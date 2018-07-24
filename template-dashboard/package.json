@@ -1,10 +1,11 @@
 {
-  "name": "template-app",
-  "version": "0.0.0",
+  "name": "template-dashboard",
+  "version": "1.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --deploy-url=/template-app-webapp/dashboard/ --base-href=/template-app-webapp/dashboard/",
     "build": "ng build",
+    "dist": "ng build --prod --base-href=/template-app-webapp/dashboard/",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
