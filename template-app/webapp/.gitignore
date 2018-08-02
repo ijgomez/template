@@ -1,0 +1,7 @@
+/.settings/
+/src/main/webapp/dashboard/
+/target/
+/.classpath
+/.project
+/.springBeans
+**/.DS_Store
