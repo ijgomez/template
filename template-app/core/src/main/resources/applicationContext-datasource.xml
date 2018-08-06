@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd">
+
+	<!-- DataSource Configuration -->
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+ 		<property name="driverClassName" value="${datasource.driverClassName}"/>
+ 		<property name="url" value="${datasource.url}"/>
+ 		<property name="username" value="${datasource.username}"/>
+ 		<property name="password" value="${datasource.password}"/>
+	</bean>
+	
+	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="dataSource"/>
+		<property name="packagesToScan" value="org.myorganization.template.core"/>
+		<!--  <property name="persistenceUnitName" value="applicationPersistenceUnit"/> -->
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
+		</property> 
+		<property name="jpaProperties">
+			<props>
+                <prop key="hibernate.dialect">${hibernate.properties.dialect}</prop>
+				<prop key="hibernate.show_sql">${hibernate.properties.show_sql}</prop>
+				<prop key="hibernate.bytecode.use_reflection_optimizer">${hibernate.properties.bytecode.use_reflection_optimizer}</prop>
+				<prop key="hibernate.jdbc.batch_size">${hibernate.properties.jdbc.batch_size}</prop>
+				<prop key="hibernate.cache.use_second_level_cache">${hibernate.properties.cache.use_second_level_cache}</prop>
+				<prop key="hibernate.hbm2ddl.auto">${hibernate.properties.hbm2ddl.auto}</prop>
+            </props>
+		</property>
+	</bean>
+
+	<!-- Transaction manager -->
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory"/>
+	</bean>
+	
+	<!-- Enable annotation driven transaction management -->
+  	<tx:annotation-driven/>
+  	
+  	 <!-- Configure Spring Data JPA and set the base package of the repository interfaces -->
+  	<jpa:repositories base-package="org.myorganization.template.core"/>
+
+</beans>
