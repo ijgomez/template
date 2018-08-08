@@ -10,11 +10,13 @@ import { ReportsModule } from './views/reports/reports.module';
 import { SupportModule } from './views/support/support.module';
 import { SecurityModule } from './views/security/security.module';
 import { MonitorsModule } from './views/monitors/monitors.module';
+import { MenuComponent } from './views/layout/menu/menu.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavComponent,
+    MenuComponent,
     FooterComponent,
     DashboardComponent
   ],

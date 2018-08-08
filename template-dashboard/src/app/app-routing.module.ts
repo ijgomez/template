@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { DashboardComponent } from './views/dashboard/dashboard.component';
+import { ReportsModule } from './views/reports/reports.module';
 
 const routes: Routes = [
    { path: '', component: DashboardComponent},
@@ -9,7 +10,7 @@ const routes: Routes = [
 
 @NgModule({
     imports: [RouterModule.forRoot(routes)],
-    exports: [RouterModule]
+    exports: [ReportsModule]
 })
 export class AppRoutingModule {}
 
