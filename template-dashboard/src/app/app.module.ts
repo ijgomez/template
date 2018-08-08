@@ -4,9 +4,6 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { ReportsModule } from './views/reports/reports.module';
-import { SupportModule } from './views/support/support.module';
-import { SecurityModule } from './views/security/security.module';
-import { MonitorsModule } from './views/monitors/monitors.module';
 import { DashboardComponent } from './views/dashboard/dashboard.component';
 import { MenuComponent } from './views/layout/menu/menu.component';
 
@@ -18,7 +15,7 @@ import { MenuComponent } from './views/layout/menu/menu.component';
   ],
   imports: [
     BrowserModule, AppRoutingModule,
-    ReportsModule, SupportModule, SecurityModule, MonitorsModule
+    ReportsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
