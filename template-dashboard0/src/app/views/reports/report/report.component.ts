@@ -33,7 +33,7 @@ export class ReportComponent implements OnInit {
     this.fileReader.onloadstart = function(e: ProgressEvent) { console.log('onloadstart... ' + e.loaded + '-' + e.total); };
     this.fileReader.onprogress  = function(e: ProgressEvent) { console.log('onprogress... ' + e.loaded + '-' + e.total); };
     this.fileReader.onloadend   = function(e: ProgressEvent) { console.log('onloadend... ' + e.loaded + '-' + e.total); };
-    this.fileReader.onerror = function(e: ErrorEvent) { console.log('onerror... ' + e); };
+    //this.fileReader.onerror = function(e: ErrorEvent) { console.log('onerror... ' + e); };
     this.fileReader.onload = (e) => {
       let fileContent: String, fileData: string, fileType: any;
 
