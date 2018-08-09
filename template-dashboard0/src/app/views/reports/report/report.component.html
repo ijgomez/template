@@ -1,0 +1,29 @@
+<form #frm="ngForm" novalidate="novalidate" (ngSubmit)="save()">
+    <div class="modal-header">
+        <button aria-label="Close" class="close" type="button" (click)="dismiss()">
+            <clr-icon aria-hidden="true" shape="close"></clr-icon>
+        </button>
+        <h3 *ngIf="isNewReport()" class="modal-title">New Report</h3>
+        <h3 *ngIf="!isNewReport()" class="modal-title">{{report.name}}</h3>
+    </div>
+    <div class="modal-body">
+        <section class="form-block">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input [(ngModel)]="report.name" id="name" name="name" required #name="ngModel" type="text" placeholder="name" size="45"/>
+            </div>
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea [(ngModel)]="report.description" id="description" name="description" rows="5" required #description="ngModel" placeholder="description"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="archive">Archive:</label>
+                <input id="archive" name="archive" type="file" (change)="fileChangeEvent($event)"/>
+            </div>
+        </section>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" type="submit">Save</button>
+        <button class="btn btn-outline" type="button" (click)="close()">Cancel</button>
+    </div>
+</form>

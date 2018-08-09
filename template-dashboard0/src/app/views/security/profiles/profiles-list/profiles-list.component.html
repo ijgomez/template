@@ -1,0 +1,46 @@
+<div class="card">
+  <div class="card-header">
+      Profiles
+  </div>
+  <div class="card-block">
+      <button type="button" class="btn btn-secondary btn-sm" (click)="reload()"><i class="fa fa-refresh fa-lg" aria-hidden="true"></i> Reload</button>
+      <button type="button" class="btn btn-secondary btn-sm" (click)="add()"><i class="fa fa-plus fa-lg" aria-hidden="true"></i> New</button>
+      <button type="button" class="btn btn-secondary btn-sm" [disabled]="!isSelectedItem()" (click)="update()"><i class="fa fa-cog fa-lg"></i> Edit</button>
+      <button type="button" class="btn btn-danger btn-sm" [disabled]="!isSelectedItem()" (click)="delete()"><i class="fa fa-trash-o fa-lg"></i> Delete</button>
+      <button type="button" class="btn btn-secondary btn-sm" (click)="export()"><i class="fa fa-file-o fa-lg" aria-hidden="true"></i> Export</button>    
+  </div>
+  <div class="card-block">
+      <div class="row">
+          <div class="col-sm-12">
+              <table class="table" style="padding-top: 0px; margin-top: 12px">
+                <thead>
+                      <tr>
+                          <th class="" (click)="short('id')" style="cursor: pointer"># <i class="fa fa-sort" [ngClass]="{'fa-sort-asc':isSortAsc('id'),'fa-sort-desc':isSortDesc('id')}"></i></th>
+                          <th class="left" (click)="short('name')" style="cursor: pointer">Name <i class="fa fa-sort" [ngClass]="{'fa-sort-asc':isSortAsc('name'),'fa-sort-desc':isSortDesc('name')}"></i></th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      <tr *ngFor="let profile of data" (click)="selectedRow(profile)" (dblclick)="update(profile)" [class.rowSelected]="isSelected(profile)" style="cursor: pointer">
+                          <td>{{profile.id}}</td>
+                          <td class="left">{{profile.name}}</td>
+                      </tr>
+                  </tbody>
+              </table>
+          </div>  
+      </div>
+      <div class="row" style="padding-top: 5px;">
+          <div class="col-sm-5">
+              Showing {{firstRow}} to {{lastRow}} of {{totalRows}} profiles
+          </div>
+          <div class="col-sm-7">
+              <span style="float: right;">
+                  <div class="btn-group btn-outline-primary btn-sm btn-icon">
+                      <button class="btn btn-primary" (click)="previousPage()" [disabled]="isFirstPage()">Previous</button>
+                      <button class="btn" *ngFor="let p of pages()" [class.btn-primary]="isActualPage(p)" (click)="page(p)">{{p + 1}}</button>
+                      <button class="btn btn-primary" (click)="nextPage()" [disabled]="isLastPage()">Next</button>
+                  </div>
+              </span>
+          </div>
+      </div>
+  </div>
+</div>

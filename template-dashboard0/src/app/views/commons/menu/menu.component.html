@@ -1,0 +1,26 @@
+<header class="header-6">
+  <div class="branding">
+    <a class="logo-and-title" [routerLink]="['/']">
+      <span class="title">Project Template</span>
+    </a>
+  </div>
+  <div class="header-nav">
+    <a class="nav-link nav-text" routerLink="reports" routerLinkActive="active">Reports</a>
+    <a class="nav-link nav-text" routerLink="monitor" routerLinkActive="active">Monitor</a>
+    <a class="nav-link nav-text" routerLink="support" routerLinkActive="active">Support</a>
+    <a class="nav-link nav-text" routerLink="security" routerLinkActive="active">Security</a>
+  </div>
+  <div class="header-actions">
+    <clr-dropdown>
+        <button class="nav-icon" clrDropdownTrigger>
+          <clr-icon shape="cog"></clr-icon>
+          <clr-icon shape="caret down"></clr-icon>
+        </button>
+        <clr-dropdown-menu clrPosition="bottom-right" *clrIfOpen>
+          <a routerLink="about" clrDropdownItem>About</a>
+          <a routerLink="preferences" clrDropdownItem>Preferences</a>
+          <a routerLink="logout" clrDropdownItem>Log out</a>
+        </clr-dropdown-menu>
+      </clr-dropdown>
+</div>
+</header>

@@ -1,0 +1,47 @@
+<form #frm="ngForm" novalidate="novalidate" (ngSubmit)="save()">
+    <div class="modal-header">
+        <button aria-label="Close" class="close" type="button" (click)="dismiss()">
+            <clr-icon aria-hidden="true" shape="close"></clr-icon>
+        </button>
+        <h3 *ngIf="isNewUser()" class="modal-title">New User</h3>
+        <h3 *ngIf="!isNewUser()" class="modal-title">{{user.username}}</h3>
+    </div>
+    <div class="modal-body">
+        <section class="form-block">
+            <div class="form-group">
+                <label for="username" class="required">Username:</label>
+                <input id="username" name="username" type="text" placeholder="username" [(ngModel)]="user.username" #username="ngModel" required minlength="3"/>
+            </div>
+            <div *ngIf="username.invalid && (username.dirty || username.touched)" class="alert alert-danger">
+                <div class="alert-items">
+                    <div class="alert-item static" *ngIf="username.errors.required">
+                        <div class="alert-icon-wrapper">
+                            <clr-icon class="alert-icon" shape="exclamation-circle"></clr-icon>
+                        </div>
+                        <span class="alert-text">Username is required.</span>
+                    </div>
+                    <div class="alert-item static" *ngIf="username.errors.minlength">
+                        <div class="alert-icon-wrapper">
+                            <clr-icon class="alert-icon" shape="exclamation-circle"></clr-icon>
+                        </div>
+                        <span class="alert-text">Username must be at least 3 characters long.</span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password" class="required">Password:</label>
+                <input id="password" name="password" type="password" placeholder="password" [(ngModel)]="user.password" #password="ngModel" required minlength="3" />
+            </div>
+            <div class="form-group">
+                <label for="profile" class="required">Profile:</label>
+                <select id="profile" name="profile" [(ngModel)]="user.profile" #profile="ngModel" [compareWith]="compareById" required >
+                    <option *ngFor="let p of profiles" [ngValue]="p" [selected]="p.id===1 ? 'selected': null">{{p.name}}</option>
+                </select>
+            </div>
+        </section>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" type="submit" [disabled]="frm.invalid">Save</button>
+        <button class="btn btn-outline" type="button" (click)="close()">Cancel</button>
+    </div>
+</form>
