@@ -6,5 +6,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'template-dashboard2';
+  title = 'Template Dashboard 2.0';
 }
