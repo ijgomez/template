@@ -3,7 +3,8 @@ import { Routes, RouterModule } from '@angular/router';
 import { ActionsListComponent } from './actions-list/actions-list.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'list', pathMatch: 'full' },
+  //{ path: '', redirectTo: 'list', pathMatch: 'full' },
+  { path: '', component: ActionsListComponent },
   { path: 'list', component: ActionsListComponent }
 ];
 
