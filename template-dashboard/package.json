@@ -5,9 +5,9 @@
   "description": "template-dashboard description",
   "scripts": {
     "lint": "tslint ./src/**/*.ts -t verbose",
-    "start": "ng serve",
+    "start": "ng serve --deploy-url=/template-app-webapp/dashboard/ --base-href=/template-app-webapp/dashboard/",
     "test": "ng test",
-    "build": "ng build --prod",
+    "build": "ng build --prod --base-href=/template-app-webapp/dashboard/",
     "e2e": "ng e2e",
     "ng": "ng"
   },
