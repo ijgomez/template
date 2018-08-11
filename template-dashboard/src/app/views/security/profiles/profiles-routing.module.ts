@@ -3,7 +3,8 @@ import { Routes, RouterModule } from '@angular/router';
 import { ProfilesListComponent } from './profiles-list/profiles-list.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'list', pathMatch: 'full' },
+  //{ path: '', redirectTo: 'list', pathMatch: 'full' },
+  { path: '', component: ProfilesListComponent },
   { path: 'list', component: ProfilesListComponent }
 ];
 

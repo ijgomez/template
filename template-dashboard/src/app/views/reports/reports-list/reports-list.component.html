@@ -1,3 +1,38 @@
 <p>
   reports-list works!
 </p>
+<a routerLink="create">Add reports</a>
+
+<table>
+  <thead>
+  <tr>
+      <td>Report Description</td>
+      <td>Report Type</td>
+      <td colspan="3">Actions</td>
+  </tr>
+  </thead>
+
+  <tbody>
+      <tr>
+          <td>Report Description 1</td>
+          <td>PDF</td>
+          <td><a [routerLink]="['execute', 1]">Execute</a></td>
+          <td><a [routerLink]="['edit', 1]">Edit</a></td>
+          <td><button (click)="deleteCoin(1)">Delete</button></td>
+      </tr>
+      <tr>
+          <td>Report Description 2</td>
+          <td>XLS</td>
+          <td><a [routerLink]="['execute', 2]">Execute</a></td>
+          <td><a [routerLink]="['edit', 2]">Edit</a></td>
+          <td><button (click)="deleteCoin(2)">Delete</button></td>
+      </tr>
+      <tr>
+          <td>Report Description 3</td>
+          <td>CSV</td>
+          <td><a [routerLink]="['execute', 3]">Execute</a></td>
+          <td><a [routerLink]="['edit', 3]">Edit</a></td>
+          <td><button (click)="deleteCoin(3)">Delete</button></td>
+      </tr>
+  </tbody>
+</table>
