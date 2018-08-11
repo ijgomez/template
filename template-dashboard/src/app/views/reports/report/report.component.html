@@ -4,5 +4,6 @@
 <form [formGroup]="reportForm" (ngSubmit)="onSubmit()">
   Name: <input type="text" formControlName="name"/>
   Description: <input type="text" formControlName="description"/>
+  <input type="file" (change)="onFileChange($event)" />
   <button type="submit" [disabled]="!reportForm.valid">send</button>
 </form>
