@@ -7,12 +7,14 @@ import { ReportsListComponent } from './reports-list/reports-list.component';
 import { ReportsHomeComponent } from './reports-home/reports-home.component';
 import { ReportComponent } from './report/report.component';
 import { ReportExecuteComponent } from './report-execute/report-execute.component';
+import { ComponentsModule } from '../components/components.module';
 
 @NgModule({
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    ReportsRoutingModule
+    ReportsRoutingModule,
+    ComponentsModule
   ],
   declarations: [ReportsListComponent, ReportsHomeComponent, ReportComponent, ReportExecuteComponent]
 })

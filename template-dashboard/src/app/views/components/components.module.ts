@@ -6,6 +6,7 @@ import { BackButtonComponent } from './buttons/back-button/back-button.component
   imports: [
     CommonModule
   ],
-  declarations: [BackButtonComponent]
+  declarations: [BackButtonComponent],
+  exports: [BackButtonComponent]
 })
 export class ComponentsModule { }

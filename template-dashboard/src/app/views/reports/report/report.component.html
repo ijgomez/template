@@ -6,5 +6,5 @@
   Description: <input type="text" formControlName="description"/>
   <input type="file" (change)="onFileChange($event)" />
   <button type="submit" [disabled]="!reportForm.valid">send</button>
-  <button>back</button>
+  <app-back-button></app-back-button>
 </form>
