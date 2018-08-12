@@ -6,6 +6,8 @@ export class Report {
 
     description: string;
 
+    format: string;
+
     archive: any;
 
 }

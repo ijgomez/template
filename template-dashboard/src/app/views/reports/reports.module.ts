@@ -6,6 +6,7 @@ import { ReportsRoutingModule } from './reports-routing.module';
 import { ReportsListComponent } from './reports-list/reports-list.component';
 import { ReportsHomeComponent } from './reports-home/reports-home.component';
 import { ReportComponent } from './report/report.component';
+import { ReportExecuteComponent } from './report-execute/report-execute.component';
 
 @NgModule({
   imports: [
@@ -13,6 +14,6 @@ import { ReportComponent } from './report/report.component';
     ReactiveFormsModule,
     ReportsRoutingModule
   ],
-  declarations: [ReportsListComponent, ReportsHomeComponent, ReportComponent]
+  declarations: [ReportsListComponent, ReportsHomeComponent, ReportComponent, ReportExecuteComponent]
 })
 export class ReportsModule { }
