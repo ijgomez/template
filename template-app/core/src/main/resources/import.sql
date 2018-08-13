@@ -21,10 +21,22 @@ insert into Report (id, name, description) values (report_seq.nextval, 'Report 2
 insert into Report (id, name, description) values (report_seq.nextval, 'Report 21', 'Description of Report 21');
 insert into Report (id, name, description) values (report_seq.nextval, 'Report 22', 'Description of Report 22');
 
+insert into Action (id, name, description) values (action_seq.nextval, 'REPORT_C', 'Report - Create');
+insert into Action (id, name, description) values (action_seq.nextval, 'REPORT_R', 'Report - Read');
+insert into Action (id, name, description) values (action_seq.nextval, 'REPORT_U', 'Report - Update');
+insert into Action (id, name, description) values (action_seq.nextval, 'REPORT_D', 'Report - Delete');
+insert into Action (id, name, description) values (action_seq.nextval, 'REPORT_E', 'Report - Execute');
+
 insert into Profile (id, name, description) values (profile_seq.nextval, 'ADMINISTRATOR', 'Administration');
 insert into Profile (id, name, description) values (profile_seq.nextval, 'SUPPORT', 'Support');
 insert into Profile (id, name, description) values (profile_seq.nextval, 'USER', 'User');
 insert into Profile (id, name, description) values (profile_seq.nextval, 'MANAGER', 'Manager');
+
+insert into Profile_Action (action_id, profile_id) values (1, 1);
+insert into Profile_Action (action_id, profile_id) values (2, 1);
+insert into Profile_Action (action_id, profile_id) values (3, 1);
+insert into Profile_Action (action_id, profile_id) values (4, 1);
+insert into Profile_Action (action_id, profile_id) values (5, 1);
 
 insert into User (id, username, password, profile_id) values (user_seq.nextval, 'admin', 'admin', 1);
 insert into User (id, username, password, profile_id) values (user_seq.nextval, 'support', 'support', 2);
