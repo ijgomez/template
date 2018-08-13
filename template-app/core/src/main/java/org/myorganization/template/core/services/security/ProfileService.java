@@ -58,6 +58,7 @@ public class ProfileService {
 		if (optional.isPresent()) {
 			Profile p = optional.get();
 			p.setName(profile.getName());
+			p.setDescription(profile.getDescription());
 			
 			return this.profileRepository.save(p);
 		} 
