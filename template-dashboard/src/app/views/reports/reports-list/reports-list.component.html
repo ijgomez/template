@@ -18,7 +18,7 @@
           <td>{{report.format}}</td>
           <td><a [routerLink]="['execute', report.id]">Execute</a></td>
           <td><a [routerLink]="['edit', report.id]">Edit</a></td>
-          <td><button (click)="deleteCoin(report.id)">Delete</button></td>
+          <td><button (click)="delete(report.id)">Delete</button></td>
       </tr>
       
   </tbody>

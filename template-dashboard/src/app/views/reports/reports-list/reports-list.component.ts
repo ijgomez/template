@@ -14,7 +14,23 @@ export class ReportsListComponent implements OnInit {
   constructor(private reportsService: ReportsService) { }
 
   ngOnInit() {
+   this.loadData();
+  }
+
+  loadData() {
     this.reportsService.findByCriteria(new ReportCriteria()).subscribe(value => { this.data = value; });
+  }
+
+  delete(id: number): void {
+    this.reportsService.read(id).subscribe(
+    data => {
+      this.reportsService.delete(data).subscribe(
+        result => { this.loadData(); },
+        error => { console.error(error); });
+    },
+    error => {
+      console.error(error);
+    });
   }
 
 }

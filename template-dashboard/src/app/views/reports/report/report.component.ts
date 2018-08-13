@@ -2,6 +2,9 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ReportsService } from '../../../services/reports/reports.service';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { Report } from '../../../domain/reports/report';
+import { Location } from '@angular/common';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-report',
@@ -16,6 +19,7 @@ export class ReportComponent implements OnInit {
     private activeRoute: ActivatedRoute,
     private formBuilder: FormBuilder,
     private cd: ChangeDetectorRef,
+    private location: Location,
     private reportsService: ReportsService
   ) { }
 
@@ -51,7 +55,22 @@ export class ReportComponent implements OnInit {
   }
 
   onSubmit() {
-    console.warn(this.reportForm.value);
+    const report: Report = this.reportForm.value;
+    let result: Observable<number>;
+    console.warn(report);
+    if (this.isEdit()) {
+      report.id = Number(this.activeRoute.snapshot.params['id']);
+      result = this.reportsService.update(report);
+    } else {
+      result = this.reportsService.create(report);
+    }
+    result.subscribe(
+      response => {
+        console.log(response);
+        this.location.back();
+      },
+      error => { console.error(error); }
+    );
   }
 
   onFileChange(event) {
