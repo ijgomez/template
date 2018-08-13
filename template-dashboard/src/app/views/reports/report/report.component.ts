@@ -34,7 +34,7 @@ export class ReportComponent implements OnInit {
     this.reportForm = this.formBuilder.group({
       name: ['', Validators.required],
       description: ['', Validators.required],
-      file: [null, Validators.required]
+      archive: null
     });
   }
 
@@ -49,7 +49,7 @@ export class ReportComponent implements OnInit {
       this.reportForm.setValue({
         name: r.name,
         description: r.description,
-        file: null // TODO Pendiente de cargar el fichero.
+        archive: null // TODO Pendiente de cargar el fichero.
       });
     });
   }
@@ -81,9 +81,16 @@ export class ReportComponent implements OnInit {
       reader.readAsDataURL(file);
 
       reader.onload = () => {
+        this.reportForm.get('archive').setValue({
+          filename: file.name,
+          filetype: file.type,
+          value: reader.result.split(',')[1]
+        });
+        /*
         this.reportForm.patchValue({
           file: reader.result
-       });
+        });
+        */
 
         // need to run CD since file load runs outside of zone
         this.cd.markForCheck();

@@ -2,9 +2,10 @@
   report works!
 </p>
 <form [formGroup]="reportForm" (ngSubmit)="onSubmit()">
-  Name: <input type="text" formControlName="name"/>
-  Description: <input type="text" formControlName="description"/>
-  <input type="file" (change)="onFileChange($event)" />
+  Name: <input type="text" id="name" formControlName="name"/>
+  Description: <input type="text" id="description" formControlName="description"/>
+  <input type="file" id="archive" (change)="onFileChange($event)" />
+  <br/>
   <button type="submit" [disabled]="!reportForm.valid">send</button>
   <app-back-button></app-back-button>
 </form>
