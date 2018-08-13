@@ -59,6 +59,7 @@ public class ProfileService {
 			Profile p = optional.get();
 			p.setName(profile.getName());
 			p.setDescription(profile.getDescription());
+			p.setActions(profile.getActions());
 			
 			return this.profileRepository.save(p);
 		} 

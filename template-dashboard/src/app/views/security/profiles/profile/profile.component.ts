@@ -5,6 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { Profile } from '../../../../domain/security/profile';
 import { Observable } from 'rxjs';
+import { Action } from '../../../../domain/security/action';
 
 @Component({
   selector: 'app-profile',
@@ -14,6 +15,14 @@ import { Observable } from 'rxjs';
 export class ProfileComponent implements OnInit {
 
   profileForm: FormGroup;
+
+  allActions: Action[] = [
+    {id: 1, name: 'REPORT_C', description: 'Report - Create'},
+    {id: 2, name: 'REPORT_R', description: 'Report - Read'},
+    {id: 3, name: 'REPORT_U', description: 'Report - Update'},
+    {id: 4, name: 'REPORT_D', description: 'Report - Delete'},
+    {id: 5, name: 'REPORT_E', description: 'Report - Execute'},
+  ];
 
   constructor(
     private activeRoute: ActivatedRoute,
@@ -34,6 +43,7 @@ export class ProfileComponent implements OnInit {
     this.profileForm = this.formBuilder.group({
       name: ['', Validators.required],
       description: ['', Validators.required],
+      actions: ['', Validators.required]
     });
   }
 
@@ -47,7 +57,8 @@ export class ProfileComponent implements OnInit {
     this.profilesService.read(id).subscribe(p => {
       this.profileForm.setValue({
         name: p.name,
-        description: p.description
+        description: p.description,
+        actions: p.actions
       });
     });
   }
@@ -69,5 +80,9 @@ export class ProfileComponent implements OnInit {
       },
       error => { console.error(error); }
     );
+  }
+
+  compare(val1, val2) {
+    return val1.id === val2.id;
   }
 }

@@ -37,6 +37,7 @@ insert into Profile_Action (action_id, profile_id) values (2, 1);
 insert into Profile_Action (action_id, profile_id) values (3, 1);
 insert into Profile_Action (action_id, profile_id) values (4, 1);
 insert into Profile_Action (action_id, profile_id) values (5, 1);
+insert into Profile_Action (action_id, profile_id) values (5, 3);
 
 insert into User (id, username, password, profile_id) values (user_seq.nextval, 'admin', 'admin', 1);
 insert into User (id, username, password, profile_id) values (user_seq.nextval, 'support', 'support', 2);
