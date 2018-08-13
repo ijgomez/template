@@ -8,5 +8,6 @@ public class Profile_ {
 
 	public static volatile SingularAttribute<Profile, Integer> id;
 	public static volatile SingularAttribute<Profile, String> name;
+	public static volatile SingularAttribute<Profile, String> description;
 	
 }

@@ -25,6 +25,10 @@ public class ProfileRepositoryQueriesImpl extends RepositoryQueriesBase<Profile,
 			if (!StringUtils.isEmpty(criteria.getName())) {
 				predicates.add(builder.like(root.get(Profile_.name), criteria.getName()));
 			}
+			
+			if (!StringUtils.isEmpty(criteria.getDescription())) {
+				predicates.add(builder.like(root.get(Profile_.description), criteria.getDescription()));
+			}
 
 		}
 		return predicates;

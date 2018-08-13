@@ -21,9 +21,10 @@ insert into Report (id, name, description) values (report_seq.nextval, 'Report 2
 insert into Report (id, name, description) values (report_seq.nextval, 'Report 21', 'Description of Report 21');
 insert into Report (id, name, description) values (report_seq.nextval, 'Report 22', 'Description of Report 22');
 
-insert into Profile (id, name) values (profile_seq.nextval, 'ADMINISTRATOR');
-insert into Profile (id, name) values (profile_seq.nextval, 'SUPPORT');
-insert into Profile (id, name) values (profile_seq.nextval, 'USER');
+insert into Profile (id, name, description) values (profile_seq.nextval, 'ADMINISTRATOR', 'Administration');
+insert into Profile (id, name, description) values (profile_seq.nextval, 'SUPPORT', 'Support');
+insert into Profile (id, name, description) values (profile_seq.nextval, 'USER', 'User');
+insert into Profile (id, name, description) values (profile_seq.nextval, 'MANAGER', 'Manager');
 
 insert into User (id, username, password, profile_id) values (user_seq.nextval, 'admin', 'admin', 1);
 insert into User (id, username, password, profile_id) values (user_seq.nextval, 'support', 'support', 2);

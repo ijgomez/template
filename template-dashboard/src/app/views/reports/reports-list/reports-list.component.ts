@@ -18,7 +18,10 @@ export class ReportsListComponent implements OnInit {
   }
 
   loadData() {
-    this.reportsService.findByCriteria(new ReportCriteria()).subscribe(value => { this.data = value; });
+    this.reportsService.findByCriteria(new ReportCriteria()).subscribe(
+      result => { this.data = result; },
+      error => { console.error(error); }
+    );
   }
 
   delete(id: number): void {

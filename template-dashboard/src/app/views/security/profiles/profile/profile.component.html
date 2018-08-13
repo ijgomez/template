@@ -1,3 +1,10 @@
 <p>
   profile works!
 </p>
+<form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+  Name: <input type="text" id="name" formControlName="name"/>
+  Description: <input type="text" id="description" formControlName="description"/>
+  <br/>
+  <button type="submit" [disabled]="!profileForm.valid">send</button>
+  <app-back-button></app-back-button>
+</form>
