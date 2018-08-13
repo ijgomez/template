@@ -38,7 +38,7 @@ public class Profile {
 	@JsonBackReference
 	private Set<User> users;
 	
-	@ManyToMany(cascade = { CascadeType.ALL })
+	@ManyToMany()
     @JoinTable(
         joinColumns = { @JoinColumn(name = "profile_id") }, 
         inverseJoinColumns = { @JoinColumn(name = "action_id") }
