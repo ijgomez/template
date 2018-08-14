@@ -2,7 +2,6 @@ package org.myorganization.template.core.domain.security;
 
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

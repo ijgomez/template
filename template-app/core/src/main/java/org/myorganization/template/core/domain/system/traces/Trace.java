@@ -1,5 +1,7 @@
 package org.myorganization.template.core.domain.system.traces;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,6 +20,9 @@ public class Trace {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "trace_seq")
 	@SequenceGenerator(name = "trace_seq", sequenceName = "trace_seq", allocationSize = 1)
 	private Long id;
+	
+	@Column(nullable = false)
+	private LocalDateTime datetime;
 
 	@Column(nullable = false)
 	private String message;
@@ -37,6 +42,14 @@ public class Trace {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+	
+	public LocalDateTime getDatetime() {
+		return datetime;
+	}
+	
+	public void setDatetime(LocalDateTime datetime) {
+		this.datetime = datetime;
 	}
 
 	public String getMessage() {
