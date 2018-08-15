@@ -5,6 +5,7 @@
   Name: <input type="text" id="name" formControlName="name"/>
   Description: <input type="text" id="description" formControlName="description"/>
   <input type="file" id="archive" (change)="onFileChange($event)" />
+  <button type="button" id="downloadButton" (click)="download()">Download</button>
   <br/>
   <button type="submit" [disabled]="!reportForm.valid">send</button>
   <app-back-button></app-back-button>
