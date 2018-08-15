@@ -1,0 +1,10 @@
+<p>
+  action works!
+</p>
+<form [formGroup]="actionForm" (ngSubmit)="onSubmit()">
+  Name: <input type="text" id="name" formControlName="name"/>
+  Description: <input type="text" id="description" formControlName="description"/>
+  <br/>
+  <button type="submit" [disabled]="!actionForm.valid">send</button>
+  <app-back-button></app-back-button>
+</form>

@@ -3,29 +3,23 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { Observable } from 'rxjs';
-import { ProfilesService } from '../../../../services/security/profiles.service';
-import { Profile } from '../../../../domain/security/profile';
 import { ActionsService } from '../../../../services/security/actions.service';
 import { Action } from '../../../../domain/security/action';
 
-
 @Component({
-  selector: 'app-profile',
-  templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.css']
+  selector: 'app-action',
+  templateUrl: './action.component.html',
+  styleUrls: ['./action.component.css']
 })
-export class ProfileComponent implements OnInit {
+export class ActionComponent implements OnInit {
 
-  profileForm: FormGroup;
-
-  allActions: Action[];
+  actionForm: FormGroup;
 
   constructor(
     private activeRoute: ActivatedRoute,
     private formBuilder: FormBuilder,
     private cd: ChangeDetectorRef,
     private location: Location,
-    private profilesService: ProfilesService,
     private actionsService: ActionsService
   ) { }
 
@@ -34,17 +28,12 @@ export class ProfileComponent implements OnInit {
     if (this.isEdit()) {
       this.loadData();
     }
-    this.actionsService.loadAll().subscribe(
-      result => this.allActions = result,
-      error => console.error(error)
-    );
   }
 
   initForm(): void {
-    this.profileForm = this.formBuilder.group({
+    this.actionForm = this.formBuilder.group({
       name: ['', Validators.required],
-      description: ['', Validators.required],
-      actions: ['', Validators.required]
+      description: ['', Validators.required]
     });
   }
 
@@ -55,24 +44,23 @@ export class ProfileComponent implements OnInit {
 
   loadData(): void {
     const id = this.activeRoute.snapshot.params['id'];
-    this.profilesService.read(id).subscribe(p => {
-      this.profileForm.setValue({
+    this.actionsService.read(id).subscribe(p => {
+      this.actionForm.setValue({
         name: p.name,
-        description: p.description,
-        actions: p.actions
+        description: p.description
       });
     });
   }
 
   onSubmit() {
-    const profile: Profile = this.profileForm.value;
+    const action: Action = this.actionForm.value;
     let result: Observable<number>;
-    console.warn(profile);
+    console.warn(action);
     if (this.isEdit()) {
-      profile.id = Number(this.activeRoute.snapshot.params['id']);
-      result = this.profilesService.update(profile);
+      action.id = Number(this.activeRoute.snapshot.params['id']);
+      result = this.actionsService.update(action);
     } else {
-      result = this.profilesService.create(profile);
+      result = this.actionsService.create(action);
     }
     result.subscribe(
       response => {
@@ -81,9 +69,5 @@ export class ProfileComponent implements OnInit {
       },
       error => { console.error(error); }
     );
-  }
-
-  compare(val1, val2) {
-    return val1.id === val2.id;
   }
 }

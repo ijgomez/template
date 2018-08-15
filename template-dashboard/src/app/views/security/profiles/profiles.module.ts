@@ -7,6 +7,7 @@ import { ProfileComponent } from './profile/profile.component';
 import { ProfilesService } from '../../../services/security/profiles.service';
 import { ComponentsModule } from '../../components/components.module';
 import { ReactiveFormsModule } from '@angular/forms';
+import { ActionsService } from '../../../services/security/actions.service';
 
 @NgModule({
   imports: [
@@ -15,6 +16,6 @@ import { ReactiveFormsModule } from '@angular/forms';
     ComponentsModule
   ],
   declarations: [ProfilesListComponent, ProfileComponent],
-  providers: [ProfilesService]
+  providers: [ProfilesService, ActionsService]
 })
 export class ProfilesModule { }
