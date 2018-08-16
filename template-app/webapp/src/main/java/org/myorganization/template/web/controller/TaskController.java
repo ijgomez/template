@@ -190,5 +190,18 @@ public class TaskController {
 		
 		return ResponseEntity.accepted().build();
 	}
+	
+	/**
+	 * Execute a current Task.
+	 * @param taskName Task name.
+	 * @return .
+	 */
+	@PostMapping("/{taskName}/schedule")
+	public ResponseEntity<String> schedule(@PathVariable String taskName) {
+		
+		//TODO ;
+		
+		return ResponseEntity.accepted().build();
+	}
 
 }
