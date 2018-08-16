@@ -2,7 +2,7 @@ export class Property {
 
     id: number;
 
-    name: string;
+    property: string;
 
     value: any;
 

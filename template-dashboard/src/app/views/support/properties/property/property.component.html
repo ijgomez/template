@@ -1,0 +1,9 @@
+<p>
+  property works!
+</p>
+<form [formGroup]="propertyForm" (ngSubmit)="onSubmit()">
+  Property: <input type="text" id="property" formControlName="property"/>
+  Value: <input type="text" id="value" formControlName="value"/>
+  <br/>
+  <button type="submit" [disabled]="!propertyForm.valid">send</button>
+  <app-back-button></app-back-button>

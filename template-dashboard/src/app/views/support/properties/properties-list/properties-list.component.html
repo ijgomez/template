@@ -1,3 +1,22 @@
 <p>
   properties-list works!
 </p>
+<a routerLink="create">Add property</a>
+
+<table>
+  <thead>
+  <tr>
+      <td>Property</td>
+      <td>Value</td>
+      <td colspan="2">Actions</td>
+  </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let p of data">
+      <td>{{p.property}}</td>
+      <td>{{p.value}}</td>
+      <td><a [routerLink]="['edit', p.id]">Edit</a></td>
+      <td><button (click)="delete(p.id)">Delete</button></td>
+    </tr>
+  </tbody>
+</table>
