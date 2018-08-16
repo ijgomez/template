@@ -11,5 +11,6 @@ public class Trace_ {
 	public static volatile SingularAttribute<Trace, Integer> id;
 	public static volatile SingularAttribute<Trace, LocalDateTime> datetime;
 	public static volatile SingularAttribute<Trace, String> message;
+	public static volatile SingularAttribute<Trace, TraceType> type;
 	
 }

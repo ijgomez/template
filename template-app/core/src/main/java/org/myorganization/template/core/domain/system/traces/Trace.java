@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -26,6 +28,10 @@ public class Trace {
 
 	@Column(nullable = false)
 	private String message;
+	
+	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
+	private TraceType type;
 
 	public Trace() {
 		super();
@@ -58,6 +64,14 @@ public class Trace {
 	
 	public void setMessage(String message) {
 		this.message = message;
+	}
+	
+	public TraceType getType() {
+		return type;
+	}
+	
+	public void setType(TraceType type) {
+		this.type = type;
 	}
 
 	@Override

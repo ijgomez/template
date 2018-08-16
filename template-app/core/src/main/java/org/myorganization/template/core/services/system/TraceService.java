@@ -57,7 +57,9 @@ public class TraceService {
 		Optional<Trace> optional = this.traceRepository.findById(id);
 		if (optional.isPresent()) {
 			Trace t = optional.get();
+			t.setDatetime(trace.getDatetime());
 			t.setMessage(trace.getMessage());
+			t.setType(trace.getType());
 			
 			return this.traceRepository.save(t);
 		} 
