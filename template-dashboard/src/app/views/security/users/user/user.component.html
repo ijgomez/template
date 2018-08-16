@@ -1,0 +1,14 @@
+<p>
+  user works!
+</p>
+<form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+  Username: <input type="text" id="username" formControlName="username"/>
+  Password: <input type="password" id="password" formControlName="password"/>
+  Select Profile:
+  <select id="profile" formControlName="profile" [compareWith]="compare">
+    <option *ngFor="let p of allProfiles" [ngValue]="p">{{p.name}}</option>
+  </select>
+  <br/>
+  <button type="submit" [disabled]="!userForm.valid">send</button>
+  <app-back-button></app-back-button>
+</form>
