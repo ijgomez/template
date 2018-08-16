@@ -1,4 +1,6 @@
-export class Report {
+import { Entity } from '../base/entity';
+
+export class Report implements Entity {
 
     id: number;
 

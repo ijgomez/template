@@ -3,17 +3,20 @@ import { environment } from '../../../environments/environment';
 import { Http, Response, RequestOptions, Headers, RequestMethod } from '@angular/http';
 import { Observable } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
+import { TemplateService } from '../base/template-service';
 import { Report } from '../../domain/reports/report';
 import { ReportCriteria } from '../../domain/reports/report-criteria';
 
 @Injectable()
-export class ReportsService {
+export class ReportsService extends TemplateService {
 
   private url = environment.urlBase + '/reports';
 
   private headers = new Headers({'Content-type': 'application/json'});
 
-  constructor(private http: Http) { }
+  constructor(private http: Http) {
+    super();
+   }
 
   findByCriteria(criteria: ReportCriteria): Observable<Report[]> {
     const options = new RequestOptions({ headers: this.headers});
@@ -90,16 +93,4 @@ export class ReportsService {
     );
   }
 
-  private handleError(error: Response | any) {
-    let errMsg: string;
-    if (error instanceof Response) {
-        const body = error.json() || '';
-        const err = body.error || JSON.stringify(body);
-        errMsg = `${error.status} - ${error.statusText || ''} ${err}`;
-    } else {
-        errMsg = error.message ? error.message : error.toString();
-    }
-    console.error('service error: ' + errMsg);
-    return Observable.throw(errMsg);
-  }
 }

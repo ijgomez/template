@@ -3,17 +3,20 @@ import { environment } from '../../../environments/environment';
 import { Http, Response, RequestOptions, Headers, RequestMethod } from '@angular/http';
 import { Observable } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
+import { TemplateService } from '../base/template-service';
 import { Action } from '../../domain/security/action';
 import { ActionCriteria } from '../../domain/security/action-criteria';
 
 @Injectable()
-export class ActionsService {
+export class ActionsService extends TemplateService {
 
   private url = environment.urlBase + '/actions';
 
   private headers = new Headers({'Content-type': 'application/json'});
 
-  constructor(private http: Http) { }
+  constructor(private http: Http) {
+    super();
+  }
 
   loadAll(): Observable<Action[]> {
     const options = new RequestOptions({ headers: this.headers});
@@ -101,16 +104,4 @@ export class ActionsService {
     );
   }
 
-  private handleError(error: Response | any) {
-    let errMsg: string;
-    if (error instanceof Response) {
-        const body = error.json() || '';
-        const err = body.error || JSON.stringify(body);
-        errMsg = `${error.status} - ${error.statusText || ''} ${err}`;
-    } else {
-        errMsg = error.message ? error.message : error.toString();
-    }
-    console.error('service error: ' + errMsg);
-    return Observable.throw(errMsg);
-  }
 }

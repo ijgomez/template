@@ -3,17 +3,20 @@ import { environment } from '../../../environments/environment';
 import { Http, Response, RequestOptions, Headers, RequestMethod } from '@angular/http';
 import { Observable } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
+import { TemplateService } from '../base/template-service';
 import { Property } from '../../domain/support/property';
 import { PropertyCriteria } from '../../domain/support/property-criteria';
 
 @Injectable()
-export class PropertiesService {
+export class PropertiesService extends TemplateService {
 
   private url = environment.urlBase + '/properties';
 
   private headers = new Headers({'Content-type': 'application/json'});
 
-  constructor(private http: Http) { }
+  constructor(private http: Http) {
+    super();
+  }
 
   findByCriteria(criteria: PropertyCriteria): Observable<Property[]> {
     const options = new RequestOptions({ headers: this.headers});
@@ -88,18 +91,5 @@ export class PropertiesService {
       }),
       catchError(this.handleError)
     );
-  }
-
-  private handleError(error: Response | any) {
-    let errMsg: string;
-    if (error instanceof Response) {
-        const body = error.json() || '';
-        const err = body.error || JSON.stringify(body);
-        errMsg = `${error.status} - ${error.statusText || ''} ${err}`;
-    } else {
-        errMsg = error.message ? error.message : error.toString();
-    }
-    console.error('service error: ' + errMsg);
-    return Observable.throw(errMsg);
   }
 }

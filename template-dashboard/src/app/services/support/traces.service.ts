@@ -3,17 +3,20 @@ import { environment } from '../../../environments/environment';
 import { Http, Response, RequestOptions, Headers, RequestMethod } from '@angular/http';
 import { Observable } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
+import { TemplateService } from '../base/template-service';
 import { Trace } from '../../domain/support/trace';
 import { TraceCriteria } from '../../domain/support/trace-criteria';
 
 @Injectable()
-export class TracesService {
+export class TracesService extends TemplateService {
 
   private url = environment.urlBase + '/traces';
 
   private headers = new Headers({'Content-type': 'application/json'});
 
-  constructor(private http: Http) { }
+  constructor(private http: Http) {
+    super();
+  }
 
   findByCriteria(criteria: TraceCriteria): Observable<Trace[]> {
     const options = new RequestOptions({ headers: this.headers});
@@ -88,19 +91,6 @@ export class TracesService {
       }),
       catchError(this.handleError)
     );
-  }
-
-  private handleError(error: Response | any) {
-    let errMsg: string;
-    if (error instanceof Response) {
-        const body = error.json() || '';
-        const err = body.error || JSON.stringify(body);
-        errMsg = `${error.status} - ${error.statusText || ''} ${err}`;
-    } else {
-        errMsg = error.message ? error.message : error.toString();
-    }
-    console.error('service error: ' + errMsg);
-    return Observable.throw(errMsg);
   }
 
 }

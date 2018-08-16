@@ -1,6 +1,7 @@
+import { Entity } from '../base/entity';
 import { Profile } from './profile';
 
-export class User {
+export class User implements Entity {
 
     id: number;
 

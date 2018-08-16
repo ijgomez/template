@@ -3,17 +3,20 @@ import { environment } from '../../../environments/environment';
 import { Http, Response, RequestOptions, Headers, RequestMethod } from '@angular/http';
 import { Observable } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
+import { TemplateService } from '../base/template-service';
 import { Profile } from '../../domain/security/profile';
 import { ProfileCriteria } from '../../domain/security/profile-criteria';
 
 @Injectable()
-export class ProfilesService {
+export class ProfilesService extends TemplateService {
 
   private url = environment.urlBase + '/profiles';
 
   private headers = new Headers({'Content-type': 'application/json'});
 
-  constructor(private http: Http) { }
+  constructor(private http: Http) {
+    super();
+   }
 
   loadAll(): Observable<Profile[]> {
     const options = new RequestOptions({ headers: this.headers});
@@ -101,16 +104,4 @@ export class ProfilesService {
     );
   }
 
-  private handleError(error: Response | any) {
-    let errMsg: string;
-    if (error instanceof Response) {
-        const body = error.json() || '';
-        const err = body.error || JSON.stringify(body);
-        errMsg = `${error.status} - ${error.statusText || ''} ${err}`;
-    } else {
-        errMsg = error.message ? error.message : error.toString();
-    }
-    console.error('service error: ' + errMsg);
-    return Observable.throw(errMsg);
-  }
 }

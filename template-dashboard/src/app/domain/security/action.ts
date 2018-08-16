@@ -1,4 +1,6 @@
-export class Action {
+import { Entity } from '../base/entity';
+
+export class Action  implements Entity {
 
     id: number;
 

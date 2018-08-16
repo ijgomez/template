@@ -1,5 +1,7 @@
+import { Entity } from '../base/entity';
 import { Action } from './action';
-export class Profile {
+
+export class Profile implements Entity {
 
     id: number;
 

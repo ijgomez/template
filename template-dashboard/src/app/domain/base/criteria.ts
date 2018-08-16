@@ -1,7 +1,7 @@
 /**
  * Class that defines the attributes common to all Criteria classes.
  */
-export class Criteria {
+export abstract class Criteria {
 
     /** Selected page number (Pagination attribute). */
     pageNumber: number;

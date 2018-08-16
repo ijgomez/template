@@ -1,4 +1,6 @@
-export class Property {
+import { Entity } from '../base/entity';
+
+export class Property implements Entity {
 
     id: number;
 
