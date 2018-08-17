@@ -1,8 +1,7 @@
 <p>
   report-execute works!
 </p>
-<form [formGroup]="reportExecuteForm" (ngSubmit)="onSubmit()">
- 
-  <button type="submit" [disabled]="!reportExecuteForm.valid">execute</button>
-  <app-back-button></app-back-button>
-</form>
+<app-dynamic-form [questions]="questions" (uploaded)="onSubmit($event)"></app-dynamic-form>
+<div *ngIf="payLoad" class="form-row">
+  <strong>Saved the following values</strong><br>{{payLoad}}
+</div>

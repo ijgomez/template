@@ -1,6 +1,6 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { FormBuilder, FormGroup } from '../../../../../node_modules/@angular/forms';
+import { Component, OnInit, ChangeDetectorRef, Input } from '@angular/core';
 import { ReportsService } from '../../../services/reports/reports.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-report-execute',
@@ -9,15 +9,21 @@ import { ReportsService } from '../../../services/reports/reports.service';
 })
 export class ReportExecuteComponent implements OnInit {
 
-  reportExecuteForm: FormGroup;
+  questions: any[];
 
-  constructor(private formBuilder: FormBuilder, private cd: ChangeDetectorRef, private reportsService: ReportsService) { }
+  payLoad = '';
+
+  constructor(
+    private activeRoute: ActivatedRoute,
+    private reportsService: ReportsService
+  ) { }
 
   ngOnInit() {
-    this.reportExecuteForm = this.formBuilder.group({});
+    const id = this.activeRoute.snapshot.params['id'];
+    this.questions = this.reportsService.getReportParams();
   }
 
-  onSubmit() {
-    console.warn(this.reportExecuteForm.value);
+  onSubmit(form) {
+    this.payLoad = JSON.stringify(form.value);
   }
 }

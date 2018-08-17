@@ -10,6 +10,7 @@ import { ReportComponent } from './report/report.component';
 import { ReportExecuteComponent } from './report-execute/report-execute.component';
 import { ComponentsModule } from '../components/components.module';
 import { ReportsService } from '../../services/reports/reports.service';
+import { QuestionControlService } from '../../services/commons/question-control.service';
 
 @NgModule({
   imports: [
@@ -17,7 +18,8 @@ import { ReportsService } from '../../services/reports/reports.service';
     ReportsRoutingModule,
     ComponentsModule
   ],
-  declarations: [ReportsListComponent, ReportsHomeComponent, ReportComponent, ReportExecuteComponent],
+  declarations: [ReportsListComponent, ReportsHomeComponent, ReportComponent,
+    ReportExecuteComponent],
   providers: [ReportsService]
 })
 export class ReportsModule { }
