@@ -2,8 +2,13 @@
   property works!
 </p>
 <form [formGroup]="propertyForm" (ngSubmit)="onSubmit()">
-  Property: <input type="text" id="property" formControlName="property"/>
-  Value: <input type="text" id="value" formControlName="value"/>
-  <br/>
+    <label for="property">Property:</label>
+    <input type="text" id="property" formControlName="property" />
+    <app-control-messages [control]="propertyForm.controls.property"></app-control-messages>
+    <br/>
+    <label for="value">Value:</label>
+    <input type="text" id="value" formControlName="value" />
+    <app-control-messages [control]="propertyForm.controls.value"></app-control-messages>
+    <br/>
   <button type="submit" [disabled]="!propertyForm.valid">send</button>
   <app-back-button></app-back-button>
