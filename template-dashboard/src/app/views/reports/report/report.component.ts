@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ReportsService } from '../../../services/reports/reports.service';
-import { FormGroup, Validators, FormBuilder } from '@angular/forms';
+import { FormGroup, Validators, FormBuilder, FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Report } from '../../../domain/reports/report';
 import { Location } from '@angular/common';
@@ -32,7 +32,7 @@ export class ReportComponent implements OnInit {
 
   initForm() {
     this.reportForm = this.formBuilder.group({
-      name: ['', Validators.required],
+      name: ['', [Validators.required, Validators.minLength(5)]],
       description: ['', Validators.required],
       archive: null
     });
@@ -84,7 +84,7 @@ export class ReportComponent implements OnInit {
         this.reportForm.get('archive').setValue({
           filename: file.name,
           filetype: file.type,
-          value: reader.result.split(',')[1]
+          value: reader.result.toString().split(',')[1]
         });
         /*
         this.reportForm.patchValue({

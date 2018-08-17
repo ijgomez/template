@@ -2,11 +2,18 @@
   report works!
 </p>
 <form [formGroup]="reportForm" (ngSubmit)="onSubmit()">
-  Name: <input type="text" id="name" formControlName="name"/>
-  Description: <input type="text" id="description" formControlName="description"/>
+  <label for="name">Name:</label>
+  <input type="text" id="name" formControlName="name" />
+  <app-control-messages [control]="reportForm.controls.name"></app-control-messages>
+  <br/>
+  <label for="description">Description:</label>
+  <input type="text" id="description" formControlName="description"/>
+  <app-control-messages [control]="reportForm.controls.description"></app-control-messages>
+  <br/>
+  <label for="archive">Archive:</label>
   <input type="file" id="archive" (change)="onFileChange($event)" />
   <button type="button" id="downloadButton" (click)="download()">Download</button>
   <br/>
-  <button type="submit" [disabled]="!reportForm.valid">send</button>
+  <button type="submit" [disabled]="reportForm.invalid">save</button>
   <app-back-button></app-back-button>
 </form>
