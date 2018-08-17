@@ -95,7 +95,7 @@ export class ReportsService extends TemplateService {
     );
   }
 
-  getReportParams(): any {
+  readReportParams(id: number | string): any {
     const questions = [
       new DropdownQuestion({
         key: 'reportParam3',

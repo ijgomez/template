@@ -20,7 +20,7 @@ export class ReportExecuteComponent implements OnInit {
 
   ngOnInit() {
     const id = this.activeRoute.snapshot.params['id'];
-    this.questions = this.reportsService.getReportParams();
+    this.questions = this.reportsService.readReportParams(id);
   }
 
   onSubmit(form) {
