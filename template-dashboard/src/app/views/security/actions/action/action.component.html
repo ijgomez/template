@@ -2,9 +2,14 @@
   action works!
 </p>
 <form [formGroup]="actionForm" (ngSubmit)="onSubmit()">
-  Name: <input type="text" id="name" formControlName="name"/>
-  Description: <input type="text" id="description" formControlName="description"/>
-  <br/>
+    <label for="name">Name:</label>
+    <input type="text" id="name" formControlName="name" />
+    <app-control-messages [control]="actionForm.controls.name"></app-control-messages>
+    <br/>
+    <label for="description">Description:</label>
+    <input type="text" id="description" formControlName="description" />
+    <app-control-messages [control]="actionForm.controls.description"></app-control-messages>
+    <br/>
   <button type="submit" [disabled]="!actionForm.valid">send</button>
   <app-back-button></app-back-button>
 </form>
