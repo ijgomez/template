@@ -2,12 +2,19 @@
   user works!
 </p>
 <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
-  Username: <input type="text" id="username" formControlName="username"/>
-  Password: <input type="password" id="password" formControlName="password"/>
-  Select Profile:
+  <label for="username">Username:</label>
+  <input type="text" id="username" formControlName="username" />
+  <app-control-messages [control]="userForm.controls.username"></app-control-messages>
+  <br/>
+  <label for="password">Password:</label>
+  <input type="password" id="password" formControlName="password" />
+  <app-control-messages [control]="userForm.controls.password"></app-control-messages>
+  <br/>
+  <label for="profile">Profile:</label>
   <select id="profile" formControlName="profile" [compareWith]="compare">
     <option *ngFor="let p of allProfiles" [ngValue]="p">{{p.name}}</option>
   </select>
+  <app-control-messages [control]="userForm.controls.profile"></app-control-messages>
   <br/>
   <button type="submit" [disabled]="!userForm.valid">send</button>
   <app-back-button></app-back-button>
