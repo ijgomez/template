@@ -85,6 +85,7 @@ export class ReportComponent implements OnInit {
           filename: file.name,
           filetype: file.type,
           value: reader.result.toString().split(',')[1]
+          // file.size
         });
         /*
         this.reportForm.patchValue({

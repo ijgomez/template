@@ -7,12 +7,13 @@ import java.util.Optional;
 import org.myorganization.template.core.domain.system.properties.Property;
 import org.myorganization.template.core.domain.system.properties.PropertyCriteria;
 import org.myorganization.template.core.domain.system.properties.PropertyRepository;
+import org.myorganization.template.core.services.base.TemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class PropertyService {
+public class PropertyService implements TemplateService<Property, PropertyCriteria>{
 
 	@Autowired
 	private PropertyRepository propertyRepository;
