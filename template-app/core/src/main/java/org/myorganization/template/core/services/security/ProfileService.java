@@ -7,13 +7,12 @@ import java.util.Optional;
 import org.myorganization.template.core.domain.security.Profile;
 import org.myorganization.template.core.domain.security.ProfileCriteria;
 import org.myorganization.template.core.domain.security.ProfileRepository;
-import org.myorganization.template.core.services.base.TemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class ProfileService implements TemplateService<Profile, ProfileCriteria> {
+public class ProfileService {
 
 	@Autowired
 	private ProfileRepository profileRepository;

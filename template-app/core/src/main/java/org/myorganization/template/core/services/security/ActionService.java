@@ -7,13 +7,12 @@ import java.util.Optional;
 import org.myorganization.template.core.domain.security.Action;
 import org.myorganization.template.core.domain.security.ActionCriteria;
 import org.myorganization.template.core.domain.security.ActionRepository;
-import org.myorganization.template.core.services.base.TemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class ActionService implements TemplateService<Action, ActionCriteria> {
+public class ActionService {
 
 	@Autowired
 	private ActionRepository actionRepository;

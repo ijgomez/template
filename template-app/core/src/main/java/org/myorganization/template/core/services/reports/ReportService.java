@@ -7,13 +7,12 @@ import java.util.Optional;
 import org.myorganization.template.core.domain.reports.Report;
 import org.myorganization.template.core.domain.reports.ReportCriteria;
 import org.myorganization.template.core.domain.reports.ReportRepository;
-import org.myorganization.template.core.services.base.TemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class ReportService implements TemplateService<Report, ReportCriteria>{
+public class ReportService {
 
 	@Autowired
 	private ReportRepository reportRepository;
