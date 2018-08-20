@@ -1,20 +1,30 @@
-package org.myorganization.template.core.domain.security;
+package org.myorganization.template.core.domain.security.profiles;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.myorganization.template.core.domain.base.Criteria;
 
-public class UserCriteria extends Criteria {
+public class ProfileCriteria extends Criteria {
 
-	private String username;
+	private String name;
 	
-	public String getUsername() {
-		return username;
+	private String description;
+	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 	
-	public void setUsername(String username) {
-		this.username = username;
+	public String getDescription() {
+		return description;
+	}
+	
+	public void setDescription(String description) {
+		this.description = description;
 	}
 	
 	@Override

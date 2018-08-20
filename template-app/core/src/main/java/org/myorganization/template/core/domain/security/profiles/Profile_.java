@@ -1,8 +1,11 @@
-package org.myorganization.template.core.domain.security;
+package org.myorganization.template.core.domain.security.profiles;
 
 import javax.persistence.metamodel.SetAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
+
+import org.myorganization.template.core.domain.security.actions.Action;
+import org.myorganization.template.core.domain.security.users.User;
 
 @StaticMetamodel(Profile.class)
 public class Profile_ {

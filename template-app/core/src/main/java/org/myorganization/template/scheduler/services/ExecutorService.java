@@ -1,4 +1,4 @@
-package org.myorganization.template.core.services.executor;
+package org.myorganization.template.scheduler.services;
 
 import org.myorganization.template.core.domain.tasks.Task;
 import org.myorganization.template.core.services.tasks.TaskService;

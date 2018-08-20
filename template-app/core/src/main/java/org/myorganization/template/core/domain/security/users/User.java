@@ -1,4 +1,4 @@
-package org.myorganization.template.core.domain.security;
+package org.myorganization.template.core.domain.security.users;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +11,7 @@ import javax.persistence.SequenceGenerator;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.myorganization.template.core.domain.security.profiles.Profile;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 

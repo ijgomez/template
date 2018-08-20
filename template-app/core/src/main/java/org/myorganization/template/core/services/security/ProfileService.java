@@ -5,9 +5,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import org.myorganization.template.core.domain.security.Profile;
-import org.myorganization.template.core.domain.security.ProfileCriteria;
-import org.myorganization.template.core.domain.security.ProfileRepository;
+import org.myorganization.template.core.domain.security.profiles.Profile;
+import org.myorganization.template.core.domain.security.profiles.ProfileCriteria;
+import org.myorganization.template.core.domain.security.profiles.ProfileRepository;
 import org.myorganization.template.core.services.base.TemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

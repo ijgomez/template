@@ -1,4 +1,4 @@
-package org.myorganization.template.core.domain.security;
+package org.myorganization.template.core.domain.security.users;
 
 import org.myorganization.template.core.domain.base.RepositoryQueries;
 

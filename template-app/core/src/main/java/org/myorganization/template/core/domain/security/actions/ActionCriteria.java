@@ -1,4 +1,4 @@
-package org.myorganization.template.core.domain.security;
+package org.myorganization.template.core.domain.security.actions;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;

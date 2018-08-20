@@ -1,4 +1,4 @@
-package org.myorganization.template.core.domain.security;
+package org.myorganization.template.core.domain.security.actions;
 
 import org.springframework.data.repository.PagingAndSortingRepository;
 

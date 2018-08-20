@@ -4,8 +4,8 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
-import org.myorganization.template.core.domain.security.User;
-import org.myorganization.template.core.domain.security.UserCriteria;
+import org.myorganization.template.core.domain.security.users.User;
+import org.myorganization.template.core.domain.security.users.UserCriteria;
 import org.myorganization.template.core.services.security.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

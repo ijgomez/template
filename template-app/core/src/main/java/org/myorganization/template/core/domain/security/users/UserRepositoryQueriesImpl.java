@@ -1,4 +1,4 @@
-package org.myorganization.template.core.domain.security;
+package org.myorganization.template.core.domain.security.users;
 
 import java.util.ArrayList;
 import java.util.List;

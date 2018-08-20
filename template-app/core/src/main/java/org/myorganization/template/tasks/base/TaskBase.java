@@ -7,7 +7,7 @@ import org.myorganization.template.core.domain.tasks.Task;
 import org.myorganization.template.core.domain.tasks.TaskExecution;
 import org.myorganization.template.core.domain.tasks.TaskExecutionAction;
 import org.myorganization.template.core.domain.tasks.TaskExecutionStatus;
-import org.myorganization.template.core.services.tasks.TaskExecutionService;
+import org.myorganization.template.scheduler.services.TaskExecutionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

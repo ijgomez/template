@@ -1,4 +1,4 @@
-package org.myorganization.template.core.services.tasks;
+package org.myorganization.template.scheduler.services;
 
 import java.util.ArrayList;
 import java.util.List;

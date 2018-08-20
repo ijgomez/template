@@ -5,9 +5,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import org.myorganization.template.core.domain.security.User;
-import org.myorganization.template.core.domain.security.UserCriteria;
-import org.myorganization.template.core.domain.security.UserRepository;
+import org.myorganization.template.core.domain.security.users.User;
+import org.myorganization.template.core.domain.security.users.UserCriteria;
+import org.myorganization.template.core.domain.security.users.UserRepository;
 import org.myorganization.template.core.services.base.TemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
