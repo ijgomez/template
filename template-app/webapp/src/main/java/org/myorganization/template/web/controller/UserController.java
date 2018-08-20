@@ -2,6 +2,7 @@ package org.myorganization.template.web.controller;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 import org.myorganization.template.core.domain.security.User;
 import org.myorganization.template.core.domain.security.UserCriteria;
@@ -74,12 +75,11 @@ public class UserController {
 
 	@GetMapping("/{id}")
 	public ResponseEntity<User> read(@PathVariable("id") Long id) {
-		User user = this.userService.read(id);
-		if (user == null) {
-			return ResponseEntity.notFound().build();
+		Optional<User> user = this.userService.read(id);
+		if (user.isPresent()) {
+			return ResponseEntity.ok(user.get());
 		}
-
-		return ResponseEntity.ok(user);
+		return ResponseEntity.notFound().build();
 	}
 	
 	@PutMapping("/{id}")

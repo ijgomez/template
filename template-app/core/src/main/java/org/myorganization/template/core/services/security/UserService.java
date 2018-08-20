@@ -44,18 +44,13 @@ public class UserService implements TemplateService<User, UserCriteria> {
 	}
 	
 	@Transactional(readOnly = true)
-	public User read(Long id) {
-		Optional<User> user = this.userRepository.findById(id);
-		if (user.isPresent()) {
-			return user.get();
-		} 
-		//TODO Not Found Exception....
-		return null;
+	public Optional<User> read(Long id) {
+		return this.userRepository.findById(id);
 	}
 	
 	@Transactional
 	public User update(Long id, User user) {
-		Optional<User> optional = this.userRepository.findById(id);
+		Optional<User> optional = this.read(id);
 		if (optional.isPresent()) {
 			User u = optional.get();
 			u.setUsername(user.getUsername());

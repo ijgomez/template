@@ -44,18 +44,13 @@ public class ActionService implements TemplateService<Action, ActionCriteria> {
 	}
 	
 	@Transactional(readOnly = true)
-	public Action read(Long id) {
-		Optional<Action> action = this.actionRepository.findById(id);
-		if (action.isPresent()) {
-			return action.get();
-		} 
-		//TODO Not Found Exception....
-		return null;
+	public Optional<Action> read(Long id) {
+		return this.actionRepository.findById(id);
 	}
 	
 	@Transactional
 	public Action update(Long id, Action action) {
-		Optional<Action> optional = this.actionRepository.findById(id);
+		Optional<Action> optional = this.read(id);
 		if (optional.isPresent()) {
 			Action a = optional.get();
 			a.setName(action.getName());

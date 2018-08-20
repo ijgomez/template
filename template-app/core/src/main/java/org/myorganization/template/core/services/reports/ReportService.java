@@ -44,18 +44,13 @@ public class ReportService implements TemplateService<Report, ReportCriteria> {
 	}
 	
 	@Transactional(readOnly = true)
-	public Report read(Long id) {
-		Optional<Report> report = this.reportRepository.findById(id);
-		if (report.isPresent()) {
-			return report.get();
-		} 
-		//TODO Not Found Exception....
-		return null;
+	public Optional<Report> read(Long id) {
+		return this.reportRepository.findById(id);
 	}
 	
 	@Transactional
 	public Report update(Long id, Report report) {
-		Optional<Report> optional = this.reportRepository.findById(id);
+		Optional<Report> optional = this.read(id);
 		if (optional.isPresent()) {
 			Report r = optional.get();
 			r.setName(report.getName());

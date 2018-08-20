@@ -44,18 +44,13 @@ public class ProfileService implements TemplateService<Profile, ProfileCriteria>
 	}
 	
 	@Transactional(readOnly = true)
-	public Profile read(Long id) {
-		Optional<Profile> report = this.profileRepository.findById(id);
-		if (report.isPresent()) {
-			return report.get();
-		} 
-		//TODO Not Found Exception....
-		return null;
+	public Optional<Profile> read(Long id) {
+		return this.profileRepository.findById(id);
 	}
 	
 	@Transactional
 	public Profile update(Long id, Profile profile) {
-		Optional<Profile> optional = this.profileRepository.findById(id);
+		Optional<Profile> optional = this.read(id);
 		if (optional.isPresent()) {
 			Profile p = optional.get();
 			p.setName(profile.getName());

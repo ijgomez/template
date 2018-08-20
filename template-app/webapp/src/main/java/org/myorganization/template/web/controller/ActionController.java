@@ -2,6 +2,7 @@ package org.myorganization.template.web.controller;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 import org.myorganization.template.core.domain.security.Action;
 import org.myorganization.template.core.domain.security.ActionCriteria;
@@ -74,12 +75,11 @@ public class ActionController {
 
 	@GetMapping("/{id}")
 	public ResponseEntity<Action> read(@PathVariable("id") Long id) {
-		Action action = this.actionService.read(id);
-		if (action == null) {
-			return ResponseEntity.notFound().build();
+		Optional<Action> action = this.actionService.read(id);
+		if (action.isPresent()) {
+			return ResponseEntity.ok(action.get());
 		}
-
-		return ResponseEntity.ok(action);
+		return ResponseEntity.notFound().build();
 	}
 	
 	@PutMapping("/{id}")

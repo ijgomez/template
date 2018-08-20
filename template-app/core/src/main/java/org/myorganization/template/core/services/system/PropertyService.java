@@ -44,18 +44,13 @@ public class PropertyService implements TemplateService<Property, PropertyCriter
 	}
 	
 	@Transactional(readOnly = true)
-	public Property read(Long id) {
-		Optional<Property> property = this.propertyRepository.findById(id);
-		if (property.isPresent()) {
-			return property.get();
-		} 
-		//TODO Not Found Exception....
-		return null;
+	public Optional<Property> read(Long id) {
+		return this.propertyRepository.findById(id);
 	}
 	
 	@Transactional
 	public Property update(Long id, Property property) {
-		Optional<Property> optional = this.propertyRepository.findById(id);
+		Optional<Property> optional = this.read(id);
 		if (optional.isPresent()) {
 			Property p = optional.get();
 			p.setProperty(property.getProperty());

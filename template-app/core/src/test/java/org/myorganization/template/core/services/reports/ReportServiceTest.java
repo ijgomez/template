@@ -100,7 +100,7 @@ public class ReportServiceTest {
 	public void testRead() throws Exception {
 		Report r = this.reportService.create(this.testEntityFactory.generateReport(1L));
 
-		Report report = this.reportService.read(r.getId());
+		Report report = this.reportService.read(r.getId()).get();
 		
 		assertNotNull(report);
 		assertNotNull(report.getId());
@@ -112,7 +112,7 @@ public class ReportServiceTest {
 	public void testReadNotFound() throws Exception {
 		Report r = this.reportService.create(this.testEntityFactory.generateReport(1L));
 
-		Report report = this.reportService.read(r.getId() + 1);
+		Report report = this.reportService.read(r.getId() + 1).get();
 		
 		assertNull(report);
 	}
@@ -121,7 +121,7 @@ public class ReportServiceTest {
 	public void testUpdate() throws Exception {
 		Report r = this.reportService.create(this.testEntityFactory.generateReport(1L));
 		
-		Report report = this.reportService.read(r.getId());
+		Report report = this.reportService.read(r.getId()).get();
 		
 		assertNotNull(report);
 		assertNotNull(report.getId());
@@ -141,7 +141,7 @@ public class ReportServiceTest {
 	public void testUpdateNotFound() throws Exception {
 		Report r = this.reportService.create(this.testEntityFactory.generateReport(1L));
 		
-		Report report = this.reportService.read(r.getId());
+		Report report = this.reportService.read(r.getId()).get();
 		
 		assertNotNull(report);
 		assertNotNull(report.getId());

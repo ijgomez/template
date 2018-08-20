@@ -44,18 +44,13 @@ public class TraceService implements TemplateService<Trace, TraceCriteria> {
 	}
 	
 	@Transactional(readOnly = true)
-	public Trace read(Long id) {
-		Optional<Trace> trace = this.traceRepository.findById(id);
-		if (trace.isPresent()) {
-			return trace.get();
-		} 
-		//TODO Not Found Exception....
-		return null;
+	public Optional<Trace> read(Long id) {
+		return this.traceRepository.findById(id);
 	}
 	
 	@Transactional
 	public Trace update(Long id, Trace trace) {
-		Optional<Trace> optional = this.traceRepository.findById(id);
+		Optional<Trace> optional = this.read(id);
 		if (optional.isPresent()) {
 			Trace t = optional.get();
 			t.setDatetime(trace.getDatetime());

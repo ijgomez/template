@@ -119,7 +119,7 @@ public class ReportServiceMockTest {
 		});
 		
 		Long id = 1L;
-		Report report = this.reportService.read(id);
+		Report report = this.reportService.read(id).get();
 		
 		assertNotNull(report);
 		assertNotNull(report.getId());
@@ -132,7 +132,7 @@ public class ReportServiceMockTest {
 		when(reportRepository.findById(anyLong())).thenReturn(Optional.empty());
 		
 		Long id = 1L;
-		Report report = this.reportService.read(id);
+		Report report = this.reportService.read(id).get();
 		
 		assertNull(report);
 	}
@@ -147,7 +147,7 @@ public class ReportServiceMockTest {
 		    }
 		});
 		
-		Report report = this.reportService.read(20L);
+		Report report = this.reportService.read(20L).get();
 		
 		assertNotNull(report);
 		assertNotNull(report.getId());
@@ -173,7 +173,7 @@ public class ReportServiceMockTest {
 		    }
 		});
 		
-		Report report = this.reportService.read(20L);
+		Report report = this.reportService.read(20L).get();
 		
 		assertNotNull(report);
 		assertNotNull(report.getId());

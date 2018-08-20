@@ -2,6 +2,7 @@ package org.myorganization.template.web.controller;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 import org.myorganization.template.core.domain.system.properties.Property;
 import org.myorganization.template.core.domain.system.properties.PropertyCriteria;
@@ -74,12 +75,11 @@ public class PropertyController {
 
 	@GetMapping("/{id}")
 	public ResponseEntity<Property> read(@PathVariable("id") Long id) {
-		Property property = this.propertyService.read(id);
-		if (property == null) {
-			return ResponseEntity.notFound().build();
+		Optional<Property> property = this.propertyService.read(id);
+		if (property.isPresent()) {
+			return ResponseEntity.ok(property.get());
 		}
-
-		return ResponseEntity.ok(property);
+		return ResponseEntity.notFound().build();
 	}
 	
 	@PutMapping("/{id}")
