@@ -7,12 +7,13 @@ import java.util.Optional;
 import org.myorganization.template.core.domain.system.traces.Trace;
 import org.myorganization.template.core.domain.system.traces.TraceCriteria;
 import org.myorganization.template.core.domain.system.traces.TraceRepository;
+import org.myorganization.template.core.services.base.TemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class TraceService {
+public class TraceService implements TemplateService<Trace, TraceCriteria> {
 
 	@Autowired
 	private TraceRepository traceRepository;

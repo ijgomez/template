@@ -7,12 +7,13 @@ import java.util.Optional;
 import org.myorganization.template.core.domain.security.User;
 import org.myorganization.template.core.domain.security.UserCriteria;
 import org.myorganization.template.core.domain.security.UserRepository;
+import org.myorganization.template.core.services.base.TemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class UserService {
+public class UserService implements TemplateService<User, UserCriteria> {
 
 	@Autowired
 	private UserRepository userRepository;
