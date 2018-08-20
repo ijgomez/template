@@ -40,4 +40,8 @@ public class ExecutorService {
 		LOGGER.info("Cancel Task: {}", task.getName());
 
 	}
+	
+	public void scheduler(String taskName) {
+		
+	}
 }
