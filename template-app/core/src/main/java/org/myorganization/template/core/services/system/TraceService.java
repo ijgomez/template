@@ -1,8 +1,9 @@
 package org.myorganization.template.core.services.system;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.myorganization.template.core.domain.system.traces.Trace;
 import org.myorganization.template.core.domain.system.traces.TraceCriteria;
@@ -20,17 +21,12 @@ public class TraceService implements TemplateService<Trace, TraceCriteria> {
 	
 	@Transactional(readOnly = true)
 	public List<Trace> findAll() {
-		List<Trace> traces = new ArrayList<>();
-		for (Trace trace : this.traceRepository.findAll()) {
-			traces.add(trace);
-		}
-		return traces;
+		return StreamSupport.stream(this.traceRepository.findAll().spliterator(), false).collect(Collectors.toList());
 	}
 	
 	@Transactional(readOnly = true)
 	public List<Trace> findByCriteria(TraceCriteria criteria) {
-		List<Trace> traces = this.traceRepository.findByCriteria(criteria);
-		return traces;
+		return this.traceRepository.findByCriteria(criteria);
 	}
 	
 	@Transactional(readOnly = true)

@@ -1,8 +1,9 @@
 package org.myorganization.template.core.services.security;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.myorganization.template.core.domain.security.User;
 import org.myorganization.template.core.domain.security.UserCriteria;
@@ -20,17 +21,12 @@ public class UserService implements TemplateService<User, UserCriteria> {
 	
 	@Transactional(readOnly = true)
 	public List<User> findAll() {
-		List<User> users = new ArrayList<>();
-		for (User user : this.userRepository.findAll()) {
-			users.add(user);
-		}
-		return users;
+		return StreamSupport.stream(this.userRepository.findAll().spliterator(), false).collect(Collectors.toList());
 	}
 	
 	@Transactional(readOnly = true)
 	public List<User> findByCriteria(UserCriteria criteria) {
-		List<User> users = this.userRepository.findByCriteria(criteria);
-		return users;
+		return this.userRepository.findByCriteria(criteria);
 	}
 	
 	@Transactional(readOnly = true)

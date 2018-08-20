@@ -1,8 +1,9 @@
 package org.myorganization.template.core.services.security;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.myorganization.template.core.domain.security.Action;
 import org.myorganization.template.core.domain.security.ActionCriteria;
@@ -20,17 +21,12 @@ public class ActionService implements TemplateService<Action, ActionCriteria> {
 	
 	@Transactional(readOnly = true)
 	public List<Action> findAll() {
-		List<Action> actions = new ArrayList<>();
-		for (Action action : this.actionRepository.findAll()) {
-			actions.add(action);
-		}
-		return actions;
+		return StreamSupport.stream(this.actionRepository.findAll().spliterator(), false).collect(Collectors.toList());
 	}
 	
 	@Transactional(readOnly = true)
 	public List<Action> findByCriteria(ActionCriteria criteria) {
-		List<Action> actions = this.actionRepository.findByCriteria(criteria);
-		return actions;
+		return this.actionRepository.findByCriteria(criteria);
 	}
 	
 	@Transactional(readOnly = true)

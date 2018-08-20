@@ -1,8 +1,9 @@
 package org.myorganization.template.core.services.system;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.myorganization.template.core.domain.system.properties.Property;
 import org.myorganization.template.core.domain.system.properties.PropertyCriteria;
@@ -20,17 +21,12 @@ public class PropertyService implements TemplateService<Property, PropertyCriter
 	
 	@Transactional(readOnly = true)
 	public List<Property> findAll() {
-		List<Property> properties = new ArrayList<>();
-		for (Property property : this.propertyRepository.findAll()) {
-			properties.add(property);
-		}
-		return properties;
+		return StreamSupport.stream(this.propertyRepository.findAll().spliterator(), false).collect(Collectors.toList());
 	}
 	
 	@Transactional(readOnly = true)
 	public List<Property> findByCriteria(PropertyCriteria criteria) {
-		List<Property> properties = this.propertyRepository.findByCriteria(criteria);
-		return properties;
+		return this.propertyRepository.findByCriteria(criteria);
 	}
 	
 	@Transactional(readOnly = true)

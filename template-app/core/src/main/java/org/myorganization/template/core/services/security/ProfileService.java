@@ -1,8 +1,9 @@
 package org.myorganization.template.core.services.security;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.myorganization.template.core.domain.security.Profile;
 import org.myorganization.template.core.domain.security.ProfileCriteria;
@@ -20,17 +21,12 @@ public class ProfileService implements TemplateService<Profile, ProfileCriteria>
 	
 	@Transactional(readOnly = true)
 	public List<Profile> findAll() {
-		List<Profile> profiles = new ArrayList<>();
-		for (Profile profile : this.profileRepository.findAll()) {
-			profiles.add(profile);
-		}
-		return profiles;
+		return StreamSupport.stream(this.profileRepository.findAll().spliterator(), false).collect(Collectors.toList());
 	}
 	
 	@Transactional(readOnly = true)
 	public List<Profile> findByCriteria(ProfileCriteria criteria) {
-		List<Profile> profiles = this.profileRepository.findByCriteria(criteria);
-		return profiles;
+		return this.profileRepository.findByCriteria(criteria);
 	}
 	
 	@Transactional(readOnly = true)

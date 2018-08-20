@@ -1,8 +1,9 @@
 package org.myorganization.template.core.services.reports;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.myorganization.template.core.domain.reports.Report;
 import org.myorganization.template.core.domain.reports.ReportCriteria;
@@ -20,17 +21,12 @@ public class ReportService implements TemplateService<Report, ReportCriteria> {
 
 	@Transactional(readOnly = true)
 	public List<Report> findAll() {
-		List<Report> reports = new ArrayList<>();
-		for (Report report : this.reportRepository.findAll()) {
-			reports.add(report);
-		}
-		return reports;
+		return StreamSupport.stream(this.reportRepository.findAll().spliterator(), false).collect(Collectors.toList());
 	}
 	
 	@Transactional(readOnly = true)
 	public List<Report> findByCriteria(ReportCriteria criteria) {
-		List<Report> reports = this.reportRepository.findByCriteria(criteria);
-		return reports;
+		return this.reportRepository.findByCriteria(criteria);
 	}
 	
 	@Transactional(readOnly = true)
