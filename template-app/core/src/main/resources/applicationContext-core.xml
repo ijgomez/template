@@ -10,7 +10,7 @@
 	<context:property-placeholder location="classpath:application.properties"/>
 	
 	<context:annotation-config/>
-	<context:component-scan base-package="org.myorganization.template.core, org.myorganization.template.scheduler, org.myorganization.template.tasks"/>
+	<context:component-scan base-package="org.myorganization.template.core"/>
 
 	<aop:aspectj-autoproxy/>
 	<aop:config proxy-target-class="true"/>
