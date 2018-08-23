@@ -2,6 +2,7 @@ package org.myorganization.template.web.controller;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 import org.myorganization.template.core.domain.system.traces.Trace;
 import org.myorganization.template.core.domain.system.traces.TraceCriteria;
@@ -74,12 +75,11 @@ public class TraceController {
 
 	@GetMapping("/{id}")
 	public ResponseEntity<Trace> read(@PathVariable("id") Long id) {
-		Trace trace = this.traceService.read(id);
-		if (trace == null) {
-			return ResponseEntity.notFound().build();
+		Optional<Trace> trace = this.traceService.read(id);
+		if (trace.isPresent()) {
+			return ResponseEntity.ok(trace.get());
 		}
-
-		return ResponseEntity.ok(trace);
+		return ResponseEntity.notFound().build();
 	}
 	
 	@PutMapping("/{id}")

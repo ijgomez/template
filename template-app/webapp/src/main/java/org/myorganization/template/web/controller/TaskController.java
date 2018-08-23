@@ -6,8 +6,8 @@ import java.util.List;
 import org.myorganization.template.core.domain.tasks.Task;
 import org.myorganization.template.core.domain.tasks.TaskCriteria;
 import org.myorganization.template.core.helper.FileHelper;
-import org.myorganization.template.core.services.executor.ExecutorService;
 import org.myorganization.template.core.services.tasks.TaskService;
+import org.myorganization.template.scheduler.services.ExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -187,6 +187,19 @@ public class TaskController {
 	public ResponseEntity<String> cancel(@PathVariable String taskName) {
 		
 		this.executorService.cancel(taskName);
+		
+		return ResponseEntity.accepted().build();
+	}
+	
+	/**
+	 * Execute a current Task.
+	 * @param taskName Task name.
+	 * @return .
+	 */
+	@PostMapping("/{taskName}/schedule")
+	public ResponseEntity<String> schedule(@PathVariable String taskName) {
+		
+		//TODO ;
 		
 		return ResponseEntity.accepted().build();
 	}

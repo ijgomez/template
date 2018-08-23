@@ -1,3 +1,22 @@
 <p>
   users-list works!
 </p>
+<a routerLink="create">Add user</a>
+
+<table>
+  <thead>
+  <tr>
+      <td>User</td>
+      <td>Profile</td>
+      <td colspan="2">Actions</td>
+  </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let user of data">
+      <td>{{user.username}}</td>
+      <td>{{user.profile.name}}</td>
+      <td><a [routerLink]="['edit', user.id]">Edit</a></td>
+      <td><button (click)="delete(user.id)">Delete</button></td>
+    </tr>
+  </tbody>
+</table>

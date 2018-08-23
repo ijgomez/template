@@ -1,35 +1,32 @@
 package org.myorganization.template.core.services.reports;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.myorganization.template.core.domain.reports.Report;
 import org.myorganization.template.core.domain.reports.ReportCriteria;
 import org.myorganization.template.core.domain.reports.ReportRepository;
+import org.myorganization.template.core.services.base.TemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class ReportService {
+public class ReportService implements TemplateService<Report, ReportCriteria> {
 
 	@Autowired
 	private ReportRepository reportRepository;
 
 	@Transactional(readOnly = true)
 	public List<Report> findAll() {
-		List<Report> reports = new ArrayList<>();
-		for (Report report : this.reportRepository.findAll()) {
-			reports.add(report);
-		}
-		return reports;
+		return StreamSupport.stream(this.reportRepository.findAll().spliterator(), false).collect(Collectors.toList());
 	}
 	
 	@Transactional(readOnly = true)
 	public List<Report> findByCriteria(ReportCriteria criteria) {
-		List<Report> reports = this.reportRepository.findByCriteria(criteria);
-		return reports;
+		return this.reportRepository.findByCriteria(criteria);
 	}
 	
 	@Transactional(readOnly = true)
@@ -43,18 +40,13 @@ public class ReportService {
 	}
 	
 	@Transactional(readOnly = true)
-	public Report read(Long id) {
-		Optional<Report> report = this.reportRepository.findById(id);
-		if (report.isPresent()) {
-			return report.get();
-		} 
-		//TODO Not Found Exception....
-		return null;
+	public Optional<Report> read(Long id) {
+		return this.reportRepository.findById(id);
 	}
 	
 	@Transactional
 	public Report update(Long id, Report report) {
-		Optional<Report> optional = this.reportRepository.findById(id);
+		Optional<Report> optional = this.read(id);
 		if (optional.isPresent()) {
 			Report r = optional.get();
 			r.setName(report.getName());

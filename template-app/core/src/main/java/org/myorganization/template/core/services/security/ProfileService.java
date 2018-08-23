@@ -1,35 +1,32 @@
 package org.myorganization.template.core.services.security;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
-import org.myorganization.template.core.domain.security.Profile;
-import org.myorganization.template.core.domain.security.ProfileCriteria;
-import org.myorganization.template.core.domain.security.ProfileRepository;
+import org.myorganization.template.core.domain.security.profiles.Profile;
+import org.myorganization.template.core.domain.security.profiles.ProfileCriteria;
+import org.myorganization.template.core.domain.security.profiles.ProfileRepository;
+import org.myorganization.template.core.services.base.TemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class ProfileService {
+public class ProfileService implements TemplateService<Profile, ProfileCriteria> {
 
 	@Autowired
 	private ProfileRepository profileRepository;
 	
 	@Transactional(readOnly = true)
 	public List<Profile> findAll() {
-		List<Profile> profiles = new ArrayList<>();
-		for (Profile profile : this.profileRepository.findAll()) {
-			profiles.add(profile);
-		}
-		return profiles;
+		return StreamSupport.stream(this.profileRepository.findAll().spliterator(), false).collect(Collectors.toList());
 	}
 	
 	@Transactional(readOnly = true)
 	public List<Profile> findByCriteria(ProfileCriteria criteria) {
-		List<Profile> profiles = this.profileRepository.findByCriteria(criteria);
-		return profiles;
+		return this.profileRepository.findByCriteria(criteria);
 	}
 	
 	@Transactional(readOnly = true)
@@ -43,21 +40,18 @@ public class ProfileService {
 	}
 	
 	@Transactional(readOnly = true)
-	public Profile read(Long id) {
-		Optional<Profile> report = this.profileRepository.findById(id);
-		if (report.isPresent()) {
-			return report.get();
-		} 
-		//TODO Not Found Exception....
-		return null;
+	public Optional<Profile> read(Long id) {
+		return this.profileRepository.findById(id);
 	}
 	
 	@Transactional
 	public Profile update(Long id, Profile profile) {
-		Optional<Profile> optional = this.profileRepository.findById(id);
+		Optional<Profile> optional = this.read(id);
 		if (optional.isPresent()) {
 			Profile p = optional.get();
 			p.setName(profile.getName());
+			p.setDescription(profile.getDescription());
+			p.setActions(profile.getActions());
 			
 			return this.profileRepository.save(p);
 		} 

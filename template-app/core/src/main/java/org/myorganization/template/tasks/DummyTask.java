@@ -1,10 +1,12 @@
 package org.myorganization.template.tasks;
 
 import org.myorganization.template.core.domain.tasks.Task;
+import org.myorganization.template.scheduler.annotations.TemplateTaskAnnotation;
 import org.myorganization.template.tasks.base.TaskBase;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+@TemplateTaskAnnotation
 @Component
 @Scope("prototype")
 public class DummyTask extends TaskBase implements Runnable {

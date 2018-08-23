@@ -2,6 +2,7 @@ package org.myorganization.template.web.controller;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 import org.myorganization.template.core.domain.reports.Report;
 import org.myorganization.template.core.domain.reports.ReportCriteria;
@@ -102,12 +103,11 @@ public class ReportController {
 	 */
 	@GetMapping("/{id}")
 	public ResponseEntity<Report> read(@PathVariable("id") Long id) {
-		Report report = this.reportService.read(id);
-		if (report == null) {
-			return ResponseEntity.notFound().build();
+		Optional<Report> report = this.reportService.read(id);
+		if (report.isPresent()) {
+			return ResponseEntity.ok(report.get());
 		}
-
-		return ResponseEntity.ok(report);
+		return ResponseEntity.notFound().build();
 	}
 
 	/**

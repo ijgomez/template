@@ -1,35 +1,32 @@
 package org.myorganization.template.core.services.system;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.myorganization.template.core.domain.system.traces.Trace;
 import org.myorganization.template.core.domain.system.traces.TraceCriteria;
 import org.myorganization.template.core.domain.system.traces.TraceRepository;
+import org.myorganization.template.core.services.base.TemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class TraceService {
+public class TraceService implements TemplateService<Trace, TraceCriteria> {
 
 	@Autowired
 	private TraceRepository traceRepository;
 	
 	@Transactional(readOnly = true)
 	public List<Trace> findAll() {
-		List<Trace> traces = new ArrayList<>();
-		for (Trace trace : this.traceRepository.findAll()) {
-			traces.add(trace);
-		}
-		return traces;
+		return StreamSupport.stream(this.traceRepository.findAll().spliterator(), false).collect(Collectors.toList());
 	}
 	
 	@Transactional(readOnly = true)
 	public List<Trace> findByCriteria(TraceCriteria criteria) {
-		List<Trace> traces = this.traceRepository.findByCriteria(criteria);
-		return traces;
+		return this.traceRepository.findByCriteria(criteria);
 	}
 	
 	@Transactional(readOnly = true)
@@ -43,21 +40,18 @@ public class TraceService {
 	}
 	
 	@Transactional(readOnly = true)
-	public Trace read(Long id) {
-		Optional<Trace> trace = this.traceRepository.findById(id);
-		if (trace.isPresent()) {
-			return trace.get();
-		} 
-		//TODO Not Found Exception....
-		return null;
+	public Optional<Trace> read(Long id) {
+		return this.traceRepository.findById(id);
 	}
 	
 	@Transactional
 	public Trace update(Long id, Trace trace) {
-		Optional<Trace> optional = this.traceRepository.findById(id);
+		Optional<Trace> optional = this.read(id);
 		if (optional.isPresent()) {
 			Trace t = optional.get();
+			t.setDatetime(trace.getDatetime());
 			t.setMessage(trace.getMessage());
+			t.setType(trace.getType());
 			
 			return this.traceRepository.save(t);
 		} 

@@ -2,9 +2,10 @@ package org.myorganization.template.web.controller;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
-import org.myorganization.template.core.domain.security.Profile;
-import org.myorganization.template.core.domain.security.ProfileCriteria;
+import org.myorganization.template.core.domain.security.profiles.Profile;
+import org.myorganization.template.core.domain.security.profiles.ProfileCriteria;
 import org.myorganization.template.core.services.security.ProfileService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,12 +75,11 @@ public class ProfileController {
 
 	@GetMapping("/{id}")
 	public ResponseEntity<Profile> read(@PathVariable("id") Long id) {
-		Profile profile = this.profileService.read(id);
-		if (profile == null) {
-			return ResponseEntity.notFound().build();
+		Optional<Profile> profile = this.profileService.read(id);
+		if (profile.isPresent()) {
+			return ResponseEntity.ok(profile.get());
 		}
-
-		return ResponseEntity.ok(profile);
+		return ResponseEntity.notFound().build();
 	}
 	
 	@PutMapping("/{id}")

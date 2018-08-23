@@ -1,3 +1,22 @@
 <p>
   actions-list works!
 </p>
+<a routerLink="create">Add action</a>
+
+<table>
+  <thead>
+  <tr>
+      <td>Name</td>
+      <td>Description</td>
+      <td colspan="2">Actions</td>
+  </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let action of data">
+      <td>{{action.name}}</td>
+      <td>{{action.description}}</td>
+      <td><a [routerLink]="['edit', action.id]">Edit</a></td>
+      <td><button (click)="delete(action.id)">Delete</button></td>
+    </tr>
+  </tbody>
+</table>

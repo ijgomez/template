@@ -1,0 +1,21 @@
+<p>
+  profile works!
+</p>
+<form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+    <label for="name">Name:</label>
+    <input type="text" id="name" formControlName="name" />
+    <app-control-messages [control]="profileForm.controls.name"></app-control-messages>
+    <br/>
+    <label for="description">Description:</label>
+    <input type="text" id="description" formControlName="description" />
+    <app-control-messages [control]="profileForm.controls.description"></app-control-messages>
+    <br/>
+    <label for="actions">Actions:</label>
+    <select id="actions" formControlName="actions" multiple [compareWith]="compare">
+      <option *ngFor="let a of allActions" [ngValue]="a">{{a.description}}</option>
+    </select>
+    <app-control-messages [control]="profileForm.controls.actions"></app-control-messages>
+    <br/>
+    <button type="submit" [disabled]="!profileForm.valid">send</button>
+    <app-back-button></app-back-button>
+</form>

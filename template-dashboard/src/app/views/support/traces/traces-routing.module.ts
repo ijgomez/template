@@ -3,7 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { TracesListComponent } from './traces-list/traces-list.component';
 
 const routes: Routes = [
-  //{ path: '', redirectTo: 'list', pathMatch: 'full' },
+  // { path: '', redirectTo: 'list', pathMatch: 'full' },
   { path: '', component: TracesListComponent},
   { path: 'list', component: TracesListComponent}
 ];

@@ -1,3 +1,19 @@
 <p>
   traces-list works!
 </p>
+<table>
+  <thead>
+  <tr>
+      <td>Datetime</td>
+      <td>Type</td>
+      <td>Messages</td>
+  </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let trace of data">
+      <td>{{trace.datetime}}</td>
+      <td>{{trace.type}}</td>
+      <td>{{trace.message}}</td>
+    </tr>
+  </tbody>
+</table>

@@ -3,7 +3,7 @@ package org.myorganization.template.web.controller;
 import java.util.List;
 
 import org.myorganization.template.core.domain.tasks.TaskExecution;
-import org.myorganization.template.core.services.tasks.TaskExecutionService;
+import org.myorganization.template.scheduler.services.TaskExecutionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
