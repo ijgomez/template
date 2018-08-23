@@ -5,7 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'app-report-execute',
   templateUrl: './report-execute.component.html',
-  styleUrls: ['./report-execute.component.css']
+  styleUrls: ['./report-execute.component.scss']
 })
 export class ReportExecuteComponent implements OnInit {
 

@@ -5,7 +5,7 @@ import { ReportCriteria } from '../../../domain/reports/report-criteria';
 @Component({
   selector: 'app-reports-list',
   templateUrl: './reports-list.component.html',
-  styleUrls: ['./reports-list.component.css']
+  styleUrls: ['./reports-list.component.scss']
 })
 export class ReportsListComponent implements OnInit {
 

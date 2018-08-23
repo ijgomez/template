@@ -5,7 +5,7 @@ import { PropertyCriteria } from '../../../../domain/support/property-criteria';
 @Component({
   selector: 'app-properties-list',
   templateUrl: './properties-list.component.html',
-  styleUrls: ['./properties-list.component.css']
+  styleUrls: ['./properties-list.component.scss']
 })
 export class PropertiesListComponent implements OnInit {
 

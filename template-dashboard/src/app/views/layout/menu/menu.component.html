@@ -1,8 +1,24 @@
-<p>
-  menu works!
-</p>
-<a routerLink="">Home</a>
-<a routerLink="reports">Reports</a>
-<a routerLink="monitors">Monitors</a>
-<a routerLink="security">Security</a>
-<a routerLink="support">Support</a>
+<nav class="sidebar">
+  <div class="list-group">
+    <a routerLink="" [routerLinkActive]="['router-link-active']" class="list-group-item">
+      <i class="fa fa-fw fa-dashboard"></i>&nbsp;
+      <span>Dashboard</span>
+    </a>
+    <a routerLink="reports" [routerLinkActive]="['router-link-active']" class="list-group-item">
+      <i class="fa fa-fw fa-bar-chart-o"></i>&nbsp;
+      <span>Reports</span>
+    </a>
+    <a routerLink="monitors" [routerLinkActive]="['router-link-active']" class="list-group-item">
+      <i class="fa fa-fw fa-desktop"></i>&nbsp;
+      <span>Monitors</span>
+    </a>
+    <a routerLink="security" [routerLinkActive]="['router-link-active']" class="list-group-item">
+      <i class="fa fa-fw fa-wrench"></i>&nbsp;
+      <span>Security</span>
+    </a>
+    <a routerLink="support" [routerLinkActive]="['router-link-active']" class="list-group-item">
+      <i class="fa fa-fw fa-wrench"></i>&nbsp;
+      <span>Support</span>
+    </a>
+  </div>
+</nav>

@@ -5,7 +5,7 @@ import { ProfileCriteria } from '../../../../domain/security/profile-criteria';
 @Component({
   selector: 'app-profiles-list',
   templateUrl: './profiles-list.component.html',
-  styleUrls: ['./profiles-list.component.css']
+  styleUrls: ['./profiles-list.component.scss']
 })
 export class ProfilesListComponent implements OnInit {
 
