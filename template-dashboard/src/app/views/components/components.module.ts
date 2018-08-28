@@ -11,15 +11,16 @@ import { DynamicFormQuestionComponent } from './forms/dynamic-form-question/dyna
 import { QuestionControlService } from '../../services/commons/question-control.service';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ControlMessagesComponent } from './forms/control-messages/control-messages.component';
+import { HeaderPageComponent } from './layout/header-page/header-page.component';
 
 @NgModule({
   imports: [
     CommonModule, HttpModule, ReactiveFormsModule
   ],
   declarations: [BackButtonComponent, ServertimestampComponent,
-    DynamicFormComponent, DynamicFormQuestionComponent, ControlMessagesComponent],
+    DynamicFormComponent, DynamicFormQuestionComponent, ControlMessagesComponent, HeaderPageComponent],
   exports: [BackButtonComponent, ServertimestampComponent, DynamicFormComponent, DynamicFormQuestionComponent,
-    ControlMessagesComponent],
+    ControlMessagesComponent, HeaderPageComponent],
   providers: [StatusService, QuestionControlService]
 })
 export class ComponentsModule { }

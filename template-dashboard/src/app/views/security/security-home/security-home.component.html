@@ -1,22 +1,5 @@
-<!--
-<p>
-  security-home works!
-</p>
-<a routerLink="users">Users</a>
-<a routerLink="profiles">Profiles</a>
-<a routerLink="actions">Actions</a>
-<router-outlet></router-outlet>
--->
-<div class="row">
-  <div class="col-xl-12">
-      <ol class="breadcrumb">
-          <li class="breadcrumb-item">
-              <i class="fa fa-dashboard"></i><a routerLink="/home"> Dashboard</a>
-          </li>
-          <li class="breadcrumb-item active"><i class="fa fa-lock"></i> Security</li>
-      </ol>
-  </div>
-</div>
+<app-header-page [heading]="'Security'" [icon]="'fa-lock'"></app-header-page>
+
 <a routerLink="users">Users</a>
 <a routerLink="profiles">Profiles</a>
 <a routerLink="actions">Actions</a>
