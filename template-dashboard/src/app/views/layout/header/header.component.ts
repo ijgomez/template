@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 
 @Component({
   selector: 'app-header',
@@ -10,6 +10,11 @@ export class HeaderComponent implements OnInit {
   title = 'template-dashboard';
 
   pushRightClass = 'push-right';
+
+  collapsed = false;
+
+  @Output()
+  collapsedEvent = new EventEmitter<boolean>();
 
   constructor() { }
 
@@ -24,5 +29,11 @@ export class HeaderComponent implements OnInit {
   toggleSidebar() {
     const dom: any = document.querySelector('body');
     dom.classList.toggle(this.pushRightClass);
+  }
+
+  toggleCollapsed() {
+    // alert('...');
+    this.collapsed = !this.collapsed;
+    this.collapsedEvent.emit(this.collapsed);
   }
 }

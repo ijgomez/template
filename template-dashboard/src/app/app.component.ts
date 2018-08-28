@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
+import { MenuComponent } from './views/layout/menu/menu.component';
 
 @Component({
   selector: 'app-root',
@@ -9,9 +10,12 @@ export class AppComponent {
 
   collapedSideBar: boolean;
 
+  @ViewChild(MenuComponent) child: MenuComponent;
+
   constructor() { }
 
   receiveCollapsed($event) {
     this.collapedSideBar = $event;
+    this.child.toggleCollapsed();
   }
 }
