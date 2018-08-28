@@ -32,7 +32,6 @@ export class HeaderComponent implements OnInit {
   }
 
   toggleCollapsed() {
-    // alert('...');
     this.collapsed = !this.collapsed;
     this.collapsedEvent.emit(this.collapsed);
   }
