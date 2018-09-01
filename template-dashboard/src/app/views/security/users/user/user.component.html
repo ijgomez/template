@@ -1,21 +1,28 @@
 <p>
   user works!
 </p>
-<form [formGroup]="userForm" (ngSubmit)="onSubmit()">
-  <label for="username">Username:</label>
-  <input type="text" id="username" formControlName="username" />
-  <app-control-messages [control]="userForm.controls.username"></app-control-messages>
-  <br/>
-  <label for="password">Password:</label>
-  <input type="password" id="password" formControlName="password" />
-  <app-control-messages [control]="userForm.controls.password"></app-control-messages>
-  <br/>
-  <label for="profile">Profile:</label>
-  <select id="profile" formControlName="profile" [compareWith]="compare">
-    <option *ngFor="let p of allProfiles" [ngValue]="p">{{p.name}}</option>
-  </select>
-  <app-control-messages [control]="userForm.controls.profile"></app-control-messages>
-  <br/>
-  <button type="submit" [disabled]="!userForm.valid">send</button>
-  <app-back-button></app-back-button>
-</form>
+<div class="row">
+  <div class="col-lg-6">
+    <form role="form" [formGroup]="userForm" (ngSubmit)="onSubmit()">
+      <fieldset class="form-group">
+        <label for="username">Username:</label>
+        <input type="text" id="username" formControlName="username" class="form-control"/>
+        <app-control-messages [control]="userForm.controls.username"></app-control-messages>
+      </fieldset>
+      <fieldset class="form-group">
+        <label for="password">Password:</label>
+        <input type="password" id="password" formControlName="password" class="form-control"/>
+        <app-control-messages [control]="userForm.controls.password"></app-control-messages>
+      </fieldset>
+      <fieldset class="form-group">
+        <label for="profile">Profile:</label>
+        <select id="profile" formControlName="profile" [compareWith]="compare" class="form-control">
+          <option *ngFor="let p of allProfiles" [ngValue]="p">{{p.name}}</option>
+        </select>
+        <app-control-messages [control]="userForm.controls.profile"></app-control-messages>
+      </fieldset>
+      <button type="submit" [disabled]="!userForm.valid" class="btn btn-secondary">send</button>
+      <app-back-button></app-back-button>
+    </form>
+  </div>
+</div>
