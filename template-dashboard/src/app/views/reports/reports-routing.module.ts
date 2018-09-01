@@ -8,9 +8,8 @@ import { ReportExecuteComponent } from './report-execute/report-execute.componen
 
 const routes: Routes = [
   { path: '', component: ReportsHomeComponent, children: [
-    // { path: '', pathMatch: 'full', redirectTo: 'list'},
+    { path: 'reports', pathMatch: 'full', redirectTo: ''},
     { path: '', component: ReportsListComponent},
-    // { path: 'list', component: ReportsListComponent},
     { path: 'create', component: ReportComponent},
     { path: 'edit/:id', component: ReportComponent},
     { path: 'execute/:id', component: ReportExecuteComponent}
