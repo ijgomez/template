@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TableEditorComponent } from './table-editor.component';
+import { RequestExecutorComponent } from './request-executor.component';
 
-describe('TableEditorComponent', () => {
-  let component: TableEditorComponent;
-  let fixture: ComponentFixture<TableEditorComponent>;
+describe('RequestExecutorComponent', () => {
+  let component: RequestExecutorComponent;
+  let fixture: ComponentFixture<RequestExecutorComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TableEditorComponent ]
+      declarations: [ RequestExecutorComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(TableEditorComponent);
+    fixture = TestBed.createComponent(RequestExecutorComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

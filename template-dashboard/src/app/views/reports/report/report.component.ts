@@ -98,4 +98,8 @@ export class ReportComponent implements OnInit {
       };
     }
   }
+
+  download() {
+    // TODO Pending
+  }
 }

@@ -1,19 +1,19 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { DataHomeComponent } from './data-home/data-home.component';
-import { TableEditorComponent } from './table-editor/table-editor.component';
 import { ScriptListComponent } from './script-list/script-list.component';
+import { RequestExecutorComponent } from './request-executor/request-executor.component';
 
 const routes: Routes = [
     { path: '', component: DataHomeComponent, children: [
-        { path: '', component: TableEditorComponent},
-        { path: 'editor', pathMatch: 'full', redirectTo: ''},
+        { path: '', component: RequestExecutorComponent},
+        { path: 'execute', pathMatch: 'full', redirectTo: ''},
         { path: 'scripts', component: ScriptListComponent}
       ] }
 ];
-  
+
 @NgModule({
-imports: [RouterModule.forChild(routes)],
-exports: [RouterModule]
+    imports: [RouterModule.forChild(routes)],
+    exports: [RouterModule]
 })
 export class DataRoutingModule { }
