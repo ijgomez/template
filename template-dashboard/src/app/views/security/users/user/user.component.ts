@@ -49,6 +49,9 @@ export class UserComponent implements OnInit {
     });
   }
 
+  // convenience getter for easy access to form fields
+  get formControls() { return this.userForm.controls; }
+
   isEdit(): Boolean {
     const id = this.activeRoute.snapshot.params['id'];
     return (id !== undefined);
