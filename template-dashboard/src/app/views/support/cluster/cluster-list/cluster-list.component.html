@@ -1,3 +1,28 @@
 <p>
   cluster-list works!
 </p>
+<button type="button" (click)="reload()">Reload</button>
+<table>
+  <thead>
+  <tr>
+      <td>Hostname</td>
+      <td>IP</td>
+      <td>Start Date</td>
+      <td>Last Update Date</td>
+      <td>Status</td>
+      <td>used Memory</td>
+      <td>max Memory</td>
+  </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let node of data">
+      <td>{{node.hostname}}</td>
+      <td>{{node.ip}}</td>
+      <td>{{node.startDatetime}}</td>
+      <td>{{node.lastUpdateTime}}</td>
+      <td>{{node.status}}</td>
+      <td>{{node.usedMemory}}</td>
+      <td>{{node.totalMemory}}</td>
+    </tr>
+  </tbody>
+</table>
