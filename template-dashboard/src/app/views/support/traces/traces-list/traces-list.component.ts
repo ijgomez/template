@@ -23,4 +23,8 @@ export class TracesListComponent implements OnInit {
       error => { console.error(error); }
     );
   }
+
+  reload(): void {
+    this.loadData();
+  }
 }

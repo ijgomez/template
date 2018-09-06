@@ -24,6 +24,10 @@ export class ReportsListComponent implements OnInit {
     );
   }
 
+  reload(): void {
+    this.loadData();
+  }
+
   delete(id: number): void {
     this.reportsService.read(id).subscribe(
     data => {

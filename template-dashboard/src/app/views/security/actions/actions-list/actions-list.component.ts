@@ -24,6 +24,10 @@ export class ActionsListComponent implements OnInit {
     );
   }
 
+  reload(): void {
+    this.loadData();
+  }
+
   delete(id: number): void {
     this.actionsService.read(id).subscribe(
     data => {

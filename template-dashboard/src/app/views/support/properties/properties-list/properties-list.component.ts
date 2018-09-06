@@ -24,6 +24,10 @@ export class PropertiesListComponent implements OnInit {
     );
   }
 
+  reload(): void {
+    this.loadData();
+  }
+
   delete(id: number): void {
     this.propertiesService.read(id).subscribe(
     data => {

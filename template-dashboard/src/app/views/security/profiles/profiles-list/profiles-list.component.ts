@@ -24,6 +24,10 @@ export class ProfilesListComponent implements OnInit {
     );
   }
 
+  reload(): void {
+    this.loadData();
+  }
+
   delete(id: number): void {
     this.profilesService.read(id).subscribe(
     data => {

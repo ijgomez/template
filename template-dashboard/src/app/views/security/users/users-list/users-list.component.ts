@@ -24,6 +24,10 @@ export class UsersListComponent implements OnInit {
     );
   }
 
+  reload(): void {
+    this.loadData();
+  }
+
   delete(id: number): void {
     this.usersService.read(id).subscribe(
     data => {
