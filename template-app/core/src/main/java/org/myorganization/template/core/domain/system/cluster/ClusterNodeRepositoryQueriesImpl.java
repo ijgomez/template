@@ -30,9 +30,9 @@ public class ClusterNodeRepositoryQueriesImpl extends RepositoryQueriesBase<Clus
 				predicates.add(builder.like(root.get(ClusterNode_.ip), criteria.getIp()));
 			}
 			
-			if (!StringUtils.isEmpty(criteria.getStatus())) {
-				predicates.add(builder.like(root.get(ClusterNode_.status), criteria.getStatus()));
-			}
+//			if (criteria.getStatus() != null) {
+//				predicates.add(builder.like(root.get(ClusterNode_.status), criteria.getStatus()));
+//			}
 
 		}
 		return predicates;

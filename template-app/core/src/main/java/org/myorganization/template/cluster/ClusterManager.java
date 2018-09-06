@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 
 import org.myorganization.template.cluster.helper.ClusterHelper;
 import org.myorganization.template.core.domain.system.cluster.ClusterNode;
+import org.myorganization.template.core.domain.system.cluster.ClusterNodeStatus;
 import org.myorganization.template.core.services.system.ClusterNodeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +30,7 @@ public class ClusterManager {
 			currentNode = this.currentNode();
 			currentNode.setIp(ClusterHelper.getLocalIp());
 			currentNode.setLastUpdateTime(LocalDateTime.now());
-			currentNode.setStatus("ALIVE");
+			currentNode.setStatus(ClusterNodeStatus.ALIVE);
 			currentNode.setTotalMemory(Runtime.getRuntime().maxMemory());
 			currentNode.setUsedMemory(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory());
 			

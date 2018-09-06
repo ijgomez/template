@@ -34,7 +34,7 @@ public class ClusterNode {
 	private LocalDateTime lastUpdateTime;
 
 	@Column(nullable = false)
-	private String status;
+	private ClusterNodeStatus status;
 	
 	@Column(nullable = false)
 	private Long usedMemory;
@@ -86,11 +86,11 @@ public class ClusterNode {
 		this.lastUpdateTime = lastUpdateTime;
 	}
 
-	public String getStatus() {
+	public ClusterNodeStatus getStatus() {
 		return status;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(ClusterNodeStatus status) {
 		this.status = status;
 	}
 

@@ -11,7 +11,7 @@ public class ClusterNodeCriteria extends Criteria {
 	
 	private String hostname;
 	
-	private String status;
+	private ClusterNodeStatus status;
 	
 	public String getIp() {
 		return ip;
@@ -29,11 +29,11 @@ public class ClusterNodeCriteria extends Criteria {
 		this.hostname = hostname;
 	}
 
-	public String getStatus() {
+	public ClusterNodeStatus getStatus() {
 		return status;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(ClusterNodeStatus status) {
 		this.status = status;
 	}
 

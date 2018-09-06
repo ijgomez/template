@@ -9,16 +9,12 @@ import org.myorganization.template.core.domain.system.cluster.ClusterNode;
 import org.myorganization.template.core.domain.system.cluster.ClusterNodeCriteria;
 import org.myorganization.template.core.domain.system.cluster.ClusterNodeRepository;
 import org.myorganization.template.core.services.base.TemplateService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ClusterNodeService implements TemplateService<ClusterNode, ClusterNodeCriteria> {
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(ClusterNodeService.class);
 	
 	@Autowired
 	private ClusterNodeRepository clusterNodeRepository;
@@ -81,10 +77,8 @@ public class ClusterNodeService implements TemplateService<ClusterNode, ClusterN
 	@Transactional
 	public void saveOrUpdate(ClusterNode clusterNode) {
 		if (clusterNode.getId() != null) {
-			LOGGER.info("update...");
 			this.update(clusterNode.getId(), clusterNode);
 		} else {
-			LOGGER.info("create...");
 			this.create(clusterNode);
 		}
 	}

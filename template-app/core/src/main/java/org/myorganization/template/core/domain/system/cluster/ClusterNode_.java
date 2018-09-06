@@ -9,6 +9,6 @@ public class ClusterNode_ {
 	public static volatile SingularAttribute<ClusterNode, Integer> id;
 	public static volatile SingularAttribute<ClusterNode, String> hostname;
 	public static volatile SingularAttribute<ClusterNode, String> ip;
-	public static volatile SingularAttribute<ClusterNode, String> status;
+	public static volatile SingularAttribute<ClusterNode, ClusterNodeStatus> status;
 	
 }
