@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HttpModule } from '@angular/http';
+import { DataTablesModule } from 'angular-datatables';
 
 import { ReportsRoutingModule } from './reports-routing.module';
 import { ReportsListComponent } from './reports-list/reports-list.component';
@@ -16,7 +17,7 @@ import { QuestionControlService } from '../../services/commons/question-control.
   imports: [
     CommonModule, HttpModule, ReactiveFormsModule,
     ReportsRoutingModule,
-    ComponentsModule
+    ComponentsModule, DataTablesModule
   ],
   declarations: [ReportsListComponent, ReportsHomeComponent, ReportComponent,
     ReportExecuteComponent],
