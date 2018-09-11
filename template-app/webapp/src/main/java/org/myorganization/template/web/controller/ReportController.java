@@ -91,7 +91,7 @@ public class ReportController {
 		
 		reportCriteria = new ReportCriteria();
 		if (StringUtils.isNotEmpty(dtCriteria.getSearch().getValue())) {
-			reportCriteria.setName(dtCriteria.getSearch().getValue());
+			reportCriteria.setDescription(dtCriteria.getSearch().getValue());
 		}
 		reportCriteria.setPageNumber(dtCriteria.getStart());
 		reportCriteria.setPageSize(dtCriteria.getLength());
