@@ -8,9 +8,11 @@ import { Report } from '../../domain/reports/report';
 import { ReportCriteria } from '../../domain/reports/report-criteria';
 import { DropdownQuestion } from '../../views/components/forms/questions/question-dropdown';
 import { TextboxQuestion } from '../../views/components/forms/questions/question-textbox';
+import { DataTablesResponse } from '../../domain/datatables/data-tables-response';
 
 @Injectable()
 export class ReportsService extends TemplateService {
+  
 
   private url = environment.urlBase + '/reports';
 
@@ -35,6 +37,17 @@ export class ReportsService extends TemplateService {
     const options = new RequestOptions({ headers: this.headers});
 
     return this.http.post(this.url + '/count', criteria, options).pipe(
+      map((response: Response) => {
+        return response.json();
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  table(dataTablesParameters: any): Observable<DataTablesResponse> {
+    const options = new RequestOptions({ headers: this.headers});
+
+    return this.http.post(this.url + '/datatables', dataTablesParameters, options).pipe(
       map((response: Response) => {
         return response.json();
       }),

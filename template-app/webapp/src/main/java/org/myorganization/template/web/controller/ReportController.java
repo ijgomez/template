@@ -4,10 +4,13 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.myorganization.template.core.domain.reports.Report;
 import org.myorganization.template.core.domain.reports.ReportCriteria;
 import org.myorganization.template.core.helper.FileHelper;
 import org.myorganization.template.core.services.reports.ReportService;
+import org.myorganization.template.web.domain.datatables.DataTablesResponse;
+import org.myorganization.template.web.domain.datatables.criteria.DataTablesCriteria;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +80,34 @@ public class ReportController {
 		Long records = reportService.countByCriteria(criteria);
 
 		return ResponseEntity.ok(records);
+	}
+	
+	@PostMapping("/datatables")
+	public ResponseEntity<DataTablesResponse<Report>> datatables(@RequestBody DataTablesCriteria dtCriteria) {
+		DataTablesResponse<Report> response;
+		ReportCriteria reportCriteria;
+
+		LOGGER.info("find by criteria: " + dtCriteria );
+		
+		reportCriteria = new ReportCriteria();
+		if (StringUtils.isNotEmpty(dtCriteria.getSearch().getValue())) {
+			reportCriteria.setName(dtCriteria.getSearch().getValue());
+		}
+		reportCriteria.setPageNumber(dtCriteria.getStart());
+		reportCriteria.setPageSize(dtCriteria.getLength());
+		
+		List<Report> reports = reportService.findByCriteria(reportCriteria);
+		Long count = reportService.countByCriteria(reportCriteria);
+		
+		LOGGER.info("Number of Reports: " + reports.size() );
+		
+		response = new DataTablesResponse<Report>();
+		response.setData(reports);
+		response.setDraw(dtCriteria.getDraw());
+		response.setRecordsFiltered(count.intValue());
+		response.setRecordsTotal(count.intValue());
+		
+		return ResponseEntity.ok(response);
 	}
 	
 	/**

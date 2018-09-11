@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ReportsService } from '../../../services/reports/reports.service';
 import { ReportCriteria } from '../../../domain/reports/report-criteria';
-import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-reports-list',
@@ -14,41 +13,51 @@ export class ReportsListComponent implements OnInit, OnDestroy {
 
   data: any[];
 
-  dtTrigger: Subject<any> = new Subject();
-
   constructor(private reportsService: ReportsService) { }
 
   ngOnInit() {
+    const that = this;
+
     this.dtOptions = {
-      pagingType: 'full_numbers'
+      pagingType: 'full_numbers',
+      serverSide: true,
+      processing: true,
+      ajax: (dataTablesParameters: any, callback) => {
+        that.reportsService.table(dataTablesParameters).subscribe(response => {
+          this.data = response.data;
+
+          callback({
+            recordsTotal: response.recordsTotal,
+            recordsFiltered: response.recordsFiltered,
+            data: []
+          });
+        });
+      }
     };
-   this.loadData();
   } 
 
   ngOnDestroy(): void {
-    // Do not forget to unsubscribe the event
-    this.dtTrigger.unsubscribe();
+
   }
 
   loadData() {
     this.reportsService.findByCriteria(new ReportCriteria()).subscribe(
       result => { 
         this.data = result; 
-        this.dtTrigger.next();
       },
       error => { console.error(error); }
     );
   }
 
   reload(): void {
-    this.loadData();
+
   }
 
   delete(id: number): void {
     this.reportsService.read(id).subscribe(
     data => {
       this.reportsService.delete(data).subscribe(
-        result => { this.loadData(); },
+        result => { this.reload(); },
         error => { console.error(error); });
     },
     error => {

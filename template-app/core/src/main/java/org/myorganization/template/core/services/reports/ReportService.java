@@ -9,12 +9,16 @@ import org.myorganization.template.core.domain.reports.Report;
 import org.myorganization.template.core.domain.reports.ReportCriteria;
 import org.myorganization.template.core.domain.reports.ReportRepository;
 import org.myorganization.template.core.services.base.TemplateService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ReportService implements TemplateService<Report, ReportCriteria> {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(ReportService.class);
 
 	@Autowired
 	private ReportRepository reportRepository;
@@ -26,6 +30,7 @@ public class ReportService implements TemplateService<Report, ReportCriteria> {
 	
 	@Transactional(readOnly = true)
 	public List<Report> findByCriteria(ReportCriteria criteria) {
+		LOGGER.info("find by criteria: " + criteria );
 		return this.reportRepository.findByCriteria(criteria);
 	}
 	
