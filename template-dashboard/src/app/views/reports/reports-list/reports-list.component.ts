@@ -1,15 +1,23 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit } from '@angular/core';
 import { ReportsService } from '../../../services/reports/reports.service';
 import { ReportCriteria } from '../../../domain/reports/report-criteria';
+import { DataTableDirective } from 'angular-datatables';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-reports-list',
   templateUrl: './reports-list.component.html',
   styleUrls: ['./reports-list.component.scss']
 })
-export class ReportsListComponent implements OnInit, OnDestroy {
+export class ReportsListComponent implements OnInit, AfterViewInit, OnDestroy {
+  
+
+  @ViewChild(DataTableDirective)
+  dtElement: DataTableDirective;
 
   dtOptions: DataTables.Settings = {};
+
+  dtTrigger: Subject<any> = new Subject();
 
   data: any[];
 
@@ -36,8 +44,13 @@ export class ReportsListComponent implements OnInit, OnDestroy {
     };
   } 
 
-  ngOnDestroy(): void {
+  ngAfterViewInit(): void {
+    this.dtTrigger.next();
+  }
 
+  ngOnDestroy(): void {
+    // Do not forget to unsubscribe the event
+    this.dtTrigger.unsubscribe();
   }
 
   loadData() {
@@ -50,7 +63,12 @@ export class ReportsListComponent implements OnInit, OnDestroy {
   }
 
   reload(): void {
-
+    this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+      // Destroy the table first
+      dtInstance.destroy();
+      // Call the dtTrigger to rerender again
+      this.dtTrigger.next();
+    });
   }
 
   delete(id: number): void {
