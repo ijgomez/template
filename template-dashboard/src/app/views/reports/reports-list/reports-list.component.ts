@@ -30,6 +30,10 @@ export class ReportsListComponent implements OnInit, AfterViewInit, OnDestroy {
       pagingType: 'full_numbers',
       serverSide: true,
       processing: true,
+      columnDefs: [
+        { width: '60%', targets: 0 },
+        { width: '20%', targets: 2, orderable: false }
+      ],
       ajax: (dataTablesParameters: any, callback) => {
         that.reportsService.table(dataTablesParameters).subscribe(response => {
           this.data = response.data;
@@ -53,15 +57,6 @@ export class ReportsListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dtTrigger.unsubscribe();
   }
 
-  loadData() {
-    this.reportsService.findByCriteria(new ReportCriteria()).subscribe(
-      result => { 
-        this.data = result; 
-      },
-      error => { console.error(error); }
-    );
-  }
-
   reload(): void {
     this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
       // Destroy the table first
@@ -69,6 +64,10 @@ export class ReportsListComponent implements OnInit, AfterViewInit, OnDestroy {
       // Call the dtTrigger to rerender again
       this.dtTrigger.next();
     });
+  }
+
+  settings(id: number) {
+
   }
 
   delete(id: number): void {
@@ -81,6 +80,10 @@ export class ReportsListComponent implements OnInit, AfterViewInit, OnDestroy {
     error => {
       console.error(error);
     });
+  }
+
+  export() {
+
   }
 
 }
