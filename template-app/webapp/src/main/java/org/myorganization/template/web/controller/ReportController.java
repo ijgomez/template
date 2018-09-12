@@ -95,6 +95,9 @@ public class ReportController {
 		}
 		reportCriteria.setPageNumber(dtCriteria.getStart());
 		reportCriteria.setPageSize(dtCriteria.getLength());
+		reportCriteria.setSortField(dtCriteria.getColumns()[dtCriteria.getOrder()[0].getColumn()].getName());
+		reportCriteria.setSortOrder(dtCriteria.getOrder()[0].getDir());
+		
 		
 		List<Report> reports = reportService.findByCriteria(reportCriteria);
 		Long count = reportService.countByCriteria(reportCriteria);

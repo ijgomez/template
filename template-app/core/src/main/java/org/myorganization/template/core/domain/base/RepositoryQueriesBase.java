@@ -44,7 +44,7 @@ public abstract class RepositoryQueriesBase<E, C extends Criteria> {
 		}
 		
 		if (criteria != null && criteria.getSortField() != null && criteria.getSortOrder() != null) {
-			if (criteria.getSortOrder().equals("ASC")) {
+			if (criteria.getSortOrder().equalsIgnoreCase("ASC")) {
 				criteriaQuery.orderBy(builder.asc(root.get(criteria.getSortField())));
 			} else {
 				criteriaQuery.orderBy(builder.desc(root.get(criteria.getSortField())));

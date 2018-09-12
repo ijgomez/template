@@ -1,8 +1,9 @@
 import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit } from '@angular/core';
-import { ReportsService } from '../../../services/reports/reports.service';
-import { ReportCriteria } from '../../../domain/reports/report-criteria';
 import { DataTableDirective } from 'angular-datatables';
 import { Subject } from 'rxjs';
+import { ReportsService } from '../../../services/reports/reports.service';
+import { Report } from '../../../domain/reports/report';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-reports-list',
@@ -10,7 +11,6 @@ import { Subject } from 'rxjs';
   styleUrls: ['./reports-list.component.scss']
 })
 export class ReportsListComponent implements OnInit, AfterViewInit, OnDestroy {
-  
 
   @ViewChild(DataTableDirective)
   dtElement: DataTableDirective;
@@ -21,7 +21,9 @@ export class ReportsListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   data: any[];
 
-  constructor(private reportsService: ReportsService) { }
+  selectedData: any;
+
+  constructor(private router: Router, private activeRoute:ActivatedRoute, private reportsService: ReportsService) { }
 
   ngOnInit() {
     const that = this;
@@ -31,7 +33,8 @@ export class ReportsListComponent implements OnInit, AfterViewInit, OnDestroy {
       serverSide: true,
       processing: true,
       columnDefs: [
-        { width: '60%', targets: 0 },
+        { width: '60%', targets: 0, name: 'description' },
+        { targets: 1, name: 'type' },
         { width: '20%', targets: 2, orderable: false }
       ],
       ajax: (dataTablesParameters: any, callback) => {
@@ -44,7 +47,7 @@ export class ReportsListComponent implements OnInit, AfterViewInit, OnDestroy {
             data: []
           });
         });
-      }
+      }  
     };
   } 
 
@@ -57,6 +60,14 @@ export class ReportsListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dtTrigger.unsubscribe();
   }
 
+  selectedItem(data: any): void {
+    this.selectedData = data;
+  }
+
+  isSelectedItem(): Boolean {
+    return !(this.selectedData == undefined || this.selectedData == null);
+  }
+
   reload(): void {
     this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
       // Destroy the table first
@@ -66,12 +77,15 @@ export class ReportsListComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  settings(id: number) {
-
+  edit(): void {
+    var report: Report = this.selectedData;
+    this.router.navigate(['edit', report.id], { relativeTo: this.activeRoute });
   }
+ 
 
-  delete(id: number): void {
-    this.reportsService.read(id).subscribe(
+  delete(): void {
+    var report: Report = this.selectedData;
+    this.reportsService.read(report.id).subscribe(
     data => {
       this.reportsService.delete(data).subscribe(
         result => { this.reload(); },
@@ -83,7 +97,7 @@ export class ReportsListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   export() {
-
+    
   }
 
 }
