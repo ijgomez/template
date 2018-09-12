@@ -38,6 +38,9 @@ export class ReportComponent implements OnInit {
     });
   }
 
+   // convenience getter for easy access to form fields
+   get formControls() { return this.reportForm.controls; }
+
   isEdit(): Boolean {
     const id = this.activeRoute.snapshot.params['id'];
     return (id !== undefined);
