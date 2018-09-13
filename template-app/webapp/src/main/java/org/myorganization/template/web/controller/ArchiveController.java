@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
-import org.myorganization.template.core.domain.reports.Report;
-import org.myorganization.template.core.domain.reports.ReportCriteria;
+import org.myorganization.template.core.domain.archives.Archive;
+import org.myorganization.template.core.domain.archives.ArchiveCriteria;
 import org.myorganization.template.core.helper.FileHelper;
-import org.myorganization.template.core.services.reports.ReportService;
+import org.myorganization.template.core.services.archives.ArchiveService;
 import org.myorganization.template.web.domain.datatables.DataTablesResponse;
 import org.myorganization.template.web.domain.datatables.criteria.DataTablesCriteria;
 import org.slf4j.Logger;
@@ -30,30 +30,30 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 /**
- * Report Controller.
+ * Archive Controller.
  * @author ijgomez
  *
  */
 @RestController
-@RequestMapping("/api/reports")
-public class ReportController {
+@RequestMapping("/api/archives")
+public class ArchiveController {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(ReportController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ArchiveController.class);
 	
 	@Autowired
-	private ReportService reportService;
+	private ArchiveService archiveService;
 
 	/**
-	 * List all Reports.
+	 * List all Archives.
 	 * @return List.
 	 */
 	@GetMapping
-	public ResponseEntity<List<Report>> findAll() {
-		List<Report> reports = reportService.findAll();
-		if (reports.isEmpty()) {
+	public ResponseEntity<List<Archive>> findAll() {
+		List<Archive> archives = archiveService.findAll();
+		if (archives.isEmpty()) {
 			return ResponseEntity.noContent().build();
 		}
-		return ResponseEntity.ok(reports);
+		return ResponseEntity.ok(archives);
 	}
 	
 	/**
@@ -61,49 +61,49 @@ public class ReportController {
 	 * @return List.
 	 */
 	@PostMapping("/search")
-	public ResponseEntity<List<Report>> findByCriteria(@RequestBody ReportCriteria criteria) {
+	public ResponseEntity<List<Archive>> findByCriteria(@RequestBody ArchiveCriteria criteria) {
 		
 		LOGGER.info("find by criteria: {}", criteria);
 		
-		List<Report> reports = reportService.findByCriteria(criteria);
-		if (reports.isEmpty()) {
+		List<Archive> archives = archiveService.findByCriteria(criteria);
+		if (archives.isEmpty()) {
 			return ResponseEntity.noContent().build();
 		}
-		return ResponseEntity.ok(reports);
+		return ResponseEntity.ok(archives);
 	}
 	
 	@PostMapping("/count")
-	public ResponseEntity<Long> countByCriteria(@RequestBody ReportCriteria criteria) {
+	public ResponseEntity<Long> countByCriteria(@RequestBody ArchiveCriteria criteria) {
 		
 		LOGGER.info("count by criteria: {}", criteria);
 		
-		Long records = reportService.countByCriteria(criteria);
+		Long records = archiveService.countByCriteria(criteria);
 
 		return ResponseEntity.ok(records);
 	}
 	
 	@PostMapping("/datatables")
-	public ResponseEntity<DataTablesResponse<Report>> datatables(@RequestBody DataTablesCriteria dtCriteria) {
-		DataTablesResponse<Report> response;
-		ReportCriteria reportCriteria;
+	public ResponseEntity<DataTablesResponse<Archive>> datatables(@RequestBody DataTablesCriteria dtCriteria) {
+		DataTablesResponse<Archive> response;
+		ArchiveCriteria archiveCriteria;
 
 		LOGGER.info("datatables: {}", dtCriteria );
 		
-		reportCriteria = new ReportCriteria();
+		archiveCriteria = new ArchiveCriteria();
 		if (StringUtils.isNotEmpty(dtCriteria.getSearch().getValue())) {
-			reportCriteria.setDescription(dtCriteria.getSearch().getValue());
+			archiveCriteria.setFilename(dtCriteria.getSearch().getValue());
 		}
-		reportCriteria.setPageNumber(dtCriteria.getStart());
-		reportCriteria.setPageSize(dtCriteria.getLength());
-		reportCriteria.setSortField(dtCriteria.getColumns()[dtCriteria.getOrder()[0].getColumn()].getName());
-		reportCriteria.setSortOrder(dtCriteria.getOrder()[0].getDir());
+		archiveCriteria.setPageNumber(dtCriteria.getStart());
+		archiveCriteria.setPageSize(dtCriteria.getLength());
+		archiveCriteria.setSortField(dtCriteria.getColumns()[dtCriteria.getOrder()[0].getColumn()].getName());
+		archiveCriteria.setSortOrder(dtCriteria.getOrder()[0].getDir());
 		
 		
-		List<Report> reports = reportService.findByCriteria(reportCriteria);
-		Long count = reportService.countByCriteria(reportCriteria);
+		List<Archive> archives = archiveService.findByCriteria(archiveCriteria);
+		Long count = archiveService.countByCriteria(archiveCriteria);
 
-		response = new DataTablesResponse<Report>();
-		response.setData(reports);
+		response = new DataTablesResponse<Archive>();
+		response.setData(archives);
 		response.setDraw(dtCriteria.getDraw());
 		response.setRecordsFiltered(count.intValue());
 		response.setRecordsTotal(count.intValue());
@@ -112,58 +112,58 @@ public class ReportController {
 	}
 	
 	/**
-	 * Create a new Report.
-	 * @param report New Report.
-	 * @return Return of Report.
+	 * Create a new Archive.
+	 * @param archive New Archive.
+	 * @return Return of Archive.
 	 */
 	@PostMapping
-	public ResponseEntity<Report> create(@RequestBody Report report) {
-		report = this.reportService.create(report);
+	public ResponseEntity<Archive> create(@RequestBody Archive archive) {
+		archive = this.archiveService.create(archive);
 		
-		if (report == null) {
+		if (archive == null) {
 			return ResponseEntity.noContent().build();
 		}
 
-		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(report.getId()).toUri();
+		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(archive.getId()).toUri();
 		return ResponseEntity.created(location).build();
 	}
 	
 	/**
-	 * Read a single report.
-	 * @param id Id of Report.
+	 * Read a single archive.
+	 * @param id Id of Archive.
 	 * @return
 	 */
 	@GetMapping("/{id}")
-	public ResponseEntity<Report> read(@PathVariable("id") Long id) {
-		Optional<Report> report = this.reportService.read(id);
-		if (report.isPresent()) {
-			return ResponseEntity.ok(report.get());
+	public ResponseEntity<Archive> read(@PathVariable("id") Long id) {
+		Optional<Archive> archive = this.archiveService.read(id);
+		if (archive.isPresent()) {
+			return ResponseEntity.ok(archive.get());
 		}
 		return ResponseEntity.notFound().build();
 	}
 
 	/**
-	 * Update report attributes.
-	 * @param id Id of Report.
-	 * @param report Report with new attributes.
+	 * Update archive attributes.
+	 * @param id Id of Archive.
+	 * @param archive Archive with new attributes.
 	 * @return
 	 */
 	@PutMapping("/{id}")
-	public ResponseEntity<Report> update(@PathVariable Long id, @RequestBody Report report) {
+	public ResponseEntity<Archive> update(@PathVariable Long id, @RequestBody Archive archive) {
 		
-		LOGGER.info("update: {}", report);
+		LOGGER.info("update: {}", archive);
 		
-		report = this.reportService.update(id, report);
-		if (null == report) {
+		archive = this.archiveService.update(id, archive);
+		if (null == archive) {
 			return ResponseEntity.notFound().build();
 		}
 
-		return ResponseEntity.ok(report);
+		return ResponseEntity.ok(archive);
 	}
 
 	/**
-	 * Delete of a Report.
-	 * @param id Id of Report.
+	 * Delete of a Archive.
+	 * @param id Id of Archive.
 	 * @return
 	 */
 	@DeleteMapping("/{id}")
@@ -171,7 +171,7 @@ public class ReportController {
 		
 		LOGGER.info("delete: {}", id);
 		
-		if (null == this.reportService.delete(id)) {
+		if (null == this.archiveService.delete(id)) {
 			return ResponseEntity.notFound().build();
 		}
 
@@ -182,7 +182,7 @@ public class ReportController {
 	public ResponseEntity<Resource> export() throws Exception {
 		ByteArrayResource resource;
 		
-		List<Report> data = this.reportService.findByCriteria(new ReportCriteria());
+		List<Archive> data = this.archiveService.findByCriteria(new ArchiveCriteria());
 		byte[] csv = FileHelper.toCsvByteArray(data);
 		resource = new ByteArrayResource(csv);
 
