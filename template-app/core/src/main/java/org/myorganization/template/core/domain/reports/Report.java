@@ -1,11 +1,11 @@
 package org.myorganization.template.core.domain.reports;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 
@@ -28,7 +28,8 @@ public class Report {
 	@Column(nullable = false)
 	private String description;
 	
-	@OneToOne(mappedBy = "report", cascade = CascadeType.ALL, optional = false)
+	@OneToOne
+    @JoinColumn(name = "archive_id")
 	private Archive archive;
 
 	public Report() {

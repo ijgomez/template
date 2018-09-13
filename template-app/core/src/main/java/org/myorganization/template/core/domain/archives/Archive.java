@@ -1,14 +1,12 @@
 package org.myorganization.template.core.domain.archives;
 
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
@@ -17,6 +15,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.myorganization.template.core.domain.reports.Report;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 public class Archive {
@@ -40,8 +40,8 @@ public class Archive {
 	@Column(nullable = false)
 	private Long size;
 	
-	@OneToOne
-    @JoinColumn(name = "report_id")
+	@OneToOne(mappedBy = "archive")
+	@JsonBackReference
 	private Report report;
 	
 	public Archive() {
