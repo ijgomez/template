@@ -22,9 +22,9 @@
 	</target>
 
 	<target name="dist" depends="compile" description="distribution">
-		<mkdir dir="target/${CONTEXT_ROOT}" />
-		<copy todir="target/${CONTEXT_ROOT}">
-			<fileset dir="${ANGULAR_APP_HOME}/dist/" includes="**/*.*" />
+		<mkdir dir="target/${CONTEXT_ROOT}/dashboard" />
+		<copy todir="target/${CONTEXT_ROOT}/dashboard">
+			<fileset dir="${ANGULAR_APP_HOME}/dist/template-dashboard" includes="**/*.*" />
 		</copy>
 	</target>
 
