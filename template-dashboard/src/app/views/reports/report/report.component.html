@@ -16,17 +16,19 @@
       </fieldset>
       <fieldset class="form-group">
         <label for="archive">Archive:</label>
-        <input type="file" class="form-control" (change)="onFileChange($event)"/>
         <!--
-        <div class="custom-file">
-          <input type="file" id="archive" formControlName="archive" class="custom-file-input" (change)="onFileChange($event)">
-          <label class="custom-file-label" for="customFile">Choose file</label>
-        </div>
+        <input type="file" class="form-control" (change)="onFileChange($event)"/>
         -->
+        <div class="custom-file">
+          <input type="file" id="archive" class="custom-file-input" (change)="onFileChange($event)">
+          <label class="custom-file-label" for="archive">Choose file</label>
+        </div>
+        <button *ngIf="reportForm.value.archive" type="button" class="btn btn-secondary" (click)="download()">download</button>
         <app-control-messages [control]="formControls.archive"></app-control-messages>
       </fieldset>
       <fieldset class="form-group">
         <button type="submit" [disabled]="reportForm.invalid" class="btn btn-secondary">save</button>
+        &nbsp;
         <app-back-button></app-back-button>
       </fieldset>
     </form>

@@ -61,7 +61,12 @@ export class ReportsListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   selectedItem(data: any): void {
-    this.selectedData = data;
+    if (this.selectedData === data) {
+      this.selectedData = null;
+    } else {
+      this.selectedData = data;
+    }
+    
   }
 
   isSelectedItem(): Boolean {

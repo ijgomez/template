@@ -60,6 +60,12 @@ public class ReportService implements TemplateService<Report, ReportCriteria> {
 			Report r = optional.get();
 			r.setName(report.getName());
 			r.setDescription(report.getDescription());
+			Archive archive = report.getArchive();
+			if (archive.getId() == null) {
+				r.setArchive(this.archiveService.create(archive));
+			} else {
+				r.setArchive(archive);
+			}
 			return this.reportRepository.save(r);
 		} 
 		//TODO Not Found Exception....

@@ -8,20 +8,20 @@
 <button type="button" (click)="export()">Export</button>
 <br/>
 <br/>
-<table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-hover table-striped table-bordered" style="width:100%">
+<table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-hover table-bordered" style="width:100%">
   <thead>
     <tr>
-      <th>Report</th>
-      <th>Type</th>
-      <th>Actions</th>
+      <th scope="col">Report</th>
+      <th scope="col">Type</th>
+      <th scope="col">Actions</th>
     </tr>
   </thead>
   <tbody *ngIf="data?.length != 0">
-    <tr *ngFor="let report of data" (click)="selectedItem(report)">
-      <td>{{report.description}}</td>
+    <tr *ngFor="let report of data" (click)="selectedItem(report)" [ngClass] = "{'highlight' : report === selectedData}">
+      <td  scope="row">{{report.description}}</td>
       <td>{{report.format}}</td>
       <td>
-        <a [routerLink]="['execute', report.id]" role="button" class="btn btn-secondary btn-sm">Execute</a>&nbsp;
+        <a *ngIf="report.archive" [routerLink]="['execute', report.id]" role="button" class="btn btn-secondary btn-sm">Execute</a>&nbsp;
       </td>
     </tr>
   </tbody>
