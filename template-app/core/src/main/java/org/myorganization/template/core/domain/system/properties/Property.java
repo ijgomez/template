@@ -11,7 +11,12 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 @Entity
+@Getter @Setter @NoArgsConstructor
 public class Property {
 
 	@Id
@@ -24,34 +29,6 @@ public class Property {
 	
 	@Column(nullable = false)
 	private String value;
-
-	public Property() {
-		super();
-	}
-	
-	public Long getId() {
-		return id;
-	}
-	
-	public void setId(Long id) {
-		this.id = id;
-	}
-	
-	public String getProperty() {
-		return property;
-	}
-	
-	public void setProperty(String property) {
-		this.property = property;
-	}
-	
-	public String getValue() {
-		return value;
-	}
-	
-	public void setValue(String value) {
-		this.value = value;
-	}
 
 	@Override
 	public int hashCode() {

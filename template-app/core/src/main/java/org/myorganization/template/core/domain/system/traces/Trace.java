@@ -15,7 +15,12 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 @Entity
+@Getter @Setter @NoArgsConstructor
 public class Trace {
 
 	@Id
@@ -32,46 +37,10 @@ public class Trace {
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private TraceType type;
-
-	public Trace() {
-		super();
-	}
 	
 	public Trace(String message) {
 		super();
 		this.message = message;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-	
-	public LocalDateTime getDatetime() {
-		return datetime;
-	}
-	
-	public void setDatetime(LocalDateTime datetime) {
-		this.datetime = datetime;
-	}
-
-	public String getMessage() {
-		return message;
-	}
-	
-	public void setMessage(String message) {
-		this.message = message;
-	}
-	
-	public TraceType getType() {
-		return type;
-	}
-	
-	public void setType(TraceType type) {
-		this.type = type;
 	}
 
 	@Override

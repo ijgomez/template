@@ -13,7 +13,12 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 @Entity
+@Getter @Setter @NoArgsConstructor
 public class ClusterNode {
 
 	@Id
@@ -42,74 +47,6 @@ public class ClusterNode {
 	@Column(nullable = false)
 	private Long totalMemory;
 	
-	public ClusterNode() {
-		super();
-	}
-	
-	public Long getId() {
-		return id;
-	}
-	
-	public void setId(Long id) {
-		this.id = id;
-	}
-	
-	public String getIp() {
-		return ip;
-	}
-
-	public void setIp(String ip) {
-		this.ip = ip;
-	}
-
-	public String getHostname() {
-		return hostname;
-	}
-
-	public void setHostname(String hostname) {
-		this.hostname = hostname;
-	}
-
-	public LocalDateTime getStartDatetime() {
-		return startDatetime;
-	}
-
-	public void setStartDatetime(LocalDateTime startDatetime) {
-		this.startDatetime = startDatetime;
-	}
-
-	public LocalDateTime getLastUpdateTime() {
-		return lastUpdateTime;
-	}
-
-	public void setLastUpdateTime(LocalDateTime lastUpdateTime) {
-		this.lastUpdateTime = lastUpdateTime;
-	}
-
-	public ClusterNodeStatus getStatus() {
-		return status;
-	}
-
-	public void setStatus(ClusterNodeStatus status) {
-		this.status = status;
-	}
-
-	public Long getUsedMemory() {
-		return usedMemory;
-	}
-
-	public void setUsedMemory(Long usedMemory) {
-		this.usedMemory = usedMemory;
-	}
-
-	public Long getTotalMemory() {
-		return totalMemory;
-	}
-
-	public void setTotalMemory(Long totalMemory) {
-		this.totalMemory = totalMemory;
-	}
-
 	@Override
 	public int hashCode() {
 		return HashCodeBuilder.reflectionHashCode(this, true);

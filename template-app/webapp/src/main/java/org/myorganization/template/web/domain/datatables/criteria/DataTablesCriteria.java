@@ -4,6 +4,11 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter @Setter @NoArgsConstructor
 public class DataTablesCriteria {
 	
 	private Integer draw;
@@ -17,58 +22,6 @@ public class DataTablesCriteria {
 	private DataTablesOrderCriteria[] order;
 	
 	private DataTablesColumnCriteria[] columns;
-
-	public DataTablesCriteria() {
-		super();
-	}
-
-	public Integer getDraw() {
-		return draw;
-	}
-
-	public void setDraw(Integer draw) {
-		this.draw = draw;
-	}
-
-	public Integer getStart() {
-		return start;
-	}
-
-	public void setStart(Integer start) {
-		this.start = start;
-	}
-
-	public Integer getLength() {
-		return length;
-	}
-
-	public void setLength(Integer length) {
-		this.length = length;
-	}
-
-	public DataTablesSearchCriteria getSearch() {
-		return search;
-	}
-
-	public void setSearch(DataTablesSearchCriteria search) {
-		this.search = search;
-	}
-
-	public DataTablesOrderCriteria[] getOrder() {
-		return order;
-	}
-
-	public void setOrder(DataTablesOrderCriteria[] order) {
-		this.order = order;
-	}
-
-	public DataTablesColumnCriteria[] getColumns() {
-		return columns;
-	}
-
-	public void setColumns(DataTablesColumnCriteria[] columns) {
-		this.columns = columns;
-	}
 	
 	@Override
 	public int hashCode() {

@@ -4,32 +4,17 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter @Setter @NoArgsConstructor
 public class DataTablesSearchCriteria {
 
 	private String value;
 	
 	private Boolean regex;
-	
-	public DataTablesSearchCriteria() {
-		super();
-	}
-
-	public String getValue() {
-		return value;
-	}
-
-	public void setValue(String value) {
-		this.value = value;
-	}
-
-	public Boolean getRegex() {
-		return regex;
-	}
-
-	public void setRegex(Boolean regex) {
-		this.regex = regex;
-	}
-	
+		
 	@Override
 	public int hashCode() {
 		return HashCodeBuilder.reflectionHashCode(this, true);

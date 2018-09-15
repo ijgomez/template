@@ -21,7 +21,12 @@ import org.myorganization.template.core.domain.security.users.User;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 @Entity
+@Getter @Setter @NoArgsConstructor
 public class Profile {
 
 	@Id
@@ -46,47 +51,11 @@ public class Profile {
     )
 	private Set<Action> actions;
 	
-	public Profile() {
-		super();
-	}
-	
 	public Profile(String name) {
 		super();
 		this.name = name;
 	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
 	
-	public String getDescription() {
-		return description;
-	}
-	
-	public void setDescription(String description) {
-		this.description = description;
-	}
-	
-	public Set<Action> getActions() {
-		return actions;
-	}
-	
-	public void setActions(Set<Action> actions) {
-		this.actions = actions;
-	}
-
 	@Override
 	public int hashCode() {
 		return HashCodeBuilder.reflectionHashCode(this, true);

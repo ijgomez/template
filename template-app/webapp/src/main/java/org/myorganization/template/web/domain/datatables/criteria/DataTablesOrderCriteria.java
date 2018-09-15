@@ -4,32 +4,17 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter @Setter @NoArgsConstructor
 public class DataTablesOrderCriteria {
 
 	private Integer column;
 	
 	private String dir;
-	
-	public DataTablesOrderCriteria() {
-		super();
-	}
-
-	public Integer getColumn() {
-		return column;
-	}
-
-	public void setColumn(Integer column) {
-		this.column = column;
-	}
-
-	public String getDir() {
-		return dir;
-	}
-
-	public void setDir(String dir) {
-		this.dir = dir;
-	}
-	
+		
 	@Override
 	public int hashCode() {
 		return HashCodeBuilder.reflectionHashCode(this, true);
