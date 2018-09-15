@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.myorganization.template.core.domain.reports.Report;
 import org.myorganization.template.core.domain.reports.ReportCriteria;
+import org.myorganization.template.core.domain.reports.ReportParam;
 import org.myorganization.template.core.helper.FileHelper;
 import org.myorganization.template.core.services.reports.ReportService;
 import org.myorganization.template.web.domain.datatables.DataTablesResponse;
@@ -176,6 +177,15 @@ public class ReportController {
 		}
 
 		return ResponseEntity.ok(id);
+	}
+	
+	@GetMapping("/{id}/params")
+	public ResponseEntity<List<ReportParam>> params(@PathVariable("id") Long id) {
+		LOGGER.info("params: {}", id);
+		
+		List<ReportParam> params = this.reportService.readParams(id);
+		
+		return ResponseEntity.ok(params);
 	}
 	
 	@GetMapping("/export")

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { Http, Response, RequestOptions, Headers, RequestMethod } from '@angular/http';
-import { Observable } from 'rxjs';
+import { Observable, forkJoin } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { TemplateService } from '../base/template-service';
 import { Report } from '../../domain/reports/report';
@@ -108,7 +108,51 @@ export class ReportsService extends TemplateService {
     );
   }
 
+  readReportParamsO(id: number | string): Observable<any> {
+    
+    const options = new RequestOptions({ headers: this.headers});
+
+    return this.http.get(`${this.url}/${id}/params`, options).pipe(
+      map((response: Response) => {
+        
+        const questions = [
+          new DropdownQuestion({
+            key: 'reportParam3',
+            label: 'Parameter 3',
+            options: [
+              {key: 'option1', value: 'Option 1'},
+              {key: 'option2', value: 'Option 2'},
+              {key: 'option3', value: 'Option 3'},
+              {key: 'option4', value: 'Option 4'}
+            ],
+            order: 3
+          }),
+
+          new TextboxQuestion({
+            key: 'reportParam1',
+            label: 'Parameter 1',
+            value: 'Default Value',
+            required: true,
+            order: 1
+          }),
+
+          new TextboxQuestion({
+            key: 'reportParam2',
+            label: 'Parameter 2 (e-Mail)',
+            type: 'email',
+            order: 2
+          })
+        ];
+
+        return questions;
+      }),
+      catchError(this.handleError)
+    );
+    
+  }
+
   readReportParams(id: number | string): any {
+
     const questions = [
       new DropdownQuestion({
         key: 'reportParam3',
@@ -142,3 +186,6 @@ export class ReportsService extends TemplateService {
   }
 
 }
+
+
+

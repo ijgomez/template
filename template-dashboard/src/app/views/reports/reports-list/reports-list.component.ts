@@ -33,9 +33,9 @@ export class ReportsListComponent implements OnInit, AfterViewInit, OnDestroy {
       serverSide: true,
       processing: true,
       columnDefs: [
-        { width: '60%', targets: 0, name: 'description' },
+        { targets: 0, name: 'description', width: '60%' },
         { targets: 1, name: 'type' },
-        { width: '20%', targets: 2, orderable: false }
+        { targets: 2, name: 'actions', width: '20%', orderable: false, className: 'text-center' }
       ],
       ajax: (dataTablesParameters: any, callback) => {
         that.reportsService.table(dataTablesParameters).subscribe(response => {

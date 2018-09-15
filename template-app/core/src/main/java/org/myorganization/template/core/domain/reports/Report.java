@@ -14,7 +14,12 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.myorganization.template.core.domain.archives.Archive;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 @Entity
+@Getter @Setter @NoArgsConstructor
 public class Report {
 
 	@Id
@@ -31,46 +36,10 @@ public class Report {
 	@OneToOne
     @JoinColumn(name = "archive_id")
 	private Archive archive;
-
-	public Report() {
-		super();
-	}
 	
 	public Report(String name) {
 		super();
 		this.name = name;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	public String getDescription() {
-		return description;
-	}
-	
-	public void setDescription(String description) {
-		this.description = description;
-	}
-	
-	public Archive getArchive() {
-		return archive;
-	}
-	
-	public void setArchive(Archive archive) {
-		this.archive = archive;
 	}
 
 	@Override
