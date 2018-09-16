@@ -9,6 +9,8 @@ import { ReportCriteria } from '../../domain/reports/report-criteria';
 import { DropdownQuestion } from '../../views/components/forms/questions/question-dropdown';
 import { TextboxQuestion } from '../../views/components/forms/questions/question-textbox';
 import { DataTablesResponse } from '../../domain/datatables/data-tables-response';
+import { ReportParam } from '../../domain/reports/report-param';
+import { QuestionFactory } from '../../views/components/forms/questions/question-factory';
 
 @Injectable()
 export class ReportsService extends TemplateService {
@@ -18,7 +20,7 @@ export class ReportsService extends TemplateService {
 
   private headers = new Headers({'Content-type': 'application/json'});
 
-  constructor(private http: Http) {
+  constructor(private http: Http, private questionFactory: QuestionFactory) {
     super();
    }
 
@@ -108,81 +110,16 @@ export class ReportsService extends TemplateService {
     );
   }
 
-  readReportParamsO(id: number | string): Observable<any> {
+  readReportParams(id: number | string): Observable<any> {
     
     const options = new RequestOptions({ headers: this.headers});
 
     return this.http.get(`${this.url}/${id}/params`, options).pipe(
       map((response: Response) => {
-        
-        const questions = [
-          new DropdownQuestion({
-            key: 'reportParam3',
-            label: 'Parameter 3',
-            options: [
-              {key: 'option1', value: 'Option 1'},
-              {key: 'option2', value: 'Option 2'},
-              {key: 'option3', value: 'Option 3'},
-              {key: 'option4', value: 'Option 4'}
-            ],
-            order: 3
-          }),
-
-          new TextboxQuestion({
-            key: 'reportParam1',
-            label: 'Parameter 1',
-            value: 'Default Value',
-            required: true,
-            order: 1
-          }),
-
-          new TextboxQuestion({
-            key: 'reportParam2',
-            label: 'Parameter 2 (e-Mail)',
-            type: 'email',
-            order: 2
-          })
-        ];
-
-        return questions;
+        return this.questionFactory.build(response.json());
       }),
       catchError(this.handleError)
     );
-    
-  }
-
-  readReportParams(id: number | string): any {
-
-    const questions = [
-      new DropdownQuestion({
-        key: 'reportParam3',
-        label: 'Parameter 3',
-        options: [
-          {key: 'option1', value: 'Option 1'},
-          {key: 'option2', value: 'Option 2'},
-          {key: 'option3', value: 'Option 3'},
-          {key: 'option4', value: 'Option 4'}
-        ],
-        order: 3
-      }),
-
-      new TextboxQuestion({
-        key: 'reportParam1',
-        label: 'Parameter 1',
-        value: 'Default Value',
-        required: true,
-        order: 1
-      }),
-
-      new TextboxQuestion({
-        key: 'reportParam2',
-        label: 'Parameter 2 (e-Mail)',
-        type: 'email',
-        order: 2
-      })
-    ];
-
-    return questions;
   }
 
 }

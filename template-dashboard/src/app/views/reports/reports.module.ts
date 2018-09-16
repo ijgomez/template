@@ -12,6 +12,7 @@ import { ReportExecuteComponent } from './report-execute/report-execute.componen
 import { ComponentsModule } from '../components/components.module';
 import { ReportsService } from '../../services/reports/reports.service';
 import { QuestionControlService } from '../../services/commons/question-control.service';
+import { QuestionFactory } from '../components/forms/questions/question-factory';
 
 @NgModule({
   imports: [
@@ -21,6 +22,6 @@ import { QuestionControlService } from '../../services/commons/question-control.
   ],
   declarations: [ReportsListComponent, ReportsHomeComponent, ReportComponent,
     ReportExecuteComponent],
-  providers: [ReportsService]
+  providers: [ReportsService, QuestionFactory]
 })
 export class ReportsModule { }
