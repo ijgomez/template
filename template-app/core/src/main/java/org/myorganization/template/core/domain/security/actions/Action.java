@@ -15,6 +15,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.myorganization.template.core.domain.security.profiles.Profile;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -35,6 +37,7 @@ public class Action {
 	private String description;
 	
 	@ManyToMany(mappedBy = "actions")
+	@JsonBackReference
 	private Set<Profile> profiles;
 	
 	@Override

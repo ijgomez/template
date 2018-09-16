@@ -20,6 +20,7 @@ import org.myorganization.template.core.domain.security.actions.Action;
 import org.myorganization.template.core.domain.security.users.User;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -49,6 +50,7 @@ public class Profile {
         joinColumns = { @JoinColumn(name = "profile_id") }, 
         inverseJoinColumns = { @JoinColumn(name = "action_id") }
     )
+	@JsonManagedReference
 	private Set<Action> actions;
 	
 	public Profile(String name) {

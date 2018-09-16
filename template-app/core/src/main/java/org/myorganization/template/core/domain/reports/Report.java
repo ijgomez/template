@@ -14,6 +14,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.myorganization.template.core.domain.archives.Archive;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -35,6 +37,7 @@ public class Report {
 	
 	@OneToOne
     @JoinColumn(name = "archive_id")
+	@JsonManagedReference
 	private Archive archive;
 	
 	public Report(String name) {
