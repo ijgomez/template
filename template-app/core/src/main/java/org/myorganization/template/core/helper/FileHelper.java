@@ -30,7 +30,7 @@ public class FileHelper {
 			for (Method m : methods) {
 				if (m.getParameterTypes().length == 0) {
 					if (m.getName().startsWith("get") || m.getName().startsWith("is")) {
-						builder.append(m.invoke(object).toString()).append(',');
+						//builder.append(m.invoke(object).toString()).append(',');
 					}
 				}
 			}

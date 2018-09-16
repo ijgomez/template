@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { Http, Response, RequestOptions, Headers, RequestMethod } from '@angular/http';
+import { Http, Response, RequestOptions, Headers, RequestMethod, ResponseContentType } from '@angular/http';
 import { Observable, forkJoin } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { TemplateService } from '../base/template-service';
@@ -99,12 +99,17 @@ export class ReportsService extends TemplateService {
     );
   }
 
-  export(criteria: ReportCriteria): Observable<Response> {
-    const options = new RequestOptions({});
+  export(criteria: ReportCriteria, filename: String): Observable<any> {
+    const options = new RequestOptions({
+      responseType: ResponseContentType.Blob
+    });
 
     return this.http.get(this.url + '/export', options).pipe(
       map((response: Response) => {
-        return response;
+        return {
+          filename: filename,
+          data: response.blob()
+        };
       }),
       catchError(this.handleError)
     );

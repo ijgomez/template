@@ -4,6 +4,7 @@ import { Subject } from 'rxjs';
 import { ReportsService } from '../../../services/reports/reports.service';
 import { Report } from '../../../domain/reports/report';
 import { Router, ActivatedRoute } from '@angular/router';
+import { ReportCriteria } from '../../../domain/reports/report-criteria';
 
 @Component({
   selector: 'app-reports-list',
@@ -101,8 +102,27 @@ export class ReportsListComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  export() {
-    
+  export(): void {
+    this.reportsService.export(new ReportCriteria(), 'filename.csv').subscribe(
+      response => {
+        console.log('start download:', response);
+        var url = window.URL.createObjectURL(response.data);
+        var a = document.createElement('a');
+        document.body.appendChild(a);
+        a.setAttribute('style', 'display: none');
+        a.href = url;
+        a.download = response.filename;
+        a.click();
+        window.URL.revokeObjectURL(url);
+        a.remove(); // remove the element
+      },
+      error => {
+        console.log('download error:', JSON.stringify(error));
+      }, 
+      () => {
+        console.log('Completed file download.')
+      }
+    );
   }
 
 }
