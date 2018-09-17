@@ -115,6 +115,17 @@
 			<artifactId>commons-text</artifactId>
 			<version>1.1</version>
 		</dependency>
+		<dependency>
+		    <groupId>commons-codec</groupId>
+		    <artifactId>commons-codec</artifactId>
+		    <version>1.11</version>
+		</dependency>
+		<!-- Jasperreport -->
+		<dependency>
+		    <groupId>net.sf.jasperreports</groupId>
+		    <artifactId>jasperreports</artifactId>
+		    <version>6.7.0</version>
+		</dependency>
 	</dependencies>
 	<profiles>
 		<profile>

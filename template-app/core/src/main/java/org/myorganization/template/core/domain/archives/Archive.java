@@ -11,9 +11,7 @@ import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.myorganization.template.core.domain.base.TemplateEntity;
 import org.myorganization.template.core.domain.reports.Report;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -24,7 +22,7 @@ import lombok.Setter;
 
 @Entity
 @Getter @Setter @NoArgsConstructor
-public class Archive {
+public class Archive extends TemplateEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "archive_seq")
@@ -48,19 +46,5 @@ public class Archive {
 	@OneToOne(mappedBy = "archive")
 	@JsonBackReference
 	private Report report;
-	
-	@Override
-	public int hashCode() {
-		return HashCodeBuilder.reflectionHashCode(this, true);
-	}
 
-	@Override
-	public boolean equals(Object obj) {
-		return EqualsBuilder.reflectionEquals(this, obj, true);
-	}
-
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
-	}
 }

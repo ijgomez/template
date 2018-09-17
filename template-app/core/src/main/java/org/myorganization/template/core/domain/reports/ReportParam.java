@@ -26,4 +26,6 @@ public class ReportParam implements Serializable {
 	
 	private Boolean required = false;
 
+	private Boolean forPrompting  = true;
+	
 }
