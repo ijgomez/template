@@ -8,11 +8,9 @@ import java.util.stream.StreamSupport;
 import org.myorganization.template.core.domain.archives.Archive;
 import org.myorganization.template.core.domain.reports.Report;
 import org.myorganization.template.core.domain.reports.ReportCriteria;
-import org.myorganization.template.core.domain.reports.ReportParam;
 import org.myorganization.template.core.domain.reports.ReportRepository;
 import org.myorganization.template.core.services.archives.ArchiveService;
 import org.myorganization.template.core.services.base.TemplateService;
-import org.myorganization.template.reports.ReportManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,9 +23,6 @@ public class ReportService implements TemplateService<Report, ReportCriteria> {
 	
 	@Autowired
 	private ArchiveService archiveService;
-	
-	@Autowired
-	private ReportManager reportManager;
 
 	@Transactional(readOnly = true)
 	public List<Report> findAll() {
@@ -56,22 +51,6 @@ public class ReportService implements TemplateService<Report, ReportCriteria> {
 	@Transactional(readOnly = true)
 	public Optional<Report> read(Long id) {
 		return this.reportRepository.findById(id);
-	}
-	
-	@Transactional(readOnly = true)
-	public List<ReportParam> readParams(Long id) {
-		Optional<Report> optional = this.read(id);
-		if (optional.isPresent()) {
-			Report report = optional.get();
-			if (report.getArchive() != null ) {
-				return this.reportManager.readParams(report.getArchive());
-			} else {
-				//TODO Archive Not Found Exception....
-				return null;
-			}
-		}
-		//TODO Not Found Exception....
-		return null;
 	}
 	
 	@Transactional

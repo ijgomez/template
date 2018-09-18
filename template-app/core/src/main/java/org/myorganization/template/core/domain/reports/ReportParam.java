@@ -22,7 +22,7 @@ public class ReportParam implements Serializable {
 	
 	private List<ReportParamOption> options;
 	
-	private Long order;
+	private Integer order;
 	
 	private Boolean required = false;
 

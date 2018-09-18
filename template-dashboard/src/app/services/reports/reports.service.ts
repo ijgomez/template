@@ -127,6 +127,21 @@ export class ReportsService extends TemplateService {
     );
   }
 
+  execute(id: number | string, params: any): Observable<any> {
+    
+    const options = new RequestOptions({ headers: this.headers});
+
+    return this.http.post(`${this.url}/${id}/execute`, params, options).pipe(
+      map((response: Response) => {
+        return {
+          filename: 'report',
+          data: response.blob()
+        };
+      }),
+      catchError(this.handleError)
+    );
+  }
+
 }
 
 

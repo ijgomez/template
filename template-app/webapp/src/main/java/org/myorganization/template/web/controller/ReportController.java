@@ -9,7 +9,7 @@ import org.myorganization.template.core.domain.reports.Report;
 import org.myorganization.template.core.domain.reports.ReportCriteria;
 import org.myorganization.template.core.domain.reports.ReportParam;
 import org.myorganization.template.core.helper.FileHelper;
-import org.myorganization.template.core.services.reports.ReportService;
+import org.myorganization.template.reports.ReportManager;
 import org.myorganization.template.web.domain.datatables.DataTablesResponse;
 import org.myorganization.template.web.domain.datatables.criteria.DataTablesCriteria;
 import org.slf4j.Logger;
@@ -42,7 +42,7 @@ public class ReportController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ReportController.class);
 	
 	@Autowired
-	private ReportService reportService;
+	private ReportManager reportManager;
 
 	/**
 	 * List all Reports.
@@ -50,7 +50,7 @@ public class ReportController {
 	 */
 	@GetMapping
 	public ResponseEntity<List<Report>> findAll() {
-		List<Report> reports = reportService.findAll();
+		List<Report> reports = reportManager.getReportService().findAll();
 		if (reports.isEmpty()) {
 			return ResponseEntity.noContent().build();
 		}
@@ -66,7 +66,7 @@ public class ReportController {
 		
 		LOGGER.info("find by criteria: {}", criteria);
 		
-		List<Report> reports = reportService.findByCriteria(criteria);
+		List<Report> reports = reportManager.getReportService().findByCriteria(criteria);
 		if (reports.isEmpty()) {
 			return ResponseEntity.noContent().build();
 		}
@@ -78,7 +78,7 @@ public class ReportController {
 		
 		LOGGER.info("count by criteria: {}", criteria);
 		
-		Long records = reportService.countByCriteria(criteria);
+		Long records = reportManager.getReportService().countByCriteria(criteria);
 
 		return ResponseEntity.ok(records);
 	}
@@ -100,8 +100,8 @@ public class ReportController {
 		reportCriteria.setSortOrder(dtCriteria.getOrder()[0].getDir());
 		
 		
-		List<Report> reports = reportService.findByCriteria(reportCriteria);
-		Long count = reportService.countByCriteria(reportCriteria);
+		List<Report> reports = reportManager.getReportService().findByCriteria(reportCriteria);
+		Long count = reportManager.getReportService().countByCriteria(reportCriteria);
 
 		response = new DataTablesResponse<Report>();
 		response.setData(reports);
@@ -119,7 +119,7 @@ public class ReportController {
 	 */
 	@PostMapping
 	public ResponseEntity<Report> create(@RequestBody Report report) {
-		report = this.reportService.create(report);
+		report = this.reportManager.getReportService().create(report);
 		
 		if (report == null) {
 			return ResponseEntity.noContent().build();
@@ -136,7 +136,7 @@ public class ReportController {
 	 */
 	@GetMapping("/{id}")
 	public ResponseEntity<Report> read(@PathVariable("id") Long id) {
-		Optional<Report> report = this.reportService.read(id);
+		Optional<Report> report = this.reportManager.getReportService().read(id);
 		if (report.isPresent()) {
 			return ResponseEntity.ok(report.get());
 		}
@@ -154,7 +154,7 @@ public class ReportController {
 		
 		LOGGER.info("update: {}", report);
 		
-		report = this.reportService.update(id, report);
+		report = this.reportManager.getReportService().update(id, report);
 		if (null == report) {
 			return ResponseEntity.notFound().build();
 		}
@@ -172,7 +172,7 @@ public class ReportController {
 		
 		LOGGER.info("delete: {}", id);
 		
-		if (null == this.reportService.delete(id)) {
+		if (null == this.reportManager.getReportService().delete(id)) {
 			return ResponseEntity.notFound().build();
 		}
 
@@ -183,7 +183,7 @@ public class ReportController {
 	public ResponseEntity<List<ReportParam>> params(@PathVariable("id") Long id) {
 		LOGGER.info("params: {}", id);
 		
-		List<ReportParam> params = this.reportService.readParams(id);
+		List<ReportParam> params = this.reportManager.readParams(id);
 		
 		return ResponseEntity.ok(params);
 	}
@@ -192,7 +192,7 @@ public class ReportController {
 	public ResponseEntity<Resource> export() throws Exception {
 		ByteArrayResource resource;
 		
-		List<Report> data = this.reportService.findByCriteria(new ReportCriteria());
+		List<Report> data = this.reportManager.getReportService().findByCriteria(new ReportCriteria());
 		byte[] csv = FileHelper.toCsvByteArray(data);
 		resource = new ByteArrayResource(csv);
 
@@ -203,6 +203,14 @@ public class ReportController {
 		headers.add("Expires", "0");
 
 		return ResponseEntity.ok().headers(headers).contentLength(csv.length).contentType(MediaType.parseMediaType("txt/csv")).body(resource);
+	}
+	
+	@PostMapping("/{id}/execute")
+	public ResponseEntity<Resource> execute(@PathVariable("id") Long id, @RequestBody Object params) {
+		LOGGER.info("execute: {} {}", id, params);
+		this.reportManager.execute(id);
+		
+		return null;
 	}
 
 }

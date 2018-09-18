@@ -26,6 +26,18 @@ export class ReportExecuteComponent implements OnInit {
   }
 
   onSubmit(form) {
+    const id = this.activeRoute.snapshot.params['id'];
     this.payLoad = JSON.stringify(form.value);
+    this.reportsService.execute(id, this.payLoad).subscribe(
+      response => {
+        console.log('start download:', response);
+      },
+      error => {
+        console.log('download error:', JSON.stringify(error));
+      },
+      () => {
+        console.log('Completed file download.')
+      }
+    );
   }
 }
