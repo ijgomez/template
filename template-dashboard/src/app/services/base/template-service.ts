@@ -15,6 +15,7 @@ export abstract class TemplateService {
             errMsg = error.message ? error.message : error.toString();
         }
         console.error('service error: ' + errMsg);
+        console.error(error);
         return Observable.throw(error);
     }
 }

@@ -34,10 +34,10 @@ export class ReportExecuteComponent implements OnInit {
       },
       error => {
         console.log('error');
-        console.log(JSON.stringify(error));
+        console.log(error);
       },
       () => {
-        console.log('Completed file download.')
+        console.log('Completed file download.');
       }
     );
   }

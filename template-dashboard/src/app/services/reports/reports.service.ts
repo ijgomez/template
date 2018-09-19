@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { Http, Response, RequestOptions, Headers, RequestMethod, ResponseContentType } from '@angular/http';
-import { Observable, forkJoin } from 'rxjs';
+import { Observable, forkJoin, throwError } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { TemplateService } from '../base/template-service';
 import { Report } from '../../domain/reports/report';
@@ -14,7 +14,6 @@ import { QuestionFactory } from '../../views/components/forms/questions/question
 
 @Injectable()
 export class ReportsService extends TemplateService {
-  
 
   private url = environment.urlBase + '/reports';
 
@@ -116,7 +115,7 @@ export class ReportsService extends TemplateService {
   }
 
   readReportParams(id: number | string): Observable<any> {
-    
+
     const options = new RequestOptions({ headers: this.headers});
 
     return this.http.get(`${this.url}/${id}/params`, options).pipe(
@@ -128,7 +127,7 @@ export class ReportsService extends TemplateService {
   }
 
   execute(id: number | string, params: any): Observable<any> {
-    
+
     const options = new RequestOptions({ headers: this.headers});
 
     return this.http.post(`${this.url}/${id}/execute`, params, options).pipe(
@@ -138,7 +137,8 @@ export class ReportsService extends TemplateService {
           data: response.blob()
         };
       }),
-      catchError(this.handleError)
+      catchError(error => throwError(error))
+      // catchError(this.handleError)
     );
   }
 
