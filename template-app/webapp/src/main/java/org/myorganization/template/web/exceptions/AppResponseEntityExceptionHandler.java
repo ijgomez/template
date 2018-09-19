@@ -1,5 +1,6 @@
 package org.myorganization.template.web.exceptions;
 
+import org.myorganization.template.reports.exceptions.ReportException;
 import org.myorganization.template.web.domain.MessageResponse;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
@@ -33,5 +34,15 @@ public class AppResponseEntityExceptionHandler  {
 
 		return ResponseEntity.badRequest().body(m);
     }
+	
+	@ExceptionHandler({ ReportException.class })
+	public ResponseEntity<MessageResponse> handleReportRequest(final ReportException ex, final WebRequest request) {
+		MessageResponse m = new MessageResponse();
+		m.setMessage(ex.getMessage());
+		if (ex.getCause() != null) {
+			m.setDetails(ex.getCause().getLocalizedMessage());
+		}
+		return ResponseEntity.badRequest().body(m);
+	}
 
 }

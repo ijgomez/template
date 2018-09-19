@@ -12,12 +12,13 @@ import org.myorganization.template.core.domain.reports.Report;
 import org.myorganization.template.core.domain.reports.ReportParam;
 import org.myorganization.template.core.helper.FileHelper;
 import org.myorganization.template.reports.ReportExecutor;
+import org.myorganization.template.reports.exceptions.ReportException;
+import org.slf4j.MarkerFactory;
 
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JasperCompileManager;
-import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
@@ -28,7 +29,7 @@ import net.sf.jasperreports.engine.xml.JRXmlLoader;
 public class JRReportExecutor implements ReportExecutor {
 
 	@Override
-	public List<ReportParam> readParams(Report report) {
+	public List<ReportParam> readParams(Report report) throws ReportException {
 		List<ReportParam> params;
 		
 		byte[] decode64;
@@ -115,17 +116,13 @@ public class JRReportExecutor implements ReportExecutor {
 	}
 
 	@Override
-	public void execute(Report report, Map<String, Object> parameters, Connection connection) {
-		
+	public void execute(Report report, Map<String, Object> parameters, Connection connection) throws ReportException {
+		JasperDesign jasperDesign;
+		JasperReport jasperReport;
+		JasperPrint jasperPrint;		
 		byte[] decode64;
-		int numParam = 0;
 		
 		try {
-			
-			JasperDesign jasperDesign;
-			JasperReport jasperReport;
-			JasperPrint jasperPrint;
-			
 			decode64 = FileHelper.decode64(report.getArchive().getValue());
 			log.debug("decode64 - " + decode64.length);
 
@@ -142,8 +139,8 @@ public class JRReportExecutor implements ReportExecutor {
 			}
 			
 		} catch (JRException | IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(MarkerFactory.getMarker("REPORT"), "Fail to execute jasper report.", e);
+			throw new ReportException("Fail to execute jasper report.", e);
 		}
 	}
 }

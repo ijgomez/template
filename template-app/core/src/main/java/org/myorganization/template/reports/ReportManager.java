@@ -9,6 +9,7 @@ import javax.sql.DataSource;
 import org.myorganization.template.core.domain.reports.Report;
 import org.myorganization.template.core.domain.reports.ReportParam;
 import org.myorganization.template.core.services.reports.ReportService;
+import org.myorganization.template.reports.exceptions.ReportException;
 import org.myorganization.template.reports.jasper.JRReportExecutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -31,7 +32,7 @@ public class ReportManager {
 	}
 	
 	@Transactional(readOnly = true)
-	public List<ReportParam> readParams(Long id) {
+	public List<ReportParam> readParams(Long id) throws ReportException {
 		ReportExecutor executor;
 		Optional<Report> optional;
 		
@@ -55,7 +56,7 @@ public class ReportManager {
 		return new JRReportExecutor();
 	}
 
-	public void execute(Long id) {
+	public void execute(Long id) throws ReportException {
 		try {
 			ReportExecutor executor;
 			Optional<Report> optional;
@@ -73,8 +74,7 @@ public class ReportManager {
 			}
 			//TODO Not Found Exception....
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new ReportException("Fail to execute report.", e);
 		}
 	}
 	

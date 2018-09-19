@@ -180,7 +180,7 @@ public class ReportController {
 	}
 	
 	@GetMapping("/{id}/params")
-	public ResponseEntity<List<ReportParam>> params(@PathVariable("id") Long id) {
+	public ResponseEntity<List<ReportParam>> params(@PathVariable("id") Long id) throws Exception {
 		LOGGER.info("params: {}", id);
 		
 		List<ReportParam> params = this.reportManager.readParams(id);
@@ -206,7 +206,7 @@ public class ReportController {
 	}
 	
 	@PostMapping("/{id}/execute")
-	public ResponseEntity<Resource> execute(@PathVariable("id") Long id, @RequestBody Object params) {
+	public ResponseEntity<Resource> execute(@PathVariable("id") Long id, @RequestBody Object params) throws Exception {
 		LOGGER.info("execute: {} {}", id, params);
 		this.reportManager.execute(id);
 		

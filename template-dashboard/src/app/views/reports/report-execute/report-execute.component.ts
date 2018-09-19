@@ -33,7 +33,8 @@ export class ReportExecuteComponent implements OnInit {
         console.log('start download:', response);
       },
       error => {
-        console.log('download error:', JSON.stringify(error));
+        console.log('error');
+        console.log(JSON.stringify(error));
       },
       () => {
         console.log('Completed file download.')

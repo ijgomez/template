@@ -6,11 +6,12 @@ import java.util.Map;
 
 import org.myorganization.template.core.domain.reports.Report;
 import org.myorganization.template.core.domain.reports.ReportParam;
+import org.myorganization.template.reports.exceptions.ReportException;
 
 public interface ReportExecutor {
 
-	List<ReportParam> readParams(Report report);
+	List<ReportParam> readParams(Report report) throws ReportException;
 
-	void execute(Report report, Map<String, Object> parameters, Connection connection);
+	void execute(Report report, Map<String, Object> parameters, Connection connection) throws ReportException;
 
 }
