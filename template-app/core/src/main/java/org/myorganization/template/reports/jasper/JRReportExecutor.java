@@ -3,8 +3,10 @@ package org.myorganization.template.reports.jasper;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.myorganization.template.core.domain.reports.Report;
 import org.myorganization.template.core.domain.reports.ReportParam;
@@ -14,6 +16,11 @@ import org.myorganization.template.reports.ReportExecutor;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRParameter;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
@@ -105,5 +112,38 @@ public class JRReportExecutor implements ReportExecutor {
 //		params.add(param);
 				
 		return params;
+	}
+
+	@Override
+	public void execute(Report report, Map<String, Object> parameters, Connection connection) {
+		
+		byte[] decode64;
+		int numParam = 0;
+		
+		try {
+			
+			JasperDesign jasperDesign;
+			JasperReport jasperReport;
+			JasperPrint jasperPrint;
+			
+			decode64 = FileHelper.decode64(report.getArchive().getValue());
+			log.debug("decode64 - " + decode64.length);
+
+			try (InputStream is = new ByteArrayInputStream(decode64)) {
+				log.debug("compile jasperreport descriptor...");
+				
+				jasperReport = JasperCompileManager.compileReport(is);
+				
+				log.debug("excute jasper report...");
+				jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, connection);
+				
+				log.debug("generating report...");
+				//JasperExportManager
+			}
+			
+		} catch (JRException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

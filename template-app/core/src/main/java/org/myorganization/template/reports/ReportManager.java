@@ -1,7 +1,10 @@
 package org.myorganization.template.reports;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
+
+import javax.sql.DataSource;
 
 import org.myorganization.template.core.domain.reports.Report;
 import org.myorganization.template.core.domain.reports.ReportParam;
@@ -19,6 +22,9 @@ public class ReportManager {
 	
 	@Autowired
 	private ReportService reportService;
+	
+	@Autowired
+	private DataSource dataSource;
 	
 	public ReportService getReportService() {
 		return reportService;
@@ -50,8 +56,26 @@ public class ReportManager {
 	}
 
 	public void execute(Long id) {
-		// TODO Auto-generated method stub
-		
+		try {
+			ReportExecutor executor;
+			Optional<Report> optional;
+			
+			optional = this.reportService.read(id);
+			if (optional.isPresent()) {
+				Report report = optional.get();
+				if (report.getArchive() != null ) {
+					executor = this.createExecutor(report);
+					// TODO Auto-generated method stub
+					executor.execute(report, null, this.dataSource.getConnection());
+				} else {
+					//TODO Archive Not Found Exception....
+				}
+			}
+			//TODO Not Found Exception....
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 }
