@@ -12,15 +12,18 @@ import { HeaderPageComponent } from './layout/header-page/header-page.component'
 
 import { StatusService } from '../../services/commons/status.service';
 import { QuestionControlService } from '../../services/commons/question-control.service';
+import { MessageComponent } from './modal/message/message.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   imports: [
-    CommonModule, HttpModule, ReactiveFormsModule
+    CommonModule, HttpModule, ReactiveFormsModule, NgbModule
   ],
   declarations: [BackButtonComponent, ServertimestampComponent,
-    DynamicFormComponent, DynamicFormQuestionComponent, ControlMessagesComponent, HeaderPageComponent],
+    DynamicFormComponent, DynamicFormQuestionComponent, ControlMessagesComponent, HeaderPageComponent, MessageComponent],
   exports: [BackButtonComponent, ServertimestampComponent, DynamicFormComponent, DynamicFormQuestionComponent,
-    ControlMessagesComponent, HeaderPageComponent],
-  providers: [StatusService, QuestionControlService]
+    ControlMessagesComponent, HeaderPageComponent, MessageComponent],
+  providers: [StatusService, QuestionControlService],
+  entryComponents: [MessageComponent]
 })
 export class ComponentsModule { }

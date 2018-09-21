@@ -1,6 +1,8 @@
 import { Component, OnInit, ChangeDetectorRef, Input } from '@angular/core';
 import { ReportsService } from '../../../services/reports/reports.service';
 import { ActivatedRoute } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { MessageComponent } from '../../components/modal/message/message.component';
 
 @Component({
   selector: 'app-report-execute',
@@ -15,7 +17,8 @@ export class ReportExecuteComponent implements OnInit {
 
   constructor(
     private activeRoute: ActivatedRoute,
-    private reportsService: ReportsService
+    private reportsService: ReportsService,
+    private modalService: NgbModal
   ) { }
 
   ngOnInit() {
@@ -33,12 +36,19 @@ export class ReportExecuteComponent implements OnInit {
         console.log('start download:', response);
       },
       error => {
-        console.log('error');
-        console.log(error);
+        this.showError(error);
       },
       () => {
         console.log('Completed file download.');
       }
     );
+  }
+
+  showError(error) {
+    console.log('error');
+    console.log(JSON.stringify(error));
+
+    const modalRef = this.modalService.open(MessageComponent);
+    modalRef.componentInstance.name = 'World';
   }
 }
