@@ -9,11 +9,16 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 export class MessageComponent implements OnInit {
 
   @Input() 
-  name;
+  title: String;
+
+  @Input() 
+  message: String;
+
+  @Input() 
+  details: String;
 
   constructor(public activeModal: NgbActiveModal) { }
 
-  ngOnInit() {
-  }
+  ngOnInit() { }
 
 }

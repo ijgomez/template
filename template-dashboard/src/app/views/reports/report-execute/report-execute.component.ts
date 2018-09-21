@@ -46,9 +46,11 @@ export class ReportExecuteComponent implements OnInit {
 
   showError(error) {
     console.log('error');
-    console.log(JSON.stringify(error));
+    console.log(error);
 
     const modalRef = this.modalService.open(MessageComponent);
-    modalRef.componentInstance.name = 'World';
+    modalRef.componentInstance.title = 'Alert!';
+    modalRef.componentInstance.message = error.json().message;
+    modalRef.componentInstance.details = error.json().details;
   }
 }
