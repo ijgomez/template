@@ -40,7 +40,7 @@ public class AppResponseEntityExceptionHandler  {
 		MessageResponse m = new MessageResponse();
 		m.setMessage(ex.getMessage());
 		if (ex.getCause() != null) {
-			m.setDetails(ex.getCause().getLocalizedMessage());
+			m.setDetails(ex.getCause().getCause().getMessage());
 		}
 		return ResponseEntity.badRequest().body(m);
 	}
