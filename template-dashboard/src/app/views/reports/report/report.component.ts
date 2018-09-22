@@ -5,6 +5,9 @@ import { ActivatedRoute } from '@angular/router';
 import { Report } from '../../../domain/reports/report';
 import { Location } from '@angular/common';
 import { Observable } from 'rxjs';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ConfirmComponent } from '../../components/modal/confirm/confirm.component';
+import { MessageComponent } from '../../components/modal/message/message.component';
 
 @Component({
   selector: 'app-report',
@@ -20,6 +23,7 @@ export class ReportComponent implements OnInit {
     private formBuilder: FormBuilder,
     private cd: ChangeDetectorRef,
     private location: Location,
+    private modalService: NgbModal,
     private reportsService: ReportsService
   ) { }
 
@@ -70,8 +74,15 @@ export class ReportComponent implements OnInit {
     }
     result.subscribe(
       response => {
-        console.log(response);
-        this.location.back();
+        const modalRef = this.modalService.open(MessageComponent, { centered: true });
+        modalRef.componentInstance.title = 'Info';
+        modalRef.componentInstance.message = response;
+        modalRef.result.then(
+          (re) => { 
+            this.location.back();
+          },
+          (reason) => {console.log(reason) }
+        );
       },
       error => { console.error(error); }
     );

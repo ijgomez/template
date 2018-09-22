@@ -5,6 +5,9 @@ import { ReportsService } from '../../../services/reports/reports.service';
 import { Report } from '../../../domain/reports/report';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ReportCriteria } from '../../../domain/reports/report-criteria';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ConfirmComponent } from '../../components/modal/confirm/confirm.component';
+import { MessageComponent } from '../../components/modal/message/message.component';
 
 @Component({
   selector: 'app-reports-list',
@@ -24,7 +27,12 @@ export class ReportsListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   selectedData: any;
 
-  constructor(private router: Router, private activeRoute:ActivatedRoute, private reportsService: ReportsService) { }
+  constructor(
+      private router: Router, 
+      private activeRoute:ActivatedRoute,  
+      private modalService: NgbModal, 
+      private reportsService: ReportsService
+    ) { }
 
   ngOnInit() {
     const that = this;
@@ -93,9 +101,21 @@ export class ReportsListComponent implements OnInit, AfterViewInit, OnDestroy {
     var report: Report = this.selectedData;
     this.reportsService.read(report.id).subscribe(
     data => {
-      this.reportsService.delete(data).subscribe(
-        result => { this.reload(); },
-        error => { console.error(error); });
+      const modalRef = this.modalService.open(ConfirmComponent, { centered: true });
+      modalRef.componentInstance.message = 'Are you sure you want to delete the ' + report.name + '?';
+      modalRef.result.then(
+        r => {
+          this.reportsService.delete(data).subscribe(
+            result => { 
+              this.selectedData = null;
+              modalRef.close();
+              this.reload(); 
+            },
+            error => { console.error(error); }
+          );
+        },
+        c => { console.log(c)}
+      );
     },
     error => {
       console.error(error);
@@ -117,12 +137,24 @@ export class ReportsListComponent implements OnInit, AfterViewInit, OnDestroy {
         a.remove(); // remove the element
       },
       error => {
-        console.log('download error:', JSON.stringify(error));
+        this.showError(error);
+        //console.log('download error:', JSON.stringify(error));
       }, 
       () => {
         console.log('Completed file download.')
       }
     );
+  }
+
+  showError(error) {
+    console.log('error');
+    console.log(error);
+
+    const modalRef = this.modalService.open(MessageComponent, { centered: true });
+    modalRef.componentInstance.title = 'Alert!';
+    modalRef.componentInstance.message = error.json().message;
+    modalRef.componentInstance.details = error.json().details;
+
   }
 
 }

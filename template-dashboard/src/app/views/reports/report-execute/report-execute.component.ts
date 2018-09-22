@@ -48,9 +48,10 @@ export class ReportExecuteComponent implements OnInit {
     console.log('error');
     console.log(error);
 
-    const modalRef = this.modalService.open(MessageComponent);
+    const modalRef = this.modalService.open(MessageComponent, { centered: true });
     modalRef.componentInstance.title = 'Alert!';
     modalRef.componentInstance.message = error.json().message;
     modalRef.componentInstance.details = error.json().details;
+
   }
 }

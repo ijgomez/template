@@ -14,16 +14,17 @@ import { StatusService } from '../../services/commons/status.service';
 import { QuestionControlService } from '../../services/commons/question-control.service';
 import { MessageComponent } from './modal/message/message.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { ConfirmComponent } from './modal/confirm/confirm.component';
 
 @NgModule({
   imports: [
     CommonModule, HttpModule, ReactiveFormsModule, NgbModule
   ],
   declarations: [BackButtonComponent, ServertimestampComponent,
-    DynamicFormComponent, DynamicFormQuestionComponent, ControlMessagesComponent, HeaderPageComponent, MessageComponent],
+    DynamicFormComponent, DynamicFormQuestionComponent, ControlMessagesComponent, HeaderPageComponent, MessageComponent, ConfirmComponent],
   exports: [BackButtonComponent, ServertimestampComponent, DynamicFormComponent, DynamicFormQuestionComponent,
-    ControlMessagesComponent, HeaderPageComponent, MessageComponent],
+    ControlMessagesComponent, HeaderPageComponent, MessageComponent, ConfirmComponent],
   providers: [StatusService, QuestionControlService],
-  entryComponents: [MessageComponent]
+  entryComponents: [MessageComponent, ConfirmComponent]
 })
 export class ComponentsModule { }
