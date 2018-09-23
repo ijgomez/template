@@ -1,12 +1,17 @@
-<p>
-  reports-list works!
-</p>
-<button type="button" (click)="reload()">Reload</button>
-<button type="button" routerLink="create">Add</button>
-<button type="button" (click)="edit()" [disabled]="!isSelectedItem()">Edit</button>
-<button type="button" (click)="delete()" [disabled]="!isSelectedItem()">Delete</button>
-<button type="button" (click)="export()">Export</button>
 <br/>
+<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+  <div class="btn-group mr-2 btn-group-sm" role="group" aria-label="First group">
+    <button type="button" class="btn btn-secondary" (click)="reload()">Reload</button>
+  </div>
+  <div class="btn-group mr-2 btn-group-sm" role="group" aria-label="Second group">
+    <button type="button" class="btn btn-secondary" routerLink="create"><i class="fa fa-fw fa-plus-square"></i>&nbsp;Add</button>
+    <button type="button" class="btn btn-secondary" (click)="edit()" [disabled]="!isSelectedItem()"><i class="fa fa-fw fa-edit"></i>&nbsp;Edit</button>
+    <button type="button" class="btn btn-secondary" (click)="delete()" [disabled]="!isSelectedItem()"><i class="fa fa-fw fa-minus-square"></i>&nbsp;Delete</button>
+  </div>
+  <div class="btn-group btn-group-sm" role="group" aria-label="Third group">
+    <button type="button" class="btn btn-secondary" (click)="export()"><i class="fa fa-fw fa-file-export"></i>&nbsp;Export</button>
+  </div>
+</div>
 <br/>
 <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-hover table-bordered" style="width:100%">
   <thead>

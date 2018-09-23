@@ -98,18 +98,13 @@ export class ReportsService extends TemplateService {
     );
   }
 
-  export(criteria: ReportCriteria, filename: String): Observable<any> {
+  export(criteria: ReportCriteria): Observable<any> {
     const options = new RequestOptions({
       responseType: ResponseContentType.Blob
     });
 
     return this.http.get(this.url + '/export', options).pipe(
-      map((response: Response) => {
-        return {
-          filename: filename,
-          data: response.blob()
-        };
-      }),
+      map((response: Response) => response),
       catchError(this.handleError)
     );
   }

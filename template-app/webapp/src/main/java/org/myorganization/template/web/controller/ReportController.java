@@ -1,9 +1,14 @@
 package org.myorganization.template.web.controller;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.myorganization.template.core.domain.reports.Report;
 import org.myorganization.template.core.domain.reports.ReportCriteria;
@@ -15,10 +20,7 @@ import org.myorganization.template.web.domain.datatables.criteria.DataTablesCrit
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -189,20 +191,20 @@ public class ReportController {
 	}
 	
 	@GetMapping("/export")
-	public ResponseEntity<Resource> export() throws Exception {
-		ByteArrayResource resource;
+	public void  export(HttpServletResponse response) throws Exception {
+		LOGGER.info("export");
 		
 		List<Report> data = this.reportManager.getReportService().findByCriteria(new ReportCriteria());
-		byte[] csv = FileHelper.toCsvByteArray(data);
-		resource = new ByteArrayResource(csv);
-
-		HttpHeaders headers = new HttpHeaders();
-		headers.add("Content-disposition", "attachment;filename=export-" + System.currentTimeMillis() + ".csv");
-		headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
-		headers.add("Pragma", "no-cache");
-		headers.add("Expires", "0");
-
-		return ResponseEntity.ok().headers(headers).contentLength(csv.length).contentType(MediaType.parseMediaType("txt/csv")).body(resource);
+		
+		response.addHeader("Content-disposition", "attachment;filename=export_" + System.currentTimeMillis() + ".csv");
+		response.addHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+		response.addHeader("Pragma", "no-cache");
+		response.addHeader("Expires", "0");
+		response.setContentType("application/vnd.ms-excel");
+		try (InputStream is = new ByteArrayInputStream(FileHelper.toCsvByteArray(data))) {
+			IOUtils.copy(is, response.getOutputStream());
+		}
+		response.flushBuffer();
 	}
 	
 	@PostMapping("/{id}/execute")

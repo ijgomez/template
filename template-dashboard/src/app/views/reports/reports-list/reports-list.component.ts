@@ -8,6 +8,7 @@ import { ReportCriteria } from '../../../domain/reports/report-criteria';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmComponent } from '../../components/modal/confirm/confirm.component';
 import { MessageComponent } from '../../components/modal/message/message.component';
+import { saveAs } from 'file-saver/FileSaver';
 
 @Component({
   selector: 'app-reports-list',
@@ -123,25 +124,16 @@ export class ReportsListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   export(): void {
-    this.reportsService.export(new ReportCriteria(), 'filename.csv').subscribe(
+    this.reportsService.export(new ReportCriteria()).subscribe(
       response => {
-        console.log('start download:', response);
-        var url = window.URL.createObjectURL(response.data);
-        var a = document.createElement('a');
-        document.body.appendChild(a);
-        a.setAttribute('style', 'display: none');
-        a.href = url;
-        a.download = response.filename;
-        a.click();
-        window.URL.revokeObjectURL(url);
-        a.remove(); // remove the element
+         // get the response as blob, rename the file, and save  it
+      const blob = response.blob();
+      const file = new Blob([blob], {});
+      const filename = 'export-' + Date.now() + '.csv';
+      saveAs(file, filename);
       },
       error => {
         this.showError(error);
-        //console.log('download error:', JSON.stringify(error));
-      }, 
-      () => {
-        console.log('Completed file download.')
       }
     );
   }
