@@ -3,6 +3,7 @@ package org.myorganization.template.reports.jasper;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
@@ -116,8 +118,8 @@ public class JRReportExecutor implements ReportExecutor {
 	}
 
 	@Override
-	public void execute(Report report, Map<String, Object> parameters, Connection connection) throws ReportException {
-		JasperDesign jasperDesign;
+	public void execute(Report report, Map<String, Object> parameters, Connection connection, OutputStream outputStream) throws ReportException {
+//		JasperDesign jasperDesign;
 		JasperReport jasperReport;
 		JasperPrint jasperPrint;		
 		byte[] decode64;
@@ -135,7 +137,8 @@ public class JRReportExecutor implements ReportExecutor {
 				jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, connection);
 				
 				log.debug("generating report...");
-				//JasperExportManager
+				JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);
+				log.debug("... end of exportReportToXmlStream");
 			}
 			
 		} catch (JRException | IOException e) {

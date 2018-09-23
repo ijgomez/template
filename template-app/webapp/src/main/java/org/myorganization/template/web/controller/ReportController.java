@@ -20,7 +20,6 @@ import org.myorganization.template.web.domain.datatables.criteria.DataTablesCrit
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -208,11 +207,11 @@ public class ReportController {
 	}
 	
 	@PostMapping("/{id}/execute")
-	public ResponseEntity<Resource> execute(@PathVariable("id") Long id, @RequestBody Object params) throws Exception {
+	public void execute(@PathVariable("id") Long id, @RequestBody Object params, HttpServletResponse response) throws Exception {
 		LOGGER.info("execute: {} {}", id, params);
-		this.reportManager.execute(id);
-		
-		return null;
+		this.reportManager.execute(id, response.getOutputStream());
+		response.flushBuffer();
+		//return null;
 	}
 
 }

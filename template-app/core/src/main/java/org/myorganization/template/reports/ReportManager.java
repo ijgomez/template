@@ -1,5 +1,6 @@
 package org.myorganization.template.reports;
 
+import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
@@ -56,7 +57,7 @@ public class ReportManager {
 		return new JRReportExecutor();
 	}
 
-	public void execute(Long id) throws ReportException {
+	public void execute(Long id, OutputStream outputStream) throws ReportException {
 		try {
 			ReportExecutor executor;
 			Optional<Report> optional;
@@ -67,7 +68,7 @@ public class ReportManager {
 				if (report.getArchive() != null ) {
 					executor = this.createExecutor(report);
 					// TODO Auto-generated method stub
-					executor.execute(report, null, this.dataSource.getConnection());
+					executor.execute(report, null, this.dataSource.getConnection(), outputStream);
 				} else {
 					//TODO Archive Not Found Exception....
 				}

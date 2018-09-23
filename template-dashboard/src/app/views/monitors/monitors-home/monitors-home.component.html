@@ -1,4 +1,8 @@
 <app-header-page [heading]="'Monitors'" [icon]="'fa-desktop'"></app-header-page>
-
-<a routerLink="process">Process Background</a>
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link" routerLink="process" routerLinkActive="active">Process Background</a>
+    </li>
+</ul>
+<br/>
 <router-outlet></router-outlet>
