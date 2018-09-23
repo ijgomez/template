@@ -56,7 +56,8 @@ export class ReportsListComponent implements OnInit, AfterViewInit, OnDestroy {
             recordsFiltered: response.recordsFiltered,
             data: []
           });
-        });
+        }, 
+        error => this.showError(error));
       }  
     };
   } 

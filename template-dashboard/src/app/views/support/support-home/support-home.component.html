@@ -1,6 +1,14 @@
 <app-header-page [heading]="'Support'" [icon]="'fa-wrench'"></app-header-page>
-
-<a routerLink="traces">Traces</a>
-<a routerLink="properties">Properties</a>
-<a routerLink="cluster">Cluster</a>
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link" routerLink="traces" routerLinkActive="active">Traces</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" routerLink="properties" routerLinkActive="active">Properties</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" routerLink="cluster" routerLinkActive="active">Cluster</a>
+    </li>
+</ul>
+<br/>
 <router-outlet></router-outlet>

@@ -1,6 +1,14 @@
 <app-header-page [heading]="'Security'" [icon]="'fa-lock'"></app-header-page>
-
-<a routerLink="users">Users</a>
-<a routerLink="profiles">Profiles</a>
-<a routerLink="actions">Actions</a>
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link" routerLink="users" routerLinkActive="active">Users</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" routerLink="profiles" routerLinkActive="active">Profiles</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" routerLink="actions" routerLinkActive="active">Actions</a>
+    </li>
+</ul>
+<br/>
 <router-outlet></router-outlet>
