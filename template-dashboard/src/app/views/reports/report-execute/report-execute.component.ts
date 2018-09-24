@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { MessageComponent } from '../../components/modal/message/message.component';
 import { saveAs } from 'file-saver/FileSaver';
+import { Report } from '../../../domain/reports/report';
 
 @Component({
   selector: 'app-report-execute',
@@ -16,6 +17,8 @@ export class ReportExecuteComponent implements OnInit {
 
   payLoad = '';
 
+  reportName: String;
+
   constructor(
     private activeRoute: ActivatedRoute,
     private reportsService: ReportsService,
@@ -24,6 +27,9 @@ export class ReportExecuteComponent implements OnInit {
 
   ngOnInit() {
     const id = this.activeRoute.snapshot.params['id'];
+    this.reportsService.read(id).subscribe(result => {
+      this.reportName = result.name;
+    });
     this.reportsService.readReportParams(id).subscribe(result => {
       this.questions = result;
     });
