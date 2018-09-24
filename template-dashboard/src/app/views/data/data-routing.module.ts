@@ -6,8 +6,8 @@ import { RequestExecutorComponent } from './request-executor/request-executor.co
 
 const routes: Routes = [
     { path: '', component: DataHomeComponent, children: [
-        { path: '', component: RequestExecutorComponent},
-        { path: 'execute', pathMatch: 'full', redirectTo: ''},
+        { path: '', pathMatch: 'full', redirectTo: 'execute'},
+        { path: 'execute', component: RequestExecutorComponent},
         { path: 'scripts', component: ScriptListComponent}
       ] }
 ];

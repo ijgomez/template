@@ -37,8 +37,10 @@ export class ReportExecuteComponent implements OnInit {
         console.log('start download:', response);
         const blob = response.blob();
         const file = new Blob([blob], {});
-        const filename = 'export-' + Date.now() + '.pdf';
+        const filename = 'report-' + Date.now() + '.pdf';
         saveAs(file, filename);
+        //var url= window.URL.createObjectURL(blob);
+        //window.open(url);
       },
       error => {
         this.showError(error);
