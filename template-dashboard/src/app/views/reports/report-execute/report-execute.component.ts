@@ -3,6 +3,7 @@ import { ReportsService } from '../../../services/reports/reports.service';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { MessageComponent } from '../../components/modal/message/message.component';
+import { saveAs } from 'file-saver/FileSaver';
 
 @Component({
   selector: 'app-report-execute',
@@ -34,6 +35,10 @@ export class ReportExecuteComponent implements OnInit {
     this.reportsService.execute(id, this.payLoad).subscribe(
       response => {
         console.log('start download:', response);
+        const blob = response.blob();
+        const file = new Blob([blob], {});
+        const filename = 'export-' + Date.now() + '.pdf';
+        saveAs(file, filename);
       },
       error => {
         this.showError(error);

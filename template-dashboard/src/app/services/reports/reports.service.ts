@@ -121,6 +121,7 @@ export class ReportsService extends TemplateService {
     );
   }
 
+  /*
   execute(id: number | string, params: any): Observable<any> {
 
     const options = new RequestOptions({ headers: this.headers});
@@ -133,9 +134,20 @@ export class ReportsService extends TemplateService {
         };
       }),
       catchError(error => throwError(error))
-      // catchError(this.handleError)
     );
   }
+  */
+ execute(id: number | string, params: any): Observable<any> {
+  const options = new RequestOptions({
+    headers: this.headers,
+    responseType: ResponseContentType.Blob
+  });
+
+  return this.http.post(`${this.url}/${id}/execute`, params, options).pipe(
+    map((response: Response) => response),
+    catchError(this.handleError)
+  );
+}
 
 }
 
