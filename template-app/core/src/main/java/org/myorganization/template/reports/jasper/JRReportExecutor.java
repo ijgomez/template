@@ -11,6 +11,7 @@ import java.util.Map;
 
 import org.myorganization.template.core.domain.reports.Report;
 import org.myorganization.template.core.domain.reports.ReportParam;
+import org.myorganization.template.core.domain.reports.ReportParamOption;
 import org.myorganization.template.core.helper.FileHelper;
 import org.myorganization.template.reports.ReportExecutor;
 import org.myorganization.template.reports.exceptions.ReportException;
@@ -33,11 +34,26 @@ public class JRReportExecutor implements ReportExecutor {
 	@Override
 	public List<ReportParam> readParams(Report report) throws ReportException {
 		List<ReportParam> params;
-		
+		ReportParam param;
 		byte[] decode64;
 		int numParam = 0;
 		
 		params = new ArrayList<>();
+		
+		param = new ReportParam();
+		param.setType("SELECT");
+		param.setKey("exporttype");
+		param.setLabel("Export Type");
+		param.setOptions(new ArrayList<>());
+		param.getOptions().add(new ReportParamOption("pdf", "PDF"));
+		param.getOptions().add(new ReportParamOption("excel", "Excel"));
+		param.getOptions().add(new ReportParamOption("html", "HTML"));
+//		param.getOptions().add(new ReportParamOption("option4", "Option 4"));
+		param.setOrder(1);
+		
+		params.add(param);
+		
+		
 		try {
 			JasperDesign jasperDesign;
 			JRParameter[] parameters;
@@ -45,6 +61,7 @@ public class JRReportExecutor implements ReportExecutor {
 			decode64 = FileHelper.decode64(report.getArchive().getValue());
 			log.debug("decode64 - " + decode64.length);
 
+			numParam = params.size();
 			try (InputStream is = new ByteArrayInputStream(decode64)) {
 				log.debug("read jasperreport descriptor...");
 				jasperDesign = JRXmlLoader.load(is);
@@ -76,17 +93,7 @@ public class JRReportExecutor implements ReportExecutor {
 		
 //		ReportParam param = new ReportParam();
 //		
-//		param.setType("SELECT");
-//		param.setKey("reportParam3");
-//		param.setLabel("Parameter 3");
-//		param.setOptions(new ArrayList<>());
-//		param.getOptions().add(new ReportParamOption("option1", "Option 1"));
-//		param.getOptions().add(new ReportParamOption("option2", "Option 2"));
-//		param.getOptions().add(new ReportParamOption("option3", "Option 3"));
-//		param.getOptions().add(new ReportParamOption("option4", "Option 4"));
-//		param.setOrder(3L);
-//		
-//		params.add(param);
+
 //		
 //		param = new ReportParam();
 //		param.setType("INPUT");

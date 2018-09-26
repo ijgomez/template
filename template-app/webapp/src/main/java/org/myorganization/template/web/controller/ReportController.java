@@ -209,6 +209,12 @@ public class ReportController {
 	@PostMapping("/{id}/execute")
 	public void execute(@PathVariable("id") Long id, @RequestBody Object params, HttpServletResponse response) throws Exception {
 		LOGGER.info("execute: {} {}", id, params);
+		
+		response.addHeader("Content-disposition", "attachment;filename=report_" + System.currentTimeMillis() + ".pdf");
+		response.addHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+		response.addHeader("Pragma", "no-cache");
+		response.addHeader("Expires", "0");
+		response.setContentType("application/pdf");
 		this.reportManager.execute(id, response.getOutputStream());
 		response.flushBuffer();
 		//return null;

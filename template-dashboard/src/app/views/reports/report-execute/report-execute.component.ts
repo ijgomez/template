@@ -3,6 +3,8 @@ import { ReportsService } from '../../../services/reports/reports.service';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { MessageComponent } from '../../components/modal/message/message.component';
+import { saveAs } from 'file-saver/FileSaver';
+import { Report } from '../../../domain/reports/report';
 
 @Component({
   selector: 'app-report-execute',
@@ -15,6 +17,8 @@ export class ReportExecuteComponent implements OnInit {
 
   payLoad = '';
 
+  reportName: String;
+
   constructor(
     private activeRoute: ActivatedRoute,
     private reportsService: ReportsService,
@@ -23,6 +27,9 @@ export class ReportExecuteComponent implements OnInit {
 
   ngOnInit() {
     const id = this.activeRoute.snapshot.params['id'];
+    this.reportsService.read(id).subscribe(result => {
+      this.reportName = result.name;
+    });
     this.reportsService.readReportParams(id).subscribe(result => {
       this.questions = result;
     });
@@ -34,6 +41,12 @@ export class ReportExecuteComponent implements OnInit {
     this.reportsService.execute(id, this.payLoad).subscribe(
       response => {
         console.log('start download:', response);
+        const blob = response.blob();
+        const file = new Blob([blob], {});
+        const filename = 'report-' + Date.now() + '.pdf';
+        saveAs(file, filename);
+        //var url= window.URL.createObjectURL(blob);
+        //window.open(url);
       },
       error => {
         this.showError(error);

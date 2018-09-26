@@ -1,36 +1,43 @@
-<p>
-  report works!
-</p>
-<div class="row">
-  <div class="col-lg-8">
-    <form role="form" [formGroup]="reportForm" (ngSubmit)="onSubmit()">
-      <fieldset class="form-group">
-        <label for="name">Name:</label>
-        <input type="text" id="name" formControlName="name" class="form-control"/>
-        <app-control-messages [control]="formControls.name"></app-control-messages>
-      </fieldset>
-      <fieldset class="form-group">
-        <label for="description">Description:</label>
-        <textarea id="description" formControlName="description" class="form-control" rows="3"></textarea>
-        <app-control-messages [control]="formControls.description"></app-control-messages>
-      </fieldset>
-      <fieldset class="form-group">
-        <label for="archive">Archive:</label>
-        <!--
-        <input type="file" class="form-control" (change)="onFileChange($event)"/>
-        -->
-        <div class="custom-file">
-          <input type="file" id="archive" class="custom-file-input" (change)="onFileChange($event)">
-          <label class="custom-file-label" for="archive">Choose file</label>
-        </div>
-        <button *ngIf="reportForm.value.archive" type="button" class="btn btn-secondary" (click)="download()">download</button>
-        <app-control-messages [control]="formControls.archive"></app-control-messages>
-      </fieldset>
-      <fieldset class="form-group">
-        <button type="submit" [disabled]="reportForm.invalid" class="btn btn-secondary">save</button>
-        &nbsp;
-        <app-back-button></app-back-button>
-      </fieldset>
-    </form>
-  </div>
+<div class="card">
+    <h5 class="card-header">Report</h5>
+    <div class="card-body">
+
+        <div class="row">
+            <div class="col-lg-8">
+              <form role="form" [formGroup]="reportForm" (ngSubmit)="onSubmit()">
+                <fieldset class="form-group">
+                  <label for="name">Name:</label>
+                  <input type="text" id="name" formControlName="name" class="form-control"/>
+                  <app-control-messages [control]="formControls.name"></app-control-messages>
+                </fieldset>
+                <fieldset class="form-group">
+                  <label for="description">Description:</label>
+                  <textarea id="description" formControlName="description" class="form-control" rows="3"></textarea>
+                  <app-control-messages [control]="formControls.description"></app-control-messages>
+                </fieldset>
+                <fieldset class="form-group">
+                  <label for="archive">Archive:</label>
+                  <!--
+                  <input type="file" class="form-control" (change)="onFileChange($event)"/>
+                  -->
+                  <div class="custom-file">
+                    <input type="file" id="archive" class="custom-file-input" (change)="onFileChange($event)">
+                    <label class="custom-file-label" for="archive">Choose file</label>
+                  </div>
+                  <button *ngIf="reportForm.value.archive" type="button" class="btn btn-secondary" (click)="download()">download</button>
+                  <app-control-messages [control]="formControls.archive"></app-control-messages>
+                </fieldset>
+                <fieldset class="form-group">
+                  <button type="submit" [disabled]="reportForm.invalid" class="btn btn-secondary">save</button>
+                  &nbsp;
+                  <app-back-button></app-back-button>
+                </fieldset>
+              </form>
+            </div>
+          </div>
+
+
+    </div>
 </div>
+
+
