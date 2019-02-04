@@ -28,6 +28,5 @@ public class PropertyRepositoryQueriesImpl extends RepositoryQueriesBase<Propert
 
 		}
 		return predicates;
-	}
-	
+	}	
 }

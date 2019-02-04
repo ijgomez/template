@@ -1,4 +1,5 @@
 import { Entity } from '../base/entity';
+import { Archive } from '../archive/archive';
 
 export class Report implements Entity {
 
@@ -10,6 +11,6 @@ export class Report implements Entity {
 
     format: string;
 
-    archive: any;
+    archive: Archive;
 
 }

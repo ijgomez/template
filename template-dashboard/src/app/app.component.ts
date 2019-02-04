@@ -1,10 +1,21 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
+import { MenuComponent } from './views/layout/menu/menu.component';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'template-dashboard';
+
+  collapedSideBar: boolean;
+
+  @ViewChild(MenuComponent) child: MenuComponent;
+
+  constructor() { }
+
+  receiveCollapsed($event) {
+    this.collapedSideBar = $event;
+    this.child.toggleCollapsed();
+  }
 }

@@ -5,7 +5,7 @@ import { TraceCriteria } from '../../../../domain/support/trace-criteria';
 @Component({
   selector: 'app-traces-list',
   templateUrl: './traces-list.component.html',
-  styleUrls: ['./traces-list.component.css']
+  styleUrls: ['./traces-list.component.scss']
 })
 export class TracesListComponent implements OnInit {
 
@@ -22,5 +22,9 @@ export class TracesListComponent implements OnInit {
       result => { this.data = result; },
       error => { console.error(error); }
     );
+  }
+
+  reload(): void {
+    this.loadData();
   }
 }

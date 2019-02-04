@@ -5,11 +5,14 @@ import { ActivatedRoute } from '@angular/router';
 import { Report } from '../../../domain/reports/report';
 import { Location } from '@angular/common';
 import { Observable } from 'rxjs';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ConfirmComponent } from '../../components/modal/confirm/confirm.component';
+import { MessageComponent } from '../../components/modal/message/message.component';
 
 @Component({
   selector: 'app-report',
   templateUrl: './report.component.html',
-  styleUrls: ['./report.component.css']
+  styleUrls: ['./report.component.scss']
 })
 export class ReportComponent implements OnInit {
 
@@ -20,6 +23,7 @@ export class ReportComponent implements OnInit {
     private formBuilder: FormBuilder,
     private cd: ChangeDetectorRef,
     private location: Location,
+    private modalService: NgbModal,
     private reportsService: ReportsService
   ) { }
 
@@ -34,9 +38,12 @@ export class ReportComponent implements OnInit {
     this.reportForm = this.formBuilder.group({
       name: ['', [Validators.required, Validators.minLength(5)]],
       description: ['', Validators.required],
-      archive: null
+      archive: ['',[Validators.required]]
     });
   }
+
+   // convenience getter for easy access to form fields
+   get formControls() { return this.reportForm.controls; }
 
   isEdit(): Boolean {
     const id = this.activeRoute.snapshot.params['id'];
@@ -45,11 +52,12 @@ export class ReportComponent implements OnInit {
 
   loadData() {
     const id = this.activeRoute.snapshot.params['id'];
-    this.reportsService.read(id).subscribe(r => {
+    this.reportsService.read(id).subscribe(report => {
+      console.log(report);
       this.reportForm.setValue({
-        name: r.name,
-        description: r.description,
-        archive: null // TODO Pendiente de cargar el fichero.
+        name: report.name,
+        description: report.description,
+        archive: report.archive // TODO Pendiente de cargar el fichero.
       });
     });
   }
@@ -66,8 +74,15 @@ export class ReportComponent implements OnInit {
     }
     result.subscribe(
       response => {
-        console.log(response);
-        this.location.back();
+        const modalRef = this.modalService.open(MessageComponent, { centered: true });
+        modalRef.componentInstance.title = 'Info';
+        modalRef.componentInstance.message = response;
+        modalRef.result.then(
+          (re) => { 
+            this.location.back();
+          },
+          (reason) => {console.log(reason) }
+        );
       },
       error => { console.error(error); }
     );
@@ -84,18 +99,17 @@ export class ReportComponent implements OnInit {
         this.reportForm.get('archive').setValue({
           filename: file.name,
           filetype: file.type,
-          value: reader.result.toString().split(',')[1]
-          // file.size
+          value: reader.result.toString().split(',')[1],
+          size: file.size 
         });
-        /*
-        this.reportForm.patchValue({
-          file: reader.result
-        });
-        */
 
         // need to run CD since file load runs outside of zone
         this.cd.markForCheck();
       };
     }
+  }
+
+  download() {
+    // TODO Pending
   }
 }

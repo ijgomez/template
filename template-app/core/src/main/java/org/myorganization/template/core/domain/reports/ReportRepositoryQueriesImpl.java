@@ -9,6 +9,7 @@ import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang3.StringUtils;
 import org.myorganization.template.core.domain.base.RepositoryQueriesBase;
+import org.myorganization.template.core.domain.base.RepositoryQueriesHelper;
 
 public class ReportRepositoryQueriesImpl extends RepositoryQueriesBase<Report, ReportCriteria> implements ReportRepositoryQueries {
 	
@@ -23,11 +24,11 @@ public class ReportRepositoryQueriesImpl extends RepositoryQueriesBase<Report, R
 			}
 			
 			if (!StringUtils.isEmpty(criteria.getName())) {
-				predicates.add(builder.like(root.get(Report_.name), criteria.getName()));
+				predicates.add(builder.like(root.get(Report_.name), RepositoryQueriesHelper.wildcard(criteria.getName())));
 			}
 			
 			if (!StringUtils.isEmpty(criteria.getDescription())) {
-				predicates.add(builder.like(root.get(Report_.description), criteria.getDescription()));
+				predicates.add(builder.like(root.get(Report_.description), RepositoryQueriesHelper.wildcard(criteria.getDescription())));
 			}
 		}
 		return predicates;

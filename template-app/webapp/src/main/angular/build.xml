@@ -1,0 +1,31 @@
+<project name="Angular Tasks Build Script" default="dist">
+
+	<!-- load enviorement properties -->
+	<property environment="env"/>
+	
+	<!-- load previously defined configuration properties file 
+	<property file="src/main/angular/build.properties" />
+	-->
+	
+	<target name="prepare">
+		<echo message="BASE_DIR: ${basedir}" />
+		<echo message="ANGULAR_APP_HOME: ${ANGULAR_APP_HOME}" />
+		<echo message="CONTEXT_ROOT: ${CONTEXT_ROOT}" />
+	</target>
+
+	<target name="clean" depends="prepare">
+
+	</target>
+
+	<target name="compile" depends="clean" description="compile dashboard">
+
+	</target>
+
+	<target name="dist" depends="compile" description="distribution">
+		<mkdir dir="target/${CONTEXT_ROOT}/dashboard" />
+		<copy todir="target/${CONTEXT_ROOT}/dashboard">
+			<fileset dir="${ANGULAR_APP_HOME}/dist/template-dashboard" includes="**/*.*" />
+		</copy>
+	</target>
+
+</project>

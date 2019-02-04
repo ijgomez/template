@@ -1,20 +1,25 @@
 package org.myorganization.template.web.controller;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.myorganization.template.core.domain.reports.Report;
 import org.myorganization.template.core.domain.reports.ReportCriteria;
+import org.myorganization.template.core.domain.reports.ReportParam;
 import org.myorganization.template.core.helper.FileHelper;
-import org.myorganization.template.core.services.reports.ReportService;
+import org.myorganization.template.reports.ReportManager;
+import org.myorganization.template.web.domain.datatables.DataTablesResponse;
+import org.myorganization.template.web.domain.datatables.criteria.DataTablesCriteria;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,7 +43,7 @@ public class ReportController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ReportController.class);
 	
 	@Autowired
-	private ReportService reportService;
+	private ReportManager reportManager;
 
 	/**
 	 * List all Reports.
@@ -46,7 +51,7 @@ public class ReportController {
 	 */
 	@GetMapping
 	public ResponseEntity<List<Report>> findAll() {
-		List<Report> reports = reportService.findAll();
+		List<Report> reports = reportManager.getReportService().findAll();
 		if (reports.isEmpty()) {
 			return ResponseEntity.noContent().build();
 		}
@@ -60,9 +65,9 @@ public class ReportController {
 	@PostMapping("/search")
 	public ResponseEntity<List<Report>> findByCriteria(@RequestBody ReportCriteria criteria) {
 		
-		LOGGER.info("find by criteria: " + criteria);
+		LOGGER.info("find by criteria: {}", criteria);
 		
-		List<Report> reports = reportService.findByCriteria(criteria);
+		List<Report> reports = reportManager.getReportService().findByCriteria(criteria);
 		if (reports.isEmpty()) {
 			return ResponseEntity.noContent().build();
 		}
@@ -72,11 +77,40 @@ public class ReportController {
 	@PostMapping("/count")
 	public ResponseEntity<Long> countByCriteria(@RequestBody ReportCriteria criteria) {
 		
-		LOGGER.info("find by criteria: " + criteria);
+		LOGGER.info("count by criteria: {}", criteria);
 		
-		Long records = reportService.countByCriteria(criteria);
+		Long records = reportManager.getReportService().countByCriteria(criteria);
 
 		return ResponseEntity.ok(records);
+	}
+	
+	@PostMapping("/datatables")
+	public ResponseEntity<DataTablesResponse<Report>> datatables(@RequestBody DataTablesCriteria dtCriteria) {
+		DataTablesResponse<Report> response;
+		ReportCriteria reportCriteria;
+
+		LOGGER.info("datatables: {}", dtCriteria );
+		
+		reportCriteria = new ReportCriteria();
+		if (StringUtils.isNotEmpty(dtCriteria.getSearch().getValue())) {
+			reportCriteria.setDescription(dtCriteria.getSearch().getValue());
+		}
+		reportCriteria.setPageNumber(dtCriteria.getStart());
+		reportCriteria.setPageSize(dtCriteria.getLength());
+		reportCriteria.setSortField(dtCriteria.getColumns()[dtCriteria.getOrder()[0].getColumn()].getName());
+		reportCriteria.setSortOrder(dtCriteria.getOrder()[0].getDir());
+		
+		
+		List<Report> reports = reportManager.getReportService().findByCriteria(reportCriteria);
+		Long count = reportManager.getReportService().countByCriteria(reportCriteria);
+
+		response = new DataTablesResponse<Report>();
+		response.setData(reports);
+		response.setDraw(dtCriteria.getDraw());
+		response.setRecordsFiltered(count.intValue());
+		response.setRecordsTotal(count.intValue());
+		
+		return ResponseEntity.ok(response);
 	}
 	
 	/**
@@ -86,7 +120,7 @@ public class ReportController {
 	 */
 	@PostMapping
 	public ResponseEntity<Report> create(@RequestBody Report report) {
-		report = this.reportService.create(report);
+		report = this.reportManager.getReportService().create(report);
 		
 		if (report == null) {
 			return ResponseEntity.noContent().build();
@@ -103,7 +137,7 @@ public class ReportController {
 	 */
 	@GetMapping("/{id}")
 	public ResponseEntity<Report> read(@PathVariable("id") Long id) {
-		Optional<Report> report = this.reportService.read(id);
+		Optional<Report> report = this.reportManager.getReportService().read(id);
 		if (report.isPresent()) {
 			return ResponseEntity.ok(report.get());
 		}
@@ -119,9 +153,9 @@ public class ReportController {
 	@PutMapping("/{id}")
 	public ResponseEntity<Report> update(@PathVariable Long id, @RequestBody Report report) {
 		
-		LOGGER.info("update {} - {}", id, report);
+		LOGGER.info("update: {}", report);
 		
-		report = this.reportService.update(id, report);
+		report = this.reportManager.getReportService().update(id, report);
 		if (null == report) {
 			return ResponseEntity.notFound().build();
 		}
@@ -137,28 +171,53 @@ public class ReportController {
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Long> delete(@PathVariable("id") Long id) {
 		
-		if (null == this.reportService.delete(id)) {
+		LOGGER.info("delete: {}", id);
+		
+		if (null == this.reportManager.getReportService().delete(id)) {
 			return ResponseEntity.notFound().build();
 		}
 
 		return ResponseEntity.ok(id);
 	}
 	
-	@GetMapping("/export")
-	public ResponseEntity<Resource> export() throws Exception {
-		ByteArrayResource resource;
+	@GetMapping("/{id}/params")
+	public ResponseEntity<List<ReportParam>> params(@PathVariable("id") Long id) throws Exception {
+		LOGGER.info("params: {}", id);
 		
-		List<Report> data = this.reportService.findByCriteria(new ReportCriteria());
-		byte[] csv = FileHelper.toCsvByteArray(data);
-		resource = new ByteArrayResource(csv);
-
-		HttpHeaders headers = new HttpHeaders();
-		headers.add("Content-disposition", "attachment;filename=export-" + System.currentTimeMillis() + ".csv");
-		headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
-		headers.add("Pragma", "no-cache");
-		headers.add("Expires", "0");
-
-		return ResponseEntity.ok().headers(headers).contentLength(csv.length).contentType(MediaType.parseMediaType("txt/csv")).body(resource);
+		List<ReportParam> params = this.reportManager.readParams(id);
+		
+		return ResponseEntity.ok(params);
+	}
+	
+	@GetMapping("/export")
+	public void  export(HttpServletResponse response) throws Exception {
+		LOGGER.info("export");
+		
+		List<Report> data = this.reportManager.getReportService().findByCriteria(new ReportCriteria());
+		
+		response.addHeader("Content-disposition", "attachment;filename=export_" + System.currentTimeMillis() + ".csv");
+		response.addHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+		response.addHeader("Pragma", "no-cache");
+		response.addHeader("Expires", "0");
+		response.setContentType("application/vnd.ms-excel");
+		try (InputStream is = new ByteArrayInputStream(FileHelper.toCsvByteArray(data))) {
+			IOUtils.copy(is, response.getOutputStream());
+		}
+		response.flushBuffer();
+	}
+	
+	@PostMapping("/{id}/execute")
+	public void execute(@PathVariable("id") Long id, @RequestBody Object params, HttpServletResponse response) throws Exception {
+		LOGGER.info("execute: {} {}", id, params);
+		
+		response.addHeader("Content-disposition", "attachment;filename=report_" + System.currentTimeMillis() + ".pdf");
+		response.addHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+		response.addHeader("Pragma", "no-cache");
+		response.addHeader("Expires", "0");
+		response.setContentType("application/pdf");
+		this.reportManager.execute(id, response.getOutputStream());
+		response.flushBuffer();
+		//return null;
 	}
 
 }

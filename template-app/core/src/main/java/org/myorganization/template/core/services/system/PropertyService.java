@@ -44,6 +44,11 @@ public class PropertyService implements TemplateService<Property, PropertyCriter
 		return this.propertyRepository.findById(id);
 	}
 	
+	@Transactional(readOnly = true)
+	public Long readNumericValue(String property) {
+		return Long.valueOf(this.propertyRepository.findByProperty(property).getValue());
+	}
+	
 	@Transactional
 	public Property update(Long id, Property property) {
 		Optional<Property> optional = this.read(id);

@@ -2,10 +2,15 @@ package org.myorganization.template.core.helper;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Base64;
 import java.util.List;
 
 public class FileHelper {
-
+	
+	public static byte[] decode64(String src) {
+		return Base64.getDecoder().decode(src);
+	}
+	
 	public static byte[] toCsvByteArray(List<?> objects) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 
 		Class<?> classType = objects.get(0).getClass();
@@ -30,7 +35,7 @@ public class FileHelper {
 			for (Method m : methods) {
 				if (m.getParameterTypes().length == 0) {
 					if (m.getName().startsWith("get") || m.getName().startsWith("is")) {
-						builder.append(m.invoke(object).toString()).append(',');
+						//builder.append(m.invoke(object).toString()).append(',');
 					}
 				}
 			}

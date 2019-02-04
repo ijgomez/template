@@ -10,7 +10,7 @@ import { Property } from '../../../../domain/support/property';
 @Component({
   selector: 'app-property',
   templateUrl: './property.component.html',
-  styleUrls: ['./property.component.css']
+  styleUrls: ['./property.component.scss']
 })
 export class PropertyComponent implements OnInit {
 

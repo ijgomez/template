@@ -1,7 +1,9 @@
 package org.myorganization.template.web.exceptions;
 
+import org.myorganization.template.reports.exceptions.ReportException;
 import org.myorganization.template.web.domain.MessageResponse;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -33,5 +35,24 @@ public class AppResponseEntityExceptionHandler  {
 
 		return ResponseEntity.badRequest().body(m);
     }
+	
+	@ExceptionHandler({ InvalidDataAccessApiUsageException.class })
+    public ResponseEntity<MessageResponse> handleBadRequest(final InvalidDataAccessApiUsageException ex, final WebRequest request) {
+		
+		MessageResponse m = new MessageResponse();
+		m.setMessage(ex.getMessage());
+
+		return ResponseEntity.badRequest().body(m);
+    }
+	
+	@ExceptionHandler({ ReportException.class })
+	public ResponseEntity<MessageResponse> handleReportRequest(final ReportException ex, final WebRequest request) {
+		MessageResponse m = new MessageResponse();
+		m.setMessage(ex.getMessage());
+		if (ex.getCause() != null) {
+			m.setDetails(ex.getCause().getCause().getMessage());
+		}
+		return ResponseEntity.badRequest().body(m);
+	}
 
 }

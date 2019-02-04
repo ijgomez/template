@@ -1,16 +1,23 @@
+<!--
 <p>
   dynamic-form works!
 </p>
-<div>
-  <form (ngSubmit)="onSubmit()" [formGroup]="form">
+-->
+<div class="row">
+  <div class="col-lg-8">
+    <form role="form" [formGroup]="form" (ngSubmit)="onSubmit()">
 
-    <div *ngFor="let question of questions" class="form-row">
-      <app-dynamic-form-question [question]="question" [form]="form"></app-dynamic-form-question>
-    </div>
+          <div *ngFor="let question of questions" class="form-row">
+            <app-dynamic-form-question [question]="question" [form]="form"></app-dynamic-form-question>
+          </div>
+      
+          <br/>
 
-    <div class="form-row">
-      <button type="submit" [disabled]="!form.valid">execute</button>
-      <app-back-button></app-back-button>
-    </div>
-  </form>
+      <fieldset class="form-group">
+        <button type="submit" [disabled]="!form.valid" class="btn btn-secondary">execute</button>
+        &nbsp;
+        <app-back-button></app-back-button>
+      </fieldset>
+    </form>
+  </div>
 </div>

@@ -1,13 +1,16 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { Http, Response, RequestOptions, Headers, RequestMethod } from '@angular/http';
-import { Observable } from 'rxjs';
+import { Http, Response, RequestOptions, Headers, RequestMethod, ResponseContentType } from '@angular/http';
+import { Observable, forkJoin, throwError } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { TemplateService } from '../base/template-service';
 import { Report } from '../../domain/reports/report';
 import { ReportCriteria } from '../../domain/reports/report-criteria';
 import { DropdownQuestion } from '../../views/components/forms/questions/question-dropdown';
 import { TextboxQuestion } from '../../views/components/forms/questions/question-textbox';
+import { DataTablesResponse } from '../../domain/datatables/data-tables-response';
+import { ReportParam } from '../../domain/reports/report-param';
+import { QuestionFactory } from '../../views/components/forms/questions/question-factory';
 
 @Injectable()
 export class ReportsService extends TemplateService {
@@ -16,7 +19,7 @@ export class ReportsService extends TemplateService {
 
   private headers = new Headers({'Content-type': 'application/json'});
 
-  constructor(private http: Http) {
+  constructor(private http: Http, private questionFactory: QuestionFactory) {
     super();
    }
 
@@ -35,6 +38,17 @@ export class ReportsService extends TemplateService {
     const options = new RequestOptions({ headers: this.headers});
 
     return this.http.post(this.url + '/count', criteria, options).pipe(
+      map((response: Response) => {
+        return response.json();
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  table(dataTablesParameters: any): Observable<DataTablesResponse> {
+    const options = new RequestOptions({ headers: this.headers});
+
+    return this.http.post(this.url + '/datatables', dataTablesParameters, options).pipe(
       map((response: Response) => {
         return response.json();
       }),
@@ -84,48 +98,58 @@ export class ReportsService extends TemplateService {
     );
   }
 
-  export(criteria: ReportCriteria): Observable<Response> {
-    const options = new RequestOptions({});
+  export(criteria: ReportCriteria): Observable<any> {
+    const options = new RequestOptions({
+      responseType: ResponseContentType.Blob
+    });
 
     return this.http.get(this.url + '/export', options).pipe(
+      map((response: Response) => response),
+      catchError(this.handleError)
+    );
+  }
+
+  readReportParams(id: number | string): Observable<any> {
+
+    const options = new RequestOptions({ headers: this.headers});
+
+    return this.http.get(`${this.url}/${id}/params`, options).pipe(
       map((response: Response) => {
-        return response;
+        return this.questionFactory.build(response.json());
       }),
       catchError(this.handleError)
     );
   }
 
-  readReportParams(id: number | string): any {
-    const questions = [
-      new DropdownQuestion({
-        key: 'reportParam3',
-        label: 'Parameter 3',
-        options: [
-          {key: 'option1', value: 'Option 1'},
-          {key: 'option2', value: 'Option 2'},
-          {key: 'option3', value: 'Option 3'},
-          {key: 'option4', value: 'Option 4'}
-        ],
-        order: 3
+  /*
+  execute(id: number | string, params: any): Observable<any> {
+
+    const options = new RequestOptions({ headers: this.headers});
+
+    return this.http.post(`${this.url}/${id}/execute`, params, options).pipe(
+      map((response: Response) => {
+        return {
+          filename: 'report',
+          data: response.blob()
+        };
       }),
-
-      new TextboxQuestion({
-        key: 'reportParam1',
-        label: 'Parameter 1',
-        value: 'Default Value',
-        required: true,
-        order: 1
-      }),
-
-      new TextboxQuestion({
-        key: 'reportParam2',
-        label: 'Parameter 2 (e-Mail)',
-        type: 'email',
-        order: 2
-      })
-    ];
-
-    return questions;
+      catchError(error => throwError(error))
+    );
   }
+  */
+ execute(id: number | string, params: any): Observable<any> {
+  const options = new RequestOptions({
+    headers: this.headers,
+    responseType: ResponseContentType.Blob
+  });
+
+  return this.http.post(`${this.url}/${id}/execute`, params, options).pipe(
+    map((response: Response) => response),
+    catchError(this.handleError)
+  );
+}
 
 }
+
+
+

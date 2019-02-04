@@ -5,8 +5,10 @@ import { ProcessBackgroundListComponent } from './process-background-list/proces
 
 const routes: Routes = [
   { path: '', component: MonitorsHomeComponent, children: [
-    { path: '', component: ProcessBackgroundListComponent}
-  ] }
+    { path: '', pathMatch: 'full', redirectTo: 'process'},
+    { path: 'process', component: ProcessBackgroundListComponent}
+    ] 
+  }
 ];
 
 @NgModule({

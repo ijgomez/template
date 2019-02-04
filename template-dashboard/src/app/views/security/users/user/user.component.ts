@@ -13,7 +13,7 @@ import { Profile } from '../../../../domain/security/profile';
 @Component({
   selector: 'app-user',
   templateUrl: './user.component.html',
-  styleUrls: ['./user.component.css']
+  styleUrls: ['./user.component.scss']
 })
 export class UserComponent implements OnInit {
 
@@ -48,6 +48,9 @@ export class UserComponent implements OnInit {
       profile: ['', Validators.required]
     });
   }
+
+  // convenience getter for easy access to form fields
+  get formControls() { return this.userForm.controls; }
 
   isEdit(): Boolean {
     const id = this.activeRoute.snapshot.params['id'];

@@ -4,7 +4,7 @@ import { StatusService } from '../../../services/commons/status.service';
 @Component({
   selector: 'app-servertimestamp',
   templateUrl: './servertimestamp.component.html',
-  styleUrls: ['./servertimestamp.component.css']
+  styleUrls: ['./servertimestamp.component.scss']
 })
 export class ServertimestampComponent implements OnInit, OnDestroy {
 

@@ -1,25 +1,37 @@
-<p>
-  reports-list works!
-</p>
-<a routerLink="create">Add reports</a>
-
-<table>
+<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+  <div class="btn-group mr-2 btn-group-sm" role="group" aria-label="First group">
+    <button type="button" class="btn btn-secondary" (click)="reload()"><i class="fas fa-sync-alt"></i>&nbsp;Reload</button>
+  </div>
+  <div class="btn-group mr-2 btn-group-sm" role="group" aria-label="Second group">
+    <button type="button" class="btn btn-secondary" routerLink="create"><i class="fa fa-plus-square"></i>&nbsp;Add</button>
+    <button type="button" class="btn btn-secondary" (click)="edit()" [disabled]="!isSelectedItem()"><i class="fa fa-edit"></i>&nbsp;Edit</button>
+    <button type="button" class="btn btn-secondary" (click)="delete()" [disabled]="!isSelectedItem()"><i class="fa fa-minus-square"></i>&nbsp;Delete</button>
+  </div>
+  <div class="btn-group btn-group-sm" role="group" aria-label="Third group">
+    <button type="button" class="btn btn-secondary" (click)="export()"><i class="fa fa-file-export"></i>&nbsp;Export</button>
+  </div>
+</div>
+<br/>
+<table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-hover table-bordered" style="width:100%">
   <thead>
-  <tr>
-      <td>Report Description</td>
-      <td>Report Type</td>
-      <td colspan="3">Actions</td>
-  </tr>
+    <tr>
+      <th scope="col">Report</th>
+      <th scope="col">Type</th>
+      <th scope="col">&nbsp;</th>
+    </tr>
   </thead>
-
-  <tbody>
-      <tr *ngFor="let report of data">
-          <td>{{report.description}}</td>
-          <td>{{report.format}}</td>
-          <td><a [routerLink]="['execute', report.id]">Execute</a></td>
-          <td><a [routerLink]="['edit', report.id]">Edit</a></td>
-          <td><button (click)="delete(report.id)">Delete</button></td>
-      </tr>
-      
+  <tbody *ngIf="data?.length != 0">
+    <tr *ngFor="let report of data" (click)="selectedItem(report)" [ngClass] = "{'highlight' : report === selectedData}">
+      <td  scope="row">{{report.description}}</td>
+      <td>{{report.format}}</td>
+      <td style="text-align: center">
+        <a *ngIf="report.archive" [routerLink]="['execute', report.id]" role="button" class="btn btn-secondary btn-sm">Execute</a>
+      </td>
+    </tr>
   </tbody>
+  <tbody *ngIf="data?.length == 0">
+    <tr>
+      <td colspan="3" class="no-data-available">No data!</td>
+    </tr>
+  <tbody>
 </table>

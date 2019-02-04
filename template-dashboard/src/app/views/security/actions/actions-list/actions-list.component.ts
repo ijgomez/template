@@ -5,7 +5,7 @@ import { ActionCriteria } from '../../../../domain/security/action-criteria';
 @Component({
   selector: 'app-actions-list',
   templateUrl: './actions-list.component.html',
-  styleUrls: ['./actions-list.component.css']
+  styleUrls: ['./actions-list.component.scss']
 })
 export class ActionsListComponent implements OnInit {
 
@@ -22,6 +22,10 @@ export class ActionsListComponent implements OnInit {
       result => { this.data = result; },
       error => { console.error(error); }
     );
+  }
+
+  reload(): void {
+    this.loadData();
   }
 
   delete(id: number): void {

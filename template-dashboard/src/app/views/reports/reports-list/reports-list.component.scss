@@ -1,0 +1,15 @@
+/*
+   server-side-angular-way.component.css
+*/
+.no-data-available {
+  text-align: center;
+}
+
+tr:hover {
+  cursor: pointer;
+}
+
+table tr.highlight {
+  background-color: rgb(59, 59, 59) !important;
+  color: #ffffff;
+}

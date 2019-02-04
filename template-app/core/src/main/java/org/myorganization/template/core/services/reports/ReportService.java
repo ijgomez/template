@@ -5,9 +5,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import org.myorganization.template.core.domain.archives.Archive;
 import org.myorganization.template.core.domain.reports.Report;
 import org.myorganization.template.core.domain.reports.ReportCriteria;
 import org.myorganization.template.core.domain.reports.ReportRepository;
+import org.myorganization.template.core.services.archives.ArchiveService;
 import org.myorganization.template.core.services.base.TemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,9 @@ public class ReportService implements TemplateService<Report, ReportCriteria> {
 
 	@Autowired
 	private ReportRepository reportRepository;
+	
+	@Autowired
+	private ArchiveService archiveService;
 
 	@Transactional(readOnly = true)
 	public List<Report> findAll() {
@@ -36,6 +41,10 @@ public class ReportService implements TemplateService<Report, ReportCriteria> {
 	
 	@Transactional
 	public Report create(Report report) {
+		Archive archive = report.getArchive();
+		if (archive.getId() == null) {
+			report.setArchive(this.archiveService.create(archive));
+		}
 		return this.reportRepository.save(report);
 	}
 	
@@ -51,6 +60,12 @@ public class ReportService implements TemplateService<Report, ReportCriteria> {
 			Report r = optional.get();
 			r.setName(report.getName());
 			r.setDescription(report.getDescription());
+			Archive archive = report.getArchive();
+			if (archive.getId() == null) {
+				r.setArchive(this.archiveService.create(archive));
+			} else {
+				r.setArchive(archive);
+			}
 			return this.reportRepository.save(r);
 		} 
 		//TODO Not Found Exception....

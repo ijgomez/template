@@ -9,7 +9,7 @@ import { Action } from '../../../../domain/security/action';
 @Component({
   selector: 'app-action',
   templateUrl: './action.component.html',
-  styleUrls: ['./action.component.css']
+  styleUrls: ['./action.component.scss']
 })
 export class ActionComponent implements OnInit {
 

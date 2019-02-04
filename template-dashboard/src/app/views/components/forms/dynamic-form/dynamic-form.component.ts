@@ -7,7 +7,7 @@ import { QuestionControlService } from '../../../../services/commons/question-co
 @Component({
   selector: 'app-dynamic-form',
   templateUrl: './dynamic-form.component.html',
-  styleUrls: ['./dynamic-form.component.css']
+  styleUrls: ['./dynamic-form.component.scss']
 })
 export class DynamicFormComponent implements OnInit {
 
@@ -22,7 +22,7 @@ export class DynamicFormComponent implements OnInit {
   constructor(private qcs: QuestionControlService) {  }
 
   ngOnInit() {
-    this.form = this.qcs.toFormGroup(this.questions.sort((a, b) => a.order - b.order));
+    this.form = this.qcs.toFormGroup(this.questions);
   }
 
   onSubmit() {

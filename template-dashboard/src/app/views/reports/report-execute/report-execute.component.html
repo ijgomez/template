@@ -1,7 +1,13 @@
-<p>
-  report-execute works!
-</p>
-<app-dynamic-form [questions]="questions" (uploaded)="onSubmit($event)"></app-dynamic-form>
-<div *ngIf="payLoad" class="form-row">
-  <strong>Saved the following values</strong><br>{{payLoad}}
-</div>
+<div class="card">
+    <h5 class="card-header">Execute Report: {{reportName}}</h5>
+    <div class="card-body">
+        <h5 class="card-title">Insert params of report:</h5>
+                
+        <app-dynamic-form *ngIf="questions" [questions]="questions" (uploaded)="onSubmit($event)"></app-dynamic-form>
+        <div *ngIf="payLoad" class="form-row">
+          <strong>Saved the following values</strong><br>{{payLoad}}
+        </div>
+    </div>
+  </div>
+
+
