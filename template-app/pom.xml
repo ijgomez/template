@@ -16,7 +16,7 @@
     <!-- Frameworks version -->
     <org.springframework.version>5.0.1.RELEASE</org.springframework.version>
     <org.hibernate.version>5.2.12.Final</org.hibernate.version>
-    <com.fasterxml.jackson.core.version>2.9.8</com.fasterxml.jackson.core.version>
+    <com.fasterxml.jackson.core.version>2.9.9.2</com.fasterxml.jackson.core.version>
     <org.slf4j.version>1.7.25</org.slf4j.version>
     <com.jayway.jsonpath.version>2.4.0</com.jayway.jsonpath.version>
   </properties>
@@ -64,8 +64,9 @@
 		<dependency>
 		    <groupId>com.fasterxml.jackson.core</groupId>
 		    <artifactId>jackson-databind</artifactId>
-		    <version>${com.fasterxml.jackson.core.version}</version>
+		    <version>2.9.9.2</version>
 		</dependency>
+		<!--
 		<dependency>
 		    <groupId>com.fasterxml.jackson.module</groupId>
 		    <artifactId>jackson-module-parameter-names</artifactId>
@@ -81,6 +82,7 @@
 		    <artifactId>jackson-datatype-jsr310</artifactId>
 		    <version>${com.fasterxml.jackson.core.version}</version>
 		</dependency>
+		  -->
 		<!-- Logging dependencies -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
