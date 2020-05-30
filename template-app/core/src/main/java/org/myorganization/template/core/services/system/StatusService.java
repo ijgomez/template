@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class StatusService {
-
+	
 	public Calendar getServerTimestamp() {
 		return Calendar.getInstance();
 	}

@@ -8,21 +8,22 @@
   	<maven>3.2.5</maven>
   </prerequisites>
   <properties>
+  	<!-- Project properties -->
   	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  	<maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
+  	<maven.compiler.source>12</maven.compiler.source>
+    <maven.compiler.target>12</maven.compiler.target>
     <maven.test.skip>true</maven.test.skip>
     
     <!-- Frameworks version -->
     <org.springframework.version>5.2.3.RELEASE</org.springframework.version>
-    <org.hibernate.version>5.2.12.Final</org.hibernate.version>
+    <org.hibernate.version>5.4.17.Final</org.hibernate.version>
     <com.fasterxml.jackson.core.version>2.9.9.2</com.fasterxml.jackson.core.version>
     <org.slf4j.version>1.7.25</org.slf4j.version>
     <com.jayway.jsonpath.version>2.4.0</com.jayway.jsonpath.version>
+    
   </properties>
   <modules>
   	<module>core</module>
-  	<module>ws</module>
   	<module>webapp</module>
   </modules>
   <dependencyManagement>
@@ -60,6 +61,12 @@
 			<artifactId>hibernate-entitymanager</artifactId>
 			<version>${org.hibernate.version}</version>
 		</dependency>
+		<dependency>
+		    <groupId>org.javassist</groupId>
+		    <artifactId>javassist</artifactId>
+		    <version>3.24.0-GA</version>
+		</dependency>
+
 		<!-- JSON Processor dependencies -->
 		<dependency>
 		    <groupId>com.fasterxml.jackson.core</groupId>
@@ -132,6 +139,43 @@
 			<scope>test</scope>
 		</dependency>
 		<!-- Commons dependencies -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-text</artifactId>
+			<version>1.1</version>
+		</dependency>
+		<dependency>
+		    <groupId>commons-codec</groupId>
+		    <artifactId>commons-codec</artifactId>
+		    <version>1.11</version>
+		</dependency>
+		<dependency>
+		    <groupId>commons-io</groupId>
+		    <artifactId>commons-io</artifactId>
+		    <version>2.6</version>
+		</dependency>
+		
+		<!-- Java up 8 API, java.xml.bind module -->
+		<dependency>
+		    <groupId>jakarta.xml.bind</groupId>
+		    <artifactId>jakarta.xml.bind-api</artifactId>
+		    <version>2.3.2</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.glassfish.jaxb</groupId>
+		    <artifactId>jaxb-runtime</artifactId>
+		    <version>2.3.2</version>
+		</dependency>
+		<dependency> 
+		    <groupId>javax.enterprise</groupId> 
+		    <artifactId>cdi-api</artifactId> 
+		    <version>1.2</version> 
+		</dependency>
 		
   	</dependencies>
   </dependencyManagement>
