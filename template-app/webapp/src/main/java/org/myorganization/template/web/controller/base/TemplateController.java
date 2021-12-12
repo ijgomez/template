@@ -16,14 +16,39 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+/**
+ * Interface defining generic controller operations for basic operations with entities.
+ * 
+ * @author ijgomez
+ *
+ * @param <E> Entity
+ * @param <C> Criteria
+ */
 public interface TemplateController<E extends TemplateEntity, C extends Criteria> {
 
+	/**
+	 * List all values.
+	 * 
+	 * @return
+	 */
 	@GetMapping
 	ResponseEntity<List<E>> findAll();
 
+	/**
+	 * Search for records that meet specific criteria.
+	 * 
+	 * @param criteria Object with search criteria.
+	 * @return List of values.
+	 */
 	@PostMapping("/search")
 	ResponseEntity<List<E>> findByCriteria(@Valid @RequestBody C criteria);
 
+	/**
+	 * Count for records that meet specific criteria.
+	 * 
+	 * @param criteria Object with search criteria.
+	 * @return Count of values.
+	 */
 	@PostMapping("/count")
 	ResponseEntity<Long> countByCriteria(@Valid @RequestBody  C criteria);
 

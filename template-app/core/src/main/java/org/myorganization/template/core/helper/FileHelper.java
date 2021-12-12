@@ -45,4 +45,6 @@ public class FileHelper {
 		return builder.toString().getBytes();
 	}
 	
+	private FileHelper() { }
+	
 }

@@ -8,6 +8,7 @@ import org.myorganization.template.core.domain.security.actions.Action;
 import org.myorganization.template.core.domain.security.users.User;
 
 @StaticMetamodel(Profile.class)
+@SuppressWarnings({"squid:S1118", "squid:S101", "squid:S3077", "squid:S1104", "squid:S1444"})
 public class Profile_ {
 
 	public static volatile SingularAttribute<Profile, Integer> id;

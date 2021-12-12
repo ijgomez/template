@@ -46,17 +46,14 @@ public class TraceService implements TemplateService<Trace, TraceCriteria> {
 	
 	@Transactional
 	public Trace update(Long id, Trace trace) {
-		Optional<Trace> optional = this.read(id);
-		if (optional.isPresent()) {
-			Trace t = optional.get();
+		
+		return this.read(id).map(t -> {
 			t.setDatetime(trace.getDatetime());
 			t.setMessage(trace.getMessage());
 			t.setType(trace.getType());
 			
 			return this.traceRepository.save(t);
-		} 
-		//TODO Not Found Exception....
-		return null;
+		}).orElseGet(() -> null);
 	}
 	
 	@Transactional

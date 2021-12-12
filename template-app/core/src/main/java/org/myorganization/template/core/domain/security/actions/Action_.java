@@ -7,6 +7,7 @@ import javax.persistence.metamodel.StaticMetamodel;
 import org.myorganization.template.core.domain.security.profiles.Profile;
 
 @StaticMetamodel(Action.class)
+@SuppressWarnings({"squid:S1118", "squid:S101", "squid:S3077", "squid:S1104", "squid:S1444"})
 public class Action_ {
 
 	public static volatile SingularAttribute<Action, Integer> id;

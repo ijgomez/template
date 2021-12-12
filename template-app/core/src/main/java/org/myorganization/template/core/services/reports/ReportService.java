@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class ReportService implements TemplateService<Report, ReportCriteria> {
+public class ReportService  implements TemplateService<Report, ReportCriteria> {
 
 	@Autowired
 	private ReportRepository reportRepository;
@@ -55,21 +55,21 @@ public class ReportService implements TemplateService<Report, ReportCriteria> {
 	
 	@Transactional
 	public Report update(Long id, Report report) {
-		Optional<Report> optional = this.read(id);
-		if (optional.isPresent()) {
-			Report r = optional.get();
+		return this.read(id).map(r -> {
+			
 			r.setName(report.getName());
 			r.setDescription(report.getDescription());
+			
 			Archive archive = report.getArchive();
 			if (archive.getId() == null) {
 				r.setArchive(this.archiveService.create(archive));
 			} else {
 				r.setArchive(archive);
 			}
+			
 			return this.reportRepository.save(r);
-		} 
-		//TODO Not Found Exception....
-		return null;
+		}).orElseGet(() -> null);
+
 	}
 	
 	@Transactional

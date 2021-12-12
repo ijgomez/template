@@ -21,7 +21,7 @@ public abstract class RepositoryQueriesBase<E, C extends Criteria> {
 	protected Class<E> entityClass;
 	
 	@SuppressWarnings("unchecked")
-	public RepositoryQueriesBase() {
+	protected RepositoryQueriesBase() {
 		this.entityClass = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
 	}
 
@@ -55,7 +55,6 @@ public abstract class RepositoryQueriesBase<E, C extends Criteria> {
 		query = entityManager.createQuery(criteriaQuery);
 		
 		if (criteria != null && criteria.getPageNumber() != null && criteria.getPageSize() != null) {
-			//query.setFirstResult(criteria.getPageNumber() * criteria.getPageSize());
 			query.setFirstResult(criteria.getPageNumber());
 			query.setMaxResults(criteria.getPageSize());
 		}

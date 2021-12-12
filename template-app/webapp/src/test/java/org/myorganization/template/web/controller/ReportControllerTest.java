@@ -132,7 +132,8 @@ public class ReportControllerTest {
 	public void testCreate() throws Exception {
 		Report report;
 		
-		report = new Report(this.testEntityFactory.random());
+		report = new Report();
+		report.setName(this.testEntityFactory.random());
 		
 
 		when(reportService.create(report)).then(new Answer<Report>() {
@@ -160,7 +161,8 @@ public class ReportControllerTest {
 	public void testCreateEmptyFields() throws Exception {
 		Report report;
 		
-		report = new Report(this.testEntityFactory.random());
+		report = new Report();
+		report.setName(this.testEntityFactory.random());
 		
 		when(reportService.create(report)).thenThrow(new DataIntegrityViolationException(""));
 		

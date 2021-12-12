@@ -1,54 +1,38 @@
 package org.myorganization.template.core.services.system;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import org.myorganization.template.core.domain.system.cluster.ClusterNode;
 import org.myorganization.template.core.domain.system.cluster.ClusterNodeCriteria;
 import org.myorganization.template.core.domain.system.cluster.ClusterNodeRepository;
 import org.myorganization.template.core.services.base.TemplateService;
+import org.myorganization.template.core.services.base.TemplateServiceBase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class ClusterNodeService implements TemplateService<ClusterNode, ClusterNodeCriteria> {
+public class ClusterNodeService extends TemplateServiceBase<ClusterNode, ClusterNodeCriteria> implements TemplateService<ClusterNode, ClusterNodeCriteria> {
 	
 	@Autowired
-	private ClusterNodeRepository clusterNodeRepository;
-	
-	@Transactional(readOnly = true)
-	public List<ClusterNode> findAll() {
-		return StreamSupport.stream(this.clusterNodeRepository.findAll().spliterator(), false).collect(Collectors.toList());
+	public ClusterNodeService(ClusterNodeRepository clusterNodeRepository) {
+		super(clusterNodeRepository);
 	}
 	
 	@Transactional(readOnly = true)
 	public List<ClusterNode> findByCriteria(ClusterNodeCriteria criteria) {
-		return this.clusterNodeRepository.findByCriteria(criteria);
+		return ((ClusterNodeRepository) super.getRepository()).findByCriteria(criteria);
 	}
 	
 	@Transactional(readOnly = true)
 	public Long countByCriteria(ClusterNodeCriteria criteria) {
-		return this.clusterNodeRepository.countByCriteria(criteria);
-	}
-	
-	@Transactional
-	public ClusterNode create(ClusterNode clusterNode) {
-		return this.clusterNodeRepository.save(clusterNode);
-	}
-	
-	@Transactional(readOnly = true)
-	public Optional<ClusterNode> read(Long id) {
-		return this.clusterNodeRepository.findById(id);
+		return ((ClusterNodeRepository) super.getRepository()).countByCriteria(criteria);
 	}
 	
 	@Transactional
 	public ClusterNode update(Long id, ClusterNode clusterNode) {
-		Optional<ClusterNode> optional = this.read(id);
-		if (optional.isPresent()) {
-			ClusterNode cn = optional.get();
+		return this.read(id).map(cn -> {
+			
 			cn.setHostname(clusterNode.getHostname());
 			cn.setIp(clusterNode.getIp());
 			cn.setStatus(clusterNode.getStatus());
@@ -57,21 +41,13 @@ public class ClusterNodeService implements TemplateService<ClusterNode, ClusterN
 			cn.setTotalMemory(clusterNode.getTotalMemory());
 			cn.setUsedMemory(clusterNode.getUsedMemory());
 			
-			return this.clusterNodeRepository.save(cn);
-		} 
-		//TODO Not Found Exception....
-		return null;
+			return super.getRepository().save(cn);
+		}).orElseGet(() -> null);
 	}
 	
 	@Transactional
-	public Long delete(Long id) {
-		this.clusterNodeRepository.deleteById(id);
-		return id;
-	}
-
-	@Transactional
 	public ClusterNode findByHostName(String hostname) {
-		return this.clusterNodeRepository.findByHostname(hostname);
+		return ((ClusterNodeRepository) super.getRepository()).findByHostname(hostname);
 	}
 
 	@Transactional

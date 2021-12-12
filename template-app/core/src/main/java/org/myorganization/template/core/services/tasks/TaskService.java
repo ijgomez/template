@@ -1,6 +1,5 @@
 package org.myorganization.template.core.services.tasks;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -8,73 +7,43 @@ import org.myorganization.template.core.domain.tasks.Task;
 import org.myorganization.template.core.domain.tasks.TaskCriteria;
 import org.myorganization.template.core.domain.tasks.TaskRepository;
 import org.myorganization.template.core.services.base.TemplateService;
+import org.myorganization.template.core.services.base.TemplateServiceBase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class TaskService implements TemplateService<Task, TaskCriteria> {
+public class TaskService extends TemplateServiceBase<Task, TaskCriteria> implements TemplateService<Task, TaskCriteria> {
 
 	@Autowired
-	private TaskRepository taskRepository;
-	
-	@Transactional(readOnly = true)
-	public List<Task> findAll() {
-		List<Task> tasks = new ArrayList<>();
-		for (Task task : this.taskRepository.findAll()) {
-			tasks.add(task);
-		}
-		return tasks;
+	public TaskService(TaskRepository taskRepository) {
+		super(taskRepository);
 	}
-	
+
 	@Transactional(readOnly = true)
 	public List<Task> findByCriteria(TaskCriteria criteria) {
-		return this.taskRepository.findByCriteria(criteria);
+		return ((TaskRepository) super.getRepository()).findByCriteria(criteria);
 	}
 	
 	@Transactional(readOnly = true)
 	public Long countByCriteria(TaskCriteria criteria) {
-		return this.taskRepository.countByCriteria(criteria);
+		return ((TaskRepository) super.getRepository()).countByCriteria(criteria);
 	}
-	
-	@Transactional
-	public Task create(Task task) {
-		return this.taskRepository.save(task);
-	}
-	
+
 	@Transactional(readOnly = true)
-	public Optional<Task> read(Long id) {
-		return this.taskRepository.findById(id);
-		
-	}
-	
-	@Transactional(readOnly = true)
-	public Task read(String name) {
-		Optional<Task> task = this.taskRepository.findByName(name);
-		if (task.isPresent()) {
-			return task.get();
-		} 
-		//TODO Not Found Exception....
-		return null;
+	public Optional<Task> read(String name) {
+		return ((TaskRepository) super.getRepository()).findByName(name);
 	}
 	
 	@Transactional
 	public Task update(Long id, Task task) {
-		Optional<Task> optional = this.taskRepository.findById(id);
-		if (optional.isPresent()) {
-			Task t = optional.get();
+		return this.read(id).map(t -> {
+			
 			t.setName(task.getName());
 			t.setDescription(task.getDescription());
-			return this.taskRepository.save(t);
-		} 
-		//TODO Not Found Exception....
-		return null;
-	}
-	
-	@Transactional
-	public Long delete(Long id) {
-		this.taskRepository.deleteById(id);
-		return id;
+			
+			return super.getRepository().save(t);
+		}).orElseGet(() -> null);
 	}
 	
 }
