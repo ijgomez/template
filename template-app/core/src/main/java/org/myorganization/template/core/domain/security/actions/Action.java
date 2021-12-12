@@ -11,6 +11,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.SequenceGenerator;
 
 import org.myorganization.template.core.domain.base.TemplateEntity;
+import org.myorganization.template.core.domain.base.TemplateEntityBase;
 import org.myorganization.template.core.domain.security.profiles.Profile;
 import org.springframework.validation.annotation.Validated;
 
@@ -18,14 +19,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Validated
 @Data
-@NoArgsConstructor
-@EqualsAndHashCode(callSuper = false)
-public class Action extends TemplateEntity {
+@EqualsAndHashCode(callSuper=false, exclude = "profiles")
+@ToString(exclude = "profiles")
+public class Action extends TemplateEntityBase implements TemplateEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "action_seq")
@@ -37,7 +38,7 @@ public class Action extends TemplateEntity {
 	
 	@Column(nullable = false)
 	private String description;
-	
+
 	@ManyToMany(mappedBy = "actions")
 	@JsonIgnore
 	private Set<Profile> profiles;

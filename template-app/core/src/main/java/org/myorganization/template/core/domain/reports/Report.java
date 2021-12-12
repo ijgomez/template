@@ -11,16 +11,19 @@ import javax.persistence.SequenceGenerator;
 
 import org.myorganization.template.core.domain.archives.Archive;
 import org.myorganization.template.core.domain.base.TemplateEntity;
+import org.myorganization.template.core.domain.base.TemplateEntityBase;
+import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Entity
-@Getter @Setter @NoArgsConstructor
-public class Report extends TemplateEntity {
+@Validated
+@Data
+@EqualsAndHashCode(callSuper=false)
+public class Report extends TemplateEntityBase implements TemplateEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "report_seq")
@@ -37,10 +40,5 @@ public class Report extends TemplateEntity {
     @JoinColumn(name = "archive_id")
 	@JsonManagedReference
 	private Archive archive;
-	
-	public Report(String name) {
-		super();
-		this.name = name;
-	}
 
 }

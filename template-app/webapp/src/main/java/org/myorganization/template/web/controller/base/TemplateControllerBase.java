@@ -6,7 +6,7 @@ import java.util.Optional;
 import javax.validation.Valid;
 
 import org.myorganization.template.core.domain.base.Criteria;
-import org.myorganization.template.core.domain.base.TemplateEntity;
+import org.myorganization.template.core.domain.base.TemplateEntityBase;
 import org.myorganization.template.core.helper.FileHelper;
 import org.myorganization.template.core.services.base.TemplateService;
 import org.springframework.core.io.ByteArrayResource;
@@ -22,7 +22,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public abstract class TemplateControllerBase<E extends TemplateEntity, C extends Criteria> implements TemplateController<E, C> {
+public abstract class TemplateControllerBase<E extends TemplateEntityBase, C extends Criteria> implements TemplateController<E, C> {
 
 	private TemplateService<E, C> service;
 

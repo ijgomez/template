@@ -12,14 +12,17 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 
 import org.myorganization.template.core.domain.base.TemplateEntity;
+import org.myorganization.template.core.domain.base.TemplateEntityBase;
+import org.springframework.validation.annotation.Validated;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Entity
-@Getter @Setter @NoArgsConstructor
-public class Trace extends TemplateEntity {
+@Validated
+@Data
+@EqualsAndHashCode(callSuper=false)
+public class Trace extends TemplateEntityBase implements TemplateEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "trace_seq")
@@ -35,10 +38,5 @@ public class Trace extends TemplateEntity {
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private TraceType type;
-	
-	public Trace(String message) {
-		super();
-		this.message = message;
-	}
 
 }

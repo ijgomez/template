@@ -14,22 +14,23 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 
 import org.myorganization.template.core.domain.base.TemplateEntity;
+import org.myorganization.template.core.domain.base.TemplateEntityBase;
 import org.myorganization.template.core.domain.security.actions.Action;
 import org.myorganization.template.core.domain.security.users.User;
 import org.springframework.validation.annotation.Validated;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Validated
 @Data
-@NoArgsConstructor
-@EqualsAndHashCode(callSuper = false)
-public class Profile extends TemplateEntity {
+@EqualsAndHashCode(callSuper=false, exclude = "users")
+@ToString(exclude = "users")
+public class Profile extends TemplateEntityBase implements TemplateEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "profile_seq")
@@ -43,7 +44,7 @@ public class Profile extends TemplateEntity {
 	private String description;
 	
 	@OneToMany(mappedBy="profile")
-	@JsonBackReference
+	@JsonIgnore
 	private Set<User> users;
 	
 	@ManyToMany()
@@ -51,12 +52,6 @@ public class Profile extends TemplateEntity {
         joinColumns = { @JoinColumn(name = "profile_id") }, 
         inverseJoinColumns = { @JoinColumn(name = "action_id") }
     )
-	@JsonIgnore
 	private Set<Action> actions;
-	
-	public Profile(String name) {
-		super();
-		this.name = name;
-	}
 
 }
