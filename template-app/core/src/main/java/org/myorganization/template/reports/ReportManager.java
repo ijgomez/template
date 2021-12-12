@@ -27,11 +27,7 @@ public class ReportManager {
 	
 	@Autowired
 	private DataSource dataSource;
-	
-	public ReportService getReportService() {
-		return reportService;
-	}
-	
+
 	@Transactional(readOnly = true)
 	public List<ReportParam> readParams(Long id) throws ReportException {
 		ReportExecutor executor;

@@ -9,12 +9,13 @@ import org.myorganization.template.core.domain.security.actions.Action;
 import org.myorganization.template.core.domain.security.actions.ActionCriteria;
 import org.myorganization.template.core.domain.security.actions.ActionRepository;
 import org.myorganization.template.core.services.base.TemplateService;
+import org.myorganization.template.core.services.base.TemplateServiceBase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class ActionService implements TemplateService<Action, ActionCriteria> {
+public class ActionService extends TemplateServiceBase implements TemplateService<Action, ActionCriteria> {
 
 	@Autowired
 	private ActionRepository actionRepository;

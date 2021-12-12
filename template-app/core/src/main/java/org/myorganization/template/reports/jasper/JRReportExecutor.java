@@ -79,8 +79,7 @@ public class JRReportExecutor implements ReportExecutor {
 			
 			
 		} catch (JRException | IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new ReportException("read params error", e);
 		}
 		
 		

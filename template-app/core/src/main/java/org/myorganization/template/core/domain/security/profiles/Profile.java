@@ -16,16 +16,19 @@ import javax.persistence.SequenceGenerator;
 import org.myorganization.template.core.domain.base.TemplateEntity;
 import org.myorganization.template.core.domain.security.actions.Action;
 import org.myorganization.template.core.domain.security.users.User;
+import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
-import lombok.Getter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
-@Getter @Setter @NoArgsConstructor
+@Validated
+@Data
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = false)
 public class Profile extends TemplateEntity {
 
 	@Id
@@ -48,7 +51,7 @@ public class Profile extends TemplateEntity {
         joinColumns = { @JoinColumn(name = "profile_id") }, 
         inverseJoinColumns = { @JoinColumn(name = "action_id") }
     )
-	@JsonManagedReference
+	@JsonIgnore
 	private Set<Action> actions;
 	
 	public Profile(String name) {

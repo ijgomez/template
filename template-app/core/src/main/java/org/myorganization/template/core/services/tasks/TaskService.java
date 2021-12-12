@@ -7,12 +7,13 @@ import java.util.Optional;
 import org.myorganization.template.core.domain.tasks.Task;
 import org.myorganization.template.core.domain.tasks.TaskCriteria;
 import org.myorganization.template.core.domain.tasks.TaskRepository;
+import org.myorganization.template.core.services.base.TemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class TaskService {
+public class TaskService implements TemplateService<Task, TaskCriteria> {
 
 	@Autowired
 	private TaskRepository taskRepository;
@@ -42,13 +43,9 @@ public class TaskService {
 	}
 	
 	@Transactional(readOnly = true)
-	public Task read(Long id) {
-		Optional<Task> task = this.taskRepository.findById(id);
-		if (task.isPresent()) {
-			return task.get();
-		} 
-		//TODO Not Found Exception....
-		return null;
+	public Optional<Task> read(Long id) {
+		return this.taskRepository.findById(id);
+		
 	}
 	
 	@Transactional(readOnly = true)

@@ -110,7 +110,7 @@ insert into Trace (id, datetime, type, message) values (trace_seq.nextval, CURRE
 insert into Trace (id, datetime, type, message) values (trace_seq.nextval, CURRENT_TIMESTAMP(), 'SYSTEM', 'cOZBE3ROTgem8CU6BIpC30l53QFM6JVbyddB1myr2vWvV9fhAZyIEik2thE6');
 insert into Trace (id, datetime, type, message) values (trace_seq.nextval, CURRENT_TIMESTAMP(), 'SYSTEM', 'KZqZ35YOAzbkQTYqr0GluZL8yaLYv5qnnbZNOlibL8qRiDMQCRnDnxF9yqrj');
 
-insert into Property (id, property, value) values (property_seq.nextval, 'CLUSTER_NODE_INTERVAL', '5000');
+insert into Property (id, property, value) values (property_seq.nextval, 'CLUSTER_NODE_INTERVAL', '60000');
 insert into Property (id, property, value) values (property_seq.nextval, 'PROPERTY_1', 'Lorem ipsum');
 insert into Property (id, property, value) values (property_seq.nextval, 'PROPERTY_2', 'Morbi rutrum');
 insert into Property (id, property, value) values (property_seq.nextval, 'PROPERTY_3', 'Ut et sapien');

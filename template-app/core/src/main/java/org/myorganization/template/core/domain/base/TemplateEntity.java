@@ -6,6 +6,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public abstract class TemplateEntity {
 
+	public abstract Long getId();
+	
 	@Override
 	public int hashCode() {
 		return HashCodeBuilder.reflectionHashCode(this, true);

@@ -10,15 +10,19 @@ import javax.persistence.SequenceGenerator;
 
 import org.myorganization.template.core.domain.base.TemplateEntity;
 import org.myorganization.template.core.domain.security.profiles.Profile;
+import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-import lombok.Getter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
-@Getter @Setter @NoArgsConstructor
+@Validated
+@Data
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = false)
 public class User extends TemplateEntity {
 
 	@Id
