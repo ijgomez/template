@@ -1,4 +1,4 @@
-package org.myorganization.template.core.domain.security.actions;
+package org.myorganization.template.core.domain;
 
 import static org.junit.Assert.assertEquals;
 
@@ -6,6 +6,7 @@ import java.util.HashSet;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.myorganization.template.core.domain.security.actions.Action;
 import org.myorganization.template.core.domain.security.profiles.Profile;
 import org.myorganization.template.core.domain.security.users.User;
 

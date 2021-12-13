@@ -10,10 +10,10 @@ public class ClusterHelper {
     }
 	
 	public static String getLocalIp() throws UnknownHostException {
-        String ip = "";
-        final InetAddress inetAddress = InetAddress.getLocalHost();
+        var ip = "";
+        final var inetAddress = InetAddress.getLocalHost();
         final byte[] address = inetAddress.getAddress();
-        for (int i = 0; i < address.length; i++) {
+        for (var i = 0; i < address.length; i++) {
             if (i > 0) {
                 ip += ".";
             }
@@ -21,5 +21,7 @@ public class ClusterHelper {
         }
         return ip;
     }
+	
+	private ClusterHelper() { }
 
 }
