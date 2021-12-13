@@ -26,8 +26,8 @@ public class TaskExecutionRepositoryQueriesImpl extends RepositoryQueriesBase<Ta
 				predicates.add(builder.like(root.get(TaskExecution_.owner), criteria.getOwner()));
 			}
 			
-			if (!StringUtils.isEmpty(criteria.getStatus())) {
-				// predicates.add(builder.like(root.get(TaskExecution_.status), criteria.getStatus()));
+			if (criteria.getStatus() != null) {
+				predicates.add(builder.equal(root.get(TaskExecution_.status), criteria.getStatus()));
 			}
 		}
 		return predicates;

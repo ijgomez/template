@@ -8,13 +8,12 @@ import org.myorganization.template.core.domain.tasks.TaskExecution;
 import org.myorganization.template.core.domain.tasks.TaskExecutionAction;
 import org.myorganization.template.core.domain.tasks.TaskExecutionStatus;
 import org.myorganization.template.scheduler.services.TaskExecutionService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public abstract class TaskBase implements Runnable {
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(TaskBase.class);
 
 	private Thread thread;
 	
@@ -29,12 +28,12 @@ public abstract class TaskBase implements Runnable {
 	@Autowired
 	private TaskExecutionService executionTaskService;
 	
-	public TaskBase(Task task) {
+	protected TaskBase(Task task) {
 		this.task = task;
 		taskExecution = new TaskExecution();
 		taskExecution.setTask(task);
-		this.heartbeatTimer = new ControlTimer(() -> { heartbeat(); }, 1000);
-		this.userControlTimer = new ControlTimer(() -> { checkStatusTask(); }, 1000);	
+		this.heartbeatTimer = new ControlTimer(this::heartbeat, 1000);
+		this.userControlTimer = new ControlTimer(this::checkStatusTask, 1000);
 	}
 	
 	private void notifyStart(LocalDateTime dispatchedAt) {
@@ -44,7 +43,7 @@ public abstract class TaskBase implements Runnable {
 	}
 
 	public void run() {
-		LOGGER.debug("Start " + this.task.getName() + " process..." + this.hashCode());
+		log.debug("Start {} process... {}", this.task.getName(), this.hashCode());
 		LocalDateTime datetime = LocalDateTime.now();
 		try {
 			notifyStart(datetime);
@@ -60,7 +59,7 @@ public abstract class TaskBase implements Runnable {
 			this.userControlTimer.stop();
 			this.heartbeatTimer.stop();
 			notifyEnd(Duration.between(datetime, LocalDateTime.now()));
-			LOGGER.debug("...End " + this.task.getName() + " process in ms.");
+			log.debug("...End {} process in ms.", this.task.getName());
 		}
 	}
 

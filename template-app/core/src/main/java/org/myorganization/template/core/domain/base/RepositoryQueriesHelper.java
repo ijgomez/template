@@ -8,4 +8,6 @@ public class RepositoryQueriesHelper {
 		return (StringUtils.isNotBlank(value))? value.replace("*", "%") : value;
 	}
 	
+	private RepositoryQueriesHelper() { }
+	
 }

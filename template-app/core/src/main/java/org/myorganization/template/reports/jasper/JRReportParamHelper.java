@@ -52,4 +52,6 @@ public class JRReportParamHelper {
 		return param;
 	}
 	
+	private JRReportParamHelper() { }
+	
 }

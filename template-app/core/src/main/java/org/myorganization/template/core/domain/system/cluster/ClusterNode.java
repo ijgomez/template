@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -39,6 +41,7 @@ public class ClusterNode extends TemplateEntityBase implements TemplateEntity {
 	@Column(nullable = false)
 	private LocalDateTime lastUpdateTime;
 
+	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private ClusterNodeStatus status;
 	
