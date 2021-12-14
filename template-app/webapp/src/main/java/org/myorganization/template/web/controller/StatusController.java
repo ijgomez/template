@@ -24,7 +24,7 @@ public class StatusController {
 	
 	/**
 	 * Server timestamp.
-	 * @return List.
+	 * @return Date.
 	 */
 	@GetMapping("/time")
 	public Date getServerTimestamp() {

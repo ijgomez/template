@@ -3,6 +3,7 @@ package org.myorganization.template.web.exceptions;
 import org.myorganization.template.reports.exceptions.ReportException;
 import org.myorganization.template.web.domain.MessageResponse;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -45,6 +46,15 @@ public class AppResponseEntityExceptionHandler  {
 		return ResponseEntity.badRequest().body(m);
     }
 	
+	@ExceptionHandler({ EmptyResultDataAccessException.class })
+	public ResponseEntity<MessageResponse> handleNotFoundRequest(final EmptyResultDataAccessException ex, final WebRequest request) {
+		
+		MessageResponse m = new MessageResponse();
+		m.setMessage(ex.getMessage());
+
+		return ResponseEntity.notFound().build();
+    }
+	
 	@ExceptionHandler({ ReportException.class })
 	public ResponseEntity<MessageResponse> handleReportRequest(final ReportException ex, final WebRequest request) {
 		MessageResponse m = new MessageResponse();
@@ -54,5 +64,5 @@ public class AppResponseEntityExceptionHandler  {
 		}
 		return ResponseEntity.badRequest().body(m);
 	}
-
+	
 }

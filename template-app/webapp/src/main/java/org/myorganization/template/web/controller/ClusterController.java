@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Validated
-@RequestMapping("/api/cluster")
+@RequestMapping("/api/cluster/nodes")
 public class ClusterController extends TemplateControllerBase<ClusterNode, ClusterNodeCriteria> implements TemplateController<ClusterNode, ClusterNodeCriteria>{
 
 	@Autowired
