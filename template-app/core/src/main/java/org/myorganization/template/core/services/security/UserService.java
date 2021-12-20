@@ -1,6 +1,8 @@
 package org.myorganization.template.core.services.security;
 
+import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.myorganization.template.core.domain.security.users.User;
 import org.myorganization.template.core.domain.security.users.UserCriteria;
@@ -14,6 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class UserService extends TemplateServiceBase<User, UserCriteria> implements TemplateService<User, UserCriteria> {
 
+//	@Autowired
+//	private PasswordEncoder passwordEncoder;
+	
 	@Autowired
 	public UserService(UserRepository userRepository) {
 		super(userRepository);
@@ -38,6 +43,30 @@ public class UserService extends TemplateServiceBase<User, UserCriteria> impleme
 			
 			return super.getRepository().save(u);
 		}).orElseGet(() -> null);
+	}
+	
+	@Transactional(readOnly = true)
+	public Optional<User> findByUsername(String username) {
+		UserCriteria criteria;
+		
+		criteria = new UserCriteria();
+		criteria.setUsername(username);
+
+		List<User> result = ((UserRepository) super.getRepository()).findByCriteria(criteria);
+		
+		if (result != null && result.size() == 1) {
+			return Optional.of(result.get(0));
+		}
+		return Optional.empty();
+	}
+
+	@Transactional
+	public void updateLastLoginDate(Long id) {
+		this.read(id).ifPresent(u -> {
+			u.setLastLoginDateTime(ZonedDateTime.now());
+			
+			super.getRepository().save(u);
+		});
 	}
 
 }

@@ -1,5 +1,7 @@
 package org.myorganization.template.core.domain.security.users;
 
+import java.time.ZonedDateTime;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -32,6 +34,8 @@ public class User extends TemplateEntityBase implements TemplateEntity {
 	
 	@Column(nullable = false)
 	private String password;
+
+	private ZonedDateTime lastLoginDateTime;
 	
 	@ManyToOne
 	private Profile profile;

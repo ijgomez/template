@@ -37,7 +37,7 @@ public class ReportService extends TemplateServiceBase<Report, ReportCriteria>  
 	@Transactional
 	public Report create(Report report) {
 		var archive = report.getArchive();
-		if (archive.getId() == null) {
+		if (archive!= null && archive.getId() == null) {
 			report.setArchive(this.archiveService.create(archive));
 		}
 		return super.create(report);

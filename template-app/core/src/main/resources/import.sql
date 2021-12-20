@@ -45,9 +45,9 @@ insert into Profile_Action (action_id, profile_id) values (4, 1);
 insert into Profile_Action (action_id, profile_id) values (5, 1);
 insert into Profile_Action (action_id, profile_id) values (5, 3);
 
-insert into User (id, username, password, profile_id) values (user_seq.nextval, 'admin', 'admin', 1);
-insert into User (id, username, password, profile_id) values (user_seq.nextval, 'support', 'support', 2);
-insert into User (id, username, password, profile_id) values (user_seq.nextval, 'user01', 'user01', 3);
+insert into User (id, username, password, profile_id) values (user_seq.nextval, 'admin', '$2a$10$Z42cT06xvytke5GmdQp.XODL1ujHBrkRhWhqIxJYGYa1m/SgBFkEe', 1);
+insert into User (id, username, password, profile_id) values (user_seq.nextval, 'support', '$2a$10$bZHmYUaqcxDlaTJ5FD7jdei0Mjt0dLAXfhQl4LCtFrJjsgqRpPBs6', 2);
+insert into User (id, username, password, profile_id) values (user_seq.nextval, 'user01', '$2a$10$SRk0cJVP8lpzXy5z23RSKeRPMpwCSA9EIlAe1uOKlgj3HzSM.CJQG1', 3);
 
 insert into Trace (id, datetime, type, message) values (trace_seq.nextval, CURRENT_TIMESTAMP(), 'SYSTEM', 'maPY4qDUNiY4aW38hmXUxaoCnmSft25U2waBPGAMwTDg2eUpdcmgnl7y7MJu');
 insert into Trace (id, datetime, type, message) values (trace_seq.nextval, CURRENT_TIMESTAMP(), 'SYSTEM', 'gnl9hrknzQCU9zrh8g71nDNSq3oTMseZ6h7uKH3EmkbcMnZttnQMzpzuicLr');

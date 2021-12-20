@@ -13,11 +13,35 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Validated
 @RequestMapping("/api/users")
+//@Slf4j
 public class UserController extends TemplateControllerBase<User, UserCriteria> implements TemplateController<User, UserCriteria>  {
 
+//	@Autowired
+//	private BCryptPasswordEncoder bCryptPasswordEncoder;
+	
 	@Autowired
 	protected UserController(UserService userService) {
 		super(userService);
 	}
+	
+//	@Override
+//	public ResponseEntity<User> create(User user) {
+//		if (user != null) {
+//			user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+//		}
+//		return super.create(user);
+//	}
+//
+//	@GetMapping("/{username}")
+//	public ResponseEntity<User> findByUsername(@PathVariable("username") String username) {
+//		log.info("username: {}", username);
+//
+//		Optional<User> user = ((UserService) super.getService()).findByUsername(username);
+//		if (user.isPresent()) {
+//			return ResponseEntity.ok(user.get());
+//		}
+//		return ResponseEntity.notFound().build();
+//	}
+	
 
 }

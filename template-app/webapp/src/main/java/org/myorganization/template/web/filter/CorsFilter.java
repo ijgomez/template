@@ -13,10 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 public class CorsFilter implements Filter {
 
 	@Override
-	public void destroy() {
-		// TODO Auto-generated method stub
-		
-	}
+	public void init(FilterConfig config) throws ServletException { }
+	
 
 	@Override
 	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain)
@@ -31,9 +29,8 @@ public class CorsFilter implements Filter {
 		
 	}
 
+
 	@Override
-	public void init(FilterConfig config) throws ServletException {
-		// TODO Auto-generated method stub
-	}
+	public void destroy() { }
 
 }

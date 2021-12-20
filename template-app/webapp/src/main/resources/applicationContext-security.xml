@@ -8,13 +8,45 @@
 		">
 
 	<security:global-method-security pre-post-annotations="enabled"/>
+	
+	<bean id="userDetailsService" class="org.myorganization.template.web.security.services.TemplateUserDetailsService"/>
+	
+	<bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
 
 	<security:http pattern="/" security="none"/>
     <security:http pattern="/index.html" security="none" />
 	<security:http pattern="/dashboard/**" security="none"/>
-	<security:http pattern="/api/users/login" security="none"/>
+
+	<security:http pattern="/api/auth/login" security="none" />
+	<security:http pattern="/api/status/time" security="none" />
+
+	<security:http pattern="/websockets/**" security="none" />
+	
+	<bean id="unauthorizedEntryPoint" class="org.myorganization.template.web.security.filters.JwtAuthenticationEntryPoint"/>
+	
+	<bean id="accessDeniedHandler" class="org.myorganization.template.web.security.filters.RestAccessDeniedHandler"/>
+	
+	<bean id="authenticationTokenProcessingFilter" class="org.myorganization.template.web.security.filters.JwtTokenAuthenticationFilter"/>
+	
+	<bean class="org.myorganization.template.web.security.services.JWTService"></bean>
+	
+	<!-- Protected API end-points -->
+	<security:http realm="Protected API" use-expressions="true" auto-config="false" create-session="stateless" entry-point-ref="unauthorizedEntryPoint">
+		<security:csrf disabled="true"/>
+		
+		<security:access-denied-handler ref="accessDeniedHandler" />
+		
+		<security:custom-filter ref="authenticationTokenProcessingFilter" after="EXCEPTION_TRANSLATION_FILTER" />
+		
+		<security:intercept-url pattern="/api/**" access="isAuthenticated()"/>
+		
+	</security:http>
 	
 	<!-- authentication manager -->
 	<security:authentication-manager alias="authenticationManager">
+		<security:authentication-provider user-service-ref="userDetailsService">
+			<security:password-encoder ref="passwordEncoder"/>
+			
+		</security:authentication-provider>
 	</security:authentication-manager>
 </beans>
