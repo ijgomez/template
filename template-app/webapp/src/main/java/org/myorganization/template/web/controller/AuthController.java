@@ -14,7 +14,7 @@ import org.myorganization.template.web.security.model.AccessTokenVO;
 import org.myorganization.template.web.security.model.AuthenticationTokenVO;
 import org.myorganization.template.web.security.model.CredentialsVO;
 import org.myorganization.template.web.security.model.RefreshTokenVO;
-import org.myorganization.template.web.security.model.TUserDetails;
+import org.myorganization.template.web.security.model.TemplateUserDetails;
 import org.myorganization.template.web.security.services.JWTService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -113,8 +113,8 @@ public class AuthController {
 	@GetMapping("/access")
 	public ResponseEntity<AccessTokenVO> accessToken() {
 		var userDetails = getUserDetails();
-		if (userDetails instanceof TUserDetails) {
-			Optional<User> user = userService.findByUsername(((TUserDetails) userDetails).getUsername());
+		if (userDetails instanceof TemplateUserDetails) {
+			Optional<User> user = userService.findByUsername(((TemplateUserDetails) userDetails).getUsername());
 			if (user.isPresent()) {
 				String accessToken = jwtService.generateAccessToken(user.get());
 				return ResponseEntity.ok(new AccessTokenVO(accessToken));

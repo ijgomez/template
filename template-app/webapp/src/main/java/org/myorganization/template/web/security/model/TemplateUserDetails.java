@@ -6,13 +6,13 @@ import org.myorganization.template.core.domain.security.users.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-public class TUserDetails implements UserDetails {
+public class TemplateUserDetails implements UserDetails {
 
 	private static final long serialVersionUID = 766648750684920897L;
 	
 	private User user;
 	
-	public TUserDetails(final User user) {
+	public TemplateUserDetails(final User user) {
 		this.user = user;
 	}
 	

@@ -3,7 +3,6 @@ package org.myorganization.template.web.security.filters;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 import java.io.IOException;
-import java.text.ParseException;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -13,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.myorganization.template.core.domain.security.users.User;
-import org.myorganization.template.web.security.model.TUserDetails;
+import org.myorganization.template.web.security.model.TemplateUserDetails;
 import org.myorganization.template.web.security.services.JWTService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -36,10 +35,10 @@ public class JwtTokenAuthenticationFilter extends GenericFilterBean {
 	private RequestMatcher requestMatcher = new AntPathRequestMatcher("/**");
 	
 	@Override
-	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
+	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
 		
-		HttpServletRequest request = (HttpServletRequest) req;
-		HttpServletResponse response = (HttpServletResponse) res;
+		HttpServletRequest request = (HttpServletRequest) servletRequest;
+		HttpServletResponse response = (HttpServletResponse) servletResponse;
 		
 		if (!requiresAuthentication(request)) {
 			/*
@@ -49,9 +48,8 @@ public class JwtTokenAuthenticationFilter extends GenericFilterBean {
 			return;
 		}
 		
-		String header = request.getHeader("Authorization");
-		if (header == null || !header.startsWith("Bearer "))
-		{
+		String header = request.getHeader(AUTHORIZATION);
+		if (header == null || !header.startsWith("Bearer ")) {
 			/*
 			 * If there's not authentication information, then we chain to the next filters. The SecurityContext will be
 			 * analyzed by the chained filter that will throw AuthenticationExceptions if necessary
@@ -60,47 +58,39 @@ public class JwtTokenAuthenticationFilter extends GenericFilterBean {
 			return;
 		}
 
-		try
-		{
+		try {
 			/*
 			 * The token is extracted from the header. It's then checked (signature and expiration) An Authentication is
 			 * then created and registered in the SecurityContext. The SecurityContext will be analyzed by chained
 			 * filters that will throw Exceptions if necessary (like if authorizations are incorrect).
 			 */
-			User user = extractAndDecodeJwt(request);
-			Authentication auth = buildAuthenticationFromJwt(user, request);
-			SecurityContextHolder.getContext().setAuthentication(auth);
+			SecurityContextHolder.getContext().setAuthentication(buildAuthenticationFromJwt(extractAndDecodeJwt(request), request));
 
 			chain.doFilter(request, response);
-		} 
-		catch (ExpiredJwtException | MalformedJwtException | ParseException ex)
-		{
+		} catch (ExpiredJwtException | MalformedJwtException ex) {
 			throw new BadCredentialsException("JWT not valid");
 		}
 		
 		/* SecurityContext is then cleared since we are stateless. */
 		SecurityContextHolder.clearContext();
-		
-		// TODO Auto-generated method stub
-		
+
 	}
 	
-	private boolean requiresAuthentication(HttpServletRequest request)
-	{
-		return requestMatcher.matches(request);
+	private boolean requiresAuthentication(HttpServletRequest request) {
+		return this.requestMatcher.matches(request);
 	}
 	
-	private User extractAndDecodeJwt(HttpServletRequest request) throws ParseException
-	{
+	private User extractAndDecodeJwt(HttpServletRequest request) {
 		String authHeader = request.getHeader(AUTHORIZATION);
-		String token = authHeader.substring("Bearer ".length());
-		return jwtService.parseAuthToken(token);
+		return this.jwtService.parseAuthToken(authHeader.substring("Bearer ".length()));
 	}
 	
-	private Authentication buildAuthenticationFromJwt(User user, HttpServletRequest request) throws ParseException
-	{
-		TUserDetails userDetails = new TUserDetails(user);
-		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+	private Authentication buildAuthenticationFromJwt(User user, HttpServletRequest request) {
+		final TemplateUserDetails userDetails;
+		UsernamePasswordAuthenticationToken authentication;
+		
+		userDetails = new TemplateUserDetails(user);
+		authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 		authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 		return authentication;
 	}
