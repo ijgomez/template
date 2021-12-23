@@ -7,11 +7,11 @@ import java.util.Optional;
 
 import javax.sql.DataSource;
 
-import org.myorganization.template.core.domain.reports.Report;
-import org.myorganization.template.core.domain.reports.ReportParam;
-import org.myorganization.template.core.services.reports.ReportService;
+import org.myorganization.template.reports.domain.Report;
+import org.myorganization.template.reports.domain.ReportParam;
 import org.myorganization.template.reports.exceptions.ReportException;
 import org.myorganization.template.reports.jasper.JRReportExecutor;
+import org.myorganization.template.reports.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;

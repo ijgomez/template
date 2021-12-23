@@ -5,8 +5,8 @@ import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
 
-import org.myorganization.template.core.domain.reports.Report;
-import org.myorganization.template.core.domain.reports.ReportParam;
+import org.myorganization.template.reports.domain.Report;
+import org.myorganization.template.reports.domain.ReportParam;
 import org.myorganization.template.reports.exceptions.ReportException;
 
 public interface ReportExecutor {

@@ -1,4 +1,4 @@
-package org.myorganization.template.core.services.reports;
+package org.myorganization.template.reports.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -11,8 +11,8 @@ import javax.transaction.Transactional;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.myorganization.template.core.domain.reports.Report;
 import org.myorganization.template.core.testing.TestEntityFactory;
+import org.myorganization.template.reports.domain.Report;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.dao.DataIntegrityViolationException;

@@ -1,13 +1,13 @@
-package org.myorganization.template.core.services.reports;
+package org.myorganization.template.reports.service;
 
 import java.util.List;
 
-import org.myorganization.template.core.domain.reports.Report;
-import org.myorganization.template.core.domain.reports.ReportCriteria;
-import org.myorganization.template.core.domain.reports.ReportRepository;
 import org.myorganization.template.core.services.archives.ArchiveService;
 import org.myorganization.template.core.services.base.TemplateService;
 import org.myorganization.template.core.services.base.TemplateServiceBase;
+import org.myorganization.template.reports.domain.Report;
+import org.myorganization.template.reports.domain.ReportCriteria;
+import org.myorganization.template.reports.domain.ReportRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

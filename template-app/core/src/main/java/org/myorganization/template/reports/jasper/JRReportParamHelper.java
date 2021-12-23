@@ -2,8 +2,8 @@ package org.myorganization.template.reports.jasper;
 
 import java.util.ArrayList;
 
-import org.myorganization.template.core.domain.reports.ReportParam;
-import org.myorganization.template.core.domain.reports.ReportParamOption;
+import org.myorganization.template.reports.domain.ReportParam;
+import org.myorganization.template.reports.domain.ReportParamOption;
 
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.JRParameter;

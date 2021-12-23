@@ -1,4 +1,4 @@
-package org.myorganization.template.core.services.reports;
+package org.myorganization.template.reports.service;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.*;
@@ -15,9 +15,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.myorganization.template.core.domain.reports.Report;
-import org.myorganization.template.core.domain.reports.ReportRepository;
 import org.myorganization.template.core.testing.TestEntityFactory;
+import org.myorganization.template.reports.domain.Report;
+import org.myorganization.template.reports.domain.ReportRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.ContextConfiguration;

@@ -8,12 +8,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.myorganization.template.core.domain.reports.Report;
-import org.myorganization.template.core.domain.reports.ReportCriteria;
-import org.myorganization.template.core.domain.reports.ReportParam;
 import org.myorganization.template.core.helper.FileHelper;
-import org.myorganization.template.core.services.reports.ReportService;
 import org.myorganization.template.reports.ReportManager;
+import org.myorganization.template.reports.domain.Report;
+import org.myorganization.template.reports.domain.ReportCriteria;
+import org.myorganization.template.reports.domain.ReportParam;
+import org.myorganization.template.reports.service.ReportService;
 import org.myorganization.template.web.controller.base.TemplateController;
 import org.myorganization.template.web.controller.base.TemplateControllerBase;
 import org.myorganization.template.web.domain.datatables.DataTablesResponse;

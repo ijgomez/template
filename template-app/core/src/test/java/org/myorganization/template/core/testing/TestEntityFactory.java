@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.text.RandomStringGenerator;
-import org.myorganization.template.core.domain.reports.Report;
+import org.myorganization.template.reports.domain.Report;
 import org.springframework.stereotype.Component;
 
 @Component

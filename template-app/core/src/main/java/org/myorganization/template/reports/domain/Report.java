@@ -1,4 +1,4 @@
-package org.myorganization.template.core.domain.reports;
+package org.myorganization.template.reports.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
