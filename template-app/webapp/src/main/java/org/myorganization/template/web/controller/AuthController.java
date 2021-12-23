@@ -5,8 +5,8 @@ import java.util.Optional;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
-import org.myorganization.template.core.domain.security.users.User;
-import org.myorganization.template.core.services.security.UserService;
+import org.myorganization.template.security.domain.users.User;
+import org.myorganization.template.security.service.UserService;
 import org.myorganization.template.web.security.exceptions.ForbiddenOperationException;
 import org.myorganization.template.web.security.exceptions.InvalidCredentialsException;
 import org.myorganization.template.web.security.exceptions.UserNotFoundException;

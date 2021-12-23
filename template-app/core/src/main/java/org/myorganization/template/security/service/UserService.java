@@ -1,14 +1,14 @@
-package org.myorganization.template.core.services.security;
+package org.myorganization.template.security.service;
 
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import org.myorganization.template.core.domain.security.users.User;
-import org.myorganization.template.core.domain.security.users.UserCriteria;
-import org.myorganization.template.core.domain.security.users.UserRepository;
 import org.myorganization.template.core.services.base.TemplateService;
 import org.myorganization.template.core.services.base.TemplateServiceBase;
+import org.myorganization.template.security.domain.users.User;
+import org.myorganization.template.security.domain.users.UserCriteria;
+import org.myorganization.template.security.domain.users.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

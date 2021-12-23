@@ -2,8 +2,8 @@ package org.myorganization.template.web.security.services;
 
 import java.util.Calendar;
 
-import org.myorganization.template.core.domain.security.users.User;
-import org.myorganization.template.core.services.security.ProfileService;
+import org.myorganization.template.security.domain.users.User;
+import org.myorganization.template.security.service.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 

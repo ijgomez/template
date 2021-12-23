@@ -2,8 +2,8 @@ package org.myorganization.template.web.security.services;
 
 import java.util.Optional;
 
-import org.myorganization.template.core.domain.security.users.User;
-import org.myorganization.template.core.services.security.UserService;
+import org.myorganization.template.security.domain.users.User;
+import org.myorganization.template.security.service.UserService;
 import org.myorganization.template.web.security.model.TemplateUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

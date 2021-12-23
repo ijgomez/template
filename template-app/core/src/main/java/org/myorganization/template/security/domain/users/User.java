@@ -1,4 +1,4 @@
-package org.myorganization.template.core.domain.security.users;
+package org.myorganization.template.security.domain.users;
 
 import java.time.ZonedDateTime;
 
@@ -12,7 +12,7 @@ import javax.persistence.SequenceGenerator;
 
 import org.myorganization.template.core.domain.base.TemplateEntity;
 import org.myorganization.template.core.domain.base.TemplateEntityBase;
-import org.myorganization.template.core.domain.security.profiles.Profile;
+import org.myorganization.template.security.domain.profiles.Profile;
 import org.springframework.validation.annotation.Validated;
 
 import lombok.Data;

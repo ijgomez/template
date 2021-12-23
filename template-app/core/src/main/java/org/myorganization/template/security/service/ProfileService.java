@@ -1,12 +1,12 @@
-package org.myorganization.template.core.services.security;
+package org.myorganization.template.security.service;
 
 import java.util.List;
 
-import org.myorganization.template.core.domain.security.profiles.Profile;
-import org.myorganization.template.core.domain.security.profiles.ProfileCriteria;
-import org.myorganization.template.core.domain.security.profiles.ProfileRepository;
 import org.myorganization.template.core.services.base.TemplateService;
 import org.myorganization.template.core.services.base.TemplateServiceBase;
+import org.myorganization.template.security.domain.profiles.Profile;
+import org.myorganization.template.security.domain.profiles.ProfileCriteria;
+import org.myorganization.template.security.domain.profiles.ProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

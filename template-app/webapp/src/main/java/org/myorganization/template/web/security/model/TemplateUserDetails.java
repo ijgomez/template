@@ -2,7 +2,7 @@ package org.myorganization.template.web.security.model;
 
 import java.util.Collection;
 
-import org.myorganization.template.core.domain.security.users.User;
+import org.myorganization.template.security.domain.users.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

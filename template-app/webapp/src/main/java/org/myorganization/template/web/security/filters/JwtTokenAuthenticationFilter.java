@@ -11,7 +11,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.myorganization.template.core.domain.security.users.User;
+import org.myorganization.template.security.domain.users.User;
 import org.myorganization.template.web.security.model.TemplateUserDetails;
 import org.myorganization.template.web.security.services.JWTService;
 import org.springframework.beans.factory.annotation.Autowired;

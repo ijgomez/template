@@ -1,12 +1,12 @@
-package org.myorganization.template.core.services.security;
+package org.myorganization.template.security.service;
 
 import java.util.List;
 
-import org.myorganization.template.core.domain.security.actions.Action;
-import org.myorganization.template.core.domain.security.actions.ActionCriteria;
-import org.myorganization.template.core.domain.security.actions.ActionRepository;
 import org.myorganization.template.core.services.base.TemplateService;
 import org.myorganization.template.core.services.base.TemplateServiceBase;
+import org.myorganization.template.security.domain.actions.Action;
+import org.myorganization.template.security.domain.actions.ActionCriteria;
+import org.myorganization.template.security.domain.actions.ActionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

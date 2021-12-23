@@ -1,8 +1,8 @@
 package org.myorganization.template.web.controller;
 
-import org.myorganization.template.core.domain.security.actions.Action;
-import org.myorganization.template.core.domain.security.actions.ActionCriteria;
-import org.myorganization.template.core.services.security.ActionService;
+import org.myorganization.template.security.domain.actions.Action;
+import org.myorganization.template.security.domain.actions.ActionCriteria;
+import org.myorganization.template.security.service.ActionService;
 import org.myorganization.template.web.controller.base.TemplateController;
 import org.myorganization.template.web.controller.base.TemplateControllerBase;
 import org.springframework.beans.factory.annotation.Autowired;

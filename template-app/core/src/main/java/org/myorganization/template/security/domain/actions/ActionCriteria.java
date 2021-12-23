@@ -1,4 +1,4 @@
-package org.myorganization.template.core.domain.security.actions;
+package org.myorganization.template.security.domain.actions;
 
 import org.myorganization.template.core.domain.base.Criteria;
 

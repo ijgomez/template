@@ -1,8 +1,8 @@
 package org.myorganization.template.web.controller;
 
-import org.myorganization.template.core.domain.security.profiles.Profile;
-import org.myorganization.template.core.domain.security.profiles.ProfileCriteria;
-import org.myorganization.template.core.services.security.ProfileService;
+import org.myorganization.template.security.domain.profiles.Profile;
+import org.myorganization.template.security.domain.profiles.ProfileCriteria;
+import org.myorganization.template.security.service.ProfileService;
 import org.myorganization.template.web.controller.base.TemplateController;
 import org.myorganization.template.web.controller.base.TemplateControllerBase;
 import org.springframework.beans.factory.annotation.Autowired;

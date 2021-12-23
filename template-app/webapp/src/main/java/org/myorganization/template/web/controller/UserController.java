@@ -1,8 +1,8 @@
 package org.myorganization.template.web.controller;
 
-import org.myorganization.template.core.domain.security.users.User;
-import org.myorganization.template.core.domain.security.users.UserCriteria;
-import org.myorganization.template.core.services.security.UserService;
+import org.myorganization.template.security.domain.users.User;
+import org.myorganization.template.security.domain.users.UserCriteria;
+import org.myorganization.template.security.service.UserService;
 import org.myorganization.template.web.controller.base.TemplateController;
 import org.myorganization.template.web.controller.base.TemplateControllerBase;
 import org.springframework.beans.factory.annotation.Autowired;

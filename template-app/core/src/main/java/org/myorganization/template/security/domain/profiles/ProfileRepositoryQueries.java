@@ -1,4 +1,4 @@
-package org.myorganization.template.core.domain.security.profiles;
+package org.myorganization.template.security.domain.profiles;
 
 import org.myorganization.template.core.domain.base.RepositoryQueries;
 

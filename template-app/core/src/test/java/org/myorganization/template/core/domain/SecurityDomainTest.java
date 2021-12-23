@@ -6,9 +6,9 @@ import java.util.HashSet;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.myorganization.template.core.domain.security.actions.Action;
-import org.myorganization.template.core.domain.security.profiles.Profile;
-import org.myorganization.template.core.domain.security.users.User;
+import org.myorganization.template.security.domain.actions.Action;
+import org.myorganization.template.security.domain.profiles.Profile;
+import org.myorganization.template.security.domain.users.User;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
