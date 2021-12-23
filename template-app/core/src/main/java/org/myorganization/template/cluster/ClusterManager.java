@@ -3,10 +3,10 @@ package org.myorganization.template.cluster;
 import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 
+import org.myorganization.template.cluster.domain.ClusterNode;
+import org.myorganization.template.cluster.domain.ClusterNodeStatus;
 import org.myorganization.template.cluster.helper.ClusterHelper;
-import org.myorganization.template.core.domain.system.cluster.ClusterNode;
-import org.myorganization.template.core.domain.system.cluster.ClusterNodeStatus;
-import org.myorganization.template.core.services.system.ClusterNodeService;
+import org.myorganization.template.cluster.service.ClusterNodeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

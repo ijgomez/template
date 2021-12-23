@@ -1,8 +1,8 @@
 package org.myorganization.template.web.controller;
 
-import org.myorganization.template.core.domain.system.cluster.ClusterNode;
-import org.myorganization.template.core.domain.system.cluster.ClusterNodeCriteria;
-import org.myorganization.template.core.services.system.ClusterNodeService;
+import org.myorganization.template.cluster.domain.ClusterNode;
+import org.myorganization.template.cluster.domain.ClusterNodeCriteria;
+import org.myorganization.template.cluster.service.ClusterNodeService;
 import org.myorganization.template.web.controller.base.TemplateController;
 import org.myorganization.template.web.controller.base.TemplateControllerBase;
 import org.springframework.beans.factory.annotation.Autowired;

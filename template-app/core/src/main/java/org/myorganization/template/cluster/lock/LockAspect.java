@@ -1,4 +1,4 @@
-package org.myorganization.template.core.lock;
+package org.myorganization.template.cluster.lock;
 
 import java.util.Arrays;
 

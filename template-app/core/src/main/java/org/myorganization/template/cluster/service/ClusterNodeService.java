@@ -1,10 +1,10 @@
-package org.myorganization.template.core.services.system;
+package org.myorganization.template.cluster.service;
 
 import java.util.List;
 
-import org.myorganization.template.core.domain.system.cluster.ClusterNode;
-import org.myorganization.template.core.domain.system.cluster.ClusterNodeCriteria;
-import org.myorganization.template.core.domain.system.cluster.ClusterNodeRepository;
+import org.myorganization.template.cluster.domain.ClusterNode;
+import org.myorganization.template.cluster.domain.ClusterNodeCriteria;
+import org.myorganization.template.cluster.domain.ClusterNodeRepository;
 import org.myorganization.template.core.services.base.TemplateService;
 import org.myorganization.template.core.services.base.TemplateServiceBase;
 import org.springframework.beans.factory.annotation.Autowired;

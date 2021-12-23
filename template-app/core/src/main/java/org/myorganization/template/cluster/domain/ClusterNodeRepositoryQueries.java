@@ -1,4 +1,4 @@
-package org.myorganization.template.core.domain.system.cluster;
+package org.myorganization.template.cluster.domain;
 
 import org.myorganization.template.core.domain.base.RepositoryQueries;
 
