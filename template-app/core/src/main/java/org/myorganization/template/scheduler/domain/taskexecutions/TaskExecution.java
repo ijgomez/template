@@ -1,4 +1,4 @@
-package org.myorganization.template.core.domain.tasks;
+package org.myorganization.template.scheduler.domain.taskexecutions;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -16,6 +16,7 @@ import javax.persistence.SequenceGenerator;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.myorganization.template.scheduler.domain.tasks.Task;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 

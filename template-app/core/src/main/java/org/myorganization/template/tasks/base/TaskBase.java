@@ -3,10 +3,10 @@ package org.myorganization.template.tasks.base;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-import org.myorganization.template.core.domain.tasks.Task;
-import org.myorganization.template.core.domain.tasks.TaskExecution;
-import org.myorganization.template.core.domain.tasks.TaskExecutionAction;
-import org.myorganization.template.core.domain.tasks.TaskExecutionStatus;
+import org.myorganization.template.scheduler.domain.taskexecutions.TaskExecution;
+import org.myorganization.template.scheduler.domain.taskexecutions.TaskExecutionAction;
+import org.myorganization.template.scheduler.domain.taskexecutions.TaskExecutionStatus;
+import org.myorganization.template.scheduler.domain.tasks.Task;
 import org.myorganization.template.scheduler.services.TaskExecutionService;
 import org.springframework.beans.factory.annotation.Autowired;
 

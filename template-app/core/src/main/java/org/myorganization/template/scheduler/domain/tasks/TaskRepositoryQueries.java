@@ -1,4 +1,4 @@
-package org.myorganization.template.core.domain.tasks;
+package org.myorganization.template.scheduler.domain.tasks;
 
 import org.myorganization.template.core.domain.base.RepositoryQueries;
 

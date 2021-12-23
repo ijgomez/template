@@ -1,6 +1,5 @@
 package org.myorganization.template.scheduler.services;
 
-import org.myorganization.template.core.services.tasks.TaskService;
 import org.myorganization.template.tasks.DummyTask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;

@@ -1,13 +1,13 @@
-package org.myorganization.template.core.services.tasks;
+package org.myorganization.template.scheduler.services;
 
 import java.util.List;
 import java.util.Optional;
 
-import org.myorganization.template.core.domain.tasks.Task;
-import org.myorganization.template.core.domain.tasks.TaskCriteria;
-import org.myorganization.template.core.domain.tasks.TaskRepository;
 import org.myorganization.template.core.services.base.TemplateService;
 import org.myorganization.template.core.services.base.TemplateServiceBase;
+import org.myorganization.template.scheduler.domain.tasks.Task;
+import org.myorganization.template.scheduler.domain.tasks.TaskCriteria;
+import org.myorganization.template.scheduler.domain.tasks.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

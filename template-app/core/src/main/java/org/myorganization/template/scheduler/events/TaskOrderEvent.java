@@ -1,4 +1,4 @@
-package org.myorganization.template.core.events;
+package org.myorganization.template.scheduler.events;
 
 import org.springframework.context.ApplicationEvent;
 

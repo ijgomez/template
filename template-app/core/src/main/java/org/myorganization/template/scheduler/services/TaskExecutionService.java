@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.myorganization.template.core.domain.tasks.TaskExecution;
-import org.myorganization.template.core.domain.tasks.TaskExecutionCriteria;
-import org.myorganization.template.core.domain.tasks.TaskExecutionRepository;
+import org.myorganization.template.scheduler.domain.taskexecutions.TaskExecution;
+import org.myorganization.template.scheduler.domain.taskexecutions.TaskExecutionCriteria;
+import org.myorganization.template.scheduler.domain.taskexecutions.TaskExecutionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

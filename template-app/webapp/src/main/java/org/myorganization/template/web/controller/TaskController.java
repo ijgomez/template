@@ -1,9 +1,9 @@
 package org.myorganization.template.web.controller;
 
-import org.myorganization.template.core.domain.tasks.Task;
-import org.myorganization.template.core.domain.tasks.TaskCriteria;
-import org.myorganization.template.core.services.tasks.TaskService;
+import org.myorganization.template.scheduler.domain.tasks.Task;
+import org.myorganization.template.scheduler.domain.tasks.TaskCriteria;
 import org.myorganization.template.scheduler.services.ExecutorService;
+import org.myorganization.template.scheduler.services.TaskService;
 import org.myorganization.template.web.controller.base.TemplateController;
 import org.myorganization.template.web.controller.base.TemplateControllerBase;
 import org.springframework.beans.factory.annotation.Autowired;
