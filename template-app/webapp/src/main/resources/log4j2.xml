@@ -10,15 +10,17 @@
     </Console>
   </Appenders>
   <Loggers>
-  	<!-- 
-  	log4j.logger.org.springframework=INFO, CONSOLE
-	log4j.logger.org.apache=INFO, CONSOLE
-	log4j.logger.org.jboss.logging=INFO, CONSOLE
-	log4j.logger.org.hibernate=INFO, CONSOLE
-	log4j.logger.org.quartz=INFO, CONSOLE
-	log4j.logger.net.sf.jasperreports=ERROR, CONSOLE 
-	-->
-    <Root level="info">
+  	<!-- Application -->
+  	<Logger name="org.myorganization.template" level="debug"/>
+  	
+  	<!-- Frameworks -->
+  	<Logger name="org.springframework" level="info"/>
+  	<Logger name="org.hibernate" level="info"/>
+  	<Logger name="org.jboss.logging" level="info"/>
+  	<Logger name="org.quartz" level="info"/>
+  	<Logger name="net.sf.jasperreports" level="info"/>
+
+    <Root>
       <AppenderRef ref="console"/>
     </Root>
   </Loggers>

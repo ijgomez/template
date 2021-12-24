@@ -1,18 +1,18 @@
 package org.myorganization.template.web.controller;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
+import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.myorganization.template.core.helper.FileHelper;
 import org.myorganization.template.reports.ReportManager;
 import org.myorganization.template.reports.domain.Report;
 import org.myorganization.template.reports.domain.ReportCriteria;
 import org.myorganization.template.reports.domain.ReportParam;
+import org.myorganization.template.reports.exceptions.ReportException;
+import org.myorganization.template.reports.exceptions.ReportNotFoundException;
 import org.myorganization.template.reports.service.ReportService;
 import org.myorganization.template.web.controller.base.TemplateController;
 import org.myorganization.template.web.controller.base.TemplateControllerBase;
@@ -79,7 +79,7 @@ public class ReportController extends TemplateControllerBase<Report, ReportCrite
 	}
 
 	@GetMapping("/{id}/params")
-	public ResponseEntity<List<ReportParam>> params(@PathVariable("id") Long id) throws Exception {
+	public ResponseEntity<List<ReportParam>> params(@PathVariable("id") Long id) throws ReportException {
 		log.info("params: {}", id);
 		
 		List<ReportParam> params = this.reportManager.readParams(id);
@@ -87,34 +87,31 @@ public class ReportController extends TemplateControllerBase<Report, ReportCrite
 		return ResponseEntity.ok(params);
 	}
 	
-	@GetMapping("/export")
-	public void  export(HttpServletResponse response) throws Exception {
-		log.info("export");
-		
-		List<Report> data = super.getService().findByCriteria(new ReportCriteria());
-		
-		response.addHeader("Content-disposition", "attachment;filename=export_" + System.currentTimeMillis() + ".csv");
-		response.addHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-		response.addHeader("Pragma", "no-cache");
-		response.addHeader("Expires", "0");
-		response.setContentType("application/vnd.ms-excel");
-		try (InputStream is = new ByteArrayInputStream(FileHelper.toCsvByteArray(data))) {
-			IOUtils.copy(is, response.getOutputStream());
-		}
-		response.flushBuffer();
-	}
-	
 	@PostMapping("/{id}/execute")
-	public void execute(@PathVariable("id") Long id, @RequestBody Object params, HttpServletResponse response) throws Exception {
+	public void execute(@PathVariable("id") Long id, @RequestBody Object params, HttpServletResponse response) throws ReportException {
 		log.info("execute: {} {}", id, params);
 		
-		response.addHeader("Content-disposition", "attachment;filename=report_" + System.currentTimeMillis() + ".pdf");
-		response.addHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-		response.addHeader("Pragma", "no-cache");
-		response.addHeader("Expires", "0");
-		response.setContentType("application/pdf");
-		this.reportManager.execute(id, response.getOutputStream());
-		response.flushBuffer();
+		Optional<Report> data = super.getService().read(id);
+		if (data.isPresent()) {
+			try {
+				var report = data.get();
+				
+				response.addHeader("Content-disposition", "attachment;filename=report_" + System.currentTimeMillis() + ".pdf");
+				response.addHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+				response.addHeader("Pragma", "no-cache");
+				response.addHeader("Expires", "0");
+				response.setContentType("application/pdf");
+				
+				this.reportManager.execute(report, null, response.getOutputStream());
+				
+				response.flushBuffer();
+				
+			} catch (ReportException | IOException e) {
+				throw new ReportException("fail execute report", e);
+			}
+		}
+		throw new ReportNotFoundException("report with id " + id + " not found");
+		
 	}
 
 }
