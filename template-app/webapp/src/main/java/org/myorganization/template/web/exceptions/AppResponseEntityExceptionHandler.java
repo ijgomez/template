@@ -6,6 +6,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -65,4 +66,14 @@ public class AppResponseEntityExceptionHandler  {
 		return ResponseEntity.badRequest().body(m);
 	}
 	
+	@ExceptionHandler({ BadCredentialsException.class })
+	public ResponseEntity<MessageResponse> handleBadCredentialsRequest(final BadCredentialsException ex, final WebRequest request) {
+		MessageResponse m = new MessageResponse();
+		m.setMessage(ex.getMessage());
+		if (ex.getCause() != null) {
+			m.setDetails(ex.getCause().getCause().getMessage());
+		}
+		return ResponseEntity.badRequest().body(m);
+	}
+
 }
