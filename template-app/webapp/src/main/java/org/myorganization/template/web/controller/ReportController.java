@@ -16,7 +16,6 @@ import org.myorganization.template.reports.exceptions.ReportNotFoundException;
 import org.myorganization.template.reports.service.ReportService;
 import org.myorganization.template.web.controller.base.TemplateController;
 import org.myorganization.template.web.controller.base.TemplateControllerBase;
-import org.myorganization.template.web.domain.datatables.DataTablesResponse;
 import org.myorganization.template.web.domain.datatables.criteria.DataTablesCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

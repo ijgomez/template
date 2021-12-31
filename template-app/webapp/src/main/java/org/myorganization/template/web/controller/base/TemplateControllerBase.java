@@ -177,17 +177,13 @@ public abstract class TemplateControllerBase<E extends TemplateEntityBase, C ext
 		
 		criteria = this.buildCriteria(dtCriteria);
 
-//		if (StringUtils.isNotEmpty(dtCriteria.getSearch().getValue())) {
-//			reportCriteria.setDescription(dtCriteria.getSearch().getValue());
-//		}
 		criteria.setPageNumber(dtCriteria.getStart());
 		criteria.setPageSize(dtCriteria.getLength());
 		criteria.setSortField(dtCriteria.getColumns()[dtCriteria.getOrder()[0].getColumn()].getName());
 		criteria.setSortOrder(dtCriteria.getOrder()[0].getDir());
 		
-		
-		List<E> data = this.getService().findByCriteria(null);
-		Long count = this.getService().countByCriteria(null);
+		List<E> data = this.getService().findByCriteria(criteria);
+		Long count = this.getService().countByCriteria(criteria);
 
 		response = new DataTablesResponse<>();
 		response.setData(data);
