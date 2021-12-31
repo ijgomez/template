@@ -49,33 +49,46 @@ public class ReportController extends TemplateControllerBase<Report, ReportCrite
 		super(reportService);
 	}
 	
-	@PostMapping("/datatables")
-	public ResponseEntity<DataTablesResponse<Report>> datatables(@RequestBody DataTablesCriteria dtCriteria) {
-		DataTablesResponse<Report> response;
-		ReportCriteria reportCriteria;
-
-		log.info("datatables: {}", dtCriteria );
+//	@PostMapping("/datatables")
+//	public ResponseEntity<DataTablesResponse<Report>> datatables(@RequestBody DataTablesCriteria dtCriteria) {
+//		DataTablesResponse<Report> response;
+//		ReportCriteria reportCriteria;
+//
+//		log.info("datatables: {}", dtCriteria );
+//		
+//		reportCriteria = new ReportCriteria();
+//		if (StringUtils.isNotEmpty(dtCriteria.getSearch().getValue())) {
+//			reportCriteria.setDescription(dtCriteria.getSearch().getValue());
+//		}
+//		reportCriteria.setPageNumber(dtCriteria.getStart());
+//		reportCriteria.setPageSize(dtCriteria.getLength());
+//		reportCriteria.setSortField(dtCriteria.getColumns()[dtCriteria.getOrder()[0].getColumn()].getName());
+//		reportCriteria.setSortOrder(dtCriteria.getOrder()[0].getDir());
+//		
+//		
+//		List<Report> reports = super.getService().findByCriteria(reportCriteria);
+//		Long count = super.getService().countByCriteria(reportCriteria);
+//
+//		response = new DataTablesResponse<>();
+//		response.setData(reports);
+//		response.setDraw(dtCriteria.getDraw());
+//		response.setRecordsFiltered(count.intValue());
+//		response.setRecordsTotal(count.intValue());
+//		
+//		return ResponseEntity.ok(response);
+//	}
+	
+	@Override
+	protected ReportCriteria buildCriteria(DataTablesCriteria dtCriteria) {
+		ReportCriteria criteria;
 		
-		reportCriteria = new ReportCriteria();
+		criteria = new ReportCriteria();
+		
 		if (StringUtils.isNotEmpty(dtCriteria.getSearch().getValue())) {
-			reportCriteria.setDescription(dtCriteria.getSearch().getValue());
+			criteria.setDescription(dtCriteria.getSearch().getValue());
 		}
-		reportCriteria.setPageNumber(dtCriteria.getStart());
-		reportCriteria.setPageSize(dtCriteria.getLength());
-		reportCriteria.setSortField(dtCriteria.getColumns()[dtCriteria.getOrder()[0].getColumn()].getName());
-		reportCriteria.setSortOrder(dtCriteria.getOrder()[0].getDir());
 		
-		
-		List<Report> reports = super.getService().findByCriteria(reportCriteria);
-		Long count = super.getService().countByCriteria(reportCriteria);
-
-		response = new DataTablesResponse<>();
-		response.setData(reports);
-		response.setDraw(dtCriteria.getDraw());
-		response.setRecordsFiltered(count.intValue());
-		response.setRecordsTotal(count.intValue());
-		
-		return ResponseEntity.ok(response);
+		return criteria;
 	}
 
 	@GetMapping("/{id}/params")

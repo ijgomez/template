@@ -9,6 +9,8 @@ import org.myorganization.template.core.domain.base.Criteria;
 import org.myorganization.template.core.domain.base.TemplateEntityBase;
 import org.myorganization.template.core.helper.FileHelper;
 import org.myorganization.template.core.services.base.TemplateService;
+import org.myorganization.template.web.domain.datatables.DataTablesResponse;
+import org.myorganization.template.web.domain.datatables.criteria.DataTablesCriteria;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -166,6 +168,38 @@ public abstract class TemplateControllerBase<E extends TemplateEntityBase, C ext
 		}
 	}
 	
+	@Override
+	public ResponseEntity<DataTablesResponse<E>> datatables(@Valid @RequestBody DataTablesCriteria dtCriteria) {
+		DataTablesResponse<E> response;
+		C criteria;
+
+		log.info("datatables: {}", dtCriteria );
+		
+		criteria = this.buildCriteria(dtCriteria);
+
+//		if (StringUtils.isNotEmpty(dtCriteria.getSearch().getValue())) {
+//			reportCriteria.setDescription(dtCriteria.getSearch().getValue());
+//		}
+		criteria.setPageNumber(dtCriteria.getStart());
+		criteria.setPageSize(dtCriteria.getLength());
+		criteria.setSortField(dtCriteria.getColumns()[dtCriteria.getOrder()[0].getColumn()].getName());
+		criteria.setSortOrder(dtCriteria.getOrder()[0].getDir());
+		
+		
+		List<E> data = this.getService().findByCriteria(null);
+		Long count = this.getService().countByCriteria(null);
+
+		response = new DataTablesResponse<>();
+		response.setData(data);
+		response.setDraw(dtCriteria.getDraw());
+		response.setRecordsFiltered(count.intValue());
+		response.setRecordsTotal(count.intValue());
+		
+		return ResponseEntity.ok(response);
+	}
+	
+	protected abstract C buildCriteria(DataTablesCriteria dtCriteria);
+
 	@Override
 	public TemplateService<E, C> getService() {
 		return service;

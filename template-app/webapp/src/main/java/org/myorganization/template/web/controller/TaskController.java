@@ -1,11 +1,13 @@
 package org.myorganization.template.web.controller;
 
+import org.apache.commons.lang3.StringUtils;
 import org.myorganization.template.scheduler.domain.tasks.Task;
 import org.myorganization.template.scheduler.domain.tasks.TaskCriteria;
 import org.myorganization.template.scheduler.services.ExecutorService;
 import org.myorganization.template.scheduler.services.TaskService;
 import org.myorganization.template.web.controller.base.TemplateController;
 import org.myorganization.template.web.controller.base.TemplateControllerBase;
+import org.myorganization.template.web.domain.datatables.criteria.DataTablesCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -31,7 +33,19 @@ public class TaskController extends TemplateControllerBase<Task, TaskCriteria> i
 	public TaskController(TaskService taskService) {
 		super(taskService);
 	}
+	
+	@Override
+	protected TaskCriteria buildCriteria(DataTablesCriteria dtCriteria) {
+		TaskCriteria criteria;
 
+		criteria = new TaskCriteria();
+
+		if (StringUtils.isNotEmpty(dtCriteria.getSearch().getValue())) {
+			criteria.setName(dtCriteria.getSearch().getValue());
+		}
+
+		return criteria;
+	}
 	
 	/**
 	 * Execute a current Task.

@@ -7,6 +7,8 @@ import javax.validation.Valid;
 import org.myorganization.template.core.domain.base.Criteria;
 import org.myorganization.template.core.domain.base.TemplateEntity;
 import org.myorganization.template.core.services.base.TemplateService;
+import org.myorganization.template.web.domain.datatables.DataTablesResponse;
+import org.myorganization.template.web.domain.datatables.criteria.DataTablesCriteria;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -66,6 +68,9 @@ public interface TemplateController<E extends TemplateEntity, C extends Criteria
 
 	@PostMapping("/export")
 	ResponseEntity<Resource> export(@Valid @RequestBody C criteria);
+	
+	@PostMapping("/datatables")
+	ResponseEntity<DataTablesResponse<E>> datatables(@RequestBody DataTablesCriteria dtCriteria);
 
 	TemplateService<E, C> getService();
 

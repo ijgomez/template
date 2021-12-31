@@ -1,10 +1,12 @@
 package org.myorganization.template.web.controller;
 
+import org.apache.commons.lang3.StringUtils;
 import org.myorganization.template.core.domain.system.properties.Property;
 import org.myorganization.template.core.domain.system.properties.PropertyCriteria;
 import org.myorganization.template.core.services.system.PropertyService;
 import org.myorganization.template.web.controller.base.TemplateController;
 import org.myorganization.template.web.controller.base.TemplateControllerBase;
+import org.myorganization.template.web.domain.datatables.criteria.DataTablesCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +20,19 @@ public class PropertyController extends TemplateControllerBase<Property, Propert
 	@Autowired
 	public PropertyController(PropertyService propertyService) {
 		super(propertyService);
+	}
+	
+	@Override
+	protected PropertyCriteria buildCriteria(DataTablesCriteria dtCriteria) {
+		PropertyCriteria criteria;
+
+		criteria = new PropertyCriteria();
+
+		if (StringUtils.isNotEmpty(dtCriteria.getSearch().getValue())) {
+			criteria.setProperty(dtCriteria.getSearch().getValue());
+		}
+
+		return criteria;
 	}
 	
 }

@@ -1,10 +1,12 @@
 package org.myorganization.template.web.controller;
 
+import org.apache.commons.lang3.StringUtils;
 import org.myorganization.template.security.domain.users.User;
 import org.myorganization.template.security.domain.users.UserCriteria;
 import org.myorganization.template.security.service.UserService;
 import org.myorganization.template.web.controller.base.TemplateController;
 import org.myorganization.template.web.controller.base.TemplateControllerBase;
+import org.myorganization.template.web.domain.datatables.criteria.DataTablesCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +24,19 @@ public class UserController extends TemplateControllerBase<User, UserCriteria> i
 	@Autowired
 	protected UserController(UserService userService) {
 		super(userService);
+	}
+	
+	@Override
+	protected UserCriteria buildCriteria(DataTablesCriteria dtCriteria) {
+		UserCriteria criteria;
+		
+		criteria = new UserCriteria();
+		
+		if (StringUtils.isNotEmpty(dtCriteria.getSearch().getValue())) {
+			criteria.setUsername(dtCriteria.getSearch().getValue());
+		}
+
+		return criteria;
 	}
 	
 //	@Override
