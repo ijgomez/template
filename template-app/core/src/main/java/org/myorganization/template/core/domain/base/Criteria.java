@@ -1,12 +1,11 @@
 package org.myorganization.template.core.domain.base;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
-@Getter @Setter @NoArgsConstructor
+@Getter @Setter @NoArgsConstructor @ToString
 public abstract class Criteria {
 	
 	private Long id;
@@ -19,8 +18,4 @@ public abstract class Criteria {
 	
 	private String sortOrder;
 
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
-	}
 }

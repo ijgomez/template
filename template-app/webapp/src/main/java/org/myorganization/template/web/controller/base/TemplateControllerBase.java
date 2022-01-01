@@ -30,6 +30,11 @@ public abstract class TemplateControllerBase<E extends TemplateEntityBase, C ext
 
 	private TemplateService<E, C> service;
 
+	/**
+	 * new instance.
+	 * 
+	 * @param service Service.
+	 */
 	protected TemplateControllerBase(TemplateService<E, C> service) {
 		super();
 		this.service = service;
@@ -47,7 +52,7 @@ public abstract class TemplateControllerBase<E extends TemplateEntityBase, C ext
 	@Override
 	public ResponseEntity<List<E>> findByCriteria(@Valid @RequestBody C criteria) {
 		
-		log.info("find by criteria: {}", criteria);
+		log.debug("find by criteria: {}", criteria);
 		
 		if (criteria == null) {
 			return ResponseEntity.badRequest().build();
@@ -63,7 +68,7 @@ public abstract class TemplateControllerBase<E extends TemplateEntityBase, C ext
 	@Override
 	public ResponseEntity<Long> countByCriteria(@Valid @RequestBody C criteria) {
 		
-		log.info("count by criteria: {}", criteria);
+		log.debug("count by criteria: {}", criteria);
 
 		if (criteria == null) {
 			return ResponseEntity.badRequest().build();
@@ -76,7 +81,7 @@ public abstract class TemplateControllerBase<E extends TemplateEntityBase, C ext
 	
 	@Override
 	public ResponseEntity<E> create(@Valid @RequestBody E entity) {
-		log.info("create {}", entity);
+		log.debug("create {}", entity);
 		
 		if (entity == null) {
 			return ResponseEntity.badRequest().build();
@@ -93,7 +98,7 @@ public abstract class TemplateControllerBase<E extends TemplateEntityBase, C ext
 	
 	@Override
 	public ResponseEntity<E> read(@PathVariable("id") Long id) {
-		log.info("read {}", id);
+		log.debug("read {}", id);
 		
 		if (id == null) {
 			return ResponseEntity.badRequest().build();
@@ -109,7 +114,7 @@ public abstract class TemplateControllerBase<E extends TemplateEntityBase, C ext
 	@Override
 	public ResponseEntity<E> update(@PathVariable Long id, @Valid @RequestBody E entity) {
 		
-		log.info("update {} - {}", id, entity);
+		log.debug("update {} - {}", id, entity);
 		
 		if (entity == null || id == null) {
 			return ResponseEntity.badRequest().build();
@@ -126,7 +131,7 @@ public abstract class TemplateControllerBase<E extends TemplateEntityBase, C ext
 	@Override
 	public ResponseEntity<Long> delete(@PathVariable("id") Long id) {
 		
-		log.info("delete {}", id);
+		log.debug("delete {}", id);
 		
 		if (id == null) {
 			return ResponseEntity.badRequest().build();
@@ -144,7 +149,7 @@ public abstract class TemplateControllerBase<E extends TemplateEntityBase, C ext
 		ByteArrayResource resource;
 		
 		try {
-			log.info("export by criteria: {}", criteria);
+			log.debug("export by criteria: {}", criteria);
 			
 			if (criteria == null) {
 				return ResponseEntity.badRequest().build();
@@ -173,15 +178,17 @@ public abstract class TemplateControllerBase<E extends TemplateEntityBase, C ext
 		DataTablesResponse<E> response;
 		C criteria;
 
-		log.info("datatables: {}", dtCriteria );
+		log.debug("datatables: {}", dtCriteria );
 		
 		criteria = this.buildCriteria(dtCriteria);
 
 		criteria.setPageNumber(dtCriteria.getStart());
 		criteria.setPageSize(dtCriteria.getLength());
-		criteria.setSortField(dtCriteria.getColumns()[dtCriteria.getOrder()[0].getColumn()].getName());
-		criteria.setSortOrder(dtCriteria.getOrder()[0].getDir());
-		
+		if (dtCriteria.getOrder() != null && dtCriteria.getOrder().length > 0) {
+			criteria.setSortField(dtCriteria.getColumns()[dtCriteria.getOrder()[0].getColumn()].getData());
+			criteria.setSortOrder(dtCriteria.getOrder()[0].getDir());
+		}
+
 		List<E> data = this.getService().findByCriteria(criteria);
 		Long count = this.getService().countByCriteria(criteria);
 
