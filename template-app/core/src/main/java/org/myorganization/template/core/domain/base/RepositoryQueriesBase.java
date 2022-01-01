@@ -13,6 +13,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.apache.commons.lang3.StringUtils;
+
 public abstract class RepositoryQueriesBase<E, C extends Criteria> {
 
 	@PersistenceContext
@@ -43,7 +45,7 @@ public abstract class RepositoryQueriesBase<E, C extends Criteria> {
 			criteriaQuery.where(predicates.toArray(new Predicate[predicates.size()]));
 		}
 		
-		if (criteria != null && criteria.getSortField() != null && criteria.getSortOrder() != null) {
+		if (criteria != null && !StringUtils.isEmpty(criteria.getSortField()) && !StringUtils.isEmpty(criteria.getSortOrder())) {
 			if (criteria.getSortOrder().equalsIgnoreCase("ASC")) {
 				criteriaQuery.orderBy(builder.asc(root.get(criteria.getSortField())));
 			} else {

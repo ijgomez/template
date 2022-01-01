@@ -11,7 +11,7 @@ import lombok.Setter;
 @Getter @Setter @NoArgsConstructor
 public class DataTablesColumnCriteria {
 
-	private Integer data;
+	private String data;
 	
 	private String name;
 	
