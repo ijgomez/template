@@ -4,9 +4,6 @@
   <artifactId>template-app</artifactId>
   <version>1.0</version>
   <packaging>pom</packaging>
-  <prerequisites>
-  	<maven>3.2.5</maven>
-  </prerequisites>
   <properties>
   	<!-- Project properties -->
   	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -16,11 +13,12 @@
     
     <!-- Frameworks version -->
     <org.springframework.version>5.2.9.RELEASE</org.springframework.version>
+    <org.springframework.security.version>5.4.1</org.springframework.security.version>
     <org.hibernate.version>5.4.17.Final</org.hibernate.version>
     <com.fasterxml.jackson.core.version>2.11.0</com.fasterxml.jackson.core.version>
     <org.slf4j.version>1.7.25</org.slf4j.version>
     <com.jayway.jsonpath.version>2.4.0</com.jayway.jsonpath.version>
-    
+    <org.projectlombok.version>1.18.16</org.projectlombok.version>
   </properties>
   <modules>
   	<module>core</module>
@@ -55,6 +53,13 @@
 			<version>${org.springframework.version}</version>
   			<scope>test</scope>
 		</dependency>
+		
+		<!-- Spring Security dependencies -->
+		<dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <version>${org.springframework.security.version}</version>
+        </dependency>
 		
 		<!-- Hibernate dependencies -->
 		<dependency>
@@ -106,7 +111,7 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.18.2</version>
+			<version>${org.projectlombok.version}</version>
 			<scope>provided</scope>
 		</dependency>
   		<!-- Testing dependencies -->

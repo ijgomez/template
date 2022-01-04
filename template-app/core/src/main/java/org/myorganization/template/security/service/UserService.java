@@ -10,14 +10,15 @@ import org.myorganization.template.security.domain.users.User;
 import org.myorganization.template.security.domain.users.UserCriteria;
 import org.myorganization.template.security.domain.users.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserService extends TemplateServiceBase<User, UserCriteria> implements TemplateService<User, UserCriteria> {
 
-//	@Autowired
-//	private PasswordEncoder passwordEncoder;
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 	
 	@Autowired
 	public UserService(UserRepository userRepository) {
