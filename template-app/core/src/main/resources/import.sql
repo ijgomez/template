@@ -27,11 +27,22 @@ insert into Report (id, name, description) values (report_seq.nextval, 'Report 2
 insert into Report (id, name, description) values (report_seq.nextval, 'Report 21', 'Description of Report 21');
 insert into Report (id, name, description) values (report_seq.nextval, 'Report 22', 'Description of Report 22');
 
-insert into Action (id, name, description) values (action_seq.nextval, 'REPORT_C', 'Report - Create');
-insert into Action (id, name, description) values (action_seq.nextval, 'REPORT_R', 'Report - Read');
-insert into Action (id, name, description) values (action_seq.nextval, 'REPORT_U', 'Report - Update');
-insert into Action (id, name, description) values (action_seq.nextval, 'REPORT_D', 'Report - Delete');
-insert into Action (id, name, description) values (action_seq.nextval, 'REPORT_E', 'Report - Execute');
+insert into Action (id, name, description) values (action_seq.nextval, 'REPORT_READ',    'Permission to view and execute reports');
+insert into Action (id, name, description) values (action_seq.nextval, 'REPORT_WRITE',   'Permission to change reports');
+insert into Action (id, name, description) values (action_seq.nextval, 'SECURITY_READ',  'Permission to view security data');
+insert into Action (id, name, description) values (action_seq.nextval, 'SECURITY_WRITE', 'Permission to change security data');
+insert into Action (id, name, description) values (action_seq.nextval, 'USER_READ',      'Permission to view users');
+insert into Action (id, name, description) values (action_seq.nextval, 'USER_WRITE',     'Permission to change users');
+insert into Action (id, name, description) values (action_seq.nextval, 'PROFILE_READ',   'Permission to view profiles');
+insert into Action (id, name, description) values (action_seq.nextval, 'PROFILE_WRITE',  'Permission to change profiles');
+insert into Action (id, name, description) values (action_seq.nextval, 'ACTION_READ',    'Permission to view actions');
+insert into Action (id, name, description) values (action_seq.nextval, 'ACTION_WRITE',   'Permission to change actions');
+insert into Action (id, name, description) values (action_seq.nextval, 'SYSTEM_READ',    'Permission to view system data');
+insert into Action (id, name, description) values (action_seq.nextval, 'SYSTEM_WRITE',   'Permission to change system data');
+insert into Action (id, name, description) values (action_seq.nextval, 'PROPERTY_READ',  'Permission to view properties');
+insert into Action (id, name, description) values (action_seq.nextval, 'PROPERTY_WRITE', 'Permission to change properties');
+insert into Action (id, name, description) values (action_seq.nextval, 'CLUSTER_READ',   'Permission to view cluster');
+insert into Action (id, name, description) values (action_seq.nextval, 'CLUSTER_WRITE',  'Permission to change cluster');
 
 insert into Profile (id, name, description) values (profile_seq.nextval, 'ADMINISTRATOR', 'Administration');
 insert into Profile (id, name, description) values (profile_seq.nextval, 'SUPPORT', 'Support');
