@@ -16,7 +16,7 @@ import org.myorganization.template.reports.exceptions.ReportNotFoundException;
 import org.myorganization.template.reports.service.ReportService;
 import org.myorganization.template.web.controller.base.TemplateController;
 import org.myorganization.template.web.controller.base.TemplateControllerBase;
-import org.myorganization.template.web.domain.datatables.criteria.DataTablesCriteria;
+import org.myorganization.template.web.domain.datatables.DataTablesCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -48,43 +48,14 @@ public class ReportController extends TemplateControllerBase<Report, ReportCrite
 		super(reportService);
 	}
 	
-//	@PostMapping("/datatables")
-//	public ResponseEntity<DataTablesResponse<Report>> datatables(@RequestBody DataTablesCriteria dtCriteria) {
-//		DataTablesResponse<Report> response;
-//		ReportCriteria reportCriteria;
-//
-//		log.info("datatables: {}", dtCriteria );
-//		
-//		reportCriteria = new ReportCriteria();
-//		if (StringUtils.isNotEmpty(dtCriteria.getSearch().getValue())) {
-//			reportCriteria.setDescription(dtCriteria.getSearch().getValue());
-//		}
-//		reportCriteria.setPageNumber(dtCriteria.getStart());
-//		reportCriteria.setPageSize(dtCriteria.getLength());
-//		reportCriteria.setSortField(dtCriteria.getColumns()[dtCriteria.getOrder()[0].getColumn()].getName());
-//		reportCriteria.setSortOrder(dtCriteria.getOrder()[0].getDir());
-//		
-//		
-//		List<Report> reports = super.getService().findByCriteria(reportCriteria);
-//		Long count = super.getService().countByCriteria(reportCriteria);
-//
-//		response = new DataTablesResponse<>();
-//		response.setData(reports);
-//		response.setDraw(dtCriteria.getDraw());
-//		response.setRecordsFiltered(count.intValue());
-//		response.setRecordsTotal(count.intValue());
-//		
-//		return ResponseEntity.ok(response);
-//	}
-	
 	@Override
-	protected ReportCriteria buildCriteria(DataTablesCriteria dtCriteria) {
+	protected ReportCriteria buildCriteria(DataTablesCriteria<ReportCriteria> dtCriteria) {
 		ReportCriteria criteria;
 		
-		criteria = new ReportCriteria();
+		criteria = (dtCriteria.getCriteria() != null) ? dtCriteria.getCriteria() : new ReportCriteria();
 		
-		if (StringUtils.isNotEmpty(dtCriteria.getSearch().getValue())) {
-			criteria.setDescription(dtCriteria.getSearch().getValue());
+		if (StringUtils.isNotEmpty(dtCriteria.getParameters().getSearch().getValue())) {
+			criteria.setDescription(dtCriteria.getParameters().getSearch().getValue());
 		}
 		
 		return criteria;

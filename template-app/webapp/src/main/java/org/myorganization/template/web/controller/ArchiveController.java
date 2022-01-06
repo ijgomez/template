@@ -6,7 +6,7 @@ import org.myorganization.template.core.domain.archives.ArchiveCriteria;
 import org.myorganization.template.core.services.archives.ArchiveService;
 import org.myorganization.template.web.controller.base.TemplateController;
 import org.myorganization.template.web.controller.base.TemplateControllerBase;
-import org.myorganization.template.web.domain.datatables.criteria.DataTablesCriteria;
+import org.myorganization.template.web.domain.datatables.DataTablesCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,13 +28,13 @@ public class ArchiveController extends TemplateControllerBase<Archive, ArchiveCr
 	}
 	
 	@Override
-	protected ArchiveCriteria buildCriteria(DataTablesCriteria dtCriteria) {
+	protected ArchiveCriteria buildCriteria(DataTablesCriteria<ArchiveCriteria> dtCriteria) {
 		ArchiveCriteria criteria;
 
-		criteria = new ArchiveCriteria();
+		criteria = (dtCriteria.getCriteria() != null) ? dtCriteria.getCriteria() : new ArchiveCriteria();
 
-		if (StringUtils.isNotEmpty(dtCriteria.getSearch().getValue())) {
-			criteria.setFilename(dtCriteria.getSearch().getValue());
+		if (StringUtils.isNotEmpty(dtCriteria.getParameters().getSearch().getValue())) {
+			criteria.setFilename(dtCriteria.getParameters().getSearch().getValue());
 		}
 
 		return criteria;

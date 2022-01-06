@@ -3,7 +3,7 @@ package org.myorganization.template.web.domain.datatables.criteria;
 import lombok.Data;
 
 @Data
-public class DataTablesCriteria {
+public class DataTablesParameters {
 	
 	private Integer draw;
 	
@@ -11,11 +11,11 @@ public class DataTablesCriteria {
 	
 	private Integer length;
 	
-	private DataTablesSearchCriteria search;
+	private DataTablesSearch search;
 	
-	private DataTablesOrderCriteria[] order;
+	private DataTablesOrder[] order;
 	
-	private DataTablesColumnCriteria[] columns;
+	private DataTablesColumn[] columns;
 	
 }
 

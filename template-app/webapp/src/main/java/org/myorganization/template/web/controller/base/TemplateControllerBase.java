@@ -9,8 +9,8 @@ import org.myorganization.template.core.domain.base.Criteria;
 import org.myorganization.template.core.domain.base.TemplateEntityBase;
 import org.myorganization.template.core.helper.FileHelper;
 import org.myorganization.template.core.services.base.TemplateService;
+import org.myorganization.template.web.domain.datatables.DataTablesCriteria;
 import org.myorganization.template.web.domain.datatables.DataTablesResponse;
-import org.myorganization.template.web.domain.datatables.criteria.DataTablesCriteria;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -172,21 +172,26 @@ public abstract class TemplateControllerBase<E extends TemplateEntityBase, C ext
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-	
+
 	@Override
-	public ResponseEntity<DataTablesResponse<E>> datatables(@Valid @RequestBody DataTablesCriteria dtCriteria) {
+	public ResponseEntity<DataTablesResponse<E>> datatables(@Valid @RequestBody DataTablesCriteria<C> dtCriteria) {
 		DataTablesResponse<E> response;
 		C criteria;
 
-		log.debug("datatables: {}", dtCriteria );
+		log.debug("datatables: {}", dtCriteria);
+		
+		if (dtCriteria.getParameters() == null) {
+			log.error("datatables parameters is empty.");
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 		
 		criteria = this.buildCriteria(dtCriteria);
 
-		criteria.setPageNumber(dtCriteria.getStart());
-		criteria.setPageSize(dtCriteria.getLength());
-		if (dtCriteria.getOrder() != null && dtCriteria.getOrder().length > 0) {
-			criteria.setSortField(dtCriteria.getColumns()[dtCriteria.getOrder()[0].getColumn()].getData());
-			criteria.setSortOrder(dtCriteria.getOrder()[0].getDir());
+		criteria.setPageNumber(dtCriteria.getParameters().getStart());
+		criteria.setPageSize(dtCriteria.getParameters().getLength());
+		if (dtCriteria.getParameters().getOrder() != null && dtCriteria.getParameters().getOrder().length > 0) {
+			criteria.setSortField(dtCriteria.getParameters().getColumns()[dtCriteria.getParameters().getOrder()[0].getColumn()].getData());
+			criteria.setSortOrder(dtCriteria.getParameters().getOrder()[0].getDir());
 		}
 
 		List<E> data = this.getService().findByCriteria(criteria);
@@ -194,14 +199,14 @@ public abstract class TemplateControllerBase<E extends TemplateEntityBase, C ext
 
 		response = new DataTablesResponse<>();
 		response.setData(data);
-		response.setDraw(dtCriteria.getDraw());
+		response.setDraw(dtCriteria.getParameters().getDraw());
 		response.setRecordsFiltered(count.intValue());
 		response.setRecordsTotal(count.intValue());
 		
 		return ResponseEntity.ok(response);
 	}
 	
-	protected abstract C buildCriteria(DataTablesCriteria dtCriteria);
+	protected abstract C buildCriteria(DataTablesCriteria<C> dtCriteria);
 
 	@Override
 	public TemplateService<E, C> getService() {

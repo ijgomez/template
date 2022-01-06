@@ -3,10 +3,10 @@ package org.myorganization.template.web.domain.datatables.criteria;
 import lombok.Data;
 
 @Data
-public class DataTablesOrderCriteria {
+public class DataTablesSearch {
 
-	private Integer column;
+	private String value;
 	
-	private String dir;
-
+	private Boolean regex;
+		
 }

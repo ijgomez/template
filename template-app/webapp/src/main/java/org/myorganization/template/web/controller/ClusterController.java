@@ -6,7 +6,7 @@ import org.myorganization.template.cluster.domain.ClusterNodeCriteria;
 import org.myorganization.template.cluster.service.ClusterNodeService;
 import org.myorganization.template.web.controller.base.TemplateController;
 import org.myorganization.template.web.controller.base.TemplateControllerBase;
-import org.myorganization.template.web.domain.datatables.criteria.DataTablesCriteria;
+import org.myorganization.template.web.domain.datatables.DataTablesCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,13 +23,13 @@ public class ClusterController extends TemplateControllerBase<ClusterNode, Clust
 	}
 	
 	@Override
-	protected ClusterNodeCriteria buildCriteria(DataTablesCriteria dtCriteria) {
+	protected ClusterNodeCriteria buildCriteria(DataTablesCriteria<ClusterNodeCriteria> dtCriteria) {
 		ClusterNodeCriteria criteria;
 
-		criteria = new ClusterNodeCriteria();
+		criteria = (dtCriteria.getCriteria() != null) ? dtCriteria.getCriteria() : new ClusterNodeCriteria();
 
-		if (StringUtils.isNotEmpty(dtCriteria.getSearch().getValue())) {
-			criteria.setHostname(dtCriteria.getSearch().getValue());
+		if (StringUtils.isNotEmpty(dtCriteria.getParameters().getSearch().getValue())) {
+			criteria.setHostname(dtCriteria.getParameters().getSearch().getValue());
 		}
 
 		return criteria;

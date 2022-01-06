@@ -6,7 +6,7 @@ import org.myorganization.template.security.domain.users.UserCriteria;
 import org.myorganization.template.security.service.UserService;
 import org.myorganization.template.web.controller.base.TemplateController;
 import org.myorganization.template.web.controller.base.TemplateControllerBase;
-import org.myorganization.template.web.domain.datatables.criteria.DataTablesCriteria;
+import org.myorganization.template.web.domain.datatables.DataTablesCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,13 +27,13 @@ public class UserController extends TemplateControllerBase<User, UserCriteria> i
 	}
 	
 	@Override
-	protected UserCriteria buildCriteria(DataTablesCriteria dtCriteria) {
+	protected UserCriteria buildCriteria(DataTablesCriteria<UserCriteria> dtCriteria) {
 		UserCriteria criteria;
 		
-		criteria = new UserCriteria();
+		criteria = (dtCriteria.getCriteria() != null) ? dtCriteria.getCriteria() : new UserCriteria();
 		
-		if (StringUtils.isNotEmpty(dtCriteria.getSearch().getValue())) {
-			criteria.setUsername(dtCriteria.getSearch().getValue());
+		if (StringUtils.isNotEmpty(dtCriteria.getParameters().getSearch().getValue())) {
+			criteria.setUsername(dtCriteria.getParameters().getSearch().getValue());
 		}
 
 		return criteria;

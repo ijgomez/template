@@ -6,7 +6,7 @@ import org.myorganization.template.core.domain.system.traces.TraceCriteria;
 import org.myorganization.template.core.services.system.TraceService;
 import org.myorganization.template.web.controller.base.TemplateController;
 import org.myorganization.template.web.controller.base.TemplateControllerBase;
-import org.myorganization.template.web.domain.datatables.criteria.DataTablesCriteria;
+import org.myorganization.template.web.domain.datatables.DataTablesCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,13 +23,13 @@ public class TraceController extends TemplateControllerBase<Trace, TraceCriteria
 	}
 	
 	@Override
-	protected TraceCriteria buildCriteria(DataTablesCriteria dtCriteria) {
+	protected TraceCriteria buildCriteria(DataTablesCriteria<TraceCriteria> dtCriteria) {
 		TraceCriteria criteria;
 
-		criteria = new TraceCriteria();
+		criteria = (dtCriteria.getCriteria() != null) ? dtCriteria.getCriteria() : new TraceCriteria();
 
-		if (StringUtils.isNotEmpty(dtCriteria.getSearch().getValue())) {
-			criteria.setMessage(dtCriteria.getSearch().getValue());
+		if (StringUtils.isNotEmpty(dtCriteria.getParameters().getSearch().getValue())) {
+			criteria.setMessage(dtCriteria.getParameters().getSearch().getValue());
 		}
 
 		return criteria;

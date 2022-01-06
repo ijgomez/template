@@ -6,7 +6,7 @@ import org.myorganization.template.core.domain.system.properties.PropertyCriteri
 import org.myorganization.template.core.services.system.PropertyService;
 import org.myorganization.template.web.controller.base.TemplateController;
 import org.myorganization.template.web.controller.base.TemplateControllerBase;
-import org.myorganization.template.web.domain.datatables.criteria.DataTablesCriteria;
+import org.myorganization.template.web.domain.datatables.DataTablesCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,13 +23,13 @@ public class PropertyController extends TemplateControllerBase<Property, Propert
 	}
 	
 	@Override
-	protected PropertyCriteria buildCriteria(DataTablesCriteria dtCriteria) {
+	protected PropertyCriteria buildCriteria(DataTablesCriteria<PropertyCriteria> dtCriteria) {
 		PropertyCriteria criteria;
 
-		criteria = new PropertyCriteria();
+		criteria = (dtCriteria.getCriteria() != null) ? dtCriteria.getCriteria() : new PropertyCriteria();
 
-		if (StringUtils.isNotEmpty(dtCriteria.getSearch().getValue())) {
-			criteria.setProperty(dtCriteria.getSearch().getValue());
+		if (StringUtils.isNotEmpty(dtCriteria.getParameters().getSearch().getValue())) {
+			criteria.setProperty(dtCriteria.getParameters().getSearch().getValue());
 		}
 
 		return criteria;

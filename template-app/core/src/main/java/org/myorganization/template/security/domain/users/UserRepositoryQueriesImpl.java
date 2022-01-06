@@ -9,6 +9,7 @@ import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang3.StringUtils;
 import org.myorganization.template.core.domain.base.RepositoryQueriesBase;
+import org.myorganization.template.core.helper.CriteriaBuilderHelper;
 
 public class UserRepositoryQueriesImpl extends RepositoryQueriesBase<User, UserCriteria> implements UserRepositoryQueries {
 	
@@ -23,7 +24,7 @@ public class UserRepositoryQueriesImpl extends RepositoryQueriesBase<User, UserC
 			}
 			
 			if (!StringUtils.isEmpty(criteria.getUsername())) {
-				predicates.add(builder.like(root.get(User_.username), criteria.getUsername()));
+				predicates.add(CriteriaBuilderHelper.ilike(builder, root.get(User_.username), criteria.getUsername()));
 			}
 
 		}

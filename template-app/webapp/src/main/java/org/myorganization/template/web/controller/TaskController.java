@@ -7,7 +7,7 @@ import org.myorganization.template.scheduler.services.ExecutorService;
 import org.myorganization.template.scheduler.services.TaskService;
 import org.myorganization.template.web.controller.base.TemplateController;
 import org.myorganization.template.web.controller.base.TemplateControllerBase;
-import org.myorganization.template.web.domain.datatables.criteria.DataTablesCriteria;
+import org.myorganization.template.web.domain.datatables.DataTablesCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -35,13 +35,13 @@ public class TaskController extends TemplateControllerBase<Task, TaskCriteria> i
 	}
 	
 	@Override
-	protected TaskCriteria buildCriteria(DataTablesCriteria dtCriteria) {
+	protected TaskCriteria buildCriteria(DataTablesCriteria<TaskCriteria> dtCriteria) {
 		TaskCriteria criteria;
 
-		criteria = new TaskCriteria();
+		criteria = (dtCriteria.getCriteria() != null) ? dtCriteria.getCriteria() : new TaskCriteria();
 
-		if (StringUtils.isNotEmpty(dtCriteria.getSearch().getValue())) {
-			criteria.setName(dtCriteria.getSearch().getValue());
+		if (StringUtils.isNotEmpty(dtCriteria.getParameters().getSearch().getValue())) {
+			criteria.setName(dtCriteria.getParameters().getSearch().getValue());
 		}
 
 		return criteria;

@@ -9,6 +9,7 @@ import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang3.StringUtils;
 import org.myorganization.template.core.domain.base.RepositoryQueriesBase;
+import org.myorganization.template.core.helper.CriteriaBuilderHelper;
 
 public class ActionRepositoryQueriesImpl extends RepositoryQueriesBase<Action, ActionCriteria> implements ActionRepositoryQueries {
 	
@@ -23,11 +24,11 @@ public class ActionRepositoryQueriesImpl extends RepositoryQueriesBase<Action, A
 			}
 			
 			if (!StringUtils.isEmpty(criteria.getName())) {
-				predicates.add(builder.like(root.get(Action_.name), criteria.getName()));
+				predicates.add(CriteriaBuilderHelper.ilike(builder, root.get(Action_.name), criteria.getName()));
 			}
 			
 			if (!StringUtils.isEmpty(criteria.getDescription())) {
-				predicates.add(builder.like(root.get(Action_.description), criteria.getDescription()));
+				predicates.add(CriteriaBuilderHelper.ilike(builder, root.get(Action_.description), criteria.getDescription()));
 			}
 
 		}
