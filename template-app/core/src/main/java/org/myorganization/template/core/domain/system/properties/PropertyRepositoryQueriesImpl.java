@@ -9,6 +9,7 @@ import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang3.StringUtils;
 import org.myorganization.template.core.domain.base.RepositoryQueriesBase;
+import org.myorganization.template.core.helper.CriteriaBuilderHelper;
 
 public class PropertyRepositoryQueriesImpl extends RepositoryQueriesBase<Property, PropertyCriteria> implements PropertyRepositoryQueries {
 	
@@ -23,7 +24,7 @@ public class PropertyRepositoryQueriesImpl extends RepositoryQueriesBase<Propert
 			}
 			
 			if (!StringUtils.isEmpty(criteria.getProperty())) {
-				predicates.add(builder.like(root.get(Property_.property), criteria.getProperty()));
+				predicates.add(CriteriaBuilderHelper.ilike(builder, root.get(Property_.property), criteria.getProperty()));
 			}
 
 		}

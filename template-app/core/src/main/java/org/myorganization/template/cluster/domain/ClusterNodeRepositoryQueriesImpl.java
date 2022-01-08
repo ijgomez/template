@@ -9,6 +9,7 @@ import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang3.StringUtils;
 import org.myorganization.template.core.domain.base.RepositoryQueriesBase;
+import org.myorganization.template.core.helper.CriteriaBuilderHelper;
 
 public class ClusterNodeRepositoryQueriesImpl extends RepositoryQueriesBase<ClusterNode, ClusterNodeCriteria> implements ClusterNodeRepositoryQueries {
 	
@@ -23,11 +24,11 @@ public class ClusterNodeRepositoryQueriesImpl extends RepositoryQueriesBase<Clus
 			}
 			
 			if (!StringUtils.isEmpty(criteria.getHostname())) {
-				predicates.add(builder.like(root.get(ClusterNode_.hostname), criteria.getHostname()));
+				predicates.add(CriteriaBuilderHelper.ilike(builder, root.get(ClusterNode_.hostname), criteria.getHostname()));
 			}
 			
 			if (!StringUtils.isEmpty(criteria.getIp())) {
-				predicates.add(builder.like(root.get(ClusterNode_.ip), criteria.getIp()));
+				predicates.add(CriteriaBuilderHelper.ilike(builder, root.get(ClusterNode_.ip), criteria.getIp()));
 			}
 			
 			if (criteria.getStatus() != null) {

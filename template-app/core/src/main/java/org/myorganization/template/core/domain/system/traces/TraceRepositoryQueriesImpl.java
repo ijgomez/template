@@ -9,6 +9,7 @@ import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang3.StringUtils;
 import org.myorganization.template.core.domain.base.RepositoryQueriesBase;
+import org.myorganization.template.core.helper.CriteriaBuilderHelper;
 
 public class TraceRepositoryQueriesImpl extends RepositoryQueriesBase<Trace, TraceCriteria> implements TraceRepositoryQueries {
 	
@@ -23,7 +24,7 @@ public class TraceRepositoryQueriesImpl extends RepositoryQueriesBase<Trace, Tra
 			}
 			
 			if (!StringUtils.isEmpty(criteria.getMessage())) {
-				predicates.add(builder.like(root.get(Trace_.message), criteria.getMessage()));
+				predicates.add(CriteriaBuilderHelper.ilike(builder, root.get(Trace_.message), criteria.getMessage()));
 			}
 
 		}
