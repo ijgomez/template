@@ -64,7 +64,7 @@ public class UserService extends TemplateServiceBase<User, UserCriteria> impleme
 	@Transactional
 	public void updateLastLoginDate(Long id) {
 		this.read(id).ifPresent(u -> {
-			u.setLastLoginDateTime(ZonedDateTime.now());
+			u.setLastAccess(ZonedDateTime.now());
 			
 			super.getRepository().save(u);
 		});

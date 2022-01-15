@@ -35,7 +35,7 @@ public class User extends TemplateEntityBase implements TemplateEntity {
 	@Column(nullable = false)
 	private String password;
 
-	private ZonedDateTime lastLoginDateTime;
+	private ZonedDateTime lastAccess;
 	
 	@ManyToOne
 	private Profile profile;
