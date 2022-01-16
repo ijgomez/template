@@ -2,15 +2,18 @@ package org.myorganization.template.web.controller;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.myorganization.template.reports.ReportManager;
-import org.myorganization.template.reports.domain.Report;
-import org.myorganization.template.reports.domain.ReportCriteria;
-import org.myorganization.template.reports.domain.ReportParam;
+import org.myorganization.template.reports.domain.report.Report;
+import org.myorganization.template.reports.domain.report.ReportCriteria;
+import org.myorganization.template.reports.domain.reportparam.ReportParam;
+import org.myorganization.template.reports.enums.ReportFormatEnum;
+import org.myorganization.template.reports.enums.ReportParamEnum;
 import org.myorganization.template.reports.exceptions.ReportException;
 import org.myorganization.template.reports.exceptions.ReportNotFoundException;
 import org.myorganization.template.reports.service.ReportService;
@@ -71,30 +74,38 @@ public class ReportController extends TemplateControllerBase<Report, ReportCrite
 	}
 	
 	@PostMapping("/{id}/execute")
-	public void execute(@PathVariable("id") Long id, @RequestBody Object params, HttpServletResponse response) throws ReportException {
+	public void execute(@PathVariable("id") Long id, @RequestBody Map<ReportParamEnum, Object> params, HttpServletResponse response) throws ReportException {
 		log.info("execute: {} {}", id, params);
 		
 		Optional<Report> data = super.getService().read(id);
-		if (data.isPresent()) {
+		if (!data.isPresent()) {
+			throw new ReportNotFoundException("report with id " + id + " not found");
+		} else {
 			try {
 				var report = data.get();
 				
-				response.addHeader("Content-disposition", "attachment;filename=report_" + System.currentTimeMillis() + ".pdf");
+				Object value = params.get(ReportParamEnum.EXPORT_TYPE);
+				
+				if (value == null) {
+					throw new ReportException("fail execute report: key " + ReportParamEnum.EXPORT_TYPE.getKey() + " not found");
+				}
+				
+				var format = ReportFormatEnum.findByKey(value.toString());
+
+				response.addHeader("Content-disposition", "attachment;filename=report_" + System.currentTimeMillis() + "." + format.getExtension());
 				response.addHeader("Cache-Control", "no-cache, no-store, must-revalidate");
 				response.addHeader("Pragma", "no-cache");
 				response.addHeader("Expires", "0");
-				response.setContentType("application/pdf");
-				
-				this.reportManager.execute(report, null, response.getOutputStream());
+				response.setContentType("application/" + format.getExtension());
+
+				this.reportManager.execute(report, params, response.getOutputStream());
 				
 				response.flushBuffer();
 				
 			} catch (ReportException | IOException e) {
-				throw new ReportException("fail execute report", e);
+				throw new ReportException("fail execute report: " + e.getMessage(), e);
 			}
-		}
-		throw new ReportNotFoundException("report with id " + id + " not found");
-		
+		} 
 	}
 
 }

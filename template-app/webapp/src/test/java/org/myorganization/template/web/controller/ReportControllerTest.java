@@ -17,7 +17,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.myorganization.template.reports.domain.Report;
+import org.myorganization.template.reports.domain.report.Report;
 import org.myorganization.template.reports.service.ReportService;
 import org.myorganization.template.web.exceptions.AppResponseEntityExceptionHandler;
 import org.myorganization.template.web.testing.TestEntityFactory;

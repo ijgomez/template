@@ -8,11 +8,13 @@ import java.util.Optional;
 
 import javax.sql.DataSource;
 
-import org.myorganization.template.reports.domain.Report;
-import org.myorganization.template.reports.domain.ReportParam;
+import org.myorganization.template.reports.domain.report.Report;
+import org.myorganization.template.reports.domain.reportparam.ReportParam;
+import org.myorganization.template.reports.enums.ReportParamEnum;
 import org.myorganization.template.reports.exceptions.ReportException;
 import org.myorganization.template.reports.exceptions.ReportNotFoundException;
-import org.myorganization.template.reports.jasper.JRReportExecutor;
+import org.myorganization.template.reports.executor.ReportExecutor;
+import org.myorganization.template.reports.executor.jasper.JRReportExecutor;
 import org.myorganization.template.reports.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -55,7 +57,7 @@ public class ReportManager {
 		return new JRReportExecutor();
 	}
 
-	public void execute(Report report, Map<String, Object> params, OutputStream outputStream) throws ReportException {
+	public void execute(Report report, Map<ReportParamEnum, Object> params, OutputStream outputStream) throws ReportException {
 		ReportExecutor executor;
 		
 		try {

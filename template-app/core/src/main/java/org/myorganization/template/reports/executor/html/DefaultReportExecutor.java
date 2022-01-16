@@ -1,4 +1,4 @@
-package org.myorganization.template.reports.jasper;
+package org.myorganization.template.reports.executor.html;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -10,11 +10,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.myorganization.template.core.helper.FileHelper;
-import org.myorganization.template.reports.ReportExecutor;
-import org.myorganization.template.reports.domain.Report;
-import org.myorganization.template.reports.domain.ReportParam;
-import org.myorganization.template.reports.domain.ReportParamOption;
+import org.myorganization.template.reports.domain.report.Report;
+import org.myorganization.template.reports.domain.reportparam.ReportParam;
+import org.myorganization.template.reports.enums.ReportParamEnum;
 import org.myorganization.template.reports.exceptions.ReportException;
+import org.myorganization.template.reports.executor.ReportExecutor;
+import org.myorganization.template.reports.executor.jasper.JRReportParamHelper;
 import org.slf4j.MarkerFactory;
 
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +30,7 @@ import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 @Slf4j
-public class JRReportExecutor implements ReportExecutor {
+public class DefaultReportExecutor implements ReportExecutor {
 
 	@Override
 	public List<ReportParam> readParams(Report report) throws ReportException {
@@ -40,20 +41,8 @@ public class JRReportExecutor implements ReportExecutor {
 		
 		params = new ArrayList<>();
 		
-		param = new ReportParam();
-		param.setType("SELECT");
-		param.setKey("exporttype");
-		param.setLabel("Export Type");
-		param.setOptions(new ArrayList<>());
-		param.getOptions().add(new ReportParamOption("pdf", "PDF"));
-		param.getOptions().add(new ReportParamOption("excel", "Excel"));
-		param.getOptions().add(new ReportParamOption("html", "HTML"));
-//		param.getOptions().add(new ReportParamOption("option4", "Option 4"));
-		param.setOrder(1);
-		
-		params.add(param);
-		
-		
+		params.add(JRReportParamHelper.buildParam(ReportParamEnum.EXPORT_TYPE, 1));
+
 		try {
 			JasperDesign jasperDesign;
 			JRParameter[] parameters;
@@ -73,11 +62,7 @@ public class JRReportExecutor implements ReportExecutor {
 					}
 				}
 			}
-			
-			
-			
-			
-			
+
 		} catch (JRException | IOException e) {
 			throw new ReportException("read params error", e);
 		}
@@ -123,8 +108,10 @@ public class JRReportExecutor implements ReportExecutor {
 		return params;
 	}
 
+	
+
 	@Override
-	public void execute(Report report, Map<String, Object> parameters, Connection connection, OutputStream outputStream) throws ReportException {
+	public void execute(Report report, Map<ReportParamEnum, Object> parameters, Connection connection, OutputStream outputStream) throws ReportException {
 //		JasperDesign jasperDesign;
 		JasperReport jasperReport;
 		JasperPrint jasperPrint;		
@@ -140,7 +127,7 @@ public class JRReportExecutor implements ReportExecutor {
 				jasperReport = JasperCompileManager.compileReport(is);
 				
 				log.debug("excute jasper report...");
-				jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, connection);
+				jasperPrint = JasperFillManager.fillReport(jasperReport, null, connection);
 				
 				log.debug("generating report...");
 				JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);

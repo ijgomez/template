@@ -1,15 +1,17 @@
-package org.myorganization.template.reports.jasper;
+package org.myorganization.template.reports.executor.html;
 
 import java.util.ArrayList;
 
-import org.myorganization.template.reports.domain.ReportParam;
-import org.myorganization.template.reports.domain.ReportParamOption;
+import org.myorganization.template.reports.domain.reportparam.ReportParam;
+import org.myorganization.template.reports.domain.reportparam.ReportParamOption;
+import org.myorganization.template.reports.enums.ReportParamEnum;
+import org.myorganization.template.reports.enums.ReportParamTypeEnum;
 
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.JRParameter;
 
 @Slf4j
-public class JRReportParamHelper {
+public class DefaultReportParamHelper {
 
 	
 	public static ReportParam convert(JRParameter parameter, int order) {
@@ -52,6 +54,28 @@ public class JRReportParamHelper {
 		return param;
 	}
 	
-	private JRReportParamHelper() { }
+	public static ReportParam buildParam(ReportParamEnum reportParam, Integer order) {
+		ReportParam param;
+		ReportParamTypeEnum type;
+		param = new ReportParam();
+		
+		param.setOrder(order);
+		param.setKey(reportParam.getKey());
+		param.setLabel("Export Type");
+		
+		type = reportParam.getType();
+		
+		param.setType(type.getType());
+		if (type.equals(ReportParamTypeEnum.SELECT)) {
+			param.setOptions(new ArrayList<>());
+			param.getOptions().add(new ReportParamOption("pdf", "PDF"));
+			param.getOptions().add(new ReportParamOption("excel", "Excel"));
+			param.getOptions().add(new ReportParamOption("html", "HTML"));
+		}
+
+		return param;
+	}
+	
+	private DefaultReportParamHelper() { }
 	
 }

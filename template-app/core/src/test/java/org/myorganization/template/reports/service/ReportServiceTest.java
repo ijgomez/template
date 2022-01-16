@@ -12,7 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.myorganization.template.core.testing.TestEntityFactory;
-import org.myorganization.template.reports.domain.Report;
+import org.myorganization.template.reports.domain.report.Report;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.dao.DataIntegrityViolationException;

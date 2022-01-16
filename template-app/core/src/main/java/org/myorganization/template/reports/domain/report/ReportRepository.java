@@ -1,4 +1,4 @@
-package org.myorganization.template.reports.domain;
+package org.myorganization.template.reports.domain.report;
 
 import org.springframework.data.repository.PagingAndSortingRepository;
 

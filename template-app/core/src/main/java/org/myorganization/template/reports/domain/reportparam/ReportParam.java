@@ -1,4 +1,4 @@
-package org.myorganization.template.reports.domain;
+package org.myorganization.template.reports.domain.reportparam;
 
 import java.io.Serializable;
 import java.util.List;

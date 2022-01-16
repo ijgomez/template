@@ -13,7 +13,7 @@ import javax.persistence.SequenceGenerator;
 
 import org.myorganization.template.core.domain.base.TemplateEntity;
 import org.myorganization.template.core.domain.base.TemplateEntityBase;
-import org.myorganization.template.reports.domain.Report;
+import org.myorganization.template.reports.domain.report.Report;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
