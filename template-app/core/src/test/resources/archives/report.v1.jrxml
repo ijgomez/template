@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6ad58af1-f302-40a9-8c4c-4dc6888f2127">
+<!-- Created with Jaspersoft Studio version 6.18.1.final using JasperReports Library version 6.18.1-9d75d1969e774d4f179fb3be8401e98a0e6d1611  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Ficheros en BBDD" pageWidth="595" pageHeight="842" whenNoDataType="BlankPage" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6ad58af1-f302-40a9-8c4c-4dc6888f2127">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="41"/>
+	<property name="com.jaspersoft.studio.report.description" value="Ficheros Alamacenados en BBDD"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -27,79 +29,166 @@
 	<parameter name="ENDDATE" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[SELECT
-     DOCUMENT."ID" AS DOCUMENT_ID,
-     DOCUMENT."DOCUMENT" AS DOCUMENT_DOCUMENT,
-     DOCUMENT."PATH" AS DOCUMENT_PATH
+     A."ID" AS ID,
+     A."FILENAME" AS FILENAME,
+     A."FILETYPE" AS FILETYPE,
+     A."SIZE" AS SIZE
 FROM
-     "PUBLIC"."DOCUMENT" DOCUMENT]]>
+     "PUBLIC"."ARCHIVE" A
+ ORDER BY
+     A."ID"]]>
 	</queryString>
-	<field name="DOCUMENT_ID" class="java.lang.Integer"/>
-	<field name="DOCUMENT_DOCUMENT" class="java.lang.String">
+	<field name="ID" class="java.lang.Long">
+		<property name="net.sf.jasperreports.sql.field.column.name" value="Id"/>
+	</field>
+	<field name="FILENAME" class="java.lang.String">
 		<fieldDescription><![CDATA[Documento]]></fieldDescription>
 	</field>
-	<field name="DOCUMENT_PATH" class="java.lang.String">
-		<fieldDescription><![CDATA[Path]]></fieldDescription>
+	<field name="FILETYPE" class="java.lang.String">
+		<fieldDescription><![CDATA[File Type]]></fieldDescription>
 	</field>
-	<group name="DOCUMENT_ID">
-		<groupExpression><![CDATA[$F{DOCUMENT_ID}]]></groupExpression>
-	</group>
-	<group name="DOCUMENT_DOCUMENT">
-		<groupExpression><![CDATA[$F{DOCUMENT_DOCUMENT}]]></groupExpression>
-	</group>
-	<group name="DOCUMENT_PATH">
-		<groupExpression><![CDATA[$F{DOCUMENT_PATH}]]></groupExpression>
-	</group>
+	<field name="SIZE" class="java.lang.Long">
+		<fieldDescription><![CDATA[Tamaño]]></fieldDescription>
+	</field>
+	<sortField name="ID"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
-	<title>
-		<band height="79" splitType="Stretch"/>
-	</title>
 	<pageHeader>
-		<band height="35" splitType="Stretch"/>
+		<band height="56" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="30" uuid="597540d8-e361-471c-bfe9-748a0e6ef448"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font size="16"/>
+				</textElement>
+				<text><![CDATA[Ficheros Almacenados en BBDD]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="30" width="280" height="26" uuid="ab36302c-8da9-4479-85cc-62fc1b3d4214"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["Start Date time: " + $P{INIDATE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="280" y="30" width="275" height="26" uuid="741a7087-e060-415a-bc9b-9da75ca679d2"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["End Date Time: " + $P{ENDDATE}]]></textFieldExpression>
+			</textField>
+		</band>
 	</pageHeader>
 	<columnHeader>
-		<band height="61" splitType="Stretch">
+		<band height="21" splitType="Stretch">
 			<staticText>
 				<reportElement x="0" y="0" width="100" height="20" uuid="9c7c360c-c504-4a7d-9908-0a4f89edc818"/>
-				<text><![CDATA[DOCUMENT_ID]]></text>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Id]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="100" y="0" width="100" height="20" uuid="7b27233e-887f-43e2-bbed-f44f60716d9c"/>
+				<reportElement x="100" y="0" width="280" height="20" uuid="7b27233e-887f-43e2-bbed-f44f60716d9c"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<text><![CDATA[Documento]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="200" y="0" width="355" height="20" uuid="03d711ec-285b-44b6-ac1e-85581a998c16"/>
-				<text><![CDATA[Path]]></text>
+				<reportElement x="380" y="0" width="100" height="20" uuid="03d711ec-285b-44b6-ac1e-85581a998c16"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tipo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="480" y="0" width="75" height="20" uuid="2bc8a070-81eb-4579-8026-838c209675c9"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tamaño]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="125" splitType="Stretch">
-			<line>
-				<reportElement x="0" y="20" width="555" height="1" uuid="1c75d5ce-1d03-4f75-8194-c6c64bd8aa3d"/>
-			</line>
+		<band height="21" splitType="Stretch">
 			<textField>
 				<reportElement x="0" y="0" width="100" height="20" uuid="a30493a4-517e-4593-bb8b-df49bc965066"/>
-				<textFieldExpression><![CDATA[$F{DOCUMENT_ID}]]></textFieldExpression>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ID}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="100" y="0" width="100" height="20" uuid="636c55d2-2459-45bd-8b23-4b1998de8990"/>
-				<textFieldExpression><![CDATA[$F{DOCUMENT_DOCUMENT}]]></textFieldExpression>
+				<reportElement x="100" y="0" width="280" height="20" uuid="636c55d2-2459-45bd-8b23-4b1998de8990"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{FILENAME}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="200" y="0" width="355" height="20" uuid="0412b708-000e-4fb5-9beb-9e19d5a60a0f"/>
-				<textFieldExpression><![CDATA[$F{DOCUMENT_PATH}]]></textFieldExpression>
+				<reportElement x="380" y="0" width="100" height="20" uuid="0412b708-000e-4fb5-9beb-9e19d5a60a0f"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{FILETYPE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="480" y="0" width="75" height="20" uuid="849f0368-d25c-4a7d-b144-895006855553"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{SIZE}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
-	<columnFooter>
-		<band height="45" splitType="Stretch"/>
-	</columnFooter>
-	<pageFooter>
-		<band height="54" splitType="Stretch"/>
-	</pageFooter>
-	<summary>
-		<band height="42" splitType="Stretch"/>
-	</summary>
 </jasperReport>
