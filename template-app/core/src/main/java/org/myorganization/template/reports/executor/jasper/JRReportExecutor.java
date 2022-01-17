@@ -88,17 +88,15 @@ public class JRReportExecutor implements ReportExecutor {
 				jasperReport = JasperCompileManager.compileReport(is);
 				
 				log.debug("excute jasper report...");
-//				jasperPrint = JasperFillManager.fillReport(jasperReport, parameters.entrySet().stream().collect(Collectors.toMap(
-//			            e -> ((ReportParamEnum)e.getKey()).getKey(), Map.Entry::getKey
-//			        )), connection);
-				jasperPrint = JasperFillManager.fillReport(jasperReport, null, connection);
-				
+				jasperPrint = JasperFillManager.fillReport(jasperReport, parameters.entrySet().stream().collect(Collectors.toMap(
+			            e -> ((ReportParamEnum)e.getKey()).getKey(), Map.Entry::getValue
+			        )), connection);
 				
 				log.debug("generating report...");
 				var format = ReportFormatEnum.findByKey(parameters.get(ReportParamEnum.EXPORT_TYPE).toString());
 				if (format.equals(ReportFormatEnum.PDF)) {
 					JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);
-					log.debug("... end of exportReportToXmlStream");
+					log.debug("... end of exportReportToPdfStream");
 				} else {
 					throw new ReportException("Format " + format.getKey() + " not supported. Not implemented");
 				}
