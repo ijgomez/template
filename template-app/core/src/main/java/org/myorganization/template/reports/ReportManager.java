@@ -2,6 +2,7 @@ package org.myorganization.template.reports;
 
 import java.io.OutputStream;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -9,6 +10,7 @@ import java.util.Optional;
 import javax.sql.DataSource;
 
 import org.myorganization.template.reports.domain.report.Report;
+import org.myorganization.template.reports.domain.reportengine.ReportEngine;
 import org.myorganization.template.reports.domain.reportparam.ReportParam;
 import org.myorganization.template.reports.enums.ReportParamEnum;
 import org.myorganization.template.reports.exceptions.ReportException;
@@ -71,6 +73,26 @@ public class ReportManager {
 		} catch (SQLException e) {
 			throw new ReportException("Fail to execute report.", e);
 		}
+	}
+
+	public List<ReportEngine> engines() {
+		List<ReportEngine> engines = new ArrayList<>();
+		
+		ReportEngine engine;
+
+		engine = new ReportEngine();
+		engine.setType("HTML");
+		engine.setDescription("HTML (Default)");
+		
+		engines.add(engine);
+		
+		engine = new ReportEngine();
+		engine.setType("JASPER");
+		engine.setDescription("Jasper Report");
+		
+		engines.add(engine);
+
+		return engines;
 	}
 	
 }

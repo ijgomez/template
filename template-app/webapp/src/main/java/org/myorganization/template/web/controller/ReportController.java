@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.myorganization.template.reports.ReportManager;
 import org.myorganization.template.reports.domain.report.Report;
 import org.myorganization.template.reports.domain.report.ReportCriteria;
+import org.myorganization.template.reports.domain.reportengine.ReportEngine;
 import org.myorganization.template.reports.domain.reportparam.ReportParam;
 import org.myorganization.template.reports.enums.ReportFormatEnum;
 import org.myorganization.template.reports.enums.ReportParamEnum;
@@ -69,6 +70,15 @@ public class ReportController extends TemplateControllerBase<Report, ReportCrite
 		log.info("params: {}", id);
 		
 		List<ReportParam> params = this.reportManager.readParams(id);
+		
+		return ResponseEntity.ok(params);
+	}
+	
+	@GetMapping("/engines")
+	public ResponseEntity<List<ReportEngine>> engines() throws ReportException {
+
+		
+		List<ReportEngine> params = this.reportManager.engines();
 		
 		return ResponseEntity.ok(params);
 	}
