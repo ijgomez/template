@@ -2,7 +2,6 @@ package org.myorganization.template.reports;
 
 import java.io.OutputStream;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -17,6 +16,7 @@ import org.myorganization.template.reports.exceptions.ReportException;
 import org.myorganization.template.reports.exceptions.ReportNotFoundException;
 import org.myorganization.template.reports.executor.ReportExecutor;
 import org.myorganization.template.reports.executor.jasper.JRReportExecutor;
+import org.myorganization.template.reports.service.ReportEngineService;
 import org.myorganization.template.reports.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -30,6 +30,9 @@ public class ReportManager {
 	
 	@Autowired
 	private ReportService reportService;
+	
+	@Autowired
+	private ReportEngineService reportEngineService;
 	
 	@Autowired
 	private DataSource dataSource;
@@ -76,23 +79,7 @@ public class ReportManager {
 	}
 
 	public List<ReportEngine> engines() {
-		List<ReportEngine> engines = new ArrayList<>();
-		
-		ReportEngine engine;
-
-		engine = new ReportEngine();
-		engine.setType("HTML");
-		engine.setDescription("HTML (Default)");
-		
-		engines.add(engine);
-		
-		engine = new ReportEngine();
-		engine.setType("JASPER");
-		engine.setDescription("Jasper Report");
-		
-		engines.add(engine);
-
-		return engines;
+		return this.reportEngineService.findAll();
 	}
 	
 }
