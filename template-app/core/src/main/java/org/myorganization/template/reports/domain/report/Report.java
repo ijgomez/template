@@ -15,6 +15,7 @@ import org.myorganization.template.core.domain.base.TemplateEntityBase;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -39,6 +40,7 @@ public class Report extends TemplateEntityBase implements TemplateEntity {
 	@OneToOne
     @JoinColumn(name = "archive_id")
 	@JsonManagedReference
+	@JsonProperty("descriptor")
 	private Archive archive;
 
 }
