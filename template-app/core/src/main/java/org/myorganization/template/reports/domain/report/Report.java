@@ -6,12 +6,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 
 import org.myorganization.template.core.domain.archives.Archive;
 import org.myorganization.template.core.domain.base.TemplateEntity;
 import org.myorganization.template.core.domain.base.TemplateEntityBase;
+import org.myorganization.template.reports.domain.reportengine.ReportEngine;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -33,6 +35,9 @@ public class Report extends TemplateEntityBase implements TemplateEntity {
 
 	@Column(nullable = false)
 	private String name;
+	
+	@ManyToOne(optional = false)
+	private ReportEngine engine;
 	
 	@Column(nullable = false)
 	private String description;

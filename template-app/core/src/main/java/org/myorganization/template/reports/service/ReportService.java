@@ -49,14 +49,17 @@ public class ReportService extends TemplateServiceBase<Report, ReportCriteria>  
 			
 			r.setName(report.getName());
 			r.setDescription(report.getDescription());
+			r.setEngine(report.getEngine());
 			
 			var archive = report.getArchive();
-			if (archive.getId() == null) {
-				r.setArchive(this.archiveService.create(archive));
-			} else {
-				r.setArchive(archive);
+			if (archive != null) {
+				if (archive.getId() == null) {
+					r.setArchive(this.archiveService.create(archive));
+				} else {
+					r.setArchive(archive);
+				}
 			}
-			
+
 			return this.getRepository().save(r);
 		}).orElseGet(() -> null);
 
