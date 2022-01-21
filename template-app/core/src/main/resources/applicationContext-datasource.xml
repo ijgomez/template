@@ -17,6 +17,9 @@
  		<property name="password" value="${datasource.password}"/>
 	</bean>
 	
+	<bean id="namingStrategy" class="org.hibernate.cfg.EJB3NamingStrategy" />
+	<!-- hibernate.ejb.naming_strategy=org.hibernate.cfg.ImprovedNamingStrategy -->
+	
 	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
 		<property name="dataSource" ref="dataSource"/>
 		<property name="packagesToScan" value="org.myorganization.template"/>
@@ -33,8 +36,13 @@
 				<prop key="hibernate.jdbc.time_zone">${hibernate.properties.jdbc.time_zone}</prop>
 				<prop key="hibernate.cache.use_second_level_cache">${hibernate.properties.cache.use_second_level_cache}</prop>
 				<prop key="hibernate.hbm2ddl.auto">${hibernate.properties.hbm2ddl.auto}</prop>
-				<prop key="hibernate.globally_quoted_identifiers">true</prop>
+				<prop key="hibernate.globally_quoted_identifiers">true</prop>                   
+                <prop key="hibernate.autoReconnect">true</prop>
+                <prop key="hibernate.autoReconnectForPools">true</prop>
+                <prop key="hibernate.is-connection-validation-required">true</prop>
+                <prop key="hibernate.physical_naming_strategy">org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy</prop>
             </props>
+            
 		</property>
 	</bean>
 

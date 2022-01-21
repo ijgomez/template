@@ -4,6 +4,7 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -49,8 +50,10 @@ public class Profile extends TemplateEntityBase implements TemplateEntity {
 	
 	@ManyToMany()
     @JoinTable(
-        joinColumns = { @JoinColumn(name = "profile_id") }, 
-        inverseJoinColumns = { @JoinColumn(name = "action_id") }
+    	foreignKey = @ForeignKey(name = "fk_profile_action_profile"),
+    	inverseForeignKey = @ForeignKey(name = "fk_profile_action_action"),
+        joinColumns = { @JoinColumn(name = "profile_fk") }, 
+        inverseJoinColumns = { @JoinColumn(name = "action_fk") }
     )
 	private Set<Action> actions;
 

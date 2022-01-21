@@ -9,7 +9,9 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 import org.myorganization.template.core.domain.base.TemplateEntity;
 import org.myorganization.template.core.domain.base.TemplateEntityBase;
@@ -19,6 +21,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Entity
+@Table(indexes = {
+		@Index(name = "idx_trace", columnList = "datetime, type")
+	})
 @Validated
 @Data
 @EqualsAndHashCode(callSuper=false)
@@ -31,12 +36,12 @@ public class Trace extends TemplateEntityBase implements TemplateEntity {
 	
 	@Column(nullable = false)
 	private LocalDateTime datetime;
-
-	@Column(nullable = false)
-	private String message;
 	
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private TraceType type;
+
+	@Column(nullable = false)
+	private String message;
 
 }
