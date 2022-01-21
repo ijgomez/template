@@ -47,7 +47,7 @@ public class JRReportExecutor implements ReportExecutor {
 			JasperDesign jasperDesign;
 			JRParameter[] parameters;
 			
-			decode64 = FileHelper.decode64(report.getArchive().getValue());
+			decode64 = FileHelper.decode64(report.getArchive().getData());
 			log.debug("decode64 - " + decode64.length);
 
 			numParam = params.size();
@@ -79,7 +79,7 @@ public class JRReportExecutor implements ReportExecutor {
 		byte[] decode64;
 		
 		try {
-			decode64 = FileHelper.decode64(report.getArchive().getValue());
+			decode64 = FileHelper.decode64(report.getArchive().getData());
 			log.debug("decode64 - " + decode64.length);
 
 			try (InputStream is = new ByteArrayInputStream(decode64)) {

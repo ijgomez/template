@@ -33,6 +33,7 @@
 				<prop key="hibernate.jdbc.time_zone">${hibernate.properties.jdbc.time_zone}</prop>
 				<prop key="hibernate.cache.use_second_level_cache">${hibernate.properties.cache.use_second_level_cache}</prop>
 				<prop key="hibernate.hbm2ddl.auto">${hibernate.properties.hbm2ddl.auto}</prop>
+				<prop key="hibernate.globally_quoted_identifiers">true</prop>
             </props>
 		</property>
 	</bean>

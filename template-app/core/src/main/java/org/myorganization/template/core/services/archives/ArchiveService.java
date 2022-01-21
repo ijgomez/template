@@ -35,7 +35,7 @@ public class ArchiveService extends TemplateServiceBase<Archive, ArchiveCriteria
 			
 			a.setFilename(archive.getFilename());
 			a.setFiletype(archive.getFiletype());
-			a.setValue(archive.getValue());
+			a.setData(archive.getData());
 			a.setSize(archive.getSize());
 			
 			return super.getRepository().save(a);

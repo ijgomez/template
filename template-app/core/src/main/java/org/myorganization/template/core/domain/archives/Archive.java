@@ -41,7 +41,7 @@ public class Archive extends TemplateEntityBase implements TemplateEntity {
 	@Lob
 	@Column(nullable = false)
 	@Basic(fetch = FetchType.LAZY, optional = false)
-	private String value;
+	private String data;
 
 	@Column(nullable = false)
 	private Long size;
