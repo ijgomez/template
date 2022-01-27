@@ -74,6 +74,9 @@ public class JRReportParamHelper {
 			param.getOptions().add(new ReportParamOption("excel", "Excel"));
 			param.getOptions().add(new ReportParamOption("html", "HTML"));
 		}
+		
+		// default value for list
+		param.setValue("pdf");
 
 		return param;
 	}
