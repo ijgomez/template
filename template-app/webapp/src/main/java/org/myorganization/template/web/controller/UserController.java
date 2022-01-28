@@ -1,5 +1,7 @@
 package org.myorganization.template.web.controller;
 
+import java.util.Optional;
+
 import org.apache.commons.lang3.StringUtils;
 import org.myorganization.template.security.domain.users.User;
 import org.myorganization.template.security.domain.users.UserCriteria;
@@ -8,14 +10,19 @@ import org.myorganization.template.web.controller.base.TemplateController;
 import org.myorganization.template.web.controller.base.TemplateControllerBase;
 import org.myorganization.template.web.domain.datatables.DataTablesCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @Validated
 @RequestMapping("/api/users")
-//@Slf4j
+@Slf4j
 public class UserController extends TemplateControllerBase<User, UserCriteria> implements TemplateController<User, UserCriteria>  {
 
 //	@Autowired
@@ -39,24 +46,16 @@ public class UserController extends TemplateControllerBase<User, UserCriteria> i
 		return criteria;
 	}
 	
-//	@Override
-//	public ResponseEntity<User> create(User user) {
-//		if (user != null) {
-//			user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-//		}
-//		return super.create(user);
-//	}
-//
-//	@GetMapping("/{username}")
-//	public ResponseEntity<User> findByUsername(@PathVariable("username") String username) {
-//		log.info("username: {}", username);
-//
-//		Optional<User> user = ((UserService) super.getService()).findByUsername(username);
-//		if (user.isPresent()) {
-//			return ResponseEntity.ok(user.get());
-//		}
-//		return ResponseEntity.notFound().build();
-//	}
+	@GetMapping("/exist/username/{username}")
+	public ResponseEntity<Boolean> existUsername(@PathVariable("username") String username) {
+		log.info("username: {}", username);
+
+		Optional<Boolean> exists = ((UserService) super.getService()).existUsername(username);
+		if (exists.isPresent()) {
+			return ResponseEntity.ok(exists.get());
+		}
+		return ResponseEntity.notFound().build();
+	}
 	
 
 }

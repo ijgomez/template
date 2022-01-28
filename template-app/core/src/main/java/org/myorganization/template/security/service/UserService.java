@@ -70,4 +70,9 @@ public class UserService extends TemplateServiceBase<User, UserCriteria> impleme
 		});
 	}
 
+	public Optional<Boolean> existUsername(String username) {
+		// TODO Auto-generated method stub
+		return ((UserRepository) super.getRepository()).existUsername(username);
+	}
+
 }
