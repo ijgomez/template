@@ -59,13 +59,13 @@ insert into profile_action (action_fk, profile_fk) values (4, 1);
 insert into profile_action (action_fk, profile_fk) values (5, 1);
 insert into profile_action (action_fk, profile_fk) values (5, 3);
 
--- insert into "user" (id, username, password, profile_fk) values (next value for user_seq, 'admin',   '$2a$10$Z42cT06xvytke5GmdQp.XODL1ujHBrkRhWhqIxJYGYa1m/SgBFkEe',  1);
--- insert into "user" (id, username, password, profile_fk) values (next value for user_seq, 'support', '$2a$10$bZHmYUaqcxDlaTJ5FD7jdei0Mjt0dLAXfhQl4LCtFrJjsgqRpPBs6',  2);
--- insert into "user" (id, username, password, profile_fk) values (next value for user_seq, 'user01',  '$2a$10$SRk0cJVP8lpzXy5z23RSKeRPMpwCSA9EIlAe1uOKlgj3HzSM.CJQG1', 3);
+insert into "user" (id, username, password, profile_fk) values (next value for user_seq, 'admin',   '$2a$10$Z42cT06xvytke5GmdQp.XODL1ujHBrkRhWhqIxJYGYa1m/SgBFkEe',  1);
+insert into "user" (id, username, password, profile_fk) values (next value for user_seq, 'support', '$2a$10$bZHmYUaqcxDlaTJ5FD7jdei0Mjt0dLAXfhQl4LCtFrJjsgqRpPBs6',  2);
+insert into "user" (id, username, password, profile_fk) values (next value for user_seq, 'user01',  '$2a$10$SRk0cJVP8lpzXy5z23RSKeRPMpwCSA9EIlAe1uOKlgj3HzSM.CJQG1', 3);
 
-insert into "user" (id, username, password, profile_fk) values (next value for user_seq, 'admin',   'admin',  1);
-insert into "user" (id, username, password, profile_fk) values (next value for user_seq, 'support', 'support',  2);
-insert into "user" (id, username, password, profile_fk) values (next value for user_seq, 'user01',  'user01', 3);
+-- insert into "user" (id, username, password, profile_fk) values (next value for user_seq, 'admin',   'admin',  1);
+-- insert into "user" (id, username, password, profile_fk) values (next value for user_seq, 'support', 'support',  2);
+-- insert into "user" (id, username, password, profile_fk) values (next value for user_seq, 'user01',  'user01', 3);
 
 insert into trace (id, datetime, type, message) values (next value for trace_seq, current_timestamp(), 'SYSTEM', 'maPY4qDUNiY4aW38hmXUxaoCnmSft25U2waBPGAMwTDg2eUpdcmgnl7y7MJu');
 insert into trace (id, datetime, type, message) values (next value for trace_seq, current_timestamp(), 'SYSTEM', 'gnl9hrknzQCU9zrh8g71nDNSq3oTMseZ6h7uKH3EmkbcMnZttnQMzpzuicLr');
