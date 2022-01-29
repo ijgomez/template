@@ -30,10 +30,10 @@
 	</parameter>
 	<queryString>
 		<![CDATA[SELECT "ID" AS DOCUMENT_ID,
-	"USERNAME" AS USERNAME,
-	"PROFILE_ID" AS PROFILE,
-	"LAST_ACCESS" AS LAST_ACCESS
-FROM PUBLIC.USER U]]>
+	"username" AS USERNAME,
+	"profile_fk" AS PROFILE,
+	"last_access" AS LAST_ACCESS
+FROM public.user U]]>
 	</queryString>
 	<field name="ID" class="java.lang.Long">
 		<fieldDescription><![CDATA[Id]]></fieldDescription>

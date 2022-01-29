@@ -33,14 +33,14 @@
 	</parameter>
 	<queryString>
 		<![CDATA[SELECT
-     T."ID" AS ID,
-     T."DATETIME" AS DATETIME,
-     T."TYPE" AS TYPE,
-     T."MESSAGE" AS MESSAGE
+     T."id" AS ID,
+     T."datetime" AS DATETIME,
+     T."type" AS TYPE,
+     T."message" AS MESSAGE
 FROM
-     "PUBLIC"."TRACE" T
+     "public"."trace" T
 ORDER BY
-	T."DATETIME"]]>
+	T."datetime"]]>
 	</queryString>
 	<field name="ID" class="java.lang.Long">
 		<fieldDescription><![CDATA[Id]]></fieldDescription>

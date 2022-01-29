@@ -33,10 +33,10 @@
 	</parameter>
 	<queryString>
 		<![CDATA[SELECT 
-	A.ID AS ID,
-	A.NAME AS NAME,
-	A.DESCRIPTION AS DESCRIPTION
-FROM PUBLIC.ACTION A]]>
+	A.id AS ID,
+	A.name AS NAME,
+	A.description AS DESCRIPTION
+FROM public.action A]]>
 	</queryString>
 	<field name="ID" class="java.lang.Long">
 		<fieldDescription><![CDATA[Id]]></fieldDescription>

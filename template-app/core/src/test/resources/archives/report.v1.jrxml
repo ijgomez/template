@@ -29,14 +29,14 @@
 	<parameter name="ENDDATE" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[SELECT
-     A."ID" AS ID,
-     A."FILENAME" AS FILENAME,
-     A."FILETYPE" AS FILETYPE,
-     A."SIZE" AS SIZE
+     A."id" AS ID,
+     A."filename" AS FILENAME,
+     A."filetype" AS FILETYPE,
+     A."size" AS SIZE
 FROM
-     "PUBLIC"."ARCHIVE" A
+     "public"."archive" A
  ORDER BY
-     A."ID"]]>
+     A."id"]]>
 	</queryString>
 	<field name="ID" class="java.lang.Long">
 		<property name="net.sf.jasperreports.sql.field.column.name" value="Id"/>
