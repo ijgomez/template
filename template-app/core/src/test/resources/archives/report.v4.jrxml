@@ -33,7 +33,7 @@
 	"username" AS USERNAME,
 	"profile_fk" AS PROFILE,
 	"last_access" AS LAST_ACCESS
-FROM public.user U]]>
+FROM user U]]>
 	</queryString>
 	<field name="ID" class="java.lang.Long">
 		<fieldDescription><![CDATA[Id]]></fieldDescription>

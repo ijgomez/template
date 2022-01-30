@@ -34,7 +34,7 @@
      A."filetype" AS FILETYPE,
      A."size" AS SIZE
 FROM
-     "public"."archive" A
+     "archive" A
  ORDER BY
      A."id"]]>
 	</queryString>

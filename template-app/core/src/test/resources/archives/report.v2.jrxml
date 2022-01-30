@@ -38,7 +38,7 @@
      T."type" AS TYPE,
      T."message" AS MESSAGE
 FROM
-     "public"."trace" T
+     "trace" T
 ORDER BY
 	T."datetime"]]>
 	</queryString>

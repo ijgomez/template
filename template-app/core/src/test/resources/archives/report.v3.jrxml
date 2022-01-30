@@ -36,7 +36,7 @@
 	A.id AS ID,
 	A.name AS NAME,
 	A.description AS DESCRIPTION
-FROM public.action A]]>
+FROM action A]]>
 	</queryString>
 	<field name="ID" class="java.lang.Long">
 		<fieldDescription><![CDATA[Id]]></fieldDescription>
