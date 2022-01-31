@@ -25,9 +25,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class UserController extends TemplateControllerBase<User, UserCriteria> implements TemplateController<User, UserCriteria>  {
 
-//	@Autowired
-//	private BCryptPasswordEncoder bCryptPasswordEncoder;
-	
 	@Autowired
 	protected UserController(UserService userService) {
 		super(userService);
@@ -46,7 +43,7 @@ public class UserController extends TemplateControllerBase<User, UserCriteria> i
 		return criteria;
 	}
 	
-	@GetMapping("/exist/username/{username}")
+	@GetMapping("/exist/{username}")
 	public ResponseEntity<Boolean> existUsername(@PathVariable("username") String username) {
 		log.info("username: {}", username);
 
