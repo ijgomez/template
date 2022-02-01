@@ -47,7 +47,7 @@ public class UserController extends TemplateControllerBase<User, UserCriteria> i
 	public ResponseEntity<Boolean> existUsername(@PathVariable("username") String username) {
 		log.info("username: {}", username);
 
-		Optional<Boolean> exists = ((UserService) super.getService()).existUsername(username);
+		Optional<Boolean> exists = ((UserService) super.getService()).existByUsername(username);
 		if (exists.isPresent()) {
 			return ResponseEntity.ok(exists.get());
 		}

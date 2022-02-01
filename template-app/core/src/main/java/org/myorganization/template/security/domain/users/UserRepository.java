@@ -9,6 +9,6 @@ import org.springframework.data.repository.query.Param;
 public interface UserRepository extends PagingAndSortingRepository<User, Long>, UserRepositoryQueries {
 
 	@Query(value = "select (case when count(u) = 1 then true else false end) from User u where u.username = :username")
-	Optional<Boolean> existUsername(@Param("username") String username);
+	Optional<Boolean> existByUsername(@Param("username") String username);
 	
 }

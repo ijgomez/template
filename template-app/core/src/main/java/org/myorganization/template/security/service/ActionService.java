@@ -1,6 +1,7 @@
 package org.myorganization.template.security.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.myorganization.template.core.services.base.TemplateService;
 import org.myorganization.template.core.services.base.TemplateServiceBase;
@@ -40,4 +41,8 @@ public class ActionService extends TemplateServiceBase<Action, ActionCriteria> i
 		}).orElseGet(() -> null);
 	}
 
+	@Transactional(readOnly = true)
+	public Optional<Boolean> existByName(String name) {
+		return ((ActionRepository) super.getRepository()).existByName(name);
+	}
 }
