@@ -6,19 +6,22 @@ import java.util.Optional;
 
 import org.myorganization.template.core.services.base.TemplateService;
 import org.myorganization.template.core.services.base.TemplateServiceBase;
+import org.myorganization.template.security.domain.actions.Action;
 import org.myorganization.template.security.domain.users.User;
 import org.myorganization.template.security.domain.users.UserCriteria;
 import org.myorganization.template.security.domain.users.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserService extends TemplateServiceBase<User, UserCriteria> implements TemplateService<User, UserCriteria> {
 
+//	@Autowired
+//	private PasswordEncoder passwordEncoder;
+	
 	@Autowired
-	private PasswordEncoder passwordEncoder;
+	private ActionService actionService;
 	
 	@Autowired
 	public UserService(UserRepository userRepository) {
@@ -73,6 +76,11 @@ public class UserService extends TemplateServiceBase<User, UserCriteria> impleme
 	@Transactional(readOnly = true)
 	public Optional<Boolean> existByUsername(String username) {
 		return ((UserRepository) super.getRepository()).existByUsername(username);
+	}
+
+	@Transactional(readOnly = true)
+	public Optional<List<Action>> findActionsByUsername(String username) {
+		return this.actionService.findActionsByUsername(username);
 	}
 
 }

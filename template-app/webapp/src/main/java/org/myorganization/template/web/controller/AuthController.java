@@ -94,7 +94,7 @@ public class AuthController {
 				throw new UserNotFoundException("User " + jwtUser.getUsername() + " not found");
 			}
 			
-			User user = u.get();
+			var user = u.get();
 			// TODO: Do not verify password for demo user as far as it breaks demo JWT token
 			if(!StringUtils.equals("admin", user.getUsername()) && !StringUtils.equals(user.getPassword(), jwtUser.getPassword()))
 			{

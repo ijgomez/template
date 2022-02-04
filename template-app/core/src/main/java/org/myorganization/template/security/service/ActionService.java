@@ -45,4 +45,10 @@ public class ActionService extends TemplateServiceBase<Action, ActionCriteria> i
 	public Optional<Boolean> existByName(String name) {
 		return ((ActionRepository) super.getRepository()).existByName(name);
 	}
+	
+	@Transactional(readOnly = true)
+	public Optional<List<Action>> findActionsByUsername(String username) {
+		return ((ActionRepository) super.getRepository()).findActionsByUsername(username);
+	}
+
 }

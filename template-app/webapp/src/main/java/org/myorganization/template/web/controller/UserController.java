@@ -1,8 +1,10 @@
 package org.myorganization.template.web.controller;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.myorganization.template.security.domain.actions.Action;
 import org.myorganization.template.security.domain.users.User;
 import org.myorganization.template.security.domain.users.UserCriteria;
 import org.myorganization.template.security.service.UserService;
@@ -47,9 +49,28 @@ public class UserController extends TemplateControllerBase<User, UserCriteria> i
 	public ResponseEntity<Boolean> existUsername(@PathVariable("username") String username) {
 		log.info("username: {}", username);
 
+		if (username == null || username.isBlank()) {
+			return ResponseEntity.badRequest().build();
+		} 
+		
 		Optional<Boolean> exists = ((UserService) super.getService()).existByUsername(username);
 		if (exists.isPresent()) {
 			return ResponseEntity.ok(exists.get());
+		}
+		return ResponseEntity.notFound().build();
+	}
+	
+	@GetMapping("/{username}/actions")
+	public ResponseEntity<List<Action>> findActionsByUsername(@PathVariable("username") String username) {
+		log.info("user's actions: {}", username);
+
+		if (username == null || username.isBlank()) {
+			return ResponseEntity.badRequest().build();
+		} 
+		
+		Optional<List<Action>> actions = ((UserService) super.getService()).findActionsByUsername(username);
+		if (actions.isPresent()) {
+			return ResponseEntity.ok(actions.get());
 		}
 		return ResponseEntity.notFound().build();
 	}
