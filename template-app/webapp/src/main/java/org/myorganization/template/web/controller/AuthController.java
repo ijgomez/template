@@ -66,8 +66,11 @@ public class AuthController {
 				
 				return ResponseEntity.ok(authenticationToken);
 			}
-		}
-		catch(Exception e) {
+		} catch(BadCredentialsException e) {
+			log.error("Bad credentials to login user: {}", credentials);
+			throw e;
+
+		} catch(Exception e) {
 			log.error("Fail to login user: {}", e.getMessage(), e);
 			throw new BadCredentialsException(e.getMessage());
 		}

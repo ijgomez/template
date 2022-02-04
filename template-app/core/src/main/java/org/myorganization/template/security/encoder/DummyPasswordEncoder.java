@@ -1,10 +1,12 @@
 package org.myorganization.template.security.encoder;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@Component("passwordEncoder")
 public class DummyPasswordEncoder implements PasswordEncoder {
 
 	@Override

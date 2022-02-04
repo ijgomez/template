@@ -19,8 +19,6 @@ import org.myorganization.template.core.domain.base.TemplateEntityBase;
 import org.myorganization.template.security.domain.profiles.Profile;
 import org.springframework.validation.annotation.Validated;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -38,8 +36,7 @@ public class User extends TemplateEntityBase implements TemplateEntity {
 
 	@Column(nullable = false)
 	private String username;
-	
-	@JsonIgnore
+
 	@Column(nullable = false)
 	private String password;
 

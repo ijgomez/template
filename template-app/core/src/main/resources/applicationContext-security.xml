@@ -12,9 +12,10 @@
 
 	<!--
 	<bean id="passwordEncoder" class="org.springframework.security.crypto.NoOpPasswordEncoder" factory-method="getInstance"/>   
-	<bean id="passwordEncoder" class=" org.myorganization.template.security.encode.DummyPasswordEncoder"/>
-	-->
+	<bean id="passwordEncoder" class="org.myorganization.template.security.encode.DummyPasswordEncoder"/>
 	<bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+	-->
+	
 	
 	
 </beans>
