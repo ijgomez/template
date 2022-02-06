@@ -9,6 +9,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
+import org.springframework.context.annotation.Profile;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -21,6 +23,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
  *
  */
 @RunWith(SpringRunner.class)
+@ContextConfiguration({"classpath:applicationContext-test.xml"})
+@Profile("test")
 @WebAppConfiguration
 public class HomeControllerTest {
 	
