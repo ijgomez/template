@@ -17,7 +17,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Entity
-@Table(uniqueConstraints={@UniqueConstraint(name = "uk_property_property", columnNames={"property"})})
+@Table(uniqueConstraints={@UniqueConstraint(name = "uk_property_key", columnNames={"key"})})
 @Validated
 @Data
 @EqualsAndHashCode(callSuper=false)
@@ -29,7 +29,7 @@ public class Property extends TemplateEntityBase implements TemplateEntity {
 	private Long id;
 
 	@Column(nullable = false)
-	private String property;
+	private String key;
 	
 	@Column(nullable = false)
 	private String value;

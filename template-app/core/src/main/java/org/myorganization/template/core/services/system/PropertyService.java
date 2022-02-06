@@ -30,15 +30,15 @@ public class PropertyService extends TemplateServiceBase<Property, PropertyCrite
 	}
 
 	@Transactional(readOnly = true)
-	public Long readNumericValue(String property) {
-		return Long.valueOf(((PropertyRepository) super.getRepository()).findByProperty(property).getValue());
+	public Long readNumericValue(String key) {
+		return Long.valueOf(((PropertyRepository) super.getRepository()).findByKey(key).getValue());
 	}
 	
 	@Transactional
 	public Property update(Long id, Property property) {
 		return this.read(id).map(p -> {
 			
-			p.setProperty(property.getProperty());
+			p.setKey(property.getKey());
 			p.setValue(property.getValue());
 			
 			return super.getRepository().save(p);

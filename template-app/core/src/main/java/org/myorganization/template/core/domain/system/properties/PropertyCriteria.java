@@ -9,6 +9,6 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper=false)
 public class PropertyCriteria extends Criteria {
 
-	private String property;
+	private String key;
 	
 }

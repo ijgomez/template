@@ -6,7 +6,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface PropertyRepository extends PagingAndSortingRepository<Property, Long>, PropertyRepositoryQueries {
 	
-	@Query("SELECT p FROM Property p WHERE LOWER(p.property) = LOWER(:property)")
-	public Property findByProperty(@Param("property") String property);
+	@Query("SELECT p FROM Property p WHERE LOWER(p.key) = LOWER(:key)")
+	public Property findByKey(@Param("key") String key);
 	
 }

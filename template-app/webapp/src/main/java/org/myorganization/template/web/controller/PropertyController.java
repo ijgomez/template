@@ -29,7 +29,7 @@ public class PropertyController extends TemplateControllerBase<Property, Propert
 		criteria = (dtCriteria.getCriteria() != null) ? dtCriteria.getCriteria() : new PropertyCriteria();
 
 		if (StringUtils.isNotEmpty(dtCriteria.getParameters().getSearch().getValue())) {
-			criteria.setProperty(dtCriteria.getParameters().getSearch().getValue());
+			criteria.setKey(dtCriteria.getParameters().getSearch().getValue());
 		}
 
 		return criteria;
