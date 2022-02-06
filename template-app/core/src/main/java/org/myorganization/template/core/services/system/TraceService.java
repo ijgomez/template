@@ -1,5 +1,6 @@
 package org.myorganization.template.core.services.system;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -8,6 +9,7 @@ import java.util.stream.StreamSupport;
 import org.myorganization.template.core.domain.system.traces.Trace;
 import org.myorganization.template.core.domain.system.traces.TraceCriteria;
 import org.myorganization.template.core.domain.system.traces.TraceRepository;
+import org.myorganization.template.core.domain.system.traces.TraceType;
 import org.myorganization.template.core.services.base.TemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -60,5 +62,10 @@ public class TraceService implements TemplateService<Trace, TraceCriteria> {
 	public Long delete(Long id) {
 		this.traceRepository.deleteById(id);
 		return id;
+	}
+	
+	@Transactional(readOnly = true)
+	public List<TraceType> getAllTypes() {
+		return Arrays.asList(TraceType.values());
 	}
 }

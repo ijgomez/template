@@ -26,6 +26,10 @@ public class TraceRepositoryQueriesImpl extends RepositoryQueriesBase<Trace, Tra
 			if (!StringUtils.isEmpty(criteria.getMessage())) {
 				predicates.add(CriteriaBuilderHelper.ilike(builder, root.get(Trace_.message), criteria.getMessage()));
 			}
+			
+			if (criteria.getType() != null) {
+				predicates.add(builder.equal(root.get(Trace_.type), criteria.getType()));
+			}
 
 		}
 		return predicates;

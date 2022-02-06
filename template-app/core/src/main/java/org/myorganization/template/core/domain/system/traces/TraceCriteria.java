@@ -11,4 +11,6 @@ public class TraceCriteria extends Criteria {
 
 	private String message;
 	
+	private TraceType type;
+	
 }
