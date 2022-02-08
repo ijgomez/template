@@ -156,7 +156,7 @@ public abstract class TemplateControllerBase<E extends TemplateEntityBase, C ext
 			} 
 			
 			List<E> data = this.service.findByCriteria(criteria);
-			byte[] csv = FileHelper.toCsvByteArray(data);
+			byte[] csv = FileHelper.toByteArray(data);
 			resource = new ByteArrayResource(csv);
 
 			var headers = new HttpHeaders();

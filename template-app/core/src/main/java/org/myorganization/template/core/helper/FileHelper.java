@@ -1,50 +1,43 @@
 package org.myorganization.template.core.helper;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.Base64;
 import java.util.List;
 
+import com.opencsv.CSVWriter;
+import com.opencsv.bean.StatefulBeanToCsv;
+import com.opencsv.bean.StatefulBeanToCsvBuilder;
+import com.opencsv.exceptions.CsvException;
+
+/**
+ * Class with commons operations over or about files.
+ * 
+ * @author ijgomez
+ *
+ */
 public class FileHelper {
 	
 	public static byte[] decode64(String src) {
 		return Base64.getDecoder().decode(src);
 	}
 	
-	public static byte[] toCsvByteArray(List<?> objects) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	public static <T> byte[] toByteArray(List<T> objects) throws CsvException, IOException {
+		var stream = new ByteArrayOutputStream();
+	    var streamWriter = new OutputStreamWriter(stream);
+	    var writer = new CSVWriter(streamWriter);
 
-		Class<?> classType = objects.get(0).getClass();
-
-		StringBuilder builder = new StringBuilder();
-		Method[] methods = classType.getDeclaredMethods();
-
-		for (Method m : methods) {
-			if (m.getParameterTypes().length == 0) {
-				if (m.getName().startsWith("get")) {
-					builder.append(m.getName().substring(3)).append(',');
-				} else if (m.getName().startsWith("is")) {
-					builder.append(m.getName().substring(2)).append(',');
-				}
-
-			}
-
-		}
-		builder.deleteCharAt(builder.length() - 1);
-		builder.append('\n');
-		for (Object object : objects) {
-			for (Method m : methods) {
-				if (m.getParameterTypes().length == 0) {
-					if (m.getName().startsWith("get") || m.getName().startsWith("is")) {
-						//builder.append(m.invoke(object).toString()).append(',');
-					}
-				}
-			}
-			builder.append('\n');
-		}
-		builder.deleteCharAt(builder.length() - 1);
-		return builder.toString().getBytes();
+	    StatefulBeanToCsv<T> beanToCsv = new StatefulBeanToCsvBuilder<T>(writer).build();
+	    beanToCsv.write(objects);
+	    streamWriter.flush();
+	    
+	    return stream.toByteArray();
 	}
-	
+
+	/**
+	 * New Instance.
+	 */
 	private FileHelper() { }
-	
+
 }

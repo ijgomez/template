@@ -66,6 +66,12 @@ public interface TemplateController<E extends TemplateEntity, C extends Criteria
 	@DeleteMapping("/{id}")
 	ResponseEntity<Long> delete(@PathVariable Long id);
 
+	/**
+	 * Export data to csv file format.
+	 * 
+	 * @param criteria Object with search criteria.
+	 * @return
+	 */
 	@PostMapping("/export")
 	ResponseEntity<Resource> export(@Valid @RequestBody C criteria);
 

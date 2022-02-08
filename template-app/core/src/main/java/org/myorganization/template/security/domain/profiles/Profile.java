@@ -21,6 +21,8 @@ import org.myorganization.template.security.domain.users.User;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.CsvBindByPosition;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -39,9 +41,13 @@ public class Profile extends TemplateEntityBase implements TemplateEntity {
 	private Long id;
 
 	@Column(nullable = false)
+	@CsvBindByName
+	@CsvBindByPosition(position = 0)
 	private String name;
 	
 	@Column(nullable = false)
+	@CsvBindByName
+	@CsvBindByPosition(position = 1)
 	private String description;
 	
 	@OneToMany(mappedBy="profile")

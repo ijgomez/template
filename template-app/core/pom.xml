@@ -130,6 +130,13 @@
 			<scope>provided</scope>
 		</dependency>
 		
+		<!-- Export Data -->
+		<dependency>
+		    <groupId>com.opencsv</groupId>
+		    <artifactId>opencsv</artifactId>
+		    <version>5.5.2</version>
+		</dependency>
+		
 		<!-- Scheduler dependencies -->
 		<dependency>
 			<groupId>org.quartz-scheduler</groupId>
@@ -161,6 +168,22 @@
 		    <groupId>commons-codec</groupId>
 		    <artifactId>commons-codec</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-collections4</artifactId>
+			<version>4.4</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+ 			<artifactId>commons-beanutils</artifactId>
+ 			<version>1.9.4</version>
+ 			<exclusions>
+		    	<exclusion>
+					<groupId>commons-collections</groupId>
+  					<artifactId>commons-collections</artifactId>
+				</exclusion>
+		    </exclusions>
+		</dependency>
 		
 		<!-- Jasperreport -->
 		<dependency>
@@ -180,6 +203,10 @@
 		    		<groupId>com.fasterxml.jackson.core</groupId>
   					<artifactId>jackson-annotations</artifactId>
 		    	</exclusion>
+		    	<exclusion>
+					<groupId>org.apache.commons</groupId>
+					<artifactId>commons-collections4</artifactId>
+				</exclusion>
 		    </exclusions>
 		</dependency>
 		<dependency>

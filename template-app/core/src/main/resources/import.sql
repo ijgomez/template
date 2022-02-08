@@ -52,12 +52,47 @@ insert into profile (id, name, description) values (next value for profile_seq, 
 insert into profile (id, name, description) values (next value for profile_seq, 'USER', 'User');
 insert into profile (id, name, description) values (next value for profile_seq, 'MANAGER', 'Manager');
 
-insert into profile_action (action_fk, profile_fk) values (1, 1);
-insert into profile_action (action_fk, profile_fk) values (2, 1);
-insert into profile_action (action_fk, profile_fk) values (3, 1);
-insert into profile_action (action_fk, profile_fk) values (4, 1);
-insert into profile_action (action_fk, profile_fk) values (5, 1);
-insert into profile_action (action_fk, profile_fk) values (5, 3);
+insert into profile_action (action_fk, profile_fk) values ((select id from action where name = 'REPORT_READ'),    (select id from profile where name = 'ADMINISTRATOR'));
+insert into profile_action (action_fk, profile_fk) values ((select id from action where name = 'REPORT_WRITE'),   (select id from profile where name = 'ADMINISTRATOR'));
+insert into profile_action (action_fk, profile_fk) values ((select id from action where name = 'SECURITY_READ'),  (select id from profile where name = 'ADMINISTRATOR'));
+insert into profile_action (action_fk, profile_fk) values ((select id from action where name = 'SECURITY_WRITE'), (select id from profile where name = 'ADMINISTRATOR'));
+insert into profile_action (action_fk, profile_fk) values ((select id from action where name = 'USER_READ'),      (select id from profile where name = 'ADMINISTRATOR'));
+insert into profile_action (action_fk, profile_fk) values ((select id from action where name = 'USER_WRITE'),     (select id from profile where name = 'ADMINISTRATOR'));
+insert into profile_action (action_fk, profile_fk) values ((select id from action where name = 'PROFILE_READ'),   (select id from profile where name = 'ADMINISTRATOR'));
+insert into profile_action (action_fk, profile_fk) values ((select id from action where name = 'PROFILE_WRITE'),  (select id from profile where name = 'ADMINISTRATOR'));
+insert into profile_action (action_fk, profile_fk) values ((select id from action where name = 'ACTION_READ'),    (select id from profile where name = 'ADMINISTRATOR'));
+insert into profile_action (action_fk, profile_fk) values ((select id from action where name = 'ACTION_WRITE'),   (select id from profile where name = 'ADMINISTRATOR'));
+insert into profile_action (action_fk, profile_fk) values ((select id from action where name = 'SYSTEM_READ'),    (select id from profile where name = 'ADMINISTRATOR'));
+insert into profile_action (action_fk, profile_fk) values ((select id from action where name = 'SYSTEM_WRITE'),   (select id from profile where name = 'ADMINISTRATOR'));
+insert into profile_action (action_fk, profile_fk) values ((select id from action where name = 'PROPERTY_READ'),  (select id from profile where name = 'ADMINISTRATOR'));
+insert into profile_action (action_fk, profile_fk) values ((select id from action where name = 'PROPERTY_WRITE'), (select id from profile where name = 'ADMINISTRATOR'));
+insert into profile_action (action_fk, profile_fk) values ((select id from action where name = 'CLUSTER_READ'),   (select id from profile where name = 'ADMINISTRATOR'));
+insert into profile_action (action_fk, profile_fk) values ((select id from action where name = 'CLUSTER_WRITE'),  (select id from profile where name = 'ADMINISTRATOR'));
+
+insert into profile_action (action_fk, profile_fk) values ((select id from action where name = 'REPORT_READ'),    (select id from profile where name = 'SUPPORT'));
+insert into profile_action (action_fk, profile_fk) values ((select id from action where name = 'REPORT_WRITE'),   (select id from profile where name = 'SUPPORT'));
+insert into profile_action (action_fk, profile_fk) values ((select id from action where name = 'SYSTEM_READ'),    (select id from profile where name = 'SUPPORT'));
+insert into profile_action (action_fk, profile_fk) values ((select id from action where name = 'SYSTEM_WRITE'),   (select id from profile where name = 'SUPPORT'));
+insert into profile_action (action_fk, profile_fk) values ((select id from action where name = 'PROPERTY_READ'),  (select id from profile where name = 'SUPPORT'));
+insert into profile_action (action_fk, profile_fk) values ((select id from action where name = 'PROPERTY_WRITE'), (select id from profile where name = 'SUPPORT'));
+insert into profile_action (action_fk, profile_fk) values ((select id from action where name = 'CLUSTER_READ'),   (select id from profile where name = 'SUPPORT'));
+insert into profile_action (action_fk, profile_fk) values ((select id from action where name = 'CLUSTER_WRITE'),  (select id from profile where name = 'SUPPORT'));
+
+insert into profile_action (action_fk, profile_fk) values ((select id from action where name = 'REPORT_READ'),    (select id from profile where name = 'USER'));
+insert into profile_action (action_fk, profile_fk) values ((select id from action where name = 'REPORT_WRITE'),   (select id from profile where name = 'USER'));
+insert into profile_action (action_fk, profile_fk) values ((select id from action where name = 'SECURITY_READ'),  (select id from profile where name = 'USER'));
+insert into profile_action (action_fk, profile_fk) values ((select id from action where name = 'SECURITY_WRITE'), (select id from profile where name = 'USER'));
+insert into profile_action (action_fk, profile_fk) values ((select id from action where name = 'USER_READ'),      (select id from profile where name = 'USER'));
+insert into profile_action (action_fk, profile_fk) values ((select id from action where name = 'USER_WRITE'),     (select id from profile where name = 'USER'));
+insert into profile_action (action_fk, profile_fk) values ((select id from action where name = 'SYSTEM_READ'),    (select id from profile where name = 'USER'));
+insert into profile_action (action_fk, profile_fk) values ((select id from action where name = 'PROPERTY_READ'),  (select id from profile where name = 'USER'));
+
+insert into profile_action (action_fk, profile_fk) values ((select id from action where name = 'REPORT_READ'),    (select id from profile where name = 'MANAGER'));
+insert into profile_action (action_fk, profile_fk) values ((select id from action where name = 'REPORT_WRITE'),   (select id from profile where name = 'MANAGER'));
+insert into profile_action (action_fk, profile_fk) values ((select id from action where name = 'SYSTEM_READ'),    (select id from profile where name = 'MANAGER'));
+insert into profile_action (action_fk, profile_fk) values ((select id from action where name = 'SYSTEM_WRITE'),   (select id from profile where name = 'MANAGER'));
+insert into profile_action (action_fk, profile_fk) values ((select id from action where name = 'PROPERTY_READ'),  (select id from profile where name = 'MANAGER'));
+insert into profile_action (action_fk, profile_fk) values ((select id from action where name = 'PROPERTY_WRITE'), (select id from profile where name = 'MANAGER'));
 
 -- insert into "user" (id, username, password, profile_fk) values (next value for user_seq, 'admin',   '$2a$10$Z42cT06xvytke5GmdQp.XODL1ujHBrkRhWhqIxJYGYa1m/SgBFkEe',  1);
 -- insert into "user" (id, username, password, profile_fk) values (next value for user_seq, 'support', '$2a$10$bZHmYUaqcxDlaTJ5FD7jdei0Mjt0dLAXfhQl4LCtFrJjsgqRpPBs6',  2);

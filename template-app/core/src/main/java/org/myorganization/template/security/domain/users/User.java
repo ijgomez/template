@@ -19,6 +19,9 @@ import org.myorganization.template.core.domain.base.TemplateEntityBase;
 import org.myorganization.template.security.domain.profiles.Profile;
 import org.springframework.validation.annotation.Validated;
 
+import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.CsvRecurse;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -35,15 +38,18 @@ public class User extends TemplateEntityBase implements TemplateEntity {
 	private Long id;
 
 	@Column(nullable = false)
+	@CsvBindByName
 	private String username;
 
 	@Column(nullable = false)
 	private String password;
 
+	@CsvBindByName
 	private ZonedDateTime lastAccess;
 	
 	@ManyToOne
 	@JoinColumn(name="profile_fk", foreignKey = @ForeignKey(name="fk_user_profile"))
+	@CsvRecurse
 	private Profile profile;
 
 }
