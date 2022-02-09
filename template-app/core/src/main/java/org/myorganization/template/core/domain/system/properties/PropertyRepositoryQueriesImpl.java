@@ -26,6 +26,10 @@ public class PropertyRepositoryQueriesImpl extends RepositoryQueriesBase<Propert
 			if (!StringUtils.isEmpty(criteria.getKey())) {
 				predicates.add(CriteriaBuilderHelper.ilike(builder, root.get(Property_.key), criteria.getKey()));
 			}
+			
+			if (!StringUtils.isEmpty(criteria.getDescription())) {
+				predicates.add(CriteriaBuilderHelper.ilike(builder, root.get(Property_.description), criteria.getDescription()));
+			}
 
 		}
 		return predicates;

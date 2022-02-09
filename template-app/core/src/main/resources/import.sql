@@ -163,11 +163,11 @@ insert into trace (id, datetime, type, message) values (next value for trace_seq
 insert into trace (id, datetime, type, message) values (next value for trace_seq, current_timestamp(), 'SYSTEM', 'cOZBE3ROTgem8CU6BIpC30l53QFM6JVbyddB1myr2vWvV9fhAZyIEik2thE6');
 insert into trace (id, datetime, type, message) values (next value for trace_seq, current_timestamp(), 'SYSTEM', 'KZqZ35YOAzbkQTYqr0GluZL8yaLYv5qnnbZNOlibL8qRiDMQCRnDnxF9yqrj');
 
-insert into property (id, "key", "value") values (next value for property_seq, 'CLUSTER_NODE_INTERVAL', '60000');
-insert into property (id, "key", "value") values (next value for property_seq, 'PROPERTY_1', 'Lorem ipsum');
-insert into property (id, "key", "value") values (next value for property_seq, 'PROPERTY_2', 'Morbi rutrum');
-insert into property (id, "key", "value") values (next value for property_seq, 'PROPERTY_3', 'Ut et sapien');
-insert into property (id, "key", "value") values (next value for property_seq, 'PROPERTY_4', 'Cras facilisis felis');
-insert into property (id, "key", "value") values (next value for property_seq, 'PROPERTY_5', 'qui dolorem ipsum');
+insert into property (id, "key", "value", description) values (next value for property_seq, 'CLUSTER_NODE_INTERVAL', '60000', 'Cluster Node Interval Reflesh (milliseconds)');
+insert into property (id, "key", "value", description) values (next value for property_seq, 'PROPERTY_1', 'Lorem ipsum', null);
+insert into property (id, "key", "value", description) values (next value for property_seq, 'PROPERTY_2', 'Morbi rutrum', null);
+insert into property (id, "key", "value", description) values (next value for property_seq, 'PROPERTY_3', 'Ut et sapien', null);
+insert into property (id, "key", "value", description) values (next value for property_seq, 'PROPERTY_4', 'Cras facilisis felis', null);
+insert into property (id, "key", "value", description) values (next value for property_seq, 'PROPERTY_5', 'qui dolorem ipsum', null);
 
 insert into task (id, name, description) values (next value for task_seq, 'DUMMY', 'Description of Task');

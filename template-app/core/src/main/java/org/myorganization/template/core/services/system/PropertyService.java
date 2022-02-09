@@ -40,6 +40,7 @@ public class PropertyService extends TemplateServiceBase<Property, PropertyCrite
 			
 			p.setKey(property.getKey());
 			p.setValue(property.getValue());
+			p.setDescription(property.getDescription());
 			
 			return super.getRepository().save(p);
 		}).orElseGet(() -> null);

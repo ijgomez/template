@@ -33,5 +33,8 @@ public class Property extends TemplateEntityBase implements TemplateEntity {
 	
 	@Column(nullable = false)
 	private String value;
+	
+	@Column
+	private String description;
 
 }
