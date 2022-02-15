@@ -23,12 +23,16 @@ public class TraceRepositoryQueriesImpl extends RepositoryQueriesBase<Trace, Tra
 				predicates.add(builder.equal(root.get(Trace_.id), criteria.getId()));
 			}
 			
-			if (!StringUtils.isEmpty(criteria.getMessage())) {
-				predicates.add(CriteriaBuilderHelper.ilike(builder, root.get(Trace_.message), criteria.getMessage()));
+			if (criteria.getFromDate() != null && criteria.getToDate() != null) {
+				predicates.add(builder.between(root.get(Trace_.datetime), criteria.getFromDate(), criteria.getToDate()));
 			}
 			
 			if (criteria.getType() != null) {
 				predicates.add(builder.equal(root.get(Trace_.type), criteria.getType()));
+			}
+			
+			if (!StringUtils.isEmpty(criteria.getMessage())) {
+				predicates.add(CriteriaBuilderHelper.ilike(builder, root.get(Trace_.message), criteria.getMessage()));
 			}
 
 		}
