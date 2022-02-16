@@ -1,8 +1,8 @@
 package org.myorganization.template.web.controller;
 
 import org.apache.commons.lang3.StringUtils;
-import org.myorganization.template.cluster.domain.ClusterNode;
-import org.myorganization.template.cluster.domain.ClusterNodeCriteria;
+import org.myorganization.template.cluster.domain.node.ClusterNode;
+import org.myorganization.template.cluster.domain.node.ClusterNodeCriteria;
 import org.myorganization.template.cluster.service.ClusterNodeService;
 import org.myorganization.template.web.controller.base.TemplateController;
 import org.myorganization.template.web.controller.base.TemplateControllerBase;

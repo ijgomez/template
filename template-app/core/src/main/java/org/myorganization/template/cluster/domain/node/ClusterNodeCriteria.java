@@ -1,5 +1,6 @@
-package org.myorganization.template.cluster.domain;
+package org.myorganization.template.cluster.domain.node;
 
+import org.myorganization.template.cluster.enums.ClusterNodeStatus;
 import org.myorganization.template.core.domain.base.Criteria;
 
 import lombok.Data;

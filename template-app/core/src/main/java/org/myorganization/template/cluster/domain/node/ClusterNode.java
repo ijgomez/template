@@ -1,4 +1,4 @@
-package org.myorganization.template.cluster.domain;
+package org.myorganization.template.cluster.domain.node;
 
 import java.time.LocalDateTime;
 
@@ -10,7 +10,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
+import org.myorganization.template.cluster.enums.ClusterNodeStatus;
 import org.myorganization.template.core.domain.base.TemplateEntity;
 import org.myorganization.template.core.domain.base.TemplateEntityBase;
 import org.springframework.validation.annotation.Validated;
@@ -19,6 +22,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Entity
+@Table(uniqueConstraints={@UniqueConstraint(name = "uk_cluster_node_hostname", columnNames={"hostname"})})
 @Validated
 @Data
 @EqualsAndHashCode(callSuper=false)

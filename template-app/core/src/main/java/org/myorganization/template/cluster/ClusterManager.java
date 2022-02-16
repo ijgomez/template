@@ -3,8 +3,8 @@ package org.myorganization.template.cluster;
 import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 
-import org.myorganization.template.cluster.domain.ClusterNode;
-import org.myorganization.template.cluster.domain.ClusterNodeStatus;
+import org.myorganization.template.cluster.domain.node.ClusterNode;
+import org.myorganization.template.cluster.enums.ClusterNodeStatus;
 import org.myorganization.template.cluster.helper.ClusterHelper;
 import org.myorganization.template.cluster.service.ClusterNodeService;
 import org.myorganization.template.core.domain.system.status.Memory;
@@ -45,14 +45,11 @@ public class ClusterManager {
 			currentNode.setStatus(ClusterNodeStatus.ALIVE);
 			currentNode.setTotalMemory(memory.getMax());
 			currentNode.setUsedMemory(memory.getUsed());
-			
-			// TODO Auto-generated catch block
-			
+
 			this.clusterNodeService.saveOrUpdate(currentNode);
 			
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("The IP address of a host could not be determined: " + e.getMessage(), e);
 		}
         
 		
