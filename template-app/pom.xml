@@ -21,6 +21,7 @@
     <org.projectlombok.version>1.18.16</org.projectlombok.version>
   </properties>
   <modules>
+  	<module>../template-dashboard</module>
   	<module>core</module>
   	<module>webapp</module>
   </modules>
