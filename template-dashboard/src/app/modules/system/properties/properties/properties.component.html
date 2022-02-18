@@ -1,0 +1,34 @@
+<app-template-form>
+    <app-header-page header [heading]="heading"></app-header-page>
+    <div templateForm>
+        <h2>{{ 'property.title' | translate }}</h2>
+        <form [formGroup]="propertiesForm" class="row g-3" (ngSubmit)="save()" novalidate>
+            <div class="col-md-6">
+                <label for="key">{{ 'property.fields.property' | translate }} <span class="text-danger">*</span>:</label>
+                <input type="text" id="key" formControlName="key" class="form-control form-control-sm" required/>
+                <div *ngIf="isValidInput('key')" class="form-text text-danger">
+                    <p *ngIf="propertiesForm.controls['key']?.errors?.required">Property is required.</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <label for="value">{{ 'property.fields.value' | translate }} <span class="text-danger">*</span>:</label>
+                <input type="text" id="value" formControlName="value" class="form-control form-control-sm" required/>
+                <div *ngIf="isValidInput('value')" class="form-text text-danger">
+                    <p *ngIf="propertiesForm.controls['value']?.errors?.required">Value is required.</p>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <label for="description">{{ 'property.fields.description' | translate }}:</label>
+                <textarea id="description" formControlName="description" class="form-control form-control-sm" rows="3" required></textarea>
+                <div *ngIf="isValidInput('description')" class="form-text text-danger">
+                    <p *ngIf="propertiesForm.controls['description']?.errors?.required">Description is required.</p>
+                </div>
+            </div>
+            <div class="col-md-12 d-grid gap-2 d-md-flex justify-content-md-end">
+                <app-cancel-button (clickEvent)="cancel()"></app-cancel-button>
+                <app-save-button [disabled]="!propertiesForm.valid"></app-save-button>
+            </div>
+        </form>
+    </div>
+    <app-message *ngIf="message" [message]="message" message></app-message>
+</app-template-form>

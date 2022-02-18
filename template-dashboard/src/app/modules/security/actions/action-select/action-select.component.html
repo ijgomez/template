@@ -1,0 +1,29 @@
+<div class="modal-header">
+    <h5 class="modal-title">Action Select</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="dismiss()"></button>
+</div>
+<div class="modal-body">
+    <form [formGroup]="filterForm" (ngSubmit) = "filter()">
+    <div class="row pb-2">
+        <div class="col">
+          <input type="text" formControlName="description" class="form-control form-control-sm" required>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-sm btn-outline-dark"><i class="bi bi-search"></i> {{ 'commons.buttons.search' | translate }}</button>
+        </div>
+    </div>
+      <div class="row">
+        <div class="col">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item list-group-item-action" *ngFor="let a of actions" [class.active]="isSelected(a)" (click)="selected(a)">
+                    {{a.description}}
+                </li>
+            </ul>
+        </div>
+      </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-sm btn-outline-dark" (click)="cancel()"><i class="bi bi-x-circle"></i> {{ 'commons.buttons.cancel' | translate }}</button>
+    <button type="button" class="btn btn-sm btn-outline-dark" (click)="ok()"><i class="bi bi-check2-circle"></i> {{ 'commons.buttons.select' | translate }}</button>
+</div>

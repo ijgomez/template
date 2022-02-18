@@ -1,0 +1,16 @@
+<div>
+    <form class="row g-3" [formGroup]="filterForm" (ngSubmit) = "filter()">
+        <div class="col-md-8">
+            <label for="username" class="form-label form-label-sm">{{ 'user.fields.username' | translate }}:</label>
+            <input type="text" formControlName="username" class="form-control form-control-sm" required/>
+        </div>
+        <div class="col-md-4">
+            <label for="profile" class="form-label form-label-sm">{{ 'profile.title' | translate }}:</label>
+            <app-profile-combo formControlName="profile" required role="button"></app-profile-combo>
+        </div>
+        <div class="col-12">
+            <app-search-button></app-search-button>
+        </div>
+    </form>
+    
+</div>

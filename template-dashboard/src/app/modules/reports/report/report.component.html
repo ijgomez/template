@@ -1,0 +1,55 @@
+<app-template-form>
+    <app-header-page header [heading]="heading"></app-header-page>
+    <div templateForm>
+        <h2>{{ 'report.title' | translate }}</h2>
+        <form [formGroup]="reportForm" class="row g-3" (ngSubmit)="save()" novalidate>
+            <div class="col-md-8">
+                <label for="name">{{ 'report.fields.name' | translate }} <span class="text-danger">*</span>:</label>
+                <input type="text" id="name" formControlName="name" class="form-control form-control-sm" required/>
+                <div *ngIf="isValidInput('name')" class="form-text text-danger">
+                    <p *ngIf="reportForm.controls['name']?.errors?.required">Name is required.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <label for="engine">{{ 'report.fields.engine' | translate }} <span class="text-danger">*</span>:</label>
+                <app-report-engine-combo id="engine" name="engine" formControlName="engine" required></app-report-engine-combo>
+
+                <div *ngIf="isValidInput('engine')" class="form-text text-danger">
+                    <p *ngIf="reportForm.controls['engine']?.errors?.required">Engine is required.</p>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <label for="description">{{ 'report.fields.description' | translate }} <span class="text-danger">*</span>:</label>
+                <textarea id="description" formControlName="description" class="form-control form-control-sm" rows="3" required></textarea>
+                <div *ngIf="isValidInput('description')" class="form-text text-danger">
+                    <p *ngIf="reportForm.controls['description']?.errors?.required">Description is required.</p>
+                </div>
+            </div>
+            <div class="col-md-12" formGroupName="descriptor" *ngIf="isSelected('JASPER')">
+                <label for="data">{{ 'report.fields.archive' | translate }} <span class="text-danger">*</span>:</label>
+                <input type="file" id="data" #fileUpload style="display: none"  required (change)="onFileChange($event)" accept=".xml, .jrxml"/>
+                
+                <div class="input-group mb-3">
+                    <input type="text" id="filename" formControlName="filename" readonly class="form-control form-control-sm"/>
+                    <button type="button" class="btn btn-outline-secondary" (click)="fileUpload.click()">Upload</button>
+                    <button type="button" class="btn btn-outline-secondary" (click)="download()" *ngIf="isDescriptorPresent()">Download</button>
+                </div>
+                <div *ngIf="isValidInput('data')" class="form-text text-danger">
+                    <p *ngIf="reportForm.controls['data']?.errors?.required">Archive is required.</p>
+                </div>
+            </div>
+            <div class="col-md-12" *ngIf="isSelected('HTML')">
+                <label for="url">{{ 'report.fields.url' | translate }} <span class="text-danger">*</span>:</label>
+                <input type="text" id="url" formControlName="url" class="form-control form-control-sm" required/>
+                <div *ngIf="isValidInput('url')" class="form-text text-danger">
+                    <p *ngIf="reportForm.controls['url']?.errors?.required">Url is required.</p>
+                </div>
+            </div>
+            <div class="col-md-12 d-grid gap-2 d-md-flex justify-content-md-end">
+                <app-cancel-button (clickEvent)="cancel()"></app-cancel-button>
+                <app-save-button [disabled]="!reportForm.valid"></app-save-button>
+            </div>
+        </form>
+    </div>
+    <app-message *ngIf="message" [message]="message" message></app-message>
+</app-template-form>

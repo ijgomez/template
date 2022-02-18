@@ -1,0 +1,20 @@
+<div class="container-fluid noselect">
+    <div class="d-grid gap-2">
+        <div class="ps-2 pe-2">
+            <ng-content select="[header]"></ng-content>
+        </div>
+        <div class="p-2 bg-light border">
+            <ng-content select="[toolbar]"></ng-content>
+        </div>
+        <div class="p-2 bg-light border">
+            <ng-content select="[filter]"></ng-content>
+        </div>
+        <div class="p-2 bg-light border">
+            <ng-content select="[list]"></ng-content>
+        </div>
+        <div class="p-2 bg-transparent border-0">
+            <ng-content select="[message]"></ng-content>
+        </div>
+    </div>
+</div>
+

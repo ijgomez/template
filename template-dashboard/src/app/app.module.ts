@@ -1,23 +1,50 @@
-import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+
+import { AppRoutingModule } from './app-routing.module';
+import { CoreModule } from './core/core.module';
+import { SharedModule } from './shared/shared.module';
 
 import { AppComponent } from './app.component';
-import { AppRoutingModule } from './app-routing.module';
-import { MenuComponent } from './views/layout/menu/menu.component';
-import { DashboardComponent } from './views/dashboard/dashboard.component';
-import { HeaderComponent } from './views/layout/header/header.component';
+import { AuthInterceptor } from './core/interceptors/auth.interceptor';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+
+//export function createTranslateLoader(http: HttpClient) {
+//  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+//}
+export function HttpLoaderFactory(http: HttpClient) {
+  return new TranslateHttpLoader(http);
+}
 
 @NgModule({
   declarations: [
-    AppComponent,
-    HeaderComponent,
-    MenuComponent,
-    DashboardComponent
+    AppComponent
   ],
   imports: [
-    BrowserModule, AppRoutingModule
+    BrowserModule,
+    FormsModule, ReactiveFormsModule,
+    AppRoutingModule,
+    HttpClientModule,
+    CoreModule,
+    SharedModule,
+    NgbModule,
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        //useFactory: createTranslateLoader,
+        useFactory: HttpLoaderFactory,
+        deps: [HttpClient]
+      }
+    })
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}
+  ],
+  schemas: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

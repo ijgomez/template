@@ -1,0 +1,80 @@
+{
+    "action": {
+        "title": "Action",
+        "fields": {
+            "name": "Name",
+            "description": "Description"
+        },
+        "messages": {
+            "name.exists": "Name already exists."
+        }
+    },
+    "commons": {
+        "buttons":{
+            "cancel": "Cancel",
+            "login": "Log in",
+            "save": "Save",
+            "search": "Search",
+            "select": "Select"
+        }
+    },
+    "login": {
+        "title": "Login",
+        "fields": {
+            "username": "Username",
+            "password": "Password"
+        },
+        "messages": {
+            
+        }
+    },
+    "profile": {
+        "title": "Profile",
+        "fields": {
+            "name": "Name",
+            "description": "Description",
+            "actions": "Actions"
+        },
+        "messages": {
+            "name.exists": "Name already exists."
+        }
+    },
+    "property": {
+        "title": "Property",
+        "fields": {
+            "property": "Property",
+            "value": "Value",
+            "description": "Description"
+        },
+        "messages": {
+            "property.exists": "Property already exists."
+        }
+    },
+    "report": {
+        "title": "Report",
+        "fields": {
+            "name": "Name",
+            "engine": "Engine",
+            "description": "Description",
+            "archive": "Archive",
+            "url": "URL"
+        },
+        "messages": {
+            
+        }
+    },
+    "user": {
+        "title": "User",
+        "fields": {
+            "username": "Username",
+            "password": "Password",
+            "profile": "Profile"
+        },
+        "messages": {
+            "username.is.required": "Username is required.",
+            "username.exists": "Username already exists.",
+            "password.is.required": "Password is required.",
+            "profile.is.required": "Profile is required."
+        }
+    }
+}

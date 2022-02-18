@@ -1,6 +1,2 @@
-<!--The content below is only a placeholder and can be replaced.-->
-<app-header (collapsedEvent)="receiveCollapsed($event)"></app-header>
-<app-menu></app-menu>
-<section class="main-container" [ngClass]="{collapsed: collapedSideBar}">
-    <router-outlet></router-outlet>
-</section>
+<app-menu (logoutEvent)="logout($event)" *ngIf="isLoggedIn$ | async"></app-menu>
+<router-outlet></router-outlet>

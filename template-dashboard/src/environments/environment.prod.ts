@@ -1,4 +1,8 @@
 export const environment = {
   production: true,
-  urlBase: 'http://localhost:8080/template-app-webapp/api'
+  urlBase: '',
+  datatable_pageLength: 10,
+  datetime: {
+    defaultFormat: 'dd/MM/yyyy HH:mm z'
+  }
 };

@@ -1,21 +1,35 @@
-import { Component, ViewChild } from '@angular/core';
-import { MenuComponent } from './views/layout/menu/menu.component';
+import { Component, OnInit } from '@angular/core';
+import { AuthService } from './core/services/security/auth.service';
+import { Observable } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
 
-  collapedSideBar: boolean;
+  supportedLanguages = ['en', 'es'];
 
-  @ViewChild(MenuComponent) child: MenuComponent;
+  isLoggedIn$: Observable<boolean> | undefined;
 
-  constructor() { }
+  constructor(
+    private authService: AuthService,
+    private translateService: TranslateService) {
+    
+      translateService.addLangs(this.supportedLanguages);
+      translateService.setDefaultLang(this.supportedLanguages[0]);
+      
+      translateService.use(this.supportedLanguages[0]);
+  }
 
-  receiveCollapsed($event) {
-    this.collapedSideBar = $event;
-    this.child.toggleCollapsed();
+  ngOnInit(): void {
+    this.isLoggedIn$ = this.authService.isLoggedIn;
+  }
+
+  logout(event: any) {
+    console.log('logout: ' + event);
+    this.authService.logout();
   }
 }

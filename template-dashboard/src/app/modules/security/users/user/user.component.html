@@ -1,0 +1,36 @@
+<app-template-form>
+    <app-header-page header [heading]="heading"></app-header-page>
+    <div templateForm>
+        <h2>{{'user.title' | translate}}</h2>
+        <form [formGroup]="userForm" class="row g-3" (ngSubmit)="save()" novalidate>
+            <div class="form-group">
+                <label for="username">{{'user.fields.username' | translate}} <span class="text-danger">*</span>:</label>
+                <input type="text" id="username" formControlName="username" class="form-control form-control-sm" required/>
+                <div *ngIf="isValidInput('username')" class="form-text text-danger">
+                    <p *ngIf="userForm.controls['username']?.errors?.required">{{'user.messages.username.is.required' | translate}}</p>
+                    <p *ngIf="userForm.controls['username']?.errors?.exists">{{'user.messages.username.exists' | translate}}</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="username">{{'user.fields.password' | translate}} <span class="text-danger">*</span>:</label>
+                <input type="password" id="password" formControlName="password" class="form-control form-control-sm" required/>
+                <div *ngIf="isValidInput('password')" class="form-text text-danger">
+                    <p *ngIf="userForm.controls['password']?.errors?.required">{{'user.messages.password.is.required' | translate}}</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="profile">{{'user.fields.profile' | translate}} <span class="text-danger">*</span>:</label>
+                <app-profile-combo id="profile" name="profile" formControlName="profile" required></app-profile-combo>
+                
+                <div *ngIf="isValidInput('profile')" class="form-text text-danger">
+                    <p *ngIf="userForm.controls['profile']?.errors?.required">{{'user.messages.profile.is.required' | translate}}</p>
+                </div>
+            </div>
+            <div class="col-md-12 d-grid gap-2 d-md-flex justify-content-md-end">
+                <app-cancel-button (clickEvent)="cancel()"></app-cancel-button>
+                <app-save-button [disabled]="!userForm.valid"></app-save-button>
+            </div>
+        </form>
+    </div>
+    <app-message *ngIf="message" [message]="message" message></app-message>
+</app-template-form>

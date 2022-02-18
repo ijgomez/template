@@ -1,0 +1,7 @@
+<app-template-list>
+    <app-header-page header [heading]="heading"></app-header-page>
+    <app-toolbar (toolbarEvent)="process($event)" [exec]="true" toolbar></app-toolbar>
+    <app-report-filter (filterEvent)="filter($event)" filter></app-report-filter>
+    <app-datatable [dtOptions]="dtOptions" (reloadEvent)="reload()" (selectedEvent)="selected($event)" (dbClickEvent)="dbClick($event)" list></app-datatable>
+    <app-message *ngIf="message" [message]="message" message></app-message>
+</app-template-list>

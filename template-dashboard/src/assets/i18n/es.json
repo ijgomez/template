@@ -1,0 +1,80 @@
+{
+    "action": {
+        "title": "Acción",
+        "fields": {
+            "name": "Nombre",
+            "description": "Descripción"
+        },
+        "messages": {
+            "name.exists": "Nombre ya existe."
+        }
+    },
+    "commons": {
+        "buttons":{
+            "cancel": "Cancelar",
+            "login": "Acceso",
+            "save": "Guardar",
+            "search": "Buscar",
+            "select": "Seleccionar"
+        }
+    },
+    "login": {
+        "title": "Autentificación",
+        "fields": {
+            "username": "Usuario",
+            "password": "Contraseña"
+        },
+        "messages": {
+            
+        }
+    },
+    "profile": {
+        "title": "Perfil",
+        "fields": {
+            "name": "Nombre",
+            "description": "Descripción",
+            "actions": "Acciones"
+        },
+        "messages": {
+            "name.exists": "Nombre ya existe."
+        }
+    },
+    "property": {
+        "title": "Propiedad",
+        "fields": {
+            "property": "Propiedad",
+            "value": "Valor",
+            "description": "Descripción"
+        },
+        "messages": {
+            "name.exists": "Propiedad ya existe."
+        }
+    },
+    "report": {
+        "title": "Informe",
+        "fields": {
+            "name": "Nombre",
+            "engine": "Motor",
+            "description": "Descripción",
+            "archive": "Archivo",
+            "url": "URL"
+        },
+        "messages": {
+            
+        }
+    },
+    "user": {
+        "title": "Usuario",
+        "fields": {
+            "username": "Username",
+            "password": "Contraseña",
+            "profile": "Perfil"
+        },
+        "messages": {
+            "username.is.required": "Usuario es necesario.",
+            "username.exists": "Usuario ya existe.",
+            "password.is.required": "Contraseña es necesario.",
+            "profile.is.required": "Perfil es necesario."
+        }
+    }
+}

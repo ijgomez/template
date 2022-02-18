@@ -1,0 +1,14 @@
+<app-template-form>
+  <app-header-page header [heading]="heading"></app-header-page>
+  <div templateForm>
+    <h2>Execute: {{name}}</h2>
+    <app-dynamic-form *ngIf="questions" [questions]="questions" (uploaded)="onSubmit($event)" (cancelEvent)="onCancel()"></app-dynamic-form>
+  </div>
+  <app-message *ngIf="message" [message]="message" message></app-message>
+</app-template-form>
+
+
+    
+    
+
+  

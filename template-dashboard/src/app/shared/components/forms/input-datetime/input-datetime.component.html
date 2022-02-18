@@ -1,0 +1,6 @@
+<div class="input-group">
+    <input type="datetime" [id]="id" [disabled]="isDisabled" [(ngModel)]="value" (ngModelChange)="valueChange($event)" class="form-control form-control-sm" ngbDatepicker #d="ngbDatepicker">
+    <div class="input-group-append">
+        <button type="button" class="btn btn-sm btn-outline-secondary" (click)="d.toggle()"><i class="bi bi-calendar3"></i></button>
+    </div>
+</div>

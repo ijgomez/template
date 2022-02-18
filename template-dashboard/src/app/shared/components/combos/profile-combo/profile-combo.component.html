@@ -1,0 +1,4 @@
+<select class="form-select form-select-sm" [id]="id" [disabled]="isDisabled" [compareWith]="compareFn" [(ngModel)]="value" (ngModelChange)="onChange($event)">
+    <option [ngValue]="null">Choose profile</option>
+    <option [ngValue]="p" *ngFor="let p of profiles | async">{{p.name}}</option>
+</select>

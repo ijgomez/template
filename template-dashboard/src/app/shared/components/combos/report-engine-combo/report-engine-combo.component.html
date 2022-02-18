@@ -1,0 +1,4 @@
+<select class="form-select form-select-sm" [id]="id" [disabled]="isDisabled" [compareWith]="compareFn" [(ngModel)]="value" (ngModelChange)="onChange($event)">
+    <option [ngValue]="null">Choose engine</option>
+    <option [ngValue]="e" *ngFor="let e of engines | async">{{e.description}}</option>
+</select>

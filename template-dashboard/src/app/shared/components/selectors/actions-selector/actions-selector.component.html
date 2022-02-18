@@ -1,0 +1,21 @@
+<div class="container-fluid g-custom">
+    <div class="row g-custom">
+        <div class="col-sm">
+            <div class="card">
+                <ul class="list-group list-group-flush template-list">
+                    <li class="list-group-item list-group-item-action" [class.active]="isSelected(a)"  *ngFor="let a of value" (click)="selected(a,$event)">
+                        {{a.description}}
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-sm-auto">
+            <div class="btn-toolbar">
+                <div role="group" class="btn-group-vertical btn-group-sm ps-1">
+                    <button type="button" class="btn btn-secondary" (click)="add()"><i class="bi bi-plus-circle"></i></button>
+                    <button type="button" class="btn btn-secondary" [disabled]="!action" (click)="remove()"><i class="bi bi-dash-circle"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

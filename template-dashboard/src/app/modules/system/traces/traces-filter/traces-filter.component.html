@@ -1,0 +1,26 @@
+<div>
+    <form class="row g-3" [formGroup]="filterForm" (ngSubmit) = "filter()">
+        
+        <div class="col-md-8">
+            <label for="message" class="form-label form-label-sm">Message:</label>
+            <input type="text" formControlName="message" class="form-control form-control-sm" required/>
+        </div>
+        <div class="col-md-4">
+            <label for="type" class="form-label form-label-sm">Type:</label>
+            <app-trace-type-combo formControlName="type" required role="button"></app-trace-type-combo>
+        </div>
+        <div class="col-md-4">
+            <label for="fromDate" class="form-label form-label-sm">From Date:</label>
+            <app-input-datetime formControlName="fromDate"></app-input-datetime>
+        </div>
+        <div class="col-md-4">
+            <label for="toDate" class="form-label form-label-sm">To Date:</label>
+            <app-input-datetime formControlName="toDate"></app-input-datetime>
+        </div>
+        <div class="col-md-4"></div>
+        <div class="col-12">
+            <app-search-button></app-search-button>
+        </div>
+    </form>
+</div>
+{{filterForm.value | json }}

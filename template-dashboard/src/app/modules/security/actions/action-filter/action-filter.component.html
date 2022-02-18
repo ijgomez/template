@@ -1,0 +1,16 @@
+<div>
+    <form class="row g-3" [formGroup]="filterForm" (ngSubmit) = "filter()">
+        <div class="col-md-4">
+            <label for="name" class="form-label form-label-sm">Name:</label>
+            <input type="text" formControlName="name" class="form-control form-control-sm" required/>
+        </div>
+        <div class="col-md-8">
+            <label for="description" class="form-label form-label-sm">Description:</label>
+            <input type="text" formControlName="description" class="form-control form-control-sm" required/>
+        </div>
+        <div class="col-12">
+            <app-search-button></app-search-button>
+        </div>
+    </form>
+    
+</div>

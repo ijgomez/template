@@ -1,0 +1,8 @@
+<p>reports home works!</p>
+<nav>
+    <ul>
+      <li *ngFor="let r of data"><a [routerLink]="[r.id]">{{r.name}}</a></li>
+    </ul>
+  </nav>
+<router-outlet></router-outlet>
+Data: {{data | json }}

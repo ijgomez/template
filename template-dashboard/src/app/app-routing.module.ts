@@ -1,22 +1,22 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
-import { DashboardComponent } from './views/dashboard/dashboard.component';
+import { RouterModule, Routes } from '@angular/router';
+import { AuthGuard } from './core/guards/auth.guard';
+import { LoginComponent } from './modules/layout/login/login.component';
 
 const routes: Routes = [
-    { path: '', redirectTo: 'home', pathMatch: 'full'},
-    { path: 'home', component: DashboardComponent},
-    { path: 'reports',  loadChildren: 'app/views/reports/reports.module#ReportsModule'},
-    { path: 'monitors', loadChildren: 'app/views/monitors/monitors.module#MonitorsModule'},
-    { path: 'data', loadChildren: 'app/views/data/data.module#DataModule'},
-    { path: 'security', loadChildren: 'app/views/security/security.module#SecurityModule'},
-    { path: 'support',  loadChildren: 'app/views/support/support.module#SupportModule'}
+  { path: '', loadChildren: () => import('./modules/layout/layout.module').then( m => m.LayoutModule ), canActivate: [AuthGuard], data: { action: 'ACCESS'} },
+  { path: 'home', loadChildren: () => import(/* webpackChunkName: "home-module" */ './modules/home/home.module').then( m => m.HomeModule ), canActivate: [AuthGuard], data: { action: 'DASHBOARD'} },
+  { path: 'security', loadChildren: () => import(/* webpackChunkName: "security-module" */'./modules/security/security.module').then( m => m.SecurityModule ), canActivate: [AuthGuard], data: { action: 'SECURITY'} },
+  { path: 'system', loadChildren: () => import(/* webpackChunkName: "system-module" */ './modules/system/system.module').then( m => m.SystemModule ), canActivate: [AuthGuard], data: { action: 'SYSTEM'} },
+  { path: 'reports', loadChildren: () => import(/* webpackChunkName: "reports-module" */ './modules/reports/reports.module').then( m => m.ReportsModule ), canActivate: [AuthGuard], data: { action: 'REPORTS'} },
+  { path: 'interfaces', loadChildren: () => import(/* webpackChunkName: "interfaces-module" */ './modules/interfaces/interfaces.module').then( m => m.InterfacesModule ), canActivate: [AuthGuard], data: { action: 'INTERFACES'} },
+  { path: 'login', component: LoginComponent },
+  { path: '**', redirectTo: '' }
 ];
 
 @NgModule({
-  imports: [
-    RouterModule.forRoot(routes)
-  ],
+  imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
-  providers: []
+  providers: [AuthGuard]
 })
 export class AppRoutingModule { }
