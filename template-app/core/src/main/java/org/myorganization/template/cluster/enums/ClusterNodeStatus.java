@@ -1,4 +1,4 @@
-package org.myorganization.template.cluster.domain;
+package org.myorganization.template.cluster.enums;
 
 public enum ClusterNodeStatus {
 

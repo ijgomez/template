@@ -1,4 +1,4 @@
-package org.myorganization.template.cluster.domain;
+package org.myorganization.template.cluster.domain.node;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;

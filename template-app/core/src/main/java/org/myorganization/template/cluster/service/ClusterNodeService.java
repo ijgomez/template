@@ -2,9 +2,9 @@ package org.myorganization.template.cluster.service;
 
 import java.util.List;
 
-import org.myorganization.template.cluster.domain.ClusterNode;
-import org.myorganization.template.cluster.domain.ClusterNodeCriteria;
-import org.myorganization.template.cluster.domain.ClusterNodeRepository;
+import org.myorganization.template.cluster.domain.node.ClusterNode;
+import org.myorganization.template.cluster.domain.node.ClusterNodeCriteria;
+import org.myorganization.template.cluster.domain.node.ClusterNodeRepository;
 import org.myorganization.template.core.services.base.TemplateService;
 import org.myorganization.template.core.services.base.TemplateServiceBase;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,8 +33,8 @@ public class ClusterNodeService extends TemplateServiceBase<ClusterNode, Cluster
 	public ClusterNode update(Long id, ClusterNode clusterNode) {
 		return this.read(id).map(cn -> {
 			
+			cn.setIp(clusterNode.getIp());		
 			cn.setHostname(clusterNode.getHostname());
-			cn.setIp(clusterNode.getIp());
 			cn.setStatus(clusterNode.getStatus());
 			cn.setLastUpdateTime(clusterNode.getLastUpdateTime());
 			cn.setStartDatetime(clusterNode.getStartDatetime());

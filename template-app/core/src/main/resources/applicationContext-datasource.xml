@@ -41,6 +41,7 @@
                 <prop key="hibernate.autoReconnectForPools">true</prop>
                 <prop key="hibernate.is-connection-validation-required">true</prop>
                 <prop key="hibernate.physical_naming_strategy">org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy</prop>
+                <prop key="hibernate.default_schema"></prop>
             </props>
             
 		</property>
