@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.myorganization.template</groupId>
 		<artifactId>template-app</artifactId>
-		<version>1.0</version>
+		<version>1.0.0</version>
 	</parent>
 	<build>
 		<filters>

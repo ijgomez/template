@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.myorganization.template</groupId>
 		<artifactId>template-app</artifactId>
-		<version>1.0</version>
+		<version>1.0.0</version>
 	</parent>
 	<properties>
 	
@@ -19,27 +19,13 @@
 			    <groupId>org.apache.maven.plugins</groupId>
 			    <artifactId>maven-war-plugin</artifactId>
 			    <version>3.3.1</version>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-          		<artifactId>maven-antrun-plugin</artifactId>
-          		<executions>
-					<execution>
-						<phase>prepare-package</phase>
-						<configuration>
-							<tasks>
-								<property name="ANGULAR_APP_HOME" value="${basedir}../../../template-dashboard"/>
-								<property name="CONTEXT_ROOT" value="${project.artifactId}-${project.version}"/>
-								<ant antfile="src/main/angular/build.xml" inheritRefs="true">
-									<target name="dist"/>
-								</ant>
-							</tasks>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-          		</executions>
+			    <configuration>
+			    	<webResources>
+						<webResource>
+							<directory>${project.basedir}/../../template-dashboard/dist</directory>
+						</webResource>
+					</webResources>
+			    </configuration>
 			</plugin>
 		</plugins>
 	</build>
@@ -47,7 +33,7 @@
 		<dependency>
 			<groupId>org.myorganization.template</groupId>
 			<artifactId>template-app-core</artifactId>
-			<version>1.0</version>
+			<version>1.0.0</version>
 		</dependency>
 		
 		<!-- Spring dependencies -->

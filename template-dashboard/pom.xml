@@ -17,7 +17,7 @@
 					<workingDirectory>src/main/dashboard</workingDirectory>
 					 -->
 
-					<installDirectory>target/node</installDirectory>
+					<installDirectory>target</installDirectory>
 				</configuration>
 
 				<executions>
