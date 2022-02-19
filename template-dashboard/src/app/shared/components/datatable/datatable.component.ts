@@ -49,7 +49,7 @@ export class DatatableComponent implements AfterViewInit, OnInit, OnDestroy {
   @Input()
   set dtOptions(value: DataTables.Settings) {
     console.log(this.translate.defaultLang);
-
+    
     value.pagingType = 'full_numbers';
     value.searching = false;
     value.lengthChange = false;
@@ -57,7 +57,7 @@ export class DatatableComponent implements AfterViewInit, OnInit, OnDestroy {
     value.serverSide = true;
     value.processing = true;
     value.language = {
-      url: "/assets/i18n/dataTables." + this.translate.currentLang + ".json"
+      url:  environment.i18n.urlBase + "/assets/i18n/dataTables." + this.translate.currentLang + ".json"
     };
     value.rowCallback = (row: Node, data: any[] | Object, index: number) => {
 

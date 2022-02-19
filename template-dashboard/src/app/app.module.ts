@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
 
 import { AppRoutingModule } from './app-routing.module';
 import { CoreModule } from './core/core.module';
@@ -17,7 +18,8 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 //  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 //}
 export function HttpLoaderFactory(http: HttpClient) {
-  return new TranslateHttpLoader(http);
+  // return new TranslateHttpLoader(http);
+  return new TranslateHttpLoader(http, environment.i18n.urlBase + '/assets/i18n/', '.json');
 }
 
 @NgModule({
