@@ -55,6 +55,7 @@
           },
           "configurations": {
             "production": {
+              "baseHref": "/template-app-webapp/dashboard/",
               "budgets": [
                 {
                   "type": "initial",
