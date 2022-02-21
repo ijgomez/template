@@ -1,27 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="warn" strict="true"
-           xmlns="http://logging.apache.org/log4j/2.0/config"
-           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-           xsi:schemaLocation="http://logging.apache.org/log4j/2.0/config 
+<Configuration status="info" strict="true"
+	xmlns="http://logging.apache.org/log4j/2.0/config"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://logging.apache.org/log4j/2.0/config 
            https://raw.githubusercontent.com/apache/logging-log4j2/master/log4j-core/src/main/resources/Log4j-config.xsd">
-  <Appenders>
-    <Console name="console" target="SYSTEM_OUT">
-      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
-    </Console>
-  </Appenders>
-  <Loggers>
-  	<!-- Application -->
-  	<Logger name="org.myorganization.template" level="debug"/>
-  	
-  	<!-- Frameworks -->
-  	<Logger name="org.springframework" level="info"/>
-  	<Logger name="org.hibernate" level="info"/>
-  	<Logger name="org.jboss.logging" level="info"/>
-  	<Logger name="org.quartz" level="info"/>
-  	<Logger name="net.sf.jasperreports" level="info"/>
+    <Properties>
+    	<Property name="log.dir" value="${sys:catalina.base}/logs"/>
+    </Properties>
+	<Appenders>
+		<Console name="console" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+		</Console>
+		<File name="file" fileName="${log.dir}/application.log">
+			<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+		</File>
+	</Appenders>
+	<Loggers>
+		<!-- Application -->
+		<Logger name="org.myorganization.template" level="debug" />
 
-    <Root>
-      <AppenderRef ref="console"/>
-    </Root>
-  </Loggers>
+		<!-- Frameworks -->
+		<Logger name="org.springframework" level="info" />
+		<Logger name="org.hibernate" level="info" />
+		<Logger name="org.jboss.logging" level="info" />
+		<Logger name="org.quartz" level="info" />
+		<Logger name="net.sf.jasperreports" level="info" />
+
+		<Root>
+			<AppenderRef ref="console" />
+			<AppenderRef ref="file"/>
+		</Root>
+	</Loggers>
 </Configuration>
