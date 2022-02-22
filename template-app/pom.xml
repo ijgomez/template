@@ -21,6 +21,7 @@
     <org.slf4j.version>1.7.25</org.slf4j.version>
     <com.jayway.jsonpath.version>2.4.0</com.jayway.jsonpath.version>
     <org.projectlombok.version>1.18.22</org.projectlombok.version>
+    <org.aspectj.version>1.9.6</org.aspectj.version>
   </properties>
   <modules>
   	<module>../template-dashboard</module>
@@ -79,6 +80,13 @@
 		    <groupId>org.javassist</groupId>
 		    <artifactId>javassist</artifactId>
 		    <version>3.24.0-GA</version>
+		</dependency>
+		
+		<!-- Aspectj dependencies -->
+		<dependency>
+		  <groupId>org.aspectj</groupId>
+		  <artifactId>aspectjweaver</artifactId>
+		  <version>${org.aspectj.version}</version>
 		</dependency>
 
 		<!-- JSON Processor dependencies -->
