@@ -13,12 +13,14 @@
 	<context:component-scan base-package="org.myorganization.template.scheduler, org.myorganization.template.tasks"/>
 
 	<bean id="schedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="schedulerName" value="template"/>
+		<property name="autoStartup" value="true"/>
 		<property name="waitForJobsToCompleteOnShutdown" value="true"/>
 		<property name="triggers">
 			<ref bean="clusterTrigger"/>
 		</property>
 	</bean>
-
+	
 	<task:annotation-driven executor="taskExecutor" scheduler="taskScheduler"/>
 	<task:scheduler id="taskScheduler" pool-size="10"/>
 	<task:executor id="taskExecutor" pool-size="10" />

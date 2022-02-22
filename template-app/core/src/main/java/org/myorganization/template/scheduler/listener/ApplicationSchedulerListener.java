@@ -19,21 +19,28 @@ public class ApplicationSchedulerListener {
 
 	@Autowired
 	private Environment environment;
+	
+	private boolean isStarting = true;
 
 	@EventListener
     public void handleContextRefresh(ContextRefreshedEvent event) {
 		ClassPathScanningCandidateComponentProvider scanner;
 		
-		log.info("Environment: {}", Arrays.asList(environment.getDefaultProfiles()));
-		
-		scanner = new ClassPathScanningCandidateComponentProvider(false);
-		scanner.addIncludeFilter(new AnnotationTypeFilter(TemplateTaskAnnotation.class));
-		
-		scanner.findCandidateComponents("org.myorganization.template.tasks").forEach(bd -> {
+		if (this.isStarting) {
+			log.info("Environment: {}", Arrays.asList(environment.getDefaultProfiles()));
 			
-			System.out.println(bd.getBeanClassName());
+			scanner = new ClassPathScanningCandidateComponentProvider(false);
+			scanner.addIncludeFilter(new AnnotationTypeFilter(TemplateTaskAnnotation.class));
 			
-		});
+			scanner.findCandidateComponents("org.myorganization.template.tasks").forEach(bd -> {
+				
+				System.out.println(bd.getBeanClassName());
+				
+			});
+			
+			this.isStarting = false;
+		}
+		
 			    
 
 	}

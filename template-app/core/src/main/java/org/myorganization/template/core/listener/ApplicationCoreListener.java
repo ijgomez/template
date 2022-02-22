@@ -16,12 +16,18 @@ public class ApplicationCoreListener {
 
 	@Autowired
 	private Environment environment;
+	
+	private boolean isStarting = true;
 
 	@EventListener
     public void handleContextRefresh(ContextRefreshedEvent event) {
 		
-		log.info("Environment: {}", Arrays.asList(environment.getDefaultProfiles()));
-
+		if (this.isStarting) {
+			log.info("Environment: {}", Arrays.asList(environment.getDefaultProfiles()));
+			
+			
+			this.isStarting = false;
+		}
 	}
 
 }
