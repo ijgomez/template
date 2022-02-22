@@ -42,5 +42,10 @@ public class StatusController {
 	public Memory getMemory() {
 		return this.statusService.getMemory();
 	}
+	
+	@GetMapping("/version")
+	public String getVersion() {
+		return this.statusService.getVersion();
+	}
 
 }

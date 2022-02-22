@@ -10,6 +10,8 @@
   	<maven.compiler.source>12</maven.compiler.source>
     <maven.compiler.target>12</maven.compiler.target>
     <maven.test.skip>true</maven.test.skip>
+    <timestamp>${maven.build.timestamp}</timestamp>
+   	<maven.build.timestamp.format>yyyy-MM-dd HH:mm z</maven.build.timestamp.format>
     
     <!-- Frameworks version -->
     <org.springframework.version>5.2.15.RELEASE</org.springframework.version>

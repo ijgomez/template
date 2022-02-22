@@ -4,11 +4,15 @@ import java.util.Calendar;
 import java.util.Properties;
 
 import org.myorganization.template.core.domain.system.status.Memory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class StatusService {
+	
+	@Value( "${version}" )
+	private String version;
 	
 	@Transactional(readOnly = true)
 	public Calendar getServerTimestamp() {
@@ -40,5 +44,10 @@ public class StatusService {
 	@Transactional(readOnly = true)
 	public int getAvailableProcessors() {
 		return Runtime.getRuntime().availableProcessors();
+	}
+
+	@Transactional(readOnly = true)
+	public String getVersion() {
+		return this.version;
 	}
 }
