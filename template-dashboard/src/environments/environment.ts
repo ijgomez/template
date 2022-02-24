@@ -5,9 +5,14 @@
 export const environment = {
   production: false,
   urlBase: '/template-app-webapp',
-  datatable_pageLength: 2,
+  datatable: {
+    fields: {
+      truncateLength: 150
+    },
+    pageLength: 2
+  },
   datetime: {
-    defaultFormat: 'dd/MM/yyyy HH:mm z'
+    defaultFormat: 'dd/MM/yyyy HH:mm zzz'
   },
   i18n: {
     urlBase: ''

@@ -53,7 +53,7 @@ export class DatatableComponent implements AfterViewInit, OnInit, OnDestroy {
     value.pagingType = 'full_numbers';
     value.searching = false;
     value.lengthChange = false;
-    value.pageLength = environment.datatable_pageLength;
+    value.pageLength = environment.datatable.pageLength;
     value.serverSide = true;
     value.processing = true;
     value.language = {
