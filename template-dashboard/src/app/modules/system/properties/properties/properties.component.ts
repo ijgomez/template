@@ -14,9 +14,9 @@ export class PropertiesComponent extends TemplateFormBaseComponent implements On
   
   public propertiesForm : FormGroup = this.formBuilder.group({
     id: [],
-    key: ['', Validators.required],
-    value: ['', Validators.required],
-    description: ['']
+    key: [null, Validators.required],
+    value: [null, Validators.required],
+    description: [null]
   });;
 
   constructor(

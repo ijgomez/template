@@ -19,7 +19,7 @@
             </div>
             <div class="col-md-12">
                 <label for="description">{{ 'property.fields.description' | translate }}:</label>
-                <textarea id="description" formControlName="description" class="form-control form-control-sm" rows="3" required></textarea>
+                <textarea id="description" formControlName="description" class="form-control form-control-sm" rows="3"></textarea>
                 <div *ngIf="isValidInput('description')" class="form-text text-danger">
                     <p *ngIf="propertiesForm.controls['description']?.errors?.required">Description is required.</p>
                 </div>
