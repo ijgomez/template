@@ -9,13 +9,25 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class NotifyService {
 
 	@Autowired
 	private TraceService traceService;
 	
-	@Transactional
-	public void notify(TraceType type, String message) {
+	public void notifyInfo(TraceType type, String message) {
+		this.notify(type, message);
+	}
+	
+	public void notifyWarn(TraceType type, String message) {
+		this.notify(type, message);
+	}
+
+	public void notifyError(TraceType type, String message, Exception e) {
+		this.notify(type, message);
+	}
+
+	private void notify(TraceType type, String message) {
 		Trace trace;
 		
 		trace = new Trace();

@@ -64,7 +64,7 @@ public class ClusterManager {
 		clusterNode = this.clusterNodeService.findByHostName(hostName);
 		if (clusterNode == null) {
 			String msg = String.format("This node of the cluster (%s) is not registered. It self-registers!", hostName);
-			this.notifyService.notify(TraceType.SYSTEM, msg);
+			this.notifyService.notifyWarn(TraceType.SYSTEM, msg);
 			log.warn(msg);
 			clusterNode = new ClusterNode();
 			clusterNode.setHostname(hostName);

@@ -5,6 +5,8 @@ import java.util.Optional;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
+import org.myorganization.template.core.domain.system.traces.TraceType;
+import org.myorganization.template.core.services.system.NotifyService;
 import org.myorganization.template.security.domain.users.User;
 import org.myorganization.template.security.service.UserService;
 import org.myorganization.template.web.security.exceptions.ForbiddenOperationException;
@@ -45,6 +47,9 @@ public class AuthController {
 	private UserService userService;
 	
 	@Autowired
+	private NotifyService notifyService;
+	
+	@Autowired
 	private AuthenticationManager authenticationManager;
 
 	@PostMapping("/login")
@@ -59,6 +64,7 @@ public class AuthController {
 				var user = u.get();
 				
 				log.warn("User with username {} has been authorized!!!", user.getUsername());
+				this.notifyService.notifyInfo(TraceType.USER, String.format("User with the username %s has accessed the application.", user.getUsername()));
 				
 				authenticationToken = this.buildAuthenticationToken(user);
 				
@@ -68,6 +74,7 @@ public class AuthController {
 			}
 		} catch(BadCredentialsException e) {
 			log.error("Bad credentials to login user: {}", credentials);
+			this.notifyService.notifyError(TraceType.USER, "Bad credentials to login user: " + credentials.getUsername(), e);
 			throw e;
 
 		} catch(Exception e) {
