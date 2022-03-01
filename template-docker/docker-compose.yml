@@ -1,0 +1,20 @@
+version: "3.7"
+services:
+  app-master:
+    image: tomcat-base:latest
+    ports:
+      - "8080:8080"
+    networks:
+      - template-network
+  web-master:
+    image: nginx-base:latest
+    ports:
+      - "80:80"
+    depends_on:
+      - app-master
+    networks:
+      - template-network
+#Docker Networks
+networks:
+  template-network:
+    driver: bridge
