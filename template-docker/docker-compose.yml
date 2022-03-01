@@ -1,20 +1,56 @@
 version: "3.7"
 services:
-  app-master:
-    image: tomcat-base:latest
-    ports:
-      - "8080:8080"
-    networks:
-      - template-network
+  # Balancer
   web-master:
     image: nginx-base:latest
+    restart: always
     ports:
       - "80:80"
     depends_on:
       - app-master
+    volumes:
+      - ./log/nginx:/var/log/nginx
     networks:
       - template-network
-#Docker Networks
+
+  # Application Server
+  app-master:
+    image: tomcat-base:latest
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./log/tomcat:/usr/local/tomcat/logs
+    networks:
+      - template-network
+  
+  #Database
+  database:
+    image: postgresql-base:latest
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=administrator
+      - POSTGRES_PASSWORD=template2022
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - pgconf:/etc/postgresql
+      - pglog:/var/log/postgresql
+    networks:
+      - template-network
+  
+# Networks
 networks:
   template-network:
     driver: bridge
+
+# Volumes
+volumes:
+  logs:
+    driver: local
+  pgdata:
+    driver: local
+  pgconf:
+    driver: local
+  pglog: 
+    driver: local
+    

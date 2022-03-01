@@ -1,0 +1,7 @@
+CREATE USER template_admin;
+
+CREATE DATABASE template;
+GRANT ALL PRIVILEGES ON DATABASE template TO template_admin;
+
+CREATE TABLESPACE template_data LOCATION '/data/TEMPLATE_DATA';
+CREATE TABLESPACE template_index LOCATION '/data/TEMPLATE_INDEX';
