@@ -1,40 +1,45 @@
 version: "3.7"
 services:
   # Balancer
-  web-master:
+  balancer:
     image: nginx-base:latest
+    container_name: template-balancer
     restart: always
     ports:
       - "80:80"
     depends_on:
-      - app-master
+      - app-server
     volumes:
-      - ./log/nginx:/var/log/nginx
+      - balancer-logs:/var/log/nginx
     networks:
       - template-network
 
   # Application Server
-  app-master:
+  app-server:
     image: tomcat-base:latest
+    container_name: template-server
     ports:
       - "8080:8080"
+    depends_on:
+      - database
     volumes:
-      - ./log/tomcat:/usr/local/tomcat/logs
+      - server-logs:/usr/local/tomcat/logs
     networks:
       - template-network
   
   #Database
   database:
     image: postgresql-base:latest
+    container_name: template-database
     ports:
       - "5432:5432"
     environment:
       - POSTGRES_USER=administrator
       - POSTGRES_PASSWORD=template2022
     volumes:
-      - pgdata:/var/lib/postgresql/data
-      - pgconf:/etc/postgresql
-      - pglog:/var/log/postgresql
+      - database-data:/var/lib/postgresql/data
+      - database-conf:/etc/postgresql
+      - database-log:/var/log/postgresql
     networks:
       - template-network
   
@@ -45,12 +50,14 @@ networks:
 
 # Volumes
 volumes:
-  logs:
+  balancer-logs:
     driver: local
-  pgdata:
+  server-logs:
     driver: local
-  pgconf:
+  database-data:
     driver: local
-  pglog: 
+  database-conf:
+    driver: local
+  database-log: 
     driver: local
     
