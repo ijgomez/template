@@ -42,7 +42,7 @@ public class PropertyService extends TemplateServiceBase<Property, PropertyCrite
 	public Property update(Long id, Property property) {
 		return this.read(id).map(p -> {
 			
-			this.notifyService.notifyInfo(TraceType.SYSTEM, "Change value of property " + property.getKey() + " with value: " + property.getValue());
+			this.notifyService.notifyInfo(TraceType.SYSTEM, "Change value of property " + property.getKey() + " with new value: " + property.getValue());
 			
 			p.setKey(property.getKey());
 			p.setValue(property.getValue());
