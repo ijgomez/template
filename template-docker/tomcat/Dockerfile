@@ -1,28 +1,28 @@
 FROM alpine:latest
 USER root
 
-## Los archivos descargados se ubicaran en /tmp para ser borrados al final
+## The downloaded files will be placed in /tmp to be deleted at the end.
 WORKDIR /tmp
 
-## Actualizando alpine
+## Update Operative System
 RUN apk update &&  apk upgrade
 
-## Instalar openjdk alpine
-RUN apk fetch openjdk8-jre
-RUN apk add openjdk8-jre
+## Install openjdk alpine
+RUN apk fetch openjdk12
+RUN apk add openjdk12
 
-## Descargar tomcat 9
+## Download tomcat 9
 RUN wget https://downloads.apache.org/tomcat/tomcat-9/v9.0.59/bin/apache-tomcat-9.0.59.tar.gz
 
-## Instalar tomcat
+## Install tomcat
 RUN tar -zxvf /tmp/apache-tomcat-9.0.59.tar.gz -C /usr/local
 RUN cd /usr/local && mv apache-tomcat-9.0.59 tomcat
 
-## Eliminar instaladores descargados
+## Remove installer downloaded
 RUN cd /tmp && rm *
 
-## Exponer puerto
+## Export ports
 EXPOSE 8080
 
-## Iniciar tomcat
+## Start tomcat
 CMD sh /usr/local/tomcat/bin/catalina.sh start && tail -f /usr/local/tomcat/logs/catalina.out
