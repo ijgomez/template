@@ -36,6 +36,7 @@ services:
     environment:
       - POSTGRES_USER=administrator
       - POSTGRES_PASSWORD=template2022
+      - PGDATA=/var/lib/postgresql/data/pgdata
     volumes:
       - database-data:/var/lib/postgresql/data
       - database-conf:/etc/postgresql
