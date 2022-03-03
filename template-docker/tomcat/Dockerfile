@@ -30,6 +30,10 @@ COPY ./config/tomcat-users.xml /usr/local/tomcat/conf/tomcat-users.xml
 COPY ./config/context.xml /usr/local/tomcat/webapps/manager/META-INF/context.xml
 COPY ./config/context.xml /usr/local/tomcat/webapps/host-manager/META-INF/context.xml
 
+## Remove examples and docs
+RUN rm -rf /usr/local/tomcat/webapps/examples
+RUN rm -rf /usr/local/tomcat/webapps/docs
+
 ## Remove installer downloaded
 RUN rm -rf /tmp
 
