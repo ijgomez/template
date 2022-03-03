@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-docker build -t nginx-base:latest ./nginx
+docker build -t template-nginx:latest ./nginx
 
-docker build -t tomcat-base:latest ./tomcat
+docker build -t template-tomcat:latest ./tomcat
 
-docker build -t postgresql-base:latest ./postgresql
+docker build -t template-postgresql:latest ./postgresql

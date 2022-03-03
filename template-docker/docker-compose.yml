@@ -2,7 +2,7 @@ version: "3.7"
 services:
   # Balancer
   balancer:
-    image: nginx-base:latest
+    image: template-nginx:latest
     container_name: template-balancer
     restart: always
     ports:
@@ -16,7 +16,7 @@ services:
 
   # Application Server
   app-server:
-    image: tomcat-base:latest
+    image: template-tomcat:latest
     container_name: template-server
     ports:
       - "8080:8080"
@@ -29,7 +29,7 @@ services:
   
   #Database
   database:
-    image: postgresql-base:latest
+    image: template-postgresql:latest
     container_name: template-database
     ports:
       - "5432:5432"
