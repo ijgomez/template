@@ -27,6 +27,9 @@ COPY ./config/server.xml /usr/local/tomcat/conf/server.xml
 COPY ./config/logging.properties /usr/local/tomcat/conf/logging.properties
 COPY ./config/tomcat-users.xml /usr/local/tomcat/conf/tomcat-users.xml
 
+COPY ./config/context.xml /usr/local/tomcat/webapps/manager/META-INF/context.xml
+COPY ./config/context.xml /usr/local/tomcat/webapps/host-manager/META-INF/context.xml
+
 ## Remove installer downloaded
 RUN rm -rf /tmp
 
