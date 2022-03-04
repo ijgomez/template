@@ -26,9 +26,10 @@ RUN mv /tmp/postgresql-42.3.3.jar /usr/local/tomcat/lib
 COPY ./config/server.xml /usr/local/tomcat/conf/server.xml
 COPY ./config/logging.properties /usr/local/tomcat/conf/logging.properties
 COPY ./config/tomcat-users.xml /usr/local/tomcat/conf/tomcat-users.xml
+COPY ./config/context.xml /usr/local/tomcat/conf/context.xml
 
-COPY ./config/context.xml /usr/local/tomcat/webapps/manager/META-INF/context.xml
-COPY ./config/context.xml /usr/local/tomcat/webapps/host-manager/META-INF/context.xml
+COPY ./config/context-manager.xml /usr/local/tomcat/webapps/manager/META-INF/context.xml
+COPY ./config/context-manager.xml /usr/local/tomcat/webapps/host-manager/META-INF/context.xml
 
 ## Remove examples and docs
 RUN rm -rf /usr/local/tomcat/webapps/examples
