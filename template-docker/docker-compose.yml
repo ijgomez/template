@@ -4,6 +4,7 @@ services:
   balancer:
     image: template-nginx:latest
     container_name: template-balancer
+    hostname: template-balancer
     restart: always
     ports:
       - "80:80"
@@ -18,6 +19,7 @@ services:
   app-server:
     image: template-tomcat:latest
     container_name: template-server
+    hostname: template-server
     ports:
       - "8080:8080"
     depends_on:
@@ -31,6 +33,7 @@ services:
   database:
     image: template-postgresql:latest
     container_name: template-database
+    hostname: template-database
     ports:
       - "5432:5432"
     environment:
