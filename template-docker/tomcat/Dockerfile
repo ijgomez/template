@@ -31,6 +31,9 @@ COPY ./config/context.xml /usr/local/tomcat/conf/context.xml
 COPY ./config/context-manager.xml /usr/local/tomcat/webapps/manager/META-INF/context.xml
 COPY ./config/context-manager.xml /usr/local/tomcat/webapps/host-manager/META-INF/context.xml
 
+## Environment Settings
+ENV CATALINA_OPTS="-Xms1G -Xmx1G -Duser.timezone=Europe/Madrid -Duser.language=es -Duser.region=ES"
+
 ## Remove examples and docs
 RUN rm -rf /usr/local/tomcat/webapps/examples
 RUN rm -rf /usr/local/tomcat/webapps/docs
