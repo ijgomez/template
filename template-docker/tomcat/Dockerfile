@@ -1,11 +1,21 @@
 FROM alpine:latest
+
+ENV USER tomcat
+ENV HOME /home/$USER
+ENV APP_DIR /apps
+
 USER root
+
+## Update Operative System
+RUN apk update &&  apk upgrade && apk add sudo
+
+# add new group and user 
+RUN adduser -D $USER \
+        && echo "$USER ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/$USER \
+        && chmod 0440 /etc/sudoers.d/$USER
 
 ## The downloaded files will be placed in /tmp to be deleted at the end.
 WORKDIR /tmp
-
-## Update Operative System
-RUN apk update &&  apk upgrade
 
 ## Install openjdk alpine
 RUN apk fetch openjdk12
@@ -15,34 +25,42 @@ RUN apk add openjdk12
 RUN wget https://downloads.apache.org/tomcat/tomcat-9/v9.0.59/bin/apache-tomcat-9.0.59.tar.gz
 
 ## Install tomcat
-RUN tar -zxvf /tmp/apache-tomcat-9.0.59.tar.gz -C /usr/local
-RUN cd /usr/local && mv apache-tomcat-9.0.59 tomcat
+RUN mkdir $APP_DIR
+RUN tar -zxvf /tmp/apache-tomcat-9.0.59.tar.gz -C $APP_DIR
+RUN cd $APP_DIR && mv apache-tomcat-9.0.59 tomcat
 
 ## Driver PostgreSQL
 RUN wget https://jdbc.postgresql.org/download/postgresql-42.3.3.jar
-RUN mv /tmp/postgresql-42.3.3.jar /usr/local/tomcat/lib
+RUN mv /tmp/postgresql-42.3.3.jar $APP_DIR/tomcat/lib
 
 ## Copy file confg
-COPY ./config/server.xml /usr/local/tomcat/conf/server.xml
-COPY ./config/logging.properties /usr/local/tomcat/conf/logging.properties
-COPY ./config/tomcat-users.xml /usr/local/tomcat/conf/tomcat-users.xml
-COPY ./config/context.xml /usr/local/tomcat/conf/context.xml
+COPY ./config/server.xml $APP_DIR/tomcat/conf/server.xml
+COPY ./config/logging.properties $APP_DIR/tomcat/conf/logging.properties
+COPY ./config/tomcat-users.xml $APP_DIR/tomcat/conf/tomcat-users.xml
+COPY ./config/context.xml $APP_DIR/tomcat/conf/context.xml
 
-COPY ./config/context-manager.xml /usr/local/tomcat/webapps/manager/META-INF/context.xml
-COPY ./config/context-manager.xml /usr/local/tomcat/webapps/host-manager/META-INF/context.xml
+COPY ./config/context-manager.xml $APP_DIR/tomcat/webapps/manager/META-INF/context.xml
+COPY ./config/context-manager.xml $APP_DIR/tomcat/webapps/host-manager/META-INF/context.xml
 
 ## Environment Settings
 ENV CATALINA_OPTS="-Xms1G -Xmx1G -Duser.timezone=Europe/Madrid -Duser.language=es -Duser.region=ES"
 
 ## Remove examples and docs
-RUN rm -rf /usr/local/tomcat/webapps/examples
-RUN rm -rf /usr/local/tomcat/webapps/docs
+RUN rm -rf $APP_DIR/tomcat/webapps/examples
+RUN rm -rf $APP_DIR/tomcat/webapps/docs
+
+## Change permissions
+RUN chown -R $USER:$USER $APP_DIR/tomcat
 
 ## Remove installer downloaded
 RUN rm -rf /tmp
+
+USER $USER
+
+WORKDIR $HOME
 
 ## Export ports
 EXPOSE 8080
 
 ## Start tomcat
-CMD sh /usr/local/tomcat/bin/catalina.sh start && tail -f /usr/local/tomcat/logs/catalina.out
+CMD sh $APP_DIR/tomcat/bin/catalina.sh start && tail -f $APP_DIR/tomcat/logs/catalina.out
