@@ -14,6 +14,12 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
     CREATE TABLESPACE template_data OWNER template_admin LOCATION '/var/lib/postgresql/data/template_data';
     CREATE TABLESPACE template_index OWNER template_admin LOCATION '/var/lib/postgresql/data/template_index';
 
+
+EOSQL
+
+psql -v ON_ERROR_STOP=1 --username "template_admin" --password "template_admin" --dbname "template" <<-EOSQL
+
+
     CREATE SCHEMA template;
 
     GRANT ALL ON SCHEMA template TO template_admin;
