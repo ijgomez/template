@@ -5,6 +5,12 @@
 	<groupId>org.myorganization.template</groupId>
 	<artifactId>template-database</artifactId>
 	<version>1.0.0</version>
+	<properties>
+	  	<!-- Project properties -->
+	  	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	  	<maven.compiler.source>12</maven.compiler.source>
+	    <maven.compiler.target>12</maven.compiler.target>
+  	</properties>
 	<build>
 		<resources>  
 			<resource>
@@ -21,8 +27,29 @@
 					<propertyFile>${basedir}/src/main/filters/liquibase.properties</propertyFile>
 					<changeLogFile>${basedir}/src/main/resources/changelogs/databaseChangeLog.xml</changeLogFile>
 					<verbose>false</verbose>
-					<migrationSQLOutputFile>${project.build.directory}/liquibase/migrate.sql</migrationSQLOutputFile>
                 </configuration>
+                <dependencies>
+                	<dependency>
+					    <groupId>org.liquibase.ext</groupId>
+					    <artifactId>liquibase-postgresql</artifactId>
+					    <version>4.8.0</version>
+					</dependency>
+                </dependencies>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>2.5</version>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>${basedir}</directory>
+							<includes>
+								<include>databasechangelog.csv</include>
+							</includes>
+						</fileset>
+					</filesets>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

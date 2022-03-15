@@ -1,0 +1,5 @@
+/target/
+/databasechangelog.csv
+/.settings/
+/.project
+/.classpath

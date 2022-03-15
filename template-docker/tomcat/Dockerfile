@@ -43,7 +43,7 @@ COPY ./config/context-manager.xml $APP_DIR/tomcat/webapps/manager/META-INF/conte
 COPY ./config/context-manager.xml $APP_DIR/tomcat/webapps/host-manager/META-INF/context.xml
 
 ## Environment Settings
-ENV CATALINA_OPTS="-Xms1G -Xmx1G -Duser.timezone=Europe/Madrid -Duser.language=es -Duser.region=ES"
+ENV CATALINA_OPTS="-Xms1G -Xmx1G -Duser.timezone=UTC -Duser.language=es -Duser.region=ES -Dfile.encoding=UTF-8"
 
 ## Remove examples and docs
 RUN rm -rf $APP_DIR/tomcat/webapps/examples
