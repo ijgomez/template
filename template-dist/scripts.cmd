@@ -1,6 +1,6 @@
 :: ### -*- batch file -*- ######################################################
 :: #                                                                          ##
-:: #  Project compilation script                                              ##
+:: #  Project database scripts script creation                                ##
 :: #                                                                          ##
 :: #############################################################################
 
@@ -141,47 +141,36 @@ cd %PROJECT_HOME%
 rem call :compile_node template-dashboard
 rem if not "%ERRORLEVEL%" == "0" ( goto fin ) 
 
-call :compile_maven template-app
+call :scripts_creation template-database
 if not "%ERRORLEVEL%" == "0" ( goto fin ) 
 
 cd %DIRNAME%
 
 goto fin
 
-:compile_node
+:scripts_creation
 
 if exist %* (
 	cd %*
 	
-	call npm install
+	call mvn clean liquibase:updateSQL
 	
 	cd ..
 )
 exit /B %ERRORLEVEL%
 
-
-:compile_maven
-
-if exist %* (
-	cd %*
-	
-	call mvn %MAVEN_OPTIONS% clean install %MAVEN_PROFILES%
-	
-	cd ..
-)
-exit /B %ERRORLEVEL%
 
 :usage
 echo.
 echo ****************************************************************************
-echo usage build.cmd [profile] [test] [offline]
+echo usage scripts.cmd [profile] [test] [offline]
 echo.
 echo examples: 
 echo.
-echo    build.cmd pro
-echo    build.cmd offline
-echo    build.cmd pro offline
-echo    build.cmd
+echo    scripts.cmd pro
+echo    scripts.cmd offline
+echo    scripts.cmd pro offline
+echo    scripts.cmd
 echo.
 echo ****************************************************************************
 echo command description:

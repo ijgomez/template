@@ -1,0 +1,31 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.myorganization.template</groupId>
+	<artifactId>template-database</artifactId>
+	<version>1.0.0</version>
+	<build>
+		<resources>  
+			<resource>
+				<directory>src/main/resources</directory>  
+				<filtering>true</filtering>
+			</resource>
+		</resources> 
+		<plugins>
+			<plugin>
+				<groupId>org.liquibase</groupId>
+				<artifactId>liquibase-maven-plugin</artifactId>
+				<version>4.8.0</version>
+				<configuration>
+					<propertyFile>${basedir}/src/main/filters/liquibase.properties</propertyFile>
+					<changeLogFile>${basedir}/src/main/resources/changelogs/databaseChangeLog.xml</changeLogFile>
+					<verbose>false</verbose>
+					<migrationSQLOutputFile>${project.build.directory}/liquibase/migrate.sql</migrationSQLOutputFile>
+                </configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<dependencies>
+	</dependencies>
+</project>
