@@ -11,10 +11,12 @@
 	
 	<property name="tablespace.data" value="TEMPLATE_DATA"/>
 	
+	<property name="tablespace.index" value="TEMPLATE_INDEX"/>
+	
 
 	<changeSet id="cluster-ddl-001" author="default" labels="template-app-1.0.0">
 	
-		<createSequence schemaName="${schema.name}" minValue="1" startValue="1" sequenceName="CLUSTER_NODE_SEQ"/>
+		<createSequence schemaName="${schema.name}" minValue="1" startValue="1" incrementBy="1" sequenceName="CLUSTER_NODE_SEQ"/>
 	
 		<createTable schemaName="${schema.name}" tableName="CLUSTER_NODE" tablespace="${tablespace.data}">
 			<column name="ID" type="BIGINT">
@@ -24,21 +26,100 @@
 				<constraints nullable="false"/>
 			</column>
 			<column name="HOSTNAME" type="VARCHAR(255)">
-				<constraints unique="true" nullable="false" uniqueConstraintName="UK_CLUSTER_NODE"/>
+				<constraints unique="true" nullable="false" uniqueConstraintName="UK_CLUSTER_NODE_HOSTNAME"/>
 			</column>
-			<column name="START_DATE_TIME" type="DATETIME"/>
-			<column name="LAST_UPDATE_TIME" type="DATETIME"/>
+			<column name="START_DATETIME" type="DATETIME">
+				<constraints nullable="false"/>
+			</column>
+			<column name="LAST_UPDATE_TIME" type="DATETIME">
+				<constraints nullable="false"/>
+			</column>
 			<column name="STATUS" type="VARCHAR(255)">
 				<constraints nullable="false"/>
 			</column>
-			<column name="USED_MEMORY" type="BIGINT"/>
-			<column name="TOTAL_MEMORY" type="BIGINT"/>
+			<column name="USED_MEMORY" type="BIGINT">
+				<constraints nullable="false"/>
+			</column>
+			<column name="TOTAL_MEMORY" type="BIGINT">
+				<constraints nullable="false"/>
+			</column>
 		</createTable>
 		<setColumnRemarks schemaName="${schema.name}" tableName="CLUSTER_NODE" columnName="IP" remarks="IP"/>
 		<setColumnRemarks schemaName="${schema.name}" tableName="CLUSTER_NODE" columnName="HOSTNAME" remarks="Hostname"/>
-		<setColumnRemarks schemaName="${schema.name}" tableName="CLUSTER_NODE" columnName="START_DATE_TIME" remarks="Start Datetime"/>
+		<setColumnRemarks schemaName="${schema.name}" tableName="CLUSTER_NODE" columnName="START_DATETIME" remarks="Start Datetime"/>
 		<setColumnRemarks schemaName="${schema.name}" tableName="CLUSTER_NODE" columnName="LAST_UPDATE_TIME" remarks="Last update time"/>
 		<setColumnRemarks schemaName="${schema.name}" tableName="CLUSTER_NODE" columnName="STATUS" remarks="Status"/>
+		<setColumnRemarks schemaName="${schema.name}" tableName="CLUSTER_NODE" columnName="USED_MEMORY" remarks="Used Memory"/>
+		<setColumnRemarks schemaName="${schema.name}" tableName="CLUSTER_NODE" columnName="TOTAL_MEMORY" remarks="Total Memory"/>
+	</changeSet>
+	<changeSet id="core-ddl-001" author="default" labels="template-app-1.0.0">
+
+		<createSequence schemaName="${schema.name}" minValue="1" startValue="1" incrementBy="1" sequenceName="ARCHIVE_SEQ"/>
+		<createTable schemaName="${schema.name}" tableName="ARCHIVE" tablespace="${tablespace.data}">
+			<column name="ID" type="BIGINT">
+				<constraints primaryKey="true" nullable="false" primaryKeyName="PK_ARCHIVE"/>
+			</column>
+			<column name="FILENAME" type="VARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="FILETYPE" type="VARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="SIZE" type="BIGINT">
+				<constraints nullable="false"/>
+			</column>
+			<column name="DATA" type="BLOB">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+		<setColumnRemarks schemaName="${schema.name}" tableName="ARCHIVE" columnName="FILENAME" remarks="Filename"/>
+		<setColumnRemarks schemaName="${schema.name}" tableName="ARCHIVE" columnName="FILETYPE" remarks="Type"/>
+		<setColumnRemarks schemaName="${schema.name}" tableName="ARCHIVE" columnName="SIZE" remarks="Size"/>
+		<setColumnRemarks schemaName="${schema.name}" tableName="ARCHIVE" columnName="DATA" remarks="Data"/>
+	
+		<createSequence schemaName="${schema.name}" minValue="1" startValue="1" incrementBy="1" sequenceName="PROPERTY_SEQ"/>
+		<createTable schemaName="${schema.name}" tableName="PROPERTY" tablespace="${tablespace.data}">
+			<column name="ID" type="BIGINT">
+				<constraints primaryKey="true" nullable="false" primaryKeyName="PK_PROPERTY"/>
+			</column>
+			<column name="KEY" type="VARCHAR(255)">
+				<constraints nullable="false" unique="true" uniqueConstraintName="UK_PROPERTY_KEY"/>
+			</column>
+			<column name="DESCRIPTION" type="VARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="VALUE" type="VARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+		<setColumnRemarks schemaName="${schema.name}" tableName="PROPERTY" columnName="KEY" remarks="Key"/>
+		<setColumnRemarks schemaName="${schema.name}" tableName="PROPERTY" columnName="DESCRIPTION" remarks="Description"/>
+		<setColumnRemarks schemaName="${schema.name}" tableName="PROPERTY" columnName="VALUE" remarks="Value"/>
+
+	
+		<createSequence schemaName="${schema.name}" minValue="1" startValue="1" incrementBy="1" sequenceName="TRACE_SEQ"/>
+		<createTable schemaName="${schema.name}" tableName="TRACE" tablespace="${tablespace.data}">
+			<column name="ID" type="BIGINT">
+				<constraints primaryKey="true" nullable="false" primaryKeyName="PK_TRACE"/>
+			</column>
+			<column name="DATETIME" type="DATETIME">
+				<constraints nullable="false"/>
+			</column>
+			<column name="TYPE" type="VARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="MESSAGE" type="VARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+		<setColumnRemarks schemaName="${schema.name}" tableName="TRACE" columnName="DATETIME" remarks="Datetime"/>
+		<setColumnRemarks schemaName="${schema.name}" tableName="TRACE" columnName="MESSAGE" remarks="Message"/>
+		<setColumnRemarks schemaName="${schema.name}" tableName="TRACE" columnName="TYPE" remarks="Type"/>
+	
+		<createIndex schemaName="${schema.name}" tableName="TRACE" indexName="IDX_TRACE" tablespace="${tablespace.index}">
+			<column name="DATETIME"/>
+			<column name="TYPE"/>
+		</createIndex>
 	</changeSet>
 
 </databaseChangeLog>
