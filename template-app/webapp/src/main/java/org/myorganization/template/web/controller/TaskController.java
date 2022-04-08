@@ -5,7 +5,6 @@ import org.myorganization.template.scheduler.domain.tasks.Task;
 import org.myorganization.template.scheduler.domain.tasks.TaskCriteria;
 import org.myorganization.template.scheduler.services.ExecutorService;
 import org.myorganization.template.scheduler.services.TaskService;
-import org.myorganization.template.web.controller.base.TemplateController;
 import org.myorganization.template.web.controller.base.TemplateControllerBase;
 import org.myorganization.template.web.domain.datatables.DataTablesCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Validated
 @RequestMapping("/api/tasks")
-public class TaskController extends TemplateControllerBase<Task, TaskCriteria> implements TemplateController<Task, TaskCriteria> {
+public class TaskController extends TemplateControllerBase<Task, TaskCriteria> {
 
 	@Autowired
 	private ExecutorService executorService;

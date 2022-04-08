@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @TemplateTaskAnnotation
 @Component
 @Scope("prototype")
-public class DummyTask extends TaskBase implements Runnable {
+public class DummyTask extends TaskBase {
 
 	public DummyTask(Task task) {
 

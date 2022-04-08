@@ -8,7 +8,6 @@ import org.myorganization.template.security.domain.actions.Action;
 import org.myorganization.template.security.domain.users.User;
 import org.myorganization.template.security.domain.users.UserCriteria;
 import org.myorganization.template.security.service.UserService;
-import org.myorganization.template.web.controller.base.TemplateController;
 import org.myorganization.template.web.controller.base.TemplateControllerBase;
 import org.myorganization.template.web.domain.datatables.DataTablesCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 @Validated
 @RequestMapping("/api/users")
 @Slf4j
-public class UserController extends TemplateControllerBase<User, UserCriteria> implements TemplateController<User, UserCriteria>  {
+public class UserController extends TemplateControllerBase<User, UserCriteria> {
 
 	@Autowired
 	protected UserController(UserService userService) {

@@ -6,7 +6,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.myorganization.template.security.domain.profiles.Profile;
 import org.myorganization.template.security.domain.profiles.ProfileCriteria;
 import org.myorganization.template.security.service.ProfileService;
-import org.myorganization.template.web.controller.base.TemplateController;
 import org.myorganization.template.web.controller.base.TemplateControllerBase;
 import org.myorganization.template.web.domain.datatables.DataTablesCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @Validated
 @RequestMapping("/api/profiles")
 @Slf4j
-public class ProfileController extends TemplateControllerBase<Profile, ProfileCriteria> implements TemplateController<Profile, ProfileCriteria> { 
+public class ProfileController extends TemplateControllerBase<Profile, ProfileCriteria> { 
 
 	@Autowired
 	public ProfileController(ProfileService profileService) {

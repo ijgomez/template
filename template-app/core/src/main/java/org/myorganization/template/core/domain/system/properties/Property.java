@@ -9,7 +9,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import org.myorganization.template.core.domain.base.TemplateEntity;
 import org.myorganization.template.core.domain.base.TemplateEntityBase;
 import org.springframework.validation.annotation.Validated;
 
@@ -21,7 +20,7 @@ import lombok.EqualsAndHashCode;
 @Validated
 @Data
 @EqualsAndHashCode(callSuper=false)
-public class Property extends TemplateEntityBase implements TemplateEntity {
+public class Property extends TemplateEntityBase {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "property_seq")

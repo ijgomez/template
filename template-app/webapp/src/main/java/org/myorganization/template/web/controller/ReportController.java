@@ -18,7 +18,6 @@ import org.myorganization.template.reports.enums.ReportParamEnum;
 import org.myorganization.template.reports.exceptions.ReportException;
 import org.myorganization.template.reports.exceptions.ReportNotFoundException;
 import org.myorganization.template.reports.service.ReportService;
-import org.myorganization.template.web.controller.base.TemplateController;
 import org.myorganization.template.web.controller.base.TemplateControllerBase;
 import org.myorganization.template.web.domain.datatables.DataTablesCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +41,7 @@ import lombok.extern.slf4j.Slf4j;
 @Validated
 @RequestMapping("/api/reports")
 @Slf4j
-public class ReportController extends TemplateControllerBase<Report, ReportCriteria> implements TemplateController<Report, ReportCriteria> {
+public class ReportController extends TemplateControllerBase<Report, ReportCriteria> {
 
 	@Autowired
 	private ReportManager reportManager;

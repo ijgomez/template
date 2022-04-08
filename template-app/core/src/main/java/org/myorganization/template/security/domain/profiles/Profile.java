@@ -14,15 +14,14 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 
-import org.myorganization.template.core.domain.base.TemplateEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.CsvBindByPosition;
+
 import org.myorganization.template.core.domain.base.TemplateEntityBase;
 import org.myorganization.template.security.domain.actions.Action;
 import org.myorganization.template.security.domain.users.User;
 import org.springframework.validation.annotation.Validated;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.opencsv.bean.CsvBindByName;
-import com.opencsv.bean.CsvBindByPosition;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -33,7 +32,7 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(callSuper=false, exclude = "users")
 @ToString(exclude = "users")
-public class Profile extends TemplateEntityBase implements TemplateEntity {
+public class Profile extends TemplateEntityBase {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "profile_seq")

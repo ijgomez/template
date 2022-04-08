@@ -12,7 +12,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import org.myorganization.template.core.domain.base.TemplateEntity;
 import org.myorganization.template.core.domain.base.TemplateEntityBase;
 import org.myorganization.template.security.domain.profiles.Profile;
 import org.springframework.validation.annotation.Validated;
@@ -31,7 +30,7 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(callSuper=false, exclude = "profiles")
 @ToString(exclude = "profiles")
-public class Action extends TemplateEntityBase implements TemplateEntity {
+public class Action extends TemplateEntityBase {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "action_seq")

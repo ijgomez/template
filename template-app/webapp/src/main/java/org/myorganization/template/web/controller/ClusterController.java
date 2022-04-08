@@ -4,7 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.myorganization.template.cluster.domain.node.ClusterNode;
 import org.myorganization.template.cluster.domain.node.ClusterNodeCriteria;
 import org.myorganization.template.cluster.service.ClusterNodeService;
-import org.myorganization.template.web.controller.base.TemplateController;
 import org.myorganization.template.web.controller.base.TemplateControllerBase;
 import org.myorganization.template.web.domain.datatables.DataTablesCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Validated
 @RequestMapping("/api/cluster/nodes")
-public class ClusterController extends TemplateControllerBase<ClusterNode, ClusterNodeCriteria> implements TemplateController<ClusterNode, ClusterNodeCriteria>{
+public class ClusterController extends TemplateControllerBase<ClusterNode, ClusterNodeCriteria> {
 
 	@Autowired
 	public ClusterController(ClusterNodeService clusterNodeService) {

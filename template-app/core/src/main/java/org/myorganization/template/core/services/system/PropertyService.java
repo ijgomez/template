@@ -6,14 +6,13 @@ import org.myorganization.template.core.domain.system.properties.Property;
 import org.myorganization.template.core.domain.system.properties.PropertyCriteria;
 import org.myorganization.template.core.domain.system.properties.PropertyRepository;
 import org.myorganization.template.core.domain.system.traces.TraceType;
-import org.myorganization.template.core.services.base.TemplateService;
 import org.myorganization.template.core.services.base.TemplateServiceBase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class PropertyService extends TemplateServiceBase<Property, PropertyCriteria> implements TemplateService<Property, PropertyCriteria> {
+public class PropertyService extends TemplateServiceBase<Property, PropertyCriteria> {
 
 	@Autowired
 	private NotifyService notifyService;

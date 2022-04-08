@@ -3,7 +3,6 @@ package org.myorganization.template.security.service;
 import java.util.List;
 import java.util.Optional;
 
-import org.myorganization.template.core.services.base.TemplateService;
 import org.myorganization.template.core.services.base.TemplateServiceBase;
 import org.myorganization.template.security.domain.profiles.Profile;
 import org.myorganization.template.security.domain.profiles.ProfileCriteria;
@@ -13,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class ProfileService extends TemplateServiceBase<Profile, ProfileCriteria> implements TemplateService<Profile, ProfileCriteria> {
+public class ProfileService extends TemplateServiceBase<Profile, ProfileCriteria> {
 
 	@Autowired
 	public ProfileService(ProfileRepository profileRepository) {

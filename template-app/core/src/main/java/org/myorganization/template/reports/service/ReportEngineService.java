@@ -2,7 +2,6 @@ package org.myorganization.template.reports.service;
 
 import java.util.List;
 
-import org.myorganization.template.core.services.base.TemplateService;
 import org.myorganization.template.core.services.base.TemplateServiceBase;
 import org.myorganization.template.reports.domain.reportengine.ReportEngine;
 import org.myorganization.template.reports.domain.reportengine.ReportEngineCriteria;
@@ -12,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class ReportEngineService extends TemplateServiceBase<ReportEngine, ReportEngineCriteria>  implements TemplateService<ReportEngine, ReportEngineCriteria> {
+public class ReportEngineService extends TemplateServiceBase<ReportEngine, ReportEngineCriteria> {
 
 	@Autowired
 	public ReportEngineService(ReportEngineRepository reportEngineRepository) {

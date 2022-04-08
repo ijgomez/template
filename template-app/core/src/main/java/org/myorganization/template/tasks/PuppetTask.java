@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Scope("prototype")
-public class PuppetTask extends TaskBase implements Runnable {
+public class PuppetTask extends TaskBase {
 
 	public PuppetTask(Task task) {
 		super(task);

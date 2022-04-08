@@ -6,7 +6,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.myorganization.template.security.domain.actions.Action;
 import org.myorganization.template.security.domain.actions.ActionCriteria;
 import org.myorganization.template.security.service.ActionService;
-import org.myorganization.template.web.controller.base.TemplateController;
 import org.myorganization.template.web.controller.base.TemplateControllerBase;
 import org.myorganization.template.web.domain.datatables.DataTablesCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @Validated
 @RequestMapping("/api/actions")
 @Slf4j
-public class ActionController extends TemplateControllerBase<Action, ActionCriteria> implements TemplateController<Action, ActionCriteria> {
+public class ActionController extends TemplateControllerBase<Action, ActionCriteria> {
 
 	@Autowired
 	public ActionController(ActionService actionService) {

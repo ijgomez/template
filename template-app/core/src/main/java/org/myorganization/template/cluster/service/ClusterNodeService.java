@@ -5,14 +5,13 @@ import java.util.List;
 import org.myorganization.template.cluster.domain.node.ClusterNode;
 import org.myorganization.template.cluster.domain.node.ClusterNodeCriteria;
 import org.myorganization.template.cluster.domain.node.ClusterNodeRepository;
-import org.myorganization.template.core.services.base.TemplateService;
 import org.myorganization.template.core.services.base.TemplateServiceBase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class ClusterNodeService extends TemplateServiceBase<ClusterNode, ClusterNodeCriteria> implements TemplateService<ClusterNode, ClusterNodeCriteria> {
+public class ClusterNodeService extends TemplateServiceBase<ClusterNode, ClusterNodeCriteria> {
 	
 	@Autowired
 	public ClusterNodeService(ClusterNodeRepository clusterNodeRepository) {

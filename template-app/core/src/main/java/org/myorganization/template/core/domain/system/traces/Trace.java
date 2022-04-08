@@ -13,7 +13,6 @@ import javax.persistence.Index;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.myorganization.template.core.domain.base.TemplateEntity;
 import org.myorganization.template.core.domain.base.TemplateEntityBase;
 import org.springframework.validation.annotation.Validated;
 
@@ -27,7 +26,7 @@ import lombok.EqualsAndHashCode;
 @Validated
 @Data
 @EqualsAndHashCode(callSuper=false)
-public class Trace extends TemplateEntityBase implements TemplateEntity {
+public class Trace extends TemplateEntityBase {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "trace_seq")

@@ -3,7 +3,6 @@ package org.myorganization.template.scheduler.services;
 import java.util.List;
 import java.util.Optional;
 
-import org.myorganization.template.core.services.base.TemplateService;
 import org.myorganization.template.core.services.base.TemplateServiceBase;
 import org.myorganization.template.scheduler.domain.tasks.Task;
 import org.myorganization.template.scheduler.domain.tasks.TaskCriteria;
@@ -13,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class TaskService extends TemplateServiceBase<Task, TaskCriteria> implements TemplateService<Task, TaskCriteria> {
+public class TaskService extends TemplateServiceBase<Task, TaskCriteria> {
 
 	@Autowired
 	public TaskService(TaskRepository taskRepository) {

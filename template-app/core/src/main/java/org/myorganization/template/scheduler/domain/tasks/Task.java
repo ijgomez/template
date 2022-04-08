@@ -10,7 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 
-import org.myorganization.template.core.domain.base.TemplateEntity;
 import org.myorganization.template.core.domain.base.TemplateEntityBase;
 import org.myorganization.template.scheduler.domain.taskexecutions.TaskExecution;
 import org.springframework.validation.annotation.Validated;
@@ -24,7 +23,7 @@ import lombok.EqualsAndHashCode;
 @Validated
 @Data
 @EqualsAndHashCode(callSuper=false)
-public class Task extends TemplateEntityBase implements TemplateEntity {
+public class Task extends TemplateEntityBase {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "task_seq")

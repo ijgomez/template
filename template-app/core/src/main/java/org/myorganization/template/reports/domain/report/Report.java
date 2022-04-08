@@ -14,7 +14,6 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import org.myorganization.template.core.domain.archives.Archive;
-import org.myorganization.template.core.domain.base.TemplateEntity;
 import org.myorganization.template.core.domain.base.TemplateEntityBase;
 import org.myorganization.template.reports.domain.reportengine.ReportEngine;
 import org.springframework.validation.annotation.Validated;
@@ -30,7 +29,7 @@ import lombok.EqualsAndHashCode;
 @Validated
 @Data
 @EqualsAndHashCode(callSuper=false)
-public class Report extends TemplateEntityBase implements TemplateEntity {
+public class Report extends TemplateEntityBase {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "report_seq")

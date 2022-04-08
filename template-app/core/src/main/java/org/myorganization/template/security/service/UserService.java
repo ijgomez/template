@@ -4,7 +4,6 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import org.myorganization.template.core.services.base.TemplateService;
 import org.myorganization.template.core.services.base.TemplateServiceBase;
 import org.myorganization.template.security.domain.actions.Action;
 import org.myorganization.template.security.domain.users.User;
@@ -15,7 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class UserService extends TemplateServiceBase<User, UserCriteria> implements TemplateService<User, UserCriteria> {
+public class UserService extends TemplateServiceBase<User, UserCriteria> {
 
 //	@Autowired
 //	private PasswordEncoder passwordEncoder;

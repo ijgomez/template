@@ -14,7 +14,6 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import org.myorganization.template.cluster.enums.ClusterNodeStatus;
-import org.myorganization.template.core.domain.base.TemplateEntity;
 import org.myorganization.template.core.domain.base.TemplateEntityBase;
 import org.springframework.validation.annotation.Validated;
 
@@ -26,7 +25,7 @@ import lombok.EqualsAndHashCode;
 @Validated
 @Data
 @EqualsAndHashCode(callSuper=false)
-public class ClusterNode extends TemplateEntityBase implements TemplateEntity {
+public class ClusterNode extends TemplateEntityBase {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cluster_node_seq")
