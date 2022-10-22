@@ -35,6 +35,11 @@
 			<artifactId>template-app-core</artifactId>
 			<version>1.0.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.myorganization.template</groupId>
+			<artifactId>template-app-cluster</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 		
 		<!-- Spring dependencies -->
 		<dependency>

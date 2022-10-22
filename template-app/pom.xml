@@ -26,6 +26,7 @@
   <modules>
   	<module>../template-dashboard</module>
   	<module>core</module>
+  	<module>cluster</module>
   	<module>webapp</module>
   
   </modules>
