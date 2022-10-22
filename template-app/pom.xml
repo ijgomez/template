@@ -27,7 +27,33 @@
   	<module>../template-dashboard</module>
   	<module>core</module>
   	<module>webapp</module>
+  
   </modules>
+  <build>
+  	<pluginManagement>
+  		<plugins>
+  			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+        		<version>3.8.1</version>
+        		<configuration>
+        			<annotationProcessorPaths>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+							<version>${org.projectlombok.version}</version>
+						</path>
+						<path>
+                            <groupId>org.hibernate</groupId>
+                            <artifactId>hibernate-jpamodelgen</artifactId>
+                            <version>${org.hibernate.version}</version>
+                        </path>
+					</annotationProcessorPaths>
+        		</configuration>
+			</plugin>
+  		</plugins>
+  	</pluginManagement>
+  </build>
   <dependencyManagement>
   	<dependencies>
   		<!-- Spring dependencies -->
