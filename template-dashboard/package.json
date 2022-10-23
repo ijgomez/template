@@ -30,7 +30,7 @@
     "bootstrap-icons": "^1.8.0",
     "crypto-js": "^4.1.1",
     "datatables.net": "^1.12.1",
-    "datatables.net-bs5": "^1.11.3",
+    "datatables.net-bs5": "^1.12.1",
     "file-saver": "^2.0.5",
     "jquery": "^3.6.0",
     "rxjs": "~6.6.0",
