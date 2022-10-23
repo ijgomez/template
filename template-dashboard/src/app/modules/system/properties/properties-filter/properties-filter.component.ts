@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { TemplateFilterComponent } from 'src/app/shared/components/filter/template-filter/template-filter.component';
 import { PropertyCriteria } from 'src/app/core/models/system/property-criteria.model';
 
@@ -10,7 +10,7 @@ import { PropertyCriteria } from 'src/app/core/models/system/property-criteria.m
 })
 export class PropertiesFilterComponent extends TemplateFilterComponent<PropertyCriteria> implements OnInit {
 
-  constructor(private formBuilder: FormBuilder) { 
+  constructor(private formBuilder: UntypedFormBuilder) { 
     super(formBuilder.group({
       property: []
     }));

@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from "@angular/core";
-import { FormBuilder, FormGroup } from "@angular/forms";
+import { UntypedFormBuilder, UntypedFormGroup } from "@angular/forms";
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from "@angular/router";
 import { Observable } from "rxjs";
@@ -19,7 +19,7 @@ export abstract class TemplateFormBaseComponent implements OnInit, OnDestroy {
 
     /** New Instance */
     constructor(
-        protected formBuilder: FormBuilder,
+        protected formBuilder: UntypedFormBuilder,
         protected router: Router,
         protected route: ActivatedRoute,
         protected location: Location
@@ -50,7 +50,7 @@ export abstract class TemplateFormBaseComponent implements OnInit, OnDestroy {
 
     protected abstract service(): any;
 
-    protected abstract form(): FormGroup;
+    protected abstract form(): UntypedFormGroup;
 
     /** Method that loads the entity's information into the form. */
     protected loadEntity(id: number): void {

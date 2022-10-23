@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { TemplateFilterComponent } from 'src/app/shared/components/filter/template-filter/template-filter.component';
 import { ClusterNodeCriteria } from 'src/app/core/models/system/cluster-node-criteria.model';
 @Component({
@@ -9,7 +9,7 @@ import { ClusterNodeCriteria } from 'src/app/core/models/system/cluster-node-cri
 })
 export class ClusterFilterComponent extends TemplateFilterComponent<ClusterNodeCriteria> implements OnInit {
 
-  constructor(private formBuilder: FormBuilder) { 
+  constructor(private formBuilder: UntypedFormBuilder) { 
     super(formBuilder.group({
       hostname: []
     }));

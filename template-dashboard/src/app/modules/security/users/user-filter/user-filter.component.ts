@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { TemplateFilterComponent } from 'src/app/shared/components/filter/template-filter/template-filter.component';
 import { UserCriteria } from 'src/app/core/models/security/user-criteria.model';
 
@@ -10,7 +10,7 @@ import { UserCriteria } from 'src/app/core/models/security/user-criteria.model';
 })
 export class UserFilterComponent extends TemplateFilterComponent<UserCriteria> implements OnInit {
 
-  constructor(private formBuilder: FormBuilder) {
+  constructor(private formBuilder: UntypedFormBuilder) {
     super(formBuilder.group({
       username: [],
       profile: []

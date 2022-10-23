@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PropertiesService } from 'src/app/core/services/system/properties.service';
 import { Location } from '@angular/common';
@@ -12,7 +12,7 @@ import { TemplateFormBaseComponent } from 'src/app/shared/components/forms/base/
 })
 export class PropertiesComponent extends TemplateFormBaseComponent implements OnInit, OnDestroy {
   
-  public propertiesForm : FormGroup = this.formBuilder.group({
+  public propertiesForm : UntypedFormGroup = this.formBuilder.group({
     id: [],
     key: [null, Validators.required],
     value: [null, Validators.required],
@@ -20,7 +20,7 @@ export class PropertiesComponent extends TemplateFormBaseComponent implements On
   });;
 
   constructor(
-      protected formBuilder: FormBuilder,
+      protected formBuilder: UntypedFormBuilder,
       protected router: Router,
       protected route: ActivatedRoute,
       protected location: Location,
@@ -44,7 +44,7 @@ export class PropertiesComponent extends TemplateFormBaseComponent implements On
     return this.propertiesService;
   }
 
-  protected form(): FormGroup {
+  protected form(): UntypedFormGroup {
     return this.propertiesForm;
   }
 

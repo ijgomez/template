@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../../../core/services/security/user.service';
 import { Location } from '@angular/common';
@@ -25,7 +25,7 @@ export class UserComponent extends TemplateFormBaseComponent implements OnInit, 
   });
 
   constructor(
-    protected formBuilder: FormBuilder,
+    protected formBuilder: UntypedFormBuilder,
     protected router: Router,
     protected route: ActivatedRoute,
     protected location: Location,
@@ -52,7 +52,7 @@ export class UserComponent extends TemplateFormBaseComponent implements OnInit, 
     return this.userService;
   }
 
-  protected form(): FormGroup {
+  protected form(): UntypedFormGroup {
     return this.userForm;
   }
   

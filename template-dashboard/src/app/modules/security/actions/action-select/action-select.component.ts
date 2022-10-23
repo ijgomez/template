@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ActionCriteria } from 'src/app/core/models/security/action-criteria.model';
 import { Action } from 'src/app/core/models/security/action.model';
@@ -18,13 +18,13 @@ export class ActionSelectComponent implements OnInit, OnDestroy {
 
   private criteria: ActionCriteria = new ActionCriteria();
 
-  filterForm: FormGroup = this.formBuilder.group({
+  filterForm: UntypedFormGroup = this.formBuilder.group({
     description: []
   });
 
   constructor(
     private activeModal: NgbActiveModal,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private actionService: ActionService
     ) { }
 

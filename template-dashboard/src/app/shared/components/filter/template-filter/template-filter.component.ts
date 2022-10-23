@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnInit, Output, OnDestroy } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-template-filter',
@@ -8,12 +8,12 @@ import { FormGroup } from '@angular/forms';
 })
 export class TemplateFilterComponent<C> implements OnInit, OnDestroy {
 
-  filterForm: FormGroup;
+  filterForm: UntypedFormGroup;
 
   @Output()
   filterEvent:EventEmitter<C> = new EventEmitter<C>();
   
-  constructor(filter: FormGroup) {
+  constructor(filter: UntypedFormGroup) {
     this.filterForm = filter;
   }
   

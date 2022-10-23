@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { TemplateFilterComponent } from 'src/app/shared/components/filter/template-filter/template-filter.component';
 import { TraceCriteria } from 'src/app/core/models/system/trace-criteria.model';
 
@@ -10,7 +10,7 @@ import { TraceCriteria } from 'src/app/core/models/system/trace-criteria.model';
 })
 export class TracesFilterComponent extends TemplateFilterComponent<TraceCriteria> implements OnInit {
 
-  constructor(private formBuilder: FormBuilder) { 
+  constructor(private formBuilder: UntypedFormBuilder) { 
     super(formBuilder.group({
       type: [],
       message: [],

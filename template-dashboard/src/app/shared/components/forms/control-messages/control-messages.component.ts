@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { ValidationsHelper } from 'src/app/shared/validators/validation.helper';
 
 @Component({
@@ -10,7 +10,7 @@ import { ValidationsHelper } from 'src/app/shared/validators/validation.helper';
 export class ControlMessagesComponent implements OnInit {
 
   @Input()
-  control!: FormControl;
+  control!: UntypedFormControl;
 
   constructor() { }
 

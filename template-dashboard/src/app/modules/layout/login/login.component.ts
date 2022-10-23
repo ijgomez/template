@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { Credentials } from 'src/app/core/models/security/credentials.model';
@@ -12,7 +12,7 @@ import { AuthService } from 'src/app/core/services/security/auth.service';
 })
 export class LoginComponent implements OnInit {
 
-  loginForm: FormGroup = this.formBuilder.group({
+  loginForm: UntypedFormGroup = this.formBuilder.group({
     username: ['admin', Validators.required],
     password: ['admin', Validators.required]
   });
@@ -25,7 +25,7 @@ export class LoginComponent implements OnInit {
       private authService: AuthService,
       private router: Router, 
       private route: ActivatedRoute,
-      private formBuilder: FormBuilder
+      private formBuilder: UntypedFormBuilder
     ) { 
       
     }

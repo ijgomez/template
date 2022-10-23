@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FormControl, Validators, FormGroup } from '@angular/forms';
+import { UntypedFormControl, Validators, UntypedFormGroup } from '@angular/forms';
 import { QuestionBase } from '../components/forms/questions/question-base';
 
 @Injectable({
@@ -13,9 +13,9 @@ export class QuestionControlService {
     const group: any = {};
 
     questions.forEach(question => {
-      group[question.key] = question.required ? new FormControl(question.value || '', Validators.required)
-                                              : new FormControl(question.value || '');
+      group[question.key] = question.required ? new UntypedFormControl(question.value || '', Validators.required)
+                                              : new UntypedFormControl(question.value || '');
     });
-    return new FormGroup(group);
+    return new UntypedFormGroup(group);
   }
 }

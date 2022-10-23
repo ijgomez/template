@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { QuestionBase } from '../questions/question-base';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { QuestionControlService } from 'src/app/shared/services/question-control.service';
 
 
@@ -14,7 +14,7 @@ export class DynamicFormComponent implements OnInit {
   @Input()
   questions: QuestionBase<any>[] = [];
 
-  form!: FormGroup;
+  form!: UntypedFormGroup;
 
   @Output()
   uploaded = new EventEmitter();

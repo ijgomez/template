@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { ProfileService } from 'src/app/core/services/security/profile.service';
@@ -24,7 +24,7 @@ export class ProfileComponent extends TemplateFormBaseComponent implements OnIni
   });
 
   constructor(
-      protected formBuilder: FormBuilder,
+      protected formBuilder: UntypedFormBuilder,
       protected router: Router,
       protected route: ActivatedRoute,
       protected location: Location,
@@ -52,7 +52,7 @@ export class ProfileComponent extends TemplateFormBaseComponent implements OnIni
     return this.profileService;
   }
 
-  protected form(): FormGroup {
+  protected form(): UntypedFormGroup {
     return this.profileForm;
   }
 

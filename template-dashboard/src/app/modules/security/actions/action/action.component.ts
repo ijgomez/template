@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, AfterViewInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { ActionService } from 'src/app/core/services/security/action.service';
@@ -13,7 +13,7 @@ import { ActionValidator } from 'src/app/core/models/security/action-validator';
 })
 export class ActionComponent extends TemplateFormBaseComponent implements OnInit, OnDestroy {
   
-  actionForm: FormGroup = this.formBuilder.group({
+  actionForm: UntypedFormGroup = this.formBuilder.group({
     id: [],
     name: [null, {
       validators: [Validators.required],
@@ -23,7 +23,7 @@ export class ActionComponent extends TemplateFormBaseComponent implements OnInit
   });
 
   constructor(
-      protected formBuilder: FormBuilder,
+      protected formBuilder: UntypedFormBuilder,
       protected router: Router,
       protected route: ActivatedRoute,
       protected location: Location,
@@ -50,7 +50,7 @@ export class ActionComponent extends TemplateFormBaseComponent implements OnInit
     return this.actionService;
   }
 
-  protected form(): FormGroup {
+  protected form(): UntypedFormGroup {
     return this.actionForm;
   }
   

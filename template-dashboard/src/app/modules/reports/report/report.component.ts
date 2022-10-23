@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
-import { FormBuilder, Validators, FormGroup, FormControl } from '@angular/forms';
+import { UntypedFormBuilder, Validators, UntypedFormGroup, UntypedFormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ReportService } from 'src/app/core/services/reports/report.service';
 import { Location } from '@angular/common';
@@ -14,7 +14,7 @@ import { TemplateFormBaseComponent } from '../../../shared/components/forms/base
 })
 export class ReportComponent extends TemplateFormBaseComponent implements OnInit, OnDestroy, AfterViewInit {
   
-  public reportForm : FormGroup = this.formBuilder.group({
+  public reportForm : UntypedFormGroup = this.formBuilder.group({
     id: [],
     name: ['', Validators.required],
     description: ['', Validators.required],
@@ -26,7 +26,7 @@ export class ReportComponent extends TemplateFormBaseComponent implements OnInit
   public engineSelected : ReportEngine | undefined;
 
   constructor(
-      protected formBuilder: FormBuilder,
+      protected formBuilder: UntypedFormBuilder,
       protected router: Router,
       protected route: ActivatedRoute,
       protected location: Location,
@@ -55,7 +55,7 @@ export class ReportComponent extends TemplateFormBaseComponent implements OnInit
     return this.reportService;
   }
 
-  protected form(): FormGroup {
+  protected form(): UntypedFormGroup {
     return this.reportForm;
   }
 
@@ -81,17 +81,17 @@ export class ReportComponent extends TemplateFormBaseComponent implements OnInit
     
     if (engine != null && engine.type == 'JASPER') {
       this.reportForm.removeControl('url');
-      this.reportForm.addControl('descriptor', new FormGroup({
-        filename: new FormControl(''),
-        data: new FormControl(null, Validators.required),
-        filetype: new FormControl(''),
-        size: new FormControl('')
+      this.reportForm.addControl('descriptor', new UntypedFormGroup({
+        filename: new UntypedFormControl(''),
+        data: new UntypedFormControl(null, Validators.required),
+        filetype: new UntypedFormControl(''),
+        size: new UntypedFormControl('')
       }));
     }
 
     if (engine != null && engine.type == 'HTML') {
       this.reportForm.removeControl('descriptor');
-      this.reportForm.addControl('url', new FormControl('', Validators.required));
+      this.reportForm.addControl('url', new UntypedFormControl('', Validators.required));
     }
 
   }
