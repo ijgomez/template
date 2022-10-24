@@ -27,7 +27,7 @@
     "@popperjs/core": "^2.11.6",
     "angular-datatables": "^14.0.0",
     "bootstrap": "^5.2.2",
-    "bootstrap-icons": "^1.8.0",
+    "bootstrap-icons": "^1.9.1",
     "crypto-js": "^4.1.1",
     "datatables.net": "^1.12.1",
     "datatables.net-bs5": "^1.12.1",
