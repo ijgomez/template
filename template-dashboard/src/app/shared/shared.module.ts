@@ -29,6 +29,7 @@ import { ServerTimestampComponent } from './components/server-timestamp/server-t
 import { TraceTypeComboComponent } from './components/combos/trace-type-combo/trace-type-combo.component';
 import { InputDatetimeComponent } from './components/forms/input-datetime/input-datetime.component';
 import { NgbDatepicker, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { ShowMenuItemPipe } from './pipes/show-menu-item.pipe';
 
 @NgModule({
   declarations: [
@@ -50,7 +51,8 @@ import { NgbDatepicker, NgbModule } from '@ng-bootstrap/ng-bootstrap';
     ActionsSelectorComponent,
     ConfirmComponent,
     ServerTimestampComponent,
-    InputDatetimeComponent
+    InputDatetimeComponent,
+    ShowMenuItemPipe
   ],
   imports: [
     CommonModule,

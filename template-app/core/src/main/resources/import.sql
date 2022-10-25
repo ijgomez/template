@@ -98,9 +98,9 @@ insert into profile_action (action_fk, profile_fk) values ((select id from actio
 -- insert into "user" (id, username, password, profile_fk) values (next value for user_seq, 'support', '$2a$10$bZHmYUaqcxDlaTJ5FD7jdei0Mjt0dLAXfhQl4LCtFrJjsgqRpPBs6',  2);
 -- insert into "user" (id, username, password, profile_fk) values (next value for user_seq, 'user01',  '$2a$10$SRk0cJVP8lpzXy5z23RSKeRPMpwCSA9EIlAe1uOKlgj3HzSM.CJQG1', 3);
 
-insert into "user" (id, username, password, profile_fk) values (next value for user_seq, 'admin',   'SMecCl59g0Q75GIxCgLagQ==', 1);
-insert into "user" (id, username, password, profile_fk) values (next value for user_seq, 'support', 'nOaUMpJ17SUCfcHES+J9RQ==', 2);
-insert into "user" (id, username, password, profile_fk) values (next value for user_seq, 'user01',  'DN3Dgaya10bZuH2CIHQ8NA==', 3);
+insert into "user" (id, username, password, profile_fk) values (next value for user_seq, 'admin',   'SMecCl59g0Q75GIxCgLagQ==', (select id from profile where name = 'ADMINISTRATOR'));
+insert into "user" (id, username, password, profile_fk) values (next value for user_seq, 'support', 'nOaUMpJ17SUCfcHES+J9RQ==', (select id from profile where name = 'SUPPORT'));
+insert into "user" (id, username, password, profile_fk) values (next value for user_seq, 'user01',  'DN3Dgaya10bZuH2CIHQ8NA==', (select id from profile where name = 'USER'));
 
 insert into trace (id, datetime, type, message) values (next value for trace_seq, current_timestamp(), 'SYSTEM', 'maPY4qDUNiY4aW38hmXUxaoCnmSft25U2waBPGAMwTDg2eUpdcmgnl7y7MJu');
 insert into trace (id, datetime, type, message) values (next value for trace_seq, current_timestamp(), 'SYSTEM', 'gnl9hrknzQCU9zrh8g71nDNSq3oTMseZ6h7uKH3EmkbcMnZttnQMzpzuicLr');

@@ -1,10 +1,12 @@
 <nav>
   <ul>
     <li><a routerLink="" routerLinkActive="active" [replaceUrl]="true">Home</a></li>
-    <li><a routerLink="security" [replaceUrl]="true">Security</a></li>
-    <li><a routerLink="system" [replaceUrl]="true">System</a></li>
-    <li><a routerLink="reports" [replaceUrl]="true">Reports</a></li>
-    <li><a routerLink="interfaces" [replaceUrl]="true">Interfaces</a></li>
+    <ng-container  *ngFor="let item of navItems">
+      <li  *ngIf="item.name | showMenuItem">
+          <a routerLink="{{ item.path }}" [replaceUrl]="true">{{ item.text }}</a>
+      </li>
+    </ng-container>
+    
     <li><a routerLink="" (click)="logout()">Logout</a></li>
   </ul>
 </nav>
