@@ -99,7 +99,12 @@
                          type="RSA" />
         </SSLHostConfig>    
     </Connector>            
-    -->                     
+    -->
+    <Connector protocol="org.apache.coyote.http11.Http11NioProtocol"
+           port="8443" maxThreads="200"
+           scheme="https" secure="true" SSLEnabled="true"
+           keystoreFile="conf/ssl/server.keystore" keystorePass="template2022"
+           clientAuth="false" sslProtocol="TLS"/>                 
     <!-- Define an SSL/TLS HTTP/1.1 Connector on port 8443 with HTTP/2
          This connector uses the APR/native implementation which always uses
          OpenSSL for TLS.   
