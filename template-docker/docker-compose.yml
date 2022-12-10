@@ -10,14 +10,14 @@ services:
       - "80:80"
       - "443:443"
     depends_on:
-      - app-server
+      - server
     volumes:
       - balancer-logs:/var/log/nginx
     networks:
       - template-network
 
   # Application Server
-  app-server:
+  server:
     image: template-tomcat:latest
     container_name: template-server
     hostname: template-server
