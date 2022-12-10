@@ -64,6 +64,8 @@ USER $USER
 
 WORKDIR $HOME
 
+VOLUME $APP_DIR/tomcat/logs
+
 ## Export ports
 EXPOSE 8080
 
