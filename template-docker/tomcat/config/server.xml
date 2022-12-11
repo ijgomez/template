@@ -31,6 +31,7 @@
   <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener" />
   <Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener" />
 
+  <Listener className="org.apache.catalina.storeconfig.StoreConfigLifecycleListener"/>
   <!-- Global JNDI resources
        Documentation at /docs/jndi-resources-howto.html
   -->
@@ -174,8 +175,10 @@
         <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
                prefix="localhost_access_log" suffix=".txt" requestAttributesEnabled="true"
                pattern="%h %l %u %t &quot;%r&quot; %s %b" />
-          <Valve className="org.apache.catalina.valves.RemoteIpValve"
-         protocolHeader="X-Forwarded-Proto" />                
+
+          <Valve className="org.apache.catalina.valves.RemoteIpValve" protocolHeader="X-Forwarded-Proto" />
+
+          
       </Host>                
     </Engine>                
   </Service>                 
