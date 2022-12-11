@@ -21,6 +21,7 @@ services:
     image: template-tomcat:latest
     container_name: template-server
     hostname: template-server
+    restart: always
     ports:
       - "8080:8080"
       - "8443:8443"
@@ -36,12 +37,14 @@ services:
     image: template-postgresql:latest
     container_name: template-database
     hostname: template-database
+    restart: always
     ports:
       - "5432:5432"
     environment:
       - POSTGRES_USER=administrator
       - POSTGRES_PASSWORD=template2022
       - PGDATA=/var/lib/postgresql/data/pgdata
+      - TZ=UTC
     volumes:
       - database-data:/var/lib/postgresql/data
       - database-conf:/etc/postgresql
