@@ -24,18 +24,18 @@ template/                          ← Raíz del workspace
 
 ## Responsabilidad de cada Módulo
 
-| Módulo | Responsabilidad |
-|---|---|
-| `commons` | Utilidades genéricas, helpers y clases compartidas reutilizables por cualquier módulo |
-| `cluster` | Coordinación de cluster, alta disponibilidad, gestión de nodos |
-| `domain` | Entidades JPA, DTOs, interfaces de repositorio, modelo de dominio puro |
-| `core` | Servicios de negocio, DAOs, workers, lógica de aplicación |
-| `webapp` | Controladores REST, seguridad, configuración Spring Boot, punto de entrada (WAR) |
-| `template-dashboard` | Aplicación frontend Angular 22 con Bootstrap 5.3.8 |
-| `template-liquibase` | Changelogs Liquibase organizados por versión para PostgreSQL 18 |
-| `template-dist` | Scripts de empaquetado y despliegue para cada sistema operativo |
-| `template-docker` | Dockerfiles y docker-compose para los distintos entornos |
-| `template-properties` | Ficheros de configuración externalizados por entorno (dev, pre, pro) |
+| Módulo                | Capa            | Responsabilidad                                                                         |
+|-----------------------|-----------------|-----------------------------------------------------------------------------------------|
+| `commons`             | Transversal     | Clases de utilidad compartidas entre módulos (mantener al mínimo)                       |
+| `cluster`             | Infraestructura | Coordinación del cluster, heartbeat de nodos, distribución de tareas                    |
+| `domain`              | Dominio         | Entidades JPA, DTOs, enums de dominio, plantillas Velocity                              |
+| `core`                | Servicio        | Servicios de negocio, DAOs, workers planificados, gestión transaccional                 |
+| `webapp`              | Presentación    | Endpoints REST/SOAP, controladores, config Spring Security, clase principal Spring Boot |
+| `template-dashboard`  | Frontend        | Aplicación Angular 22 con Bootstrap 5.3.8                                               |
+| `template-liquibase`  | Base de datos   | Changelogs Liquibase organizados por versión para PostgreSQL 18                         |
+| `template-dist`       | Despliegue      | Scripts de empaquetado y despliegue para cada sistema operativo                         |
+| `template-docker`     | Despliegue      | Dockerfiles y docker-compose para los distintos entornos                                |
+| `template-properties` | Configuración   | Ficheros de configuración externalizados por entorno (dev, pre, pro)                    |
 
 ## Dependencias entre Módulos Maven
 

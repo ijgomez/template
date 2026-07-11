@@ -9,14 +9,14 @@
 
 ## Nomenclatura
 
-| Elemento | Convención | Ejemplo |
-|---|---|---|
-| Componentes | PascalCase + sufijo | `UserListComponent` |
-| Servicios | PascalCase + sufijo | `AuthService` |
-| Ficheros | kebab-case + tipo | `user-list.component.ts` |
-| Variables y métodos | camelCase | `getUserById`, `isLoading` |
-| Constantes | UPPER_SNAKE_CASE | `API_BASE_URL` |
-| Interfaces | PascalCase con prefijo `I` opcional | `User`, `IUserResponse` |
+| Elemento            | Convención                          | Ejemplo                    |
+|---------------------|-------------------------------------|----------------------------|
+| Componentes         | PascalCase + sufijo                 | `UserListComponent`        |
+| Servicios           | PascalCase + sufijo                 | `AuthService`              |
+| Ficheros            | kebab-case + tipo                   | `user-list.component.ts`   |
+| Variables y métodos | camelCase                           | `getUserById`, `isLoading` |
+| Constantes          | UPPER_SNAKE_CASE                    | `API_BASE_URL`             |
+| Interfaces          | PascalCase con prefijo `I` opcional | `User`, `IUserResponse`    |
 
 ## Estructura de Carpetas
 
@@ -63,6 +63,6 @@ src/
 - Tipar siempre: no usar `any` salvo justificación excepcional.
 - Usar modelos/interfaces para los datos de la API (carpeta `models/`).
 - Gestionar el estado de carga y error en los componentes que consumen observables.
-- Usar `environment.ts` para las URLs de la API y otras configuraciones por entorno.
+- Usar `environment.ts` para las URL de la API y otras configuraciones por entorno.
 - Lazy loading para los feature modules.
 - Escribir tests unitarios con **Jasmine/Karma** o **Jest**.

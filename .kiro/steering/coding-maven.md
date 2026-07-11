@@ -26,7 +26,7 @@
 - Declarar dependencias con el scope correcto:
   - `compile` (por defecto): dependencias necesarias en runtime.
   - `test`: solo para tests (JUnit, Mockito...).
-  - `provided`: proporcionadas por el servidor (p.ej. Servlet API).
+  - `provided`: proporcionadas por el servidor (p. ej. Servlet API).
 - Agrupar dependencias por categoría con comentarios: `<!-- Spring -->`, `<!-- Database -->`, `<!-- Test -->`.
 - Evitar dependencias transitivas innecesarias usando `<exclusions>` cuando sea preciso.
 

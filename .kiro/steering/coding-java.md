@@ -8,13 +8,13 @@
 
 ## Nomenclatura
 
-| Elemento | Convención | Ejemplo |
-|---|---|---|
-| Clases | PascalCase | `UserService`, `OrderRepository` |
-| Métodos y variables | camelCase | `findById`, `userEmail` |
-| Constantes | UPPER_SNAKE_CASE | `MAX_RETRY_COUNT` |
-| Paquetes | lowercase sin guiones | `org.myorganization.template.user` |
-| Ficheros de configuración | kebab-case | `application-dev.yml` |
+| Elemento                  | Convención            | Ejemplo                            |
+|---------------------------|-----------------------|------------------------------------|
+| Clases                    | PascalCase            | `UserService`, `OrderRepository`   |
+| Métodos y variables       | camelCase             | `findById`, `userEmail`            |
+| Constantes                | UPPER_SNAKE_CASE      | `MAX_RETRY_COUNT`                  |
+| Paquetes                  | lowercase sin guiones | `org.myorganization.template.user` |
+| Ficheros de configuración | kebab-case            | `application-dev.yml`              |
 
 ## Estructura de Paquetes
 
@@ -22,13 +22,13 @@
 
 Organizar por funcionalidad (feature package), no por capa. Cada módulo Maven tiene su propio subpaquete raíz:
 
-| Módulo Maven | Paquete base |
-|---|---|
-| `commons` | `org.myorganization.template.commons` |
-| `cluster` | `org.myorganization.template.cluster` |
-| `domain` | `org.myorganization.template.domain` |
-| `core` | `org.myorganization.template.core` |
-| `webapp` | `org.myorganization.template.web` |
+| Módulo Maven | Paquete base                          |
+|--------------|---------------------------------------|
+| `commons`    | `org.myorganization.template.commons` |
+| `cluster`    | `org.myorganization.template.cluster` |
+| `domain`     | `org.myorganization.template.domain`  |
+| `core`       | `org.myorganization.template.core`    |
+| `webapp`     | `org.myorganization.template.web`     |
 
 Dentro de cada módulo, organizar por feature:
 
@@ -51,6 +51,16 @@ org.myorganization.template.core
 - **Repository:** acceso a datos mediante Spring Data JPA. Anotado con `@Repository`.
 - **Entity:** mapeo JPA. Usar `@Entity`, evitar lógica en las entidades.
 - **DTO:** objetos de transferencia de datos para entrada/salida de la API. No exponer entidades directamente.
+
+### Responsabilidades por módulo
+
+| Módulo    | Capa            | Contiene                                                                                |
+|-----------|-----------------|-----------------------------------------------------------------------------------------|
+| `core`    | Servicio        | Servicios de negocio, DAOs, workers planificados, gestión transaccional                 |
+| `domain`  | Dominio         | Entidades JPA, DTOs, enums de dominio, plantillas Velocity                              |
+| `commons` | Transversal     | Clases de utilidad compartidas entre módulos (mantener al mínimo)                       |
+| `cluster` | Infraestructura | Coordinación del cluster, heartbeat de nodos, distribución de tareas                    |
+| `webapp`  | Presentación    | Endpoints REST/SOAP, controladores, config Spring Security, clase principal Spring Boot |
 
 ## API REST
 

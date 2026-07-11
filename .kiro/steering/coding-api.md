@@ -15,14 +15,14 @@
 
 ## Métodos HTTP y Códigos de Respuesta
 
-| Operación | Método | Código éxito | Notas |
-|---|---|---|---|
-| Obtener lista | `GET` | `200 OK` | Soportar paginación |
-| Obtener uno | `GET` | `200 OK` | `404` si no existe |
-| Crear | `POST` | `201 Created` | Incluir `Location` header |
-| Actualización total | `PUT` | `200 OK` | |
-| Actualización parcial | `PATCH` | `200 OK` | |
-| Eliminar | `DELETE` | `204 No Content` | |
+| Operación             | Método   | Código éxito     | Notas                     |
+|-----------------------|----------|------------------|---------------------------|
+| Obtener lista         | `GET`    | `200 OK`         | Soportar paginación       |
+| Obtener uno           | `GET`    | `200 OK`         | `404` si no existe        |
+| Crear                 | `POST`   | `201 Created`    | Incluir `Location` header |
+| Actualización total   | `PUT`    | `200 OK`         |                           |
+| Actualización parcial | `PATCH`  | `200 OK`         |                           |
+| Eliminar              | `DELETE` | `204 No Content` |                           |
 
 ## Controladores
 

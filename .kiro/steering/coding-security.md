@@ -10,7 +10,7 @@
 
 - Usar **JWT (JSON Web Tokens)** como mecanismo de autenticación stateless.
 - Los tokens deben incluir: `sub` (identificador de usuario), `roles`, `iat` (emisión) y `exp` (expiración).
-- El tiempo de expiración del access token debe ser corto (p.ej. 15-30 minutos).
+- El tiempo de expiración del access token debe ser corto (p. ej. 15-30 minutos).
 - Usar refresh tokens de larga duración para renovar el access token sin re-autenticación.
 - Nunca almacenar el JWT en `localStorage`; preferir cookies `HttpOnly` + `Secure` o memoria de la aplicación.
 
@@ -80,7 +80,7 @@ public class SecurityConfig {
 - Configurar cabeceras de seguridad HTTP (`Content-Security-Policy`, `X-Content-Type-Options`).
 
 ### CSRF
-- Deshabilitado para APIs stateless con JWT. Si se usan sesiones, activarlo obligatoriamente.
+- Deshabilitado para API stateless con JWT. Si se usan sesiones, activarlo obligatoriamente.
 
 ### CORS
 - Configurar CORS explícitamente en Spring Security. No usar `@CrossOrigin` en controladores individuales.
