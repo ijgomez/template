@@ -55,6 +55,8 @@ webapp   ← core (salida WAR)
 
 - Usar kebab-case para todos los nombres de directorios y módulos.
 - Mantener el modelo de ramas: `master` para código estable, `release/*` para candidatos a release.
-- No añadir lógica de negocio en `template-web`; delegar siempre a `template-core`.
-- No añadir dependencias de Spring en `template-domain`; debe ser un módulo Java puro (salvo JPA).
+- No añadir lógica de negocio en `webapp`; delegar siempre a `core`.
+- No añadir dependencias de Spring en `domain`; debe ser un módulo Java puro (salvo JPA).
 - Los ficheros de propiedades sensibles (contraseñas, tokens) nunca se versionen; usar `template-properties` solo para plantillas o propiedades no sensibles.
+- Los changelogs de Liquibase se mantienen en formato **XML** dentro de `template-liquibase`.
+- Las reglas detalladas de cada área están en los ficheros de steering correspondientes: `coding-java.md`, `coding-maven.md`, `coding-api.md`, `coding-security.md`, `coding-liquibase.md`, `coding-angular.md`.
