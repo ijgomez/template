@@ -13,20 +13,31 @@
 | Clases | PascalCase | `UserService`, `OrderRepository` |
 | Métodos y variables | camelCase | `findById`, `userEmail` |
 | Constantes | UPPER_SNAKE_CASE | `MAX_RETRY_COUNT` |
-| Paquetes | lowercase sin guiones | `com.example.myapp.user` |
+| Paquetes | lowercase sin guiones | `org.myorganization.template.user` |
 | Ficheros de configuración | kebab-case | `application-dev.yml` |
 
 ## Estructura de Paquetes
 
-Organizar por funcionalidad (feature package), no por capa:
+- **Paquete raíz:** `org.myorganization.template`
+
+Organizar por funcionalidad (feature package), no por capa. Cada módulo Maven tiene su propio subpaquete raíz:
+
+| Módulo Maven | Paquete base |
+|---|---|
+| `commons` | `org.myorganization.template.commons` |
+| `cluster` | `org.myorganization.template.cluster` |
+| `domain` | `org.myorganization.template.domain` |
+| `core` | `org.myorganization.template.core` |
+| `webapp` | `org.myorganization.template.web` |
+
+Dentro de cada módulo, organizar por feature:
 
 ```
-com.example.myapp
+org.myorganization.template.core
 ├── user/
-│   ├── UserController.java
 │   ├── UserService.java
 │   ├── UserRepository.java
-│   └── User.java
+│   └── ...
 ├── order/
 │   └── ...
 └── shared/
@@ -35,7 +46,7 @@ com.example.myapp
 
 ## Capas y Responsabilidades
 
-- **Controller:** solo gestión de la petición HTTP y delegación al servicio. Sin lógica de negocio.
+- **Controller:** solo gestión de la petición HTTP y delegación al servicio. Sin lógica de negocio. Ver `coding-api.md` para las reglas detalladas de la API REST.
 - **Service:** lógica de negocio. Anotado con `@Service`.
 - **Repository:** acceso a datos mediante Spring Data JPA. Anotado con `@Repository`.
 - **Entity:** mapeo JPA. Usar `@Entity`, evitar lógica en las entidades.
@@ -43,11 +54,7 @@ com.example.myapp
 
 ## API REST
 
-- Usar `@RestController` y mapeos estándar (`@GetMapping`, `@PostMapping`, etc.).
-- Responder siempre con `ResponseEntity<T>`.
-- Versionar la API en la URL: `/api/v1/...`.
-- Usar códigos HTTP semánticamente correctos (200, 201, 204, 400, 404, 500).
-- Manejar errores globalmente con `@RestControllerAdvice`.
+Las reglas detalladas de diseño y convenciones de la API REST están en `coding-api.md`.
 
 ## Base de Datos y Liquibase
 

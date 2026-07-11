@@ -39,18 +39,32 @@
 
 ## Estructura Multi-módulo
 
-Si el proyecto crece a multi-módulo, seguir esta convención:
+El backend sigue una estructura multi-módulo Maven bajo el directorio `template/`:
 
 ```
 template/
-├── pom.xml                  # POM padre (packaging: pom)
-├── template-backend/
-│   └── pom.xml
-└── template-dashboard/
-    └── package.json
+├── pom.xml       ← POM padre (packaging: pom, parent: Spring Boot 4.1.0)
+├── commons/      ← Utilidades compartidas
+├── cluster/      ← Coordinación de cluster y alta disponibilidad
+├── domain/       ← Entidades JPA, DTOs, modelo de dominio
+├── core/         ← Servicios, DAOs, lógica de negocio, workers
+└── webapp/       ← WAR: controladores, seguridad, configuración
 ```
 
-- El POM padre solo gestiona versiones y módulos, no declara dependencias de aplicación.
+- El POM padre declara los módulos, gestiona versiones en `<dependencyManagement>` y no contiene dependencias de aplicación.
+- El orden de build y las dependencias entre módulos es:
+
+```
+commons
+  ↓
+cluster  ← commons
+  ↓
+domain   ← cluster, commons
+  ↓
+core     ← domain (+ todos los transitivos)
+  ↓
+webapp   ← core (salida WAR)
+```
 
 ## Comandos Habituales
 
