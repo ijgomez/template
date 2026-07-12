@@ -36,6 +36,46 @@
 - Usar `maven-surefire-plugin` para la ejecución de tests unitarios.
 - Usar `maven-failsafe-plugin` para tests de integración (ficheros `*IT.java`).
 - Configurar `maven-compiler-plugin` con `<release>21</release>`.
+- Usar **`jacoco-maven-plugin`** para medir la cobertura de tests.
+- Usar **`sonar-maven-plugin`** para analizar la calidad del código con SonarQube.
+
+### Configuración de JaCoCo
+
+```xml
+<plugin>
+    <groupId>org.jacoco</groupId>
+    <artifactId>jacoco-maven-plugin</artifactId>
+    <executions>
+        <execution>
+            <id>prepare-agent</id>
+            <goals><goal>prepare-agent</goal></goals>
+        </execution>
+        <execution>
+            <id>report</id>
+            <phase>verify</phase>
+            <goals><goal>report</goal></goals>
+        </execution>
+    </executions>
+</plugin>
+```
+
+### Configuración de SonarQube
+
+```xml
+<plugin>
+    <groupId>org.sonarsource.scanner.maven</groupId>
+    <artifactId>sonar-maven-plugin</artifactId>
+</plugin>
+```
+
+Ejecutar el análisis con:
+
+```bash
+./mvnw verify sonar:sonar \
+  -Dsonar.projectKey=template \
+  -Dsonar.host.url=http://localhost:9000 \
+  -Dsonar.token=${SONAR_TOKEN}
+```
 
 ## Estructura Multi-módulo
 
@@ -72,9 +112,10 @@ webapp   ← core (salida WAR)
 ./mvnw clean install              # Compilar, testear y empaquetar
 ./mvnw spring-boot:run            # Arrancar la aplicación en local
 ./mvnw test                       # Ejecutar tests unitarios
-./mvnw verify                     # Ejecutar tests unitarios + integración
+./mvnw verify                     # Ejecutar tests unitarios + integración + cobertura JaCoCo
 ./mvnw clean package -DskipTests  # Empaquetar sin ejecutar tests
 ./mvnw dependency:tree            # Ver árbol de dependencias
+./mvnw verify sonar:sonar         # Ejecutar tests, cobertura y análisis SonarQube
 ```
 
 ## Buenas Prácticas

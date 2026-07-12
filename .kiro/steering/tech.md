@@ -11,10 +11,26 @@
 ### Backend
 - **Java 21**
 - **Spring Boot 4.1.0**
+- **Lombok** (reducción de código repetitivo: constructores, getters, builders, etc.)
+- **Log4j2** (framework de logging)
+- **JaCoCo** (cobertura de tests)
+- **SonarQube** (análisis de calidad del código)
+
+### Modos de Despliegue
+
+La aplicación está diseñada para ejecutarse en dos modos:
+
+- **Microservicio** (JAR ejecutable): empaquetado como JAR con servidor embebido, arranca de forma autónoma.
+- **Aplicación web** (WAR desplegable): empaquetado como WAR para desplegar en un servidor de aplicaciones externo.
+
+Servidores web soportados:
+- **Apache Tomcat**
+- **WildFly**
 
 ### Base de Datos
 - **PostgreSQL 18**
 - **Liquibase** (gestión de migraciones y cambios del modelo de datos)
+- **Spring Data JPA** (acceso y operaciones de base de datos)
 
 ### Frontend
 - **Angular 22**

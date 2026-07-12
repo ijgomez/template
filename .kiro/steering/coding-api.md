@@ -26,46 +26,77 @@
 
 ## Controladores
 
-- Usar `@RestController` con `@RequestMapping("/api/v1/<recurso>")` a nivel de clase.
-- Responder siempre con `ResponseEntity<T>` para tener control explícito del código HTTP.
-- Sin lógica de negocio en el controlador; delegar todo al servicio correspondiente.
-- Validar la entrada con `@Valid` y Bean Validation (`@NotNull`, `@Size`, etc.).
+Los controladores siguen el patrón **interfaz + implementación**:
+
+- La **interfaz** define el contrato HTTP: lleva `@RequestMapping` a nivel de tipo y todas las anotaciones de mapeo de métodos (`@GetMapping`, `@PostMapping`, etc.), parámetros (`@PathVariable`, `@RequestBody`, etc.) y documentación OpenAPI (`@Operation`, `@ApiResponse`).
+- La **implementación** lleva `@RestController` y el resto de anotaciones de comportamiento (`@PreAuthorize`, `@Validated`, etc.). No repite las anotaciones de mapeo ya definidas en la interfaz.
+- Nomenclatura: interfaz `<Recurso>Controller`, implementación `<Recurso>ControllerImpl`.
 
 ```java
-@RestController
+// Interfaz — define el contrato HTTP
 @RequestMapping("/api/v1/users")
-public class UserController {
+public interface UserController {
+
+    @Operation(summary = "Get user by ID")
+    @ApiResponse(responseCode = "200")
+    @ApiResponse(responseCode = "404", description = "User not found")
+    @GetMapping("/{id}")
+    ResponseEntity<UserDTO> getById(@PathVariable Long id);
+
+    @Operation(summary = "Create a new user")
+    @ApiResponse(responseCode = "201")
+    @PostMapping
+    ResponseEntity<UserDTO> create(@Valid @RequestBody CreateUserRequest request);
+}
+```
+
+```java
+// Implementación — lógica de despacho y seguridad
+@RestController
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+public class UserControllerImpl implements UserController {
 
     private final UserService userService;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getById(@PathVariable Long id) {
+    @Override
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    public ResponseEntity<UserDTO> getById(Long id) {
         return ResponseEntity.ok(userService.findById(id));
     }
 
-    @PostMapping
-    public ResponseEntity<UserDto> create(@Valid @RequestBody CreateUserRequest request) {
-        UserDto created = userService.create(request);
+    @Override
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<UserDTO> create(CreateUserRequest request) {
+        UserDTO created = userService.create(request);
         URI location = URI.create("/api/v1/users/" + created.id());
         return ResponseEntity.created(location).body(created);
     }
 }
 ```
 
+Reglas adicionales:
+
+- Responder siempre con `ResponseEntity<T>` para tener control explícito del código HTTP.
+- Sin lógica de negocio en el controlador; delegar todo al servicio correspondiente.
+- Validar la entrada con `@Valid` y Bean Validation (`@NotNull`, `@Size`, etc.).
+
 ## DTOs
 
 - Nunca exponer entidades JPA directamente en la API; usar siempre DTOs.
 - Los DTOs de respuesta viven en `domain` (paquete `org.myorganization.template.domain.<feature>`).
 - Los DTOs de petición (request bodies) pueden vivir en `webapp` o `domain` según reutilización.
-- Preferir **Java Records** para DTOs inmutables:
+- Preferir **Java Records** para DTOs inmutables.
+
+### Nomenclatura de DTOs
+
+- Los DTOs de respuesta siguen el patrón `<Entidad>DTO` (mismo nombre que la entidad + sufijo `DTO`).
+- Los DTOs de creación siguen el patrón `Create<Entidad>Request`.
+- Los DTOs de actualización siguen el patrón `Update<Entidad>Request`.
 
 ```java
-public record UserDto(Long id, String email, String name) {}
+public record UserDTO(Long id, String email, String name) {}
 public record CreateUserRequest(@NotBlank String email, @NotBlank String name) {}
+public record UpdateUserRequest(@NotBlank String name) {}
 ```
 
 ## Paginación
