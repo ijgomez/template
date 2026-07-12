@@ -2,9 +2,9 @@
 
 ## Documentacion
 
-- [Resumen de analisis de Kiro](template-docs/ia/kiro-analysis-summary.md)
-- [Guia de ingenieria](template-docs/ia/engineering-playbook.md)
-- [Lista de verificacion para PR](template-docs/ia/pr-checklist.md)
+- [Directivas de codigo](template-docs/coding-directives.md)
+- [Guia de ingenieria](template-docs/engineering-playbook.md)
+- [Lista de verificacion para PR](template-docs/pr-checklist.md)
 - [Instrucciones de Copilot para el repositorio](.github/copilot-instructions.md)
 
 
