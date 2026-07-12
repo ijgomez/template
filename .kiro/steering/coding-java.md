@@ -155,6 +155,157 @@ org.myorganization.template.core
 | `cluster` | Infraestructura | Coordinación del cluster, heartbeat de nodos, distribución de tareas                    |
 | `webapp`  | Presentación    | Endpoints REST/SOAP, controladores, config Spring Security, clase principal Spring Boot |
 
+## Búsqueda Paginada por Criterios en Repositorios
+
+Todo `@Repository` asociado a una entidad **debe** exponer dos métodos para búsquedas dinámicas paginadas:
+
+| Método            | Retorno        | Descripción                                                          |
+|-------------------|----------------|----------------------------------------------------------------------|
+| `findByCriteria`  | `List<Entity>` | Devuelve los registros que cumplen los criterios, paginados          |
+| `countByCriteria` | `long`         | Devuelve el número total de registros que cumplen los mismos criterios |
+
+Ambos métodos comparten la misma lógica de construcción de consulta dinámica; la única diferencia es que `countByCriteria` ejecuta un `SELECT COUNT(...)` en lugar de un `SELECT *`.
+
+### Objeto Criteria
+
+- Para cada entidad existe un objeto de criterios con el nombre `<Entidad>Criteria` (p. ej. entidad `User` → `UserCriteria`).
+- El objeto Criteria vive en el módulo `domain`, junto a la entidad correspondiente.
+- Contiene los campos por los cuales se puede filtrar. Los campos nulos se ignoran al construir la consulta.
+- Incluye además los parámetros de paginación (`offset` y `limit`).
+- Usar Lombok `@Getter`, `@Setter` y `@Builder` para reducir código repetitivo.
+
+```java
+@Getter
+@Setter
+@Builder
+public class UserCriteria {
+
+    private String email;
+    private String name;
+    private UserStatus status;
+    private LocalDate createdFrom;
+    private LocalDate createdTo;
+
+    // Paginación
+    private int offset;
+    private int limit;
+}
+```
+
+### JPA Static Metamodel (hibernate-jpamodelgen)
+
+Para construir los `CriteriaBuilder` de forma **type-safe**, se utiliza el **JPA Static Metamodel** generado automáticamente por `hibernate-jpamodelgen` en tiempo de compilación.
+
+#### Configuración Maven
+
+La configuración de `annotationProcessorPaths` con `hibernate-jpamodelgen` y `lombok` en el `maven-compiler-plugin` está documentada en `coding-maven.md`. Aplica a todos los módulos con `packaging: jar`.
+
+#### Resultado de la generación
+
+Para cada entidad `@Entity`, el procesador genera una clase con sufijo `_` en el mismo paquete:
+
+```
+User.java   →   User_.java (generado en target/generated-sources/annotations/)
+```
+
+La clase generada contiene atributos estáticos tipados (`SingularAttribute`, `ListAttribute`, etc.) que representan cada campo de la entidad:
+
+```java
+// Generado automáticamente — NO editar
+@StaticMetamodel(User.class)
+public abstract class User_ {
+    public static volatile SingularAttribute<User, Long> id;
+    public static volatile SingularAttribute<User, String> email;
+    public static volatile SingularAttribute<User, String> name;
+    public static volatile SingularAttribute<User, UserStatus> status;
+    public static volatile SingularAttribute<User, LocalDateTime> createdAt;
+}
+```
+
+#### Reglas de uso
+
+- **Obligatorio** usar los atributos del Static Metamodel (`User_.email`) en lugar de strings literales (`"email"`) al acceder a campos en `CriteriaBuilder`. Esto garantiza seguridad de tipos en tiempo de compilación y evita errores por typos en nombres de campo.
+- Nunca usar `root.get("nombreCampo")` — usar siempre `root.get(Entity_.campo)`.
+- Los ficheros generados (`*_.java`) no se versionan; se generan en cada build en `target/generated-sources/annotations/`.
+
+### Implementación en el Repository
+
+Usar `JPA Criteria API` con el **Static Metamodel** para construir la consulta dinámicamente a partir de los campos no nulos del objeto Criteria:
+
+```java
+@Repository
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+public class UserRepository {
+
+    private final EntityManager entityManager;
+
+    public List<User> findByCriteria(UserCriteria criteria) {
+        var cb = entityManager.getCriteriaBuilder();
+        var cq = cb.createQuery(User.class);
+        var root = cq.from(User.class);
+
+        var predicates = buildPredicates(cb, root, criteria);
+        cq.where(predicates.toArray(new Predicate[0]));
+
+        return entityManager.createQuery(cq)
+            .setFirstResult(criteria.getOffset())
+            .setMaxResults(criteria.getLimit())
+            .getResultList();
+    }
+
+    public long countByCriteria(UserCriteria criteria) {
+        var cb = entityManager.getCriteriaBuilder();
+        var cq = cb.createQuery(Long.class);
+        var root = cq.from(User.class);
+
+        var predicates = buildPredicates(cb, root, criteria);
+        cq.select(cb.count(root));
+        cq.where(predicates.toArray(new Predicate[0]));
+
+        return entityManager.createQuery(cq).getSingleResult();
+    }
+
+    private List<Predicate> buildPredicates(CriteriaBuilder cb, Root<User> root, UserCriteria criteria) {
+        var predicates = new ArrayList<Predicate>();
+
+        if (criteria.getEmail() != null) {
+            predicates.add(cb.like(cb.lower(root.get(User_.email)), "%" + criteria.getEmail().toLowerCase() + "%"));
+        }
+        if (criteria.getName() != null) {
+            predicates.add(cb.like(cb.lower(root.get(User_.name)), "%" + criteria.getName().toLowerCase() + "%"));
+        }
+        if (criteria.getStatus() != null) {
+            predicates.add(cb.equal(root.get(User_.status), criteria.getStatus()));
+        }
+        if (criteria.getCreatedFrom() != null) {
+            predicates.add(cb.greaterThanOrEqualTo(root.get(User_.createdAt), criteria.getCreatedFrom()));
+        }
+        if (criteria.getCreatedTo() != null) {
+            predicates.add(cb.lessThanOrEqualTo(root.get(User_.createdAt), criteria.getCreatedTo()));
+        }
+
+        return predicates;
+    }
+}
+```
+
+### Reglas
+
+- La lógica de construcción de predicados debe estar extraída en un método privado (`buildPredicates`) reutilizado por `findByCriteria` y `countByCriteria` para garantizar consistencia.
+- **Siempre** referenciar los campos de la entidad mediante el Static Metamodel (`Entity_.campo`), nunca con strings literales.
+- Los campos de texto deben buscarse con `LIKE` case-insensitive por defecto, salvo que el dominio requiera coincidencia exacta.
+- Los campos de tipo enum, ID o booleano se buscan con `equal`.
+- Los campos de tipo fecha/rango se buscan con `greaterThanOrEqualTo` / `lessThanOrEqualTo`.
+- Si el objeto Criteria no tiene ningún campo informado, la consulta devuelve todos los registros (paginados).
+
+### Nomenclatura
+
+| Elemento        | Patrón               | Ejemplo          |
+|-----------------|----------------------|------------------|
+| Objeto Criteria | `<Entidad>Criteria`  | `UserCriteria`   |
+| Método búsqueda | `findByCriteria`     | —                |
+| Método conteo   | `countByCriteria`    | —                |
+
 ## API REST
 
 Las reglas detalladas de diseño y convenciones de la API REST están en `coding-api.md`.

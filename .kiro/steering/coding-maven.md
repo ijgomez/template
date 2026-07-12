@@ -36,8 +36,40 @@
 - Usar `maven-surefire-plugin` para la ejecución de tests unitarios.
 - Usar `maven-failsafe-plugin` para tests de integración (ficheros `*IT.java`).
 - Configurar `maven-compiler-plugin` con `<release>21</release>`.
+- En todos los módulos con `packaging: jar`, configurar `annotationProcessorPaths` en `maven-compiler-plugin` con **Lombok** y **hibernate-jpamodelgen** para la generación automática de código en compilación.
 - Usar **`jacoco-maven-plugin`** para medir la cobertura de tests.
 - Usar **`sonar-maven-plugin`** para analizar la calidad del código con SonarQube.
+
+### Configuración de maven-compiler-plugin (módulos JAR)
+
+Todo módulo con `packaging: jar` (`commons`, `cluster`, `domain`, `core`) debe incluir la configuración de `annotationProcessorPaths` con Lombok y hibernate-jpamodelgen. Esto garantiza que:
+
+- **Lombok** genera getters, setters, constructores y builders en compilación.
+- **hibernate-jpamodelgen** genera las clases del JPA Static Metamodel (`Entity_.java`) necesarias para consultas type-safe con `CriteriaBuilder`.
+
+```xml
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-compiler-plugin</artifactId>
+    <configuration>
+        <release>21</release>
+        <annotationProcessorPaths>
+            <path>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+            </path>
+            <path>
+                <groupId>org.hibernate.orm</groupId>
+                <artifactId>hibernate-jpamodelgen</artifactId>
+            </path>
+        </annotationProcessorPaths>
+    </configuration>
+</plugin>
+```
+
+> Las versiones de ambos procesadores las gestiona el BOM de Spring Boot. No declarar versiones explícitas en `<annotationProcessorPaths>`.
+
+**Nota:** El módulo `webapp` (con `packaging: war`) también debe incluir esta configuración si contiene clases que usan Lombok o entidades JPA. En general, se recomienda declarar esta configuración en el POM padre dentro de `<pluginManagement>` para que todos los módulos la hereden automáticamente.
 
 ### Configuración de JaCoCo
 
@@ -122,5 +154,5 @@ webapp   ← core (salida WAR)
 
 - No hacer commit del directorio `target/`.
 - Versionar el Maven Wrapper (`.mvn/` y `mvnw`) en el repositorio.
-- Usar perfiles (`<profiles>`) para configuraciones específicas por entorno (dev, prod).
+- Usar perfiles (`<profiles>`) para configuraciones específicas de compilación: `local` (entorno local), `dist` (distribución para el resto de entornos) y `test` (ejecución de tests y cobertura). Ver `structure.md` para el detalle de entornos.
 - Mantener el `pom.xml` ordenado y legible; evitar bloques de XML innecesarios.
