@@ -86,34 +86,34 @@ public class Application extends SpringBootServletInitializer {
 
 ### Sufijos obligatorios por estereotipo
 
-| Anotación       | Sufijo obligatorio  | Ejemplo                  |
-|-----------------|---------------------|--------------------------|
-| `@Service`      | `Service`           | `UserService`            |
-| `@Repository`   | `Repository`        | `UserRepository`         |
-| `@RestController` (implementación) | `ControllerImpl` | `UserControllerImpl` |
-| Interfaz de controlador | `Controller` | `UserController` |
-| `@Component`    | Descriptivo libre   | `JwtTokenParser`         |
+| Anotación                          | Sufijo obligatorio | Ejemplo              |
+|------------------------------------|--------------------|----------------------|
+| `@Service`                         | `Service`          | `UserService`        |
+| `@Repository`                      | `Repository`       | `UserRepository`     |
+| `@RestController` (implementación) | `ControllerImpl`   | `UserControllerImpl` |
+| Interfaz de controlador            | `Controller`       | `UserController`     |
+| `@Component`                       | Descriptivo libre  | `JwtTokenParser`     |
 
 - Toda clase anotada con `@Service` **debe** terminar en `Service`.
 - Toda clase anotada con `@Repository` **debe** terminar en `Repository`.
 - Los controladores siguen el patrón interfaz + implementación: la interfaz termina en `Controller` y la clase anotada con `@RestController` termina en `ControllerImpl`. Ver `coding-api.md` para el detalle del patrón.
 
-### Nomenclatura de DTOs
+### Nomenclatura de DTO's
 
-- Los DTOs de respuesta deben tener el mismo nombre que la entidad correspondiente seguido del sufijo `DTO`: `<Entidad>DTO`.
+- Los DTO's de respuesta deben tener el mismo nombre que la entidad correspondiente seguido del sufijo `DTO`: `<Entidad>DTO`.
 - Ejemplo: entidad `User` → DTO de respuesta `UserDTO`.
 
-| Tipo         | Patrón              | Ejemplo               |
-|--------------|---------------------|-----------------------|
-| DTO respuesta | `<Entidad>DTO`     | `UserDTO`             |
-| DTO creación  | `Create<Entidad>Request` | `CreateUserRequest` |
+| Tipo              | Patrón                   | Ejemplo             |
+|-------------------|--------------------------|---------------------|
+| DTO respuesta     | `<Entidad>DTO`           | `UserDTO`           |
+| DTO creación      | `Create<Entidad>Request` | `CreateUserRequest` |
 | DTO actualización | `Update<Entidad>Request` | `UpdateUserRequest` |
 
 ## Estructura de Paquetes
 
 - **Paquete raíz:** `org.myorganization.template`
 
-Organizar por funcionalidad (feature package), no por capa. Cada módulo Maven tiene su propio subpaquete raíz:
+Organizar por funcionalidad (feature package), no por capa. Cada módulo Maven tiene su propio sub paquete raíz:
 
 | Módulo Maven | Paquete base                          |
 |--------------|---------------------------------------|

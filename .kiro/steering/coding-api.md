@@ -6,7 +6,7 @@
 - Toda la API se expone bajo el prefijo `/api/v1/` para permitir versionado sin romper clientes existentes.
 - Los controladores viven en el módulo `webapp`, en el paquete `org.myorganization.template.web.<feature>`.
 
-## Estructura de URLs
+## Estructura de URL's
 
 - Usar sustantivos en plural para los recursos: `/api/v1/users`, `/api/v1/orders`.
 - Usar kebab-case para nombres compuestos: `/api/v1/order-items`.
@@ -82,16 +82,16 @@ Reglas adicionales:
 
 ## DTOs
 
-- Nunca exponer entidades JPA directamente en la API; usar siempre DTOs.
+- Nunca exponer entidades JPA directamente en la API; usar siempre DTO's.
 - Los DTOs de respuesta viven en `domain` (paquete `org.myorganization.template.domain.<feature>`).
 - Los DTOs de petición (request bodies) pueden vivir en `webapp` o `domain` según reutilización.
 - Preferir **Java Records** para DTOs inmutables.
 
 ### Nomenclatura de DTOs
 
-- Los DTOs de respuesta siguen el patrón `<Entidad>DTO` (mismo nombre que la entidad + sufijo `DTO`).
-- Los DTOs de creación siguen el patrón `Create<Entidad>Request`.
-- Los DTOs de actualización siguen el patrón `Update<Entidad>Request`.
+- Los DTO's de respuesta siguen el patrón `<Entidad>DTO` (mismo nombre que la entidad + sufijo `DTO`).
+- Los DTO's de creación siguen el patrón `Create<Entidad>Request`.
+- Los DTO's de actualización siguen el patrón `Update<Entidad>Request`.
 
 ```java
 public record UserDTO(Long id, String email, String name) {}
@@ -139,11 +139,11 @@ Las reglas detalladas de seguridad (autenticación JWT, autorización, CORS, pro
 ## Documentación
 
 - Documentar la API con **OpenAPI 3 / Springdoc** (`springdoc-openapi`).
-- Anotar controladores y DTOs con `@Operation`, `@ApiResponse` y `@Schema` cuando la descripción no sea obvia.
+- Anotar controladores y DTO's con `@Operation`, `@ApiResponse` y `@Schema` cuando la descripción no sea obvia.
 - El contrato OpenAPI generado (`/v3/api-docs`) es la fuente de verdad para el frontend.
 
 ## Comunicación Frontend ↔ Backend
 
 - El frontend (`template-dashboard`) consume la API usando el `HttpClient` de Angular.
-- Los modelos TypeScript del frontend deben mantenerse sincronizados con los DTOs del backend.
+- Los modelos TypeScript del frontend deben mantenerse sincronizados con los DTO's del backend.
 - Usar el fichero de entorno Angular (`environment.ts`) para configurar la URL base de la API.

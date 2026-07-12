@@ -7,7 +7,7 @@ Este es un repositorio plantilla utilizado como punto de partida para nuevos pro
 ## Información General
 
 - **Repositorio:** https://github.com/ijgomez/template
-- **Propietario:** Javier Izquierdo Gomez
+- **Propietario:** Javier Izquierdo Gómez
 - **Estado:** Configuración inicial / scaffolding de plantilla
 
 ## Idioma de Trabajo

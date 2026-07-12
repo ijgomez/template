@@ -96,7 +96,7 @@ export const environment = {
 };
 ```
 
-- Nunca hardcodear URLs, timeouts ni otros valores configurables directamente en servicios o componentes; referenciar siempre `environment.<nombreAplicacion>.<funcionalidad>.<propiedad>`.
+- Nunca hardcodear URL's, timeouts ni otros valores configurables directamente en servicios o componentes; referenciar siempre `environment.<nombreAplicacion>.<funcionalidad>.<propiedad>`.
 
 ## Testing
 
@@ -111,7 +111,7 @@ export const environment = {
 
 #### Tests de Servicios
 
-- Mockear el `HttpClient` con `HttpClientTestingModule` y `HttpTestingController`.
+- Mockear él `HttpClient` con `HttpClientTestingModule` y `HttpTestingController`.
 - Verificar que se realizan las peticiones HTTP correctas y se manejan los errores.
 
 ```typescript
