@@ -18,12 +18,12 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 - **AuthService**: Servicio del backend que gestiona la autenticación de usuarios y la emisión de tokens JWT.
 - **UserService**: Servicio del backend que gestiona las operaciones CRUD sobre los usuarios del sistema.
 - **ProfileService**: Servicio del backend que gestiona las operaciones CRUD sobre los perfiles (roles) del sistema, incluyendo la asignación de acciones a cada perfil.
-- **ActionService**: Servicio del backend que gestiona las operaciones CRUD sobre las acciones (permisos) del sistema.
+- **ActionService**: Servicio del backend que gestiona la consulta y edición de las acciones (permisos) del sistema. Las acciones no pueden ser creadas ni eliminadas por los usuarios.
 - **ReportService**: Servicio del backend que gestiona la generación, consulta y exportación de informes de la aplicación.
 - **ParameterService**: Servicio del backend que gestiona los parámetros generales de operación de la aplicación.
 - **AuditService**: Servicio del backend que gestiona el registro y consulta de la trazabilidad y auditoría del sistema (logs de actividad y errores).
-- **InterfaceService**: Servicio del backend que gestiona la supervisión del estado, definición y trazabilidad de las interfaces y servicios integrados.
-- **ClusterService**: Servicio del backend que gestiona la configuración y acciones de las instancias de la aplicación en entornos de alta disponibilidad (nodos y bloqueos).
+- **InterfaceService**: Servicio del backend que gestiona la consulta y supervisión del estado, definición y trazabilidad de las interfaces y servicios integrados. Expone únicamente operaciones de lectura.
+- **ClusterService**: Servicio del backend que gestiona la consulta y edición de los nodos del cluster y la consulta de bloqueos en entornos de alta disponibilidad. Los nodos no pueden ser eliminados y los bloqueos solo pueden ser consultados.
 - **LayoutComponent**: Componente Angular que define la estructura visual de la aplicación (header, sidebar, content area, footer).
 - **Guard**: Mecanismo de Angular que protege rutas comprobando el estado de autenticación o los permisos del usuario.
 - **Interceptor**: Componente de Angular que intercepta las peticiones HTTP para adjuntar el token JWT y gestionar errores de autenticación.
@@ -224,20 +224,17 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 7. WHEN se intenta eliminar un perfil que tiene usuarios asignados, THE ProfileService SHALL devolver un error 409 Conflict con un mensaje indicando que el perfil está en uso.
 8. WHEN se intenta acceder a un perfil que no existe, THE ProfileService SHALL devolver un error 404 Not Found.
 
-### Requirement 15: Gestión de acciones (CRUD)
+### Requirement 15: Consulta y edición de acciones
 
-**User Story:** As a administrador, I want gestionar las acciones (permisos) del sistema (crear, consultar, modificar y eliminar), so that pueda definir los permisos granulares que controlan el acceso a cada funcionalidad.
+**User Story:** As a administrador, I want consultar y editar las acciones (permisos) del sistema, so that pueda revisar y actualizar la información descriptiva de los permisos granulares que controlan el acceso a cada funcionalidad.
 
 #### Acceptance Criteria
 
-1. THE ActionService SHALL exponer un endpoint para crear una nueva acción con los datos: código identificador único, nombre descriptivo y descripción.
-2. THE ActionService SHALL exponer un endpoint para obtener la lista de acciones con soporte de paginación y filtros por código y nombre.
-3. THE ActionService SHALL exponer un endpoint para obtener los datos de una acción concreta por su identificador.
-4. THE ActionService SHALL exponer un endpoint para actualizar los datos de una acción existente (nombre, descripción).
-5. THE ActionService SHALL exponer un endpoint para eliminar una acción existente.
-6. WHEN se intenta crear una acción con un código que ya existe, THE ActionService SHALL devolver un error 409 Conflict.
-7. WHEN se intenta eliminar una acción que está asignada a perfiles, THE ActionService SHALL devolver un error 409 Conflict con un mensaje indicando que la acción está en uso.
-8. WHEN se intenta acceder a una acción que no existe, THE ActionService SHALL devolver un error 404 Not Found.
+1. THE ActionService SHALL exponer un endpoint para obtener la lista de acciones con soporte de paginación y filtros por código y nombre.
+2. THE ActionService SHALL exponer un endpoint para obtener los datos de una acción concreta por su identificador.
+3. THE ActionService SHALL exponer un endpoint para actualizar los datos de una acción existente (nombre, descripción).
+4. WHEN se intenta acceder a una acción que no existe, THE ActionService SHALL devolver un error 404 Not Found.
+5. THE ActionService SHALL rechazar cualquier solicitud de eliminación de acciones, devolviendo un error 405 Method Not Allowed.
 
 ### Requirement 16: Generación y consulta de informes
 
@@ -278,7 +275,7 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 5. WHEN se intenta acceder a un parámetro que no existe, THE ParameterService SHALL devolver un error 404 Not Found.
 6. THE ParameterService SHALL registrar en el AuditLog cada modificación de un parámetro, incluyendo el valor anterior, el valor nuevo y el usuario que realizó el cambio.
 
-### Requirement 19: Trazabilidad y auditoría del sistema
+### Requirement 19: Trazabilidad y auditoría del sistema (solo lectura)
 
 **User Story:** As a administrador, I want consultar los registros de actividad y errores del sistema, so that pueda supervisar el comportamiento de la aplicación, investigar incidencias y garantizar la trazabilidad de las operaciones.
 
@@ -287,13 +284,14 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 1. THE AuditService SHALL registrar automáticamente cada operación relevante del sistema (login, logout, creación, modificación y eliminación de entidades) con los datos: fecha y hora, usuario, acción realizada, entidad afectada y resultado (éxito o error).
 2. THE AuditService SHALL exponer un endpoint para consultar los logs de actividad con soporte de paginación y filtros por rango de fechas, usuario, tipo de acción y entidad.
 3. THE AuditService SHALL exponer un endpoint para consultar los logs de errores con soporte de paginación y filtros por rango de fechas, severidad y componente.
-4. THE SPA SHALL presentar los logs de auditoría en formato tabular con soporte de paginación, ordenación y búsqueda.
+4. THE SPA SHALL presentar los logs de auditoría en formato tabular con soporte de paginación, ordenación y búsqueda, en modo solo lectura.
 5. THE AuditService SHALL garantizar que los registros de auditoría sean inmutables (no se pueden modificar ni eliminar a través de la API).
 6. WHEN el volumen de datos del log supera el período de retención configurado, THE AuditService SHALL archivar los registros antiguos según la política de retención definida en los parámetros del sistema.
+7. THE AuditService SHALL exponer únicamente endpoints de consulta (GET). La creación, modificación y eliminación de registros de auditoría no está disponible a través de la API de usuario; el registro se realiza de forma automática por el sistema.
 
-### Requirement 20: Supervisión de interfaces y servicios integrados
+### Requirement 20: Supervisión de interfaces y servicios integrados (solo lectura)
 
-**User Story:** As a administrador, I want supervisar el estado de las interfaces y servicios integrados con la aplicación, so that pueda detectar problemas de conectividad y garantizar la disponibilidad de las integraciones.
+**User Story:** As a administrador, I want consultar el estado de las interfaces y servicios integrados con la aplicación, so that pueda detectar problemas de conectividad y garantizar la disponibilidad de las integraciones.
 
 #### Acceptance Criteria
 
@@ -303,10 +301,11 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 4. THE SPA SHALL presentar un panel de supervisión de interfaces mostrando el estado consolidado de todas las interfaces con indicadores visuales (verde para activa, rojo para error, gris para inactiva).
 5. WHEN una interfaz cambia de estado, THE InterfaceService SHALL registrar el cambio en el AuditLog con la fecha, el estado anterior y el estado nuevo.
 6. WHEN se intenta acceder a una interfaz que no existe, THE InterfaceService SHALL devolver un error 404 Not Found.
+7. THE InterfaceService SHALL exponer únicamente endpoints de consulta (GET). La creación, modificación y eliminación de interfaces no está disponible a través de la API de usuario.
 
-### Requirement 21: Gestión de nodos del cluster
+### Requirement 21: Consulta y edición de nodos del cluster
 
-**User Story:** As a administrador, I want gestionar la configuración y supervisar el estado de los nodos del cluster, so that pueda garantizar la alta disponibilidad de la aplicación.
+**User Story:** As a administrador, I want consultar y editar la configuración de los nodos del cluster, so that pueda supervisar el estado de las instancias y ajustar su configuración para garantizar la alta disponibilidad de la aplicación.
 
 #### Acceptance Criteria
 
@@ -316,19 +315,19 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 4. THE SPA SHALL presentar un panel de supervisión de nodos mostrando el estado consolidado de todas las instancias con indicadores visuales de disponibilidad.
 5. WHEN un nodo no envía heartbeat dentro del intervalo configurado, THE ClusterService SHALL marcar el nodo como inactivo y registrar el evento en el AuditLog.
 6. WHEN se intenta acceder a un nodo que no existe, THE ClusterService SHALL devolver un error 404 Not Found.
+7. THE ClusterService SHALL rechazar cualquier solicitud de eliminación de nodos, devolviendo un error 405 Method Not Allowed.
 
-### Requirement 22: Gestión de bloqueos del cluster
+### Requirement 22: Consulta de bloqueos del cluster (solo lectura)
 
-**User Story:** As a administrador, I want consultar y gestionar los bloqueos activos en el cluster, so that pueda supervisar la coordinación entre nodos y resolver situaciones de bloqueo manual cuando sea necesario.
+**User Story:** As a administrador, I want consultar los bloqueos activos en el cluster, so that pueda supervisar la coordinación entre nodos y verificar el estado de los recursos compartidos.
 
 #### Acceptance Criteria
 
 1. THE ClusterService SHALL exponer un endpoint para obtener la lista de bloqueos activos con soporte de paginación y filtros por nodo propietario y recurso bloqueado.
 2. THE ClusterService SHALL exponer un endpoint para obtener los datos detallados de un bloqueo concreto (identificador, recurso bloqueado, nodo propietario, fecha de adquisición, fecha de expiración).
-3. THE ClusterService SHALL exponer un endpoint para liberar manualmente un bloqueo activo por su identificador.
-4. WHEN un administrador libera manualmente un bloqueo, THE ClusterService SHALL registrar la acción en el AuditLog incluyendo el usuario que realizó la liberación y el recurso afectado.
-5. WHEN se intenta liberar un bloqueo que no existe o ya ha expirado, THE ClusterService SHALL devolver un error 404 Not Found.
-6. THE SPA SHALL presentar la lista de bloqueos activos con la opción de liberar manualmente cada bloqueo, solicitando confirmación al usuario antes de ejecutar la acción.
+3. THE SPA SHALL presentar la lista de bloqueos activos en modo solo lectura, sin opciones de liberación manual ni modificación.
+4. WHEN se intenta acceder a un bloqueo que no existe o ya ha expirado, THE ClusterService SHALL devolver un error 404 Not Found.
+5. THE ClusterService SHALL exponer únicamente endpoints de consulta (GET) para los bloqueos. La liberación manual de bloqueos no está disponible a través de la API de usuario.
 
 ### Requirement 23: Comportamiento estándar de vistas de listado
 
@@ -338,10 +337,12 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 
 1. THE SPA SHALL presentar toda tabla o lista de datos con soporte de paginación del lado del servidor.
 2. THE SPA SHALL proporcionar filtros de búsqueda por cada uno de los campos visibles en la tabla, permitiendo al usuario refinar los resultados mostrados.
-3. THE SPA SHALL incluir en cada vista de listado de entidades gestionables (usuarios, perfiles, acciones, parámetros, nodos, bloqueos, interfaces) un botón de exportación a CSV que descargue todos los registros que coincidan con los filtros aplicados.
+3. THE SPA SHALL incluir en cada vista de listado un botón de exportación a CSV que descargue todos los registros que coincidan con los filtros aplicados.
 4. WHEN el usuario pulsa el botón de exportación a CSV, THE SPA SHALL generar y descargar un fichero CSV con las columnas visibles y los datos filtrados.
-5. WHILE el usuario tiene la acción de creación asignada en su perfil, THE SPA SHALL mostrar un botón "Crear" en las vistas de listado de entidades gestionables que permita añadir un nuevo registro.
-6. WHILE el usuario tiene la acción de edición asignada en su perfil, THE SPA SHALL mostrar una opción "Editar" en cada fila del listado que permita modificar el registro.
-7. WHILE el usuario tiene la acción de eliminación asignada en su perfil, THE SPA SHALL mostrar una opción "Borrar" en cada fila del listado que permita eliminar el registro, solicitando confirmación antes de ejecutar la acción.
+5. WHILE el usuario tiene la acción de creación asignada en su perfil, THE SPA SHALL mostrar un botón "Crear" en las vistas de listado de entidades que soporten creación (usuarios, perfiles, parámetros).
+6. WHILE el usuario tiene la acción de edición asignada en su perfil, THE SPA SHALL mostrar una opción "Editar" en cada fila del listado de entidades que soporten edición (usuarios, perfiles, parámetros, acciones, nodos del cluster).
+7. WHILE el usuario tiene la acción de eliminación asignada en su perfil, THE SPA SHALL mostrar una opción "Borrar" en cada fila del listado de entidades que soporten eliminación (usuarios, perfiles), solicitando confirmación antes de ejecutar la acción.
 8. THE SPA SHALL mostrar una opción "Ver Detalle" en cada fila del listado que permita consultar la información completa del registro.
 9. WHILE el usuario no tiene la acción requerida para crear, editar o borrar registros, THE SPA SHALL ocultar las opciones correspondientes y presentar la vista de listado en modo solo lectura.
+10. THE SPA SHALL presentar las vistas de listado de Acciones y Nodos del cluster únicamente con las opciones "Ver Detalle" y "Editar" (sin botón "Crear" ni opción "Borrar").
+11. THE SPA SHALL presentar las vistas de listado de Bloqueos del cluster, Trazabilidad/Auditoría e Interfaces únicamente con la opción "Ver Detalle" (sin opciones de Crear, Editar ni Borrar).
