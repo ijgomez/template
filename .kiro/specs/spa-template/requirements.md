@@ -170,13 +170,16 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 
 ### Requirement 11: Notificaciones al usuario
 
-**User Story:** As a usuario, I want recibir feedback visual sobre el resultado de mis acciones, so that sepa si una operación se completó correctamente o hubo un error.
+**User Story:** As a usuario, I want recibir feedback visual sobre el progreso y resultado de mis acciones, so that sepa que la aplicación está procesando mi solicitud y conozca el resultado final de la operación.
 
 #### Acceptance Criteria
 
-1. WHEN una operación se completa exitosamente (crear, actualizar, eliminar), THE SPA SHALL mostrar una notificación de tipo éxito visible durante 5 segundos.
-2. WHEN una operación falla, THE SPA SHALL mostrar una notificación de tipo error con el mensaje descriptivo del error visible durante 8 segundos.
-3. THE SPA SHALL permitir al usuario cerrar manualmente cualquier notificación antes de que expire.
+1. WHEN el usuario ejecuta una acción que requiere procesamiento (crear, actualizar, eliminar), THE SPA SHALL mostrar inmediatamente una notificación de tipo progreso indicando que la operación está en curso.
+2. WHEN la operación en curso se completa exitosamente, THE SPA SHALL reemplazar la notificación de progreso por una notificación de tipo éxito visible durante 5 segundos.
+3. WHEN la operación en curso falla, THE SPA SHALL reemplazar la notificación de progreso por una notificación de tipo error con el mensaje descriptivo del motivo del fallo, visible durante 8 segundos.
+4. THE SPA SHALL permitir al usuario cerrar manualmente cualquier notificación (progreso, éxito o error) antes de que expire.
+5. WHILE la notificación de progreso está visible, THE SPA SHALL mostrar un indicador visual de actividad (spinner o barra de progreso indeterminada) junto al mensaje de la notificación.
+6. THE SPA SHALL soportar tres tipos de notificación: progreso (información de operación en curso), éxito (confirmación de operación completada) y error (detalle del fallo ocurrido).
 
 ### Requirement 12: Internacionalización y detección de idioma
 
