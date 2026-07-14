@@ -113,16 +113,18 @@ Ambos mecanismos deben usarse siempre juntos: el changeset vive en la carpeta de
 
 ## Convenciones de Nomenclatura
 
-| Elemento     | Convención                       | Ejemplo                          |
-|--------------|----------------------------------|----------------------------------|
-| Ficheros     | `YYYYMMDD-descripcion-kebab.xml` | `20240101-create-user-table.xml` |
-| Tablas       | snake_case, **singular**         | `user`, `order_item`             |
-| Columnas     | snake_case, **singular**         | `created_at`, `user_id`          |
-| Índices      | `idx_<tabla>_<columna>`          | `idx_user_email`                 |
-| Foreign keys | `<tabla>_<referencia>_FK`        | `order_user_id_FK`               |
-| Secuencias   | `<tabla>_SEQ`                    | `user_SEQ`                       |
+| Elemento           | Convención                       | Ejemplo                          |
+|---------------------|----------------------------------|----------------------------------|
+| Ficheros            | `YYYYMMDD-descripcion-kebab.xml` | `20240101-create-user-table.xml` |
+| Tablas              | snake_case, **singular**         | `user`, `order_item`             |
+| Tablas intermedias  | `<entidad1>2<entidad2>`          | `profile2action`                 |
+| Columnas            | snake_case, **singular**         | `created_at`, `user_id`          |
+| Índices             | `idx_<tabla>_<columna>`          | `idx_user_email`                 |
+| Foreign keys        | `<tabla>_<referencia>_FK`        | `order_user_id_FK`               |
+| Secuencias          | `<tabla>_SEQ`                    | `user_SEQ`                       |
 
 - Los nombres de tablas y columnas deben estar en **singular** (no en plural).
+- Las tablas intermedias (join tables) de relaciones muchos-a-muchos siguen la convención `<entidad1>2<entidad2>` en snake_case (p. ej. `profile2action`).
 - Todas las foreign keys **deben** terminar en `_FK`.
 - Todas las secuencias **deben** terminar en `_SEQ`.
 

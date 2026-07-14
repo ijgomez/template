@@ -142,7 +142,7 @@ org.myorganization.template.core
 - **Controller:** solo gestión de la petición HTTP y delegación al servicio. Sin lógica de negocio. Ver `coding-api.md` para las reglas detalladas de la API REST.
 - **Service:** lógica de negocio. Anotado con `@Service`.
 - **Repository:** acceso a datos mediante Spring Data JPA. Anotado con `@Repository`.
-- **Entity:** mapeo JPA. Usar `@Entity`, evitar lógica en las entidades.
+- **Entity:** mapeo JPA. Usar `@Entity`, evitar lógica en las entidades. Para relaciones muchos-a-muchos, la tabla intermedia (join table) se nombra con la convención `<entidad1>2<entidad2>` (p. ej. `profile2action`) usando `@JoinTable(name = "profile2action")`.
 - **DTO:** objetos de transferencia de datos para entrada/salida de la API. No exponer entidades directamente.
 
 ### Responsabilidades por módulo

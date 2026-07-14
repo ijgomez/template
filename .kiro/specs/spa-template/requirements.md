@@ -27,8 +27,8 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 - **LayoutComponent**: Componente Angular que define la estructura visual de la aplicación (header, sidebar, content area, footer).
 - **Guard**: Mecanismo de Angular que protege rutas comprobando el estado de autenticación o los permisos del usuario.
 - **Interceptor**: Componente de Angular que intercepta las peticiones HTTP para adjuntar el token JWT y gestionar errores de autenticación.
-- **Profile**: Conjunto nombrado de acciones (permisos) que se asigna a los usuarios para determinar su nivel de acceso dentro del sistema. Equivale al concepto de "rol" con acciones granulares asociadas.
-- **Action**: Permiso individual y granular que autoriza el acceso a una funcionalidad específica del sistema. Las acciones se agrupan en perfiles.
+- **Profile**: Conjunto nombrado de acciones (permisos) que se asigna a los usuarios para determinar su nivel de acceso dentro del sistema. Equivale al concepto de "rol" con acciones granulares asociadas. Mantiene una relación muchos-a-muchos con las acciones: un perfil puede tener de 0 a N acciones asignadas y una misma acción puede estar asignada a múltiples perfiles.
+- **Action**: Permiso individual y granular que autoriza el acceso a una funcionalidad específica del sistema. Cada acción tiene un tipo (READ, WRITE, EXECUTE) que clasifica la naturaleza del permiso. Las acciones se agrupan en perfiles.
 - **JWT**: JSON Web Token — estándar para transmitir información de autenticación de forma segura entre el frontend y el backend.
 - **Report**: Documento generado a partir de datos de la aplicación, que presenta información consolidada y estructurada para análisis, supervisión y toma de decisiones.
 - **Parameter**: Valor de configuración general que controla el comportamiento operativo de la aplicación y puede ser modificado por un administrador sin necesidad de despliegue.
@@ -218,14 +218,15 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 
 #### Acceptance Criteria
 
-1. THE ProfileService SHALL exponer un endpoint para crear un nuevo perfil con los datos: nombre, descripción y lista de acciones asignadas.
-2. THE ProfileService SHALL exponer un endpoint para obtener la lista de perfiles con soporte de paginación y filtros por nombre y estado.
+1. THE ProfileService SHALL exponer un endpoint para crear un nuevo perfil con los datos: nombre (obligatorio, único), descripción (opcional) y lista de acciones asignadas (de 0 a N acciones, sin duplicados).
+2. THE ProfileService SHALL exponer un endpoint para obtener la lista de perfiles con soporte de paginación y filtros por nombre.
 3. THE ProfileService SHALL exponer un endpoint para obtener los datos de un perfil concreto por su identificador, incluyendo la lista de acciones asignadas.
-4. THE ProfileService SHALL exponer un endpoint para actualizar los datos de un perfil existente (nombre, descripción, lista de acciones asignadas).
+4. THE ProfileService SHALL exponer un endpoint para actualizar los datos de un perfil existente (nombre, descripción, lista de acciones asignadas sin duplicados).
 5. THE ProfileService SHALL exponer un endpoint para eliminar un perfil existente.
 6. WHEN se intenta crear un perfil con un nombre que ya existe, THE ProfileService SHALL devolver un error 409 Conflict.
 7. WHEN se intenta eliminar un perfil que tiene usuarios asignados, THE ProfileService SHALL devolver un error 409 Conflict con un mensaje indicando que el perfil está en uso.
 8. WHEN se intenta acceder a un perfil que no existe, THE ProfileService SHALL devolver un error 404 Not Found.
+9. WHEN se intenta crear o actualizar un perfil con una acción duplicada en la lista de acciones, THE ProfileService SHALL devolver un error 400 Bad Request indicando que la lista de acciones contiene duplicados.
 
 ### Requirement 15: Consulta y edición de acciones
 
@@ -233,13 +234,39 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 
 #### Acceptance Criteria
 
-1. THE ActionService SHALL exponer un endpoint para obtener la lista de acciones con soporte de paginación y filtros por código y nombre.
-2. THE ActionService SHALL exponer un endpoint para obtener los datos de una acción concreta por su identificador.
-3. THE ActionService SHALL exponer un endpoint para actualizar los datos de una acción existente (nombre, descripción).
+1. THE ActionService SHALL exponer un endpoint para obtener la lista de acciones con soporte de paginación y filtros por código, nombre y tipo.
+2. THE ActionService SHALL exponer un endpoint para obtener los datos de una acción concreta por su identificador, incluyendo los campos: código, tipo, nombre y descripción.
+3. THE ActionService SHALL exponer un endpoint para actualizar los datos de una acción existente (nombre, descripción y tipo).
 4. WHEN se intenta acceder a una acción que no existe, THE ActionService SHALL devolver un error 404 Not Found.
 5. THE ActionService SHALL rechazar cualquier solicitud de eliminación de acciones, devolviendo un error 405 Method Not Allowed.
+6. THE ActionService SHALL rechazar cualquier solicitud de creación de acciones, devolviendo un error 405 Method Not Allowed.
 
-### Requirement 16: Generación y consulta de informes
+### Requirement 16: Modelo de datos de acción
+
+**User Story:** As a desarrollador, I want un modelo de datos de acción bien definido en la base de datos, so that pueda gestionar los permisos granulares del sistema de forma consistente y tipada.
+
+#### Acceptance Criteria
+
+1. THE SPA SHALL gestionar la tabla de acciones con los siguientes campos: identificador (autogenerado), código (único, obligatorio), tipo (obligatorio, enum con valores READ, WRITE, EXECUTE), nombre (obligatorio), descripción (opcional), fecha de creación y fecha de última modificación.
+2. THE SPA SHALL crear el esquema de la tabla de acciones mediante una migración Liquibase versionada.
+3. THE SPA SHALL definir el campo tipo como un enum de base de datos con los valores permitidos: READ, WRITE, EXECUTE.
+4. WHEN se intenta insertar una acción con un código que ya existe, THE SPA SHALL rechazar la operación con un error de violación de restricción de unicidad.
+
+### Requirement 17: Modelo de datos de perfil
+
+**User Story:** As a desarrollador, I want un modelo de datos de perfil bien definido en la base de datos, so that pueda gestionar los perfiles y su relación con las acciones de forma consistente.
+
+#### Acceptance Criteria
+
+1. THE SPA SHALL gestionar la tabla de perfiles con los siguientes campos: identificador (autogenerado), nombre (único, obligatorio), descripción (opcional), fecha de creación y fecha de última modificación.
+2. THE SPA SHALL gestionar la tabla intermedia de relación perfil-acción (join table) con el nombre `profile2action`, siguiendo la convención de nomenclatura `<Entidad1>2<Entidad2>` para tablas intermedias. La tabla contendrá los campos: identificador del perfil (referencia a la tabla de perfiles) e identificador de la acción (referencia a la tabla de acciones).
+3. THE SPA SHALL definir una restricción de unicidad compuesta en la tabla intermedia `profile2action` sobre los campos identificador del perfil e identificador de la acción, garantizando que una misma acción no pueda asignarse dos veces al mismo perfil.
+4. THE SPA SHALL crear el esquema de la tabla de perfiles y de la tabla intermedia `profile2action` mediante migraciones Liquibase versionadas.
+5. THE SPA SHALL aplicar la convención de nomenclatura `<Entidad1>2<Entidad2>` (en snake_case) para todas las tablas intermedias de relaciones muchos-a-muchos del sistema.
+5. WHEN se intenta insertar un perfil con un nombre que ya existe, THE SPA SHALL rechazar la operación con un error de violación de restricción de unicidad.
+6. WHEN se intenta insertar un registro duplicado en la tabla intermedia `profile2action`, THE SPA SHALL rechazar la operación con un error de violación de restricción de unicidad compuesta.
+
+### Requirement 18: Generación y consulta de informes
 
 **User Story:** As a usuario autenticado, I want generar y consultar informes de la aplicación, so that pueda obtener datos consolidados y estructurados para análisis, supervisión y toma de decisiones.
 
@@ -252,7 +279,7 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 5. WHEN el usuario solicita generar un informe sin proporcionar filtros obligatorios, THE ReportService SHALL devolver un error 400 Bad Request indicando los filtros requeridos.
 6. WHEN el usuario no tiene la acción requerida para acceder a un informe, THE ReportService SHALL devolver un error 403 Forbidden.
 
-### Requirement 17: Exportación de informes
+### Requirement 19: Exportación de informes
 
 **User Story:** As a usuario autenticado, I want exportar los informes en diferentes formatos, so that pueda descargar y compartir la información fuera de la aplicación.
 
@@ -265,7 +292,7 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 5. WHEN la exportación se completa, THE SPA SHALL iniciar la descarga del fichero en el navegador del usuario.
 6. IF la generación del fichero de exportación falla, THEN THE ReportService SHALL devolver un error 500 Internal Server Error con un mensaje descriptivo.
 
-### Requirement 18: Gestión de parámetros generales
+### Requirement 20: Gestión de parámetros generales
 
 **User Story:** As a administrador, I want definir y modificar los parámetros generales de operación de la aplicación, so that pueda ajustar el comportamiento del sistema sin necesidad de despliegue.
 
@@ -278,7 +305,7 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 5. WHEN se intenta acceder a un parámetro que no existe, THE ParameterService SHALL devolver un error 404 Not Found.
 6. THE ParameterService SHALL registrar en el AuditLog cada modificación de un parámetro, incluyendo el valor anterior, el valor nuevo y el usuario que realizó el cambio.
 
-### Requirement 19: Trazabilidad y auditoría del sistema (solo lectura)
+### Requirement 21: Trazabilidad y auditoría del sistema (solo lectura)
 
 **User Story:** As a administrador, I want consultar los registros de actividad y errores del sistema, so that pueda supervisar el comportamiento de la aplicación, investigar incidencias y garantizar la trazabilidad de las operaciones.
 
@@ -292,7 +319,7 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 6. WHEN el volumen de datos del log supera el período de retención configurado, THE AuditService SHALL archivar los registros antiguos según la política de retención definida en los parámetros del sistema.
 7. THE AuditService SHALL exponer únicamente endpoints de consulta (GET). La creación, modificación y eliminación de registros de auditoría no está disponible a través de la API de usuario; el registro se realiza de forma automática por el sistema.
 
-### Requirement 20: Supervisión de interfaces y servicios integrados (solo lectura)
+### Requirement 22: Supervisión de interfaces y servicios integrados (solo lectura)
 
 **User Story:** As a administrador, I want consultar el estado de las interfaces y servicios integrados con la aplicación, so that pueda detectar problemas de conectividad y garantizar la disponibilidad de las integraciones.
 
@@ -306,7 +333,7 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 6. WHEN se intenta acceder a una interfaz que no existe, THE InterfaceService SHALL devolver un error 404 Not Found.
 7. THE InterfaceService SHALL exponer únicamente endpoints de consulta (GET). La creación, modificación y eliminación de interfaces no está disponible a través de la API de usuario.
 
-### Requirement 21: Consulta y edición de nodos del cluster
+### Requirement 23: Consulta y edición de nodos del cluster
 
 **User Story:** As a administrador, I want consultar y editar la configuración de los nodos del cluster, so that pueda supervisar el estado de las instancias y ajustar su configuración para garantizar la alta disponibilidad de la aplicación.
 
@@ -320,7 +347,7 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 6. WHEN se intenta acceder a un nodo que no existe, THE ClusterService SHALL devolver un error 404 Not Found.
 7. THE ClusterService SHALL rechazar cualquier solicitud de eliminación de nodos, devolviendo un error 405 Method Not Allowed.
 
-### Requirement 22: Consulta de bloqueos del cluster (solo lectura)
+### Requirement 24: Consulta de bloqueos del cluster (solo lectura)
 
 **User Story:** As a administrador, I want consultar los bloqueos activos en el cluster, so that pueda supervisar la coordinación entre nodos y verificar el estado de los recursos compartidos.
 
@@ -332,7 +359,7 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 4. WHEN se intenta acceder a un bloqueo que no existe o ya ha expirado, THE ClusterService SHALL devolver un error 404 Not Found.
 5. THE ClusterService SHALL exponer únicamente endpoints de consulta (GET) para los bloqueos. La liberación manual de bloqueos no está disponible a través de la API de usuario.
 
-### Requirement 23: Comportamiento estándar de vistas de listado
+### Requirement 25: Comportamiento estándar de vistas de listado
 
 **User Story:** As a usuario autenticado, I want que todas las vistas que presenten listas o tablas de datos en la aplicación sigan un comportamiento consistente, so that pueda paginar, filtrar, exportar y gestionar los registros de forma uniforme.
 
