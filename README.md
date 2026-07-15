@@ -13,8 +13,8 @@ Sobre esta base común se incorporan los módulos funcionales propios de cada pr
 
 El objetivo es disponer de una plataforma reutilizable, escalable y mantenible que unifique la arquitectura, el modelo de datos, la experiencia de usuario y las buenas prácticas de desarrollo, reduciendo significativamente el esfuerzo necesario para iniciar nuevos proyectos y garantizando la homogeneidad entre las aplicaciones desarrolladas.
 
-## Documentacion
+## Documentación
 
-La documentación completa del proyecto está disponible en el modulo: [Documentación](template-docs/README.md)
+La documentación completa del proyecto está disponible en el módulo: [Documentación](template-docs/README.md)
 
 

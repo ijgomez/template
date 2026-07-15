@@ -10,7 +10,7 @@ En este directorio se encuentra toda la documentación funcional y técnica de l
 
 Describe la arquitectura general, las tecnologías utilizadas y la estructura del proyecto.
 
-- [Visión general](01-introduction/vision.md)
+- [Visión general](01-introduction/overview.md)
 - [Arquitectura](01-introduction/architecture.md)
 - [Tecnologías utilizadas](01-introduction/technologies.md)
 - [Estructura del proyecto](01-introduction/project-structure.md)
@@ -39,7 +39,6 @@ Describe los distintos módulos funcionales de la aplicación.
 
 #### Backend
 
-- [Arquitectura](03-technical/backend/arquitectura.md)
 - [Seguridad](03-technical/backend/security.md)
 - [Modelo de datos](03-technical/backend/database-model.md)
 - [API](03-technical/backend/api.md)
