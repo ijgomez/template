@@ -16,12 +16,12 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 - **Dashboard**: Página principal de la aplicación tras el login, que muestra un resumen de la información relevante para el usuario autenticado.
 - **AuthModule**: Módulo del frontend responsable de gestionar la autenticación (login, logout, refresh de tokens).
 - **AuthService**: Servicio del backend que gestiona la autenticación de usuarios y la emisión de tokens JWT.
-- **UserService**: Servicio del backend que gestiona las operaciones CRUD sobre los usuarios del sistema.
+- **UserService**: Servicio del backend que gestiona las operaciones CRUD sobre los usuarios del sistema. El modelo de usuario incluye: username (único, obligatorio), password (hash BCrypt, obligatorio), nombre (opcional), apellidos (opcional), email (opcional), lastAccess (fecha, solo lectura del sistema) y perfil asignado. Gestiona además la relación muchos-a-muchos con informes a través de la tabla intermedia `user2report`.
 - **ProfileService**: Servicio del backend que gestiona las operaciones CRUD sobre los perfiles (roles) del sistema, incluyendo la asignación de acciones a cada perfil.
 - **ActionService**: Servicio del backend que gestiona la consulta y edición de las acciones (permisos) del sistema. Las acciones no pueden ser creadas ni eliminadas por los usuarios.
 - **ReportService**: Servicio del backend que gestiona la generación, consulta y exportación de informes de la aplicación.
 - **ParameterService**: Servicio del backend que gestiona los parámetros generales de operación de la aplicación.
-- **AuditService**: Servicio del backend que gestiona el registro y consulta de la trazabilidad y auditoría del sistema (logs de actividad y errores).
+- **AuditService**: Servicio del backend que gestiona la consulta de los registros de auditoría almacenados en la tabla audit_log. El registro (escritura) de la auditoría se realiza de forma automática mediante AOP (aspectos), sin intervención directa de este servicio ni del código de negocio.
 - **InterfaceService**: Servicio del backend que gestiona la consulta y supervisión del estado, definición y trazabilidad de las interfaces y servicios integrados. Expone únicamente operaciones de lectura.
 - **ClusterService**: Servicio del backend que gestiona la consulta y edición de los nodos del cluster y la consulta de bloqueos en entornos de alta disponibilidad. Los nodos no pueden ser eliminados y los bloqueos solo pueden ser consultados.
 - **LayoutComponent**: Componente Angular que define la estructura visual de la aplicación (header, sidebar, content area, footer).
@@ -32,7 +32,8 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 - **JWT**: JSON Web Token — estándar para transmitir información de autenticación de forma segura entre el frontend y el backend.
 - **Report**: Documento generado a partir de datos de la aplicación, que presenta información consolidada y estructurada para análisis, supervisión y toma de decisiones.
 - **Parameter**: Valor de configuración general que controla el comportamiento operativo de la aplicación y puede ser modificado por un administrador sin necesidad de despliegue.
-- **AuditLog**: Registro cronológico de las actividades y errores del sistema que permite la trazabilidad de las operaciones realizadas por los usuarios.
+- **AuditLog**: Registro de auditoría a nivel de aplicación que almacena la actividad de los usuarios en una tabla dedicada (audit_log). NO se refiere a los campos de timestamps en las entidades (created_at, last_modified_at), que son un concepto diferente. El AuditLog registra QUIÉN realizó QUÉ operación (CREATE, UPDATE, DELETE, EXECUTE), CUÁNDO y sobre QUÉ entidad/sección, de forma no invasiva mediante AOP (aspectos) sin contaminar el código de negocio.
+- **AOP**: Aspect-Oriented Programming (Programación Orientada a Aspectos) — paradigma que permite separar las preocupaciones transversales (como auditoría, logging, seguridad) del código de negocio principal, aplicándolas de forma declarativa mediante aspectos que interceptan las operaciones sin modificar el código de los servicios.
 - **Interface**: Punto de integración entre la aplicación y un servicio externo, cuyo estado y actividad puede ser supervisado por los administradores.
 - **Node**: Instancia individual de la aplicación en un entorno de alta disponibilidad (cluster).
 - **Lock**: Mecanismo de bloqueo utilizado para coordinar el acceso exclusivo a recursos compartidos entre los nodos del cluster.
@@ -45,10 +46,11 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 
 #### Acceptance Criteria
 
-1. WHEN el usuario envía credenciales válidas (email y contraseña), THE AuthService SHALL autenticar al usuario y devolver un access token JWT y un refresh token.
+1. WHEN el usuario envía credenciales válidas (username y contraseña), THE AuthService SHALL autenticar al usuario y devolver un access token JWT y un refresh token.
 2. WHEN el usuario envía credenciales inválidas, THE AuthService SHALL devolver un error 401 Unauthorized con un mensaje descriptivo.
-3. WHEN el AuthModule recibe un access token válido, THE AuthModule SHALL almacenar el token en memoria y redirigir al usuario al Dashboard.
-4. WHILE el usuario no está autenticado, THE Guard SHALL redirigir cualquier intento de acceso a rutas protegidas hacia la página de login.
+3. WHEN la autenticación es exitosa, THE AuthService SHALL actualizar el campo lastAccess del usuario con la fecha y hora actuales del sistema.
+4. WHEN el AuthModule recibe un access token válido, THE AuthModule SHALL almacenar el token en memoria y redirigir al usuario al Dashboard.
+5. WHILE el usuario no está autenticado, THE Guard SHALL redirigir cualquier intento de acceso a rutas protegidas hacia la página de login.
 
 ### Requirement 2: Logout de usuario
 
@@ -76,13 +78,14 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 
 #### Acceptance Criteria
 
-1. THE UserService SHALL exponer un endpoint para crear un nuevo usuario con los datos: nombre, email, contraseña y perfil asignado.
-2. THE UserService SHALL exponer un endpoint para obtener la lista de usuarios con soporte de paginación y filtros por nombre, email y perfil.
+1. THE UserService SHALL exponer un endpoint para crear un nuevo usuario con los datos: username (obligatorio, único), password (obligatorio), nombre (opcional), apellidos (opcional), email (opcional), perfil asignado y lista de informes permitidos (de 0 a N informes, sin duplicados).
+2. THE UserService SHALL exponer un endpoint para obtener la lista de usuarios con soporte de paginación y filtros por username, nombre, apellidos, email y perfil.
 3. THE UserService SHALL exponer un endpoint para obtener los datos de un usuario concreto por su identificador.
-4. THE UserService SHALL exponer un endpoint para actualizar los datos de un usuario existente (nombre, email, perfil asignado).
+4. THE UserService SHALL exponer un endpoint para actualizar los datos de un usuario existente (nombre, apellidos, email, perfil asignado y lista de informes permitidos sin duplicados).
 5. THE UserService SHALL exponer un endpoint para eliminar un usuario existente.
-6. WHEN se intenta crear un usuario con un email que ya existe, THE UserService SHALL devolver un error 409 Conflict.
+6. WHEN se intenta crear un usuario con un username que ya existe, THE UserService SHALL devolver un error 409 Conflict.
 7. WHEN se intenta acceder a un usuario que no existe, THE UserService SHALL devolver un error 404 Not Found.
+8. WHEN se intenta crear o actualizar un usuario con un informe duplicado en la lista de informes permitidos, THE UserService SHALL devolver un error 400 Bad Request indicando que la lista de informes contiene duplicados.
 
 ### Requirement 5: Autorización basada en perfiles y acciones
 
@@ -144,9 +147,13 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 
 #### Acceptance Criteria
 
-1. THE SPA SHALL gestionar la tabla de usuarios con los siguientes campos: identificador (autogenerado), nombre, email (único), contraseña (hash BCrypt), perfil asignado (referencia a la tabla de perfiles), fecha de creación y fecha de última modificación.
+1. THE SPA SHALL gestionar la tabla de usuarios con los siguientes campos: identificador (autogenerado), username (único, obligatorio), contraseña (hash BCrypt, obligatorio), nombre (opcional), apellidos (opcional), email (opcional), lastAccess (fecha, solo lectura del sistema), perfil asignado (referencia a la tabla de perfiles), fecha de creación y fecha de última modificación.
 2. THE SPA SHALL crear el esquema de la tabla de usuarios mediante una migración Liquibase versionada.
 3. WHEN se crea un nuevo usuario, THE UserService SHALL almacenar la contraseña utilizando el algoritmo BCrypt con un strength mínimo de 12.
+4. THE SPA SHALL gestionar la tabla intermedia de relación usuario-informe (join table) con el nombre `user2report`, siguiendo la convención de nomenclatura `<Entidad1>2<Entidad2>` para tablas intermedias. La tabla contendrá los campos: identificador del usuario (referencia a la tabla de usuarios) e identificador del informe (referencia a la tabla de informes).
+5. THE SPA SHALL definir una restricción de unicidad compuesta en la tabla intermedia `user2report` sobre los campos identificador del usuario e identificador del informe, garantizando que un mismo informe no pueda asignarse dos veces al mismo usuario.
+6. THE SPA SHALL crear el esquema de la tabla intermedia `user2report` mediante una migración Liquibase versionada.
+7. THE SPA SHALL garantizar que el campo lastAccess sea de solo lectura y no modificable a través de la API de gestión de usuarios; su valor se actualiza exclusivamente por el AuthService tras un login exitoso.
 
 ### Requirement 9: Página de perfil del usuario
 
@@ -154,9 +161,9 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 
 #### Acceptance Criteria
 
-1. THE SPA SHALL mostrar una página de perfil accesible para cualquier usuario autenticado con sus datos: nombre y email.
-2. WHEN el usuario modifica sus datos de perfil y confirma, THE UserService SHALL actualizar los datos del usuario en la base de datos.
-3. WHEN el usuario intenta modificar su email a uno que ya existe en el sistema, THE UserService SHALL devolver un error 409 Conflict.
+1. THE SPA SHALL mostrar una página de perfil accesible para cualquier usuario autenticado con los siguientes datos: username (solo lectura), nombre, apellidos, email y lastAccess (solo lectura).
+2. THE SPA SHALL permitir al usuario editar únicamente los campos: nombre, apellidos y email.
+3. WHEN el usuario modifica sus datos de perfil y confirma, THE UserService SHALL actualizar los campos nombre, apellidos y email del usuario en la base de datos.
 
 ### Requirement 10: Configuración por entorno
 
@@ -307,17 +314,20 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 
 ### Requirement 21: Trazabilidad y auditoría del sistema (solo lectura)
 
-**User Story:** As a administrador, I want consultar los registros de actividad y errores del sistema, so that pueda supervisar el comportamiento de la aplicación, investigar incidencias y garantizar la trazabilidad de las operaciones.
+**User Story:** As a administrador, I want consultar los registros de actividad del sistema, so that pueda supervisar el comportamiento de la aplicación, investigar incidencias y garantizar la trazabilidad de todas las operaciones realizadas por los usuarios.
+
+**Nota importante:** Este requisito se refiere exclusivamente al sistema de auditoría a nivel de aplicación, que registra la actividad de los usuarios en una tabla dedicada (audit_log). NO se refiere a los campos de timestamps en las entidades (created_at, last_modified_at), que existen por separado con otro propósito. El registro de auditoría se implementa de forma no invasiva mediante AOP (aspectos) u otra tecnología transversal que no contamine el código de negocio.
 
 #### Acceptance Criteria
 
-1. THE AuditService SHALL registrar automáticamente cada operación relevante del sistema (login, logout, creación, modificación y eliminación de entidades) con los datos: fecha y hora, usuario, acción realizada, entidad afectada y resultado (éxito o error).
-2. THE AuditService SHALL exponer un endpoint para consultar los logs de actividad con soporte de paginación y filtros por rango de fechas, usuario, tipo de acción y entidad.
-3. THE AuditService SHALL exponer un endpoint para consultar los logs de errores con soporte de paginación y filtros por rango de fechas, severidad y componente.
-4. THE SPA SHALL presentar los logs de auditoría en formato tabular con soporte de paginación, ordenación y búsqueda, en modo solo lectura.
-5. THE AuditService SHALL garantizar que los registros de auditoría sean inmutables (no se pueden modificar ni eliminar a través de la API).
+1. THE AuditService SHALL registrar automáticamente mediante AOP (aspectos) cada operación relevante del sistema sin añadir código de auditoría en los servicios de negocio. Las operaciones registradas son: CREATE (creación de un registro de cualquier entidad), UPDATE (modificación de un atributo de una entidad, incluyendo idealmente los valores anteriores y nuevos), DELETE (eliminación de un registro de cualquier entidad) y EXECUTE (ejecución de una acción de tipo execute, como pulsar un botón de ejecución).
+2. THE AuditService SHALL registrar para cada operación auditada los siguientes datos: timestamp (fecha y hora exacta), username (usuario que realizó la operación), operation_type (CREATE, UPDATE, DELETE o EXECUTE), section (módulo/sección del sistema donde se realizó la operación: USERS, PROFILES, ACTIONS, PARAMETERS, REPORTS, INTERFACES, CLUSTER, SYSTEM), entity_id (identificador del registro afectado, opcional), entity_name (tipo de entidad afectada) y detail (texto opcional con información adicional, como los valores antiguos/nuevos en modificaciones).
+3. THE AuditService SHALL exponer un endpoint para consultar los registros de auditoría con soporte de paginación y filtros por: rango de fechas (desde/hasta), usuario (quién realizó la operación), tipo de operación (CREATE, UPDATE, DELETE, EXECUTE) y sección/módulo (USERS, PROFILES, ACTIONS, PARAMETERS, REPORTS, INTERFACES, CLUSTER, SYSTEM).
+4. THE SPA SHALL presentar los registros de auditoría en formato tabular con soporte de paginación, ordenación y filtros, en modo solo lectura.
+5. THE AuditService SHALL garantizar que los registros de auditoría sean inmutables (no se pueden modificar ni eliminar a través de la API ni a través de ningún proceso de la aplicación). La tabla audit_log es append-only.
 6. WHEN el volumen de datos del log supera el período de retención configurado, THE AuditService SHALL archivar los registros antiguos según la política de retención definida en los parámetros del sistema.
-7. THE AuditService SHALL exponer únicamente endpoints de consulta (GET). La creación, modificación y eliminación de registros de auditoría no está disponible a través de la API de usuario; el registro se realiza de forma automática por el sistema.
+7. THE AuditService SHALL exponer únicamente endpoints de consulta (GET). La creación, modificación y eliminación de registros de auditoría no está disponible a través de la API de usuario; el registro se realiza de forma automática por el sistema mediante AOP.
+8. THE AuditService SHALL ser independiente de los campos de timestamps de las entidades (created_at, last_modified_at). Dichos campos existen con un propósito diferente (trazabilidad a nivel de registro) y no sustituyen ni son sustituidos por el sistema de auditoría.
 
 ### Requirement 22: Supervisión de interfaces y servicios integrados (solo lectura)
 
@@ -376,3 +386,16 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 9. WHILE el usuario no tiene la acción requerida para crear, editar o borrar registros, THE SPA SHALL ocultar las opciones correspondientes y presentar la vista de listado en modo solo lectura.
 10. THE SPA SHALL presentar las vistas de listado de Acciones y Nodos del cluster únicamente con las opciones "Ver Detalle" y "Editar" (sin botón "Crear" ni opción "Borrar").
 11. THE SPA SHALL presentar las vistas de listado de Bloqueos del cluster, Trazabilidad/Auditoría e Interfaces únicamente con la opción "Ver Detalle" (sin opciones de Crear, Editar ni Borrar).
+
+### Requirement 26: Modelo de datos de auditoría
+
+**User Story:** As a desarrollador, I want un modelo de datos de auditoría bien definido en la base de datos, so that pueda almacenar de forma estructurada e inmutable todos los registros de actividad generados por el sistema de auditoría AOP.
+
+#### Acceptance Criteria
+
+1. THE SPA SHALL gestionar la tabla de auditoría con el nombre `audit_log` y los siguientes campos: id (BIGINT, autogenerado, clave primaria), timestamp (TIMESTAMP, obligatorio, fecha y hora de la operación), username (VARCHAR, obligatorio, usuario que realizó la operación), operation_type (VARCHAR, obligatorio, enum con valores: CREATE, UPDATE, DELETE, EXECUTE), section (VARCHAR, obligatorio, módulo/sección del sistema con valores: USERS, PROFILES, ACTIONS, PARAMETERS, REPORTS, INTERFACES, CLUSTER, SYSTEM), entity_id (VARCHAR, opcional, identificador del registro afectado), entity_name (VARCHAR, obligatorio, nombre del tipo de entidad afectada) y detail (TEXT, opcional, información adicional como los valores anteriores/nuevos en modificaciones).
+2. THE SPA SHALL crear el esquema de la tabla `audit_log` mediante una migración Liquibase versionada.
+3. THE SPA SHALL garantizar que la tabla `audit_log` sea append-only: no se permite la ejecución de operaciones UPDATE ni DELETE sobre los registros de esta tabla. La inmutabilidad se refuerza tanto a nivel de aplicación (el AuditService no expone operaciones de escritura) como a nivel de base de datos (restricciones o políticas que impidan la modificación o eliminación de registros).
+4. THE SPA SHALL definir un índice compuesto sobre los campos timestamp y username para optimizar las consultas de auditoría filtradas por rango de fechas y usuario.
+5. THE SPA SHALL definir un índice sobre el campo operation_type para optimizar las consultas filtradas por tipo de operación.
+6. THE SPA SHALL definir un índice sobre el campo section para optimizar las consultas filtradas por sección/módulo.
