@@ -41,9 +41,7 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 
 ## Requirements
 
-### Seguridad (SEC)
-
-### Requirement SEC-001: Login de usuario
+### Requirement 1: Login de usuario
 
 **User Story:** As a usuario, I want autenticarme en la aplicación con mis credenciales, so that pueda acceder a las funcionalidades protegidas.
 
@@ -55,7 +53,7 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 4. WHEN el AuthModule recibe un access token válido, THE AuthModule SHALL almacenar el token en memoria y redirigir al usuario al Dashboard.
 5. WHILE el usuario no está autenticado, THE Guard SHALL redirigir cualquier intento de acceso a rutas protegidas hacia la página de login.
 
-### Requirement SEC-002: Logout de usuario
+### Requirement 2: Logout de usuario
 
 **User Story:** As a usuario autenticado, I want cerrar mi sesión, so that mis credenciales dejen de ser válidas y mi sesión quede protegida.
 
@@ -65,7 +63,7 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 2. WHEN el usuario cierra sesión, THE AuthService SHALL invalidar el refresh token en el servidor.
 3. WHEN el logout se completa, THE AuthModule SHALL redirigir al usuario a la página de login.
 
-### Requirement SEC-003: Renovación automática del token
+### Requirement 3: Renovación automática del token
 
 **User Story:** As a usuario autenticado, I want que mi sesión se renueve automáticamente, so that no tenga que volver a iniciar sesión mientras estoy activo.
 
@@ -75,7 +73,7 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 2. WHEN la renovación del token es exitosa, THE Interceptor SHALL reemplazar el access token anterior por el nuevo y reintentar la petición original.
 3. IF el refresh token ha expirado o es inválido, THEN THE AuthModule SHALL cerrar la sesión del usuario y redirigirlo a la página de login.
 
-### Requirement SEC-004: Gestión de usuarios (CRUD)
+### Requirement 4: Gestión de usuarios (CRUD)
 
 **User Story:** As a administrador, I want gestionar los usuarios del sistema (crear, consultar, modificar y eliminar), so that pueda controlar quién tiene acceso a la aplicación.
 
@@ -90,7 +88,7 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 7. WHEN se intenta acceder a un usuario que no existe, THE UserService SHALL devolver un error 404 Not Found.
 8. WHEN se intenta crear o actualizar un usuario con un informe duplicado en la lista de informes permitidos, THE UserService SHALL devolver un error 400 Bad Request indicando que la lista de informes contiene duplicados.
 
-### Requirement SEC-005: Autorización basada en perfiles y acciones
+### Requirement 5: Autorización basada en perfiles y acciones
 
 **User Story:** As a administrador, I want que el sistema restrinja el acceso a funcionalidades según el perfil y las acciones asignadas al usuario, so that cada usuario solo acceda a lo que le corresponde.
 
@@ -103,86 +101,7 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 5. WHEN un usuario sin la acción requerida intenta navegar a una ruta restringida en el frontend, THE Guard SHALL redirigir al usuario al Dashboard.
 6. THE SPA SHALL evaluar las acciones del usuario para determinar la visibilidad de cada elemento de navegación y funcionalidad en la interfaz.
 
-### Requirement SEC-006: Modelo de datos de usuario
-
-**User Story:** As a desarrollador, I want un modelo de datos de usuario bien definido en la base de datos, so that pueda gestionar la información de los usuarios de forma consistente.
-
-#### Acceptance Criteria
-
-1. THE SPA SHALL gestionar la tabla de usuarios con los siguientes campos: identificador (autogenerado), username (único, obligatorio), contraseña (hash BCrypt, obligatorio), nombre (opcional), apellidos (opcional), email (opcional), lastAccess (fecha, solo lectura del sistema), perfil asignado (referencia a la tabla de perfiles), fecha de creación y fecha de última modificación.
-2. THE SPA SHALL crear el esquema de la tabla de usuarios mediante una migración Liquibase versionada.
-3. WHEN se crea un nuevo usuario, THE UserService SHALL almacenar la contraseña utilizando el algoritmo BCrypt con un strength mínimo de 12.
-4. THE SPA SHALL gestionar la tabla intermedia de relación usuario-informe (join table) con el nombre `user2report`, siguiendo la convención de nomenclatura `<Entidad1>2<Entidad2>` para tablas intermedias. La tabla contendrá los campos: identificador del usuario (referencia a la tabla de usuarios) e identificador del informe (referencia a la tabla de informes).
-5. THE SPA SHALL definir una restricción de unicidad compuesta en la tabla intermedia `user2report` sobre los campos identificador del usuario e identificador del informe, garantizando que un mismo informe no pueda asignarse dos veces al mismo usuario.
-6. THE SPA SHALL crear el esquema de la tabla intermedia `user2report` mediante una migración Liquibase versionada.
-7. THE SPA SHALL garantizar que el campo lastAccess sea de solo lectura y no modificable a través de la API de gestión de usuarios; su valor se actualiza exclusivamente por el AuthService tras un login exitoso.
-
-### Requirement SEC-007: Página de perfil del usuario
-
-**User Story:** As a usuario autenticado, I want consultar y modificar mis datos de perfil, so that pueda mantener mi información actualizada.
-
-#### Acceptance Criteria
-
-1. THE SPA SHALL mostrar una página de perfil accesible para cualquier usuario autenticado con los siguientes datos: username (solo lectura), nombre, apellidos, email y lastAccess (solo lectura).
-2. THE SPA SHALL permitir al usuario editar únicamente los campos: nombre, apellidos y email.
-3. WHEN el usuario modifica sus datos de perfil y confirma, THE UserService SHALL actualizar los campos nombre, apellidos y email del usuario en la base de datos.
-
-### Requirement SEC-008: Gestión de perfiles (CRUD)
-
-**User Story:** As a administrador, I want gestionar los perfiles del sistema (crear, consultar, modificar y eliminar), so that pueda definir conjuntos de acciones reutilizables para asignar a los usuarios.
-
-#### Acceptance Criteria
-
-1. THE ProfileService SHALL exponer un endpoint para crear un nuevo perfil con los datos: nombre (obligatorio, único), descripción (opcional) y lista de acciones asignadas (de 0 a N acciones, sin duplicados).
-2. THE ProfileService SHALL exponer un endpoint para obtener la lista de perfiles con soporte de paginación y filtros por nombre.
-3. THE ProfileService SHALL exponer un endpoint para obtener los datos de un perfil concreto por su identificador, incluyendo la lista de acciones asignadas.
-4. THE ProfileService SHALL exponer un endpoint para actualizar los datos de un perfil existente (nombre, descripción, lista de acciones asignadas sin duplicados).
-5. THE ProfileService SHALL exponer un endpoint para eliminar un perfil existente.
-6. WHEN se intenta crear un perfil con un nombre que ya existe, THE ProfileService SHALL devolver un error 409 Conflict.
-7. WHEN se intenta eliminar un perfil que tiene usuarios asignados, THE ProfileService SHALL devolver un error 409 Conflict con un mensaje indicando que el perfil está en uso.
-8. WHEN se intenta acceder a un perfil que no existe, THE ProfileService SHALL devolver un error 404 Not Found.
-9. WHEN se intenta crear o actualizar un perfil con una acción duplicada en la lista de acciones, THE ProfileService SHALL devolver un error 400 Bad Request indicando que la lista de acciones contiene duplicados.
-
-### Requirement SEC-009: Consulta y edición de acciones
-
-**User Story:** As a administrador, I want consultar y editar las acciones (permisos) del sistema, so that pueda revisar y actualizar la información descriptiva de los permisos granulares que controlan el acceso a cada funcionalidad.
-
-#### Acceptance Criteria
-
-1. THE ActionService SHALL exponer un endpoint para obtener la lista de acciones con soporte de paginación y filtros por código, nombre y tipo.
-2. THE ActionService SHALL exponer un endpoint para obtener los datos de una acción concreta por su identificador, incluyendo los campos: código, tipo, nombre y descripción.
-3. THE ActionService SHALL exponer un endpoint para actualizar los datos de una acción existente (nombre, descripción y tipo).
-4. WHEN se intenta acceder a una acción que no existe, THE ActionService SHALL devolver un error 404 Not Found.
-5. THE ActionService SHALL rechazar cualquier solicitud de eliminación de acciones, devolviendo un error 405 Method Not Allowed.
-6. THE ActionService SHALL rechazar cualquier solicitud de creación de acciones, devolviendo un error 405 Method Not Allowed.
-
-### Requirement SEC-010: Modelo de datos de acción
-
-**User Story:** As a desarrollador, I want un modelo de datos de acción bien definido en la base de datos, so that pueda gestionar los permisos granulares del sistema de forma consistente y tipada.
-
-#### Acceptance Criteria
-
-1. THE SPA SHALL gestionar la tabla de acciones con los siguientes campos: identificador (autogenerado), código (único, obligatorio), tipo (obligatorio, enum con valores READ, WRITE, EXECUTE), nombre (obligatorio), descripción (opcional), fecha de creación y fecha de última modificación.
-2. THE SPA SHALL crear el esquema de la tabla de acciones mediante una migración Liquibase versionada.
-3. THE SPA SHALL definir el campo tipo como un enum de base de datos con los valores permitidos: READ, WRITE, EXECUTE.
-4. WHEN se intenta insertar una acción con un código que ya existe, THE SPA SHALL rechazar la operación con un error de violación de restricción de unicidad.
-
-### Requirement SEC-011: Modelo de datos de perfil
-
-**User Story:** As a desarrollador, I want un modelo de datos de perfil bien definido en la base de datos, so that pueda gestionar los perfiles y su relación con las acciones de forma consistente.
-
-#### Acceptance Criteria
-
-1. THE SPA SHALL gestionar la tabla de perfiles con los siguientes campos: identificador (autogenerado), nombre (único, obligatorio), descripción (opcional), fecha de creación y fecha de última modificación.
-2. THE SPA SHALL gestionar la tabla intermedia de relación perfil-acción (join table) con el nombre `profile2action`, siguiendo la convención de nomenclatura `<Entidad1>2<Entidad2>` para tablas intermedias. La tabla contendrá los campos: identificador del perfil (referencia a la tabla de perfiles) e identificador de la acción (referencia a la tabla de acciones).
-3. THE SPA SHALL definir una restricción de unicidad compuesta en la tabla intermedia `profile2action` sobre los campos identificador del perfil e identificador de la acción, garantizando que una misma acción no pueda asignarse dos veces al mismo perfil.
-4. THE SPA SHALL crear el esquema de la tabla de perfiles y de la tabla intermedia `profile2action` mediante migraciones Liquibase versionadas.
-5. WHEN se intenta insertar un perfil con un nombre que ya existe, THE SPA SHALL rechazar la operación con un error de violación de restricción de unicidad.
-6. WHEN se intenta insertar un registro duplicado en la tabla intermedia `profile2action`, THE SPA SHALL rechazar la operación con un error de violación de restricción de unicidad compuesta.
-
-### Aplicación (APP)
-
-### Requirement APP-001: Layout responsivo y adaptativo de la aplicación
+### Requirement 6: Layout responsivo y adaptativo de la aplicación
 
 **User Story:** As a usuario, I want una interfaz consistente y adaptable a distintos dispositivos, so that pueda usar la aplicación de forma óptima desde escritorio, tablet o móvil.
 
@@ -197,7 +116,7 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 7. THE SPA SHALL aplicar principios de AdaptiveDesign ofreciendo experiencias diferenciadas por tipo de dispositivo: en móvil simplificando la navegación y priorizando acciones principales, en tablet ofreciendo un equilibrio entre densidad de información e interacción táctil, y en escritorio aprovechando el espacio disponible para mostrar más información simultáneamente.
 8. THE LayoutComponent SHALL utilizar breakpoints consistentes con el sistema de Bootstrap 5: xs (<576px), sm (≥576px), md (≥768px), lg (≥992px), xl (≥1200px), xxl (≥1400px).
 
-### Requirement APP-002: Navegación de la aplicación
+### Requirement 7: Navegación de la aplicación
 
 **User Story:** As a usuario autenticado, I want navegar entre las distintas secciones de la aplicación, so that pueda acceder a la funcionalidad que necesito.
 
@@ -223,7 +142,31 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 6. THE SPA SHALL presentar los elementos del menú con capacidad de expandir y colapsar los sub-niveles (Administración, Seguridad, Cluster).
 7. WHILE el usuario no tiene la acción requerida para acceder a una sección del menú, THE SPA SHALL ocultar dicha sección del menú de navegación.
 
-### Requirement APP-003: Configuración por entorno
+### Requirement 8: Modelo de datos de usuario
+
+**User Story:** As a desarrollador, I want un modelo de datos de usuario bien definido en la base de datos, so that pueda gestionar la información de los usuarios de forma consistente.
+
+#### Acceptance Criteria
+
+1. THE SPA SHALL gestionar la tabla de usuarios con los siguientes campos: identificador (autogenerado), username (único, obligatorio), contraseña (hash BCrypt, obligatorio), nombre (opcional), apellidos (opcional), email (opcional), lastAccess (fecha, solo lectura del sistema), perfil asignado (referencia a la tabla de perfiles), fecha de creación y fecha de última modificación.
+2. THE SPA SHALL crear el esquema de la tabla de usuarios mediante una migración Liquibase versionada.
+3. WHEN se crea un nuevo usuario, THE UserService SHALL almacenar la contraseña utilizando el algoritmo BCrypt con un strength mínimo de 12.
+4. THE SPA SHALL gestionar la tabla intermedia de relación usuario-informe (join table) con el nombre `user2report`, siguiendo la convención de nomenclatura `<Entidad1>2<Entidad2>` para tablas intermedias. La tabla contendrá los campos: identificador del usuario (referencia a la tabla de usuarios) e identificador del informe (referencia a la tabla de informes).
+5. THE SPA SHALL definir una restricción de unicidad compuesta en la tabla intermedia `user2report` sobre los campos identificador del usuario e identificador del informe, garantizando que un mismo informe no pueda asignarse dos veces al mismo usuario.
+6. THE SPA SHALL crear el esquema de la tabla intermedia `user2report` mediante una migración Liquibase versionada.
+7. THE SPA SHALL garantizar que el campo lastAccess sea de solo lectura y no modificable a través de la API de gestión de usuarios; su valor se actualiza exclusivamente por el AuthService tras un login exitoso.
+
+### Requirement 9: Página de perfil del usuario
+
+**User Story:** As a usuario autenticado, I want consultar y modificar mis datos de perfil, so that pueda mantener mi información actualizada.
+
+#### Acceptance Criteria
+
+1. THE SPA SHALL mostrar una página de perfil accesible para cualquier usuario autenticado con los siguientes datos: username (solo lectura), nombre, apellidos, email y lastAccess (solo lectura).
+2. THE SPA SHALL permitir al usuario editar únicamente los campos: nombre, apellidos y email.
+3. WHEN el usuario modifica sus datos de perfil y confirma, THE UserService SHALL actualizar los campos nombre, apellidos y email del usuario en la base de datos.
+
+### Requirement 10: Configuración por entorno
 
 **User Story:** As a desarrollador, I want que la aplicación soporte múltiples entornos de configuración, so that pueda desplegar la misma aplicación en local, desarrollo, integración, QA y producción con configuraciones específicas.
 
@@ -233,7 +176,7 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 2. THE SPA SHALL soportar los perfiles de compilación Maven (local, dist, test) para generar artefactos específicos según el entorno de destino.
 3. THE SPA SHALL utilizar los ficheros `environment.ts` de Angular para configurar variables específicas del frontend por entorno (desarrollo y producción como mínimo).
 
-### Requirement APP-004: Notificaciones al usuario
+### Requirement 11: Notificaciones al usuario
 
 **User Story:** As a usuario, I want recibir feedback visual sobre el progreso y resultado de mis acciones, so that sepa que la aplicación está procesando mi solicitud y conozca el resultado final de la operación.
 
@@ -246,7 +189,7 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 5. WHILE la notificación de progreso está visible, THE SPA SHALL mostrar un indicador visual de actividad (spinner o barra de progreso indeterminada) junto al mensaje de la notificación.
 6. THE SPA SHALL soportar tres tipos de notificación: progreso (información de operación en curso), éxito (confirmación de operación completada) y error (detalle del fallo ocurrido).
 
-### Requirement APP-005: Internacionalización y detección de idioma
+### Requirement 12: Internacionalización y detección de idioma
 
 **User Story:** As a usuario, I want que la aplicación se adapte automáticamente a mi idioma, so that pueda utilizar la interfaz en mi lengua preferida sin configuración manual.
 
@@ -261,7 +204,7 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 7. THE SPA SHALL persistir la preferencia de idioma del usuario en el almacenamiento local del navegador.
 8. WHEN el usuario tiene una preferencia de idioma almacenada en el almacenamiento local, THE SPA SHALL utilizar dicha preferencia en lugar de la detección automática del navegador.
 
-### Requirement APP-006: Progressive Web App (PWA)
+### Requirement 13: Progressive Web App (PWA)
 
 **User Story:** As a usuario, I want poder instalar la aplicación en mi dispositivo y utilizarla con funcionalidades offline básicas, so that tenga una experiencia similar a una aplicación nativa.
 
@@ -276,7 +219,88 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 7. WHEN una nueva versión de la aplicación está disponible, THE ServiceWorker SHALL notificar al usuario y ofrecer la opción de actualizar la aplicación.
 8. THE SPA SHALL utilizar el módulo @angular/service-worker proporcionado por Angular para la gestión del ServiceWorker.
 
-### Requirement APP-007: Gestión de parámetros generales (CRUD)
+
+### Requirement 14: Gestión de perfiles (CRUD)
+
+**User Story:** As a administrador, I want gestionar los perfiles del sistema (crear, consultar, modificar y eliminar), so that pueda definir conjuntos de acciones reutilizables para asignar a los usuarios.
+
+#### Acceptance Criteria
+
+1. THE ProfileService SHALL exponer un endpoint para crear un nuevo perfil con los datos: nombre (obligatorio, único), descripción (opcional) y lista de acciones asignadas (de 0 a N acciones, sin duplicados).
+2. THE ProfileService SHALL exponer un endpoint para obtener la lista de perfiles con soporte de paginación y filtros por nombre.
+3. THE ProfileService SHALL exponer un endpoint para obtener los datos de un perfil concreto por su identificador, incluyendo la lista de acciones asignadas.
+4. THE ProfileService SHALL exponer un endpoint para actualizar los datos de un perfil existente (nombre, descripción, lista de acciones asignadas sin duplicados).
+5. THE ProfileService SHALL exponer un endpoint para eliminar un perfil existente.
+6. WHEN se intenta crear un perfil con un nombre que ya existe, THE ProfileService SHALL devolver un error 409 Conflict.
+7. WHEN se intenta eliminar un perfil que tiene usuarios asignados, THE ProfileService SHALL devolver un error 409 Conflict con un mensaje indicando que el perfil está en uso.
+8. WHEN se intenta acceder a un perfil que no existe, THE ProfileService SHALL devolver un error 404 Not Found.
+9. WHEN se intenta crear o actualizar un perfil con una acción duplicada en la lista de acciones, THE ProfileService SHALL devolver un error 400 Bad Request indicando que la lista de acciones contiene duplicados.
+
+### Requirement 15: Consulta y edición de acciones
+
+**User Story:** As a administrador, I want consultar y editar las acciones (permisos) del sistema, so that pueda revisar y actualizar la información descriptiva de los permisos granulares que controlan el acceso a cada funcionalidad.
+
+#### Acceptance Criteria
+
+1. THE ActionService SHALL exponer un endpoint para obtener la lista de acciones con soporte de paginación y filtros por código, nombre y tipo.
+2. THE ActionService SHALL exponer un endpoint para obtener los datos de una acción concreta por su identificador, incluyendo los campos: código, tipo, nombre y descripción.
+3. THE ActionService SHALL exponer un endpoint para actualizar los datos de una acción existente (nombre, descripción y tipo).
+4. WHEN se intenta acceder a una acción que no existe, THE ActionService SHALL devolver un error 404 Not Found.
+5. THE ActionService SHALL rechazar cualquier solicitud de eliminación de acciones, devolviendo un error 405 Method Not Allowed.
+6. THE ActionService SHALL rechazar cualquier solicitud de creación de acciones, devolviendo un error 405 Method Not Allowed.
+
+### Requirement 16: Modelo de datos de acción
+
+**User Story:** As a desarrollador, I want un modelo de datos de acción bien definido en la base de datos, so that pueda gestionar los permisos granulares del sistema de forma consistente y tipada.
+
+#### Acceptance Criteria
+
+1. THE SPA SHALL gestionar la tabla de acciones con los siguientes campos: identificador (autogenerado), código (único, obligatorio), tipo (obligatorio, enum con valores READ, WRITE, EXECUTE), nombre (obligatorio), descripción (opcional), fecha de creación y fecha de última modificación.
+2. THE SPA SHALL crear el esquema de la tabla de acciones mediante una migración Liquibase versionada.
+3. THE SPA SHALL definir el campo tipo como un enum de base de datos con los valores permitidos: READ, WRITE, EXECUTE.
+4. WHEN se intenta insertar una acción con un código que ya existe, THE SPA SHALL rechazar la operación con un error de violación de restricción de unicidad.
+
+### Requirement 17: Modelo de datos de perfil
+
+**User Story:** As a desarrollador, I want un modelo de datos de perfil bien definido en la base de datos, so that pueda gestionar los perfiles y su relación con las acciones de forma consistente.
+
+#### Acceptance Criteria
+
+1. THE SPA SHALL gestionar la tabla de perfiles con los siguientes campos: identificador (autogenerado), nombre (único, obligatorio), descripción (opcional), fecha de creación y fecha de última modificación.
+2. THE SPA SHALL gestionar la tabla intermedia de relación perfil-acción (join table) con el nombre `profile2action`, siguiendo la convención de nomenclatura `<Entidad1>2<Entidad2>` para tablas intermedias. La tabla contendrá los campos: identificador del perfil (referencia a la tabla de perfiles) e identificador de la acción (referencia a la tabla de acciones).
+3. THE SPA SHALL definir una restricción de unicidad compuesta en la tabla intermedia `profile2action` sobre los campos identificador del perfil e identificador de la acción, garantizando que una misma acción no pueda asignarse dos veces al mismo perfil.
+4. THE SPA SHALL crear el esquema de la tabla de perfiles y de la tabla intermedia `profile2action` mediante migraciones Liquibase versionadas.
+5. THE SPA SHALL aplicar la convención de nomenclatura `<Entidad1>2<Entidad2>` (en snake_case) para todas las tablas intermedias de relaciones muchos-a-muchos del sistema.
+5. WHEN se intenta insertar un perfil con un nombre que ya existe, THE SPA SHALL rechazar la operación con un error de violación de restricción de unicidad.
+6. WHEN se intenta insertar un registro duplicado en la tabla intermedia `profile2action`, THE SPA SHALL rechazar la operación con un error de violación de restricción de unicidad compuesta.
+
+### Requirement 18: Generación y consulta de informes
+
+**User Story:** As a usuario autenticado, I want generar y consultar informes de la aplicación, so that pueda obtener datos consolidados y estructurados para análisis, supervisión y toma de decisiones.
+
+#### Acceptance Criteria
+
+1. THE ReportService SHALL exponer un endpoint para obtener la lista de informes disponibles para el usuario autenticado, filtrados según las acciones de su perfil.
+2. THE ReportService SHALL exponer un endpoint para generar un informe específico aceptando parámetros de filtro (rango de fechas, criterios de búsqueda específicos del informe).
+3. WHEN el usuario solicita generar un informe, THE ReportService SHALL aplicar los filtros proporcionados y devolver los datos del informe en formato estructurado.
+4. THE SPA SHALL presentar los datos del informe en pantalla en formato tabular con soporte de paginación y ordenación por columnas.
+5. WHEN el usuario solicita generar un informe sin proporcionar filtros obligatorios, THE ReportService SHALL devolver un error 400 Bad Request indicando los filtros requeridos.
+6. WHEN el usuario no tiene la acción requerida para acceder a un informe, THE ReportService SHALL devolver un error 403 Forbidden.
+
+### Requirement 19: Exportación de informes
+
+**User Story:** As a usuario autenticado, I want exportar los informes en diferentes formatos, so that pueda descargar y compartir la información fuera de la aplicación.
+
+#### Acceptance Criteria
+
+1. THE ReportService SHALL exponer un endpoint para exportar un informe generado en formato PDF.
+2. THE ReportService SHALL exponer un endpoint para exportar un informe generado en formato CSV.
+3. THE ReportService SHALL exponer un endpoint para exportar un informe generado en formato Excel (XLSX).
+4. WHEN el usuario solicita exportar un informe, THE ReportService SHALL aplicar los mismos filtros utilizados en la generación del informe en pantalla.
+5. WHEN la exportación se completa, THE SPA SHALL iniciar la descarga del fichero en el navegador del usuario.
+6. IF la generación del fichero de exportación falla, THEN THE ReportService SHALL devolver un error 500 Internal Server Error con un mensaje descriptivo.
+
+### Requirement 20: Gestión de parámetros generales (CRUD)
 
 **User Story:** As a administrador, I want gestionar los parámetros generales de operación de la aplicación (crear, consultar, modificar y eliminar), so that pueda ajustar el comportamiento del sistema sin necesidad de despliegue.
 
@@ -292,19 +316,66 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 8. WHEN se intenta acceder a un parámetro que no existe, THE ParameterService SHALL devolver un error 404 Not Found.
 9. THE ParameterService SHALL registrar en el AuditLog cada creación, modificación y eliminación de un parámetro, incluyendo el valor anterior (si aplica), el valor nuevo y el usuario que realizó el cambio.
 
-### Requirement APP-008: Modelo de datos de parámetro
+### Requirement 21: Trazabilidad y auditoría del sistema (solo lectura)
 
-**User Story:** As a desarrollador, I want un modelo de datos de parámetro bien definido en la base de datos, so that pueda gestionar los parámetros de configuración del sistema de forma consistente y tipada.
+**User Story:** As a administrador, I want consultar los registros de actividad del sistema, so that pueda supervisar el comportamiento de la aplicación, investigar incidencias y garantizar la trazabilidad de todas las operaciones realizadas por los usuarios.
+
+**Nota importante:** Este requisito se refiere exclusivamente al sistema de auditoría a nivel de aplicación, que registra la actividad de los usuarios en una tabla dedicada (audit_log). NO se refiere a los campos de timestamps en las entidades (created_at, last_modified_at), que existen por separado con otro propósito. El registro de auditoría se implementa de forma no invasiva mediante AOP (aspectos) u otra tecnología transversal que no contamine el código de negocio.
 
 #### Acceptance Criteria
 
-1. THE SPA SHALL gestionar la tabla de parámetros con los siguientes campos: identificador (autogenerado), código (único, obligatorio, tipo VARCHAR), descripción (opcional, tipo VARCHAR), valor (obligatorio, tipo VARCHAR, almacena el valor del parámetro como cadena independientemente de su tipo lógico), tipo (obligatorio, enum con valores: STRING, INTEGER, BOOLEAN, DATE), fecha de creación y fecha de última modificación.
-2. THE SPA SHALL crear el esquema de la tabla de parámetros mediante una migración Liquibase versionada.
-3. THE SPA SHALL definir el campo tipo como un enum de base de datos con los valores permitidos: STRING, INTEGER, BOOLEAN, DATE.
-4. WHEN se intenta insertar un parámetro con un código que ya existe, THE SPA SHALL rechazar la operación con un error de violación de restricción de unicidad.
-5. THE ParameterService SHALL validar que el campo valor sea compatible con el tipo definido antes de persistir el registro: para INTEGER el valor debe ser un número entero válido, para BOOLEAN debe ser "true" o "false", para DATE debe ser una fecha en formato ISO 8601, y para STRING cualquier valor es aceptado.
+1. THE AuditService SHALL registrar automáticamente mediante AOP (aspectos) cada operación relevante del sistema sin añadir código de auditoría en los servicios de negocio. Las operaciones registradas son: CREATE (creación de un registro de cualquier entidad), UPDATE (modificación de un atributo de una entidad, incluyendo idealmente los valores anteriores y nuevos), DELETE (eliminación de un registro de cualquier entidad) y EXECUTE (ejecución de una acción de tipo execute, como pulsar un botón de ejecución).
+2. THE AuditService SHALL registrar para cada operación auditada los siguientes datos: timestamp (fecha y hora exacta), username (usuario que realizó la operación), operation_type (CREATE, UPDATE, DELETE o EXECUTE), section (módulo/sección del sistema donde se realizó la operación: USERS, PROFILES, ACTIONS, PARAMETERS, REPORTS, INTERFACES, CLUSTER, SYSTEM), entity_id (identificador del registro afectado, opcional), entity_name (tipo de entidad afectada) y detail (texto opcional con información adicional, como los valores antiguos/nuevos en modificaciones).
+3. THE AuditService SHALL exponer un endpoint para consultar los registros de auditoría con soporte de paginación y filtros por: rango de fechas (desde/hasta), usuario (quién realizó la operación), tipo de operación (CREATE, UPDATE, DELETE, EXECUTE) y sección/módulo (USERS, PROFILES, ACTIONS, PARAMETERS, REPORTS, INTERFACES, CLUSTER, SYSTEM).
+4. THE SPA SHALL presentar los registros de auditoría en formato tabular con soporte de paginación, ordenación y filtros, en modo solo lectura.
+5. THE AuditService SHALL garantizar que los registros de auditoría sean inmutables (no se pueden modificar ni eliminar a través de la API ni a través de ningún proceso de la aplicación). La tabla audit_log es append-only.
+6. WHEN el volumen de datos del log supera el período de retención configurado, THE AuditService SHALL archivar los registros antiguos según la política de retención definida en los parámetros del sistema.
+7. THE AuditService SHALL exponer únicamente endpoints de consulta (GET). La creación, modificación y eliminación de registros de auditoría no está disponible a través de la API de usuario; el registro se realiza de forma automática por el sistema mediante AOP.
+8. THE AuditService SHALL ser independiente de los campos de timestamps de las entidades (created_at, last_modified_at). Dichos campos existen con un propósito diferente (trazabilidad a nivel de registro) y no sustituyen ni son sustituidos por el sistema de auditoría.
 
-### Requirement APP-009: Comportamiento estándar de vistas de listado
+### Requirement 22: Supervisión de interfaces y servicios integrados (solo lectura)
+
+**User Story:** As a administrador, I want consultar el estado de las interfaces y servicios integrados con la aplicación, so that pueda detectar problemas de conectividad y garantizar la disponibilidad de las integraciones.
+
+#### Acceptance Criteria
+
+1. THE InterfaceService SHALL exponer un endpoint para obtener la lista de interfaces registradas en el sistema con su estado actual (activa, inactiva, en error).
+2. THE InterfaceService SHALL exponer un endpoint para obtener la definición detallada de una interfaz concreta (nombre, descripción, URL del servicio, protocolo, frecuencia de verificación).
+3. THE InterfaceService SHALL exponer un endpoint para consultar la trazabilidad de una interfaz específica: logs de actividad con soporte de paginación y filtros por rango de fechas y resultado (éxito, error).
+4. THE SPA SHALL presentar un panel de supervisión de interfaces mostrando el estado consolidado de todas las interfaces con indicadores visuales (verde para activa, rojo para error, gris para inactiva).
+5. WHEN una interfaz cambia de estado, THE InterfaceService SHALL registrar el cambio en el AuditLog con la fecha, el estado anterior y el estado nuevo.
+6. WHEN se intenta acceder a una interfaz que no existe, THE InterfaceService SHALL devolver un error 404 Not Found.
+7. THE InterfaceService SHALL exponer únicamente endpoints de consulta (GET). La creación, modificación y eliminación de interfaces no está disponible a través de la API de usuario.
+
+### Requirement 23: Consulta y edición de nodos del cluster
+
+**User Story:** As a administrador, I want consultar el estado de los nodos del cluster y poder designar cuál actúa como maestro, so that pueda supervisar las instancias de la aplicación y gestionar la alta disponibilidad.
+
+#### Acceptance Criteria
+
+1. THE ClusterService SHALL exponer un endpoint para obtener la lista de nodos del cluster con los siguientes datos por cada nodo: estado (ALIVE, DEAD), hostname, ip, master, memoriaUsada, memoriaLibre, memoriaTotal, fecha de arranque y fecha de última actualización.
+2. THE ClusterService SHALL exponer un endpoint para obtener los datos detallados de un nodo concreto por su identificador, incluyendo todos los campos de la entidad.
+3. THE ClusterService SHALL exponer un endpoint para actualizar únicamente el campo master de un nodo existente.
+4. WHEN se establece un nodo como master (master=true), THE ClusterService SHALL garantizar que solo un nodo puede ser maestro en el sistema, desactivando automáticamente el flag master del nodo que previamente lo tenía.
+5. THE SPA SHALL presentar un panel de supervisión de nodos mostrando el estado consolidado de todas las instancias con indicadores visuales de disponibilidad (verde para ALIVE, rojo para DEAD) e indicador del nodo maestro.
+6. THE SPA SHALL presentar todos los campos del nodo como solo lectura excepto el campo master, que será editable por el administrador.
+7. WHEN se intenta acceder a un nodo que no existe, THE ClusterService SHALL devolver un error 404 Not Found.
+8. THE ClusterService SHALL rechazar cualquier solicitud de creación de nodos, devolviendo un error 405 Method Not Allowed.
+9. THE ClusterService SHALL rechazar cualquier solicitud de eliminación de nodos, devolviendo un error 405 Method Not Allowed.
+
+### Requirement 24: Consulta de bloqueos del cluster (solo lectura)
+
+**User Story:** As a administrador, I want consultar las estadísticas de bloqueos del cluster, so that pueda supervisar qué tareas producen bloqueos, su frecuencia y sus tiempos de ejecución.
+
+#### Acceptance Criteria
+
+1. THE ClusterService SHALL exponer un endpoint para obtener la lista de bloqueos (ClusterBlock) con soporte de paginación y filtros por nombre de tarea.
+2. THE ClusterService SHALL exponer un endpoint para obtener los datos detallados de un bloqueo concreto por su identificador, incluyendo todos los campos: nombre, fecha de inicio, tiempo medio, tiempo mínimo, tiempo máximo y total.
+3. THE SPA SHALL presentar la lista de bloqueos en modo solo lectura, sin opciones de creación, edición ni eliminación.
+4. WHEN se intenta acceder a un bloqueo que no existe, THE ClusterService SHALL devolver un error 404 Not Found.
+5. THE ClusterService SHALL exponer únicamente endpoints de consulta (GET) para los bloqueos. La creación, modificación y eliminación de bloqueos no está disponible a través de la API de usuario; los registros se gestionan exclusivamente por el sistema.
+
+### Requirement 25: Comportamiento estándar de vistas de listado
 
 **User Story:** As a usuario autenticado, I want que todas las vistas que presenten listas o tablas de datos en la aplicación sigan un comportamiento consistente, so that pueda paginar, filtrar, exportar y gestionar los registros de forma uniforme.
 
@@ -322,7 +393,20 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 10. THE SPA SHALL presentar las vistas de listado de Acciones y Nodos del cluster únicamente con las opciones "Ver Detalle" y "Editar" (sin botón "Crear" ni opción "Borrar").
 11. THE SPA SHALL presentar las vistas de listado de Bloqueos del cluster, Trazabilidad/Auditoría e Interfaces únicamente con la opción "Ver Detalle" (sin opciones de Crear, Editar ni Borrar).
 
-### Requirement APP-010: Gestión de zonas horarias y almacenamiento en UTC
+### Requirement 26: Modelo de datos de auditoría
+
+**User Story:** As a desarrollador, I want un modelo de datos de auditoría bien definido en la base de datos, so that pueda almacenar de forma estructurada e inmutable todos los registros de actividad generados por el sistema de auditoría AOP.
+
+#### Acceptance Criteria
+
+1. THE SPA SHALL gestionar la tabla de auditoría con el nombre `audit_log` y los siguientes campos: id (BIGINT, autogenerado, clave primaria), timestamp (TIMESTAMP, obligatorio, fecha y hora de la operación), username (VARCHAR, obligatorio, usuario que realizó la operación), operation_type (VARCHAR, obligatorio, enum con valores: CREATE, UPDATE, DELETE, EXECUTE), section (VARCHAR, obligatorio, módulo/sección del sistema con valores: USERS, PROFILES, ACTIONS, PARAMETERS, REPORTS, INTERFACES, CLUSTER, SYSTEM), entity_id (VARCHAR, opcional, identificador del registro afectado), entity_name (VARCHAR, obligatorio, nombre del tipo de entidad afectada) y detail (TEXT, opcional, información adicional como los valores anteriores/nuevos en modificaciones).
+2. THE SPA SHALL crear el esquema de la tabla `audit_log` mediante una migración Liquibase versionada.
+3. THE SPA SHALL garantizar que la tabla `audit_log` sea append-only: no se permite la ejecución de operaciones UPDATE ni DELETE sobre los registros de esta tabla. La inmutabilidad se refuerza tanto a nivel de aplicación (el AuditService no expone operaciones de escritura) como a nivel de base de datos (restricciones o políticas que impidan la modificación o eliminación de registros).
+4. THE SPA SHALL definir un índice compuesto sobre los campos timestamp y username para optimizar las consultas de auditoría filtradas por rango de fechas y usuario.
+5. THE SPA SHALL definir un índice sobre el campo operation_type para optimizar las consultas filtradas por tipo de operación.
+6. THE SPA SHALL definir un índice sobre el campo section para optimizar las consultas filtradas por sección/módulo.
+
+### Requirement 27: Gestión de zonas horarias y almacenamiento en UTC
 
 **User Story:** As a usuario, I want que la aplicación almacene todas las fechas en UTC y me las muestre convertidas a mi zona horaria local, so that pueda consultar la información temporal de forma coherente independientemente de mi ubicación geográfica.
 
@@ -336,83 +420,54 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 6. THE SPA SHALL utilizar un servicio o pipe centralizado en Angular para la conversión y formateo de fechas, evitando lógica de conversión dispersa en los componentes.
 7. THE SPA SHALL configurar la conexión a PostgreSQL con el tipo de dato `TIMESTAMP WITH TIME ZONE` (timestamptz) para los campos de fecha y hora, garantizando el almacenamiento correcto en UTC.
 
-### Informes (RPT)
+### Requirement 28: Modelo de datos de parámetro
 
-### Requirement RPT-001: Generación y consulta de informes
-
-**User Story:** As a usuario autenticado, I want generar y consultar informes de la aplicación, so that pueda obtener datos consolidados y estructurados para análisis, supervisión y toma de decisiones.
+**User Story:** As a desarrollador, I want un modelo de datos de parámetro bien definido en la base de datos, so that pueda gestionar los parámetros de configuración del sistema de forma consistente y tipada.
 
 #### Acceptance Criteria
 
-1. THE ReportService SHALL exponer un endpoint para obtener la lista de informes disponibles para el usuario autenticado, filtrados según las acciones de su perfil.
-2. THE ReportService SHALL exponer un endpoint para generar un informe específico aceptando parámetros de filtro (rango de fechas, criterios de búsqueda específicos del informe).
-3. WHEN el usuario solicita generar un informe, THE ReportService SHALL aplicar los filtros proporcionados y devolver los datos del informe en formato estructurado.
-4. THE SPA SHALL presentar los datos del informe en pantalla en formato tabular con soporte de paginación y ordenación por columnas.
-5. WHEN el usuario solicita generar un informe sin proporcionar filtros obligatorios, THE ReportService SHALL devolver un error 400 Bad Request indicando los filtros requeridos.
-6. WHEN el usuario no tiene la acción requerida para acceder a un informe, THE ReportService SHALL devolver un error 403 Forbidden.
+1. THE SPA SHALL gestionar la tabla de parámetros con los siguientes campos: identificador (autogenerado), código (único, obligatorio, tipo VARCHAR), descripción (opcional, tipo VARCHAR), valor (obligatorio, tipo VARCHAR, almacena el valor del parámetro como cadena independientemente de su tipo lógico), tipo (obligatorio, enum con valores: STRING, INTEGER, BOOLEAN, DATE), fecha de creación y fecha de última modificación.
+2. THE SPA SHALL crear el esquema de la tabla de parámetros mediante una migración Liquibase versionada.
+3. THE SPA SHALL definir el campo tipo como un enum de base de datos con los valores permitidos: STRING, INTEGER, BOOLEAN, DATE.
+4. WHEN se intenta insertar un parámetro con un código que ya existe, THE SPA SHALL rechazar la operación con un error de violación de restricción de unicidad.
+5. THE ParameterService SHALL validar que el campo valor sea compatible con el tipo definido antes de persistir el registro: para INTEGER el valor debe ser un número entero válido, para BOOLEAN debe ser "true" o "false", para DATE debe ser una fecha en formato ISO 8601, y para STRING cualquier valor es aceptado.
 
-### Requirement RPT-002: Exportación de informes
+### Requirement 29: Modelo de datos de nodo del cluster
 
-**User Story:** As a usuario autenticado, I want exportar los informes en diferentes formatos, so that pueda descargar y compartir la información fuera de la aplicación.
-
-#### Acceptance Criteria
-
-1. THE ReportService SHALL exponer un endpoint para exportar un informe generado en formato PDF.
-2. THE ReportService SHALL exponer un endpoint para exportar un informe generado en formato CSV.
-3. THE ReportService SHALL exponer un endpoint para exportar un informe generado en formato Excel (XLSX).
-4. WHEN el usuario solicita exportar un informe, THE ReportService SHALL aplicar los mismos filtros utilizados en la generación del informe en pantalla.
-5. WHEN la exportación se completa, THE SPA SHALL iniciar la descarga del fichero en el navegador del usuario.
-6. IF la generación del fichero de exportación falla, THEN THE ReportService SHALL devolver un error 500 Internal Server Error con un mensaje descriptivo.
-
-### Auditoría (AUD)
-
-### Requirement AUD-001: Trazabilidad y auditoría del sistema (solo lectura)
-
-**User Story:** As a administrador, I want consultar los registros de actividad del sistema, so that pueda supervisar el comportamiento de la aplicación, investigar incidencias y garantizar la trazabilidad de todas las operaciones realizadas por los usuarios.
-
-**Nota importante:** Este requisito se refiere exclusivamente al sistema de auditoría a nivel de aplicación, que registra la actividad de los usuarios en una tabla dedicada (audit_log). NO se refiere a los campos de timestamps en las entidades (created_at, last_modified_at), que existen por separado con otro propósito. El registro de auditoría se implementa de forma no invasiva mediante AOP (aspectos) u otra tecnología transversal que no contamine el código de negocio.
+**User Story:** As a desarrollador, I want un modelo de datos de nodo del cluster bien definido en la base de datos, so that pueda registrar y supervisar las instancias de la aplicación en entornos de alta disponibilidad.
 
 #### Acceptance Criteria
 
-1. THE AuditService SHALL registrar automáticamente mediante AOP (aspectos) cada operación relevante del sistema sin añadir código de auditoría en los servicios de negocio. Las operaciones registradas son: CREATE (creación de un registro de cualquier entidad), UPDATE (modificación de un atributo de una entidad, incluyendo idealmente los valores anteriores y nuevos), DELETE (eliminación de un registro de cualquier entidad) y EXECUTE (ejecución de una acción de tipo execute, como pulsar un botón de ejecución).
-2. THE AuditService SHALL registrar para cada operación auditada los siguientes datos: timestamp (fecha y hora exacta), username (usuario que realizó la operación), operation_type (CREATE, UPDATE, DELETE o EXECUTE), section (módulo/sección del sistema donde se realizó la operación: USERS, PROFILES, ACTIONS, PARAMETERS, REPORTS, INTERFACES, CLUSTER, SYSTEM), entity_id (identificador del registro afectado, opcional), entity_name (tipo de entidad afectada) y detail (texto opcional con información adicional, como los valores antiguos/nuevos en modificaciones).
-3. THE AuditService SHALL exponer un endpoint para consultar los registros de auditoría con soporte de paginación y filtros por: rango de fechas (desde/hasta), usuario (quién realizó la operación), tipo de operación (CREATE, UPDATE, DELETE, EXECUTE) y sección/módulo (USERS, PROFILES, ACTIONS, PARAMETERS, REPORTS, INTERFACES, CLUSTER, SYSTEM).
-4. THE SPA SHALL presentar los registros de auditoría en formato tabular con soporte de paginación, ordenación y filtros, en modo solo lectura.
-5. THE AuditService SHALL garantizar que los registros de auditoría sean inmutables (no se pueden modificar ni eliminar a través de la API ni a través de ningún proceso de la aplicación). La tabla audit_log es append-only.
-6. WHEN el volumen de datos del log supera el período de retención configurado, THE AuditService SHALL archivar los registros antiguos según la política de retención definida en los parámetros del sistema.
-7. THE AuditService SHALL exponer únicamente endpoints de consulta (GET). La creación, modificación y eliminación de registros de auditoría no está disponible a través de la API de usuario; el registro se realiza de forma automática por el sistema mediante AOP.
-8. THE AuditService SHALL ser independiente de los campos de timestamps de las entidades (created_at, last_modified_at). Dichos campos existen con un propósito diferente (trazabilidad a nivel de registro) y no sustituyen ni son sustituidos por el sistema de auditoría.
+1. THE SPA SHALL gestionar la tabla de nodos del cluster con los siguientes campos: identificador (autogenerado), estado (obligatorio, enum con valores: ALIVE, DEAD), hostname (obligatorio, tipo VARCHAR, nombre de la máquina del sistema operativo), ip (obligatorio, tipo VARCHAR, dirección IP de la máquina), master (obligatorio, tipo BOOLEAN, indica si el nodo actúa como maestro), memoriaUsada (obligatorio, tipo BIGINT, memoria usada por la aplicación en bytes), memoriaLibre (obligatorio, tipo BIGINT, memoria libre en bytes), memoriaTotal (obligatorio, tipo BIGINT, memoria total en bytes), fecha de arranque (opcional, tipo TIMESTAMP WITH TIME ZONE, última vez que la instancia fue arrancada) y fecha de última actualización (opcional, tipo TIMESTAMP WITH TIME ZONE, último chequeo de que la instancia está funcionando).
+2. THE SPA SHALL crear el esquema de la tabla de nodos del cluster mediante una migración Liquibase versionada.
+3. THE SPA SHALL definir el campo estado como un enum de base de datos con los valores permitidos: ALIVE, DEAD.
+4. THE SPA SHALL garantizar mediante restricción de base de datos o lógica de aplicación que solo un nodo puede tener el campo master con valor true en cualquier momento.
+5. THE SPA SHALL garantizar que los registros de nodos del cluster son creados y actualizados exclusivamente por el propio sistema (la propia instancia de la aplicación al arrancar y periódicamente), nunca por la API de usuario. La API de usuario solo permite modificar el campo master.
 
-### Requirement AUD-002: Modelo de datos de auditoría
+### Requirement 30: Autoregistro y heartbeat del nodo del cluster
 
-**User Story:** As a desarrollador, I want un modelo de datos de auditoría bien definido en la base de datos, so that pueda almacenar de forma estructurada e inmutable todos los registros de actividad generados por el sistema de auditoría AOP.
+**User Story:** As a desarrollador, I want que cada instancia de la aplicación se registre automáticamente en el cluster al arrancar y envíe un heartbeat periódico, so that el sistema de supervisión refleje en todo momento qué instancias están activas.
 
 #### Acceptance Criteria
 
-1. THE SPA SHALL gestionar la tabla de auditoría con el nombre `audit_log` y los siguientes campos: id (BIGINT, autogenerado, clave primaria), timestamp (TIMESTAMP, obligatorio, fecha y hora de la operación), username (VARCHAR, obligatorio, usuario que realizó la operación), operation_type (VARCHAR, obligatorio, enum con valores: CREATE, UPDATE, DELETE, EXECUTE), section (VARCHAR, obligatorio, módulo/sección del sistema con valores: USERS, PROFILES, ACTIONS, PARAMETERS, REPORTS, INTERFACES, CLUSTER, SYSTEM), entity_id (VARCHAR, opcional, identificador del registro afectado), entity_name (VARCHAR, obligatorio, nombre del tipo de entidad afectada) y detail (TEXT, opcional, información adicional como los valores anteriores/nuevos en modificaciones).
-2. THE SPA SHALL crear el esquema de la tabla `audit_log` mediante una migración Liquibase versionada.
-3. THE SPA SHALL garantizar que la tabla `audit_log` sea append-only: no se permite la ejecución de operaciones UPDATE ni DELETE sobre los registros de esta tabla. La inmutabilidad se refuerza tanto a nivel de aplicación (el AuditService no expone operaciones de escritura) como a nivel de base de datos (restricciones o políticas que impidan la modificación o eliminación de registros).
-4. THE SPA SHALL definir un índice compuesto sobre los campos timestamp y username para optimizar las consultas de auditoría filtradas por rango de fechas y usuario.
-5. THE SPA SHALL definir un índice sobre el campo operation_type para optimizar las consultas filtradas por tipo de operación.
-6. THE SPA SHALL definir un índice sobre el campo section para optimizar las consultas filtradas por sección/módulo.
+1. WHEN la aplicación arranca y no existe un registro en la tabla de nodos del cluster con el hostname de la máquina actual, THE ClusterService SHALL crear automáticamente un nuevo registro con: hostname (identificador de la instancia), ip de la máquina, estado ALIVE, master false, datos de memoria actuales, fecha de arranque con la fecha y hora actual y fecha de última actualización con la fecha y hora actual.
+2. WHEN la aplicación arranca y ya existe un registro en la tabla de nodos del cluster con el hostname de la máquina actual, THE ClusterService SHALL actualizar el registro existente con: estado ALIVE, ip actual, datos de memoria actuales y fecha de arranque con la fecha y hora actual.
+3. THE SPA SHALL ejecutar una tarea en background (scheduled task) que cada 30 segundos actualice el registro del nodo en la tabla de nodos del cluster con: estado ALIVE, datos de memoria actuales (memoriaUsada, memoriaLibre, memoriaTotal) y fecha de última actualización con la fecha y hora actual.
+4. THE SPA SHALL utilizar el hostname del sistema operativo como identificador único de la instancia para localizar su registro en la tabla de nodos del cluster.
+5. THE SPA SHALL configurar el intervalo del heartbeat (30 segundos por defecto) como un parámetro configurable a través de los parámetros del sistema o de la configuración de la aplicación.
 
-### Interfaces (INT)
+### Requirement 31: Modelo de datos de bloqueo del cluster (ClusterBlock)
 
-### Requirement INT-001: Supervisión de interfaces y servicios integrados (solo lectura)
-
-**User Story:** As a administrador, I want consultar el estado de las interfaces y servicios integrados con la aplicación, so that pueda detectar problemas de conectividad y garantizar la disponibilidad de las integraciones.
+**User Story:** As a desarrollador, I want un modelo de datos de bloqueo del cluster bien definido en la base de datos, so that pueda registrar y consultar las estadísticas de bloqueos producidos por las tareas del sistema.
 
 #### Acceptance Criteria
 
-1. THE InterfaceService SHALL exponer un endpoint para obtener la lista de interfaces registradas en el sistema con su estado actual (activa, inactiva, en error).
-2. THE InterfaceService SHALL exponer un endpoint para obtener la definición detallada de una interfaz concreta (nombre, descripción, URL del servicio, protocolo, frecuencia de verificación).
-3. THE InterfaceService SHALL exponer un endpoint para consultar la trazabilidad de una interfaz específica: logs de actividad con soporte de paginación y filtros por rango de fechas y resultado (éxito, error).
-4. THE SPA SHALL presentar un panel de supervisión de interfaces mostrando el estado consolidado de todas las interfaces con indicadores visuales (verde para activa, rojo para error, gris para inactiva).
-5. WHEN una interfaz cambia de estado, THE InterfaceService SHALL registrar el cambio en el AuditLog con la fecha, el estado anterior y el estado nuevo.
-6. WHEN se intenta acceder a una interfaz que no existe, THE InterfaceService SHALL devolver un error 404 Not Found.
-7. THE InterfaceService SHALL exponer únicamente endpoints de consulta (GET). La creación, modificación y eliminación de interfaces no está disponible a través de la API de usuario.
+1. THE SPA SHALL gestionar la tabla de bloqueos del cluster (ClusterBlock) con los siguientes campos: identificador (autogenerado), nombre (obligatorio, único, tipo VARCHAR, nombre de la tarea que provoca el bloqueo), fecha de inicio (obligatorio, tipo TIMESTAMP WITH TIME ZONE, fecha de inicio del bloqueo actual), tiempo medio (obligatorio, tipo BIGINT, tiempo medio en milisegundos que ha durado un bloqueo de esta tarea), tiempo mínimo (obligatorio, tipo BIGINT, tiempo mínimo en milisegundos que ha durado un bloqueo de esta tarea), tiempo máximo (obligatorio, tipo BIGINT, tiempo máximo en milisegundos que ha durado un bloqueo de esta tarea) y total (obligatorio, tipo BIGINT, número total de bloqueos que ha producido esa tarea).
+2. THE SPA SHALL crear el esquema de la tabla de bloqueos del cluster mediante una migración Liquibase versionada.
+3. WHEN se intenta insertar un bloqueo con un nombre que ya existe, THE SPA SHALL rechazar la operación con un error de violación de restricción de unicidad.
+4. THE SPA SHALL garantizar que los registros de la tabla ClusterBlock son creados y actualizados exclusivamente por el propio sistema (las tareas que adquieren bloqueos), nunca por la API de usuario.
 
-### Requirement INT-002: Trazabilidad de operaciones de interfaces (solo lectura)
+### Requirement 32: Trazabilidad de operaciones de interfaces (solo lectura)
 
 **User Story:** As a administrador, I want consultar el registro de todas las operaciones realizadas por las interfaces con sistemas externos, so that pueda monitorizar el tráfico entrante y saliente, diagnosticar problemas y verificar el correcto funcionamiento de las integraciones.
 
@@ -425,7 +480,7 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 5. THE InterfaceService SHALL exponer únicamente endpoints de consulta (GET) para los registros de operaciones de interfaces. La creación, modificación y eliminación no está disponible a través de la API de usuario; el registro se realiza de forma automática por el sistema.
 6. WHEN se intenta acceder a un registro de operación de interfaz que no existe, THE InterfaceService SHALL devolver un error 404 Not Found.
 
-### Requirement INT-003: Modelo de datos de trazabilidad de interfaces (InterfaceLog)
+### Requirement 33: Modelo de datos de trazabilidad de interfaces (InterfaceLog)
 
 **User Story:** As a desarrollador, I want un modelo de datos de trazabilidad de interfaces bien definido en la base de datos, so that pueda almacenar de forma estructurada todas las operaciones realizadas con sistemas externos.
 
@@ -437,68 +492,3 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 4. THE SPA SHALL definir un índice compuesto sobre los campos timestamp e interface_name para optimizar las consultas filtradas por rango de fechas e interfaz.
 5. THE SPA SHALL definir un índice sobre el campo status para optimizar las consultas filtradas por estado de la respuesta.
 6. THE SPA SHALL garantizar que los registros de la tabla InterfaceLog son creados exclusivamente por el sistema de forma automática y son inmutables (append-only, no se permiten operaciones UPDATE ni DELETE).
-
-### Cluster / Alta Disponibilidad (HA)
-
-### Requirement HA-001: Consulta y edición de nodos del cluster
-
-**User Story:** As a administrador, I want consultar el estado de los nodos del cluster y poder designar cuál actúa como maestro, so that pueda supervisar las instancias de la aplicación y gestionar la alta disponibilidad.
-
-#### Acceptance Criteria
-
-1. THE ClusterService SHALL exponer un endpoint para obtener la lista de nodos del cluster con los siguientes datos por cada nodo: estado (ALIVE, DEAD), hostname, ip, master, memoriaUsada, memoriaLibre, memoriaTotal, fecha de arranque y fecha de última actualización.
-2. THE ClusterService SHALL exponer un endpoint para obtener los datos detallados de un nodo concreto por su identificador, incluyendo todos los campos de la entidad.
-3. THE ClusterService SHALL exponer un endpoint para actualizar únicamente el campo master de un nodo existente.
-4. WHEN se establece un nodo como master (master=true), THE ClusterService SHALL garantizar que solo un nodo puede ser maestro en el sistema, desactivando automáticamente el flag master del nodo que previamente lo tenía.
-5. THE SPA SHALL presentar un panel de supervisión de nodos mostrando el estado consolidado de todas las instancias con indicadores visuales de disponibilidad (verde para ALIVE, rojo para DEAD) e indicador del nodo maestro.
-6. THE SPA SHALL presentar todos los campos del nodo como solo lectura excepto el campo master, que será editable por el administrador.
-7. WHEN se intenta acceder a un nodo que no existe, THE ClusterService SHALL devolver un error 404 Not Found.
-8. THE ClusterService SHALL rechazar cualquier solicitud de creación de nodos, devolviendo un error 405 Method Not Allowed.
-9. THE ClusterService SHALL rechazar cualquier solicitud de eliminación de nodos, devolviendo un error 405 Method Not Allowed.
-
-### Requirement HA-002: Consulta de bloqueos del cluster (solo lectura)
-
-**User Story:** As a administrador, I want consultar las estadísticas de bloqueos del cluster, so that pueda supervisar qué tareas producen bloqueos, su frecuencia y sus tiempos de ejecución.
-
-#### Acceptance Criteria
-
-1. THE ClusterService SHALL exponer un endpoint para obtener la lista de bloqueos (ClusterBlock) con soporte de paginación y filtros por nombre de tarea.
-2. THE ClusterService SHALL exponer un endpoint para obtener los datos detallados de un bloqueo concreto por su identificador, incluyendo todos los campos: nombre, fecha de inicio, tiempo medio, tiempo mínimo, tiempo máximo y total.
-3. THE SPA SHALL presentar la lista de bloqueos en modo solo lectura, sin opciones de creación, edición ni eliminación.
-4. WHEN se intenta acceder a un bloqueo que no existe, THE ClusterService SHALL devolver un error 404 Not Found.
-5. THE ClusterService SHALL exponer únicamente endpoints de consulta (GET) para los bloqueos. La creación, modificación y eliminación de bloqueos no está disponible a través de la API de usuario; los registros se gestionan exclusivamente por el sistema.
-
-### Requirement HA-003: Modelo de datos de nodo del cluster
-
-**User Story:** As a desarrollador, I want un modelo de datos de nodo del cluster bien definido en la base de datos, so that pueda registrar y supervisar las instancias de la aplicación en entornos de alta disponibilidad.
-
-#### Acceptance Criteria
-
-1. THE SPA SHALL gestionar la tabla de nodos del cluster con los siguientes campos: identificador (autogenerado), estado (obligatorio, enum con valores: ALIVE, DEAD), hostname (obligatorio, tipo VARCHAR, nombre de la máquina del sistema operativo), ip (obligatorio, tipo VARCHAR, dirección IP de la máquina), master (obligatorio, tipo BOOLEAN, indica si el nodo actúa como maestro), memoriaUsada (obligatorio, tipo BIGINT, memoria usada por la aplicación en bytes), memoriaLibre (obligatorio, tipo BIGINT, memoria libre en bytes), memoriaTotal (obligatorio, tipo BIGINT, memoria total en bytes), fecha de arranque (opcional, tipo TIMESTAMP WITH TIME ZONE, última vez que la instancia fue arrancada) y fecha de última actualización (opcional, tipo TIMESTAMP WITH TIME ZONE, último chequeo de que la instancia está funcionando).
-2. THE SPA SHALL crear el esquema de la tabla de nodos del cluster mediante una migración Liquibase versionada.
-3. THE SPA SHALL definir el campo estado como un enum de base de datos con los valores permitidos: ALIVE, DEAD.
-4. THE SPA SHALL garantizar mediante restricción de base de datos o lógica de aplicación que solo un nodo puede tener el campo master con valor true en cualquier momento.
-5. THE SPA SHALL garantizar que los registros de nodos del cluster son creados y actualizados exclusivamente por el propio sistema (la propia instancia de la aplicación al arrancar y periódicamente), nunca por la API de usuario. La API de usuario solo permite modificar el campo master.
-
-### Requirement HA-004: Modelo de datos de bloqueo del cluster (ClusterBlock)
-
-**User Story:** As a desarrollador, I want un modelo de datos de bloqueo del cluster bien definido en la base de datos, so that pueda registrar y consultar las estadísticas de bloqueos producidos por las tareas del sistema.
-
-#### Acceptance Criteria
-
-1. THE SPA SHALL gestionar la tabla de bloqueos del cluster (ClusterBlock) con los siguientes campos: identificador (autogenerado), nombre (obligatorio, único, tipo VARCHAR, nombre de la tarea que provoca el bloqueo), fecha de inicio (obligatorio, tipo TIMESTAMP WITH TIME ZONE, fecha de inicio del bloqueo actual), tiempo medio (obligatorio, tipo BIGINT, tiempo medio en milisegundos que ha durado un bloqueo de esta tarea), tiempo mínimo (obligatorio, tipo BIGINT, tiempo mínimo en milisegundos que ha durado un bloqueo de esta tarea), tiempo máximo (obligatorio, tipo BIGINT, tiempo máximo en milisegundos que ha durado un bloqueo de esta tarea) y total (obligatorio, tipo BIGINT, número total de bloqueos que ha producido esa tarea).
-2. THE SPA SHALL crear el esquema de la tabla de bloqueos del cluster mediante una migración Liquibase versionada.
-3. WHEN se intenta insertar un bloqueo con un nombre que ya existe, THE SPA SHALL rechazar la operación con un error de violación de restricción de unicidad.
-4. THE SPA SHALL garantizar que los registros de la tabla ClusterBlock son creados y actualizados exclusivamente por el propio sistema (las tareas que adquieren bloqueos), nunca por la API de usuario.
-
-### Requirement HA-005: Autoregistro y heartbeat del nodo del cluster
-
-**User Story:** As a desarrollador, I want que cada instancia de la aplicación se registre automáticamente en el cluster al arrancar y envíe un heartbeat periódico, so that el sistema de supervisión refleje en todo momento qué instancias están activas.
-
-#### Acceptance Criteria
-
-1. WHEN la aplicación arranca y no existe un registro en la tabla de nodos del cluster con el hostname de la máquina actual, THE ClusterService SHALL crear automáticamente un nuevo registro con: hostname (identificador de la instancia), ip de la máquina, estado ALIVE, master false, datos de memoria actuales, fecha de arranque con la fecha y hora actual y fecha de última actualización con la fecha y hora actual.
-2. WHEN la aplicación arranca y ya existe un registro en la tabla de nodos del cluster con el hostname de la máquina actual, THE ClusterService SHALL actualizar el registro existente con: estado ALIVE, ip actual, datos de memoria actuales y fecha de arranque con la fecha y hora actual.
-3. THE SPA SHALL ejecutar una tarea en background (scheduled task) que cada 30 segundos actualice el registro del nodo en la tabla de nodos del cluster con: estado ALIVE, datos de memoria actuales (memoriaUsada, memoriaLibre, memoriaTotal) y fecha de última actualización con la fecha y hora actual.
-4. THE SPA SHALL utilizar el hostname del sistema operativo como identificador único de la instancia para localizar su registro en la tabla de nodos del cluster.
-5. THE SPA SHALL configurar el intervalo del heartbeat (30 segundos por defecto) como un parámetro configurable a través de los parámetros del sistema o de la configuración de la aplicación.
