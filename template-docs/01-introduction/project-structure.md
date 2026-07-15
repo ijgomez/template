@@ -136,14 +136,6 @@ La documentación está organizada en distintas secciones:
 
 ---
 
-## Asistentes IA (`.kiro`)
-
-Este directorio contiene la configuración utilizada por herramientas de asistencia al desarrollo basadas en inteligencia artificial.
-
-Su contenido no forma parte del funcionamiento de la aplicación, pero proporciona contexto y directrices para facilitar el desarrollo y mantenimiento del proyecto.
-
----
-
 # Organización del repositorio
 
 La separación del proyecto en varios componentes proporciona numerosas ventajas:
