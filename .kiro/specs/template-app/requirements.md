@@ -276,29 +276,34 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 
 ### Requirement 18: Generación y consulta de informes
 
-**User Story:** As a usuario autenticado, I want generar y consultar informes de la aplicación, so that pueda obtener datos consolidados y estructurados para análisis, supervisión y toma de decisiones.
+**User Story:** As a usuario autenticado, I want acceder a los informes que tengo asignados, configurar sus filtros y consultar los resultados paginados, so that pueda obtener datos consolidados y estructurados para análisis, supervisión y toma de decisiones.
 
 #### Acceptance Criteria
 
-1. THE ReportService SHALL exponer un endpoint para obtener la lista de informes disponibles para el usuario autenticado, filtrados según las acciones de su perfil.
-2. THE ReportService SHALL exponer un endpoint para generar un informe específico aceptando parámetros de filtro (rango de fechas, criterios de búsqueda específicos del informe).
-3. WHEN el usuario solicita generar un informe, THE ReportService SHALL aplicar los filtros proporcionados y devolver los datos del informe en formato estructurado.
-4. THE SPA SHALL presentar los datos del informe en pantalla en formato tabular con soporte de paginación y ordenación por columnas.
-5. WHEN el usuario solicita generar un informe sin proporcionar filtros obligatorios, THE ReportService SHALL devolver un error 400 Bad Request indicando los filtros requeridos.
-6. WHEN el usuario no tiene la acción requerida para acceder a un informe, THE ReportService SHALL devolver un error 403 Forbidden.
+1. WHEN el usuario accede a la sección de Informes desde el menú, THE SPA SHALL mostrar una pantalla de listado con los informes permitidos para el usuario autenticado, determinados por la relación user2report (tabla intermedia entre usuario e informe).
+2. THE ReportService SHALL exponer un endpoint para obtener la lista de informes asignados al usuario autenticado, consultando la relación user2report asociada al identificador del usuario.
+3. THE SPA SHALL mostrar en cada fila del listado de informes un botón "Ejecutar" que permita al usuario navegar a la pantalla de ejecución del informe seleccionado.
+4. WHEN el usuario pulsa el botón "Ejecutar" de un informe, THE SPA SHALL navegar a una pantalla independiente de ejecución de informe que presente un formulario con los filtros específicos de dicho informe.
+5. THE ReportService SHALL exponer un endpoint para obtener la definición de filtros de un informe específico, devolviendo la lista de campos de filtro con su nombre, tipo de dato y si es obligatorio u opcional.
+6. WHEN el usuario rellena los filtros y pulsa el botón "Filtrar", THE ReportService SHALL ejecutar el informe aplicando los filtros proporcionados y devolver los datos del informe en formato estructurado con soporte de paginación del lado del servidor.
+7. THE SPA SHALL mostrar los resultados del informe en la misma pantalla de ejecución, debajo del formulario de filtros, en formato tabular con paginación del lado del servidor (mismo patrón que el resto de vistas de listado de la aplicación).
+8. WHEN el usuario solicita ejecutar un informe sin proporcionar los filtros obligatorios, THE ReportService SHALL devolver un error 400 Bad Request indicando los filtros requeridos.
+9. WHEN el usuario no tiene el informe asignado en la relación user2report e intenta acceder a la ejecución de dicho informe, THE ReportService SHALL devolver un error 403 Forbidden.
 
 ### Requirement 19: Exportación de informes
 
-**User Story:** As a usuario autenticado, I want exportar los informes en diferentes formatos, so that pueda descargar y compartir la información fuera de la aplicación.
+**User Story:** As a usuario autenticado, I want exportar los resultados de un informe en diferentes formatos, so that pueda descargar y compartir la información fuera de la aplicación.
 
 #### Acceptance Criteria
 
-1. THE ReportService SHALL exponer un endpoint para exportar un informe generado en formato PDF.
-2. THE ReportService SHALL exponer un endpoint para exportar un informe generado en formato CSV.
-3. THE ReportService SHALL exponer un endpoint para exportar un informe generado en formato Excel (XLSX).
-4. WHEN el usuario solicita exportar un informe, THE ReportService SHALL aplicar los mismos filtros utilizados en la generación del informe en pantalla.
-5. WHEN la exportación se completa, THE SPA SHALL iniciar la descarga del fichero en el navegador del usuario.
-6. IF la generación del fichero de exportación falla, THEN THE ReportService SHALL devolver un error 500 Internal Server Error con un mensaje descriptivo.
+1. THE SPA SHALL mostrar en la pantalla de resultados del informe opciones de exportación en los formatos: PDF, Excel (XLSX), CSV y TXT.
+2. THE ReportService SHALL exponer un endpoint para exportar los resultados de un informe en formato PDF.
+3. THE ReportService SHALL exponer un endpoint para exportar los resultados de un informe en formato Excel (XLSX).
+4. THE ReportService SHALL exponer un endpoint para exportar los resultados de un informe en formato CSV.
+5. THE ReportService SHALL exponer un endpoint para exportar los resultados de un informe en formato TXT.
+6. WHEN el usuario solicita exportar un informe, THE ReportService SHALL aplicar los mismos filtros utilizados en la ejecución actual del informe en pantalla.
+7. WHEN la exportación se completa, THE SPA SHALL iniciar la descarga del fichero generado en el navegador del usuario.
+8. IF la generación del fichero de exportación falla, THEN THE ReportService SHALL devolver un error 500 Internal Server Error con un mensaje descriptivo.
 
 ### Requirement 20: Gestión de parámetros generales (CRUD)
 
@@ -385,13 +390,14 @@ Este documento define los requisitos para la aplicación SPA (Single Page Applic
 2. THE SPA SHALL proporcionar filtros de búsqueda por cada uno de los campos visibles en la tabla, permitiendo al usuario refinar los resultados mostrados.
 3. THE SPA SHALL incluir en cada vista de listado un botón de exportación a CSV que descargue todos los registros que coincidan con los filtros aplicados.
 4. WHEN el usuario pulsa el botón de exportación a CSV, THE SPA SHALL generar y descargar un fichero CSV con las columnas visibles y los datos filtrados.
-5. WHILE el usuario tiene la acción de creación asignada en su perfil, THE SPA SHALL mostrar un botón "Crear" en las vistas de listado de entidades que soporten creación (usuarios, perfiles, parámetros).
-6. WHILE el usuario tiene la acción de edición asignada en su perfil, THE SPA SHALL mostrar una opción "Editar" en cada fila del listado de entidades que soporten edición (usuarios, perfiles, parámetros, acciones, nodos del cluster).
-7. WHILE el usuario tiene la acción de eliminación asignada en su perfil, THE SPA SHALL mostrar una opción "Borrar" en cada fila del listado de entidades que soporten eliminación (usuarios, perfiles), solicitando confirmación antes de ejecutar la acción.
-8. THE SPA SHALL mostrar una opción "Ver Detalle" en cada fila del listado que permita consultar la información completa del registro.
-9. WHILE el usuario no tiene la acción requerida para crear, editar o borrar registros, THE SPA SHALL ocultar las opciones correspondientes y presentar la vista de listado en modo solo lectura.
-10. THE SPA SHALL presentar las vistas de listado de Acciones y Nodos del cluster únicamente con las opciones "Ver Detalle" y "Editar" (sin botón "Crear" ni opción "Borrar").
-11. THE SPA SHALL presentar las vistas de listado de Bloqueos del cluster, Trazabilidad/Auditoría e Interfaces únicamente con la opción "Ver Detalle" (sin opciones de Crear, Editar ni Borrar).
+5. WHEN el usuario interactúa con los controles de paginación (cambio de página), aplica o modifica filtros, o pulsa el botón de exportación, THE SPA SHALL mostrar una notificación de progreso (según lo definido en el Requirement 11) mientras la operación está en curso.
+6. WHILE el usuario tiene la acción de creación asignada en su perfil, THE SPA SHALL mostrar un botón "Crear" en las vistas de listado de entidades que soporten creación (usuarios, perfiles, parámetros).
+7. WHILE el usuario tiene la acción de edición asignada en su perfil, THE SPA SHALL mostrar una opción "Editar" en cada fila del listado de entidades que soporten edición (usuarios, perfiles, parámetros, acciones, nodos del cluster).
+8. WHILE el usuario tiene la acción de eliminación asignada en su perfil, THE SPA SHALL mostrar una opción "Borrar" en cada fila del listado de entidades que soporten eliminación (usuarios, perfiles), solicitando confirmación antes de ejecutar la acción.
+9. THE SPA SHALL mostrar una opción "Ver Detalle" en cada fila del listado que permita consultar la información completa del registro.
+10. WHILE el usuario no tiene la acción requerida para crear, editar o borrar registros, THE SPA SHALL ocultar las opciones correspondientes y presentar la vista de listado en modo solo lectura.
+11. THE SPA SHALL presentar las vistas de listado de Acciones y Nodos del cluster únicamente con las opciones "Ver Detalle" y "Editar" (sin botón "Crear" ni opción "Borrar").
+12. THE SPA SHALL presentar las vistas de listado de Bloqueos del cluster, Trazabilidad/Auditoría e Interfaces únicamente con la opción "Ver Detalle" (sin opciones de Crear, Editar ni Borrar).
 
 ### Requirement 26: Modelo de datos de auditoría
 
