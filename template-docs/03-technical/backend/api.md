@@ -139,24 +139,10 @@ Todas las APIs siguen la misma estructura lógica.
 
 ```mermaid
 flowchart TB
-
-Controller
-
-↓
-
-DTO
-
-↓
-
-Business Service
-
-↓
-
-Repository
-
-↓
-
-Database
+    Controller --> DTO
+    DTO --> BS["Business Service"]
+    BS --> Repository
+    Repository --> Database
 ```
 
 Cada API implementa únicamente la adaptación entre el protocolo utilizado y los servicios de negocio.
