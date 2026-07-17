@@ -31,6 +31,56 @@ src/main/resources/db/
 - Incluir siempre `author`, `id` y `labels` (versión de la aplicación).
 - Estructura obligatoria: `<comment>`, `<preConditions>`, operación, `<rollback>`.
 
+Ejemplo completo:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="20240101-create-user" author="template" labels="v1.0.0">
+
+        <comment>Creación de la tabla de usuarios del sistema</comment>
+
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="user"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="user">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="username" type="VARCHAR(100)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="email" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="active" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createSequence sequenceName="user_SEQ" startValue="1" incrementBy="50"/>
+
+        <rollback>
+            <dropSequence sequenceName="user_SEQ"/>
+            <dropTable tableName="user"/>
+        </rollback>
+
+    </changeSet>
+
+</databaseChangeLog>
+```
+
 ## Convenciones de Nomenclatura
 
 | Elemento           | Convención                       | Ejemplo                          |

@@ -2,7 +2,7 @@
 
 ## Introducción
 
-Template utiliza **Liquibase** como herramienta para el control de versiones del esquema de base de datos.
+Template utiliza **Liquibase** como herramienta para el control de versiones del esquema de base de datos (**PostgreSQL 18**).
 
 Todas las modificaciones sobre la estructura de la base de datos deben realizarse mediante changelogs de Liquibase, garantizando que cualquier instalación pueda evolucionar automáticamente entre versiones de forma controlada y reproducible.
 
@@ -36,61 +36,52 @@ Las migraciones se encuentran en el proyecto:
 template-liquibase/
 ```
 
-Una organización recomendada es la siguiente:
+Los ficheros de migración se ubican en `template-liquibase/src/main/resources/db/changelog/`.
+
+La organización es la siguiente:
 
 ```text
-template-liquibase/
-
-├── changelog/
-│
-├── schema/
-│
-├── data/
-│
-├── views/
-│
-├── procedures/
-│
-├── functions/
-│
-├── indexes/
-│
-└── master.xml
+src/main/resources/db/
+└── changelog/
+    ├── db.changelog-master.xml
+    ├── migrations/
+    │   ├── v1.0.0/
+    │   ├── v1.1.0/
+    │   └── v2.0.0/
+    └── data/
+        └── v1.0.0/
 ```
 
-Cada directorio contiene un tipo específico de modificación.
-
-| Directorio | Contenido |
-|------------|-----------|
-| schema | Creación y modificación de tablas |
-| data | Datos iniciales |
-| indexes | Índices |
-| views | Vistas |
-| procedures | Procedimientos almacenados |
-| functions | Funciones |
-| changelog | Organización de los changelogs |
+Los changesets se organizan en carpetas por versión dentro de `migrations/`. Los datos iniciales se ubican en `data/`.
 
 ---
 
 # Changelog maestro
 
-Todas las migraciones son referenciadas desde un changelog principal.
+Todas las migraciones son referenciadas desde un changelog principal (`db.changelog-master.xml`).
+
+Se utiliza `includeAll` para incluir automáticamente todos los ficheros XML de cada directorio de versión, en orden alfabético. Esto evita tener que registrar manualmente cada fichero.
 
 Ejemplo:
 
 ```xml
-<databaseChangeLog>
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
 
-    <include file="schema/001-create-security.xml"/>
+    <includeAll path="migrations/v1.0.0/" relativeToChangelogFile="true"/>
 
-    <include file="schema/002-create-users.xml"/>
+    <includeAll path="migrations/v1.1.0/" relativeToChangelogFile="true"/>
 
-    <include file="data/001-initial-users.xml"/>
+    <includeAll path="data/v1.0.0/" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>
 ```
 
-El orden de inclusión determina el orden de ejecución.
+El orden de los bloques `includeAll` determina el orden de ejecución entre versiones. Dentro de cada directorio, los ficheros se procesan en orden alfabético, por lo que el formato `YYYYMMDD-` en el nombre garantiza la secuencia correcta.
 
 ---
 
@@ -98,18 +89,20 @@ El orden de inclusión determina el orden de ejecución.
 
 Cada modificación de la base de datos debe almacenarse en un fichero independiente.
 
+Los ficheros siguen el formato `YYYYMMDD-descripcion-kebab-case.xml`.
+
 Ejemplo:
 
 ```text
-schema/
+migrations/v1.0.0/
 
-001-create-security.xml
+20240101-create-security.xml
 
-002-create-users.xml
+20240102-create-users.xml
 
-003-create-roles.xml
+20240103-create-roles.xml
 
-004-create-permissions.xml
+20240104-create-permissions.xml
 ```
 
 No se deben agrupar múltiples funcionalidades no relacionadas en un mismo changelog.
@@ -118,21 +111,9 @@ No se deben agrupar múltiples funcionalidades no relacionadas en un mismo chang
 
 # Identificación de los cambios
 
-Cada `changeSet` debe disponer de un identificador único.
+Cada `changeSet` dispone de un identificador único y es inmutable una vez publicado.
 
-Ejemplo:
-
-```xml
-<changeSet
-    id="001-create-users"
-    author="template">
-
-    ...
-
-</changeSet>
-```
-
-Una vez publicado, un `changeSet` nunca debe modificarse.
+Ver formato obligatorio, campos requeridos y estructura interna en [Reglas de Codificación — Liquibase](../../04-development/coding-guidelines/liquibase.md#formato-de-changesets).
 
 ---
 
@@ -177,7 +158,7 @@ Liquibase registra las migraciones ejecutadas mediante sus tablas internas.
 
 # Compatibilidad
 
-Las migraciones deben ser compatibles con la base de datos soportada por la plataforma.
+Las migraciones deben ser compatibles con **PostgreSQL 18**, base de datos soportada por la plataforma.
 
 Siempre que sea posible se utilizarán elementos independientes del motor de base de datos.
 
@@ -215,33 +196,15 @@ E --> F
 
 # Buenas prácticas
 
-Durante el desarrollo deben seguirse las siguientes recomendaciones:
-
-- Un único cambio funcional por changelog.
-- No modificar changeSets ya publicados.
-- Utilizar nombres descriptivos.
-- Mantener un orden secuencial.
-- Documentar cambios complejos.
-- Evitar SQL específico cuando no sea necesario.
-- Probar todas las migraciones antes de publicarlas.
+Ver el listado completo de reglas y recomendaciones en [Reglas de Codificación — Liquibase](../../04-development/coding-guidelines/liquibase.md).
 
 ---
 
 # Rollback
 
-Siempre que sea posible, los cambios deberán definir su operación de rollback.
+Siempre que sea posible, los cambios deberán definir su operación de rollback explícita para facilitar la recuperación ante incidencias durante el despliegue.
 
-Ejemplo:
-
-```xml
-<rollback>
-
-    <dropTable tableName="users"/>
-
-</rollback>
-```
-
-Esto facilita la recuperación ante incidencias durante el despliegue.
+Ver convenciones en [Reglas de Codificación — Liquibase](../../04-development/coding-guidelines/liquibase.md#reglas-de-los-changesets).
 
 ---
 
@@ -249,7 +212,7 @@ Esto facilita la recuperación ante incidencias durante el despliegue.
 
 Las migraciones pueden ejecutarse durante el proceso de despliegue o mediante tareas específicas de Maven.
 
-La estrategia concreta dependerá del entorno de ejecución y del proceso de integración continua adoptado por cada proyecto.
+Ver comandos disponibles en [Reglas de Codificación — Liquibase](../../04-development/coding-guidelines/liquibase.md#comandos-habituales).
 
 ---
 
@@ -270,10 +233,11 @@ La evolución del código y de la base de datos debe mantenerse sincronizada.
 
 Para ampliar la información consultar:
 
-- **database-model.md**
-- **backend.md**
-- **deployment.md**
-- **configuration.md**
+- [database-model.md](database-model.md)
+- [backend.md](backend.md)
+- [deployment.md](deployment.md)
+- [configuration.md](../../../04-development/configuration.md)
+- [Reglas de Codificación — Liquibase](../../04-development/coding-guidelines/liquibase.md)
 
 ---
 
