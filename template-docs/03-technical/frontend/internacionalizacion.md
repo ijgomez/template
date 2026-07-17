@@ -276,11 +276,11 @@ Se recomienda seguir las siguientes normas:
 
 # Documentación relacionada
 
-- `layout.md`
-- `navigation.md`
-- `notifications.md`
-- `backend/security.md`
-- `backend/api.md`
+- [layout.md](layout.md)
+- [navigation.md](navigation.md)
+- [notifications.md](notifications.md)
+- [security.md](../backend/security.md)
+- [api.md](../backend/api.md)
 
 ---
 

@@ -244,11 +244,11 @@ Durante el desarrollo se recomienda:
 
 # Documentación relacionada
 
-- `layout.md`
-- `navigation.md`
-- `internacionalizacion.md`
-- `notifications.md`
-- `backend/api.md`
+- [layout.md](layout.md)
+- [navigation.md](navigation.md)
+- [internacionalizacion.md](internacionalizacion.md)
+- [notifications.md](notifications.md)
+- [api.md](../backend/api.md)
 
 ---
 

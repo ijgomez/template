@@ -293,10 +293,10 @@ Durante el desarrollo deben respetarse las siguientes recomendaciones:
 
 Para ampliar la información consultar:
 
-- **backend.md**
-- **api.md**
-- **database-model.md**
-- **coding-guidelines.md**
+- [backend.md](backend.md)
+- [api.md](api.md)
+- [database-model.md](database-model.md)
+- [coding-guidelines.md](../../04-development/coding-guidelines.md)
 
 ---
 

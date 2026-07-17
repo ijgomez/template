@@ -324,10 +324,10 @@ Durante el desarrollo de nuevas pantallas se recomienda:
 
 # Documentación relacionada
 
-- `navigation.md`
-- `notifications.md`
-- `internacionalizacion.md`
-- `pwa.md`
+- [navigation.md](navigation.md)
+- [notifications.md](notifications.md)
+- [internacionalizacion.md](internacionalizacion.md)
+- [pwa.md](pwa.md)
 
 ---
 

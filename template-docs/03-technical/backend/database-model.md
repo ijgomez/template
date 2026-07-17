@@ -259,10 +259,10 @@ Durante el desarrollo deben respetarse las siguientes recomendaciones:
 
 Para ampliar la información sobre el modelo de datos consultar:
 
-- **backend.md**
-- **liquibase.md**
-- **api.md**
-- **coding-guidelines.md**
+- [backend.md](backend.md)
+- [liquibase.md](liquibase.md)
+- [api.md](api.md)
+- [coding-guidelines.md](../../04-development/coding-guidelines.md)
 
 ---
 

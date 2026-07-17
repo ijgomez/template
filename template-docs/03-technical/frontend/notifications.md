@@ -353,12 +353,12 @@ Se recomienda:
 
 # Documentación relacionada
 
-- `layout.md`
-- `navigation.md`
-- `internacionalizacion.md`
-- `backend/api.md`
-- `backend/security.md`
-- `backend/monitoring.md`
+- [layout.md](layout.md)
+- [navigation.md](navigation.md)
+- [internacionalizacion.md](internacionalizacion.md)
+- [security.md](../backend/security.md)
+- [api.md](../backend/api.md)
+- [monitoring.md](../backend/monitoring.md)
 
 ---
 

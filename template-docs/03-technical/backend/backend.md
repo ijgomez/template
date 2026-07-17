@@ -310,11 +310,11 @@ Las convenciones de desarrollo se describen con mayor detalle en el documento **
 
 Para obtener información más detallada sobre aspectos específicos del backend, consultar los siguientes documentos:
 
-- **api.md**: Arquitectura y diseño de las APIs.
-- **security.md**: Autenticación y autorización.
-- **database-model.md**: Modelo de datos.
-- **liquibase.md**: Gestión de migraciones.
-- **coding-guidelines.md**: Convenciones de desarrollo.
+- [api.md](api.md)
+- [security.md](security.md)
+- [database-model.md](database-model.md)
+- [liquibase.md](liquibase.md)
+- [coding-guidelines.md](../../04-development/coding-guidelines.md)
 
 ---
 

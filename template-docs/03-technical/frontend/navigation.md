@@ -300,11 +300,11 @@ Durante el desarrollo se recomienda:
 
 # Documentación relacionada
 
-- `layout.md`
-- `internacionalizacion.md`
-- `notifications.md`
-- `backend/api.md`
-- `backend/security.md`
+- [layout.md](layout.md)
+- [internacionalizacion.md](internacionalizacion.md)
+- [notifications.md](notifications.md)
+- [security.md](../backend/security.md)
+- [api.md](../backend/api.md)
 
 ---
 

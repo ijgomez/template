@@ -255,11 +255,11 @@ Se recomienda seguir las siguientes prácticas durante el despliegue:
 
 Para ampliar la información consultar:
 
-- **installation.md**
-- **configuration.md**
-- **backend.md**
-- **liquibase.md**
-- **cluster.md**
+- [installation.md](../../04-development/installation.md)
+- [configuration.md](../../04-development/configuration.md)
+- [backend.md](backend.md)
+- [liquibase.md](liquibase.md)
+- [ha.md](ha.md)
 
 ---
 
