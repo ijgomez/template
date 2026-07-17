@@ -2,7 +2,7 @@
 
 ## Introducción
 
-Template utiliza **Liquibase** como herramienta para el control de versiones del esquema de base de datos (**PostgreSQL 18**).
+Template utiliza **Liquibase** como herramienta para el control de versiones del esquema de base de datos.
 
 Todas las modificaciones sobre la estructura de la base de datos deben realizarse mediante changelogs de Liquibase, garantizando que cualquier instalación pueda evolucionar automáticamente entre versiones de forma controlada y reproducible.
 
@@ -158,7 +158,7 @@ Liquibase registra las migraciones ejecutadas mediante sus tablas internas.
 
 # Compatibilidad
 
-Las migraciones deben ser compatibles con **PostgreSQL 18**, base de datos soportada por la plataforma.
+Las migraciones deben ser compatibles con la base de datos de la plataforma. Consultar la base de datos de referencia en [technologies.md](../../01-introduction/technologies.md).
 
 Siempre que sea posible se utilizarán elementos independientes del motor de base de datos.
 

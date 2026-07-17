@@ -17,7 +17,7 @@ La plataforma está compuesta por las siguientes capas tecnológicas:
 | Frontend      | Angular, TypeScript, Bootstrap |
 | Backend       | Java, Spring Boot              |
 | Persistencia  | JPA, Hibernate                 |
-| Base de datos | PostgreSQL                     |
+| Base de datos | PostgreSQL 18                  |
 | Seguridad     | Spring Security, JWT           |
 | Migraciones   | Liquibase                      |
 | Construcción  | Maven, npm                     |
@@ -69,7 +69,7 @@ La base de datos de referencia es PostgreSQL, aunque la arquitectura permite tra
 
 | Tecnología | Descripción                             |
 |------------|-----------------------------------------|
-| PostgreSQL | Base de datos de referencia             |
+| PostgreSQL 18 | Base de datos de referencia          |
 | JPA        | API de persistencia                     |
 | Hibernate  | ORM                                     |
 | Liquibase  | Versionado del esquema de base de datos |
