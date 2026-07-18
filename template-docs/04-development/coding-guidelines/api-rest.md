@@ -8,7 +8,7 @@ Directrices para el diseño y convenciones de la API REST.
 - Toda la API se expone bajo el prefijo `/api/v1/`.
 - Los controladores viven en el módulo `webapp`, paquete `org.myorganization.template.web.<feature>`.
 
-## Estructura de URLs
+## Estructura de URL's
 
 - Sustantivos en plural: `/api/v1/users`, `/api/v1/orders`.
 - kebab-case para nombres compuestos: `/api/v1/order-items`.

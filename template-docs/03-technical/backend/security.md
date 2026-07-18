@@ -69,12 +69,12 @@ PERMISSION ||--o{ ROLE_PERMISSION : assigned
 
 Los conceptos principales son:
 
-| Elemento | Descripción |
-|----------|-------------|
-| Usuario | Persona que accede al sistema |
-| Perfil | Agrupación de permisos |
-| Acción | Permiso para ejecutar una funcionalidad |
-| Sesión | Contexto de autenticación del usuario |
+| Elemento | Descripción                             |
+|----------|-----------------------------------------|
+| Usuario  | Persona que accede al sistema           |
+| Perfil   | Agrupación de permisos                  |
+| Acción   | Permiso para ejecutar una funcionalidad |
+| Sesión   | Contexto de autenticación del usuario   |
 
 ---
 
@@ -191,9 +191,9 @@ Los perfiles únicamente agrupan dichas acciones.
 
 ---
 
-# Seguridad de las APIs
+# Seguridad de las API's
 
-Todas las APIs pueden protegerse mediante mecanismos de autenticación.
+Todas las API's pueden protegerse mediante mecanismos de autenticación.
 
 Dependiendo del tipo de API podrán utilizarse:
 
@@ -283,7 +283,7 @@ Durante el desarrollo deben respetarse las siguientes recomendaciones:
 - No exponer información sensible.
 - Utilizar siempre HTTPS.
 - No almacenar contraseñas.
-- Utilizar DTO para todas las APIs.
+- Utilizar DTO para todas las API's.
 - Centralizar la gestión de permisos.
 - Evitar permisos codificados en la aplicación.
 

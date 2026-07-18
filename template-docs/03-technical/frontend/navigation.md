@@ -290,7 +290,7 @@ Durante el desarrollo se recomienda:
 
 - Utilizar rutas jerárquicas.
 - Evitar rutas duplicadas.
-- Mantener URLs estables.
+- Mantener URL's estables.
 - Utilizar Lazy Loading para los módulos funcionales.
 - Proteger todas las rutas mediante Guards.
 - No realizar comprobaciones de permisos únicamente en el frontend.

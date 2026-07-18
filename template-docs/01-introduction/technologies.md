@@ -67,12 +67,12 @@ La plataforma utiliza bases de datos relacionales.
 
 La base de datos de referencia es PostgreSQL, aunque la arquitectura permite trabajar con otros motores compatibles con JPA.
 
-| Tecnología | Descripción                             |
-|------------|-----------------------------------------|
-| PostgreSQL 18 | Base de datos de referencia          |
-| JPA        | API de persistencia                     |
-| Hibernate  | ORM                                     |
-| Liquibase  | Versionado del esquema de base de datos |
+| Tecnología    | Descripción                             |
+|---------------|-----------------------------------------|
+| PostgreSQL 18 | Base de datos de referencia             |
+| JPA           | API de persistencia                     |
+| Hibernate     | ORM                                     |
+| Liquibase     | Versionado del esquema de base de datos |
 
 ---
 

@@ -44,13 +44,13 @@ template/
 
 Cada módulo tiene una responsabilidad específica.
 
-| Módulo | Descripción |
-|---------|-------------|
-| commons | Componentes reutilizables y utilidades comunes |
+| Módulo  | Descripción                                                  |
+|---------|--------------------------------------------------------------|
+| commons | Componentes reutilizables y utilidades comunes               |
 | cluster | Gestión de la alta disponibilidad y coordinación entre nodos |
-| domain | Modelo de dominio, entidades, DTOs y objetos compartidos |
-| core | Servicios de negocio, persistencia y procesos internos |
-| webapp | Configuración de Spring Boot, APIs y seguridad |
+| domain  | Modelo de dominio, entidades, DTOs y objetos compartidos     |
+| core    | Servicios de negocio, persistencia y procesos internos       |
+| webapp  | Configuración de Spring Boot, APIs y seguridad               |
 
 ---
 
@@ -85,7 +85,7 @@ Cada capa únicamente interactúa con la inmediatamente inferior.
 
 ## Controllers
 
-Los controladores representan el punto de entrada de las distintas APIs.
+Los controladores representan el punto de entrada de las distintas API's.
 
 Sus responsabilidades son:
 
@@ -262,7 +262,7 @@ Las excepciones se clasifican según su naturaleza:
 - Excepciones técnicas.
 - Errores de validación.
 
-Todas ellas son transformadas en respuestas homogéneas por la capa de APIs.
+Todas ellas son transformadas en respuestas homogéneas por la capa de API's.
 
 ---
 
@@ -286,7 +286,7 @@ Entre ellos:
 - Servidores SMTP.
 - Otros mecanismos que puedan incorporarse en el futuro.
 
-La arquitectura de las APIs se describe en el documento **api.md**.
+La arquitectura de las 'API's' se describe en el documento **api.md**.
 
 ---
 
@@ -296,7 +296,7 @@ Todo el desarrollo realizado sobre Template debe respetar las siguientes normas:
 
 - Mantener la lógica de negocio exclusivamente en los servicios.
 - No acceder directamente a la base de datos desde los controladores.
-- Utilizar DTOs para todas las APIs.
+- Utilizar DTO's para todas las API's.
 - Evitar dependencias entre módulos funcionales.
 - Mantener la separación entre configuración y código.
 - Reutilizar los componentes comunes siempre que sea posible.

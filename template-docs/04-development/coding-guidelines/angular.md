@@ -40,7 +40,7 @@ src/
 ## Componentes
 
 - Preferir componentes standalone (Angular 22).
-- Separar template (`.html`), estilos (`.scss`) y lógica (`.ts`).
+- Separar plantilla (`.html`), estilos (`.scss`) y lógica (`.ts`).
 - Usar `OnPush` como estrategia de detección de cambios cuando sea posible.
 
 ## Servicios

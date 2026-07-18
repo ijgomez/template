@@ -4,15 +4,15 @@
 
 ## Directrices disponibles
 
-| Tecnología / Área      | Documento                                                          |
-|------------------------|--------------------------------------------------------------------|
-| Java / Spring Boot     | [java-spring-boot.md](coding-guidelines/java-spring-boot.md)      |
-| Maven                  | [maven.md](coding-guidelines/maven.md)                            |
-| API REST               | [api-rest.md](coding-guidelines/api-rest.md)                      |
-| Seguridad              | [security.md](coding-guidelines/security.md)                      |
-| Liquibase              | [liquibase.md](coding-guidelines/liquibase.md)                    |
-| Angular / Frontend     | [angular.md](coding-guidelines/angular.md)                        |
-| Documentación          | [documentation.md](coding-guidelines/documentation.md)            |
+| Tecnología / Área  | Documento                                                    |
+|--------------------|--------------------------------------------------------------|
+| Java / Spring Boot | [java-spring-boot.md](coding-guidelines/java-spring-boot.md) |
+| Maven              | [maven.md](coding-guidelines/maven.md)                       |
+| API REST           | [api-rest.md](coding-guidelines/api-rest.md)                 |
+| Seguridad          | [security.md](coding-guidelines/security.md)                 |
+| Liquibase          | [liquibase.md](coding-guidelines/liquibase.md)               |
+| Angular / Frontend | [angular.md](coding-guidelines/angular.md)                   |
+| Documentación      | [documentation.md](coding-guidelines/documentation.md)       |
 
 ## Propósito
 

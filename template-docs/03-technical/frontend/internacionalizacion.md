@@ -59,10 +59,10 @@ La plataforma puede incorporar cualquier idioma.
 
 Por defecto se recomienda incluir:
 
-| Código | Idioma |
-|---------|---------|
-| es | Español |
-| en | Inglés |
+| Código | Idioma  |
+|--------|---------|
+| es     | Español |
+| en     | Inglés  |
 
 Cada proyecto podrá ampliar esta lista según sus necesidades.
 

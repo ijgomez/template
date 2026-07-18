@@ -22,7 +22,7 @@ El modelo de datos se basa en los siguientes principios:
 - Normalización de la información.
 - Identificadores únicos para todas las entidades.
 - Relaciones explícitas entre entidades.
-- Separación entre entidades persistentes y DTOs.
+- Separación entre entidades persistentes y DTO's.
 - Auditoría de cambios.
 - Evolución controlada mediante migraciones.
 
@@ -48,7 +48,7 @@ Repository --> Entity
 
 Las entidades representan el modelo persistente de la aplicación.
 
-Los DTO constituyen el modelo utilizado por las APIs.
+Los DTO constituyen el modelo utilizado por las API's.
 
 ---
 
@@ -185,7 +185,7 @@ Esto mejora la legibilidad del código y evita valores literales.
 
 # DTO
 
-Las entidades JPA nunca se exponen directamente mediante las APIs.
+Las entidades JPA nunca se exponen directamente mediante las API's.
 
 Todas las comunicaciones utilizan DTO específicos.
 
@@ -197,7 +197,7 @@ Database --> Entity --> Mapper --> DTO --> API
 
 Esta separación proporciona:
 
-- Independencia entre persistencia y APIs.
+- Independencia entre persistencia y API's.
 - Mayor seguridad.
 - Evolución independiente del modelo.
 - Optimización de las respuestas.
@@ -268,6 +268,6 @@ Para ampliar la información sobre el modelo de datos consultar:
 
 # Resumen
 
-El modelo de datos de Template proporciona una representación consistente del dominio de la aplicación, separando claramente la persistencia de la lógica de negocio y de las APIs.
+El modelo de datos de Template proporciona una representación consistente del dominio de la aplicación, separando claramente la persistencia de la lógica de negocio y de las API's.
 
 Su organización modular, junto con el uso de JPA/Hibernate y Liquibase, facilita la evolución controlada del modelo y garantiza la mantenibilidad de la plataforma a largo plazo.

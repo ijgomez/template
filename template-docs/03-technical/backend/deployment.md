@@ -97,12 +97,12 @@ La coordinación entre nodos se realiza mediante el módulo **cluster**.
 
 La plataforma contempla diferentes entornos de ejecución.
 
-| Entorno | Objetivo |
-|----------|----------|
-| Desarrollo (DES) | Desarrollo y pruebas locales |
-| Integración (INT) | Integración continua |
+| Entorno             | Objetivo                               |
+|---------------------|----------------------------------------|
+| Desarrollo (DES)    | Desarrollo y pruebas locales           |
+| Integración (INT)   | Integración continua                   |
 | Preproducción (PRE) | Validación previa al paso a producción |
-| Producción (PRO) | Entorno productivo |
+| Producción (PRO)    | Entorno productivo                     |
 
 Cada entorno dispone de su propia configuración.
 

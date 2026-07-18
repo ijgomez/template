@@ -53,12 +53,12 @@ El **Service Worker** actúa como intermediario entre la aplicación y el servid
 
 La implementación PWA se basa en los siguientes elementos.
 
-| Componente | Descripción |
-|------------|-------------|
-| Manifest | Describe la aplicación instalable. |
-| Service Worker | Gestiona caché y recursos. |
-| Cache Storage | Almacenamiento local de recursos. |
-| IndexedDB | Almacenamiento de datos locales (cuando sea necesario). |
+| Componente     | Descripción                                             |
+|----------------|---------------------------------------------------------|
+| Manifest       | Describe la aplicación instalable.                      |
+| Service Worker | Gestiona caché y recursos.                              |
+| Cache Storage  | Almacenamiento local de recursos.                       |
+| IndexedDB      | Almacenamiento de datos locales (cuando sea necesario). |
 
 ---
 
@@ -95,14 +95,14 @@ Su funcionamiento es completamente transparente para los módulos funcionales.
 
 Template podrá utilizar diferentes estrategias dependiendo del tipo de recurso.
 
-| Recurso | Estrategia recomendada |
-|----------|------------------------|
-| HTML | Network First |
-| JavaScript | Cache First |
-| CSS | Cache First |
-| Imágenes | Cache First |
-| API REST | Network First |
-| Configuración | Network First |
+| Recurso       | Estrategia recomendada |
+|---------------|------------------------|
+| HTML          | Network First          |
+| JavaScript    | Cache First            |
+| CSS           | Cache First            |
+| Imágenes      | Cache First            |
+| API REST      | Network First          |
+| Configuración | Network First          |
 
 La estrategia concreta podrá modificarse según las necesidades del proyecto.
 

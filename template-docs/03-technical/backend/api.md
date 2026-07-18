@@ -1,12 +1,12 @@
-# Arquitectura de APIs
+# Arquitectura de API's
 
 ## Introducción
 
 Template desacopla completamente la lógica de negocio de los mecanismos utilizados para exponer los servicios.
 
-Para ello, la plataforma distingue entre las APIs utilizadas por la interfaz de usuario y aquellas destinadas a la integración con sistemas externos.
+Para ello, la plataforma distingue entre las API's utilizadas por la interfaz de usuario y aquellas destinadas a la integración con sistemas externos.
 
-Todas las APIs consumen los mismos servicios de negocio, garantizando que la lógica funcional se implemente una única vez.
+Todas las API's consumen los mismos servicios de negocio, garantizando que la lógica funcional se implemente una única vez.
 
 ---
 
@@ -80,13 +80,13 @@ GET /api/ui/reports
 
 ---
 
-# APIs de Integración
+# API's de Integración
 
 ## Objetivo
 
-Las APIs de integración permiten que aplicaciones externas interactúen con Template.
+Las API's de integración permiten que aplicaciones externas interactúen con Template.
 
-Estas APIs representan contratos públicos y deben mantenerse estables entre versiones.
+Estas API's representan contratos públicos y deben mantenerse estables entre versiones.
 
 ---
 
@@ -135,7 +135,7 @@ Por ejemplo:
 
 # Organización
 
-Todas las APIs siguen la misma estructura lógica.
+Todas las API's siguen la misma estructura lógica.
 
 ```mermaid
 flowchart TB
@@ -151,7 +151,7 @@ Cada API implementa únicamente la adaptación entre el protocolo utilizado y lo
 
 # Versionado
 
-Las APIs públicas utilizan versionado.
+Las API's públicas utilizan versionado.
 
 Ejemplo:
 
@@ -167,7 +167,7 @@ La Frontend API evoluciona junto con la versión del Dashboard y no requiere man
 
 # Seguridad
 
-Las APIs implementan autenticación y autorización.
+Las API's implementan autenticación y autorización.
 
 Dependiendo del tipo de API podrán utilizarse diferentes mecanismos:
 
@@ -183,7 +183,7 @@ La autorización siempre se realiza sobre los servicios de negocio.
 
 # DTO
 
-Las APIs nunca exponen directamente las entidades JPA.
+Las API's nunca exponen directamente las entidades JPA.
 
 Todas las operaciones utilizan objetos DTO específicos para cada consumidor.
 
@@ -198,17 +198,17 @@ Esto permite:
 
 # Gestión de errores
 
-Todas las APIs proporcionan una respuesta uniforme en caso de error.
+Todas las API's proporcionan una respuesta uniforme en caso de error.
 
-Las APIs REST utilizan códigos HTTP estándar.
+Las API's REST utilizan códigos HTTP estándar.
 
-Las APIs SOAP utilizan SOAP Fault.
+Las API's SOAP utilizan SOAP Fault.
 
 ---
 
 # Documentación
 
-Las APIs públicas se documentan mediante OpenAPI y, en el caso de SOAP, mediante WSDL.
+Las API's públicas se documentan mediante OpenAPI y, en el caso de SOAP, mediante WSDL.
 
 La Frontend API no tiene por qué publicarse externamente, aunque puede documentarse internamente para facilitar el desarrollo del Dashboard.
 
@@ -216,20 +216,20 @@ La Frontend API no tiene por qué publicarse externamente, aunque puede document
 
 # Principios de diseño
 
-Todas las APIs desarrolladas sobre Template deben cumplir los siguientes principios:
+Todas las API's desarrolladas sobre Template deben cumplir los siguientes principios:
 
 - La lógica de negocio debe implementarse únicamente en los servicios de negocio.
-- Las APIs actúan únicamente como adaptadores.
+- Las API's actúan únicamente como adaptadores.
 - No acceder directamente a la persistencia desde los controladores.
 - No exponer entidades JPA.
-- Mantener contratos estables para las APIs públicas.
+- Mantener contratos estables para las API's públicas.
 - Optimizar la Frontend API para la experiencia de usuario.
-- Documentar todas las APIs.
+- Documentar todas las API's.
 
 ---
 
 # Resumen
 
-Template diferencia claramente entre las APIs orientadas a la interfaz de usuario y aquellas destinadas a la integración con otros sistemas.
+Template diferencia claramente entre las API's orientadas a la interfaz de usuario y aquellas destinadas a la integración con otros sistemas.
 
 Esta separación permite optimizar cada interfaz para su consumidor específico, manteniendo una única implementación de la lógica de negocio y facilitando la evolución independiente de cada mecanismo de integración.

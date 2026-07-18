@@ -103,7 +103,7 @@ Entre sus responsabilidades destacan:
 - Integración con sistemas externos.
 - Generación de informes.
 
-El backend expone diferentes tipos de APIs dependiendo del consumidor.
+El backend expone diferentes tipos de API's dependiendo del consumidor.
 
 ---
 
@@ -133,9 +133,9 @@ La arquitectura permite incorporar nuevos mecanismos de integración sin modific
 
 ---
 
-# Arquitectura de APIs
+# Arquitectura de API's
 
-Una de las características principales de Template es la separación entre las APIs destinadas a la interfaz de usuario y aquellas orientadas a la integración con terceros.
+Una de las características principales de Template es la separación entre las API's destinadas a la interfaz de usuario y aquellas orientadas a la integración con terceros.
 
 ## Frontend API
 
@@ -154,7 +154,7 @@ Su objetivo es minimizar el número de llamadas necesarias para construir cada p
 
 ## APIs de Integración
 
-Las APIs de integración permiten la comunicación con aplicaciones externas.
+Las API's de integración permiten la comunicación con aplicaciones externas.
 
 Dependiendo de las necesidades del proyecto, la plataforma puede exponer distintos mecanismos de integración, entre ellos:
 
@@ -162,7 +162,7 @@ Dependiendo de las necesidades del proyecto, la plataforma puede exponer distint
 - SOAP.
 - Otros protocolos que puedan incorporarse en el futuro.
 
-Estas APIs constituyen contratos estables orientados a otros sistemas y evolucionan de forma independiente de la Frontend API.
+Estas API's constituyen contratos estables orientados a otros sistemas y evolucionan de forma independiente de la Frontend API.
 
 ---
 
@@ -318,7 +318,7 @@ El diseño de Template se basa en los siguientes principios:
 - Escalabilidad.
 - Mantenibilidad.
 - Extensibilidad.
-- Evolución independiente de las APIs.
+- Evolución independiente de las API's.
 
 Estos principios permiten adaptar la plataforma a nuevos requisitos sin comprometer la estabilidad del sistema.
 
@@ -344,6 +344,6 @@ Estos principios permiten adaptar la plataforma a nuevos requisitos sin comprome
 
 Template proporciona una arquitectura moderna y desacoplada en la que la lógica de negocio constituye el núcleo de la plataforma.
 
-La separación entre la **Frontend API**, destinada exclusivamente a la aplicación Angular, y las **APIs de Integración**, orientadas a sistemas externos, permite optimizar cada interfaz para su consumidor sin duplicar la lógica de negocio.
+La separación entre la **Frontend API**, destinada exclusivamente a la aplicación Angular, y las **API's de Integración**, orientadas a sistemas externos, permite optimizar cada interfaz para su consumidor sin duplicar la lógica de negocio.
 
 Este enfoque facilita la evolución independiente de cada componente, simplifica el mantenimiento y proporciona una base sólida para el desarrollo de aplicaciones empresariales escalables y reutilizables.

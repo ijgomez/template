@@ -119,13 +119,13 @@ Todos ellos utilizan el mismo servicio.
 
 Los eventos pueden clasificarse según su naturaleza.
 
-| Tipo | Descripción |
-|------|-------------|
-| Información | Evento informativo. |
-| Éxito | Operación completada correctamente. |
-| Advertencia | Situación que requiere atención. |
-| Error | Operación fallida. |
-| Sistema | Eventos técnicos de la plataforma. |
+| Tipo        | Descripción                         |
+|-------------|-------------------------------------|
+| Información | Evento informativo.                 |
+| Éxito       | Operación completada correctamente. |
+| Advertencia | Situación que requiere atención.    |
+| Error       | Operación fallida.                  |
+| Sistema     | Eventos técnicos de la plataforma.  |
 
 ---
 
@@ -177,7 +177,7 @@ Ejemplos:
 - Nodo secundario activo.
 - Licencia próxima a caducar.
 
-Normalmente permanecen visibles hasta que desaparece la condición que los originó.
+Normalmente, permanecen visibles hasta que desaparece la condición que los originó.
 
 ---
 
@@ -230,23 +230,23 @@ Esta funcionalidad podrá incorporarse sin modificar la lógica de negocio.
 
 Cada evento dispone de un nivel de prioridad.
 
-| Prioridad | Uso |
-|-----------|-----|
-| Baja | Información general. |
-| Media | Información relevante. |
-| Alta | Requiere atención. |
-| Crítica | Requiere actuación inmediata. |
+| Prioridad | Uso                           |
+|-----------|-------------------------------|
+| Baja      | Información general.          |
+| Media     | Información relevante.        |
+| Alta      | Requiere atención.            |
+| Crítica   | Requiere actuación inmediata. |
 
 La prioridad influye en el canal utilizado.
 
 Por ejemplo:
 
-| Prioridad | Canal recomendado |
-|-----------|------------------|
-| Baja | Toast |
-| Media | Centro de Notificaciones |
-| Alta | Banner |
-| Crítica | Modal + Centro de Notificaciones |
+| Prioridad | Canal recomendado                |
+|-----------|----------------------------------|
+| Baja      | Toast                            |
+| Media     | Centro de Notificaciones         |
+| Alta      | Banner                           |
+| Crítica   | Modal + Centro de Notificaciones |
 
 ---
 
