@@ -49,9 +49,11 @@ Describe los distintos módulos funcionales de la aplicación.
 - [Instalación](04-development/installation.md)
 - [Configuración](04-development/configuration.md)
 - [Compilación](04-development/build.md)
+- [Entornos](04-development/environments.md)
 - [Buenas prácticas](04-development/coding-guidelines.md)
 - [Test](04-development/testing.md)
 - [Release](04-development/release.md)
+- [Documentacion](04-development/documents.md)
 
 ### Especificación funcional
 
@@ -68,3 +70,4 @@ Documentación funcional completa del sistema.
 - [Reglas de negocio]()
 - [Historias de usuario]()
 - [Criterios de aceptación]()
+- [Siguientes pasos](specification/roadmap.md)

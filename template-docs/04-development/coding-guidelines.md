@@ -12,6 +12,7 @@
 | Seguridad          | [security.md](coding-guidelines/security.md)                 |
 | Liquibase          | [liquibase.md](coding-guidelines/liquibase.md)               |
 | Angular / Frontend | [angular.md](coding-guidelines/angular.md)                   |
+| Testing            | [testing.md](coding-guidelines/testing.md)                   |
 | Documentación      | [documentation.md](coding-guidelines/documentation.md)       |
 
 ## Propósito
