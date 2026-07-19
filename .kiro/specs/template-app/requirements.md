@@ -48,10 +48,10 @@
 
 #### Acceptance Criteria
 
-1. THE UserService SHALL exponer un endpoint para crear un nuevo usuario con los datos: username (obligatorio, único), password (obligatorio), nombre (opcional), apellidos (opcional), email (opcional), perfil asignado y lista de informes permitidos (de 0 a N informes, sin duplicados).
-2. THE UserService SHALL exponer un endpoint para obtener la lista de usuarios con soporte de paginación y filtros por username, nombre, apellidos, email y perfil.
-3. THE UserService SHALL exponer un endpoint para obtener los datos de un usuario concreto por su identificador.
-4. THE UserService SHALL exponer un endpoint para actualizar los datos de un usuario existente (nombre, apellidos, email, perfil asignado y lista de informes permitidos sin duplicados).
+1. THE UserService SHALL exponer un endpoint para crear un nuevo usuario aceptando un UserDTO con el campo id nulo y los datos: username (obligatorio, único), password (obligatorio), nombre (opcional), apellidos (opcional), email (opcional), perfil asignado y lista de informes permitidos (de 0 a N informes, sin duplicados). El sistema genera el identificador del usuario.
+2. THE UserService SHALL exponer un endpoint para obtener la lista de usuarios con soporte de paginación y filtros por username, nombre, apellidos, email y perfil mediante un objeto UserCriteria, incluyendo un método countByCriteria(criteria) que devuelva el total de registros que coinciden con los filtros aplicados.
+3. THE UserService SHALL exponer un endpoint para obtener los datos de un usuario concreto por su identificador, devolviendo un UserDTO.
+4. THE UserService SHALL exponer un endpoint para actualizar los datos de un usuario existente aceptando un UserDTO con el campo id poblado (identificando al usuario a actualizar), actualizando: nombre, apellidos, email, perfil asignado y lista de informes permitidos sin duplicados.
 5. THE UserService SHALL exponer un endpoint para eliminar un usuario existente.
 6. WHEN se intenta crear un usuario con un username que ya existe, THE UserService SHALL devolver un error 409 Conflict.
 7. WHEN se intenta acceder a un usuario que no existe, THE UserService SHALL devolver un error 404 Not Found.
@@ -195,10 +195,10 @@
 
 #### Acceptance Criteria
 
-1. THE ProfileService SHALL exponer un endpoint para crear un nuevo perfil con los datos: nombre (obligatorio, único), descripción (opcional) y lista de acciones asignadas (de 0 a N acciones, sin duplicados).
-2. THE ProfileService SHALL exponer un endpoint para obtener la lista de perfiles con soporte de paginación y filtros por nombre.
-3. THE ProfileService SHALL exponer un endpoint para obtener los datos de un perfil concreto por su identificador, incluyendo la lista de acciones asignadas.
-4. THE ProfileService SHALL exponer un endpoint para actualizar los datos de un perfil existente (nombre, descripción, lista de acciones asignadas sin duplicados).
+1. THE ProfileService SHALL exponer un endpoint para crear un nuevo perfil aceptando un ProfileDTO con el campo id nulo y los datos: nombre (obligatorio, único), descripción (opcional) y lista de acciones asignadas (de 0 a N acciones, sin duplicados). El sistema genera el identificador del perfil.
+2. THE ProfileService SHALL exponer un endpoint para obtener la lista de perfiles con soporte de paginación y filtros por nombre mediante un objeto ProfileCriteria, incluyendo un método countByCriteria(criteria) que devuelva el total de registros que coinciden con los filtros aplicados.
+3. THE ProfileService SHALL exponer un endpoint para obtener los datos de un perfil concreto por su identificador, incluyendo la lista de acciones asignadas, devolviendo un ProfileDTO.
+4. THE ProfileService SHALL exponer un endpoint para actualizar los datos de un perfil existente aceptando un ProfileDTO con el campo id poblado (identificando al perfil a actualizar), actualizando: nombre, descripción, lista de acciones asignadas sin duplicados.
 5. THE ProfileService SHALL exponer un endpoint para eliminar un perfil existente.
 6. WHEN se intenta crear un perfil con un nombre que ya existe, THE ProfileService SHALL devolver un error 409 Conflict.
 7. WHEN se intenta eliminar un perfil que tiene usuarios asignados, THE ProfileService SHALL devolver un error 409 Conflict con un mensaje indicando que el perfil está en uso.
@@ -211,9 +211,9 @@
 
 #### Acceptance Criteria
 
-1. THE ActionService SHALL exponer un endpoint para obtener la lista de acciones con soporte de paginación y filtros por código, nombre y tipo.
-2. THE ActionService SHALL exponer un endpoint para obtener los datos de una acción concreta por su identificador, incluyendo los campos: código, tipo, nombre y descripción.
-3. THE ActionService SHALL exponer un endpoint para actualizar los datos de una acción existente (nombre, descripción y tipo).
+1. THE ActionService SHALL exponer un endpoint para obtener la lista de acciones con soporte de paginación y filtros por código, nombre y tipo mediante un objeto ActionCriteria, incluyendo un método countByCriteria(criteria) que devuelva el total de registros que coinciden con los filtros aplicados.
+2. THE ActionService SHALL exponer un endpoint para obtener los datos de una acción concreta por su identificador, incluyendo los campos: código, tipo, nombre y descripción, devolviendo un ActionDTO.
+3. THE ActionService SHALL exponer un endpoint para actualizar los datos de una acción existente aceptando un ActionDTO con el campo id poblado (identificando la acción a actualizar), actualizando: nombre, descripción y tipo.
 4. WHEN se intenta acceder a una acción que no existe, THE ActionService SHALL devolver un error 404 Not Found.
 5. THE ActionService SHALL rechazar cualquier solicitud de eliminación de acciones, devolviendo un error 405 Method Not Allowed.
 6. THE ActionService SHALL rechazar cualquier solicitud de creación de acciones, devolviendo un error 405 Method Not Allowed.
@@ -280,10 +280,10 @@
 
 #### Acceptance Criteria
 
-1. THE ParameterService SHALL exponer un endpoint para crear un nuevo parámetro con los datos: código (obligatorio, único), descripción (opcional), valor (obligatorio) y tipo (obligatorio, enum: STRING, INTEGER, BOOLEAN, DATE).
-2. THE ParameterService SHALL exponer un endpoint para obtener la lista de parámetros del sistema con soporte de paginación y filtros por código, descripción y tipo.
-3. THE ParameterService SHALL exponer un endpoint para obtener los datos de un parámetro concreto por su código.
-4. THE ParameterService SHALL exponer un endpoint para actualizar los datos de un parámetro existente (descripción, valor y tipo).
+1. THE ParameterService SHALL exponer un endpoint para crear un nuevo parámetro aceptando un ParameterDTO con el campo id nulo y los datos: código (obligatorio, único), descripción (opcional), valor (obligatorio) y tipo (obligatorio, enum: STRING, INTEGER, BOOLEAN, DATE). El sistema genera el identificador del parámetro.
+2. THE ParameterService SHALL exponer un endpoint para obtener la lista de parámetros del sistema con soporte de paginación y filtros por código, descripción y tipo mediante un objeto ParameterCriteria, incluyendo un método countByCriteria(criteria) que devuelva el total de registros que coinciden con los filtros aplicados.
+3. THE ParameterService SHALL exponer un endpoint para obtener los datos de un parámetro concreto por su código, devolviendo un ParameterDTO.
+4. THE ParameterService SHALL exponer un endpoint para actualizar los datos de un parámetro existente aceptando un ParameterDTO con el campo id poblado (identificando al parámetro a actualizar), actualizando: descripción, valor y tipo.
 5. THE ParameterService SHALL exponer un endpoint para eliminar un parámetro existente.
 6. WHEN se intenta crear un parámetro con un código que ya existe, THE ParameterService SHALL devolver un error 409 Conflict.
 7. WHEN se intenta actualizar un parámetro con un valor que no es compatible con el tipo definido (por ejemplo, un texto en un parámetro de tipo INTEGER), THE ParameterService SHALL devolver un error 400 Bad Request con un mensaje indicando la incompatibilidad de tipo.
@@ -299,8 +299,8 @@
 #### Acceptance Criteria
 
 1. THE AuditService SHALL registrar automáticamente mediante AOP (aspectos) cada operación relevante del sistema sin añadir código de auditoría en los servicios de negocio. Las operaciones registradas son: CREATE (creación de un registro de cualquier entidad), UPDATE (modificación de un atributo de una entidad, incluyendo idealmente los valores anteriores y nuevos), DELETE (eliminación de un registro de cualquier entidad) y EXECUTE (ejecución de una acción de tipo execute, como pulsar un botón de ejecución).
-2. THE AuditService SHALL registrar para cada operación auditada los siguientes datos: timestamp (fecha y hora exacta), username (usuario que realizó la operación), operation_type (CREATE, UPDATE, DELETE o EXECUTE), section (módulo/sección del sistema donde se realizó la operación: USERS, PROFILES, ACTIONS, PARAMETERS, REPORTS, INTERFACES, CLUSTER, SYSTEM), entity_id (identificador del registro afectado, opcional), entity_name (tipo de entidad afectada) y detail (texto opcional con información adicional, como los valores antiguos/nuevos en modificaciones).
-3. THE AuditService SHALL exponer un endpoint para consultar los registros de auditoría con soporte de paginación y filtros por: rango de fechas (desde/hasta), usuario (quién realizó la operación), tipo de operación (CREATE, UPDATE, DELETE, EXECUTE) y sección/módulo (USERS, PROFILES, ACTIONS, PARAMETERS, REPORTS, INTERFACES, CLUSTER, SYSTEM).
+2. THE AuditService SHALL registrar para cada operación auditada los siguientes datos: timestamp (fecha y hora exacta), username (usuario que realizó la operación), operation_type (CREATE, UPDATE, DELETE o EXECUTE), section (módulo/sección del sistema donde se realizó la operación: SECURITY, REPORTS, INTERFACES, CLUSTER, SYSTEM), entity_id (identificador del registro afectado, opcional), entity_name (tipo de entidad afectada) y detail (texto opcional con información adicional, como los valores antiguos/nuevos en modificaciones).
+3. THE AuditService SHALL exponer un endpoint para consultar los registros de auditoría con soporte de paginación y filtros por: rango de fechas (desde/hasta), usuario (quién realizó la operación), tipo de operación (CREATE, UPDATE, DELETE, EXECUTE) y sección/módulo (SECURITY, REPORTS, INTERFACES, CLUSTER, SYSTEM), incluyendo un método countByCriteria(criteria) que devuelva el total de registros que coinciden con los filtros aplicados.
 4. THE SPA SHALL presentar los registros de auditoría en formato tabular con soporte de paginación, ordenación y filtros, en modo solo lectura.
 5. THE AuditService SHALL garantizar que los registros de auditoría sean inmutables (no se pueden modificar ni eliminar a través de la API ni a través de ningún proceso de la aplicación). La tabla audit_log es append-only.
 6. WHEN el volumen de datos del log supera el período de retención configurado, THE AuditService SHALL archivar los registros antiguos según la política de retención definida en los parámetros del sistema.
@@ -315,7 +315,7 @@
 
 1. THE InterfaceService SHALL exponer un endpoint para obtener la lista de interfaces registradas en el sistema con su estado actual (activa, inactiva, en error).
 2. THE InterfaceService SHALL exponer un endpoint para obtener la definición detallada de una interfaz concreta (nombre, descripción, URL del servicio, protocolo, frecuencia de verificación).
-3. THE InterfaceService SHALL exponer un endpoint para consultar la trazabilidad de una interfaz específica: logs de actividad con soporte de paginación y filtros por rango de fechas y resultado (éxito, error).
+3. THE InterfaceService SHALL exponer un endpoint para consultar la trazabilidad de una interfaz específica: logs de actividad con soporte de paginación y filtros por rango de fechas y resultado (éxito, error), incluyendo un método countByCriteria(criteria) que devuelva el total de registros que coinciden con los filtros aplicados.
 4. THE SPA SHALL presentar un panel de supervisión de interfaces mostrando el estado consolidado de todas las interfaces con indicadores visuales (verde para activa, rojo para error, gris para inactiva).
 5. WHEN una interfaz cambia de estado, THE InterfaceService SHALL registrar el cambio en el AuditLog con la fecha, el estado anterior y el estado nuevo.
 6. WHEN se intenta acceder a una interfaz que no existe, THE InterfaceService SHALL devolver un error 404 Not Found.
@@ -343,7 +343,7 @@
 
 #### Acceptance Criteria
 
-1. THE ClusterService SHALL exponer un endpoint para obtener la lista de bloqueos (ClusterBlock) con soporte de paginación y filtros por nombre de tarea.
+1. THE ClusterService SHALL exponer un endpoint para obtener la lista de bloqueos (ClusterBlock) con soporte de paginación y filtros por nombre de tarea, incluyendo un método countByCriteria(criteria) que devuelva el total de registros que coinciden con los filtros aplicados.
 2. THE ClusterService SHALL exponer un endpoint para obtener los datos detallados de un bloqueo concreto por su identificador, incluyendo todos los campos: nombre, fecha de inicio, tiempo medio, tiempo mínimo, tiempo máximo y total.
 3. THE SPA SHALL presentar la lista de bloqueos en modo solo lectura, sin opciones de creación, edición ni eliminación.
 4. WHEN se intenta acceder a un bloqueo que no existe, THE ClusterService SHALL devolver un error 404 Not Found.
@@ -367,6 +367,7 @@
 10. WHILE el usuario no tiene la acción requerida para crear, editar o borrar registros, THE SPA SHALL ocultar las opciones correspondientes y presentar la vista de listado en modo solo lectura.
 11. THE SPA SHALL presentar las vistas de listado de Acciones y Nodos del cluster únicamente con las opciones "Ver Detalle" y "Editar" (sin botón "Crear" ni opción "Borrar").
 12. THE SPA SHALL presentar las vistas de listado de Bloqueos del cluster, Trazabilidad/Auditoría e Interfaces únicamente con la opción "Ver Detalle" (sin opciones de Crear, Editar ni Borrar).
+13. THE SPA SHALL requerir que todo servicio del backend que soporte paginación exponga, además del método findByCriteria(criteria, pageable) para obtener la página de resultados, un método countByCriteria(criteria) que devuelva el número total de registros que coinciden con los criterios de filtrado aplicados, permitiendo al frontend calcular la paginación completa (total de páginas y navegación).
 
 ### Requirement 26: Modelo de datos de auditoría
 
@@ -374,7 +375,7 @@
 
 #### Acceptance Criteria
 
-1. THE SPA SHALL gestionar la tabla de auditoría con el nombre `audit_log` y los siguientes campos: id (BIGINT, autogenerado, clave primaria), timestamp (TIMESTAMP, obligatorio, fecha y hora de la operación), username (VARCHAR, obligatorio, usuario que realizó la operación), operation_type (VARCHAR, obligatorio, enum con valores: CREATE, UPDATE, DELETE, EXECUTE), section (VARCHAR, obligatorio, módulo/sección del sistema con valores: USERS, PROFILES, ACTIONS, PARAMETERS, REPORTS, INTERFACES, CLUSTER, SYSTEM), entity_id (VARCHAR, opcional, identificador del registro afectado), entity_name (VARCHAR, obligatorio, nombre del tipo de entidad afectada) y detail (TEXT, opcional, información adicional como los valores anteriores/nuevos en modificaciones).
+1. THE SPA SHALL gestionar la tabla de auditoría con el nombre `audit_log` y los siguientes campos: id (BIGINT, autogenerado, clave primaria), timestamp (TIMESTAMP, obligatorio, fecha y hora de la operación), username (VARCHAR, obligatorio, usuario que realizó la operación), operation_type (VARCHAR, obligatorio, enum con valores: CREATE, UPDATE, DELETE, EXECUTE), section (VARCHAR, obligatorio, módulo/sección del sistema con valores: SECURITY, REPORTS, INTERFACES, CLUSTER, SYSTEM), entity_id (VARCHAR, opcional, identificador del registro afectado), entity_name (VARCHAR, obligatorio, nombre del tipo de entidad afectada) y detail (TEXT, opcional, información adicional como los valores anteriores/nuevos en modificaciones).
 2. THE SPA SHALL crear el esquema de la tabla `audit_log` mediante una migración Liquibase versionada.
 3. THE SPA SHALL garantizar que la tabla `audit_log` sea append-only: no se permite la ejecución de operaciones UPDATE ni DELETE sobre los registros de esta tabla. La inmutabilidad se refuerza tanto a nivel de aplicación (el AuditService no expone operaciones de escritura) como a nivel de base de datos (restricciones o políticas que impidan la modificación o eliminación de registros).
 4. THE SPA SHALL definir un índice compuesto sobre los campos timestamp y username para optimizar las consultas de auditoría filtradas por rango de fechas y usuario.
@@ -447,6 +448,7 @@
 2. THE SPA SHALL crear el esquema de la tabla de bloqueos del cluster mediante una migración Liquibase versionada.
 3. WHEN se intenta insertar un bloqueo con un nombre que ya existe, THE SPA SHALL rechazar la operación con un error de violación de restricción de unicidad.
 4. THE SPA SHALL garantizar que los registros de la tabla ClusterBlock son creados y actualizados exclusivamente por el propio sistema (las tareas que adquieren bloqueos), nunca por la API de usuario.
+5. THE SPA SHALL definir una clave foránea en la tabla CLUSTER_BLOCK desde el campo nombre (name) hacia el campo nombre (name) de la tabla CLUSTER_TASK, garantizando que no pueda existir un registro de bloqueo para una tarea que no esté registrada en la tabla CLUSTER_TASK.
 
 ### Requirement 32: Trazabilidad de operaciones de interfaces (solo lectura)
 
@@ -455,7 +457,7 @@
 #### Acceptance Criteria
 
 1. THE InterfaceService SHALL registrar automáticamente cada operación realizada por una interfaz con un sistema externo, ya sea de entrada (recepción de datos) o de salida (envío de datos), sin intervención del código de negocio.
-2. THE InterfaceService SHALL exponer un endpoint para consultar los registros de operaciones de interfaces con soporte de paginación y filtros por: rango de fechas, tipo de operación (IN, OUT), interfaz y estado de la respuesta (éxito, error).
+2. THE InterfaceService SHALL exponer un endpoint para consultar los registros de operaciones de interfaces con soporte de paginación y filtros por: rango de fechas, tipo de operación (IN, OUT), interfaz y estado de la respuesta (éxito, error), incluyendo un método countByCriteria(criteria) que devuelva el total de registros que coinciden con los filtros aplicados.
 3. THE InterfaceService SHALL exponer un endpoint para obtener el detalle de una operación concreta por su identificador, incluyendo todos los campos: fecha y hora, tipo de operación, interfaz, payload de la petición, payload de la respuesta y estado.
 4. THE SPA SHALL presentar los registros de operaciones de interfaces en formato tabular con soporte de paginación, ordenación y filtros, en modo solo lectura.
 5. THE InterfaceService SHALL exponer únicamente endpoints de consulta (GET) para los registros de operaciones de interfaces. La creación, modificación y eliminación no está disponible a través de la API de usuario; el registro se realiza de forma automática por el sistema.
@@ -566,3 +568,19 @@
 6. THE ClusterLockService SHALL utilizar la hora de la base de datos (no la hora local de la JVM) para registrar los tiempos de bloqueo, evitando problemas de clock drift entre nodos del cluster.
 7. WHEN se libera un lock, THE ClusterLockService SHALL actualizar el registro correspondiente en la tabla ClusterBlock con: el tiempo transcurrido desde la adquisición, recalculando el tiempo medio, actualizando el tiempo mínimo y máximo si corresponde, e incrementando el contador total de bloqueos.
 8. IF un lock no puede ser adquirido porque otro nodo o hilo lo tiene activo, THEN THE ClusterLockService SHALL bloquear la ejecución del hilo solicitante hasta que el lock sea liberado o aplicar la política de timeout definida.
+
+
+### Requirement 40: Convención de DTO y Criteria para entidades del dominio
+
+**User Story:** As a desarrollador, I want que todas las entidades del dominio sigan una convención uniforme de DTO para transferencia de datos y Criteria para filtrado en consultas paginadas, so that se elimine la proliferación de objetos Request específicos y se mantenga una API de servicios consistente y predecible.
+
+#### Acceptance Criteria
+
+1. THE SPA SHALL definir una clase DTO (Data Transfer Object) para cada entidad del dominio: UserDTO, ProfileDTO, ActionDTO, ParameterDTO, ReportDTO, AuditLogDTO, InterfaceDTO, InterfaceLogDTO, ClusterNodeDTO, ClusterBlockDTO, ClusterTaskDTO y ClusterJobDTO.
+2. THE SPA SHALL definir una clase Criteria para cada entidad que soporte consultas paginadas con filtros: UserCriteria, ProfileCriteria, ActionCriteria, ParameterCriteria, AuditCriteria, InterfaceLogCriteria, ClusterBlockCriteria.
+3. WHEN se invoca el método create de un servicio, THE SPA SHALL aceptar el DTO de la entidad correspondiente con el campo de clave primaria (id) establecido a null. El sistema genera el identificador del registro de forma automática.
+4. WHEN se invoca el método update de un servicio, THE SPA SHALL aceptar el DTO de la entidad correspondiente con el campo de clave primaria (id) poblado, identificando el registro a actualizar.
+5. THE SPA SHALL prohibir la creación de objetos de tipo CreateXxxRequest o UpdateXxxRequest cuando existe un DTO correspondiente para la entidad. Los DTOs se utilizan directamente para operaciones de creación (id=null) y actualización (id poblado).
+6. THE SPA SHALL permitir la creación de objetos Request únicamente cuando no existe una entidad de dominio correspondiente (por ejemplo, LoginRequest para autenticación, donde no existe una entidad Login).
+7. THE SPA SHALL permitir la creación de objetos Response dedicados cuando la respuesta no corresponde directamente a una entidad del dominio (por ejemplo, TokenResponse para la respuesta de autenticación).
+8. THE SPA SHALL utilizar los objetos Criteria como parámetro de entrada en los métodos findByCriteria(criteria, pageable) y countByCriteria(criteria) de cada servicio, encapsulando los filtros aplicables a las consultas paginadas.
