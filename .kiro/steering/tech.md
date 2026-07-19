@@ -5,8 +5,10 @@
 ## Configuración de Control de Versiones
 
 - **Control de versiones:** Git con Git LFS habilitado
-- **Ramas:** `master` (rama principal), `release/2.0` (rama de release)
 - **Remoto:** GitHub (`https://github.com/ijgomez/template`)
+- **Estrategia de branching:** GitFlow
+- **Versionado:** SemVer (MAJOR.MINOR.PATCH)
+- **Detalle completo:** ver `template-docs/04-development/version-control.md`
 
 ## Versiones Específicas
 

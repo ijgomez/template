@@ -413,23 +413,29 @@
 
 #### Acceptance Criteria
 
-1. THE SPA SHALL gestionar la tabla de nodos del cluster con los siguientes campos: identificador (autogenerado), estado (obligatorio, enum con valores: ALIVE, DEAD), hostname (obligatorio, tipo VARCHAR, nombre de la máquina del sistema operativo), ip (obligatorio, tipo VARCHAR, dirección IP de la máquina), master (obligatorio, tipo BOOLEAN, indica si el nodo actúa como maestro), memoriaUsada (obligatorio, tipo BIGINT, memoria usada por la aplicación en bytes), memoriaLibre (obligatorio, tipo BIGINT, memoria libre en bytes), memoriaTotal (obligatorio, tipo BIGINT, memoria total en bytes), fecha de arranque (opcional, tipo TIMESTAMP WITH TIME ZONE, última vez que la instancia fue arrancada) y fecha de última actualización (opcional, tipo TIMESTAMP WITH TIME ZONE, último chequeo de que la instancia está funcionando).
+1. THE SPA SHALL gestionar la tabla de nodos del cluster (CLUSTER_NODE) con los siguientes campos: identificador (autogenerado), estado (obligatorio, enum con valores: ALIVE, DEAD), hostname (obligatorio, tipo VARCHAR, nombre de la máquina del sistema operativo), ip (obligatorio, tipo VARCHAR, dirección IP de la máquina), master (obligatorio, tipo BOOLEAN, indica si el nodo actúa como maestro), memoriaUsada (obligatorio, tipo BIGINT, memoria usada por la aplicación en bytes), memoriaLibre (obligatorio, tipo BIGINT, memoria libre en bytes), memoriaTotal (obligatorio, tipo BIGINT, memoria total en bytes), fecha de arranque (opcional, tipo TIMESTAMP WITH TIME ZONE, última vez que la instancia fue arrancada) y fecha de última actualización (opcional, tipo TIMESTAMP WITH TIME ZONE, último chequeo de que la instancia está funcionando).
 2. THE SPA SHALL crear el esquema de la tabla de nodos del cluster mediante una migración Liquibase versionada.
 3. THE SPA SHALL definir el campo estado como un enum de base de datos con los valores permitidos: ALIVE, DEAD.
 4. THE SPA SHALL garantizar mediante restricción de base de datos o lógica de aplicación que solo un nodo puede tener el campo master con valor true en cualquier momento.
 5. THE SPA SHALL garantizar que los registros de nodos del cluster son creados y actualizados exclusivamente por el propio sistema (la propia instancia de la aplicación al arrancar y periódicamente), nunca por la API de usuario. La API de usuario solo permite modificar el campo master.
+6. THE SPA SHALL utilizar el campo last_modified_at (gestionado automáticamente por Spring Data JPA según el Requirement 34) como referencia temporal para determinar si un nodo ha excedido el timeout de heartbeat (5 minutos / 300000 ms), marcándolo como DEAD en caso afirmativo.
 
 ### Requirement 30: Autoregistro y heartbeat del nodo del cluster
 
-**User Story:** As a desarrollador, I want que cada instancia de la aplicación se registre automáticamente en el cluster al arrancar y envíe un heartbeat periódico, so that el sistema de supervisión refleje en todo momento qué instancias están activas.
+**User Story:** As a desarrollador, I want que cada instancia de la aplicación se registre automáticamente en el cluster al arrancar y envíe un heartbeat periódico con detección de nodos muertos y elección automática de maestro, so that el sistema de supervisión refleje en todo momento qué instancias están activas y el cluster mantenga siempre un nodo maestro operativo.
 
 #### Acceptance Criteria
 
 1. WHEN la aplicación arranca y no existe un registro en la tabla de nodos del cluster con el hostname de la máquina actual, THE ClusterService SHALL crear automáticamente un nuevo registro con: hostname (identificador de la instancia), ip de la máquina, estado ALIVE, master false, datos de memoria actuales, fecha de arranque con la fecha y hora actual y fecha de última actualización con la fecha y hora actual.
 2. WHEN la aplicación arranca y ya existe un registro en la tabla de nodos del cluster con el hostname de la máquina actual, THE ClusterService SHALL actualizar el registro existente con: estado ALIVE, ip actual, datos de memoria actuales y fecha de arranque con la fecha y hora actual.
-3. THE SPA SHALL ejecutar una tarea en background (scheduled task) que cada 30 segundos actualice el registro del nodo en la tabla de nodos del cluster con: estado ALIVE, datos de memoria actuales (memoriaUsada, memoriaLibre, memoriaTotal) y fecha de última actualización con la fecha y hora actual.
+3. THE SPA SHALL ejecutar una tarea en background (scheduled task / HeartbeatWorker) que cada 30 segundos actualice el registro del nodo en la tabla de nodos del cluster con: estado ALIVE, datos de memoria actuales (memoriaUsada, memoriaLibre, memoriaTotal) y fecha de última actualización con la fecha y hora actual.
 4. THE SPA SHALL utilizar el hostname del sistema operativo como identificador único de la instancia para localizar su registro en la tabla de nodos del cluster.
 5. THE SPA SHALL configurar el intervalo del heartbeat (30 segundos por defecto) como un parámetro configurable a través de los parámetros del sistema o de la configuración de la aplicación.
+6. WHEN el HeartbeatWorker ejecuta su ciclo, THE ClusterService SHALL adquirir un lock sobre el recurso "NODOS" antes de procesar la lógica de heartbeat, garantizando exclusión mutua entre instancias concurrentes.
+7. WHEN el HeartbeatWorker detecta que el campo last_modified_at de un nodo supera los 5 minutos (300000 milisegundos) respecto al momento actual, THE ClusterService SHALL marcar dicho nodo como DEAD actualizando su campo estado.
+8. WHEN el HeartbeatWorker detecta que no existe ningún nodo con estado ALIVE y master true en el cluster, THE ClusterService SHALL promover automáticamente al nodo actual como maestro (master = true).
+9. IF la aplicación arranca y no encuentra su propio registro en la tabla de nodos del cluster por hostname, THEN THE ClusterService SHALL registrar un log de nivel FATAL indicando una condición operativa crítica.
+10. THE SPA SHALL implementar el HeartbeatWorker como una clase abstracta que defina puntos de extensión (métodos abstractos) para que los módulos consumidores implementen la reacción ante nodos muertos detectados y la lógica de primera invocación tras el arranque.
 
 ### Requirement 31: Modelo de datos de bloqueo del cluster (ClusterBlock)
 
@@ -467,3 +473,96 @@
 4. THE SPA SHALL definir un índice compuesto sobre los campos timestamp e interface_name para optimizar las consultas filtradas por rango de fechas e interfaz.
 5. THE SPA SHALL definir un índice sobre el campo status para optimizar las consultas filtradas por estado de la respuesta.
 6. THE SPA SHALL garantizar que los registros de la tabla InterfaceLog son creados exclusivamente por el sistema de forma automática y son inmutables (append-only, no se permiten operaciones UPDATE ni DELETE).
+
+### Requirement 34: Convención de almacenamiento de timestamps en base de datos
+
+**User Story:** As a desarrollador, I want que todos los campos de fecha y hora en la base de datos utilicen un tipo con zona horaria y que todas las entidades incluyan campos estándar de trazabilidad a nivel de registro, so that se garantice la precisión temporal en entornos multi-timezone y se disponga de infraestructura uniforme para saber cuándo se creó y modificó cada registro.
+
+#### Acceptance Criteria
+
+1. THE SPA SHALL utilizar el tipo TIMESTAMP WITH TIME ZONE (timestamptz) de PostgreSQL para todos los campos de base de datos que almacenen valores de fecha y hora, sin excepción.
+2. THE SPA SHALL incluir en todas las entidades los campos created_at (obligatorio, tipo TIMESTAMP WITH TIME ZONE, fecha y hora de creación del registro) y last_modified_at (obligatorio, tipo TIMESTAMP WITH TIME ZONE, fecha y hora de la última modificación del registro).
+3. THE SPA SHALL gestionar los campos created_at y last_modified_at de forma automática mediante el mecanismo de auditoría de Spring Data JPA (@CreatedDate, @LastModifiedDate), sin intervención del código de negocio.
+4. THE SPA SHALL exponer los campos created_at y last_modified_at como campos de solo lectura en la API REST. Las peticiones de creación o modificación que incluyan valores para estos campos son ignoradas por el sistema.
+5. THE SPA SHALL asignar el valor de created_at únicamente en el momento de la inserción del registro; el campo es inmutable tras la creación.
+6. THE SPA SHALL actualizar el valor de last_modified_at de forma automática cada vez que el registro sea modificado.
+7. THE SPA SHALL definir los campos created_at y last_modified_at en las migraciones Liquibase de cada tabla con restricción NOT NULL y valor por defecto CURRENT_TIMESTAMP.
+8. THE SPA SHALL diferenciar los campos created_at y last_modified_at (trazabilidad a nivel de registro) del sistema de auditoría AuditLog (trazabilidad a nivel de operación de usuario). Ambos mecanismos son complementarios y tienen propósitos distintos.
+
+### Requirement 35: Convención de estructura de URLs para la Frontend API
+
+**User Story:** As a desarrollador, I want que los endpoints de la API consumidos exclusivamente por el frontend (template-dashboard) sigan una jerarquía de URLs que refleje la estructura de módulos funcionales de la aplicación, so that la organización de la API sea coherente con la navegación del usuario y facilite el mantenimiento y la comprensión del sistema.
+
+#### Acceptance Criteria
+
+1. THE SPA SHALL organizar los endpoints de la Frontend API (consumidos exclusivamente por template-dashboard) bajo una estructura de URLs que refleje la jerarquía de módulos funcionales de la aplicación, utilizando el prefijo `/api/v1/` como base.
+2. THE AuthService SHALL mantener los endpoints de autenticación en la ruta `/api/v1/auth/` sin cambios, dado que la autenticación es un módulo transversal independiente de la estructura funcional de administración.
+3. THE UserService SHALL exponer los endpoints de gestión de usuarios en la ruta `/api/v1/administration/security/users/`, incluyendo el endpoint de perfil del usuario autenticado en `/api/v1/administration/security/users/me`.
+4. THE ProfileService SHALL exponer los endpoints de gestión de perfiles en la ruta `/api/v1/administration/security/profiles/`.
+5. THE ActionService SHALL exponer los endpoints de gestión de acciones en la ruta `/api/v1/administration/security/actions/`.
+6. THE ParameterService SHALL exponer los endpoints de gestión de parámetros en la ruta `/api/v1/administration/parameters/`.
+7. THE AuditService SHALL exponer los endpoints de consulta de registros de auditoría del sistema en la ruta `/api/v1/administration/audit/system/`.
+8. THE InterfaceService SHALL exponer los endpoints de consulta y supervisión de interfaces en la ruta `/api/v1/administration/interfaces/`.
+9. THE InterfaceService SHALL exponer los endpoints de consulta de trazabilidad de operaciones de interfaces (InterfaceLog) en la ruta `/api/v1/administration/audit/interfaces/`.
+10. THE ClusterService SHALL exponer los endpoints de gestión de nodos del cluster en la ruta `/api/v1/administration/cluster/nodes/`.
+11. THE ClusterService SHALL exponer los endpoints de consulta de bloqueos del cluster en la ruta `/api/v1/administration/cluster/blocks/`.
+12. THE ReportService SHALL exponer los endpoints de gestión de informes en la ruta `/api/v1/reports/`, como módulo funcional de primer nivel independiente de administración.
+13. THE SPA SHALL aplicar esta convención de estructura de URLs únicamente a la Frontend API (consumida por template-dashboard). Las APIs de integración destinadas a sistemas externos pueden seguir convenciones diferentes según sus necesidades.
+
+### Requirement 36: Modelo de datos de tarea del cluster (ClusterTask)
+
+**User Story:** As a desarrollador, I want un modelo de datos de tarea del cluster bien definido en la base de datos, so that pueda configurar qué tareas son ejecutables en el cluster, cuántos nodos pueden ejecutar cada tarea simultáneamente y cuántos nodos mínimos deben estar activos para permitir su ejecución.
+
+#### Acceptance Criteria
+
+1. THE SPA SHALL gestionar la tabla de tareas del cluster (CLUSTER_TASK) con los siguientes campos: id (autogenerado, clave primaria), name (obligatorio, único, tipo VARCHAR, nombre identificador de la tarea), description (opcional, tipo VARCHAR, descripción funcional de la tarea), nodes (obligatorio, tipo INTEGER, número máximo de nodos que deben ejecutar esta tarea simultáneamente) y minNodes (obligatorio, tipo INTEGER, número mínimo de nodos con estado ALIVE requeridos en el cluster para permitir la ejecución de esta tarea).
+2. THE SPA SHALL crear el esquema de la tabla CLUSTER_TASK mediante una migración Liquibase versionada.
+3. THE SPA SHALL definir una restricción de unicidad sobre el campo name de la tabla CLUSTER_TASK, garantizando que cada nombre de tarea sea único en el sistema.
+4. THE SPA SHALL garantizar que el campo nodes contenga un valor mayor o igual a 1, representando al menos un nodo ejecutor permitido.
+5. THE SPA SHALL garantizar que el campo minNodes contenga un valor mayor o igual a 1, representando al menos un nodo ALIVE requerido para permitir la ejecución.
+6. THE SPA SHALL utilizar el campo nodes para gobernar el escalado horizontal por tarea: cuando nodes es 1, solo un nodo ejecuta la tarea; cuando nodes es mayor a 1, múltiples nodos pueden ejecutar la tarea concurrentemente con protección de lock.
+7. THE SPA SHALL utilizar el campo minNodes como condición de arranque: una tarea no se ejecuta si el número de nodos ALIVE en el cluster es inferior al valor de minNodes definido para dicha tarea.
+
+### Requirement 37: Modelo de datos de asignación de tareas del cluster (ClusterJob)
+
+**User Story:** As a desarrollador, I want un modelo de datos de asignación de tareas a nodos bien definido en la base de datos, so that pueda configurar qué nodos están autorizados a ejecutar cada tarea, con qué prioridad y si están habilitados.
+
+#### Acceptance Criteria
+
+1. THE SPA SHALL gestionar la tabla de asignación de tareas del cluster (CLUSTER_JOB) con clave primaria compuesta (ClusterJobPK) formada por: clusterNode (obligatorio, clave foránea a la tabla CLUSTER_NODE) y clusterTask (obligatorio, clave foránea a la tabla CLUSTER_TASK). Campos adicionales: priority (obligatorio, tipo INTEGER, prioridad de ejecución del nodo para esta tarea, donde un valor menor indica mayor prioridad) y enabled (obligatorio, tipo BOOLEAN, indica si la asignación está activa y el nodo puede ejecutar la tarea).
+2. THE SPA SHALL crear el esquema de la tabla CLUSTER_JOB mediante una migración Liquibase versionada, incluyendo las restricciones de clave foránea hacia CLUSTER_NODE y CLUSTER_TASK.
+3. THE SPA SHALL definir la clave primaria compuesta de CLUSTER_JOB sobre los campos clusterNode y clusterTask, garantizando que un nodo solo puede tener una asignación por tarea.
+4. THE SPA SHALL utilizar el campo priority para definir el orden de preferencia entre nodos candidatos a ejecutar una misma tarea: el nodo con menor valor de priority tiene preferencia sobre los demás.
+5. THE SPA SHALL utilizar el campo enabled como condición necesaria para que un nodo pueda ejecutar una tarea: un nodo con enabled = false no ejecuta la tarea independientemente de su prioridad.
+6. WHEN se elimina un registro de CLUSTER_NODE referenciado por registros de CLUSTER_JOB, THE SPA SHALL aplicar la política de integridad referencial definida (CASCADE o restricción), impidiendo inconsistencias en la matriz de asignación.
+7. WHEN se elimina un registro de CLUSTER_TASK referenciado por registros de CLUSTER_JOB, THE SPA SHALL aplicar la política de integridad referencial definida (CASCADE o restricción), impidiendo inconsistencias en la matriz de asignación.
+
+### Requirement 38: Gobierno de ejecución de tareas clusterizadas (AbstractClusterWorker)
+
+**User Story:** As a desarrollador, I want un mecanismo de gobierno que determine si el nodo actual debe ejecutar una tarea clusterizada basándose en la configuración de tareas, la autorización del nodo, la disponibilidad del cluster y la prioridad, so that las tareas se distribuyan de forma controlada y solo se ejecuten cuando las condiciones del cluster lo permiten.
+
+#### Acceptance Criteria
+
+1. WHEN una tarea clusterizada se activa en el nodo actual, THE AbstractClusterWorker SHALL obtener la configuración de la tarea (ClusterTask) por su nombre desde la tabla CLUSTER_TASK. Si no existe una definición única para el nombre de tarea, la ejecución se aborta.
+2. WHEN la configuración de la tarea ha sido obtenida, THE AbstractClusterWorker SHALL verificar que el nodo actual tiene una asignación habilitada (enabled = true) en la tabla CLUSTER_JOB para dicha tarea. Si el nodo no está autorizado o no está habilitado, la ejecución se aborta.
+3. WHEN el nodo está autorizado para la tarea, THE AbstractClusterWorker SHALL verificar que el número de nodos con estado ALIVE en el cluster es mayor o igual al campo minNodes definido en la configuración de la tarea. Si no se cumple esta condición, la ejecución se aborta.
+4. WHEN las condiciones de disponibilidad se cumplen, THE AbstractClusterWorker SHALL calcular si el nodo actual debe ejecutar la tarea basándose en: el número de nodos configurados para la tarea (campo nodes de ClusterTask), la prioridad del nodo actual en CLUSTER_JOB, el estado ALIVE de los nodos con mayor prioridad (menor valor de priority) y el campo enabled de dichos nodos.
+5. WHEN el AbstractClusterWorker determina que el nodo actual debe ejecutar la tarea, THE AbstractClusterWorker SHALL invocar el método handleExecute de la implementación concreta de la tarea.
+6. WHILE la configuración de la tarea permite ejecución en múltiples nodos simultáneamente (nodes > 1), THE AbstractClusterWorker SHALL proteger la ejecución adquiriendo un lock por nombre de tarea antes de invocar handleExecute, garantizando la coordinación entre nodos concurrentes.
+7. WHEN la ejecución de handleExecute finaliza (con éxito o con error), THE AbstractClusterWorker SHALL liberar el lock adquirido por nombre de tarea.
+8. THE AbstractClusterWorker SHALL ignorar nodos con estado DEAD al calcular los candidatos a ejecutar la tarea, considerando únicamente nodos con estado ALIVE y enabled = true en CLUSTER_JOB.
+
+### Requirement 39: Servicio de locks del cluster (ClusterLockService)
+
+**User Story:** As a desarrollador, I want un servicio centralizado de locks del cluster que proporcione exclusión mutua tanto a nivel intra-instancia como inter-instancia, so that las tareas clusterizadas y los recursos compartidos se protejan contra ejecución concurrente entre hilos y entre nodos.
+
+#### Acceptance Criteria
+
+1. THE ClusterLockService SHALL exponer una operación para adquirir un lock identificado por nombre (nombre de tarea o nombre de recurso), bloqueando el acceso concurrente al recurso protegido.
+2. THE ClusterLockService SHALL exponer una operación para liberar un lock identificado por nombre, actualizando las métricas de bloqueo en la tabla ClusterBlock (tiempo medio, tiempo mínimo, tiempo máximo, total de bloqueos y fecha de inicio).
+3. THE ClusterLockService SHALL exponer una operación para verificar si existen locks activos para un nombre de recurso dado.
+4. THE ClusterLockService SHALL implementar exclusión mutua intra-instancia (entre hilos del mismo nodo) utilizando el mecanismo synchronized de Java, garantizando que un solo hilo por instancia accede al recurso protegido.
+5. THE ClusterLockService SHALL implementar exclusión mutua inter-instancia (entre nodos del cluster) utilizando un mecanismo de lock basado en SQL específico del dialecto de base de datos, garantizando que un solo nodo ejecuta la sección protegida.
+6. THE ClusterLockService SHALL utilizar la hora de la base de datos (no la hora local de la JVM) para registrar los tiempos de bloqueo, evitando problemas de clock drift entre nodos del cluster.
+7. WHEN se libera un lock, THE ClusterLockService SHALL actualizar el registro correspondiente en la tabla ClusterBlock con: el tiempo transcurrido desde la adquisición, recalculando el tiempo medio, actualizando el tiempo mínimo y máximo si corresponde, e incrementando el contador total de bloqueos.
+8. IF un lock no puede ser adquirido porque otro nodo o hilo lo tiene activo, THEN THE ClusterLockService SHALL bloquear la ejecución del hilo solicitante hasta que el lock sea liberado o aplicar la política de timeout definida.

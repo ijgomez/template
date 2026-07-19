@@ -205,6 +205,22 @@ Administration --> Cluster["Cluster"]
 
 Cada módulo encapsula su funcionalidad y puede evolucionar de forma independiente.
 
+## Servicios Transversales (Cross-Cutting Services)
+
+La aplicación tendrá un conjunto de servicios transversales, donde vivirían servicios reutilizables por cualquier módulo:
+
+- **Notification Service** — gestión de notificaciones (email, push, in-app).
+- **Translation Service** — internacionalización y traducción de mensajes.
+- **Permission Service** — evaluación centralizada de permisos y acciones.
+- **Configuration Service** — acceso unificado a parámetros y configuración.
+- **Audit Service** — registro de auditoría mediante AOP.
+- **Logging Service** — logging estructurado y centralizado.
+- **Scheduler Service** — planificación y ejecución de tareas programadas.
+- **Event Bus** — comunicación desacoplada entre módulos mediante eventos.
+- **Cache Service** — gestión de caché para optimizar el rendimiento.
+
+De esta forma, los módulos funcionales (Informes, Administración, etc.) no implementarían estas capacidades, sino que simplemente las consumirían. Esta organización refleja mejor la arquitectura de la plataforma y la hace mucho más mantenible y extensible.
+
 ---
 
 # Gestión de dependencias
