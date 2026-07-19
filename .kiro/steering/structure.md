@@ -25,11 +25,11 @@
 
 ### Perfiles Maven
 
-| Perfil         | Entorno(s) que cubre         | Descripción                                                        |
-|----------------|------------------------------|--------------------------------------------------------------------|
-| `local`        | Local                        | Configuración para desarrollo local (BD local, logs en DEBUG, etc.)|
-| `dist`         | Desarrollo, Integración, QA, Producción | Compilación para distribución. La configuración se externaliza en `template-properties`. |
-| `test`         | —                            | Ejecuta los tests (unitarios e integración). Activa JaCoCo y SonarQube. |
+| Perfil  | Entorno(s) que cubre                    | Descripción                                                                              |
+|---------|-----------------------------------------|------------------------------------------------------------------------------------------|
+| `local` | Local                                   | Configuración para desarrollo local (BD local, logs en DEBUG, etc.)                      |
+| `dist`  | Desarrollo, Integración, QA, Producción | Compilación para distribución. La configuración se externaliza en `template-properties`. |
+| `test`  | —                                       | Ejecuta los tests (unitarios e integración). Activa JaCoCo y SonarQube.                  |
 
 ### Dependencias entre Módulos Maven
 
