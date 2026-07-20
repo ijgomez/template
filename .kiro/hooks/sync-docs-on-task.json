@@ -1,0 +1,15 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Sync Docs After Task",
+      "description": "When a spec task completes, automatically updates the documentation in template-docs to reflect the changes made during the spec task execution.",
+      "trigger": "PostTaskExec",
+      "action": {
+        "type": "agent",
+        "prompt": "A spec task has just been completed. Review the changes made during this task and update the relevant documentation files in template-docs/ to reflect these changes. Specifically:\n\n1. Read the spec files in .kiro/specs/ to understand what was implemented.\n2. Update template-docs/specification/requirements.md if requirements were added or changed.\n3. Update template-docs/specification/glossary.md if new terms were introduced.\n4. Update template-docs/specification/use-cases.md if new use cases were implemented.\n5. Update any other relevant files in template-docs/ (e.g., technical architecture, data model) based on what was built.\n\nKeep the documentation concise, consistent with the existing style, and avoid duplicating content that already exists in the spec files (use references where appropriate)."
+      },
+      "enabled": true
+    }
+  ]
+}

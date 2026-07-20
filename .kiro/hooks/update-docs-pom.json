@@ -1,0 +1,16 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Actualizar documentación al cambiar pom.xml",
+      "description": "Cuando se guarda un fichero pom.xml, revisa las dependencias añadidas o modificadas y actualiza los ficheros de steering tech.md y coding-maven.md para reflejar los cambios.",
+      "trigger": "PostFileSave",
+      "matcher": ".*pom\\.xml$",
+      "action": {
+        "type": "agent",
+        "prompt": "Se ha modificado un fichero pom.xml. Revisa los cambios realizados en las dependencias (nuevas, actualizadas o eliminadas) y actualiza los ficheros de documentación de steering que corresponda:\n- `.kiro/steering/tech.md`: si cambia el stack tecnológico principal (versiones de Java, Spring Boot, PostgreSQL, etc.)\n- `.kiro/steering/coding-maven.md`: si cambian plugins, scopes, estructura del POM o versiones relevantes de dependencias.\n\nSé conciso: solo actualiza lo que haya cambiado realmente. No reescribas secciones que no se vean afectadas."
+      },
+      "enabled": true
+    }
+  ]
+}
