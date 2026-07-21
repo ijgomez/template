@@ -127,6 +127,8 @@ La IA debe generar código utilizando exclusivamente los componentes listados a 
 | Form Group       | `<tp-form-group>`          | Agrupación de campo + label + validación      |
 | Date Picker      | `<tp-date-picker>`         | Selección de fecha                            |
 | Autocomplete     | `<tp-autocomplete>`        | Búsqueda con sugerencias                      |
+| Entity Filter    | `<tp-entity-filter>`       | Filtro por entidad con lista de selección     |
+| Date Range       | `<tp-date-range>`          | Selector de rango de fechas (desde - hasta)   |
 
 ## Variantes de botones
 
@@ -199,6 +201,175 @@ La IA debe respetar los siguientes patrones cuando genere pantallas completas.
 │ [Volver]              [Editar] [Eliminar]   │
 └─────────────────────────────────────────────┘
 ```
+
+---
+
+# Filtros
+
+Los filtros permiten al usuario reducir los resultados mostrados en un listado. Existen dos tipos principales de filtro según la naturaleza del criterio de búsqueda.
+
+## Filtro por entidad (lista de selección)
+
+Cuando el usuario necesita filtrar por una entidad relacionada, el filtro se presenta como una lista de elementos seleccionados con acciones de gestión.
+
+### Estructura visual
+
+```text
+┌────────────────────────────────────────────────┐ [+] [↑] [✕] [⊘]
+│ Lista por campo1 de elementos seleccionados    │
+│   - Ordenable por cabeceras                    │
+│   - Acciones por fila: seleccionar             │
+├────────────────────────────────────────────────┤
+│ Paginación                                     │
+└────────────────────────────────────────────────┘
+```
+
+### Botones de acción
+
+Los botones se representan exclusivamente con iconos (sin texto) para minimizar el espacio ocupado.
+
+| Botón         | Icono            | Acción                                                        |
+|---------------|------------------|---------------------------------------------------------------|
+| Añadir Todos  | `bi-plus-circle` | Abre modal con formulario de texto (ver detalle abajo)        |
+| Añadir        | `bi-plus`        | Abre modal con listado simple para seleccionar elementos      |
+| Borrar        | `bi-x`           | Elimina el elemento seleccionado de la lista                  |
+| Borrar Todos  | `bi-x-circle`    | Muestra diálogo de confirmación y elimina todos los elementos |
+
+### Comportamiento de cada acción
+
+#### Añadir Todos
+
+Al pulsar, se abre una ventana modal con:
+
+```text
+┌─────────────────────────────────────────────┐
+│ Título: Añadir múltiples elementos          │
+├─────────────────────────────────────────────┤
+│ <tp-form-group>                             │
+│   Label: "Introduzca un valor por línea"    │
+│   <textarea>                                │
+│     valor1                                  │
+│     valor2                                  │
+│     valor3                                  │
+│   </textarea>                               │
+│ </tp-form-group>                            │
+├─────────────────────────────────────────────┤
+│ [Cancelar]                      [Aceptar]   │
+└─────────────────────────────────────────────┘
+```
+
+Cada línea del textarea representa el campo identificativo (campo1) de un elemento de la entidad. Al aceptar, los elementos válidos se añaden a la lista de seleccionados.
+
+#### Añadir
+
+Al pulsar, se abre una ventana modal con un **Listado Simple** que permite buscar y seleccionar elementos individuales:
+
+```text
+┌─────────────────────────────────────────────┐
+│ Título: Seleccionar [Entidad]               │
+├─────────────────────────────────────────────┤
+│ Filtro rápido: [campo de búsqueda]          │
+├─────────────────────────────────────────────┤
+│ Tabla con columnas relevantes               │
+│   - Selección múltiple (checkbox)           │
+│   - Ordenable por cabeceras                 │
+├─────────────────────────────────────────────┤
+│ Paginación                                  │
+├─────────────────────────────────────────────┤
+│ [Cancelar]                   [Seleccionar]  │
+└─────────────────────────────────────────────┘
+```
+
+#### Borrar
+
+Elimina de la lista el elemento que tiene el foco o está seleccionado. No requiere confirmación.
+
+#### Borrar Todos
+
+Muestra un diálogo de confirmación:
+
+```text
+┌─────────────────────────────────────────────┐
+│ ¿Eliminar todos los elementos seleccionados?│
+├─────────────────────────────────────────────┤
+│ Esta acción no se puede deshacer.           │
+├─────────────────────────────────────────────┤
+│ [Cancelar]                   [Confirmar]    │
+└─────────────────────────────────────────────┘
+```
+
+Si el usuario confirma, se vacía la lista completa.
+
+### Componente
+
+| Selector              | Descripción                                         |
+|-----------------------|-----------------------------------------------------|
+| `<tp-entity-filter>`  | Filtro por entidad con lista de selección y modales |
+
+---
+
+## Filtro por atributo
+
+Cuando el usuario filtra por un atributo concreto de una entidad (texto, número, fecha, etc.), se aplican las siguientes reglas:
+
+### Validación
+
+- El filtro aplica los **mismos validadores de formato** que el formulario de creación/edición de la entidad.
+- **Excepción**: no se valida la unicidad del valor (no se comprueba si ya existe).
+- Los mensajes de validación son los mismos que en el formulario, traducidos mediante `i18n`.
+
+### Filtro de tipo fecha (rango)
+
+Cuando el atributo es de tipo fecha, el filtro debe permitir la búsqueda por **rango de fechas**:
+
+```text
+┌─────────────────────────────────────────────────────┐
+│ [Fecha desde]  —  [Fecha hasta]                     │
+└─────────────────────────────────────────────────────┘
+```
+
+| Selector               | Descripción                                |
+|------------------------|--------------------------------------------|
+| `<tp-date-range>`      | Selector de rango de fechas (desde - hasta)|
+
+Reglas:
+
+- Ambos campos son opcionales individualmente (permite buscar "desde X" o "hasta Y").
+- Si se informan ambos, "desde" no puede ser posterior a "hasta" (validación cruzada).
+- Se utiliza el componente `<tp-date-picker>` para cada campo del rango.
+- Formato de fecha consistente con la configuración de internacionalización.
+
+### Tipos de filtro por atributo
+
+| Tipo de atributo | Componente                        | Comportamiento                                      |
+|------------------|-----------------------------------|-----------------------------------------------------|
+| Texto            | `<tp-input>`                      | Búsqueda parcial (contains). Validación de formato. |
+| Número           | `<tp-input type="number">`        | Validación de rango y formato numérico.             |
+| Fecha            | `<tp-date-range>`                 | Rango desde-hasta.                                  |
+| Boolean          | `<tp-select>` con Sí/No/Todos    | Selección de estado.                                |
+| Enum             | `<tp-select>` con opciones        | Lista de valores posibles.                          |
+| Entidad          | `<tp-entity-filter>`              | Lista de selección (ver sección anterior).          |
+
+---
+
+## Barra de filtros
+
+La disposición general de los filtros en un listado es:
+
+```text
+┌───────────────────────────────────────────────────────────────┐
+│ Filtro1        Filtro2        Filtro3        [Buscar][Limpiar]│
+├───────────────────────────────────────────────────────────────┤
+│ Filtro4 (entity-filter, ocupa ancho completo)                 │
+└───────────────────────────────────────────────────────────────┘
+```
+
+Reglas de disposición:
+
+- Los filtros simples (texto, número, boolean, enum, fecha) se muestran en línea, agrupados en filas.
+- Los filtros de tipo entidad (`<tp-entity-filter>`) ocupan el ancho completo y se sitúan debajo de los filtros simples.
+- Los botones [Buscar] y [Limpiar] se alinean a la derecha de la última fila de filtros simples.
+- Cada filtro incluye su label visible por encima del campo.
 
 ---
 
