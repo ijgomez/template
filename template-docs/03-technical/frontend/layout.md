@@ -78,12 +78,100 @@ El menú lateral proporciona acceso a los distintos módulos de la aplicación.
 Características:
 
 - Menús jerárquicos.
-- Colapsable.
+- Colapsable (dos estados: expandido y contraído).
 - Iconografía consistente.
 - Adaptado a los permisos del usuario.
-- Estado persistente.
+- Estado persistente (se recuerda entre navegaciones).
 
 El contenido del menú depende de las acciones autorizadas para el usuario autenticado.
+
+### Comportamiento colapsable
+
+El menú lateral soporta dos estados visuales controlados por un botón de toggle situado en la barra superior (zona izquierda).
+
+#### Estado expandido (por defecto)
+
+- Ancho: `260px` (variable `--tp-sidebar-width`).
+- Muestra: icono + texto de cada enlace.
+- Muestra: títulos de sección (PRINCIPAL, ADMINISTRACIÓN).
+- Muestra: submenús expandidos/colapsados.
+- La marca de la aplicación muestra icono + nombre.
+
+#### Estado contraído
+
+- Ancho: `64px`.
+- Muestra: solo los iconos de cada enlace, centrados.
+- Oculta: textos de los enlaces, títulos de sección y submenús.
+- La marca de la aplicación muestra solo el icono.
+- Los tooltips deben aparecer en hover para indicar el nombre de cada opción.
+
+#### Botón de toggle
+
+| Propiedad         | Valor                                         |
+|-------------------|-----------------------------------------------|
+| Ubicación         | Barra superior, zona izquierda (primer elemento) |
+| Icono expandido   | `bi-layout-sidebar-inset`                     |
+| Icono contraído   | `bi-list`                                     |
+| `aria-label`      | "Colapsar menú" / "Expandir menú"            |
+| `aria-expanded`   | `true` (expandido) / `false` (contraído)      |
+
+#### Transición
+
+- La transición entre estados utiliza una animación de `250ms` con easing `ease-in-out`.
+- Se anima simultáneamente el ancho del sidebar y el margen izquierdo del área principal.
+
+#### Persistencia del estado
+
+- El estado (expandido/contraído) se persiste en `localStorage` con la clave `tp-sidebar-collapsed`.
+- Al iniciar la aplicación, se restaura el último estado conocido.
+
+#### Interacción con responsive
+
+| Pantalla      | Comportamiento                                                                 |
+|---------------|--------------------------------------------------------------------------------|
+| Escritorio (≥992px) | Toggle funcional: alterna entre 260px y 64px.                            |
+| Tablet (<992px)     | Sidebar oculto por defecto; se muestra como overlay al pulsar toggle.    |
+| Móvil (<576px)      | Sidebar oculto; se despliega completo como overlay con backdrop.          |
+
+#### Implementación Angular
+
+```typescript
+// sidebar.component.ts
+@Component({
+  selector: 'app-sidebar',
+  templateUrl: './sidebar.component.html',
+  styleUrls: ['./sidebar.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class SidebarComponent implements OnInit {
+  isCollapsed = signal<boolean>(false);
+
+  ngOnInit(): void {
+    const saved = localStorage.getItem('tp-sidebar-collapsed');
+    if (saved === 'true') {
+      this.isCollapsed.set(true);
+    }
+  }
+
+  toggle(): void {
+    this.isCollapsed.update(v => !v);
+    localStorage.setItem('tp-sidebar-collapsed', String(this.isCollapsed()));
+  }
+}
+```
+
+#### Clases CSS implicadas
+
+| Clase                          | Elemento         | Descripción                                    |
+|--------------------------------|------------------|------------------------------------------------|
+| `.tp-sidebar`                  | `<aside>`        | Sidebar en estado normal (260px)               |
+| `.tp-sidebar.collapsed`        | `<aside>`        | Sidebar en estado contraído (64px)             |
+| `.tp-wrapper.sidebar-collapsed`| `<div>` raíz     | Wrapper cuando el sidebar está contraído       |
+| `.tp-sidebar-toggle`           | `<button>`       | Botón de toggle en la barra superior           |
+
+#### Referencia visual (wireframes)
+
+Los wireframes en `template-docs/specification/wireframes/` implementan este comportamiento de forma interactiva con JavaScript para previsualización.
 
 ---
 
