@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template App - Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+    <div class="tp-login-page">
+        <div class="tp-login-card">
+            <div class="text-center mb-4">
+                <div class="d-inline-flex align-items-center justify-content-center rounded-3 mb-3" style="width:56px;height:56px;background:var(--tp-color-primary);">
+                    <i class="bi bi-grid-fill text-white fs-3" aria-hidden="true"></i>
+                </div>
+                <h2 class="fw-bold">Template App</h2>
+                <p class="text-muted mb-0">Introduce tus credenciales para acceder</p>
+            </div>
+
+            <form>
+                <div class="mb-3">
+                    <label for="username" class="form-label">Usuario</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-person" aria-hidden="true"></i></span>
+                        <input type="text" class="form-control" id="username" placeholder="Introduce tu usuario" aria-label="Nombre de usuario">
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">Contrasena</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-lock" aria-hidden="true"></i></span>
+                        <input type="password" class="form-control" id="password" placeholder="Introduce tu contrasena" aria-label="Contrasena">
+                        <button class="btn btn-outline-secondary" type="button" aria-label="Mostrar contrasena">
+                            <i class="bi bi-eye" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="remember">
+                            <label class="form-check-label" for="remember">Recordarme</label>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
+                    <i class="bi bi-box-arrow-in-right me-2" aria-hidden="true"></i>Iniciar sesion
+                </button>
+            </form>
+
+            <!-- Error state example -->
+            <div class="alert alert-danger mt-3 d-flex align-items-center d-none" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2" aria-hidden="true"></i>
+                <span>Credenciales incorrectas. Intentalo de nuevo.</span>
+            </div>
+
+            <div class="text-center mt-4">
+                <small class="text-muted">
+                    <i class="bi bi-translate me-1" aria-hidden="true"></i>
+                    <a href="#" class="text-decoration-none">ES</a> |
+                    <a href="#" class="text-decoration-none">EN</a>
+                </small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Wireframe Nav -->
+    <nav class="wireframe-nav" aria-label="Navegacion entre wireframes">
+        <span class="nav-label">Wireframes:</span>
+        <a href="login.html" class="active">Login</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="users-list.html">Usuarios</a>
+        <a href="user-form.html">Usuario Form</a>
+        <a href="profiles-list.html">Perfiles</a>
+        <a href="profile-form.html">Perfil Form</a>
+        <a href="actions-list.html">Acciones</a>
+        <a href="parameters-list.html">Parametros</a>
+        <a href="audit.html">Auditoria</a>
+        <a href="interfaces.html">Interfaces</a>
+        <a href="cluster.html">Cluster</a>
+        <a href="reports.html">Informes</a>
+        <a href="profile-page.html">Mi Perfil</a>
+        <a href="404.html">404</a>
+    </nav>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template App - Usuarios</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+    <div class="tp-wrapper">
+        <!-- Sidebar -->
+        <aside class="tp-sidebar" aria-label="Menu principal">
+            <div class="sidebar-brand">
+                <div class="brand-icon">T</div>
+                <span>Template</span>
+            </div>
+            <nav class="nav-section">
+                <div class="nav-section-title">Principal</div>
+                <a href="dashboard.html" class="nav-link">
+                    <i class="bi bi-speedometer2" aria-hidden="true"></i> Dashboard
+                </a>
+                <a href="reports.html" class="nav-link">
+                    <i class="bi bi-file-earmark-bar-graph" aria-hidden="true"></i> Informes
+                </a>
+            </nav>
+            <nav class="nav-section">
+                <div class="nav-section-title">Administracion</div>
+                <a href="#" class="nav-link" data-bs-toggle="collapse" data-bs-target="#menuSecurity" aria-expanded="true" aria-controls="menuSecurity">
+                    <i class="bi bi-shield-lock" aria-hidden="true"></i> Seguridad
+                    <i class="bi bi-chevron-down ms-auto" aria-hidden="true"></i>
+                </a>
+                <div class="collapse show nav-submenu" id="menuSecurity">
+                    <a href="users-list.html" class="nav-link active" aria-current="page">Usuarios</a>
+                    <a href="profiles-list.html" class="nav-link">Perfiles</a>
+                    <a href="actions-list.html" class="nav-link">Acciones</a>
+                </div>
+                <a href="parameters-list.html" class="nav-link">
+                    <i class="bi bi-sliders" aria-hidden="true"></i> Parametros
+                </a>
+                <a href="audit.html" class="nav-link">
+                    <i class="bi bi-journal-text" aria-hidden="true"></i> Auditoria
+                </a>
+                <a href="interfaces.html" class="nav-link">
+                    <i class="bi bi-diagram-3" aria-hidden="true"></i> Interfaces
+                </a>
+                <a href="cluster.html" class="nav-link">
+                    <i class="bi bi-hdd-network" aria-hidden="true"></i> Cluster
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main -->
+        <main class="tp-main">
+            <!-- Header -->
+            <header class="tp-header">
+                <div class="header-left">
+                    <button class="btn btn-link text-dark d-lg-none" aria-label="Abrir menu">
+                        <i class="bi bi-list fs-4" aria-hidden="true"></i>
+                    </button>
+                    <div class="header-search">
+                        <i class="bi bi-search" aria-hidden="true"></i>
+                        <input type="text" class="form-control form-control-sm" placeholder="Buscar..." aria-label="Busqueda global">
+                    </div>
+                </div>
+                <div class="header-right">
+                    <button class="btn btn-link text-muted position-relative" aria-label="Notificaciones">
+                        <i class="bi bi-bell fs-5" aria-hidden="true"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">3</span>
+                    </button>
+                    <div class="dropdown">
+                        <button class="btn btn-link text-decoration-none d-flex align-items-center gap-2" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Menu de usuario">
+                            <div class="user-avatar">JI</div>
+                            <span class="text-dark fw-medium d-none d-md-inline">Javier Izquierdo</span>
+                            <i class="bi bi-chevron-down text-muted" aria-hidden="true"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="profile-page.html"><i class="bi bi-person me-2" aria-hidden="true"></i>Mi perfil</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="login.html"><i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>Cerrar sesion</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Breadcrumb -->
+            <div class="tp-breadcrumb">
+                <nav aria-label="Breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="dashboard.html">Administracion</a></li>
+                        <li class="breadcrumb-item"><a href="#">Seguridad</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Usuarios</li>
+                    </ol>
+                </nav>
+            </div>
+
+            <!-- Content -->
+            <div class="tp-content">
+                <!-- Title and action -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1 class="h3 mb-0">Usuarios</h1>
+                    <a href="user-form.html" class="btn btn-primary">
+                        <i class="bi bi-plus-lg me-1" aria-hidden="true"></i> Nuevo
+                    </a>
+                </div>
+
+                <!-- Filter bar -->
+                <div class="tp-filter-bar">
+                    <form class="row g-3 align-items-end" aria-label="Filtros de busqueda de usuarios">
+                        <div class="col-md-3">
+                            <label for="filterUsername" class="form-label">Usuario</label>
+                            <input type="text" class="form-control form-control-sm" id="filterUsername" placeholder="Nombre de usuario">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="filterName" class="form-label">Nombre</label>
+                            <input type="text" class="form-control form-control-sm" id="filterName" placeholder="Nombre">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="filterProfile" class="form-label">Perfil</label>
+                            <select class="form-select form-select-sm" id="filterProfile" aria-label="Seleccionar perfil">
+                                <option value="">Todos</option>
+                                <option value="admin">Administrador</option>
+                                <option value="user">Usuario</option>
+                                <option value="auditor">Auditor</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 d-flex justify-content-end gap-2">
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="bi bi-search me-1" aria-hidden="true"></i> Buscar
+                            </button>
+                            <button type="reset" class="btn btn-outline-secondary btn-sm">
+                                <i class="bi bi-x-circle me-1" aria-hidden="true"></i> Limpiar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Data table -->
+                <div class="card tp-card">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover tp-table mb-0" aria-label="Listado de usuarios">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">ID</th>
+                                        <th scope="col">Usuario</th>
+                                        <th scope="col">Nombre</th>
+                                        <th scope="col">Apellidos</th>
+                                        <th scope="col">Email</th>
+                                        <th scope="col">Perfil</th>
+                                        <th scope="col">Ultimo acceso</th>
+                                        <th scope="col" class="actions-cell">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>jgarcia</td>
+                                        <td>Juan</td>
+                                        <td>Garcia Lopez</td>
+                                        <td>jgarcia@template.com</td>
+                                        <td><span class="badge bg-primary-subtle text-primary">Administrador</span></td>
+                                        <td>15/01/2025 09:32</td>
+                                        <td class="actions-cell">
+                                            <div class="btn-group" role="group" aria-label="Acciones para usuario jgarcia">
+                                                <a href="users-detail.html" class="btn btn-sm btn-outline-secondary" aria-label="Ver usuario jgarcia">
+                                                    <i class="bi bi-eye" aria-hidden="true"></i>
+                                                </a>
+                                                <a href="user-form.html" class="btn btn-sm btn-outline-secondary" aria-label="Editar usuario jgarcia">
+                                                    <i class="bi bi-pencil" aria-hidden="true"></i>
+                                                </a>
+                                                <button type="button" class="btn btn-sm btn-outline-secondary" aria-label="Eliminar usuario jgarcia">
+                                                    <i class="bi bi-trash" aria-hidden="true"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td>mmartinez</td>
+                                        <td>Maria</td>
+                                        <td>Martinez Ruiz</td>
+                                        <td>mmartinez@template.com</td>
+                                        <td><span class="badge bg-primary-subtle text-primary">Administrador</span></td>
+                                        <td>15/01/2025 08:45</td>
+                                        <td class="actions-cell">
+                                            <div class="btn-group" role="group" aria-label="Acciones para usuario mmartinez">
+                                                <a href="users-detail.html" class="btn btn-sm btn-outline-secondary" aria-label="Ver usuario mmartinez">
+                                                    <i class="bi bi-eye" aria-hidden="true"></i>
+                                                </a>
+                                                <a href="user-form.html" class="btn btn-sm btn-outline-secondary" aria-label="Editar usuario mmartinez">
+                                                    <i class="bi bi-pencil" aria-hidden="true"></i>
+                                                </a>
+                                                <button type="button" class="btn btn-sm btn-outline-secondary" aria-label="Eliminar usuario mmartinez">
+                                                    <i class="bi bi-trash" aria-hidden="true"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>3</td>
+                                        <td>cfernandez</td>
+                                        <td>Carlos</td>
+                                        <td>Fernandez Navarro</td>
+                                        <td>cfernandez@template.com</td>
+                                        <td><span class="badge bg-secondary-subtle text-secondary">Usuario</span></td>
+                                        <td>14/01/2025 17:20</td>
+                                        <td class="actions-cell">
+                                            <div class="btn-group" role="group" aria-label="Acciones para usuario cfernandez">
+                                                <a href="users-detail.html" class="btn btn-sm btn-outline-secondary" aria-label="Ver usuario cfernandez">
+                                                    <i class="bi bi-eye" aria-hidden="true"></i>
+                                                </a>
+                                                <a href="user-form.html" class="btn btn-sm btn-outline-secondary" aria-label="Editar usuario cfernandez">
+                                                    <i class="bi bi-pencil" aria-hidden="true"></i>
+                                                </a>
+                                                <button type="button" class="btn btn-sm btn-outline-secondary" aria-label="Eliminar usuario cfernandez">
+                                                    <i class="bi bi-trash" aria-hidden="true"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>4</td>
+                                        <td>alopez</td>
+                                        <td>Ana</td>
+                                        <td>Lopez Sanchez</td>
+                                        <td>alopez@template.com</td>
+                                        <td><span class="badge bg-info-subtle text-info">Auditor</span></td>
+                                        <td>14/01/2025 14:10</td>
+                                        <td class="actions-cell">
+                                            <div class="btn-group" role="group" aria-label="Acciones para usuario alopez">
+                                                <a href="users-detail.html" class="btn btn-sm btn-outline-secondary" aria-label="Ver usuario alopez">
+                                                    <i class="bi bi-eye" aria-hidden="true"></i>
+                                                </a>
+                                                <a href="user-form.html" class="btn btn-sm btn-outline-secondary" aria-label="Editar usuario alopez">
+                                                    <i class="bi bi-pencil" aria-hidden="true"></i>
+                                                </a>
+                                                <button type="button" class="btn btn-sm btn-outline-secondary" aria-label="Eliminar usuario alopez">
+                                                    <i class="bi bi-trash" aria-hidden="true"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>5</td>
+                                        <td>pmoreno</td>
+                                        <td>Pedro</td>
+                                        <td>Moreno Jimenez</td>
+                                        <td>pmoreno@template.com</td>
+                                        <td><span class="badge bg-secondary-subtle text-secondary">Usuario</span></td>
+                                        <td>13/01/2025 11:55</td>
+                                        <td class="actions-cell">
+                                            <div class="btn-group" role="group" aria-label="Acciones para usuario pmoreno">
+                                                <a href="users-detail.html" class="btn btn-sm btn-outline-secondary" aria-label="Ver usuario pmoreno">
+                                                    <i class="bi bi-eye" aria-hidden="true"></i>
+                                                </a>
+                                                <a href="user-form.html" class="btn btn-sm btn-outline-secondary" aria-label="Editar usuario pmoreno">
+                                                    <i class="bi bi-pencil" aria-hidden="true"></i>
+                                                </a>
+                                                <button type="button" class="btn btn-sm btn-outline-secondary" aria-label="Eliminar usuario pmoreno">
+                                                    <i class="bi bi-trash" aria-hidden="true"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between align-items-center">
+                        <span class="text-muted" style="font-size: 0.8125rem;">Mostrando 1-5 de 148</span>
+                        <nav aria-label="Paginacion de usuarios">
+                            <ul class="pagination pagination-sm mb-0">
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" aria-label="Pagina anterior">
+                                        <i class="bi bi-chevron-left" aria-hidden="true"></i>
+                                    </a>
+                                </li>
+                                <li class="page-item active" aria-current="page"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                                <li class="page-item"><a class="page-link" href="#">30</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#" aria-label="Pagina siguiente">
+                                        <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <footer class="tp-footer">
+                <span>Template App v1.2.0 — Entorno: LOCAL</span>
+                <span>&copy; 2026 Javier Izquierdo Gomez</span>
+            </footer>
+        </main>
+    </div>
+
+    <!-- Wireframe Nav -->
+    <nav class="wireframe-nav" aria-label="Navegacion entre wireframes">
+        <span class="nav-label">Wireframes:</span>
+        <a href="login.html">Login</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="users-list.html" class="active">Usuarios</a>
+        <a href="user-form.html">Usuario Form</a>
+        <a href="profiles-list.html">Perfiles</a>
+        <a href="profile-form.html">Perfil Form</a>
+        <a href="actions-list.html">Acciones</a>
+        <a href="parameters-list.html">Parametros</a>
+        <a href="audit.html">Auditoria</a>
+        <a href="interfaces.html">Interfaces</a>
+        <a href="cluster.html">Cluster</a>
+        <a href="reports.html">Informes</a>
+        <a href="profile-page.html">Mi Perfil</a>
+        <a href="404.html">404</a>
+    </nav>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

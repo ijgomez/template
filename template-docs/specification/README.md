@@ -6,7 +6,7 @@
 - [Requisitos](requirements.md)
 - [Casos de uso](use-cases.md)
 - [Modelo de datos](data-model.md)
-- [Wireframes]()
+- [Wireframes](wireframes/index.html)
 - [Mockups]()
 - [Diagramas]()
 - [Reglas de negocio]()

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template App - Acciones</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+    <div class="tp-wrapper">
+        <!-- Sidebar -->
+        <aside class="tp-sidebar" aria-label="Menu principal">
+            <div class="sidebar-brand">
+                <div class="brand-icon">T</div>
+                <span>Template</span>
+            </div>
+            <nav class="nav-section">
+                <div class="nav-section-title">Principal</div>
+                <a href="dashboard.html" class="nav-link">
+                    <i class="bi bi-speedometer2" aria-hidden="true"></i> Dashboard
+                </a>
+                <a href="reports.html" class="nav-link">
+                    <i class="bi bi-file-earmark-bar-graph" aria-hidden="true"></i> Informes
+                </a>
+            </nav>
+            <nav class="nav-section">
+                <div class="nav-section-title">Administracion</div>
+                <a href="#" class="nav-link" data-bs-toggle="collapse" data-bs-target="#menuSecurity" aria-expanded="true" aria-controls="menuSecurity">
+                    <i class="bi bi-shield-lock" aria-hidden="true"></i> Seguridad
+                    <i class="bi bi-chevron-down ms-auto" aria-hidden="true"></i>
+                </a>
+                <div class="collapse show nav-submenu" id="menuSecurity">
+                    <a href="users-list.html" class="nav-link">Usuarios</a>
+                    <a href="profiles-list.html" class="nav-link">Perfiles</a>
+                    <a href="actions-list.html" class="nav-link active" aria-current="page">Acciones</a>
+                </div>
+                <a href="parameters-list.html" class="nav-link">
+                    <i class="bi bi-sliders" aria-hidden="true"></i> Parametros
+                </a>
+                <a href="audit.html" class="nav-link">
+                    <i class="bi bi-journal-text" aria-hidden="true"></i> Auditoria
+                </a>
+                <a href="interfaces.html" class="nav-link">
+                    <i class="bi bi-diagram-3" aria-hidden="true"></i> Interfaces
+                </a>
+                <a href="cluster.html" class="nav-link">
+                    <i class="bi bi-hdd-network" aria-hidden="true"></i> Cluster
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main -->
+        <main class="tp-main">
+            <!-- Header -->
+            <header class="tp-header">
+                <div class="header-left">
+                    <button class="btn btn-link text-dark d-lg-none" aria-label="Abrir menu">
+                        <i class="bi bi-list fs-4" aria-hidden="true"></i>
+                    </button>
+                    <div class="header-search">
+                        <i class="bi bi-search" aria-hidden="true"></i>
+                        <input type="text" class="form-control form-control-sm" placeholder="Buscar..." aria-label="Busqueda global">
+                    </div>
+                </div>
+                <div class="header-right">
+                    <button class="btn btn-link text-muted position-relative" aria-label="Notificaciones">
+                        <i class="bi bi-bell fs-5" aria-hidden="true"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">3</span>
+                    </button>
+                    <div class="dropdown">
+                        <button class="btn btn-link text-decoration-none d-flex align-items-center gap-2" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Menu de usuario">
+                            <div class="user-avatar">JI</div>
+                            <span class="text-dark fw-medium d-none d-md-inline">Javier Izquierdo</span>
+                            <i class="bi bi-chevron-down text-muted" aria-hidden="true"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="profile-page.html"><i class="bi bi-person me-2" aria-hidden="true"></i>Mi perfil</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="login.html"><i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>Cerrar sesion</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Breadcrumb -->
+            <div class="tp-breadcrumb">
+                <nav aria-label="Breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="dashboard.html">Administracion</a></li>
+                        <li class="breadcrumb-item"><a href="#">Seguridad</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Acciones</li>
+                    </ol>
+                </nav>
+            </div>
+
+            <!-- Content -->
+            <div class="tp-content">
+                <!-- Title (no new button - actions cannot be created) -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1 class="h3 mb-0">Acciones</h1>
+                </div>
+
+                <!-- Filter bar -->
+                <div class="tp-filter-bar">
+                    <form class="row g-3 align-items-end" aria-label="Filtros de busqueda de acciones">
+                        <div class="col-md-4">
+                            <label for="filterCode" class="form-label">Codigo</label>
+                            <input type="text" class="form-control form-control-sm" id="filterCode" placeholder="Codigo de accion">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="filterType" class="form-label">Tipo</label>
+                            <select class="form-select form-select-sm" id="filterType" aria-label="Seleccionar tipo de accion">
+                                <option value="">Todos</option>
+                                <option value="READ">READ</option>
+                                <option value="WRITE">WRITE</option>
+                                <option value="EXECUTE">EXECUTE</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 d-flex justify-content-end gap-2">
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="bi bi-search me-1" aria-hidden="true"></i> Buscar
+                            </button>
+                            <button type="reset" class="btn btn-outline-secondary btn-sm">
+                                <i class="bi bi-x-circle me-1" aria-hidden="true"></i> Limpiar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Data table -->
+                <div class="card tp-card">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover tp-table mb-0" aria-label="Listado de acciones">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">ID</th>
+                                        <th scope="col">Codigo</th>
+                                        <th scope="col">Nombre</th>
+                                        <th scope="col">Tipo</th>
+                                        <th scope="col">Descripcion</th>
+                                        <th scope="col" class="actions-cell">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>USER_READ</td>
+                                        <td>Lectura de usuarios</td>
+                                        <td><span class="badge bg-info-subtle text-info">READ</span></td>
+                                        <td>Permite consultar el listado y detalle de usuarios</td>
+                                        <td class="actions-cell">
+                                            <div class="btn-group" role="group" aria-label="Acciones para USER_READ">
+                                                <a href="actions-detail.html" class="btn btn-sm btn-outline-secondary" aria-label="Ver accion USER_READ">
+                                                    <i class="bi bi-eye" aria-hidden="true"></i>
+                                                </a>
+                                                <a href="actions-form.html" class="btn btn-sm btn-outline-secondary" aria-label="Editar accion USER_READ">
+                                                    <i class="bi bi-pencil" aria-hidden="true"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td>USER_WRITE</td>
+                                        <td>Escritura de usuarios</td>
+                                        <td><span class="badge bg-warning-subtle text-warning">WRITE</span></td>
+                                        <td>Permite crear y modificar usuarios del sistema</td>
+                                        <td class="actions-cell">
+                                            <div class="btn-group" role="group" aria-label="Acciones para USER_WRITE">
+                                                <a href="actions-detail.html" class="btn btn-sm btn-outline-secondary" aria-label="Ver accion USER_WRITE">
+                                                    <i class="bi bi-eye" aria-hidden="true"></i>
+                                                </a>
+                                                <a href="actions-form.html" class="btn btn-sm btn-outline-secondary" aria-label="Editar accion USER_WRITE">
+                                                    <i class="bi bi-pencil" aria-hidden="true"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>3</td>
+                                        <td>PROFILE_READ</td>
+                                        <td>Lectura de perfiles</td>
+                                        <td><span class="badge bg-info-subtle text-info">READ</span></td>
+                                        <td>Permite consultar el listado y detalle de perfiles</td>
+                                        <td class="actions-cell">
+                                            <div class="btn-group" role="group" aria-label="Acciones para PROFILE_READ">
+                                                <a href="actions-detail.html" class="btn btn-sm btn-outline-secondary" aria-label="Ver accion PROFILE_READ">
+                                                    <i class="bi bi-eye" aria-hidden="true"></i>
+                                                </a>
+                                                <a href="actions-form.html" class="btn btn-sm btn-outline-secondary" aria-label="Editar accion PROFILE_READ">
+                                                    <i class="bi bi-pencil" aria-hidden="true"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>4</td>
+                                        <td>PROFILE_WRITE</td>
+                                        <td>Escritura de perfiles</td>
+                                        <td><span class="badge bg-warning-subtle text-warning">WRITE</span></td>
+                                        <td>Permite crear y modificar perfiles de seguridad</td>
+                                        <td class="actions-cell">
+                                            <div class="btn-group" role="group" aria-label="Acciones para PROFILE_WRITE">
+                                                <a href="actions-detail.html" class="btn btn-sm btn-outline-secondary" aria-label="Ver accion PROFILE_WRITE">
+                                                    <i class="bi bi-eye" aria-hidden="true"></i>
+                                                </a>
+                                                <a href="actions-form.html" class="btn btn-sm btn-outline-secondary" aria-label="Editar accion PROFILE_WRITE">
+                                                    <i class="bi bi-pencil" aria-hidden="true"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>5</td>
+                                        <td>AUDIT_READ</td>
+                                        <td>Lectura de auditoria</td>
+                                        <td><span class="badge bg-info-subtle text-info">READ</span></td>
+                                        <td>Permite consultar los registros de auditoria</td>
+                                        <td class="actions-cell">
+                                            <div class="btn-group" role="group" aria-label="Acciones para AUDIT_READ">
+                                                <a href="actions-detail.html" class="btn btn-sm btn-outline-secondary" aria-label="Ver accion AUDIT_READ">
+                                                    <i class="bi bi-eye" aria-hidden="true"></i>
+                                                </a>
+                                                <a href="actions-form.html" class="btn btn-sm btn-outline-secondary" aria-label="Editar accion AUDIT_READ">
+                                                    <i class="bi bi-pencil" aria-hidden="true"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>6</td>
+                                        <td>REPORT_EXECUTE</td>
+                                        <td>Ejecucion de informes</td>
+                                        <td><span class="badge bg-success-subtle text-success">EXECUTE</span></td>
+                                        <td>Permite generar y ejecutar informes del sistema</td>
+                                        <td class="actions-cell">
+                                            <div class="btn-group" role="group" aria-label="Acciones para REPORT_EXECUTE">
+                                                <a href="actions-detail.html" class="btn btn-sm btn-outline-secondary" aria-label="Ver accion REPORT_EXECUTE">
+                                                    <i class="bi bi-eye" aria-hidden="true"></i>
+                                                </a>
+                                                <a href="actions-form.html" class="btn btn-sm btn-outline-secondary" aria-label="Editar accion REPORT_EXECUTE">
+                                                    <i class="bi bi-pencil" aria-hidden="true"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between align-items-center">
+                        <span class="text-muted" style="font-size: 0.8125rem;">Mostrando 1-6 de 24</span>
+                        <nav aria-label="Paginacion de acciones">
+                            <ul class="pagination pagination-sm mb-0">
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" aria-label="Pagina anterior">
+                                        <i class="bi bi-chevron-left" aria-hidden="true"></i>
+                                    </a>
+                                </li>
+                                <li class="page-item active" aria-current="page"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item"><a class="page-link" href="#">4</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#" aria-label="Pagina siguiente">
+                                        <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <footer class="tp-footer">
+                <span>Template App v1.2.0 — Entorno: LOCAL</span>
+                <span>&copy; 2026 Javier Izquierdo Gomez</span>
+            </footer>
+        </main>
+    </div>
+
+    <!-- Wireframe Nav -->
+    <nav class="wireframe-nav" aria-label="Navegacion entre wireframes">
+        <span class="nav-label">Wireframes:</span>
+        <a href="login.html">Login</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="users-list.html">Usuarios</a>
+        <a href="user-form.html">Usuario Form</a>
+        <a href="profiles-list.html">Perfiles</a>
+        <a href="profile-form.html">Perfil Form</a>
+        <a href="actions-list.html" class="active">Acciones</a>
+        <a href="parameters-list.html">Parametros</a>
+        <a href="audit.html">Auditoria</a>
+        <a href="interfaces.html">Interfaces</a>
+        <a href="cluster.html">Cluster</a>
+        <a href="reports.html">Informes</a>
+        <a href="profile-page.html">Mi Perfil</a>
+        <a href="404.html">404</a>
+    </nav>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
