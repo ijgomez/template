@@ -32,29 +32,34 @@
                     <a href="reports.html" class="nav-link">Informe de errores</a>
                 </div>
             </nav>
-            <nav class="nav-section">
-                <div class="nav-section-title">Administracion</div>
-                <a href="#" class="nav-link" data-bs-toggle="collapse" data-bs-target="#menuSecurity" aria-expanded="true" aria-controls="menuSecurity">
-                    <i class="bi bi-shield-lock" aria-hidden="true"></i> Seguridad
+                        <nav class="nav-section">
+                <a href="#" class="nav-link" data-bs-toggle="collapse" data-bs-target="#menuAdmin" aria-expanded="true" aria-controls="menuAdmin">
+                    <i class="bi bi-gear" aria-hidden="true"></i> Administracion
                     <i class="bi bi-chevron-down ms-auto" aria-hidden="true"></i>
                 </a>
-                <div class="collapse show nav-submenu" id="menuSecurity">
-                    <a href="users-list.html" class="nav-link">Usuarios</a>
-                    <a href="profiles-list.html" class="nav-link">Perfiles</a>
-                    <a href="actions-list.html" class="nav-link active" aria-current="page">Acciones</a>
+                <div class="collapse show nav-submenu" id="menuAdmin">
+                    <a href="#" class="nav-link" data-bs-toggle="collapse" data-bs-target="#menuSecurity" aria-expanded="true" aria-controls="menuSecurity">
+                        <i class="bi bi-shield-lock" aria-hidden="true"></i> Seguridad
+                        <i class="bi bi-chevron-down ms-auto" aria-hidden="true"></i>
+                    </a>
+                    <div class="collapse show nav-submenu" id="menuSecurity">
+                        <a href="users-list.html" class="nav-link">Usuarios</a>
+                        <a href="profiles-list.html" class="nav-link">Perfiles</a>
+                        <a href="actions-list.html" class="nav-link active" aria-current="page">Acciones</a>
+                    </div>
+                    <a href="parameters-list.html" class="nav-link">
+                        <i class="bi bi-sliders" aria-hidden="true"></i> Parametros
+                    </a>
+                    <a href="audit.html" class="nav-link">
+                        <i class="bi bi-journal-text" aria-hidden="true"></i> Auditoria
+                    </a>
+                    <a href="interfaces.html" class="nav-link">
+                        <i class="bi bi-diagram-3" aria-hidden="true"></i> Interfaces
+                    </a>
+                    <a href="cluster.html" class="nav-link">
+                        <i class="bi bi-hdd-network" aria-hidden="true"></i> Cluster
+                    </a>
                 </div>
-                <a href="parameters-list.html" class="nav-link">
-                    <i class="bi bi-sliders" aria-hidden="true"></i> Parametros
-                </a>
-                <a href="audit.html" class="nav-link">
-                    <i class="bi bi-journal-text" aria-hidden="true"></i> Auditoria
-                </a>
-                <a href="interfaces.html" class="nav-link">
-                    <i class="bi bi-diagram-3" aria-hidden="true"></i> Interfaces
-                </a>
-                <a href="cluster.html" class="nav-link">
-                    <i class="bi bi-hdd-network" aria-hidden="true"></i> Cluster
-                </a>
             </nav>
         </aside>
 

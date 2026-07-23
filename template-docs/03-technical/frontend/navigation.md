@@ -231,14 +231,14 @@ Ejemplo:
 ```text
 Principal
 ├── Dashboard
-└── Informes
+└── Informes ▾
     ├── Actividad mensual
     ├── Resumen de accesos
     ├── Estadísticas de uso
     └── Informe de errores
 
-Administración
-├── Seguridad
+Administración ▾
+├── Seguridad ▾
 │   ├── Usuarios
 │   ├── Perfiles
 │   └── Acciones
@@ -247,6 +247,8 @@ Administración
 ├── Interfaces
 └── Cluster
 ```
+
+Tanto "Informes" como "Administración" son menús desplegables de primer nivel con icono y chevron. Al expandirse muestran sus opciones hijas. "Seguridad" es un submenú de segundo nivel dentro de "Administración".
 
 Los informes disponibles para el usuario se muestran como submenú desplegable de "Informes" en el menú lateral. La lista se genera dinámicamente según los informes asignados al usuario (relación `user2report`).
 
