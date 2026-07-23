@@ -35,7 +35,8 @@
 }
 
 .tp-sidebar .sidebar-brand {
-    padding: 1rem 1.25rem;
+    height: var(--tp-header-height);
+    padding: 0 1.25rem;
     border-bottom: 1px solid #495057;
     display: flex;
     align-items: center;

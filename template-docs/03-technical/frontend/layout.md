@@ -59,6 +59,7 @@ Situada en la parte superior de la aplicación.
 
 Incluye, entre otros elementos:
 
+- Botón de toggle del menú lateral (zona izquierda).
 - Logotipo de la aplicación.
 - Campo de búsqueda global.
 - Selector de idioma.
@@ -68,6 +69,10 @@ Incluye, entre otros elementos:
 - Menú de sesión.
 
 La barra superior permanece visible durante toda la navegación.
+
+### Alineación visual con el menú lateral
+
+La barra superior (`.tp-header`) y la zona de marca del menú lateral (`.sidebar-brand`) comparten la misma altura (`--tp-header-height`: 56px). Esto crea una línea horizontal continua que unifica visualmente ambos elementos como si fueran una sola cabecera.
 
 ---
 
