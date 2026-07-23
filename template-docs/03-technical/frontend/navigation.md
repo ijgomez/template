@@ -229,14 +229,26 @@ Cada módulo funcional incorpora sus propias rutas.
 Ejemplo:
 
 ```text
-Administration
+Principal
+├── Dashboard
+└── Informes
+    ├── Actividad mensual
+    ├── Resumen de accesos
+    ├── Estadísticas de uso
+    └── Informe de errores
 
-├── Users
-├── Roles
-├── Actions
-├── Parameters
-└── Audit
+Administración
+├── Seguridad
+│   ├── Usuarios
+│   ├── Perfiles
+│   └── Acciones
+├── Parámetros
+├── Auditoría
+├── Interfaces
+└── Cluster
 ```
+
+Los informes disponibles para el usuario se muestran como submenú desplegable de "Informes" en el menú lateral. La lista se genera dinámicamente según los informes asignados al usuario (relación `user2report`).
 
 Cada módulo es responsable de registrar sus rutas dentro de la aplicación.
 

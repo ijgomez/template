@@ -21,9 +21,16 @@
                 <a href="dashboard.html" class="nav-link">
                     <i class="bi bi-speedometer2" aria-hidden="true"></i> Dashboard
                 </a>
-                <a href="reports.html" class="nav-link active" aria-current="page">
+                <a href="#" class="nav-link active" data-bs-toggle="collapse" data-bs-target="#menuReports" aria-expanded="true" aria-controls="menuReports">
                     <i class="bi bi-file-earmark-bar-graph" aria-hidden="true"></i> Informes
+                    <i class="bi bi-chevron-down ms-auto" aria-hidden="true"></i>
                 </a>
+                <div class="collapse show nav-submenu" id="menuReports">
+                    <a href="reports.html" class="nav-link active" aria-current="page">Actividad mensual</a>
+                    <a href="reports.html" class="nav-link">Resumen de accesos</a>
+                    <a href="reports.html" class="nav-link">Estadisticas de uso</a>
+                    <a href="reports.html" class="nav-link">Informe de errores</a>
+                </div>
             </nav>
             <nav class="nav-section">
                 <div class="nav-section-title">Administracion</div>
@@ -100,38 +107,13 @@
                     <h1 class="h3 mb-0">Informes</h1>
                 </div>
 
-                <!-- Report Layout: Left nav + Right content -->
-                <div class="row g-4">
-                    <!-- Left Panel: Report list -->
-                    <div class="col-lg-3">
-                        <div class="card tp-card">
-                            <div class="card-header">Informes disponibles</div>
-                            <div class="card-body p-2">
-                                <nav class="nav nav-pills flex-column" aria-label="Lista de informes disponibles">
-                                    <a href="#" class="nav-link active" aria-current="true">
-                                        <i class="bi bi-calendar-month me-2" aria-hidden="true"></i> Actividad mensual
-                                    </a>
-                                    <a href="#" class="nav-link">
-                                        <i class="bi bi-door-open me-2" aria-hidden="true"></i> Resumen de accesos
-                                    </a>
-                                    <a href="#" class="nav-link">
-                                        <i class="bi bi-bar-chart me-2" aria-hidden="true"></i> Estadisticas de uso
-                                    </a>
-                                    <a href="#" class="nav-link">
-                                        <i class="bi bi-exclamation-triangle me-2" aria-hidden="true"></i> Informe de errores
-                                    </a>
-                                </nav>
-                            </div>
-                        </div>
+                <!-- Report content (full width, report selected from sidebar) -->
+                <div>
+                    <!-- Report Header -->
+                    <div class="mb-3">
+                        <h2 class="h5 mb-1">Actividad mensual</h2>
+                        <p class="text-muted mb-0" style="font-size: 0.875rem;">Informe detallado de la actividad de los usuarios en el sistema durante el periodo seleccionado.</p>
                     </div>
-
-                    <!-- Right Panel: Selected report -->
-                    <div class="col-lg-9">
-                        <!-- Report Header -->
-                        <div class="mb-3">
-                            <h2 class="h5 mb-1">Actividad mensual</h2>
-                            <p class="text-muted mb-0" style="font-size: 0.875rem;">Informe detallado de la actividad de los usuarios en el sistema durante el periodo seleccionado.</p>
-                        </div>
 
                         <!-- Filter Section -->
                         <div class="tp-filter-bar">
@@ -266,7 +248,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
 
             <!-- Footer -->
             <footer class="tp-footer">
