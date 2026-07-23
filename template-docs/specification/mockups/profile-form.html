@@ -20,7 +20,7 @@
                 <a href="dashboard.html" class="nav-link">
                     <i class="bi bi-speedometer2" aria-hidden="true"></i> Dashboard
                 </a>
-                <a href="#" class="nav-link" data-bs-toggle="collapse" data-bs-target="#menuReports" aria-expanded="false" aria-controls="menuReports">
+                <a href="#" class="nav-link has-submenu" data-bs-toggle="collapse" data-bs-target="#menuReports" aria-expanded="false" aria-controls="menuReports">
                     <i class="bi bi-file-earmark-bar-graph" aria-hidden="true"></i> Informes
                     <i class="bi bi-chevron-down ms-auto" aria-hidden="true"></i>
                 </a>
@@ -30,12 +30,12 @@
                     <a href="reports.html" class="nav-link">Estadisticas de uso</a>
                     <a href="reports.html" class="nav-link">Informe de errores</a>
                 </div>
-                <a href="#" class="nav-link" data-bs-toggle="collapse" data-bs-target="#menuAdmin" aria-expanded="true" aria-controls="menuAdmin">
+                <a href="#" class="nav-link has-submenu" data-bs-toggle="collapse" data-bs-target="#menuAdmin" aria-expanded="true" aria-controls="menuAdmin">
                     <i class="bi bi-gear" aria-hidden="true"></i> Administracion
                     <i class="bi bi-chevron-down ms-auto" aria-hidden="true"></i>
                 </a>
                 <div class="collapse show nav-submenu" id="menuAdmin">
-                    <a href="#" class="nav-link" data-bs-toggle="collapse" data-bs-target="#menuSecurity" aria-expanded="true" aria-controls="menuSecurity">
+                    <a href="#" class="nav-link has-submenu" data-bs-toggle="collapse" data-bs-target="#menuSecurity" aria-expanded="true" aria-controls="menuSecurity">
                         <i class="bi bi-shield-lock" aria-hidden="true"></i> Seguridad
                         <i class="bi bi-chevron-down ms-auto" aria-hidden="true"></i>
                     </a>
@@ -253,6 +253,19 @@
             const isCollapsed = sidebar.classList.contains("collapsed");
             btn.setAttribute("aria-expanded", !isCollapsed);
             btn.querySelector("i").className = isCollapsed ? "bi bi-list fs-4" : "bi bi-layout-sidebar-inset fs-4";
+            // When collapsed, force all submenus to show (CSS handles flyout visibility)
+            sidebar.querySelectorAll(".nav-submenu").forEach(function(menu) {
+                if (isCollapsed) {
+                    menu.classList.remove("show");
+                    menu.style.display = "";
+                } else {
+                    // Restore expanded state for menus that were open
+                    const trigger = menu.previousElementSibling;
+                    if (trigger && trigger.getAttribute("aria-expanded") === "true") {
+                        menu.classList.add("show");
+                    }
+                }
+            });
         });
     </script>
 </body>

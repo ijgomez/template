@@ -106,9 +106,10 @@ El menú lateral soporta dos estados visuales controlados por un botón de toggl
 
 - Ancho: `64px`.
 - Muestra: solo los iconos de cada enlace, centrados.
-- Oculta: textos de los enlaces, títulos de sección y submenús.
+- Oculta: textos de los enlaces, títulos de sección y chevrons.
 - La marca de la aplicación muestra solo el icono.
-- Los tooltips deben aparecer en hover para indicar el nombre de cada opción.
+- Los menús con submenú muestran un **flyout lateral** al pasar el ratón sobre el icono: un panel blanco flotante que aparece a la derecha del sidebar con las opciones del submenú.
+- Los submenús anidados (ej. Seguridad dentro de Administración) se muestran inline dentro del flyout, indentados.
 
 #### Botón de toggle
 
