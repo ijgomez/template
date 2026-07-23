@@ -171,7 +171,7 @@ export class SidebarComponent implements OnInit {
 
 #### Referencia visual (wireframes)
 
-Los wireframes en `template-docs/specification/wireframes/` implementan este comportamiento de forma interactiva con JavaScript para previsualización.
+Los mockups en `template-docs/specification/mockups/` implementan este comportamiento de forma interactiva con JavaScript para previsualización.
 
 ---
 

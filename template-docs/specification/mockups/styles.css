@@ -1,4 +1,4 @@
-/* Template App Wireframe Styles */
+/* Template App Mockup Styles */
 :root {
     --tp-color-primary: #0d6efd;
     --tp-color-secondary: #6c757d;
@@ -413,8 +413,8 @@
     }
 }
 
-/* Wireframe navigation bar (only for prototype) */
-.wireframe-nav {
+/* Mockup navigation bar (only for prototype) */
+.mockup-nav {
     position: fixed;
     bottom: 0;
     left: 0;
@@ -429,7 +429,7 @@
     align-items: center;
 }
 
-.wireframe-nav a {
+.mockup-nav a {
     color: #adb5bd;
     font-size: 0.75rem;
     padding: 0.25rem 0.5rem;
@@ -438,13 +438,13 @@
     transition: all 0.15s;
 }
 
-.wireframe-nav a:hover,
-.wireframe-nav a.active {
+.mockup-nav a:hover,
+.mockup-nav a.active {
     color: white;
     background: rgba(13, 110, 253, 0.3);
 }
 
-.wireframe-nav .nav-label {
+.mockup-nav .nav-label {
     color: #6c757d;
     font-size: 0.7rem;
     font-weight: 600;
