@@ -84,13 +84,13 @@
                     </div>
                 </div>
                 <div class="header-right">
-                    <div class="dropdown">
-                        <button class="btn btn-link text-muted position-relative" data-bs-toggle="dropdown" aria-expanded="true" aria-label="Notificaciones">
+                    <div class="dropdown" id="notifDropdown">
+                        <button class="btn btn-link text-muted position-relative" id="notifToggle" aria-expanded="true" aria-label="Notificaciones">
                             <i class="bi bi-bell fs-5" aria-hidden="true"></i>
                             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">3</span>
                         </button>
                         <!-- Notifications panel (shown for mockup) -->
-                        <div class="dropdown-menu dropdown-menu-end show p-0" style="width: 360px; max-height: 420px; overflow-y: auto;">
+                        <div id="notifPanel" class="dropdown-menu dropdown-menu-end p-0 show" style="width: 360px; max-height: 420px; overflow-y: auto; position: fixed; top: var(--tp-header-height); right: 0; z-index: 1060;">
                             <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom bg-light">
                                 <strong style="font-size: 0.85rem;">Notificaciones</strong>
                                 <a href="#" class="text-decoration-none" style="font-size: 0.75rem;">Marcar todas como leidas</a>
@@ -348,6 +348,20 @@
                     }
                 }
             });
+        });
+
+        // Notification panel toggle (no Popper)
+        document.getElementById("notifToggle").addEventListener("click", function(e) {
+            e.stopPropagation();
+            var panel = document.getElementById("notifPanel");
+            panel.classList.toggle("show");
+        });
+        document.addEventListener("click", function(e) {
+            var panel = document.getElementById("notifPanel");
+            var toggle = document.getElementById("notifToggle");
+            if (panel && !panel.contains(e.target) && !toggle.contains(e.target)) {
+                panel.classList.remove("show");
+            }
         });
     </script>
 </body>
