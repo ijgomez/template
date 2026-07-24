@@ -161,7 +161,8 @@ La IA debe respetar los siguientes patrones cuando genere pantallas completas.
 ┌─────────────────────────────────────────────┐
 │ Título de la entidad                         │
 ├─────────────────────────────────────────────┤
-│ Filtros: campo1 | campo2 | [Buscar] [Limpiar]│
+│ Filtros: campo1 | campo2                         │
+│                          [Buscar] [Limpiar]      │
 ├─────────────────────────────────────────────┤
 │ [+ Nuevo] [Modificar] [Eliminar]   [Exportar CSV]│
 ├─────────────────────────────────────────────┤
@@ -209,18 +210,31 @@ Al cambiar el tamaño de página se recarga la primera página con el nuevo tama
 
 ```text
 ┌─────────────────────────────────────────────┐
-│ Título: Nuevo/Editar [Entidad]              │
+│ Título: Nuevo/Editar [Entidad]   [Cancelar] [Guardar]│
 ├─────────────────────────────────────────────┤
-│ Sección 1: Datos generales                  │
-│   campo1     campo2                         │
-│   campo3     campo4                         │
+│ SECCION 1                                   │
+│   campo1     campo2     campo3              │
+│   campo4     campo5     campo6              │
 ├─────────────────────────────────────────────┤
-│ Sección 2: Configuración                    │
-│   campo5     campo6                         │
-├─────────────────────────────────────────────┤
-│ [Cancelar]                      [Guardar]   │
+│ SECCION 2 (tabla asociada)                  │
+│   [Añadir]                     N elementos  │
+│   Tabla compacta con botón eliminar por fila│
 └─────────────────────────────────────────────┘
 ```
+
+### Reglas de diseño de formularios
+
+- **Botones de acción (Cancelar/Guardar)**: Se sitúan a la derecha del título, en la misma línea. Tamaño `btn-sm`.
+- **Campos**: Usar `form-control-sm` y `form-label-sm` para densidad compacta.
+- **Grid**: Preferir 3 columnas (`col-md-4`) para campos cortos. Usar `col-md-8` o `col-12` solo para campos largos (descripción, textarea).
+- **Secciones**: Separar con un título ligero (`h6`, uppercase, muted, letter-spacing) sin cards pesadas. Los campos van directamente debajo sin card wrapper.
+- **Tablas asociadas** (informes del usuario, acciones del perfil): Se muestran como un `list-group` compacto dentro de un contenedor con borde (`border rounded`). Estructura:
+  - **Cabecera** (inline, fuera del contenedor): Título con badge contador + input de filtro + botón Añadir (solo icono `+`).
+  - **Items**: `list-group-item` con padding mínimo (`py-1 px-3`), texto + badge de tipo (si aplica) + botón cerrar (`btn-close` mini) para eliminar.
+  - **Footer**: Barra compacta con fondo `bg-light`, contador de paginación y mini-pagination.
+  - El filtro es búsqueda local (client-side) sobre los elementos ya asignados.
+  - Al pulsar el botón Añadir se abre un modal de selección (ver patrón Modal de Selección).
+- **Spacing**: Usar `g-2` en los rows (8px gap) en lugar de `g-3` (16px).
 
 ## Detalle (CRUD - Read one)
 
@@ -235,6 +249,44 @@ Al cambiar el tamaño de página se recarga la primera página con el nuevo tama
 │ [Volver]              [Editar] [Eliminar]   │
 └─────────────────────────────────────────────┘
 ```
+
+## Panel de notificaciones
+
+Al pulsar el icono de la campana en la barra superior se despliega un dropdown con las notificaciones pendientes.
+
+```text
+┌──────────────────────────────────────┐
+│ Notificaciones    [Marcar como leídas]│
+├──────────────────────────────────────┤
+│ [Error]                   22/07 09:30│
+│ Título de la notificación            │
+│ Detalle breve...          [Ir a detalle]│
+├──────────────────────────────────────┤
+│ [Aviso]                   22/07 08:15│
+│ Título de la notificación            │
+│ Detalle breve...          [Ir a detalle]│
+├──────────────────────────────────────┤
+│        Ver todas las notificaciones  │
+└──────────────────────────────────────┘
+```
+
+### Estructura de cada notificación
+
+| Elemento     | Descripción                                                        |
+|--------------|--------------------------------------------------------------------|
+| Badge        | Severidad: `Error` (danger), `Aviso` (warning), `Info` (info)      |
+| Timestamp    | Fecha y hora, alineado a la derecha                                |
+| Título       | Texto corto descriptivo (`fw-medium`)                              |
+| Detalle      | Texto secundario (`text-muted`, max 2 líneas)                      |
+| Botón        | "Ir a detalle" (`btn-outline-primary`, tamaño mini) — opcional     |
+
+### Reglas
+
+- Ancho del dropdown: `360px`.
+- Máximo alto con scroll: `420px` (`max-height` + `overflow-y: auto`).
+- Header con fondo `bg-light` y enlace "Marcar todas como leídas".
+- Footer con enlace "Ver todas las notificaciones" centrado.
+- Las notificaciones no leídas pueden tener fondo ligeramente destacado.
 
 ---
 
@@ -392,9 +444,11 @@ La disposición general de los filtros en un listado es:
 
 ```text
 ┌───────────────────────────────────────────────────────────────┐
-│ Filtro1        Filtro2        Filtro3        [Buscar][Limpiar]│
+│ Filtro1        Filtro2        Filtro3                          │
 ├───────────────────────────────────────────────────────────────┤
 │ Filtro4 (entity-filter, ocupa ancho completo)                 │
+├───────────────────────────────────────────────────────────────┤
+│                                       [Buscar] [Limpiar]      │
 └───────────────────────────────────────────────────────────────┘
 ```
 
@@ -402,7 +456,7 @@ Reglas de disposición:
 
 - Los filtros simples (texto, número, boolean, enum, fecha) se muestran en línea, agrupados en filas.
 - Los filtros de tipo entidad (`<tp-entity-filter>`) ocupan el ancho completo y se sitúan debajo de los filtros simples.
-- Los botones [Buscar] y [Limpiar] se alinean a la derecha de la última fila de filtros simples.
+- Los botones [Buscar] y [Limpiar] se sitúan siempre en una **fila independiente** al final del bloque de filtros, alineados a la derecha (`col-12 d-flex justify-content-end`).
 - Cada filtro incluye su label visible por encima del campo.
 
 ---

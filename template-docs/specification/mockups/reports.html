@@ -107,7 +107,8 @@
             <div class="tp-breadcrumb">
                 <nav aria-label="Breadcrumb">
                     <ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item active" aria-current="page">Informes</li>
+                        <li class="breadcrumb-item"><a href="#">Informes</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Actividad mensual</li>
                     </ol>
                 </nav>
             </div>
@@ -116,16 +117,11 @@
             <div class="tp-content">
                 <!-- Title -->
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h1 class="h3 mb-0">Informes</h1>
-                </div>
-
-                <!-- Report content (full width, report selected from sidebar) -->
-                <div>
-                    <!-- Report Header -->
-                    <div class="mb-3">
-                        <h2 class="h5 mb-1">Actividad mensual</h2>
+                    <div>
+                        <h1 class="h3 mb-1">Actividad mensual</h1>
                         <p class="text-muted mb-0" style="font-size: 0.875rem;">Informe detallado de la actividad de los usuarios en el sistema durante el periodo seleccionado.</p>
                     </div>
+                </div>
 
                         <!-- Filter Section -->
                         <div class="tp-filter-bar">
@@ -153,7 +149,7 @@
                                         <option value="SYSTEM">Sistema</option>
                                     </select>
                                 </div>
-                                <div class="col-md-2 d-flex gap-2">
+                                <div class="col-12 d-flex justify-content-end gap-2 mt-2">
                                     <button type="submit" class="btn btn-primary btn-sm">
                                         <i class="bi bi-play-fill me-1" aria-hidden="true"></i> Ejecutar
                                     </button>
@@ -162,6 +158,22 @@
                                     </button>
                                 </div>
                             </form>
+                        </div>
+
+                        <!-- Action toolbar -->
+                        <div class="tp-toolbar d-flex gap-2 mb-3">
+                            <button type="button" class="btn btn-outline-secondary btn-sm ms-auto" aria-label="Exportar como PDF">
+                                <i class="bi bi-file-earmark-pdf me-1" aria-hidden="true"></i> PDF
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" aria-label="Exportar como XLSX">
+                                <i class="bi bi-file-earmark-excel me-1" aria-hidden="true"></i> XLSX
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" aria-label="Exportar como CSV">
+                                <i class="bi bi-file-earmark-spreadsheet me-1" aria-hidden="true"></i> CSV
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" aria-label="Exportar como TXT">
+                                <i class="bi bi-file-earmark-text me-1" aria-hidden="true"></i> TXT
+                            </button>
                         </div>
 
                         <!-- Results Table -->
@@ -251,22 +263,7 @@
                             </div>
                         </div>
 
-                        <!-- Export Toolbar -->
-                        <div class="d-flex align-items-center gap-2 mt-3">
-                            <span class="text-muted" style="font-size: 0.875rem;">Exportar como:</span>
-                            <button type="button" class="btn btn-outline-secondary btn-sm" aria-label="Exportar como PDF">
-                                <i class="bi bi-file-earmark-pdf me-1" aria-hidden="true"></i> PDF
-                            </button>
-                            <button type="button" class="btn btn-outline-secondary btn-sm" aria-label="Exportar como XLSX">
-                                <i class="bi bi-file-earmark-excel me-1" aria-hidden="true"></i> XLSX
-                            </button>
-                            <button type="button" class="btn btn-outline-secondary btn-sm" aria-label="Exportar como CSV">
-                                <i class="bi bi-file-earmark-spreadsheet me-1" aria-hidden="true"></i> CSV
-                            </button>
-                            <button type="button" class="btn btn-outline-secondary btn-sm" aria-label="Exportar como TXT">
-                                <i class="bi bi-file-earmark-text me-1" aria-hidden="true"></i> TXT
-                            </button>
-                        </div>
+
                     </div>
                 </div>
 

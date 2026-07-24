@@ -117,110 +117,89 @@
 
             <!-- Content -->
             <div class="tp-content">
-                <div class="d-flex justify-content-between align-items-center mb-4">
+                <!-- Title + actions -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
                     <h1 class="h3 mb-0">Nuevo perfil</h1>
+                    <div class="d-flex gap-2">
+                        <a href="profiles-list.html" class="btn btn-outline-secondary btn-sm" role="button" data-testid="btn-cancel">Cancelar</a>
+                        <button type="submit" form="profileForm" class="btn btn-primary btn-sm" data-testid="btn-save">
+                            <i class="bi bi-check-lg me-1" aria-hidden="true"></i> Guardar
+                        </button>
+                    </div>
                 </div>
 
-                <form novalidate data-testid="profile-form">
+                <form id="profileForm" novalidate data-testid="profile-form">
                     <!-- Datos generales -->
-                    <div class="card tp-card mb-4">
-                        <div class="card-header">Datos generales</div>
-                        <div class="card-body">
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label for="profileName" class="form-label">Nombre <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="profileName" name="name" aria-required="true" data-testid="input-name">
-                                </div>
-                                <div class="col-12">
-                                    <label for="profileDescription" class="form-label">Descripcion</label>
-                                    <textarea class="form-control" id="profileDescription" name="description" rows="3" data-testid="input-description"></textarea>
-                                </div>
-                            </div>
+                    <h6 class="text-muted text-uppercase fw-semibold mb-2" style="font-size: 0.75rem; letter-spacing: 0.05em;">Datos generales</h6>
+                    <div class="row g-2 mb-3">
+                        <div class="col-md-4">
+                            <label for="profileName" class="form-label form-label-sm mb-1">Nombre <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control form-control-sm" id="profileName" name="name" aria-required="true" data-testid="input-name">
+                        </div>
+                        <div class="col-md-8">
+                            <label for="profileDescription" class="form-label form-label-sm mb-1">Descripcion</label>
+                            <input type="text" class="form-control form-control-sm" id="profileDescription" name="description" data-testid="input-description">
                         </div>
                     </div>
 
                     <!-- Acciones asignadas -->
-                    <div class="card tp-card mb-4">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <span>Acciones asignadas</span>
-                            <button type="button" class="btn btn-sm btn-outline-primary" aria-label="Anadir accion" data-testid="btn-add-action">
-                                <i class="bi bi-plus-lg me-1" aria-hidden="true"></i> Anadir
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="text-muted text-uppercase fw-semibold mb-0" style="font-size: 0.75rem; letter-spacing: 0.05em;">Acciones asignadas <span class="badge bg-secondary-subtle text-secondary ms-1">5</span></h6>
+                        <div class="d-flex align-items-center gap-2">
+                            <input type="text" class="form-control form-control-sm" style="width: 150px; font-size: 0.75rem; height: 26px;" placeholder="Filtrar..." aria-label="Filtrar acciones asignadas">
+                            <button type="button" class="btn btn-outline-primary" style="font-size: 0.7rem; padding: 0.2rem 0.5rem;" aria-label="Anadir accion" data-testid="btn-add-action">
+                                <i class="bi bi-plus" aria-hidden="true"></i>
                             </button>
                         </div>
-                        <div class="card-body p-0">
-                            <div class="table-responsive">
-                                <table class="table table-hover tp-table mb-0" aria-label="Acciones asignadas al perfil">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">Codigo</th>
-                                            <th scope="col">Nombre</th>
-                                            <th scope="col">Tipo</th>
-                                            <th scope="col" class="text-end">Acciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>USER_READ</td>
-                                            <td>Consultar usuarios</td>
-                                            <td><span class="badge bg-info-subtle text-info">READ</span></td>
-                                            <td class="text-end actions-cell">
-                                                <button type="button" class="btn btn-sm btn-outline-danger" aria-label="Eliminar accion USER_READ" data-testid="btn-remove-action-user-read">
-                                                    <i class="bi bi-trash" aria-hidden="true"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>USER_WRITE</td>
-                                            <td>Modificar usuarios</td>
-                                            <td><span class="badge bg-warning-subtle text-warning">WRITE</span></td>
-                                            <td class="text-end actions-cell">
-                                                <button type="button" class="btn btn-sm btn-outline-danger" aria-label="Eliminar accion USER_WRITE" data-testid="btn-remove-action-user-write">
-                                                    <i class="bi bi-trash" aria-hidden="true"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>PROFILE_READ</td>
-                                            <td>Consultar perfiles</td>
-                                            <td><span class="badge bg-info-subtle text-info">READ</span></td>
-                                            <td class="text-end actions-cell">
-                                                <button type="button" class="btn btn-sm btn-outline-danger" aria-label="Eliminar accion PROFILE_READ" data-testid="btn-remove-action-profile-read">
-                                                    <i class="bi bi-trash" aria-hidden="true"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>AUDIT_READ</td>
-                                            <td>Consultar auditoria</td>
-                                            <td><span class="badge bg-info-subtle text-info">READ</span></td>
-                                            <td class="text-end actions-cell">
-                                                <button type="button" class="btn btn-sm btn-outline-danger" aria-label="Eliminar accion AUDIT_READ" data-testid="btn-remove-action-audit-read">
-                                                    <i class="bi bi-trash" aria-hidden="true"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>REPORT_EXECUTE</td>
-                                            <td>Ejecutar informes</td>
-                                            <td><span class="badge bg-success-subtle text-success">EXECUTE</span></td>
-                                            <td class="text-end actions-cell">
-                                                <button type="button" class="btn btn-sm btn-outline-danger" aria-label="Eliminar accion REPORT_EXECUTE" data-testid="btn-remove-action-report-execute">
-                                                    <i class="bi bi-trash" aria-hidden="true"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                    </div>
+                    <div class="border rounded" style="font-size: 0.8rem;">
+                        <div class="list-group list-group-flush">
+                            <div class="list-group-item d-flex justify-content-between align-items-center py-1 px-3">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge bg-info-subtle text-info" style="font-size: 0.65rem;">READ</span>
+                                    <span>USER_READ — Consultar usuarios</span>
+                                </div>
+                                <button type="button" class="btn-close" style="font-size: 0.5rem;" aria-label="Eliminar accion USER_READ" data-testid="btn-remove-action-user-read"></button>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center py-1 px-3">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge bg-warning-subtle text-warning" style="font-size: 0.65rem;">WRITE</span>
+                                    <span>USER_WRITE — Modificar usuarios</span>
+                                </div>
+                                <button type="button" class="btn-close" style="font-size: 0.5rem;" aria-label="Eliminar accion USER_WRITE" data-testid="btn-remove-action-user-write"></button>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center py-1 px-3">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge bg-info-subtle text-info" style="font-size: 0.65rem;">READ</span>
+                                    <span>PROFILE_READ — Consultar perfiles</span>
+                                </div>
+                                <button type="button" class="btn-close" style="font-size: 0.5rem;" aria-label="Eliminar accion PROFILE_READ" data-testid="btn-remove-action-profile-read"></button>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center py-1 px-3">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge bg-info-subtle text-info" style="font-size: 0.65rem;">READ</span>
+                                    <span>AUDIT_READ — Consultar auditoria</span>
+                                </div>
+                                <button type="button" class="btn-close" style="font-size: 0.5rem;" aria-label="Eliminar accion AUDIT_READ" data-testid="btn-remove-action-audit-read"></button>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center py-1 px-3">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge bg-success-subtle text-success" style="font-size: 0.65rem;">EXEC</span>
+                                    <span>REPORT_EXECUTE — Ejecutar informes</span>
+                                </div>
+                                <button type="button" class="btn-close" style="font-size: 0.5rem;" aria-label="Eliminar accion REPORT_EXECUTE" data-testid="btn-remove-action-report-execute"></button>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- Form buttons -->
-                    <div class="d-flex justify-content-end gap-2">
-                        <a href="profiles-list.html" class="btn btn-outline-secondary" role="button" data-testid="btn-cancel">Cancelar</a>
-                        <button type="submit" class="btn btn-primary" data-testid="btn-save">
-                            <i class="bi bi-check-lg me-1" aria-hidden="true"></i> Guardar
-                        </button>
+                        <div class="d-flex justify-content-between align-items-center px-3 py-1 border-top bg-light" style="font-size: 0.7rem;">
+                            <span class="text-muted">1-5 de 5</span>
+                            <nav aria-label="Paginacion acciones">
+                                <ul class="pagination pagination-sm mb-0" style="font-size: 0.65rem;">
+                                    <li class="page-item disabled"><a class="page-link py-0 px-1" href="#">&laquo;</a></li>
+                                    <li class="page-item active"><a class="page-link py-0 px-1" href="#">1</a></li>
+                                    <li class="page-item disabled"><a class="page-link py-0 px-1" href="#">&raquo;</a></li>
+                                </ul>
+                            </nav>
+                        </div>
                     </div>
                 </form>
             </div>

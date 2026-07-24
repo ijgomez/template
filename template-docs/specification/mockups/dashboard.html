@@ -84,10 +84,52 @@
                     </div>
                 </div>
                 <div class="header-right">
-                    <button class="btn btn-link text-muted position-relative" aria-label="Notificaciones">
-                        <i class="bi bi-bell fs-5" aria-hidden="true"></i>
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">3</span>
-                    </button>
+                    <div class="dropdown">
+                        <button class="btn btn-link text-muted position-relative" data-bs-toggle="dropdown" aria-expanded="true" aria-label="Notificaciones">
+                            <i class="bi bi-bell fs-5" aria-hidden="true"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">3</span>
+                        </button>
+                        <!-- Notifications panel (shown for mockup) -->
+                        <div class="dropdown-menu dropdown-menu-end show p-0" style="width: 360px; max-height: 420px; overflow-y: auto;">
+                            <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom bg-light">
+                                <strong style="font-size: 0.85rem;">Notificaciones</strong>
+                                <a href="#" class="text-decoration-none" style="font-size: 0.75rem;">Marcar todas como leidas</a>
+                            </div>
+                            <!-- Notification item 1 - error -->
+                            <div class="px-3 py-2 border-bottom" style="font-size: 0.8rem;">
+                                <div class="d-flex justify-content-between align-items-start mb-1">
+                                    <span class="badge bg-danger">Error</span>
+                                    <small class="text-muted" style="font-size: 0.7rem;">22/07/2026 09:30</small>
+                                </div>
+                                <div class="fw-medium mb-1">SMTP Notificaciones: Conexion rechazada</div>
+                                <div class="text-muted" style="font-size: 0.75rem;">smtp://mail.template.com:587 — Connection refused after 3 retries</div>
+                                <a href="interfaces.html" class="btn btn-outline-primary mt-1" style="font-size: 0.65rem; padding: 0.15rem 0.4rem;">Ir a detalle</a>
+                            </div>
+                            <!-- Notification item 2 - warning -->
+                            <div class="px-3 py-2 border-bottom" style="font-size: 0.8rem;">
+                                <div class="d-flex justify-content-between align-items-start mb-1">
+                                    <span class="badge bg-warning text-dark">Aviso</span>
+                                    <small class="text-muted" style="font-size: 0.7rem;">22/07/2026 08:15</small>
+                                </div>
+                                <div class="fw-medium mb-1">Nodo node-03: Memoria al 85%</div>
+                                <div class="text-muted" style="font-size: 0.75rem;">El nodo node-03 ha superado el umbral de memoria configurado</div>
+                                <a href="cluster.html" class="btn btn-outline-primary mt-1" style="font-size: 0.65rem; padding: 0.15rem 0.4rem;">Ir a detalle</a>
+                            </div>
+                            <!-- Notification item 3 - info -->
+                            <div class="px-3 py-2" style="font-size: 0.8rem;">
+                                <div class="d-flex justify-content-between align-items-start mb-1">
+                                    <span class="badge bg-info text-dark">Info</span>
+                                    <small class="text-muted" style="font-size: 0.7rem;">22/07/2026 06:00</small>
+                                </div>
+                                <div class="fw-medium mb-1">Backup completado correctamente</div>
+                                <div class="text-muted" style="font-size: 0.75rem;">El backup programado se ha ejecutado sin errores</div>
+                            </div>
+                            <!-- Footer -->
+                            <div class="text-center border-top py-2">
+                                <a href="#" class="text-decoration-none" style="font-size: 0.75rem;">Ver todas las notificaciones</a>
+                            </div>
+                        </div>
+                    </div>
                     <div class="dropdown">
                         <button class="btn btn-link text-decoration-none d-flex align-items-center gap-2" data-bs-toggle="dropdown" aria-expanded="false">
                             <div class="user-avatar">JI</div>
