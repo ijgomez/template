@@ -47,15 +47,25 @@
                     <a href="parameters-list.html" class="nav-link">
                         <i class="bi bi-sliders" aria-hidden="true"></i> Parametros
                     </a>
-                    <a href="audit.html" class="nav-link">
+                    <a href="#" class="nav-link has-submenu" data-bs-toggle="collapse" data-bs-target="#menuAudit" aria-expanded="false" aria-controls="menuAudit">
                         <i class="bi bi-journal-text" aria-hidden="true"></i> Auditoria
+                        <i class="bi bi-chevron-down ms-auto" aria-hidden="true"></i>
                     </a>
+                    <div class="collapse nav-submenu" id="menuAudit">
+                        <a href="audit.html" class="nav-link">Sistema</a>
+                        <a href="audit.html" class="nav-link">Interfaces</a>
+                    </div>
                     <a href="interfaces.html" class="nav-link">
                         <i class="bi bi-diagram-3" aria-hidden="true"></i> Interfaces
                     </a>
-                    <a href="cluster.html" class="nav-link">
+                    <a href="#" class="nav-link has-submenu" data-bs-toggle="collapse" data-bs-target="#menuCluster" aria-expanded="false" aria-controls="menuCluster">
                         <i class="bi bi-hdd-network" aria-hidden="true"></i> Cluster
+                        <i class="bi bi-chevron-down ms-auto" aria-hidden="true"></i>
                     </a>
+                    <div class="collapse nav-submenu" id="menuCluster">
+                        <a href="cluster.html" class="nav-link">Nodos</a>
+                        <a href="cluster.html" class="nav-link">Bloqueos</a>
+                    </div>
                 </div>
             </nav>
         </aside>
@@ -106,7 +116,7 @@
 
             <!-- Content -->
             <div class="tp-content">
-                <!-- Title (no new button - actions cannot be created) -->
+                <!-- Title -->
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h1 class="h3 mb-0">Acciones</h1>
                 </div>
@@ -138,6 +148,17 @@
                     </form>
                 </div>
 
+                <!-- Action toolbar (no Nuevo/Eliminar for actions - only edit) -->
+                <div class="tp-toolbar d-flex gap-2 mb-3">
+                    <button type="button" class="btn btn-warning btn-sm text-white">
+                        <i class="bi bi-pencil me-1" aria-hidden="true"></i> Modificar
+                    </button>
+                
+                    <button type="button" class="btn btn-outline-secondary btn-sm ms-auto">
+                        <i class="bi bi-download me-1" aria-hidden="true"></i> Exportar CSV
+                    </button>
+                </div>
+
                 <!-- Data table -->
                 <div class="card tp-card">
                     <div class="card-body p-0">
@@ -145,116 +166,48 @@
                             <table class="table table-hover tp-table mb-0" aria-label="Listado de acciones">
                                 <thead>
                                     <tr>
-                                        <th scope="col">ID</th>
                                         <th scope="col">Codigo</th>
                                         <th scope="col">Nombre</th>
                                         <th scope="col">Tipo</th>
                                         <th scope="col">Descripcion</th>
-                                        <th scope="col" class="actions-cell">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>1</td>
+                                    <tr class="table-active">
                                         <td>USER_READ</td>
                                         <td>Lectura de usuarios</td>
                                         <td><span class="badge bg-info-subtle text-info">READ</span></td>
                                         <td>Permite consultar el listado y detalle de usuarios</td>
-                                        <td class="actions-cell">
-                                            <div class="btn-group" role="group" aria-label="Acciones para USER_READ">
-                                                <a href="actions-detail.html" class="btn btn-sm btn-outline-secondary" aria-label="Ver accion USER_READ">
-                                                    <i class="bi bi-eye" aria-hidden="true"></i>
-                                                </a>
-                                                <a href="actions-form.html" class="btn btn-sm btn-outline-secondary" aria-label="Editar accion USER_READ">
-                                                    <i class="bi bi-pencil" aria-hidden="true"></i>
-                                                </a>
-                                            </div>
-                                        </td>
                                     </tr>
                                     <tr>
-                                        <td>2</td>
                                         <td>USER_WRITE</td>
                                         <td>Escritura de usuarios</td>
                                         <td><span class="badge bg-warning-subtle text-warning">WRITE</span></td>
                                         <td>Permite crear y modificar usuarios del sistema</td>
-                                        <td class="actions-cell">
-                                            <div class="btn-group" role="group" aria-label="Acciones para USER_WRITE">
-                                                <a href="actions-detail.html" class="btn btn-sm btn-outline-secondary" aria-label="Ver accion USER_WRITE">
-                                                    <i class="bi bi-eye" aria-hidden="true"></i>
-                                                </a>
-                                                <a href="actions-form.html" class="btn btn-sm btn-outline-secondary" aria-label="Editar accion USER_WRITE">
-                                                    <i class="bi bi-pencil" aria-hidden="true"></i>
-                                                </a>
-                                            </div>
-                                        </td>
                                     </tr>
                                     <tr>
-                                        <td>3</td>
                                         <td>PROFILE_READ</td>
                                         <td>Lectura de perfiles</td>
                                         <td><span class="badge bg-info-subtle text-info">READ</span></td>
                                         <td>Permite consultar el listado y detalle de perfiles</td>
-                                        <td class="actions-cell">
-                                            <div class="btn-group" role="group" aria-label="Acciones para PROFILE_READ">
-                                                <a href="actions-detail.html" class="btn btn-sm btn-outline-secondary" aria-label="Ver accion PROFILE_READ">
-                                                    <i class="bi bi-eye" aria-hidden="true"></i>
-                                                </a>
-                                                <a href="actions-form.html" class="btn btn-sm btn-outline-secondary" aria-label="Editar accion PROFILE_READ">
-                                                    <i class="bi bi-pencil" aria-hidden="true"></i>
-                                                </a>
-                                            </div>
-                                        </td>
                                     </tr>
                                     <tr>
-                                        <td>4</td>
                                         <td>PROFILE_WRITE</td>
                                         <td>Escritura de perfiles</td>
                                         <td><span class="badge bg-warning-subtle text-warning">WRITE</span></td>
                                         <td>Permite crear y modificar perfiles de seguridad</td>
-                                        <td class="actions-cell">
-                                            <div class="btn-group" role="group" aria-label="Acciones para PROFILE_WRITE">
-                                                <a href="actions-detail.html" class="btn btn-sm btn-outline-secondary" aria-label="Ver accion PROFILE_WRITE">
-                                                    <i class="bi bi-eye" aria-hidden="true"></i>
-                                                </a>
-                                                <a href="actions-form.html" class="btn btn-sm btn-outline-secondary" aria-label="Editar accion PROFILE_WRITE">
-                                                    <i class="bi bi-pencil" aria-hidden="true"></i>
-                                                </a>
-                                            </div>
-                                        </td>
                                     </tr>
                                     <tr>
-                                        <td>5</td>
                                         <td>AUDIT_READ</td>
                                         <td>Lectura de auditoria</td>
                                         <td><span class="badge bg-info-subtle text-info">READ</span></td>
                                         <td>Permite consultar los registros de auditoria</td>
-                                        <td class="actions-cell">
-                                            <div class="btn-group" role="group" aria-label="Acciones para AUDIT_READ">
-                                                <a href="actions-detail.html" class="btn btn-sm btn-outline-secondary" aria-label="Ver accion AUDIT_READ">
-                                                    <i class="bi bi-eye" aria-hidden="true"></i>
-                                                </a>
-                                                <a href="actions-form.html" class="btn btn-sm btn-outline-secondary" aria-label="Editar accion AUDIT_READ">
-                                                    <i class="bi bi-pencil" aria-hidden="true"></i>
-                                                </a>
-                                            </div>
-                                        </td>
                                     </tr>
                                     <tr>
-                                        <td>6</td>
                                         <td>REPORT_EXECUTE</td>
                                         <td>Ejecucion de informes</td>
                                         <td><span class="badge bg-success-subtle text-success">EXECUTE</span></td>
                                         <td>Permite generar y ejecutar informes del sistema</td>
-                                        <td class="actions-cell">
-                                            <div class="btn-group" role="group" aria-label="Acciones para REPORT_EXECUTE">
-                                                <a href="actions-detail.html" class="btn btn-sm btn-outline-secondary" aria-label="Ver accion REPORT_EXECUTE">
-                                                    <i class="bi bi-eye" aria-hidden="true"></i>
-                                                </a>
-                                                <a href="actions-form.html" class="btn btn-sm btn-outline-secondary" aria-label="Editar accion REPORT_EXECUTE">
-                                                    <i class="bi bi-pencil" aria-hidden="true"></i>
-                                                </a>
-                                            </div>
-                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -264,22 +217,23 @@
                         <span class="text-muted" style="font-size: 0.8125rem;">Mostrando 1-6 de 24</span>
                         <nav aria-label="Paginacion de acciones">
                             <ul class="pagination pagination-sm mb-0">
-                                <li class="page-item disabled">
-                                    <a class="page-link" href="#" aria-label="Pagina anterior">
-                                        <i class="bi bi-chevron-left" aria-hidden="true"></i>
-                                    </a>
-                                </li>
+                                <li class="page-item disabled"><a class="page-link" href="#" aria-label="Pagina anterior"><i class="bi bi-chevron-left" aria-hidden="true"></i></a></li>
                                 <li class="page-item active" aria-current="page"><a class="page-link" href="#">1</a></li>
                                 <li class="page-item"><a class="page-link" href="#">2</a></li>
                                 <li class="page-item"><a class="page-link" href="#">3</a></li>
                                 <li class="page-item"><a class="page-link" href="#">4</a></li>
-                                <li class="page-item">
-                                    <a class="page-link" href="#" aria-label="Pagina siguiente">
-                                        <i class="bi bi-chevron-right" aria-hidden="true"></i>
-                                    </a>
-                                </li>
+                                <li class="page-item"><a class="page-link" href="#" aria-label="Pagina siguiente"><i class="bi bi-chevron-right" aria-hidden="true"></i></a></li>
                             </ul>
                         </nav>
+                        <div class="d-flex align-items-center gap-2 ms-3">
+                            <label for="pageSize" class="text-muted text-nowrap mb-0" style="font-size: 0.8125rem;">Elementos por pagina:</label>
+                            <select class="form-select form-select-sm" id="pageSize" style="width: auto;" aria-label="Elementos por pagina">
+                                <option value="5">5</option>
+                                <option value="10" selected>10</option>
+                                <option value="20">20</option>
+                                <option value="50">50</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>

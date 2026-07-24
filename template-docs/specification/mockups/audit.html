@@ -47,15 +47,25 @@
                     <a href="parameters-list.html" class="nav-link">
                         <i class="bi bi-sliders" aria-hidden="true"></i> Parametros
                     </a>
-                    <a href="audit.html" class="nav-link active" aria-current="page">
+                    <a href="#" class="nav-link active has-submenu" data-bs-toggle="collapse" data-bs-target="#menuAudit" aria-expanded="true" aria-controls="menuAudit">
                         <i class="bi bi-journal-text" aria-hidden="true"></i> Auditoria
+                        <i class="bi bi-chevron-down ms-auto" aria-hidden="true"></i>
                     </a>
+                    <div class="collapse show nav-submenu" id="menuAudit">
+                        <a href="audit.html" class="nav-link active" aria-current="page">Sistema</a>
+                        <a href="audit.html" class="nav-link">Interfaces</a>
+                    </div>
                     <a href="interfaces.html" class="nav-link">
                         <i class="bi bi-diagram-3" aria-hidden="true"></i> Interfaces
                     </a>
-                    <a href="cluster.html" class="nav-link">
+                    <a href="#" class="nav-link has-submenu" data-bs-toggle="collapse" data-bs-target="#menuCluster" aria-expanded="false" aria-controls="menuCluster">
                         <i class="bi bi-hdd-network" aria-hidden="true"></i> Cluster
+                        <i class="bi bi-chevron-down ms-auto" aria-hidden="true"></i>
                     </a>
+                    <div class="collapse nav-submenu" id="menuCluster">
+                        <a href="cluster.html" class="nav-link">Nodos</a>
+                        <a href="cluster.html" class="nav-link">Bloqueos</a>
+                    </div>
                 </div>
             </nav>
         </aside>
@@ -98,7 +108,8 @@
                 <nav aria-label="Breadcrumb">
                     <ol class="breadcrumb mb-0">
                         <li class="breadcrumb-item"><a href="dashboard.html">Administracion</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Auditoria</li>
+                        <li class="breadcrumb-item"><a href="#">Auditoria</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Sistema</li>
                     </ol>
                 </nav>
             </div>
@@ -107,176 +118,158 @@
             <div class="tp-content">
                 <!-- Title -->
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h1 class="h3 mb-0">Auditoria</h1>
+                    <h1 class="h3 mb-0">Auditoria del sistema</h1>
                 </div>
 
-                <!-- Tabs -->
-                <ul class="nav nav-tabs mb-3" id="auditTabs" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="sistema-tab" data-bs-toggle="tab" data-bs-target="#sistema" type="button" role="tab" aria-controls="sistema" aria-selected="true">
-                            <i class="bi bi-pc-display me-1" aria-hidden="true"></i> Sistema
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="interfaces-tab" data-bs-toggle="tab" data-bs-target="#interfaces" type="button" role="tab" aria-controls="interfaces" aria-selected="false">
-                            <i class="bi bi-diagram-3 me-1" aria-hidden="true"></i> Interfaces
-                        </button>
-                    </li>
-                </ul>
-
-                <!-- Tab Content -->
-                <div class="tab-content" id="auditTabsContent">
-                    <!-- Tab Sistema -->
-                    <div class="tab-pane fade show active" id="sistema" role="tabpanel" aria-labelledby="sistema-tab">
-                        <!-- Filter bar -->
-                        <div class="tp-filter-bar">
-                            <form class="row g-3 align-items-end" aria-label="Filtros de busqueda de auditoria del sistema">
-                                <div class="col-md-2">
-                                    <label for="filterUsername" class="form-label">Usuario</label>
-                                    <input type="text" class="form-control form-control-sm" id="filterUsername" placeholder="Nombre de usuario">
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="filterOperation" class="form-label">Operacion</label>
-                                    <select class="form-select form-select-sm" id="filterOperation" aria-label="Seleccionar tipo de operacion">
-                                        <option value="">Todos</option>
-                                        <option value="CREATE">CREATE</option>
-                                        <option value="UPDATE">UPDATE</option>
-                                        <option value="DELETE">DELETE</option>
-                                        <option value="EXECUTE">EXECUTE</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="filterSection" class="form-label">Seccion</label>
-                                    <select class="form-select form-select-sm" id="filterSection" aria-label="Seleccionar seccion">
-                                        <option value="">Todos</option>
-                                        <option value="SECURITY">SECURITY</option>
-                                        <option value="REPORTS">REPORTS</option>
-                                        <option value="INTERFACES">INTERFACES</option>
-                                        <option value="CLUSTER">CLUSTER</option>
-                                        <option value="SYSTEM">SYSTEM</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="filterDateFrom" class="form-label">Fecha desde</label>
-                                    <input type="date" class="form-control form-control-sm" id="filterDateFrom" aria-label="Fecha desde">
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="filterDateTo" class="form-label">Fecha hasta</label>
-                                    <input type="date" class="form-control form-control-sm" id="filterDateTo" aria-label="Fecha hasta">
-                                </div>
-                                <div class="col-md-2 d-flex justify-content-end gap-2">
-                                    <button type="submit" class="btn btn-primary btn-sm">
-                                        <i class="bi bi-search me-1" aria-hidden="true"></i> Buscar
-                                    </button>
-                                    <button type="reset" class="btn btn-outline-secondary btn-sm">
-                                        <i class="bi bi-x-circle me-1" aria-hidden="true"></i> Limpiar
-                                    </button>
-                                </div>
-                            </form>
+                <!-- Filter bar -->
+                <div class="tp-filter-bar">
+                    <form class="row g-3 align-items-end" aria-label="Filtros de busqueda de auditoria del sistema">
+                        <div class="col-md-2">
+                            <label for="filterUsername" class="form-label">Usuario</label>
+                            <input type="text" class="form-control form-control-sm" id="filterUsername" placeholder="Nombre de usuario">
                         </div>
+                        <div class="col-md-2">
+                            <label for="filterOperation" class="form-label">Operacion</label>
+                            <select class="form-select form-select-sm" id="filterOperation" aria-label="Seleccionar tipo de operacion">
+                                <option value="">Todos</option>
+                                <option value="CREATE">CREATE</option>
+                                <option value="UPDATE">UPDATE</option>
+                                <option value="DELETE">DELETE</option>
+                                <option value="EXECUTE">EXECUTE</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="filterSection" class="form-label">Seccion</label>
+                            <select class="form-select form-select-sm" id="filterSection" aria-label="Seleccionar seccion">
+                                <option value="">Todos</option>
+                                <option value="SECURITY">SECURITY</option>
+                                <option value="REPORTS">REPORTS</option>
+                                <option value="INTERFACES">INTERFACES</option>
+                                <option value="CLUSTER">CLUSTER</option>
+                                <option value="SYSTEM">SYSTEM</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="filterDateFrom" class="form-label">Fecha desde</label>
+                            <input type="date" class="form-control form-control-sm" id="filterDateFrom" aria-label="Fecha desde">
+                        </div>
+                        <div class="col-md-2">
+                            <label for="filterDateTo" class="form-label">Fecha hasta</label>
+                            <input type="date" class="form-control form-control-sm" id="filterDateTo" aria-label="Fecha hasta">
+                        </div>
+                        <div class="col-md-2 d-flex justify-content-end gap-2">
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="bi bi-search me-1" aria-hidden="true"></i> Buscar
+                            </button>
+                            <button type="reset" class="btn btn-outline-secondary btn-sm">
+                                <i class="bi bi-x-circle me-1" aria-hidden="true"></i> Limpiar
+                            </button>
+                        </div>
+                    </form>
+                </div>
 
-                        <!-- Data table -->
-                        <div class="card tp-card">
-                            <div class="card-body p-0">
-                                <div class="table-responsive">
-                                    <table class="table table-hover tp-table mb-0" aria-label="Listado de registros de auditoria del sistema">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col">ID</th>
-                                                <th scope="col">Fecha</th>
-                                                <th scope="col">Usuario</th>
-                                                <th scope="col">Operacion</th>
-                                                <th scope="col">Seccion</th>
-                                                <th scope="col">Entidad</th>
-                                                <th scope="col">ID Entidad</th>
-                                                <th scope="col">Detalle</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>1024</td>
-                                                <td>15/01/2025 09:45:12</td>
-                                                <td>jgarcia</td>
-                                                <td><span class="badge bg-success-subtle text-success">CREATE</span></td>
-                                                <td>SECURITY</td>
-                                                <td>Usuario</td>
-                                                <td>42</td>
-                                                <td>Creacion de usuario cfernandez con perfil Usuario</td>
-                                            </tr>
-                                            <tr>
-                                                <td>1023</td>
-                                                <td>15/01/2025 09:32:08</td>
-                                                <td>mmartinez</td>
-                                                <td><span class="badge bg-warning-subtle text-warning">UPDATE</span></td>
-                                                <td>SYSTEM</td>
-                                                <td>Parametro</td>
-                                                <td>7</td>
-                                                <td>Modificacion del parametro MAX_SESSIONS de 5 a 10</td>
-                                            </tr>
-                                            <tr>
-                                                <td>1022</td>
-                                                <td>15/01/2025 08:15:44</td>
-                                                <td>jgarcia</td>
-                                                <td><span class="badge bg-danger-subtle text-danger">DELETE</span></td>
-                                                <td>SECURITY</td>
-                                                <td>Perfil</td>
-                                                <td>5</td>
-                                                <td>Eliminacion del perfil Temporal</td>
-                                            </tr>
-                                            <tr>
-                                                <td>1021</td>
-                                                <td>14/01/2025 17:20:33</td>
-                                                <td>alopez</td>
-                                                <td><span class="badge bg-info-subtle text-info">EXECUTE</span></td>
-                                                <td>REPORTS</td>
-                                                <td>Informe</td>
-                                                <td>12</td>
-                                                <td>Generacion del informe mensual de actividad</td>
-                                            </tr>
-                                            <tr>
-                                                <td>1020</td>
-                                                <td>14/01/2025 16:05:19</td>
-                                                <td>mmartinez</td>
-                                                <td><span class="badge bg-success-subtle text-success">CREATE</span></td>
-                                                <td>INTERFACES</td>
-                                                <td>Interfaz</td>
-                                                <td>8</td>
-                                                <td>Registro de nueva interfaz REST_EXTERNAL_API</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            <div class="card-footer d-flex justify-content-between align-items-center">
-                                <span class="text-muted" style="font-size: 0.8125rem;">Mostrando 1-5 de 1,024</span>
-                                <nav aria-label="Paginacion de auditoria">
-                                    <ul class="pagination pagination-sm mb-0">
-                                        <li class="page-item disabled">
-                                            <a class="page-link" href="#" aria-label="Pagina anterior">
-                                                <i class="bi bi-chevron-left" aria-hidden="true"></i>
-                                            </a>
-                                        </li>
-                                        <li class="page-item active" aria-current="page"><a class="page-link" href="#">1</a></li>
-                                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                        <li class="page-item disabled"><span class="page-link">...</span></li>
-                                        <li class="page-item"><a class="page-link" href="#">205</a></li>
-                                        <li class="page-item">
-                                            <a class="page-link" href="#" aria-label="Pagina siguiente">
-                                                <i class="bi bi-chevron-right" aria-hidden="true"></i>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </nav>
-                            </div>
+                <!-- Action toolbar -->
+                <div class="tp-toolbar d-flex gap-2 mb-3">
+                    <button type="button" class="btn btn-outline-secondary btn-sm ms-auto">
+                        <i class="bi bi-download me-1" aria-hidden="true"></i> Exportar CSV
+                    </button>
+                </div>
+
+                <!-- Data table (read-only) -->
+                <div class="card tp-card">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover tp-table mb-0" aria-label="Registros de auditoria del sistema">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Fecha</th>
+                                        <th scope="col">Usuario</th>
+                                        <th scope="col">Operacion</th>
+                                        <th scope="col">Seccion</th>
+                                        <th scope="col">Entidad</th>
+                                        <th scope="col">ID Entidad</th>
+                                        <th scope="col">Detalle</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>22/07/2026 09:45</td>
+                                        <td>jgarcia</td>
+                                        <td><span class="badge bg-success-subtle text-success">CREATE</span></td>
+                                        <td>SECURITY</td>
+                                        <td>Usuario</td>
+                                        <td>42</td>
+                                        <td>Creacion de usuario cfernandez con perfil Usuario</td>
+                                    </tr>
+                                    <tr>
+                                        <td>22/07/2026 09:32</td>
+                                        <td>mmartinez</td>
+                                        <td><span class="badge bg-primary-subtle text-primary">UPDATE</span></td>
+                                        <td>SYSTEM</td>
+                                        <td>Parametro</td>
+                                        <td>7</td>
+                                        <td>Modificacion del parametro MAX_SESSIONS de 5 a 10</td>
+                                    </tr>
+                                    <tr>
+                                        <td>22/07/2026 08:15</td>
+                                        <td>jgarcia</td>
+                                        <td><span class="badge bg-danger-subtle text-danger">DELETE</span></td>
+                                        <td>SECURITY</td>
+                                        <td>Perfil</td>
+                                        <td>5</td>
+                                        <td>Eliminacion del perfil Temporal</td>
+                                    </tr>
+                                    <tr>
+                                        <td>21/07/2026 17:20</td>
+                                        <td>alopez</td>
+                                        <td><span class="badge bg-info-subtle text-info">EXECUTE</span></td>
+                                        <td>REPORTS</td>
+                                        <td>Informe</td>
+                                        <td>12</td>
+                                        <td>Generacion del informe mensual de actividad</td>
+                                    </tr>
+                                    <tr>
+                                        <td>21/07/2026 16:05</td>
+                                        <td>mmartinez</td>
+                                        <td><span class="badge bg-success-subtle text-success">CREATE</span></td>
+                                        <td>INTERFACES</td>
+                                        <td>Interfaz</td>
+                                        <td>8</td>
+                                        <td>Registro de nueva interfaz REST_EXTERNAL_API</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-
-                    <!-- Tab Interfaces -->
-                    <div class="tab-pane fade" id="interfaces" role="tabpanel" aria-labelledby="interfaces-tab">
-                        <div class="text-center text-muted py-5">
-                            <i class="bi bi-diagram-3 fs-1" aria-hidden="true"></i>
-                            <p class="mt-3">Contenido de auditoria de interfaces (pendiente de implementar)</p>
+                    <div class="card-footer d-flex justify-content-between align-items-center">
+                        <span class="text-muted" style="font-size: 0.8125rem;">Mostrando 1-5 de 1,024</span>
+                        <nav aria-label="Paginacion de auditoria">
+                            <ul class="pagination pagination-sm mb-0">
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" aria-label="Pagina anterior">
+                                        <i class="bi bi-chevron-left" aria-hidden="true"></i>
+                                    </a>
+                                </li>
+                                <li class="page-item active" aria-current="page"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                                <li class="page-item"><a class="page-link" href="#">205</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#" aria-label="Pagina siguiente">
+                                        <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                        <div class="d-flex align-items-center gap-2 ms-3">
+                            <label class="text-muted text-nowrap mb-0" style="font-size: 0.8125rem;">Elementos por pagina:</label>
+                            <select class="form-select form-select-sm" style="width: auto;" aria-label="Elementos por pagina">
+                                <option value="5">5</option>
+                                <option value="10" selected>10</option>
+                                <option value="20">20</option>
+                                <option value="50">50</option>
+                            </select>
                         </div>
                     </div>
                 </div>

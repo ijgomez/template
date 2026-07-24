@@ -47,15 +47,25 @@
                     <a href="parameters-list.html" class="nav-link">
                         <i class="bi bi-sliders" aria-hidden="true"></i> Parametros
                     </a>
-                    <a href="audit.html" class="nav-link">
+                    <a href="#" class="nav-link has-submenu" data-bs-toggle="collapse" data-bs-target="#menuAudit" aria-expanded="false" aria-controls="menuAudit">
                         <i class="bi bi-journal-text" aria-hidden="true"></i> Auditoria
+                        <i class="bi bi-chevron-down ms-auto" aria-hidden="true"></i>
                     </a>
+                    <div class="collapse nav-submenu" id="menuAudit">
+                        <a href="audit.html" class="nav-link">Sistema</a>
+                        <a href="audit.html" class="nav-link">Interfaces</a>
+                    </div>
                     <a href="interfaces.html" class="nav-link">
                         <i class="bi bi-diagram-3" aria-hidden="true"></i> Interfaces
                     </a>
-                    <a href="cluster.html" class="nav-link">
+                    <a href="#" class="nav-link has-submenu" data-bs-toggle="collapse" data-bs-target="#menuCluster" aria-expanded="false" aria-controls="menuCluster">
                         <i class="bi bi-hdd-network" aria-hidden="true"></i> Cluster
+                        <i class="bi bi-chevron-down ms-auto" aria-hidden="true"></i>
                     </a>
+                    <div class="collapse nav-submenu" id="menuCluster">
+                        <a href="cluster.html" class="nav-link">Nodos</a>
+                        <a href="cluster.html" class="nav-link">Bloqueos</a>
+                    </div>
                 </div>
             </nav>
         </aside>
@@ -106,12 +116,9 @@
 
             <!-- Content -->
             <div class="tp-content">
-                <!-- Title and action -->
+                <!-- Title -->
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h1 class="h3 mb-0">Usuarios</h1>
-                    <a href="user-form.html" class="btn btn-primary">
-                        <i class="bi bi-plus-lg me-1" aria-hidden="true"></i> Nuevo
-                    </a>
                 </div>
 
                 <!-- Filter bar -->
@@ -145,6 +152,23 @@
                     </form>
                 </div>
 
+                <!-- Action toolbar -->
+                <div class="tp-toolbar d-flex gap-2 mb-3">
+                    <a href="user-form.html" class="btn btn-primary btn-sm">
+                        <i class="bi bi-plus-lg me-1" aria-hidden="true"></i> Nuevo
+                    </a>
+                    <button type="button" class="btn btn-warning btn-sm text-white">
+                        <i class="bi bi-pencil me-1" aria-hidden="true"></i> Modificar
+                    </button>
+                    <button type="button" class="btn btn-danger btn-sm">
+                        <i class="bi bi-trash me-1" aria-hidden="true"></i> Eliminar
+                    </button>
+                
+                    <button type="button" class="btn btn-outline-secondary btn-sm ms-auto">
+                        <i class="bi bi-download me-1" aria-hidden="true"></i> Exportar CSV
+                    </button>
+                </div>
+
                 <!-- Data table -->
                 <div class="card tp-card">
                     <div class="card-body p-0">
@@ -152,126 +176,54 @@
                             <table class="table table-hover tp-table mb-0" aria-label="Listado de usuarios">
                                 <thead>
                                     <tr>
-                                        <th scope="col">ID</th>
                                         <th scope="col">Usuario</th>
                                         <th scope="col">Nombre</th>
                                         <th scope="col">Apellidos</th>
                                         <th scope="col">Email</th>
                                         <th scope="col">Perfil</th>
                                         <th scope="col">Ultimo acceso</th>
-                                        <th scope="col" class="actions-cell">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>1</td>
+                                    <tr class="table-active">
                                         <td>jgarcia</td>
                                         <td>Juan</td>
                                         <td>Garcia Lopez</td>
                                         <td>jgarcia@template.com</td>
                                         <td><span class="badge bg-primary-subtle text-primary">Administrador</span></td>
                                         <td>15/01/2025 09:32</td>
-                                        <td class="actions-cell">
-                                            <div class="btn-group" role="group" aria-label="Acciones para usuario jgarcia">
-                                                <a href="users-detail.html" class="btn btn-sm btn-outline-secondary" aria-label="Ver usuario jgarcia">
-                                                    <i class="bi bi-eye" aria-hidden="true"></i>
-                                                </a>
-                                                <a href="user-form.html" class="btn btn-sm btn-outline-secondary" aria-label="Editar usuario jgarcia">
-                                                    <i class="bi bi-pencil" aria-hidden="true"></i>
-                                                </a>
-                                                <button type="button" class="btn btn-sm btn-outline-secondary" aria-label="Eliminar usuario jgarcia">
-                                                    <i class="bi bi-trash" aria-hidden="true"></i>
-                                                </button>
-                                            </div>
-                                        </td>
                                     </tr>
                                     <tr>
-                                        <td>2</td>
                                         <td>mmartinez</td>
                                         <td>Maria</td>
                                         <td>Martinez Ruiz</td>
                                         <td>mmartinez@template.com</td>
                                         <td><span class="badge bg-primary-subtle text-primary">Administrador</span></td>
                                         <td>15/01/2025 08:45</td>
-                                        <td class="actions-cell">
-                                            <div class="btn-group" role="group" aria-label="Acciones para usuario mmartinez">
-                                                <a href="users-detail.html" class="btn btn-sm btn-outline-secondary" aria-label="Ver usuario mmartinez">
-                                                    <i class="bi bi-eye" aria-hidden="true"></i>
-                                                </a>
-                                                <a href="user-form.html" class="btn btn-sm btn-outline-secondary" aria-label="Editar usuario mmartinez">
-                                                    <i class="bi bi-pencil" aria-hidden="true"></i>
-                                                </a>
-                                                <button type="button" class="btn btn-sm btn-outline-secondary" aria-label="Eliminar usuario mmartinez">
-                                                    <i class="bi bi-trash" aria-hidden="true"></i>
-                                                </button>
-                                            </div>
-                                        </td>
                                     </tr>
                                     <tr>
-                                        <td>3</td>
                                         <td>cfernandez</td>
                                         <td>Carlos</td>
                                         <td>Fernandez Navarro</td>
                                         <td>cfernandez@template.com</td>
                                         <td><span class="badge bg-secondary-subtle text-secondary">Usuario</span></td>
                                         <td>14/01/2025 17:20</td>
-                                        <td class="actions-cell">
-                                            <div class="btn-group" role="group" aria-label="Acciones para usuario cfernandez">
-                                                <a href="users-detail.html" class="btn btn-sm btn-outline-secondary" aria-label="Ver usuario cfernandez">
-                                                    <i class="bi bi-eye" aria-hidden="true"></i>
-                                                </a>
-                                                <a href="user-form.html" class="btn btn-sm btn-outline-secondary" aria-label="Editar usuario cfernandez">
-                                                    <i class="bi bi-pencil" aria-hidden="true"></i>
-                                                </a>
-                                                <button type="button" class="btn btn-sm btn-outline-secondary" aria-label="Eliminar usuario cfernandez">
-                                                    <i class="bi bi-trash" aria-hidden="true"></i>
-                                                </button>
-                                            </div>
-                                        </td>
                                     </tr>
                                     <tr>
-                                        <td>4</td>
                                         <td>alopez</td>
                                         <td>Ana</td>
                                         <td>Lopez Sanchez</td>
                                         <td>alopez@template.com</td>
                                         <td><span class="badge bg-info-subtle text-info">Auditor</span></td>
                                         <td>14/01/2025 14:10</td>
-                                        <td class="actions-cell">
-                                            <div class="btn-group" role="group" aria-label="Acciones para usuario alopez">
-                                                <a href="users-detail.html" class="btn btn-sm btn-outline-secondary" aria-label="Ver usuario alopez">
-                                                    <i class="bi bi-eye" aria-hidden="true"></i>
-                                                </a>
-                                                <a href="user-form.html" class="btn btn-sm btn-outline-secondary" aria-label="Editar usuario alopez">
-                                                    <i class="bi bi-pencil" aria-hidden="true"></i>
-                                                </a>
-                                                <button type="button" class="btn btn-sm btn-outline-secondary" aria-label="Eliminar usuario alopez">
-                                                    <i class="bi bi-trash" aria-hidden="true"></i>
-                                                </button>
-                                            </div>
-                                        </td>
                                     </tr>
                                     <tr>
-                                        <td>5</td>
                                         <td>pmoreno</td>
                                         <td>Pedro</td>
                                         <td>Moreno Jimenez</td>
                                         <td>pmoreno@template.com</td>
                                         <td><span class="badge bg-secondary-subtle text-secondary">Usuario</span></td>
                                         <td>13/01/2025 11:55</td>
-                                        <td class="actions-cell">
-                                            <div class="btn-group" role="group" aria-label="Acciones para usuario pmoreno">
-                                                <a href="users-detail.html" class="btn btn-sm btn-outline-secondary" aria-label="Ver usuario pmoreno">
-                                                    <i class="bi bi-eye" aria-hidden="true"></i>
-                                                </a>
-                                                <a href="user-form.html" class="btn btn-sm btn-outline-secondary" aria-label="Editar usuario pmoreno">
-                                                    <i class="bi bi-pencil" aria-hidden="true"></i>
-                                                </a>
-                                                <button type="button" class="btn btn-sm btn-outline-secondary" aria-label="Eliminar usuario pmoreno">
-                                                    <i class="bi bi-trash" aria-hidden="true"></i>
-                                                </button>
-                                            </div>
-                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -298,6 +250,15 @@
                                 </li>
                             </ul>
                         </nav>
+                        <div class="d-flex align-items-center gap-2 ms-3">
+                            <label for="pageSize" class="text-muted text-nowrap mb-0" style="font-size: 0.8125rem;">Elementos por pagina:</label>
+                            <select class="form-select form-select-sm" id="pageSize" style="width: auto;" aria-label="Elementos por pagina">
+                                <option value="5">5</option>
+                                <option value="10" selected>10</option>
+                                <option value="20">20</option>
+                                <option value="50">50</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>

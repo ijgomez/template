@@ -47,15 +47,25 @@
                     <a href="parameters-list.html" class="nav-link">
                         <i class="bi bi-sliders" aria-hidden="true"></i> Parametros
                     </a>
-                    <a href="audit.html" class="nav-link">
+                    <a href="#" class="nav-link has-submenu" data-bs-toggle="collapse" data-bs-target="#menuAudit" aria-expanded="false" aria-controls="menuAudit">
                         <i class="bi bi-journal-text" aria-hidden="true"></i> Auditoria
+                        <i class="bi bi-chevron-down ms-auto" aria-hidden="true"></i>
                     </a>
+                    <div class="collapse nav-submenu" id="menuAudit">
+                        <a href="audit.html" class="nav-link">Sistema</a>
+                        <a href="audit.html" class="nav-link">Interfaces</a>
+                    </div>
                     <a href="interfaces.html" class="nav-link">
                         <i class="bi bi-diagram-3" aria-hidden="true"></i> Interfaces
                     </a>
-                    <a href="cluster.html" class="nav-link">
+                    <a href="#" class="nav-link has-submenu" data-bs-toggle="collapse" data-bs-target="#menuCluster" aria-expanded="false" aria-controls="menuCluster">
                         <i class="bi bi-hdd-network" aria-hidden="true"></i> Cluster
+                        <i class="bi bi-chevron-down ms-auto" aria-hidden="true"></i>
                     </a>
+                    <div class="collapse nav-submenu" id="menuCluster">
+                        <a href="cluster.html" class="nav-link">Nodos</a>
+                        <a href="cluster.html" class="nav-link">Bloqueos</a>
+                    </div>
                 </div>
             </nav>
         </aside>
@@ -109,9 +119,6 @@
                 <!-- Title -->
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h1 class="h3 mb-0">Perfiles</h1>
-                    <a href="profile-form.html" class="btn btn-primary">
-                        <i class="bi bi-plus-lg me-1" aria-hidden="true"></i> Nuevo
-                    </a>
                 </div>
 
                 <!-- Filter Bar -->
@@ -121,15 +128,32 @@
                             <label for="filterName" class="form-label form-label-sm mb-1">Nombre</label>
                             <input type="text" class="form-control form-control-sm" id="filterName" placeholder="Filtrar por nombre...">
                         </div>
-                        <div class="col-md-auto">
+                        <div class="col-md-auto d-flex gap-2">
                             <button type="button" class="btn btn-sm btn-primary">
                                 <i class="bi bi-search me-1" aria-hidden="true"></i> Buscar
                             </button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary ms-1">
+                            <button type="button" class="btn btn-sm btn-outline-secondary">
                                 <i class="bi bi-x-lg me-1" aria-hidden="true"></i> Limpiar
                             </button>
                         </div>
                     </form>
+                </div>
+
+                <!-- Action toolbar -->
+                <div class="tp-toolbar d-flex gap-2 mb-3">
+                    <a href="profile-form.html" class="btn btn-primary btn-sm">
+                        <i class="bi bi-plus-lg me-1" aria-hidden="true"></i> Nuevo
+                    </a>
+                    <button type="button" class="btn btn-warning btn-sm text-white">
+                        <i class="bi bi-pencil me-1" aria-hidden="true"></i> Modificar
+                    </button>
+                    <button type="button" class="btn btn-danger btn-sm">
+                        <i class="bi bi-trash me-1" aria-hidden="true"></i> Eliminar
+                    </button>
+                
+                    <button type="button" class="btn btn-outline-secondary btn-sm ms-auto">
+                        <i class="bi bi-download me-1" aria-hidden="true"></i> Exportar CSV
+                    </button>
                 </div>
 
                 <!-- Table -->
@@ -143,81 +167,32 @@
                                     <th>Descripcion</th>
                                     <th class="text-center">N acciones</th>
                                     <th>Creado</th>
-                                    <th class="text-center">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>1</td>
+                                <tr class="table-active">
                                     <td><strong>Administrador</strong></td>
                                     <td>Acceso completo a todas las funcionalidades del sistema</td>
                                     <td class="text-center"><span class="badge bg-primary-subtle text-primary">24</span></td>
                                     <td>15/01/2025</td>
-                                    <td class="actions-cell text-center">
-                                        <a href="profile-form.html" class="btn btn-sm btn-outline-secondary" title="Ver detalle" aria-label="Ver perfil Administrador">
-                                            <i class="bi bi-eye" aria-hidden="true"></i>
-                                        </a>
-                                        <a href="profile-form.html" class="btn btn-sm btn-outline-secondary" title="Editar" aria-label="Editar perfil Administrador">
-                                            <i class="bi bi-pencil" aria-hidden="true"></i>
-                                        </a>
-                                        <button class="btn btn-sm btn-outline-secondary" title="Eliminar" aria-label="Eliminar perfil Administrador">
-                                            <i class="bi bi-trash" aria-hidden="true"></i>
-                                        </button>
-                                    </td>
                                 </tr>
                                 <tr>
-                                    <td>2</td>
                                     <td><strong>Operador</strong></td>
                                     <td>Gestion operativa sin acceso a configuracion avanzada</td>
                                     <td class="text-center"><span class="badge bg-primary-subtle text-primary">16</span></td>
                                     <td>15/01/2025</td>
-                                    <td class="actions-cell text-center">
-                                        <a href="profile-form.html" class="btn btn-sm btn-outline-secondary" title="Ver detalle" aria-label="Ver perfil Operador">
-                                            <i class="bi bi-eye" aria-hidden="true"></i>
-                                        </a>
-                                        <a href="profile-form.html" class="btn btn-sm btn-outline-secondary" title="Editar" aria-label="Editar perfil Operador">
-                                            <i class="bi bi-pencil" aria-hidden="true"></i>
-                                        </a>
-                                        <button class="btn btn-sm btn-outline-secondary" title="Eliminar" aria-label="Eliminar perfil Operador">
-                                            <i class="bi bi-trash" aria-hidden="true"></i>
-                                        </button>
-                                    </td>
                                 </tr>
                                 <tr>
-                                    <td>3</td>
                                     <td><strong>Consultor</strong></td>
                                     <td>Solo lectura para consulta de datos e informes</td>
                                     <td class="text-center"><span class="badge bg-primary-subtle text-primary">8</span></td>
                                     <td>20/02/2025</td>
-                                    <td class="actions-cell text-center">
-                                        <a href="profile-form.html" class="btn btn-sm btn-outline-secondary" title="Ver detalle" aria-label="Ver perfil Consultor">
-                                            <i class="bi bi-eye" aria-hidden="true"></i>
-                                        </a>
-                                        <a href="profile-form.html" class="btn btn-sm btn-outline-secondary" title="Editar" aria-label="Editar perfil Consultor">
-                                            <i class="bi bi-pencil" aria-hidden="true"></i>
-                                        </a>
-                                        <button class="btn btn-sm btn-outline-secondary" title="Eliminar" aria-label="Eliminar perfil Consultor">
-                                            <i class="bi bi-trash" aria-hidden="true"></i>
-                                        </button>
-                                    </td>
                                 </tr>
                                 <tr>
-                                    <td>4</td>
                                     <td><strong>Auditor</strong></td>
                                     <td>Acceso a logs de auditoria y trazabilidad del sistema</td>
                                     <td class="text-center"><span class="badge bg-primary-subtle text-primary">5</span></td>
                                     <td>10/03/2025</td>
-                                    <td class="actions-cell text-center">
-                                        <a href="profile-form.html" class="btn btn-sm btn-outline-secondary" title="Ver detalle" aria-label="Ver perfil Auditor">
-                                            <i class="bi bi-eye" aria-hidden="true"></i>
-                                        </a>
-                                        <a href="profile-form.html" class="btn btn-sm btn-outline-secondary" title="Editar" aria-label="Editar perfil Auditor">
-                                            <i class="bi bi-pencil" aria-hidden="true"></i>
-                                        </a>
-                                        <button class="btn btn-sm btn-outline-secondary" title="Eliminar" aria-label="Eliminar perfil Auditor">
-                                            <i class="bi bi-trash" aria-hidden="true"></i>
-                                        </button>
-                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -231,6 +206,15 @@
                                 <li class="page-item disabled"><a class="page-link" href="#">&raquo;</a></li>
                             </ul>
                         </nav>
+                        <div class="d-flex align-items-center gap-2 ms-3">
+                            <label for="pageSize" class="text-muted text-nowrap mb-0" style="font-size: 0.8125rem;">Elementos por pagina:</label>
+                            <select class="form-select form-select-sm" id="pageSize" style="width: auto;" aria-label="Elementos por pagina">
+                                <option value="5">5</option>
+                                <option value="10" selected>10</option>
+                                <option value="20">20</option>
+                                <option value="50">50</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>

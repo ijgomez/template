@@ -47,15 +47,25 @@
                     <a href="parameters-list.html" class="nav-link">
                         <i class="bi bi-sliders" aria-hidden="true"></i> Parametros
                     </a>
-                    <a href="audit.html" class="nav-link">
+                    <a href="#" class="nav-link has-submenu" data-bs-toggle="collapse" data-bs-target="#menuAudit" aria-expanded="false" aria-controls="menuAudit">
                         <i class="bi bi-journal-text" aria-hidden="true"></i> Auditoria
+                        <i class="bi bi-chevron-down ms-auto" aria-hidden="true"></i>
                     </a>
+                    <div class="collapse nav-submenu" id="menuAudit">
+                        <a href="audit.html" class="nav-link">Sistema</a>
+                        <a href="audit.html" class="nav-link">Interfaces</a>
+                    </div>
                     <a href="interfaces.html" class="nav-link">
                         <i class="bi bi-diagram-3" aria-hidden="true"></i> Interfaces
                     </a>
-                    <a href="cluster.html" class="nav-link active" aria-current="page">
+                    <a href="#" class="nav-link active has-submenu" data-bs-toggle="collapse" data-bs-target="#menuCluster" aria-expanded="true" aria-controls="menuCluster">
                         <i class="bi bi-hdd-network" aria-hidden="true"></i> Cluster
+                        <i class="bi bi-chevron-down ms-auto" aria-hidden="true"></i>
                     </a>
+                    <div class="collapse show nav-submenu" id="menuCluster">
+                        <a href="cluster.html" class="nav-link active" aria-current="page">Nodos</a>
+                        <a href="cluster.html" class="nav-link">Bloqueos</a>
+                    </div>
                 </div>
             </nav>
         </aside>
@@ -98,7 +108,8 @@
                 <nav aria-label="Breadcrumb">
                     <ol class="breadcrumb mb-0">
                         <li class="breadcrumb-item"><a href="dashboard.html">Administracion</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Cluster</li>
+                        <li class="breadcrumb-item"><a href="#">Cluster</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Nodos</li>
                     </ol>
                 </nav>
             </div>
@@ -107,196 +118,119 @@
             <div class="tp-content">
                 <!-- Title -->
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h1 class="h3 mb-0">Cluster</h1>
+                    <h1 class="h3 mb-0">Nodos del cluster</h1>
                 </div>
 
-                <!-- Tabs -->
-                <ul class="nav nav-tabs mb-3" id="clusterTabs" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="nodos-tab" data-bs-toggle="tab" data-bs-target="#nodos" type="button" role="tab" aria-controls="nodos" aria-selected="true">
-                            <i class="bi bi-hdd-stack me-1" aria-hidden="true"></i> Nodos
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="bloqueos-tab" data-bs-toggle="tab" data-bs-target="#bloqueos" type="button" role="tab" aria-controls="bloqueos" aria-selected="false">
-                            <i class="bi bi-lock me-1" aria-hidden="true"></i> Bloqueos
-                        </button>
-                    </li>
-                </ul>
+                <!-- Filter bar -->
+                <div class="tp-filter-bar">
+                    <form class="row g-3 align-items-end" aria-label="Filtros de busqueda de nodos">
+                        <div class="col-md-3">
+                            <label for="filterHostname" class="form-label">Hostname</label>
+                            <input type="text" class="form-control form-control-sm" id="filterHostname" placeholder="Nombre del nodo">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="filterStatus" class="form-label">Estado</label>
+                            <select class="form-select form-select-sm" id="filterStatus" aria-label="Seleccionar estado">
+                                <option value="">Todos</option>
+                                <option value="ALIVE">ALIVE</option>
+                                <option value="DEAD">DEAD</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="filterMaster" class="form-label">Maestro</label>
+                            <select class="form-select form-select-sm" id="filterMaster" aria-label="Filtrar por maestro">
+                                <option value="">Todos</option>
+                                <option value="true">Si</option>
+                                <option value="false">No</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 d-flex justify-content-end gap-2">
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="bi bi-search me-1" aria-hidden="true"></i> Buscar
+                            </button>
+                            <button type="reset" class="btn btn-outline-secondary btn-sm">
+                                <i class="bi bi-x-circle me-1" aria-hidden="true"></i> Limpiar
+                            </button>
+                        </div>
+                    </form>
+                </div>
 
-                <!-- Tab Content -->
-                <div class="tab-content" id="clusterTabsContent">
-                    <!-- Tab Nodos -->
-                    <div class="tab-pane fade show active" id="nodos" role="tabpanel" aria-labelledby="nodos-tab">
-                        <div class="row g-4">
-                            <!-- Node 01 -->
-                            <div class="col-lg-4">
-                                <div class="card tp-card h-100">
-                                    <div class="card-header d-flex justify-content-between align-items-center">
-                                        <span class="fw-semibold"><i class="bi bi-hdd-network me-2" aria-hidden="true"></i>node-01</span>
-                                        <div class="d-flex gap-1">
-                                            <span class="badge bg-success">ALIVE</span>
-                                            <span class="badge bg-primary">MASTER</span>
-                                        </div>
-                                    </div>
-                                    <div class="card-body">
-                                        <dl class="row mb-0" style="font-size: 0.8125rem;">
-                                            <dt class="col-5 text-muted fw-normal">Hostname</dt>
-                                            <dd class="col-7 mb-2">node-01.template.com</dd>
+                <!-- Action toolbar (only set master - no create/delete for nodes) -->
+                <div class="tp-toolbar d-flex gap-2 mb-3">
+                    <button type="button" class="btn btn-primary btn-sm">
+                        <i class="bi bi-star me-1" aria-hidden="true"></i> Designar maestro
+                    </button>
+                
+                    <button type="button" class="btn btn-outline-secondary btn-sm ms-auto">
+                        <i class="bi bi-download me-1" aria-hidden="true"></i> Exportar CSV
+                    </button>
+                </div>
 
-                                            <dt class="col-5 text-muted fw-normal">IP</dt>
-                                            <dd class="col-7 mb-2">192.168.1.10</dd>
-
-                                            <dt class="col-5 text-muted fw-normal">Memoria</dt>
-                                            <dd class="col-7 mb-2">
-                                                <div class="d-flex align-items-center gap-2">
-                                                    <div class="progress flex-grow-1" style="height: 6px;" role="progressbar" aria-label="Uso de memoria node-01" aria-valuenow="53" aria-valuemin="0" aria-valuemax="100">
-                                                        <div class="progress-bar bg-success" style="width: 53%"></div>
-                                                    </div>
-                                                    <small class="text-muted text-nowrap">4.2 / 8 GB</small>
-                                                </div>
-                                            </dd>
-
-                                            <dt class="col-5 text-muted fw-normal">Inicio</dt>
-                                            <dd class="col-7 mb-2">08/07/2026 06:00</dd>
-
-                                            <dt class="col-5 text-muted fw-normal">Ultimo heartbeat</dt>
-                                            <dd class="col-7 mb-0">22/07/2026 09:15</dd>
-                                        </dl>
-                                    </div>
-                                    <div class="card-footer text-end">
-                                        <button class="btn btn-outline-primary btn-sm" disabled aria-label="Designar maestro node-01 (ya es maestro)">
-                                            <i class="bi bi-star me-1" aria-hidden="true"></i> Designar maestro
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Node 02 -->
-                            <div class="col-lg-4">
-                                <div class="card tp-card h-100">
-                                    <div class="card-header d-flex justify-content-between align-items-center">
-                                        <span class="fw-semibold"><i class="bi bi-hdd-network me-2" aria-hidden="true"></i>node-02</span>
-                                        <span class="badge bg-success">ALIVE</span>
-                                    </div>
-                                    <div class="card-body">
-                                        <dl class="row mb-0" style="font-size: 0.8125rem;">
-                                            <dt class="col-5 text-muted fw-normal">Hostname</dt>
-                                            <dd class="col-7 mb-2">node-02.template.com</dd>
-
-                                            <dt class="col-5 text-muted fw-normal">IP</dt>
-                                            <dd class="col-7 mb-2">192.168.1.11</dd>
-
-                                            <dt class="col-5 text-muted fw-normal">Memoria</dt>
-                                            <dd class="col-7 mb-2">
-                                                <div class="d-flex align-items-center gap-2">
-                                                    <div class="progress flex-grow-1" style="height: 6px;" role="progressbar" aria-label="Uso de memoria node-02" aria-valuenow="39" aria-valuemin="0" aria-valuemax="100">
-                                                        <div class="progress-bar bg-success" style="width: 39%"></div>
-                                                    </div>
-                                                    <small class="text-muted text-nowrap">3.1 / 8 GB</small>
-                                                </div>
-                                            </dd>
-
-                                            <dt class="col-5 text-muted fw-normal">Inicio</dt>
-                                            <dd class="col-7 mb-0">10/07/2026 12:30</dd>
-                                        </dl>
-                                    </div>
-                                    <div class="card-footer text-end">
-                                        <button class="btn btn-outline-primary btn-sm" aria-label="Designar maestro node-02">
-                                            <i class="bi bi-star me-1" aria-hidden="true"></i> Designar maestro
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Node 03 -->
-                            <div class="col-lg-4">
-                                <div class="card tp-card h-100">
-                                    <div class="card-header d-flex justify-content-between align-items-center">
-                                        <span class="fw-semibold"><i class="bi bi-hdd-network me-2" aria-hidden="true"></i>node-03</span>
-                                        <span class="badge bg-success">ALIVE</span>
-                                    </div>
-                                    <div class="card-body">
-                                        <dl class="row mb-0" style="font-size: 0.8125rem;">
-                                            <dt class="col-5 text-muted fw-normal">Hostname</dt>
-                                            <dd class="col-7 mb-2">node-03.template.com</dd>
-
-                                            <dt class="col-5 text-muted fw-normal">IP</dt>
-                                            <dd class="col-7 mb-2">192.168.1.12</dd>
-
-                                            <dt class="col-5 text-muted fw-normal">Memoria</dt>
-                                            <dd class="col-7 mb-2">
-                                                <div class="d-flex align-items-center gap-2">
-                                                    <div class="progress flex-grow-1" style="height: 6px;" role="progressbar" aria-label="Uso de memoria node-03" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100">
-                                                        <div class="progress-bar bg-success" style="width: 35%"></div>
-                                                    </div>
-                                                    <small class="text-muted text-nowrap">2.8 / 8 GB</small>
-                                                </div>
-                                            </dd>
-
-                                            <dt class="col-5 text-muted fw-normal">Inicio</dt>
-                                            <dd class="col-7 mb-0">15/07/2026 08:00</dd>
-                                        </dl>
-                                    </div>
-                                    <div class="card-footer text-end">
-                                        <button class="btn btn-outline-primary btn-sm" aria-label="Designar maestro node-03">
-                                            <i class="bi bi-star me-1" aria-hidden="true"></i> Designar maestro
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
+                <!-- Data table -->
+                <div class="card tp-card">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover tp-table mb-0" aria-label="Listado de nodos del cluster">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Hostname</th>
+                                        <th scope="col">IP</th>
+                                        <th scope="col">Estado</th>
+                                        <th scope="col">Maestro</th>
+                                        <th scope="col">Memoria</th>
+                                        <th scope="col">Inicio</th>
+                                        <th scope="col">Ultimo heartbeat</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="table-active">
+                                        <td>node-01.template.com</td>
+                                        <td>192.168.1.10</td>
+                                        <td><span class="badge bg-success">ALIVE</span></td>
+                                        <td><span class="badge bg-primary">MASTER</span></td>
+                                        <td>4.2 / 8 GB</td>
+                                        <td>08/07/2026 06:00</td>
+                                        <td>22/07/2026 09:15</td>
+                                    </tr>
+                                    <tr>
+                                        <td>node-02.template.com</td>
+                                        <td>192.168.1.11</td>
+                                        <td><span class="badge bg-success">ALIVE</span></td>
+                                        <td><span class="text-muted">—</span></td>
+                                        <td>3.1 / 8 GB</td>
+                                        <td>10/07/2026 12:30</td>
+                                        <td>22/07/2026 09:15</td>
+                                    </tr>
+                                    <tr>
+                                        <td>node-03.template.com</td>
+                                        <td>192.168.1.12</td>
+                                        <td><span class="badge bg-success">ALIVE</span></td>
+                                        <td><span class="text-muted">—</span></td>
+                                        <td>2.8 / 8 GB</td>
+                                        <td>15/07/2026 08:00</td>
+                                        <td>22/07/2026 09:14</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-
-                    <!-- Tab Bloqueos -->
-                    <div class="tab-pane fade" id="bloqueos" role="tabpanel" aria-labelledby="bloqueos-tab">
-                        <div class="card tp-card">
-                            <div class="card-body p-0">
-                                <div class="table-responsive">
-                                    <table class="table table-hover tp-table mb-0" aria-label="Listado de bloqueos del cluster">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col">ID</th>
-                                                <th scope="col">Nombre</th>
-                                                <th scope="col">Inicio</th>
-                                                <th scope="col">Tiempo medio</th>
-                                                <th scope="col">Min</th>
-                                                <th scope="col">Max</th>
-                                                <th scope="col">Total executions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>1</td>
-                                                <td>HEARTBEAT_TASK</td>
-                                                <td>08/07/2026 06:00:05</td>
-                                                <td>12 ms</td>
-                                                <td>8 ms</td>
-                                                <td>45 ms</td>
-                                                <td>128,450</td>
-                                            </tr>
-                                            <tr>
-                                                <td>2</td>
-                                                <td>DEAD_NODE_CHECK</td>
-                                                <td>08/07/2026 06:01:00</td>
-                                                <td>85 ms</td>
-                                                <td>42 ms</td>
-                                                <td>320 ms</td>
-                                                <td>21,408</td>
-                                            </tr>
-                                            <tr>
-                                                <td>3</td>
-                                                <td>BACKUP_TASK</td>
-                                                <td>08/07/2026 06:05:00</td>
-                                                <td>2,450 ms</td>
-                                                <td>1,800 ms</td>
-                                                <td>5,200 ms</td>
-                                                <td>342</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
+                    <div class="card-footer d-flex justify-content-between align-items-center">
+                        <span class="text-muted" style="font-size: 0.8125rem;">Mostrando 1-3 de 3</span>
+                        <nav aria-label="Paginacion de nodos">
+                            <ul class="pagination pagination-sm mb-0">
+                                <li class="page-item disabled"><a class="page-link" href="#" aria-label="Pagina anterior"><i class="bi bi-chevron-left" aria-hidden="true"></i></a></li>
+                                <li class="page-item active" aria-current="page"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item disabled"><a class="page-link" href="#" aria-label="Pagina siguiente"><i class="bi bi-chevron-right" aria-hidden="true"></i></a></li>
+                            </ul>
+                        </nav>
+                        <div class="d-flex align-items-center gap-2 ms-3">
+                            <label class="text-muted text-nowrap mb-0" style="font-size: 0.8125rem;">Elementos por pagina:</label>
+                            <select class="form-select form-select-sm" style="width: auto;" aria-label="Elementos por pagina">
+                                <option value="5">5</option>
+                                <option value="10" selected>10</option>
+                                <option value="20">20</option>
+                                <option value="50">50</option>
+                            </select>
                         </div>
                     </div>
                 </div>

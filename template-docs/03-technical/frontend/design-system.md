@@ -159,17 +159,51 @@ La IA debe respetar los siguientes patrones cuando genere pantallas completas.
 
 ```text
 ┌─────────────────────────────────────────────┐
-│ Título de la entidad                [+ Nuevo]│
+│ Título de la entidad                         │
 ├─────────────────────────────────────────────┤
 │ Filtros: campo1 | campo2 | [Buscar] [Limpiar]│
 ├─────────────────────────────────────────────┤
+│ [+ Nuevo] [Modificar] [Eliminar]   [Exportar CSV]│
+├─────────────────────────────────────────────┤
 │ Tabla con columnas relevantes               │
 │   - Ordenable por cabeceras                 │
-│   - Acciones por fila: ver, editar, eliminar│
+│   - Fila seleccionable (click para marcar)  │
+│   - Sin columna de acciones por fila        │
 ├─────────────────────────────────────────────┤
-│ Paginación                                  │
+│ 1-10 de 150  [< 1 2 3 4 5 >]  Elem/pág: [10]│
 └─────────────────────────────────────────────┘
 ```
+
+### Barra de herramientas (toolbar)
+
+Las acciones sobre entidades se agrupan en una **barra de herramientas única** situada entre los filtros y la tabla. No se repiten botones de acción en cada fila.
+
+| Botón      | Variante            | Condición                                       |
+|------------|---------------------|-------------------------------------------------|
+| Nuevo      | `primary`           | Siempre visible (si la entidad permite creación)|
+| Modificar  | `warning`           | Activo cuando hay una fila seleccionada         |
+| Eliminar   | `danger`            | Activo cuando hay una fila seleccionada         |
+| Exportar CSV | `outline-secondary` | Siempre visible, alineado a la derecha (`ms-auto`) |
+
+Para actuar sobre un registro, el usuario primero selecciona la fila (clic en la fila, que se resalta con `table-active`) y luego pulsa el botón correspondiente en la toolbar.
+
+Las entidades que no permiten creación o eliminación (ej. Acciones) solo muestran los botones aplicables.
+
+La columna de identificador interno (ID / PK) no se muestra en las tablas. El sistema gestiona la selección internamente sin exponer claves primarias al usuario.
+
+### Paginación
+
+La zona de paginación se sitúa en el pie de la tabla (`card-footer`) y contiene tres elementos alineados horizontalmente:
+
+| Posición   | Elemento                        | Ejemplo                  |
+|------------|---------------------------------|--------------------------|
+| Izquierda  | Contador de registros           | "Mostrando 1-10 de 150" |
+| Centro     | Navegación de páginas           | `< 1 2 3 ... 15 >`      |
+| Derecha    | Selector de elementos por página| `Elementos por página: [10 ▾]` |
+
+Opciones disponibles en el selector: 5, 10, 20, 50.
+
+Al cambiar el tamaño de página se recarga la primera página con el nuevo tamaño.
 
 ## Formulario (CRUD - Create / Update)
 

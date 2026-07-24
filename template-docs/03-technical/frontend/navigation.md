@@ -243,9 +243,13 @@ Administración ▾
 │   ├── Perfiles
 │   └── Acciones
 ├── Parámetros
-├── Auditoría
+├── Auditoría ▾
+│   ├── Sistema
+│   └── Interfaces
 ├── Interfaces
-└── Cluster
+└── Cluster ▾
+    ├── Nodos
+    └── Bloqueos
 ```
 
 Tanto "Informes" como "Administración" son menús desplegables de primer nivel con icono y chevron. Al expandirse muestran sus opciones hijas. "Seguridad" es un submenú de segundo nivel dentro de "Administración".

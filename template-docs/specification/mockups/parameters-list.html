@@ -47,15 +47,25 @@
                     <a href="parameters-list.html" class="nav-link active" aria-current="page">
                         <i class="bi bi-sliders" aria-hidden="true"></i> Parametros
                     </a>
-                    <a href="audit.html" class="nav-link">
+                    <a href="#" class="nav-link has-submenu" data-bs-toggle="collapse" data-bs-target="#menuAudit" aria-expanded="false" aria-controls="menuAudit">
                         <i class="bi bi-journal-text" aria-hidden="true"></i> Auditoria
+                        <i class="bi bi-chevron-down ms-auto" aria-hidden="true"></i>
                     </a>
+                    <div class="collapse nav-submenu" id="menuAudit">
+                        <a href="audit.html" class="nav-link">Sistema</a>
+                        <a href="audit.html" class="nav-link">Interfaces</a>
+                    </div>
                     <a href="interfaces.html" class="nav-link">
                         <i class="bi bi-diagram-3" aria-hidden="true"></i> Interfaces
                     </a>
-                    <a href="cluster.html" class="nav-link">
+                    <a href="#" class="nav-link has-submenu" data-bs-toggle="collapse" data-bs-target="#menuCluster" aria-expanded="false" aria-controls="menuCluster">
                         <i class="bi bi-hdd-network" aria-hidden="true"></i> Cluster
+                        <i class="bi bi-chevron-down ms-auto" aria-hidden="true"></i>
                     </a>
+                    <div class="collapse nav-submenu" id="menuCluster">
+                        <a href="cluster.html" class="nav-link">Nodos</a>
+                        <a href="cluster.html" class="nav-link">Bloqueos</a>
+                    </div>
                 </div>
             </nav>
         </aside>
@@ -105,12 +115,9 @@
 
             <!-- Content -->
             <div class="tp-content">
-                <!-- Title and action -->
+                <!-- Title -->
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h1 class="h3 mb-0">Parametros</h1>
-                    <a href="parameter-form.html" class="btn btn-primary">
-                        <i class="bi bi-plus-lg me-1" aria-hidden="true"></i> Nuevo
-                    </a>
                 </div>
 
                 <!-- Filter bar -->
@@ -141,6 +148,23 @@
                     </form>
                 </div>
 
+                <!-- Action toolbar -->
+                <div class="tp-toolbar d-flex gap-2 mb-3">
+                    <a href="parameter-form.html" class="btn btn-primary btn-sm">
+                        <i class="bi bi-plus-lg me-1" aria-hidden="true"></i> Nuevo
+                    </a>
+                    <button type="button" class="btn btn-warning btn-sm text-white">
+                        <i class="bi bi-pencil me-1" aria-hidden="true"></i> Modificar
+                    </button>
+                    <button type="button" class="btn btn-danger btn-sm">
+                        <i class="bi bi-trash me-1" aria-hidden="true"></i> Eliminar
+                    </button>
+                
+                    <button type="button" class="btn btn-outline-secondary btn-sm ms-auto">
+                        <i class="bi bi-download me-1" aria-hidden="true"></i> Exportar CSV
+                    </button>
+                </div>
+
                 <!-- Data table -->
                 <div class="card tp-card">
                     <div class="card-body p-0">
@@ -148,114 +172,42 @@
                             <table class="table table-hover tp-table mb-0" aria-label="Listado de parametros">
                                 <thead>
                                     <tr>
-                                        <th scope="col">ID</th>
                                         <th scope="col">Codigo</th>
                                         <th scope="col">Descripcion</th>
                                         <th scope="col">Tipo</th>
                                         <th scope="col">Valor</th>
-                                        <th scope="col" class="actions-cell">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>1</td>
+                                    <tr class="table-active">
                                         <td>APP_NAME</td>
                                         <td>Nombre de la aplicacion</td>
                                         <td><span class="badge bg-primary-subtle text-primary">STRING</span></td>
                                         <td>Template App</td>
-                                        <td class="actions-cell">
-                                            <div class="btn-group" role="group" aria-label="Acciones para parametro APP_NAME">
-                                                <a href="parameter-detail.html" class="btn btn-sm btn-outline-secondary" aria-label="Ver parametro APP_NAME">
-                                                    <i class="bi bi-eye" aria-hidden="true"></i>
-                                                </a>
-                                                <a href="parameter-form.html" class="btn btn-sm btn-outline-secondary" aria-label="Editar parametro APP_NAME">
-                                                    <i class="bi bi-pencil" aria-hidden="true"></i>
-                                                </a>
-                                                <button type="button" class="btn btn-sm btn-outline-secondary" aria-label="Eliminar parametro APP_NAME">
-                                                    <i class="bi bi-trash" aria-hidden="true"></i>
-                                                </button>
-                                            </div>
-                                        </td>
                                     </tr>
                                     <tr>
-                                        <td>2</td>
                                         <td>SESSION_TIMEOUT</td>
                                         <td>Tiempo de expiracion de sesion (segundos)</td>
                                         <td><span class="badge bg-info-subtle text-info">INTEGER</span></td>
                                         <td>3600</td>
-                                        <td class="actions-cell">
-                                            <div class="btn-group" role="group" aria-label="Acciones para parametro SESSION_TIMEOUT">
-                                                <a href="parameter-detail.html" class="btn btn-sm btn-outline-secondary" aria-label="Ver parametro SESSION_TIMEOUT">
-                                                    <i class="bi bi-eye" aria-hidden="true"></i>
-                                                </a>
-                                                <a href="parameter-form.html" class="btn btn-sm btn-outline-secondary" aria-label="Editar parametro SESSION_TIMEOUT">
-                                                    <i class="bi bi-pencil" aria-hidden="true"></i>
-                                                </a>
-                                                <button type="button" class="btn btn-sm btn-outline-secondary" aria-label="Eliminar parametro SESSION_TIMEOUT">
-                                                    <i class="bi bi-trash" aria-hidden="true"></i>
-                                                </button>
-                                            </div>
-                                        </td>
                                     </tr>
                                     <tr>
-                                        <td>3</td>
                                         <td>MAINTENANCE_MODE</td>
                                         <td>Modo mantenimiento activo</td>
                                         <td><span class="badge bg-warning-subtle text-warning">BOOLEAN</span></td>
                                         <td>false</td>
-                                        <td class="actions-cell">
-                                            <div class="btn-group" role="group" aria-label="Acciones para parametro MAINTENANCE_MODE">
-                                                <a href="parameter-detail.html" class="btn btn-sm btn-outline-secondary" aria-label="Ver parametro MAINTENANCE_MODE">
-                                                    <i class="bi bi-eye" aria-hidden="true"></i>
-                                                </a>
-                                                <a href="parameter-form.html" class="btn btn-sm btn-outline-secondary" aria-label="Editar parametro MAINTENANCE_MODE">
-                                                    <i class="bi bi-pencil" aria-hidden="true"></i>
-                                                </a>
-                                                <button type="button" class="btn btn-sm btn-outline-secondary" aria-label="Eliminar parametro MAINTENANCE_MODE">
-                                                    <i class="bi bi-trash" aria-hidden="true"></i>
-                                                </button>
-                                            </div>
-                                        </td>
                                     </tr>
                                     <tr>
-                                        <td>4</td>
                                         <td>BACKUP_DATE</td>
                                         <td>Fecha del proximo backup programado</td>
                                         <td><span class="badge bg-secondary-subtle text-secondary">DATE</span></td>
                                         <td>2026-07-01</td>
-                                        <td class="actions-cell">
-                                            <div class="btn-group" role="group" aria-label="Acciones para parametro BACKUP_DATE">
-                                                <a href="parameter-detail.html" class="btn btn-sm btn-outline-secondary" aria-label="Ver parametro BACKUP_DATE">
-                                                    <i class="bi bi-eye" aria-hidden="true"></i>
-                                                </a>
-                                                <a href="parameter-form.html" class="btn btn-sm btn-outline-secondary" aria-label="Editar parametro BACKUP_DATE">
-                                                    <i class="bi bi-pencil" aria-hidden="true"></i>
-                                                </a>
-                                                <button type="button" class="btn btn-sm btn-outline-secondary" aria-label="Eliminar parametro BACKUP_DATE">
-                                                    <i class="bi bi-trash" aria-hidden="true"></i>
-                                                </button>
-                                            </div>
-                                        </td>
                                     </tr>
                                     <tr>
-                                        <td>5</td>
                                         <td>MAX_UPLOAD_SIZE</td>
                                         <td>Tamano maximo de subida (bytes)</td>
                                         <td><span class="badge bg-info-subtle text-info">INTEGER</span></td>
                                         <td>10485760</td>
-                                        <td class="actions-cell">
-                                            <div class="btn-group" role="group" aria-label="Acciones para parametro MAX_UPLOAD_SIZE">
-                                                <a href="parameter-detail.html" class="btn btn-sm btn-outline-secondary" aria-label="Ver parametro MAX_UPLOAD_SIZE">
-                                                    <i class="bi bi-eye" aria-hidden="true"></i>
-                                                </a>
-                                                <a href="parameter-form.html" class="btn btn-sm btn-outline-secondary" aria-label="Editar parametro MAX_UPLOAD_SIZE">
-                                                    <i class="bi bi-pencil" aria-hidden="true"></i>
-                                                </a>
-                                                <button type="button" class="btn btn-sm btn-outline-secondary" aria-label="Eliminar parametro MAX_UPLOAD_SIZE">
-                                                    <i class="bi bi-trash" aria-hidden="true"></i>
-                                                </button>
-                                            </div>
-                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -265,21 +217,22 @@
                         <span class="text-muted" style="font-size: 0.8125rem;">Mostrando 1-5 de 12</span>
                         <nav aria-label="Paginacion de parametros">
                             <ul class="pagination pagination-sm mb-0">
-                                <li class="page-item disabled">
-                                    <a class="page-link" href="#" aria-label="Pagina anterior">
-                                        <i class="bi bi-chevron-left" aria-hidden="true"></i>
-                                    </a>
-                                </li>
+                                <li class="page-item disabled"><a class="page-link" href="#" aria-label="Pagina anterior"><i class="bi bi-chevron-left" aria-hidden="true"></i></a></li>
                                 <li class="page-item active" aria-current="page"><a class="page-link" href="#">1</a></li>
                                 <li class="page-item"><a class="page-link" href="#">2</a></li>
                                 <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                <li class="page-item">
-                                    <a class="page-link" href="#" aria-label="Pagina siguiente">
-                                        <i class="bi bi-chevron-right" aria-hidden="true"></i>
-                                    </a>
-                                </li>
+                                <li class="page-item"><a class="page-link" href="#" aria-label="Pagina siguiente"><i class="bi bi-chevron-right" aria-hidden="true"></i></a></li>
                             </ul>
                         </nav>
+                        <div class="d-flex align-items-center gap-2 ms-3">
+                            <label for="pageSize" class="text-muted text-nowrap mb-0" style="font-size: 0.8125rem;">Elementos por pagina:</label>
+                            <select class="form-select form-select-sm" id="pageSize" style="width: auto;" aria-label="Elementos por pagina">
+                                <option value="5">5</option>
+                                <option value="10" selected>10</option>
+                                <option value="20">20</option>
+                                <option value="50">50</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
