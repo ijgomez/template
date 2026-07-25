@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Template App - Interfaces</title>
+    <title>Template App - Interfaces / Configuracion / Interfaces</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="styles.css" rel="stylesheet">
@@ -30,11 +30,25 @@
                     <a href="reports.html" class="nav-link">Estadisticas de uso</a>
                     <a href="reports.html" class="nav-link">Informe de errores</a>
                 </div>
-                <a href="#" class="nav-link has-submenu" data-bs-toggle="collapse" data-bs-target="#menuAdmin" aria-expanded="true" aria-controls="menuAdmin">
+                <a href="#" class="nav-link has-submenu" data-bs-toggle="collapse" data-bs-target="#menuInterfaces" aria-expanded="true" aria-controls="menuInterfaces">
+                    <i class="bi bi-diagram-3" aria-hidden="true"></i> Interfaces
+                    <i class="bi bi-chevron-down ms-auto" aria-hidden="true"></i>
+                </a>
+                <div class="collapse show nav-submenu" id="menuInterfaces">
+                    <a href="interfaces-monitor.html" class="nav-link">Monitor</a>
+                    <a href="#" class="nav-link has-submenu" data-bs-toggle="collapse" data-bs-target="#menuConfig" aria-expanded="true" aria-controls="menuConfig">
+                        <i class="bi bi-gear-wide-connected" aria-hidden="true"></i> Configuracion
+                        <i class="bi bi-chevron-down ms-auto" aria-hidden="true"></i>
+                    </a>
+                    <div class="collapse show nav-submenu" id="menuConfig">
+                        <a href="interfaces.html" class="nav-link active" aria-current="page">Interfaces</a>
+                    </div>
+                </div>
+                <a href="#" class="nav-link has-submenu" data-bs-toggle="collapse" data-bs-target="#menuAdmin" aria-expanded="false" aria-controls="menuAdmin">
                     <i class="bi bi-gear" aria-hidden="true"></i> Administracion
                     <i class="bi bi-chevron-down ms-auto" aria-hidden="true"></i>
                 </a>
-                <div class="collapse show nav-submenu" id="menuAdmin">
+                <div class="collapse nav-submenu" id="menuAdmin">
                     <a href="#" class="nav-link has-submenu" data-bs-toggle="collapse" data-bs-target="#menuSecurity" aria-expanded="false" aria-controls="menuSecurity">
                         <i class="bi bi-shield-lock" aria-hidden="true"></i> Seguridad
                         <i class="bi bi-chevron-down ms-auto" aria-hidden="true"></i>
@@ -47,16 +61,8 @@
                     <a href="parameters-list.html" class="nav-link">
                         <i class="bi bi-sliders" aria-hidden="true"></i> Parametros
                     </a>
-                    <a href="#" class="nav-link has-submenu" data-bs-toggle="collapse" data-bs-target="#menuAudit" aria-expanded="false" aria-controls="menuAudit">
+                    <a href="audit.html" class="nav-link">
                         <i class="bi bi-journal-text" aria-hidden="true"></i> Auditoria
-                        <i class="bi bi-chevron-down ms-auto" aria-hidden="true"></i>
-                    </a>
-                    <div class="collapse nav-submenu" id="menuAudit">
-                        <a href="audit.html" class="nav-link">Sistema</a>
-                        <a href="audit.html" class="nav-link">Interfaces</a>
-                    </div>
-                    <a href="interfaces.html" class="nav-link active" aria-current="page">
-                        <i class="bi bi-diagram-3" aria-hidden="true"></i> Interfaces
                     </a>
                     <a href="#" class="nav-link has-submenu" data-bs-toggle="collapse" data-bs-target="#menuCluster" aria-expanded="false" aria-controls="menuCluster">
                         <i class="bi bi-hdd-network" aria-hidden="true"></i> Cluster
@@ -107,7 +113,8 @@
             <div class="tp-breadcrumb">
                 <nav aria-label="Breadcrumb">
                     <ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="dashboard.html">Administracion</a></li>
+                        <li class="breadcrumb-item"><a href="#">Interfaces</a></li>
+                        <li class="breadcrumb-item"><a href="#">Configuracion</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Interfaces</li>
                     </ol>
                 </nav>
@@ -115,137 +122,153 @@
 
             <!-- Content -->
             <div class="tp-content">
+                <!-- Title -->
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h1 class="h3 mb-0">Interfaces</h1>
                 </div>
 
-                <!-- Interface cards grid -->
-                <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
-                    <!-- API Pagos -->
-                    <div class="col">
-                        <div class="card tp-card h-100">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-start mb-3">
-                                    <h5 class="card-title mb-0">API Pagos</h5>
-                                    <span class="badge tp-badge-active">ACTIVE</span>
-                                </div>
-                                <div class="mb-2">
-                                    <span class="badge bg-primary-subtle text-primary">REST</span>
-                                </div>
-                                <div class="mb-2">
-                                    <small class="text-muted d-block">URL</small>
-                                    <code class="small">https://api.pagos.es/v2</code>
-                                </div>
-                                <div class="d-flex justify-content-between">
-                                    <div>
-                                        <small class="text-muted d-block">Ultimo check</small>
-                                        <span class="small">22/07/2026 09:15</span>
-                                    </div>
-                                    <div class="text-end">
-                                        <small class="text-muted d-block">Frecuencia</small>
-                                        <span class="small">Cada 60s</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-footer bg-transparent">
-                                <a href="#" class="btn btn-outline-primary btn-sm w-100" aria-label="Ver detalle de API Pagos">Ver detalle</a>
-                            </div>
+                <!-- Filter bar -->
+                <div class="tp-filter-bar">
+                    <form class="row g-3 align-items-end" aria-label="Filtros de busqueda de interfaces">
+                        <div class="col-md-3">
+                            <label for="filterName" class="form-label">Nombre</label>
+                            <input type="text" class="form-control form-control-sm" id="filterName" placeholder="Nombre de la interfaz">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="filterProtocol" class="form-label">Protocolo</label>
+                            <select class="form-select form-select-sm" id="filterProtocol" aria-label="Seleccionar protocolo">
+                                <option value="">Todos</option>
+                                <option value="REST">REST</option>
+                                <option value="SOAP">SOAP</option>
+                                <option value="LDAP">LDAP</option>
+                                <option value="SMTP">SMTP</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="filterStatus" class="form-label">Estado</label>
+                            <select class="form-select form-select-sm" id="filterStatus" aria-label="Seleccionar estado">
+                                <option value="">Todos</option>
+                                <option value="ACTIVE">ACTIVE</option>
+                                <option value="INACTIVE">INACTIVE</option>
+                                <option value="ERROR">ERROR</option>
+                            </select>
+                        </div>
+                        <div class="col-12 d-flex justify-content-end gap-2 mt-2">
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="bi bi-search me-1" aria-hidden="true"></i> Buscar
+                            </button>
+                            <button type="reset" class="btn btn-outline-secondary btn-sm">
+                                <i class="bi bi-x-circle me-1" aria-hidden="true"></i> Limpiar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Action toolbar (read-only, no create/delete) -->
+                <div class="tp-toolbar d-flex gap-2 mb-3">
+                    <button type="button" class="btn btn-outline-secondary btn-sm ms-auto">
+                        <i class="bi bi-download me-1" aria-hidden="true"></i> Exportar CSV
+                    </button>
+                </div>
+
+                <!-- Data table -->
+                <div class="card tp-card">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover tp-table mb-0" aria-label="Listado de interfaces">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Nombre</th>
+                                        <th scope="col">Protocolo</th>
+                                        <th scope="col">URL</th>
+                                        <th scope="col">Estado</th>
+                                        <th scope="col">Frecuencia</th>
+                                        <th scope="col">Ultimo check</th>
+                                        <th scope="col">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>API Pagos</td>
+                                        <td><span class="badge bg-primary-subtle text-primary">REST</span></td>
+                                        <td><code class="small">https://api.pagos.es/v2</code></td>
+                                        <td><span class="badge bg-success">ACTIVE</span></td>
+                                        <td>60s</td>
+                                        <td>22/07/2026 09:15</td>
+                                        <td>
+                                            <a href="#" class="btn btn-outline-primary btn-sm" aria-label="Ver detalle de API Pagos">
+                                                <i class="bi bi-eye" aria-hidden="true"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>LDAP Corporativo</td>
+                                        <td><span class="badge bg-secondary-subtle text-secondary">LDAP</span></td>
+                                        <td><code class="small">ldap://ldap.corp.local:389</code></td>
+                                        <td><span class="badge bg-success">ACTIVE</span></td>
+                                        <td>120s</td>
+                                        <td>22/07/2026 09:14</td>
+                                        <td>
+                                            <a href="#" class="btn btn-outline-primary btn-sm" aria-label="Ver detalle de LDAP Corporativo">
+                                                <i class="bi bi-eye" aria-hidden="true"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>SMTP Notificaciones</td>
+                                        <td><span class="badge bg-secondary-subtle text-secondary">SMTP</span></td>
+                                        <td><code class="small">smtp://mail.template.com:587</code></td>
+                                        <td><span class="badge bg-danger">ERROR</span></td>
+                                        <td>60s</td>
+                                        <td class="text-danger">22/07/2026 09:13</td>
+                                        <td>
+                                            <a href="#" class="btn btn-outline-primary btn-sm" aria-label="Ver detalle de SMTP Notificaciones">
+                                                <i class="bi bi-eye" aria-hidden="true"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>API Inventario</td>
+                                        <td><span class="badge bg-primary-subtle text-primary">REST</span></td>
+                                        <td><code class="small">https://inv.internal/api</code></td>
+                                        <td><span class="badge bg-secondary">INACTIVE</span></td>
+                                        <td>300s</td>
+                                        <td>20/07/2026 18:00</td>
+                                        <td>
+                                            <a href="#" class="btn btn-outline-primary btn-sm" aria-label="Ver detalle de API Inventario">
+                                                <i class="bi bi-eye" aria-hidden="true"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-
-                    <!-- LDAP Corporativo -->
-                    <div class="col">
-                        <div class="card tp-card h-100">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-start mb-3">
-                                    <h5 class="card-title mb-0">LDAP Corporativo</h5>
-                                    <span class="badge tp-badge-active">ACTIVE</span>
-                                </div>
-                                <div class="mb-2">
-                                    <span class="badge bg-secondary-subtle text-secondary">LDAP</span>
-                                </div>
-                                <div class="mb-2">
-                                    <small class="text-muted d-block">URL</small>
-                                    <code class="small">ldap://ldap.corp.local:389</code>
-                                </div>
-                                <div class="d-flex justify-content-between">
-                                    <div>
-                                        <small class="text-muted d-block">Ultimo check</small>
-                                        <span class="small">22/07/2026 09:14</span>
-                                    </div>
-                                    <div class="text-end">
-                                        <small class="text-muted d-block">Frecuencia</small>
-                                        <span class="small">Cada 120s</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-footer bg-transparent">
-                                <a href="#" class="btn btn-outline-primary btn-sm w-100" aria-label="Ver detalle de LDAP Corporativo">Ver detalle</a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- SMTP Notificaciones -->
-                    <div class="col">
-                        <div class="card tp-card h-100">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-start mb-3">
-                                    <h5 class="card-title mb-0">SMTP Notificaciones</h5>
-                                    <span class="badge tp-badge-error">ERROR</span>
-                                </div>
-                                <div class="mb-2">
-                                    <span class="badge bg-secondary-subtle text-secondary">SMTP</span>
-                                </div>
-                                <div class="mb-2">
-                                    <small class="text-muted d-block">URL</small>
-                                    <code class="small">smtp://mail.template.com:587</code>
-                                </div>
-                                <div class="d-flex justify-content-between">
-                                    <div>
-                                        <small class="text-muted d-block">Ultimo check</small>
-                                        <span class="small text-danger">22/07/2026 09:13 (fallido)</span>
-                                    </div>
-                                    <div class="text-end">
-                                        <small class="text-muted d-block">Frecuencia</small>
-                                        <span class="small">Cada 60s</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-footer bg-transparent">
-                                <a href="#" class="btn btn-outline-primary btn-sm w-100" aria-label="Ver detalle de SMTP Notificaciones">Ver detalle</a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- API Inventario -->
-                    <div class="col">
-                        <div class="card tp-card h-100">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-start mb-3">
-                                    <h5 class="card-title mb-0">API Inventario</h5>
-                                    <span class="badge tp-badge-inactive">INACTIVE</span>
-                                </div>
-                                <div class="mb-2">
-                                    <span class="badge bg-primary-subtle text-primary">REST</span>
-                                </div>
-                                <div class="mb-2">
-                                    <small class="text-muted d-block">URL</small>
-                                    <code class="small">https://inv.internal/api</code>
-                                </div>
-                                <div class="d-flex justify-content-between">
-                                    <div>
-                                        <small class="text-muted d-block">Ultimo check</small>
-                                        <span class="small">20/07/2026 18:00</span>
-                                    </div>
-                                    <div class="text-end">
-                                        <small class="text-muted d-block">Frecuencia</small>
-                                        <span class="small">Cada 300s</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-footer bg-transparent">
-                                <a href="#" class="btn btn-outline-primary btn-sm w-100" aria-label="Ver detalle de API Inventario">Ver detalle</a>
-                            </div>
+                    <div class="card-footer d-flex justify-content-between align-items-center">
+                        <span class="text-muted" style="font-size: 0.8125rem;">Mostrando 1-4 de 4</span>
+                        <nav aria-label="Paginacion de interfaces">
+                            <ul class="pagination pagination-sm mb-0">
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" aria-label="Pagina anterior">
+                                        <i class="bi bi-chevron-left" aria-hidden="true"></i>
+                                    </a>
+                                </li>
+                                <li class="page-item active" aria-current="page"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" aria-label="Pagina siguiente">
+                                        <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                        <div class="d-flex align-items-center gap-2 ms-3">
+                            <label class="text-muted text-nowrap mb-0" style="font-size: 0.8125rem;">Elementos por pagina:</label>
+                            <select class="form-select form-select-sm" style="width: auto;" aria-label="Elementos por pagina">
+                                <option value="5">5</option>
+                                <option value="10" selected>10</option>
+                                <option value="20">20</option>
+                                <option value="50">50</option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -272,6 +295,7 @@
         <a href="parameters-list.html">Parametros</a>
         <a href="audit.html">Auditoria</a>
         <a href="interfaces.html" class="active">Interfaces</a>
+        <a href="interfaces-monitor.html">Monitor</a>
         <a href="cluster.html">Cluster</a>
         <a href="reports.html">Informes</a>
         <a href="profile-page.html">Mi Perfil</a>
@@ -289,13 +313,11 @@
             const isCollapsed = sidebar.classList.contains("collapsed");
             btn.setAttribute("aria-expanded", !isCollapsed);
             btn.querySelector("i").className = isCollapsed ? "bi bi-list fs-4" : "bi bi-layout-sidebar-inset fs-4";
-            // When collapsed, force all submenus to show (CSS handles flyout visibility)
             sidebar.querySelectorAll(".nav-submenu").forEach(function(menu) {
                 if (isCollapsed) {
                     menu.classList.remove("show");
                     menu.style.display = "";
                 } else {
-                    // Restore expanded state for menus that were open
                     const trigger = menu.previousElementSibling;
                     if (trigger && trigger.getAttribute("aria-expanded") === "true") {
                         menu.classList.add("show");

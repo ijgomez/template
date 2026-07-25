@@ -255,8 +255,8 @@ Full-stack enterprise application template implementing authentication/authoriza
     - _Requirements: 21.3, 21.5, 21.6, 21.7_
 
   - [ ] 10.3 Implement AuditController in webapp module
-    - GET /api/v1/administration/audit/system (paginated + filters)
-    - GET /api/v1/administration/audit/system/count
+    - GET /api/v1/administration/audit (paginated + filters)
+    - GET /api/v1/administration/audit/count
     - _Requirements: 35.7_
 
   - [ ]* 10.4 Write property test for audit log immutability (Property 10)
@@ -294,11 +294,11 @@ Full-stack enterprise application template implementing authentication/authoriza
     - _Requirements: 22.1, 22.2, 22.3, 22.5, 22.6, 22.7, 32.1, 32.2, 32.3, 32.5, 32.6_
 
   - [ ] 12.2 Implement InterfaceController in webapp module
-    - GET /api/v1/administration/interfaces
-    - GET /api/v1/administration/interfaces/{id}
-    - GET /api/v1/administration/audit/interfaces (paginated + filters)
-    - GET /api/v1/administration/audit/interfaces/count
-    - GET /api/v1/administration/audit/interfaces/{id}
+    - GET /api/v1/interfaces/configuration (list interfaces with status)
+    - GET /api/v1/interfaces/configuration/{id} (interface detail)
+    - GET /api/v1/interfaces/monitor (paginated + filters)
+    - GET /api/v1/interfaces/monitor/count
+    - GET /api/v1/interfaces/monitor/{id} (operation detail)
     - _Requirements: 35.8, 35.9_
 
 - [ ] 13. Cluster management (backend)
@@ -480,8 +480,8 @@ Full-stack enterprise application template implementing authentication/authoriza
     - Client-side routing without full page reloads
     - Lazy load modules on navigation
     - Show/hide menu items based on user actions
-    - Menu structure: Informes, Administración > (Seguridad > Usuarios/Perfiles/Acciones, Parámetros, Auditoría, Interfaces, Cluster > Nodos/Bloqueos)
-    - Expandable/collapsible sub-levels (Administración, Seguridad, Cluster)
+    - Menu structure: Informes, Interfaces > (Monitor, Configuración), Administración > (Seguridad > Usuarios/Perfiles/Acciones, Parámetros, Auditoría, Cluster > Nodos/Bloqueos)
+    - Expandable/collapsible sub-levels (Interfaces, Administración, Seguridad, Cluster)
     - 404 page with link to Dashboard
     - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7_
 
@@ -549,15 +549,15 @@ Full-stack enterprise application template implementing authentication/authoriza
     - Detail view only (no Create, Edit, Delete per Req 25.12)
     - _Requirements: 21.3, 21.4, 25.1, 25.2, 25.3, 25.4, 25.9, 25.12_
 
-  - [ ] 23.2 Implement Interface logs list view (read-only)
+
+- [ ] 24. Frontend CRUD views - Interfaces module (top-level)
+  - [ ] 24.1 Implement Interfaces Monitor view (read-only)
     - List view: paginated table, filters (fecha, tipo operación, interfaz, status), CSV export
     - Detail view: timestamp, operation_type, interface_name, request_payload, response_payload, status
     - No Create/Edit/Delete per Req 25.12
     - _Requirements: 32.2, 32.3, 32.4, 25.1, 25.2, 25.3, 25.4, 25.9, 25.12_
 
-
-- [ ] 24. Frontend CRUD views - Interfaces module
-  - [ ] 24.1 Implement Interfaces monitoring panel
+  - [ ] 24.2 Implement Interfaces Configuration panel (read-only)
     - List view: all interfaces with status indicators (green=active, red=error, grey=inactive)
     - Detail view: name, description, URL, protocol, check frequency
     - No Create/Edit/Delete per Req 25.12
@@ -661,7 +661,7 @@ Full-stack enterprise application template implementing authentication/authoriza
     { "id": 8, "tasks": ["10.3", "10.4", "13.4", "13.5", "13.6", "13.7", "15.2", "15.4", "15.5"] },
     { "id": 9, "tasks": ["18.1", "19.1"] },
     { "id": 10, "tasks": ["18.2", "18.3", "18.4"] },
-    { "id": 11, "tasks": ["21.1", "21.2", "21.3", "21.4", "22.1", "23.1", "23.2", "24.1", "25.1", "25.2", "26.1", "28.1", "29.1"] },
+    { "id": 11, "tasks": ["21.1", "21.2", "21.3", "21.4", "22.1", "23.1", "24.1", "24.2", "25.1", "25.2", "26.1", "28.1", "29.1"] },
     { "id": 12, "tasks": ["28.2", "30.1"] },
     { "id": 13, "tasks": ["30.2", "30.3"] }
   ]

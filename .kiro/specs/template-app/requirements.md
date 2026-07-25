@@ -97,6 +97,9 @@
 4. WHEN el usuario navega a una URL que no existe, THE SPA SHALL mostrar una página de error 404 con un enlace para volver al Dashboard.
 5. THE SPA SHALL organizar el menú de navegación principal con la siguiente estructura jerárquica:
    - Informes
+   - Interfaces
+     - Monitor
+     - Configuración
    - Administración
      - Seguridad
        - Usuarios
@@ -104,11 +107,10 @@
        - Acciones
      - Parámetros
      - Auditoría
-     - Interfaces
      - Cluster
        - Nodos
        - Bloqueos
-6. THE SPA SHALL presentar los elementos del menú con capacidad de expandir y colapsar los sub-niveles (Administración, Seguridad, Cluster).
+6. THE SPA SHALL presentar los elementos del menú con capacidad de expandir y colapsar los sub-niveles (Interfaces, Administración, Seguridad, Cluster).
 7. WHILE el usuario no tiene la acción requerida para acceder a una sección del menú, THE SPA SHALL ocultar dicha sección del menú de navegación.
 
 ### Requirement 8: Modelo de datos de usuario
@@ -503,9 +505,9 @@
 4. THE ProfileService SHALL exponer los endpoints de gestión de perfiles en la ruta `/api/v1/administration/security/profiles/`.
 5. THE ActionService SHALL exponer los endpoints de gestión de acciones en la ruta `/api/v1/administration/security/actions/`.
 6. THE ParameterService SHALL exponer los endpoints de gestión de parámetros en la ruta `/api/v1/administration/parameters/`.
-7. THE AuditService SHALL exponer los endpoints de consulta de registros de auditoría del sistema en la ruta `/api/v1/administration/audit/system/`.
-8. THE InterfaceService SHALL exponer los endpoints de consulta y supervisión de interfaces en la ruta `/api/v1/administration/interfaces/`.
-9. THE InterfaceService SHALL exponer los endpoints de consulta de trazabilidad de operaciones de interfaces (InterfaceLog) en la ruta `/api/v1/administration/audit/interfaces/`.
+7. THE AuditService SHALL exponer los endpoints de consulta de registros de auditoría del sistema en la ruta `/api/v1/administration/audit/`.
+8. THE InterfaceService SHALL exponer los endpoints de configuración y supervisión de interfaces en la ruta `/api/v1/interfaces/configuration/`, como módulo funcional de primer nivel independiente de administración.
+9. THE InterfaceService SHALL exponer los endpoints de consulta de trazabilidad de operaciones de interfaces (InterfaceLog / Monitor) en la ruta `/api/v1/interfaces/monitor/`.
 10. THE ClusterService SHALL exponer los endpoints de gestión de nodos del cluster en la ruta `/api/v1/administration/cluster/nodes/`.
 11. THE ClusterService SHALL exponer los endpoints de consulta de bloqueos del cluster en la ruta `/api/v1/administration/cluster/blocks/`.
 12. THE ReportService SHALL exponer los endpoints de gestión de informes en la ruta `/api/v1/reports/`, como módulo funcional de primer nivel independiente de administración.

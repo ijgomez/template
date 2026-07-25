@@ -9,11 +9,11 @@ Template App es una aplicación empresarial full-stack diseñada como plataforma
 - **Base de datos**: PostgreSQL 18 con migraciones Liquibase (formato XML).
 - **Seguridad**: JWT (access + refresh tokens), autorización basada en perfiles y acciones.
 
-La plataforma cubre: autenticación/autorización, gestión de usuarios/perfiles/acciones, informes con exportación multi-formato, auditoría AOP, supervisión de interfaces, cluster de alta disponibilidad con gobernanza de tareas, y configuración multi-entorno.
+La plataforma cubre: autenticación/autorización, gestión de usuarios/perfiles/acciones, informes con exportación multi-formato, auditoría AOP, supervisión y monitorización de interfaces (módulo independiente), cluster de alta disponibilidad con gobernanza de tareas, y configuración multi-entorno.
 
 ### Decisiones de diseño clave
 
-1. **Separación Frontend API vs Integration API**: La Frontend API (`/api/v1/`) está organizada jerárquicamente reflejando los módulos funcionales (administración/seguridad, administración/parámetros, etc.) y no es un contrato público. Las APIs de integración (REST/SOAP) son contratos estables para sistemas externos.
+1. **Separación Frontend API vs Integration API**: La Frontend API (`/api/v1/`) está organizada jerárquicamente reflejando los módulos funcionales (administración/seguridad, administración/parámetros, interfaces/, etc.) y no es un contrato público. Las APIs de integración (REST/SOAP) son contratos estables para sistemas externos.
 2. **Auditoría no invasiva via AOP**: El sistema de auditoría se implementa como aspecto transversal que no contamina el código de negocio. Es independiente de los campos `created_at`/`last_modified_at` de las entidades.
 3. **Cluster auto-registrado con gobierno de tareas**: Cada instancia se registra automáticamente al arrancar, envía heartbeat periódico, detecta nodos muertos y elige maestro automáticamente. La ejecución de tareas se gobierna por configuración (ClusterTask/ClusterJob) con prioridades y condiciones de disponibilidad.
 4. **Modelo de seguridad por acciones**: La autorización se basa en acciones atómicas agrupadas en perfiles, no en roles monolíticos. Las acciones controlan tanto el acceso API (backend) como la visibilidad de navegación y funcionalidades (frontend).
@@ -34,6 +34,7 @@ flowchart TB
         SPA["SPA + PWA"]
         AuthModule["Auth Module"]
         AdminModule["Admin Module"]
+        InterfacesModule["Interfaces Module"]
         ReportsModule["Reports Module"]
     end
     
@@ -413,18 +414,18 @@ interface AuthService {
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
-| `/api/v1/administration/audit/system` | GET | Consultar registros de auditoría del sistema (paginado, filtros) |
-| `/api/v1/administration/audit/system/count` | GET | Contar registros de auditoría que coinciden con filtros |
-| `/api/v1/administration/audit/interfaces` | GET | Consultar trazabilidad de operaciones de interfaces (paginado, filtros) |
-| `/api/v1/administration/audit/interfaces/count` | GET | Contar operaciones de interfaces que coinciden con filtros |
-| `/api/v1/administration/audit/interfaces/{id}` | GET | Detalle de operación de interfaz |
+| `/api/v1/administration/audit` | GET | Consultar registros de auditoría del sistema (paginado, filtros) |
+| `/api/v1/administration/audit/count` | GET | Contar registros de auditoría que coinciden con filtros |
 
-#### Interfaces (`/api/v1/administration/interfaces/`)
+#### Interfaces (`/api/v1/interfaces/`)
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
-| `/api/v1/administration/interfaces` | GET | Listar interfaces con estado |
-| `/api/v1/administration/interfaces/{id}` | GET | Detalle de interfaz |
+| `/api/v1/interfaces/configuration` | GET | Listar interfaces con estado |
+| `/api/v1/interfaces/configuration/{id}` | GET | Detalle de interfaz |
+| `/api/v1/interfaces/monitor` | GET | Consultar trazabilidad de operaciones de interfaces (paginado, filtros) |
+| `/api/v1/interfaces/monitor/count` | GET | Contar operaciones de interfaces que coinciden con filtros |
+| `/api/v1/interfaces/monitor/{id}` | GET | Detalle de operación de interfaz |
 
 #### Cluster (`/api/v1/administration/cluster/`)
 

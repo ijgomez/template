@@ -237,24 +237,31 @@ Principal
     ├── Estadísticas de uso
     └── Informe de errores
 
+Interfaces ▾
+├── Monitor
+└── Configuración
+
 Administración ▾
 ├── Seguridad ▾
 │   ├── Usuarios
 │   ├── Perfiles
 │   └── Acciones
 ├── Parámetros
-├── Auditoría ▾
-│   ├── Sistema
-│   └── Interfaces
-├── Interfaces
+├── Auditoría
 └── Cluster ▾
     ├── Nodos
     └── Bloqueos
 ```
 
-Tanto "Informes" como "Administración" son menús desplegables de primer nivel con icono y chevron. Al expandirse muestran sus opciones hijas. "Seguridad" es un submenú de segundo nivel dentro de "Administración".
+"Informes", "Interfaces" y "Administración" son menús desplegables de primer nivel con icono y chevron. Al expandirse muestran sus opciones hijas. "Seguridad" y "Cluster" son submenús de segundo nivel dentro de "Administración".
+
+El módulo **Interfaces** agrupa la funcionalidad de supervisión e integración con sistemas externos:
+- **Monitor**: panel de actividad de las interfaces, mostrando la trazabilidad de operaciones (logs de entrada/salida, estados, payloads).
+- **Configuración**: listado de interfaces registradas con su estado actual (activa, inactiva, error) y detalle de cada interfaz.
 
 Los informes disponibles para el usuario se muestran como submenú desplegable de "Informes" en el menú lateral. La lista se genera dinámicamente según los informes asignados al usuario (relación `user2report`).
+
+La sección "Auditoría" ya no es un submenú desplegable; al tratarse de un único destino (registros de auditoría del sistema), se comporta como un enlace directo dentro de Administración.
 
 Cada módulo es responsable de registrar sus rutas dentro de la aplicación.
 

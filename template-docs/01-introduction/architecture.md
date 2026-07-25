@@ -272,6 +272,12 @@ Template
 
 Template --> Reports["Informes"]
 
+Template --> Interfaces["Interfaces"]
+
+Interfaces --> Monitor["Monitor"]
+
+Interfaces --> Configuration["Configuración"]
+
 Template --> Administration["Administración"]
 
 Administration --> Security["Seguridad"]
@@ -279,8 +285,6 @@ Administration --> Security["Seguridad"]
 Administration --> Parameters["Parámetros"]
 
 Administration --> Audit["Auditoría"]
-
-Administration --> Interfaces["Interfaces"]
 
 Administration --> Cluster["Cluster"]
 ```

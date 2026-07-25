@@ -30,6 +30,20 @@
                     <a href="reports.html" class="nav-link">Estadisticas de uso</a>
                     <a href="reports.html" class="nav-link">Informe de errores</a>
                 </div>
+                <a href="#" class="nav-link has-submenu" data-bs-toggle="collapse" data-bs-target="#menuInterfaces" aria-expanded="false" aria-controls="menuInterfaces">
+                    <i class="bi bi-diagram-3" aria-hidden="true"></i> Interfaces
+                    <i class="bi bi-chevron-down ms-auto" aria-hidden="true"></i>
+                </a>
+                <div class="collapse nav-submenu" id="menuInterfaces">
+                    <a href="interfaces-monitor.html" class="nav-link">Monitor</a>
+                    <a href="#" class="nav-link has-submenu" data-bs-toggle="collapse" data-bs-target="#menuConfig" aria-expanded="false" aria-controls="menuConfig">
+                        <i class="bi bi-gear-wide-connected" aria-hidden="true"></i> Configuracion
+                        <i class="bi bi-chevron-down ms-auto" aria-hidden="true"></i>
+                    </a>
+                    <div class="collapse nav-submenu" id="menuConfig">
+                        <a href="interfaces.html" class="nav-link">Interfaces</a>
+                    </div>
+                </div>
                 <a href="#" class="nav-link has-submenu" data-bs-toggle="collapse" data-bs-target="#menuAdmin" aria-expanded="true" aria-controls="menuAdmin">
                     <i class="bi bi-gear" aria-hidden="true"></i> Administracion
                     <i class="bi bi-chevron-down ms-auto" aria-hidden="true"></i>
@@ -47,16 +61,8 @@
                     <a href="parameters-list.html" class="nav-link">
                         <i class="bi bi-sliders" aria-hidden="true"></i> Parametros
                     </a>
-                    <a href="#" class="nav-link has-submenu" data-bs-toggle="collapse" data-bs-target="#menuAudit" aria-expanded="false" aria-controls="menuAudit">
+                    <a href="audit.html" class="nav-link">
                         <i class="bi bi-journal-text" aria-hidden="true"></i> Auditoria
-                        <i class="bi bi-chevron-down ms-auto" aria-hidden="true"></i>
-                    </a>
-                    <div class="collapse nav-submenu" id="menuAudit">
-                        <a href="audit.html" class="nav-link">Sistema</a>
-                        <a href="audit.html" class="nav-link">Interfaces</a>
-                    </div>
-                    <a href="interfaces.html" class="nav-link">
-                        <i class="bi bi-diagram-3" aria-hidden="true"></i> Interfaces
                     </a>
                     <a href="#" class="nav-link has-submenu" data-bs-toggle="collapse" data-bs-target="#menuCluster" aria-expanded="false" aria-controls="menuCluster">
                         <i class="bi bi-hdd-network" aria-hidden="true"></i> Cluster
@@ -283,7 +289,8 @@
         <a href="actions-list.html">Acciones</a>
         <a href="parameters-list.html">Parametros</a>
         <a href="audit.html">Auditoria</a>
-        <a href="interfaces.html">Interfaces</a>
+        <a href="interfaces.html">Configuracion</a>
+        <a href="interfaces-monitor.html">Monitor</a>
         <a href="cluster.html">Cluster</a>
         <a href="reports.html">Informes</a>
         <a href="profile-page.html">Mi Perfil</a>

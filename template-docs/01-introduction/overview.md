@@ -89,11 +89,13 @@ La plantilla está organizada en módulos funcionales independientes.
 Actualmente, incluye entre otros, los siguientes módulos:
 
 - Informes.
+- Interfaces.
+  - Monitor.
+  - Configuración.
 - Administración.
   - Seguridad.
   - Parámetros.
   - Auditoría.
-  - Interfaces.
   - Cluster.
 
 Cada módulo encapsula su propia funcionalidad y puede evolucionar de forma independiente.
