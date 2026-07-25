@@ -166,6 +166,10 @@
 
                 <!-- Action toolbar (read-only, no create/delete) -->
                 <div class="tp-toolbar d-flex gap-2 mb-3">
+                    <button type="button" class="btn btn-primary btn-sm">
+                        <i class="bi bi-eye me-1" aria-hidden="true"></i> Ver detalle
+                    </button>
+                
                     <button type="button" class="btn btn-outline-secondary btn-sm ms-auto">
                         <i class="bi bi-download me-1" aria-hidden="true"></i> Exportar CSV
                     </button>
@@ -184,22 +188,16 @@
                                         <th scope="col">Estado</th>
                                         <th scope="col">Frecuencia</th>
                                         <th scope="col">Ultimo check</th>
-                                        <th scope="col">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
+                                    <tr class="table-active">
                                         <td>API Pagos</td>
                                         <td><span class="badge bg-primary-subtle text-primary">REST</span></td>
                                         <td><code class="small">https://api.pagos.es/v2</code></td>
                                         <td><span class="badge bg-success">ACTIVE</span></td>
                                         <td>60s</td>
                                         <td>22/07/2026 09:15</td>
-                                        <td>
-                                            <a href="#" class="btn btn-outline-primary btn-sm" aria-label="Ver detalle de API Pagos">
-                                                <i class="bi bi-eye" aria-hidden="true"></i>
-                                            </a>
-                                        </td>
                                     </tr>
                                     <tr>
                                         <td>LDAP Corporativo</td>
@@ -208,11 +206,6 @@
                                         <td><span class="badge bg-success">ACTIVE</span></td>
                                         <td>120s</td>
                                         <td>22/07/2026 09:14</td>
-                                        <td>
-                                            <a href="#" class="btn btn-outline-primary btn-sm" aria-label="Ver detalle de LDAP Corporativo">
-                                                <i class="bi bi-eye" aria-hidden="true"></i>
-                                            </a>
-                                        </td>
                                     </tr>
                                     <tr>
                                         <td>SMTP Notificaciones</td>
@@ -221,11 +214,6 @@
                                         <td><span class="badge bg-danger">ERROR</span></td>
                                         <td>60s</td>
                                         <td class="text-danger">22/07/2026 09:13</td>
-                                        <td>
-                                            <a href="#" class="btn btn-outline-primary btn-sm" aria-label="Ver detalle de SMTP Notificaciones">
-                                                <i class="bi bi-eye" aria-hidden="true"></i>
-                                            </a>
-                                        </td>
                                     </tr>
                                     <tr>
                                         <td>API Inventario</td>
@@ -234,11 +222,6 @@
                                         <td><span class="badge bg-secondary">INACTIVE</span></td>
                                         <td>300s</td>
                                         <td>20/07/2026 18:00</td>
-                                        <td>
-                                            <a href="#" class="btn btn-outline-primary btn-sm" aria-label="Ver detalle de API Inventario">
-                                                <i class="bi bi-eye" aria-hidden="true"></i>
-                                            </a>
-                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
