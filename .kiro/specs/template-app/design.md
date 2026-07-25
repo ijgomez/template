@@ -16,7 +16,7 @@ La plataforma cubre: autenticación/autorización, gestión de usuarios/perfiles
 1. **Separación Frontend API vs Integration API**: La Frontend API (`/api/v1/`) está organizada jerárquicamente reflejando los módulos funcionales (administración/seguridad, administración/parámetros, interfaces/, etc.) y no es un contrato público. Las APIs de integración (REST/SOAP) son contratos estables para sistemas externos.
 2. **Auditoría no invasiva via AOP**: El sistema de auditoría se implementa como aspecto transversal que no contamina el código de negocio. Es independiente de los campos `created_at`/`last_modified_at` de las entidades.
 3. **Cluster auto-registrado con gobierno de tareas**: Cada instancia se registra automáticamente al arrancar, envía heartbeat periódico, detecta nodos muertos y elige maestro automáticamente. La ejecución de tareas se gobierna por configuración (ClusterTask/ClusterJob) con prioridades y condiciones de disponibilidad.
-4. **Modelo de seguridad por acciones**: La autorización se basa en acciones atómicas agrupadas en perfiles, no en roles monolíticos. Las acciones controlan tanto el acceso API (backend) como la visibilidad de navegación y funcionalidades (frontend).
+4. **Modelo de seguridad por acciones**: La autorización se basa en acciones atómicas agrupadas en perfiles, no en roles monolíticos. Las acciones controlan tanto el acceso API (backend) como la visibilidad de navegación y funcionalidades (frontend). Cada acción sigue la nomenclatura `<IDENTIFICADOR>_<SUFIJO>` donde el sufijo es `_READ`, `_WRITE` o `_EXECUTE`, coherente con el campo `type` de la entidad. El catálogo inicial de 14 acciones se despliega como seed data en Liquibase.
 5. **Timestamps con zona horaria**: Todos los campos temporales usan `TIMESTAMP WITH TIME ZONE`, almacenados en UTC. El frontend convierte a la zona horaria local del usuario.
 6. **Módulo domain sin dependencias de Spring**: El módulo domain es Java puro (salvo JPA), manteniendo la separación de responsabilidades.
 
@@ -625,6 +625,49 @@ erDiagram
 10. **Entidades con trazabilidad**: Todos los registros incluyen `created_at` (inmutable tras creación) y `last_modified_at` (actualizado automáticamente por Spring Data JPA). Son solo lectura en la API.
 11. **Parameter type-value validation**: El valor debe ser compatible con el tipo declarado (INTEGER → número entero, BOOLEAN → "true"/"false", DATE → ISO 8601, STRING → cualquier valor).
 
+### Action Catalog and Naming Convention
+
+All system actions follow the naming pattern `<IDENTIFIER>_<SUFFIX>` where the suffix determines the type:
+
+| Suffix | ActionType | Meaning |
+|--------|-----------|---------|
+| `_READ` | READ | Read, query, or view data |
+| `_WRITE` | WRITE | Create, edit, or delete data |
+| `_EXECUTE` | EXECUTE | Execute an operation |
+
+#### Predefined Actions (Seed Data)
+
+The following 14 actions are loaded as seed data via Liquibase migration and must exist from the first startup:
+
+| Code | Type | Description |
+|------|------|-------------|
+| `DASHBOARD_READ` | READ | View the main dashboard |
+| `REPORT_EXECUTE` | EXECUTE | Execute reports |
+| `INTERFACES_READ` | READ | Access the Interfaces module (Monitor + Configuration) |
+| `USER_READ` | READ | Query users |
+| `USER_WRITE` | WRITE | Create, edit, or delete users |
+| `PROFILE_READ` | READ | Query profiles |
+| `PROFILE_WRITE` | WRITE | Create, edit, or delete profiles |
+| `ACTION_READ` | READ | Query system actions |
+| `SYSTEM_PARAMETER_READ` | READ | Query system parameters |
+| `SYSTEM_PARAMETER_WRITE` | WRITE | Modify system parameters |
+| `SYSTEM_LOG_READ` | READ | Query audit logs |
+| `CLUSTER_NODE_READ` | READ | Query cluster nodes |
+| `CLUSTER_NODE_WRITE` | WRITE | Modify cluster node configuration |
+| `CLUSTER_LOCK_READ` | READ | Query cluster locks |
+
+#### Menu Visibility Rules
+
+Each menu item is governed by one or more actions. A menu item is visible if the user has **at least one** of the actions associated with it.
+
+**Parent section inheritance**: A parent menu section is visible only if the user has at least one action associated with any of its children:
+
+- **Seguridad**: visible if user has any of `USER_READ`, `USER_WRITE`, `PROFILE_READ`, `PROFILE_WRITE`, `ACTION_READ`.
+- **Cluster**: visible if user has any of `CLUSTER_NODE_READ`, `CLUSTER_NODE_WRITE`, `CLUSTER_LOCK_READ`.
+- **Administración**: visible if user has access to at least one of its subsections (Seguridad, Parámetros, Auditoría, or Cluster).
+- **Interfaces**: governed by a single action (`INTERFACES_READ`); the entire section (Monitor + Configuration) is hidden if absent.
+- **Informes**: governed by a single action (`REPORT_EXECUTE`); individual report visibility within the section depends on the `user2report` relationship.
+
 ---
 
 ## Correctness Properties
@@ -663,9 +706,9 @@ erDiagram
 
 ### Property 6: Navigation visibility matches user actions
 
-*For any* set of actions assigned to a user's profile, the set of visible navigation items in the SPA sidebar should be exactly the set of menu items whose required action is present in the user's action set.
+*For any* set of actions assigned to a user's profile, the set of visible navigation items in the SPA sidebar should be exactly the set of menu items whose required action is present in the user's action set. Parent sections inherit visibility from their children: a parent section is visible if and only if the user has at least one action associated with any of its child items.
 
-**Validates: Requirements 5.6, 7.2**
+**Validates: Requirements 5.6, 7.2, 7.8, 7.9, 7.10, 7.11, 7.12**
 
 ### Property 7: Auth guard redirects unauthenticated users
 

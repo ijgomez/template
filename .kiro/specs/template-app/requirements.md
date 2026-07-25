@@ -69,6 +69,8 @@
 4. WHEN un usuario sin la acción requerida intenta acceder a un recurso protegido, THE AuthService SHALL devolver un error 403 Forbidden.
 5. WHEN un usuario sin la acción requerida intenta navegar a una ruta restringida en el frontend, THE Guard SHALL redirigir al usuario al Dashboard.
 6. THE SPA SHALL evaluar las acciones del usuario para determinar la visibilidad de cada elemento de navegación y funcionalidad en la interfaz.
+7. THE SPA SHALL aplicar la siguiente nomenclatura para los códigos de acción: `<IDENTIFICADOR>_READ` para leer, consultar o visualizar datos; `<IDENTIFICADOR>_WRITE` para editar o modificar datos; `<IDENTIFICADOR>_EXECUTE` para ejecutar una operación. El campo `type` de la acción (READ, WRITE, EXECUTE) debe ser coherente con el sufijo del código.
+8. THE SPA SHALL registrar todas las acciones del sistema en la tabla ACCION. No se permite controlar el acceso a una funcionalidad mediante acciones no registradas en dicha tabla.
 
 ### Requirement 6: Layout responsivo y adaptativo de la aplicación
 
@@ -96,6 +98,7 @@
 3. WHEN el usuario hace clic en un enlace de navegación, THE SPA SHALL cargar el módulo correspondiente de forma lazy (lazy loading).
 4. WHEN el usuario navega a una URL que no existe, THE SPA SHALL mostrar una página de error 404 con un enlace para volver al Dashboard.
 5. THE SPA SHALL organizar el menú de navegación principal con la siguiente estructura jerárquica:
+   - Dashboard
    - Informes
    - Interfaces
      - Monitor
@@ -112,6 +115,28 @@
        - Bloqueos
 6. THE SPA SHALL presentar los elementos del menú con capacidad de expandir y colapsar los sub-niveles (Interfaces, Administración, Seguridad, Cluster).
 7. WHILE el usuario no tiene la acción requerida para acceder a una sección del menú, THE SPA SHALL ocultar dicha sección del menú de navegación.
+8. THE SPA SHALL aplicar el siguiente mapeo de acciones por opción de menú para determinar la visibilidad y el acceso:
+
+   | Opción de menú       | Acciones requeridas                                      |
+   |----------------------|----------------------------------------------------------|
+   | Dashboard            | `DASHBOARD_READ`                                         |
+   | Informes             | `REPORT_EXECUTE`                                         |
+   | Interfaces (completa)| `INTERFACES_READ`                                        |
+   | Usuarios             | `USER_READ`, `USER_WRITE`                                |
+   | Perfiles             | `PROFILE_READ`, `PROFILE_WRITE`                          |
+   | Acciones             | `ACTION_READ`                                            |
+   | Parámetros           | `SYSTEM_PARAMETER_READ`, `SYSTEM_PARAMETER_WRITE`        |
+   | Auditoría            | `SYSTEM_LOG_READ`                                        |
+   | Nodos                | `CLUSTER_NODE_READ`, `CLUSTER_NODE_WRITE`                |
+   | Bloqueos             | `CLUSTER_LOCK_READ`                                      |
+
+9. THE SPA SHALL mostrar una opción de menú si el usuario posee al menos una de las acciones asociadas a dicha opción. Por ejemplo, la opción "Usuarios" se muestra si el usuario tiene `USER_READ` o `USER_WRITE` (o ambas).
+10. THE SPA SHALL aplicar herencia de visibilidad en secciones padre del menú: una sección padre se muestra únicamente si el usuario dispone de al menos una acción asociada a alguno de sus hijos. En concreto:
+    - La sección **Seguridad** se muestra si el usuario tiene alguna de las acciones: `USER_READ`, `USER_WRITE`, `PROFILE_READ`, `PROFILE_WRITE` o `ACTION_READ`.
+    - La sección **Cluster** se muestra si el usuario tiene alguna de las acciones: `CLUSTER_NODE_READ`, `CLUSTER_NODE_WRITE` o `CLUSTER_LOCK_READ`.
+    - La sección **Administración** se muestra si el usuario tiene acceso a al menos una de sus subsecciones (Seguridad, Parámetros, Auditoría o Cluster).
+11. THE SPA SHALL gobernar toda la sección Interfaces (Monitor y Configuración) con una única acción (`INTERFACES_READ`). Si el usuario no tiene esta acción, toda la sección queda oculta.
+12. THE SPA SHALL gobernar toda la sección Informes con una única acción (`REPORT_EXECUTE`). La visibilidad de cada informe individual dentro de la sección depende de la relación `user2report` del usuario, pero el acceso a la sección requiere esta acción.
 
 ### Requirement 8: Modelo de datos de usuario
 
@@ -230,6 +255,26 @@
 2. THE SPA SHALL crear el esquema de la tabla de acciones mediante una migración Liquibase versionada.
 3. THE SPA SHALL definir el campo tipo como un enum de base de datos con los valores permitidos: READ, WRITE, EXECUTE.
 4. WHEN se intenta insertar una acción con un código que ya existe, THE SPA SHALL rechazar la operación con un error de violación de restricción de unicidad.
+5. THE SPA SHALL incluir en la migración Liquibase una carga de datos inicial (seed data) con las siguientes 14 acciones predefinidas del sistema:
+
+   | Código                   | Tipo      | Nombre                                    |
+   |--------------------------|-----------|-------------------------------------------|
+   | `DASHBOARD_READ`         | READ      | Visualizar el panel principal (Dashboard) |
+   | `REPORT_EXECUTE`         | EXECUTE   | Ejecutar informes                         |
+   | `INTERFACES_READ`        | READ      | Acceder al módulo de Interfaces           |
+   | `USER_READ`              | READ      | Consultar usuarios                        |
+   | `USER_WRITE`             | WRITE     | Crear, editar o eliminar usuarios         |
+   | `PROFILE_READ`           | READ      | Consultar perfiles                        |
+   | `PROFILE_WRITE`          | WRITE     | Crear, editar o eliminar perfiles         |
+   | `ACTION_READ`            | READ      | Consultar acciones del sistema            |
+   | `SYSTEM_PARAMETER_READ`  | READ      | Consultar parámetros del sistema          |
+   | `SYSTEM_PARAMETER_WRITE` | WRITE     | Modificar parámetros del sistema          |
+   | `SYSTEM_LOG_READ`        | READ      | Consultar registros de auditoría          |
+   | `CLUSTER_NODE_READ`      | READ      | Consultar nodos del clúster               |
+   | `CLUSTER_NODE_WRITE`     | WRITE     | Modificar la configuración de nodos       |
+   | `CLUSTER_LOCK_READ`      | READ      | Consultar bloqueos del clúster            |
+
+6. THE SPA SHALL garantizar que las acciones predefinidas existen en la tabla tras la ejecución de las migraciones, de forma que el sistema de autorización funcione correctamente desde el primer arranque.
 
 ### Requirement 17: Modelo de datos de perfil
 

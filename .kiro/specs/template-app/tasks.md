@@ -32,7 +32,8 @@ Full-stack enterprise application template implementing authentication/authoriza
     - Define enums, unique constraints, composite keys, foreign keys, and indexes as specified in design
     - Include NOT NULL constraints and DEFAULT CURRENT_TIMESTAMP for created_at/last_modified_at
     - Define cluster_block.name FK → cluster_task.name (ON DELETE RESTRICT, ON UPDATE CASCADE)
-    - _Requirements: 8.1, 8.2, 8.4, 8.5, 8.6, 16.1, 16.2, 16.3, 16.4, 17.1, 17.2, 17.3, 17.4, 17.5, 26.1, 26.2, 26.3, 26.4, 26.5, 26.6, 27.7, 28.1, 28.2, 28.3, 29.1, 29.2, 29.3, 31.1, 31.2, 31.3, 31.5, 33.1, 33.2, 33.3, 33.4, 33.5, 33.6, 34.1, 34.2, 34.7, 36.1, 36.2, 36.3, 36.4, 36.5, 37.1, 37.2, 37.3_
+    - Include seed data changeset with the 14 predefined actions (DASHBOARD_READ, REPORT_EXECUTE, INTERFACES_READ, USER_READ, USER_WRITE, PROFILE_READ, PROFILE_WRITE, ACTION_READ, SYSTEM_PARAMETER_READ, SYSTEM_PARAMETER_WRITE, SYSTEM_LOG_READ, CLUSTER_NODE_READ, CLUSTER_NODE_WRITE, CLUSTER_LOCK_READ) ensuring the authorization system works from first startup
+    - _Requirements: 8.1, 8.2, 8.4, 8.5, 8.6, 16.1, 16.2, 16.3, 16.4, 16.5, 16.6, 17.1, 17.2, 17.3, 17.4, 17.5, 26.1, 26.2, 26.3, 26.4, 26.5, 26.6, 27.7, 28.1, 28.2, 28.3, 29.1, 29.2, 29.3, 31.1, 31.2, 31.3, 31.5, 33.1, 33.2, 33.3, 33.4, 33.5, 33.6, 34.1, 34.2, 34.7, 36.1, 36.2, 36.3, 36.4, 36.5, 37.1, 37.2, 37.3_
 
 
   - [ ] 1.2 Create JPA entities in the domain module
@@ -479,16 +480,19 @@ Full-stack enterprise application template implementing authentication/authoriza
   - [ ] 18.3 Implement navigation with lazy loading and action-based visibility
     - Client-side routing without full page reloads
     - Lazy load modules on navigation
-    - Show/hide menu items based on user actions
-    - Menu structure: Informes, Interfaces > (Monitor, Configuración), Administración > (Seguridad > Usuarios/Perfiles/Acciones, Parámetros, Auditoría, Cluster > Nodos/Bloqueos)
+    - Show/hide menu items based on user actions using the action↔menu mapping: DASHBOARD_READ→Dashboard, REPORT_EXECUTE→Informes, INTERFACES_READ→Interfaces, USER_READ/USER_WRITE→Usuarios, PROFILE_READ/PROFILE_WRITE→Perfiles, ACTION_READ→Acciones, SYSTEM_PARAMETER_READ/SYSTEM_PARAMETER_WRITE→Parámetros, SYSTEM_LOG_READ→Auditoría, CLUSTER_NODE_READ/CLUSTER_NODE_WRITE→Nodos, CLUSTER_LOCK_READ→Bloqueos
+    - Show a menu item if user has at least one of its associated actions
+    - Implement parent section inheritance: Seguridad visible if any child action present, Cluster visible if any child action present, Administración visible if any subsection accessible
+    - Interfaces section governed by single action (INTERFACES_READ); Informes section governed by single action (REPORT_EXECUTE)
+    - Menu structure: Dashboard, Informes, Interfaces > (Monitor, Configuración), Administración > (Seguridad > Usuarios/Perfiles/Acciones, Parámetros, Auditoría, Cluster > Nodos/Bloqueos)
     - Expandable/collapsible sub-levels (Interfaces, Administración, Seguridad, Cluster)
     - 404 page with link to Dashboard
-    - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7_
+    - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7, 7.8, 7.9, 7.10, 7.11, 7.12_
 
   - [ ]* 18.4 Write property test for navigation visibility (Property 6)
     - **Property 6: Navigation visibility matches user actions**
-    - For any set of actions, visible nav items = menu items whose required action is in user's set
-    - **Validates: Requirements 5.6, 7.2**
+    - For any set of actions, visible nav items = menu items whose required action is in user's set; parent sections inherit visibility from children
+    - **Validates: Requirements 5.6, 7.2, 7.8, 7.9, 7.10, 7.11, 7.12**
 
 
 - [ ] 19. Frontend notification system

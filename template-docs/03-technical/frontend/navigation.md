@@ -267,6 +267,88 @@ Cada módulo es responsable de registrar sus rutas dentro de la aplicación.
 
 ---
 
+# Acciones y permisos
+
+## Concepto
+
+Cada pantalla o funcionalidad tiene una o varias **acciones** asociadas. Las acciones permiten configurar el acceso a cada pantalla y controlar si el usuario puede ver datos, editar datos o ejecutar funcionalidades.
+
+Todas las acciones deben registrarse en la tabla `ACCION`.
+
+## Nomenclatura
+
+El código de cada acción sigue uno de los siguientes formatos:
+
+| Sufijo       | Significado                                      |
+|--------------|--------------------------------------------------|
+| `_READ`      | Leer, consultar o visualizar datos               |
+| `_WRITE`     | Editar o modificar datos                         |
+| `_EXECUTE`   | Ejecutar una operación                           |
+
+El formato completo es: `<IDENTIFICADOR>_<SUFIJO>`.
+
+## Mapeo de acciones por opción de menú
+
+```text
+Principal
+├── Dashboard                => DASHBOARD_READ
+└── Informes ▾               => REPORT_EXECUTE
+    ├── Actividad mensual
+    ├── Resumen de accesos
+    ├── Estadísticas de uso
+    └── Informe de errores
+
+Interfaces ▾                 => INTERFACES_READ
+├── Monitor
+└── Configuración
+
+Administración ▾
+├── Seguridad ▾
+│   ├── Usuarios             => USER_READ, USER_WRITE
+│   ├── Perfiles             => PROFILE_READ, PROFILE_WRITE
+│   └── Acciones             => ACTION_READ
+├── Parámetros               => SYSTEM_PARAMETER_READ, SYSTEM_PARAMETER_WRITE
+├── Auditoría                => SYSTEM_LOG_READ
+└── Cluster ▾
+    ├── Nodos                => CLUSTER_NODE_READ, CLUSTER_NODE_WRITE
+    └── Bloqueos             => CLUSTER_LOCK_READ
+```
+
+## Catálogo de acciones
+
+| Código                     | Descripción                                        |
+|----------------------------|----------------------------------------------------|
+| `DASHBOARD_READ`           | Visualizar el panel principal (Dashboard)          |
+| `REPORT_EXECUTE`           | Ejecutar informes                                  |
+| `INTERFACES_READ`          | Acceder al módulo de Interfaces (Monitor y Config) |
+| `USER_READ`                | Consultar usuarios                                 |
+| `USER_WRITE`               | Crear, editar o eliminar usuarios                  |
+| `PROFILE_READ`             | Consultar perfiles                                 |
+| `PROFILE_WRITE`            | Crear, editar o eliminar perfiles                  |
+| `ACTION_READ`              | Consultar acciones del sistema                     |
+| `SYSTEM_PARAMETER_READ`    | Consultar parámetros del sistema                   |
+| `SYSTEM_PARAMETER_WRITE`   | Modificar parámetros del sistema                   |
+| `SYSTEM_LOG_READ`          | Consultar registros de auditoría                   |
+| `CLUSTER_NODE_READ`        | Consultar nodos del clúster                        |
+| `CLUSTER_NODE_WRITE`       | Modificar la configuración de nodos                |
+| `CLUSTER_LOCK_READ`        | Consultar bloqueos del clúster                     |
+
+## Reglas de visibilidad
+
+1. **Informes**: todos los informes comparten la misma acción (`REPORT_EXECUTE`). La visibilidad de cada informe individual depende de la relación `user2report` del usuario, pero el acceso a la sección requiere esta acción.
+
+2. **Interfaces**: toda la sección (Monitor y Configuración) se gobierna con una única acción (`INTERFACES_READ`).
+
+3. **Herencia en secciones padre**: si una sección del menú contiene varias opciones hijas, la sección padre hereda la visibilidad de sus hijos. Una sección se muestra únicamente si el usuario dispone de al menos una acción asociada a alguno de sus hijos.
+
+   Ejemplo: la sección **Seguridad** se muestra solo si el usuario tiene alguna de las acciones `USER_READ`, `USER_WRITE`, `PROFILE_READ`, `PROFILE_WRITE` o `ACTION_READ`. Si no dispone de ninguna, la sección no aparece en el menú.
+
+   Del mismo modo, la sección **Cluster** se muestra solo si el usuario tiene `CLUSTER_NODE_READ`, `CLUSTER_NODE_WRITE` o `CLUSTER_LOCK_READ`.
+
+   La sección **Administración** se muestra si el usuario tiene acceso a al menos una de sus subsecciones (Seguridad, Parámetros, Auditoría o Cluster).
+
+---
+
 # Lazy Loading
 
 Las funcionalidades se cargan bajo demanda utilizando Lazy Loading.
