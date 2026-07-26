@@ -1,0 +1,62 @@
+{
+  "app": {
+    "title": "Template Dashboard"
+  },
+  "menu": {
+    "dashboard": "Panel Principal",
+    "reports": "Informes",
+    "interfaces": "Interfaces",
+    "interfaces.monitor": "Monitor",
+    "interfaces.configuration": "Configuración",
+    "administration": "Administración",
+    "administration.security": "Seguridad",
+    "administration.security.users": "Usuarios",
+    "administration.security.profiles": "Perfiles",
+    "administration.security.actions": "Acciones",
+    "administration.parameters": "Parámetros",
+    "administration.audit": "Auditoría",
+    "administration.cluster": "Cluster",
+    "administration.cluster.nodes": "Nodos",
+    "administration.cluster.blocks": "Bloqueos"
+  },
+  "button": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "search": "Buscar",
+    "create": "Crear",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "export": "Exportar",
+    "filter": "Filtrar",
+    "close": "Cerrar",
+    "confirm": "Confirmar",
+    "back": "Volver"
+  },
+  "login": {
+    "title": "Iniciar Sesión",
+    "username": "Usuario",
+    "password": "Contraseña",
+    "submit": "Acceder",
+    "error": "Credenciales inválidas"
+  },
+  "notification": {
+    "progress": "Procesando...",
+    "success": "Operación completada correctamente",
+    "error": "Se ha producido un error"
+  },
+  "validation": {
+    "required": "Este campo es obligatorio",
+    "email": "Dirección de email inválida",
+    "minLength": "La longitud mínima es {{min}} caracteres",
+    "maxLength": "La longitud máxima es {{max}} caracteres"
+  },
+  "common": {
+    "loading": "Cargando...",
+    "noData": "No hay datos disponibles",
+    "actions": "Acciones",
+    "detail": "Detalle",
+    "pagination": {
+      "showing": "Mostrando {{from}} a {{to}} de {{total}} registros"
+    }
+  }
+}

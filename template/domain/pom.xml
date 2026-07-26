@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.myorganization.template</groupId>
+        <artifactId>template</artifactId>
+        <version>0.1.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>template-domain</artifactId>
+    <packaging>jar</packaging>
+
+    <name>Template - Domain</name>
+    <description>Domain model - JPA entities, DTOs and value objects (pure Java, no Spring)</description>
+
+    <dependencies>
+        <!-- Module dependencies -->
+        <dependency>
+            <groupId>org.myorganization.template</groupId>
+            <artifactId>template-cluster</artifactId>
+        </dependency>
+
+        <!-- Jakarta Persistence API (JPA annotations only, no Spring) -->
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+        </dependency>
+
+        <!-- Jakarta Validation API (for bean validation annotations) -->
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>

@@ -1,0 +1,62 @@
+{
+  "app": {
+    "title": "Template Dashboard"
+  },
+  "menu": {
+    "dashboard": "Dashboard",
+    "reports": "Reports",
+    "interfaces": "Interfaces",
+    "interfaces.monitor": "Monitor",
+    "interfaces.configuration": "Configuration",
+    "administration": "Administration",
+    "administration.security": "Security",
+    "administration.security.users": "Users",
+    "administration.security.profiles": "Profiles",
+    "administration.security.actions": "Actions",
+    "administration.parameters": "Parameters",
+    "administration.audit": "Audit",
+    "administration.cluster": "Cluster",
+    "administration.cluster.nodes": "Nodes",
+    "administration.cluster.blocks": "Blocks"
+  },
+  "button": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "search": "Search",
+    "create": "Create",
+    "edit": "Edit",
+    "delete": "Delete",
+    "export": "Export",
+    "filter": "Filter",
+    "close": "Close",
+    "confirm": "Confirm",
+    "back": "Back"
+  },
+  "login": {
+    "title": "Login",
+    "username": "Username",
+    "password": "Password",
+    "submit": "Sign In",
+    "error": "Invalid credentials"
+  },
+  "notification": {
+    "progress": "Processing...",
+    "success": "Operation completed successfully",
+    "error": "An error occurred"
+  },
+  "validation": {
+    "required": "This field is required",
+    "email": "Invalid email address",
+    "minLength": "Minimum length is {{min}} characters",
+    "maxLength": "Maximum length is {{max}} characters"
+  },
+  "common": {
+    "loading": "Loading...",
+    "noData": "No data available",
+    "actions": "Actions",
+    "detail": "Detail",
+    "pagination": {
+      "showing": "Showing {{from}} to {{to}} of {{total}} records"
+    }
+  }
+}

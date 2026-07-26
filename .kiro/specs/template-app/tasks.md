@@ -6,8 +6,8 @@ Full-stack enterprise application template implementing authentication/authoriza
 
 ## Tasks
 
-- [ ] 0. Project structure scaffolding
-  - [ ] 0.1 Create the multi-module Maven project structure (backend)
+- [x] 0. Project structure scaffolding
+  - [x] 0.1 Create the multi-module Maven project structure (backend)
     - Create parent POM with module declarations and dependency management (Spring Boot 4.1.0, Java 21, PostgreSQL 18 driver, Liquibase, JUnit 5, Mockito, AssertJ, jqwik, Testcontainers, JaCoCo)
     - Create module directories and POMs: template-commons, template-cluster, template-domain, template-core, template-webapp (WAR), template-liquibase
     - Configure module dependency chain: commons → cluster → domain → core → webapp
@@ -16,7 +16,7 @@ Full-stack enterprise application template implementing authentication/authoriza
     - Domain module must NOT include Spring dependencies (only JPA API)
     - _Requirements: 10.1, 10.2_
 
-  - [ ] 0.2 Initialize the Angular project (frontend)
+  - [x] 0.2 Initialize the Angular project (frontend)
     - Create template-dashboard Angular 22 project with Angular CLI
     - Add Bootstrap 5.3.8 dependency
     - Add @ngx-translate for i18n
@@ -26,7 +26,7 @@ Full-stack enterprise application template implementing authentication/authoriza
     - _Requirements: 10.3, 13.8_
 
 - [ ] 1. Database schema and domain model foundation
-  - [ ] 1.1 Create Liquibase XML migrations for all database tables
+  - [~] 1.1 Create Liquibase XML migrations for all database tables
     - Create master changelog and versioned changesets for: users, profiles, actions, profile2action, user2report, reports, parameters, audit_log, interfaces, interface_log, cluster_node, cluster_block, cluster_task, cluster_job
     - All timestamp fields use TIMESTAMP WITH TIME ZONE (timestamptz)
     - Define enums, unique constraints, composite keys, foreign keys, and indexes as specified in design
@@ -36,7 +36,7 @@ Full-stack enterprise application template implementing authentication/authoriza
     - _Requirements: 8.1, 8.2, 8.4, 8.5, 8.6, 16.1, 16.2, 16.3, 16.4, 16.5, 16.6, 17.1, 17.2, 17.3, 17.4, 17.5, 26.1, 26.2, 26.3, 26.4, 26.5, 26.6, 27.7, 28.1, 28.2, 28.3, 29.1, 29.2, 29.3, 31.1, 31.2, 31.3, 31.5, 33.1, 33.2, 33.3, 33.4, 33.5, 33.6, 34.1, 34.2, 34.7, 36.1, 36.2, 36.3, 36.4, 36.5, 37.1, 37.2, 37.3_
 
 
-  - [ ] 1.2 Create JPA entities in the domain module
+  - [~] 1.2 Create JPA entities in the domain module
     - Implement all entities as Java classes with JPA annotations: User, Profile, Action, Parameter, Report, AuditLog, Interface, InterfaceLog, ClusterNode, ClusterBlock, ClusterTask, ClusterJob
     - Implement join table entities: Profile2Action, User2Report
     - Implement composite key class: ClusterJobPK
@@ -44,24 +44,24 @@ Full-stack enterprise application template implementing authentication/authoriza
     - Domain module must have no Spring dependencies (except JPA)
     - _Requirements: 8.1, 16.1, 17.1, 28.1, 29.1, 31.1, 33.1, 34.2, 34.3, 34.5, 34.6, 36.1, 37.1_
 
-  - [ ] 1.3 Create domain enums in the domain module
+  - [~] 1.3 Create domain enums in the domain module
     - Implement enums: ActionType (READ, WRITE, EXECUTE), ParameterType (STRING, INTEGER, BOOLEAN, DATE), OperationType (CREATE, UPDATE, DELETE, EXECUTE), AuditSection (SECURITY, REPORTS, INTERFACES, CLUSTER, SYSTEM), NodeStatus (ALIVE, DEAD), InterfaceStatus (ACTIVE, INACTIVE, ERROR), InterfaceOperationType (IN, OUT), InterfaceLogStatus (SUCCESS, ERROR), ExportFormat (PDF, XLSX, CSV, TXT)
     - _Requirements: 16.3, 28.3, 29.3, 33.3_
 
-  - [ ] 1.4 Create DTOs and Criteria classes in the domain module
+  - [~] 1.4 Create DTOs and Criteria classes in the domain module
     - Implement Java records: UserDTO, ProfileDTO, ActionDTO, ParameterDTO, ReportDTO, ReportFilterDTO, AuditLogDTO, InterfaceDTO, InterfaceLogDTO, ClusterNodeDTO, ClusterBlockDTO, ClusterTaskDTO, ClusterJobDTO
     - Implement request/response: LoginRequest, TokenResponse (only non-entity objects allowed)
     - Implement Criteria classes: UserCriteria, ProfileCriteria, ActionCriteria, ParameterCriteria, AuditCriteria, InterfaceLogCriteria, ClusterBlockCriteria
     - _Requirements: 40.1, 40.2, 40.3, 40.4, 40.5, 40.6, 40.7, 40.8_
 
 
-- [ ] 2. Checkpoint - Verify database schema and domain model
+- [~] 2. Checkpoint - Verify database schema and domain model
   - Ensure Liquibase migrations apply successfully against PostgreSQL
   - Ensure all entities compile and JPA mappings are valid
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 3. Security infrastructure (backend)
-  - [ ] 3.1 Implement Spring Security configuration with JWT
+  - [~] 3.1 Implement Spring Security configuration with JWT
     - Configure SecurityFilterChain with stateless session management
     - Implement JwtTokenProvider: generate access + refresh tokens, validate, extract claims
     - Include profile name and action codes list in JWT payload
@@ -69,21 +69,21 @@ Full-stack enterprise application template implementing authentication/authoriza
     - Configure CORS for Angular frontend
     - _Requirements: 1.1, 5.1, 8.3_
 
-  - [ ] 3.2 Implement AuthService in core module
+  - [~] 3.2 Implement AuthService in core module
     - authenticate(username, password): validate credentials, update lastAccess, generate TokenResponse
     - refreshToken(refreshToken): validate refresh token, issue new token pair
     - logout(refreshToken): invalidate refresh token
     - Return 401 for invalid credentials
     - _Requirements: 1.1, 1.2, 1.3, 2.2, 3.1, 3.3_
 
-  - [ ] 3.3 Implement AuthController in webapp module
+  - [~] 3.3 Implement AuthController in webapp module
     - POST /api/v1/auth/login
     - POST /api/v1/auth/refresh
     - POST /api/v1/auth/logout
     - _Requirements: 35.2_
 
 
-  - [ ] 3.4 Implement authorization filter and access control
+  - [~] 3.4 Implement authorization filter and access control
     - Create JwtAuthenticationFilter that extracts token from Authorization header
     - Implement action-based authorization: check user actions against endpoint requirements
     - Return 403 Forbidden when user lacks required action
@@ -102,14 +102,14 @@ Full-stack enterprise application template implementing authentication/authoriza
     - **Validates: Requirements 5.4, 18.9**
 
 - [ ] 4. Global exception handling and error response format
-  - [ ] 4.1 Implement GlobalExceptionHandler in webapp module
+  - [~] 4.1 Implement GlobalExceptionHandler in webapp module
     - Create @RestControllerAdvice with handlers for: EntityNotFoundException (404), DuplicateEntityException (409), EntityInUseException (409), ValidationException (400), AuthenticationException (401), AccessDeniedException (403), MethodNotAllowedException (405), ReportExportException (500)
     - Consistent error response JSON format: timestamp, status, error, message, path
     - _Requirements: 4.6, 4.7, 4.8, 14.6, 14.7, 14.8, 14.9, 15.4, 15.5, 15.6, 20.6, 20.7, 20.8, 22.6, 23.7, 24.4, 32.6_
 
 
 - [ ] 5. User management (backend CRUD)
-  - [ ] 5.1 Implement UserService in core module
+  - [~] 5.1 Implement UserService in core module
     - create(UserDTO): validate unique username, hash password BCrypt, persist user + user2report associations (no duplicates)
     - findById(id): return UserDTO or 404
     - findByCriteria(UserCriteria, Pageable): paginated listing with filters (username, nombre, apellidos, email, perfil)
@@ -119,7 +119,7 @@ Full-stack enterprise application template implementing authentication/authoriza
     - updateProfile(userId, UserDTO): self-service update (nombre, apellidos, email only)
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.8, 9.3_
 
-  - [ ] 5.2 Implement UserController in webapp module
+  - [~] 5.2 Implement UserController in webapp module
     - GET /api/v1/administration/security/users (paginated + filters)
     - GET /api/v1/administration/security/users/count
     - POST /api/v1/administration/security/users
@@ -147,7 +147,7 @@ Full-stack enterprise application template implementing authentication/authoriza
     - **Validates: Requirements 4.8**
 
 - [ ] 6. Profile management (backend CRUD)
-  - [ ] 6.1 Implement ProfileService in core module
+  - [~] 6.1 Implement ProfileService in core module
     - create(ProfileDTO): validate unique name, persist profile + profile2action associations (no duplicates)
     - findById(id): return ProfileDTO with actions list or 404
     - findByCriteria(ProfileCriteria, Pageable): paginated listing with filters (nombre)
@@ -156,7 +156,7 @@ Full-stack enterprise application template implementing authentication/authoriza
     - delete(id): fail with 409 if profile has assigned users
     - _Requirements: 14.1, 14.2, 14.3, 14.4, 14.5, 14.6, 14.7, 14.8, 14.9_
 
-  - [ ] 6.2 Implement ProfileController in webapp module
+  - [~] 6.2 Implement ProfileController in webapp module
     - GET /api/v1/administration/security/profiles (paginated + filters)
     - GET /api/v1/administration/security/profiles/count
     - POST /api/v1/administration/security/profiles
@@ -182,7 +182,7 @@ Full-stack enterprise application template implementing authentication/authoriza
     - **Validates: Requirements 14.9**
 
 - [ ] 7. Action management (backend read/update only)
-  - [ ] 7.1 Implement ActionService in core module
+  - [~] 7.1 Implement ActionService in core module
     - findById(id): return ActionDTO or 404
     - findByCriteria(ActionCriteria, Pageable): paginated listing with filters (código, nombre, tipo)
     - countByCriteria(ActionCriteria): total matching count
@@ -190,7 +190,7 @@ Full-stack enterprise application template implementing authentication/authoriza
     - Reject create (405) and delete (405) operations
     - _Requirements: 15.1, 15.2, 15.3, 15.4, 15.5, 15.6_
 
-  - [ ] 7.2 Implement ActionController in webapp module
+  - [~] 7.2 Implement ActionController in webapp module
     - GET /api/v1/administration/security/actions (paginated + filters)
     - GET /api/v1/administration/security/actions/count
     - GET /api/v1/administration/security/actions/{id}
@@ -200,7 +200,7 @@ Full-stack enterprise application template implementing authentication/authoriza
     - _Requirements: 35.5_
 
 - [ ] 8. Parameter management (backend CRUD)
-  - [ ] 8.1 Implement ParameterService in core module
+  - [~] 8.1 Implement ParameterService in core module
     - create(ParameterDTO): validate unique code, validate type-value compatibility, persist
     - findByCode(code): return ParameterDTO or 404
     - findByCriteria(ParameterCriteria, Pageable): paginated listing with filters (código, descripción, tipo)
@@ -211,7 +211,7 @@ Full-stack enterprise application template implementing authentication/authoriza
     - _Requirements: 20.1, 20.2, 20.3, 20.4, 20.5, 20.6, 20.7, 20.8, 20.9, 28.5_
 
 
-  - [ ] 8.2 Implement ParameterController in webapp module
+  - [~] 8.2 Implement ParameterController in webapp module
     - GET /api/v1/administration/parameters (paginated + filters)
     - GET /api/v1/administration/parameters/count
     - POST /api/v1/administration/parameters
@@ -235,11 +235,11 @@ Full-stack enterprise application template implementing authentication/authoriza
     - For any parameter type and invalid value string, create/update returns 400; for valid value string, operation succeeds
     - **Validates: Requirements 20.7, 28.5**
 
-- [ ] 9. Checkpoint - Verify backend CRUD services
+- [~] 9. Checkpoint - Verify backend CRUD services
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 10. Audit system (backend AOP)
-  - [ ] 10.1 Implement AuditAspect with AOP in core module
+  - [~] 10.1 Implement AuditAspect with AOP in core module
     - Create @Aspect that intercepts service methods annotated for audit
     - Record: timestamp, username, operation_type, section, entity_id, entity_name, detail
     - Fail silently: audit errors must NOT propagate to business operations (log at ERROR level)
@@ -247,7 +247,7 @@ Full-stack enterprise application template implementing authentication/authoriza
     - _Requirements: 21.1, 21.2, 21.5, 21.8, 34.8_
 
 
-  - [ ] 10.2 Implement AuditService in core module
+  - [~] 10.2 Implement AuditService in core module
     - findByCriteria(AuditCriteria, Pageable): paginated listing with filters (fecha desde/hasta, username, operation_type, section)
     - countByCriteria(AuditCriteria): total matching count
     - log(AuditLogEntry): internal method called by AOP aspect
@@ -255,7 +255,7 @@ Full-stack enterprise application template implementing authentication/authoriza
     - Implement retention archival when configured period exceeded
     - _Requirements: 21.3, 21.5, 21.6, 21.7_
 
-  - [ ] 10.3 Implement AuditController in webapp module
+  - [~] 10.3 Implement AuditController in webapp module
     - GET /api/v1/administration/audit (paginated + filters)
     - GET /api/v1/administration/audit/count
     - _Requirements: 35.7_
@@ -266,7 +266,7 @@ Full-stack enterprise application template implementing authentication/authoriza
     - **Validates: Requirements 21.5, 26.3**
 
 - [ ] 11. Report system (backend)
-  - [ ] 11.1 Implement ReportService in core module
+  - [~] 11.1 Implement ReportService in core module
     - findByUser(userId): list reports assigned via user2report
     - getFilters(reportId): return filter definitions for a report
     - execute(reportId, filters, pageable): execute report with server-side pagination
@@ -275,7 +275,7 @@ Full-stack enterprise application template implementing authentication/authoriza
     - Validate user has report assigned (403 if not)
     - _Requirements: 18.1, 18.2, 18.5, 18.6, 18.8, 18.9, 19.2, 19.3, 19.4, 19.5, 19.6, 19.8_
 
-  - [ ] 11.2 Implement ReportController in webapp module
+  - [~] 11.2 Implement ReportController in webapp module
     - GET /api/v1/reports (user's reports)
     - GET /api/v1/reports/{id}/filters
     - POST /api/v1/reports/{id}/execute (paginated)
@@ -284,7 +284,7 @@ Full-stack enterprise application template implementing authentication/authoriza
 
 
 - [ ] 12. Interface monitoring (backend read-only)
-  - [ ] 12.1 Implement InterfaceService in core module
+  - [~] 12.1 Implement InterfaceService in core module
     - findAll(): list all interfaces with current status
     - findById(id): interface detail or 404
     - findLogsByCriteria(InterfaceLogCriteria, Pageable): paginated logs with filters (fecha, tipo operación, interfaz, status)
@@ -294,7 +294,7 @@ Full-stack enterprise application template implementing authentication/authoriza
     - Automatic logging of interface operations (append-only, immutable)
     - _Requirements: 22.1, 22.2, 22.3, 22.5, 22.6, 22.7, 32.1, 32.2, 32.3, 32.5, 32.6_
 
-  - [ ] 12.2 Implement InterfaceController in webapp module
+  - [~] 12.2 Implement InterfaceController in webapp module
     - GET /api/v1/interfaces/configuration (list interfaces with status)
     - GET /api/v1/interfaces/configuration/{id} (interface detail)
     - GET /api/v1/interfaces/monitor (paginated + filters)
@@ -303,7 +303,7 @@ Full-stack enterprise application template implementing authentication/authoriza
     - _Requirements: 35.8, 35.9_
 
 - [ ] 13. Cluster management (backend)
-  - [ ] 13.1 Implement ClusterService in core module
+  - [~] 13.1 Implement ClusterService in core module
     - findAllNodes(): list all cluster nodes
     - findNodeById(id): node detail or 404
     - setMaster(id): set node as master (deactivate previous master, ensure single-master invariant)
@@ -317,7 +317,7 @@ Full-stack enterprise application template implementing authentication/authoriza
     - _Requirements: 23.1, 23.2, 23.3, 23.4, 23.7, 23.8, 23.9, 24.1, 24.2, 24.4, 24.5, 29.4, 29.5, 30.1, 30.2, 30.7, 30.8_
 
 
-  - [ ] 13.2 Implement ClusterController in webapp module
+  - [~] 13.2 Implement ClusterController in webapp module
     - GET /api/v1/administration/cluster/nodes
     - GET /api/v1/administration/cluster/nodes/{id}
     - PATCH /api/v1/administration/cluster/nodes/{id} (master field only)
@@ -328,20 +328,20 @@ Full-stack enterprise application template implementing authentication/authoriza
     - GET /api/v1/administration/cluster/blocks/{id}
     - _Requirements: 35.10, 35.11_
 
-  - [ ] 13.3 Implement ClusterLockService in core module
+  - [~] 13.3 Implement ClusterLockService in core module
     - acquireLock(resourceName): intra-instance (synchronized) + inter-instance (SQL lock)
     - releaseLock(resourceName): release lock, update ClusterBlock metrics (avg, min, max, total)
     - isLocked(resourceName): check if resource has active lock
     - Use database time (not JVM local time) to avoid clock drift
     - _Requirements: 39.1, 39.2, 39.3, 39.4, 39.5, 39.6, 39.7, 39.8_
 
-  - [ ] 13.4 Implement AbstractClusterWorker in cluster module
+  - [~] 13.4 Implement AbstractClusterWorker in cluster module
     - Template method execute(): getTaskName → verify ClusterTask exists → verify ClusterJob enabled → verify ALIVE ≥ minNodes → calculate priority → acquire lock if nodes > 1 → handleExecute() → release lock
     - Abstract methods: handleExecute(), getTaskName()
     - Ignore DEAD nodes when calculating candidates
     - _Requirements: 38.1, 38.2, 38.3, 38.4, 38.5, 38.6, 38.7, 38.8_
 
-  - [ ] 13.5 Implement HeartbeatWorker in cluster module
+  - [~] 13.5 Implement HeartbeatWorker in cluster module
     - Scheduled task (30s configurable interval)
     - Acquire lock on "NODOS" resource before processing
     - Update current node: status ALIVE, memory data, last_modified_at
@@ -362,11 +362,11 @@ Full-stack enterprise application template implementing authentication/authoriza
     - For any cluster config (task, jobs, node states), AbstractClusterWorker decisions follow: no task→abort, no enabled job→abort, ALIVE<minNodes→abort, not in top N priority→abort, else→execute
     - **Validates: Requirements 38.1, 38.2, 38.3, 38.4, 38.5, 38.8**
 
-- [ ] 14. Checkpoint - Verify backend services complete
+- [~] 14. Checkpoint - Verify backend services complete
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 15. Backend cross-cutting concerns
-  - [ ] 15.1 Implement pagination metadata consistency
+  - [~] 15.1 Implement pagination metadata consistency
     - Ensure all paginated endpoints return consistent metadata: totalPages = ceil(totalElements/size), content.length ≤ size
     - Standardize Page response serialization across all controllers
     - _Requirements: 25.1, 25.13_
@@ -376,7 +376,7 @@ Full-stack enterprise application template implementing authentication/authoriza
     - For any valid page size and number, totalPages = ceil(totalElements/size), content ≤ size, page < totalPages → non-empty
     - **Validates: Requirements 25.1, 4.2, 14.2, 20.2**
 
-  - [ ] 15.3 Implement UTC timezone configuration
+  - [~] 15.3 Implement UTC timezone configuration
     - Configure JVM timezone to UTC
     - Configure PostgreSQL connection with timestamptz
     - Ensure all API responses use ISO 8601 with Z suffix
@@ -393,14 +393,14 @@ Full-stack enterprise application template implementing authentication/authoriza
     - For any create/update request with client-provided created_at/last_modified_at, the system ignores them and sets its own values
     - **Validates: Requirements 34.4, 34.5, 34.6**
 
-  - [ ] 15.6 Implement multi-environment configuration
+  - [~] 15.6 Implement multi-environment configuration
     - Configure Maven profiles: local, dist, test
     - Externalize environment-specific settings (DB URL, JWT secret, timeouts)
     - Configure Spring profiles for each environment
     - _Requirements: 10.1, 10.2_
 
 - [ ] 16. Frontend core infrastructure
-  - [ ] 16.1 Set up Angular 22 project structure with PWA and i18n
+  - [~] 16.1 Set up Angular 22 project structure with PWA and i18n
     - Initialize template-dashboard Angular project
     - Configure @angular/service-worker for PWA
     - Configure manifest.json (name, icons 192x192+512x512, theme-color, background-color, standalone)
@@ -409,13 +409,13 @@ Full-stack enterprise application template implementing authentication/authoriza
     - Configure i18n with @ngx-translate: en.json and es.json translation files
     - _Requirements: 13.1, 13.2, 13.3, 13.6, 13.7, 13.8, 12.1, 12.2_
 
-  - [ ] 16.2 Implement frontend AuthService and token management
+  - [~] 16.2 Implement frontend AuthService and token management
     - AuthService: login(), logout(), refreshToken(), getAccessToken(), getCurrentUser(), isAuthenticated(), hasAction()
     - Store tokens in memory (not localStorage for security)
     - Decode JWT payload to extract profile and actions
     - _Requirements: 1.4, 2.1, 2.3_
 
-  - [ ] 16.3 Implement HTTP interceptor with JWT and auto-refresh
+  - [~] 16.3 Implement HTTP interceptor with JWT and auto-refresh
     - Add Authorization: Bearer header to all requests
     - Detect token expiration proximity (configurable margin) and auto-refresh
     - On refresh failure, redirect to login
@@ -423,7 +423,7 @@ Full-stack enterprise application template implementing authentication/authoriza
     - _Requirements: 3.1, 3.2, 3.3_
 
 
-  - [ ] 16.4 Implement AuthGuard and ActionGuard
+  - [~] 16.4 Implement AuthGuard and ActionGuard
     - AuthGuard: redirect unauthenticated users to /login
     - ActionGuard: redirect users without required action to Dashboard
     - _Requirements: 1.5, 5.5_
@@ -438,7 +438,7 @@ Full-stack enterprise application template implementing authentication/authoriza
     - For any route with required action, user without that action is redirected to Dashboard
     - **Validates: Requirements 5.5**
 
-  - [ ] 16.7 Implement I18nService with auto-detection
+  - [~] 16.7 Implement I18nService with auto-detection
     - Detect browser language via navigator.language
     - Fallback to English if unsupported language
     - Persist preference in localStorage
@@ -446,7 +446,7 @@ Full-stack enterprise application template implementing authentication/authoriza
     - Supported languages: en, es
     - _Requirements: 12.3, 12.4, 12.5, 12.6, 12.7, 12.8_
 
-  - [ ] 16.8 Implement DateService and DatePipe for timezone conversion
+  - [~] 16.8 Implement DateService and DatePipe for timezone conversion
     - Convert UTC → local timezone (Intl.DateTimeFormat().resolvedOptions().timeZone)
     - Convert local → UTC before sending to backend
     - Centralized service/pipe used consistently across all components
@@ -458,11 +458,11 @@ Full-stack enterprise application template implementing authentication/authoriza
     - **Validates: Requirements 27.3, 27.4**
 
 
-- [ ] 17. Checkpoint - Verify frontend core infrastructure
+- [~] 17. Checkpoint - Verify frontend core infrastructure
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 18. Frontend layout and navigation
-  - [ ] 18.1 Implement LayoutComponent (header, sidebar, content, footer)
+  - [~] 18.1 Implement LayoutComponent (header, sidebar, content, footer)
     - Use Bootstrap 5 grid system and utility classes
     - Header: application name + user menu
     - Sidebar: navigation menu with expand/collapse sub-levels
@@ -470,14 +470,14 @@ Full-stack enterprise application template implementing authentication/authoriza
     - Footer: application info
     - _Requirements: 6.1, 6.3, 6.8_
 
-  - [ ] 18.2 Implement responsive behavior (RWD + Adaptive Design)
+  - [~] 18.2 Implement responsive behavior (RWD + Adaptive Design)
     - Mobile (<576px): hide sidebar, hamburger menu, single column, prioritize content
     - Tablet (576px–991px): collapsible slide panel, two-column forms/tables
     - Desktop (≥992px): permanent expanded sidebar, multi-column layout
     - Bootstrap breakpoints: xs, sm, md, lg, xl, xxl
     - _Requirements: 6.2, 6.4, 6.5, 6.6, 6.7_
 
-  - [ ] 18.3 Implement navigation with lazy loading and action-based visibility
+  - [~] 18.3 Implement navigation with lazy loading and action-based visibility
     - Client-side routing without full page reloads
     - Lazy load modules on navigation
     - Show/hide menu items based on user actions using the action↔menu mapping: DASHBOARD_READ→Dashboard, REPORT_EXECUTE→Informes, INTERFACES_READ→Interfaces, USER_READ/USER_WRITE→Usuarios, PROFILE_READ/PROFILE_WRITE→Perfiles, ACTION_READ→Acciones, SYSTEM_PARAMETER_READ/SYSTEM_PARAMETER_WRITE→Parámetros, SYSTEM_LOG_READ→Auditoría, CLUSTER_NODE_READ/CLUSTER_NODE_WRITE→Nodos, CLUSTER_LOCK_READ→Bloqueos
@@ -496,7 +496,7 @@ Full-stack enterprise application template implementing authentication/authoriza
 
 
 - [ ] 19. Frontend notification system
-  - [ ] 19.1 Implement NotificationService and notification component
+  - [~] 19.1 Implement NotificationService and notification component
     - Three types: progress (in-progress with spinner), success (auto-dismiss 5s), error (auto-dismiss 8s with message)
     - Progress → Success transition on operation completion
     - Progress → Error transition on operation failure
@@ -505,20 +505,20 @@ Full-stack enterprise application template implementing authentication/authoriza
     - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.5, 11.6, 25.5_
 
 - [ ] 20. Frontend environment configuration
-  - [ ] 20.1 Configure Angular environment files
+  - [~] 20.1 Configure Angular environment files
     - environment.ts (development) and environment.prod.ts (production)
     - API URL, token refresh margin, notification timeouts
     - _Requirements: 10.3_
 
 - [ ] 21. Frontend CRUD views - Security module
-  - [ ] 21.1 Implement Users list and form views
+  - [~] 21.1 Implement Users list and form views
     - List view: paginated table, filters (username, nombre, apellidos, email, perfil), CSV export
     - Create/Edit form: username, password, nombre, apellidos, email, perfil selector, report assignments (multi-select)
     - Detail view: all user fields read-only
     - Action-based button visibility: Create, Edit, Delete (with confirmation)
     - _Requirements: 25.1, 25.2, 25.3, 25.4, 25.6, 25.7, 25.8, 25.9, 25.10_
 
-  - [ ] 21.2 Implement Profiles list and form views
+  - [~] 21.2 Implement Profiles list and form views
     - List view: paginated table, filters (nombre), CSV export
     - Create/Edit form: nombre, descripción, action assignments (multi-select)
     - Detail view: profile fields + assigned actions list
@@ -526,21 +526,21 @@ Full-stack enterprise application template implementing authentication/authoriza
     - _Requirements: 25.1, 25.2, 25.3, 25.4, 25.6, 25.7, 25.8, 25.9, 25.10_
 
 
-  - [ ] 21.3 Implement Actions list and form views
+  - [~] 21.3 Implement Actions list and form views
     - List view: paginated table, filters (código, nombre, tipo), CSV export
     - Edit form: nombre, descripción, tipo (no create/delete buttons)
     - Detail view: all action fields read-only
     - Only Edit option (no Create/Delete per Req 25.11)
     - _Requirements: 25.1, 25.2, 25.3, 25.4, 25.7, 25.9, 25.11_
 
-  - [ ] 21.4 Implement User Profile page (self-service)
+  - [~] 21.4 Implement User Profile page (self-service)
     - Display: username (read-only), nombre, apellidos, email, lastAccess (read-only)
     - Editable fields: nombre, apellidos, email
     - Save calls PUT /api/v1/administration/security/users/me
     - _Requirements: 9.1, 9.2, 9.3_
 
 - [ ] 22. Frontend CRUD views - Parameters module
-  - [ ] 22.1 Implement Parameters list and form views
+  - [~] 22.1 Implement Parameters list and form views
     - List view: paginated table, filters (código, descripción, tipo), CSV export
     - Create/Edit form: código, descripción, valor, tipo (with type-value validation feedback)
     - Detail view: all parameter fields read-only
@@ -548,53 +548,53 @@ Full-stack enterprise application template implementing authentication/authoriza
     - _Requirements: 25.1, 25.2, 25.3, 25.4, 25.6, 25.7, 25.8, 25.9, 25.10_
 
 - [ ] 23. Frontend CRUD views - Audit module
-  - [ ] 23.1 Implement Audit log list view (read-only)
+  - [~] 23.1 Implement Audit log list view (read-only)
     - List view: paginated table, filters (fecha desde/hasta, username, operation_type, section), CSV export
     - Detail view only (no Create, Edit, Delete per Req 25.12)
     - _Requirements: 21.3, 21.4, 25.1, 25.2, 25.3, 25.4, 25.9, 25.12_
 
 
 - [ ] 24. Frontend CRUD views - Interfaces module (top-level)
-  - [ ] 24.1 Implement Interfaces Monitor view (read-only)
+  - [~] 24.1 Implement Interfaces Monitor view (read-only)
     - List view: paginated table, filters (fecha, tipo operación, interfaz, status), CSV export
     - Detail view: timestamp, operation_type, interface_name, request_payload, response_payload, status
     - No Create/Edit/Delete per Req 25.12
     - _Requirements: 32.2, 32.3, 32.4, 25.1, 25.2, 25.3, 25.4, 25.9, 25.12_
 
-  - [ ] 24.2 Implement Interfaces Configuration panel (read-only)
+  - [~] 24.2 Implement Interfaces Configuration panel (read-only)
     - List view: all interfaces with status indicators (green=active, red=error, grey=inactive)
     - Detail view: name, description, URL, protocol, check frequency
     - No Create/Edit/Delete per Req 25.12
     - _Requirements: 22.1, 22.2, 22.4, 25.9, 25.12_
 
 - [ ] 25. Frontend CRUD views - Cluster module
-  - [ ] 25.1 Implement Cluster Nodes list and edit views
+  - [~] 25.1 Implement Cluster Nodes list and edit views
     - List view: nodes with status indicators (green=ALIVE, red=DEAD), master indicator
     - All fields read-only except master (editable)
     - Edit form: master toggle only
     - No Create/Delete per Req 25.11
     - _Requirements: 23.1, 23.5, 23.6, 25.1, 25.7, 25.9, 25.11_
 
-  - [ ] 25.2 Implement Cluster Blocks list view (read-only)
+  - [~] 25.2 Implement Cluster Blocks list view (read-only)
     - List view: paginated table, filters (nombre de tarea), CSV export
     - Detail view: name, start_date, avg_time, min_time, max_time, total
     - No Create/Edit/Delete per Req 25.12
     - _Requirements: 24.1, 24.2, 24.3, 25.1, 25.2, 25.3, 25.4, 25.9, 25.12_
 
 - [ ] 26. Frontend CRUD views - Reports module
-  - [ ] 26.1 Implement Reports list, execution and export views
+  - [~] 26.1 Implement Reports list, execution and export views
     - List view: user's assigned reports with "Execute" button per row
     - Execution view: filter form (dynamic based on report definition) + results table (paginated)
     - Export buttons: PDF, XLSX, CSV, TXT (apply same filters as current execution)
     - Download file on successful export
     - _Requirements: 18.1, 18.3, 18.4, 18.5, 18.6, 18.7, 19.1, 19.7_
 
-- [ ] 27. Checkpoint - Verify frontend views complete
+- [~] 27. Checkpoint - Verify frontend views complete
   - Ensure all tests pass, ask the user if questions arise.
 
 
 - [ ] 28. Frontend i18n translation files
-  - [ ] 28.1 Create complete translation files for en and es
+  - [~] 28.1 Create complete translation files for en and es
     - en.json: all UI labels, messages, notifications, menu items, errors in English
     - es.json: all UI labels, messages, notifications, menu items, errors in Spanish
     - Ensure every key used in templates exists in both files with non-empty value
@@ -606,14 +606,14 @@ Full-stack enterprise application template implementing authentication/authoriza
     - **Validates: Requirements 12.1**
 
 - [ ] 29. Frontend PWA offline behavior
-  - [ ] 29.1 Implement offline detection and messaging
+  - [~] 29.1 Implement offline detection and messaging
     - Show cached static resources when offline
     - Display connectivity warning message when no internet
     - Auto-recover full functionality when connection restored
     - _Requirements: 13.4, 13.5_
 
 - [ ] 30. Integration and wiring
-  - [ ] 30.1 Wire frontend modules with backend API endpoints
+  - [~] 30.1 Wire frontend modules with backend API endpoints
     - Ensure all Angular services call correct backend URLs per Req 35 conventions
     - Verify lazy loading of all feature modules
     - Verify interceptor attaches JWT to all requests
@@ -634,7 +634,7 @@ Full-stack enterprise application template implementing authentication/authoriza
     - Test AbstractClusterWorker full governance flow
     - _Requirements: 21.1, 30.1, 30.7, 30.8, 39.2, 38.1_
 
-- [ ] 31. Final checkpoint - Ensure all tests pass
+- [~] 31. Final checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes

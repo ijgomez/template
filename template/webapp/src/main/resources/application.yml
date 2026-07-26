@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: template
+
+  profiles:
+    active: ${spring.profiles.active:local}
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml

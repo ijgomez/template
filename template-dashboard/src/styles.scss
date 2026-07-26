@@ -1,0 +1,60 @@
+// Bootstrap
+@use 'bootstrap/scss/bootstrap';
+
+// Design System tokens
+:root {
+  --tp-color-primary: #0d6efd;
+  --tp-color-secondary: #6c757d;
+  --tp-color-success: #198754;
+  --tp-color-danger: #dc3545;
+  --tp-color-warning: #ffc107;
+  --tp-color-info: #0dcaf0;
+  --tp-color-background: #ffffff;
+  --tp-color-surface: #f8f9fa;
+  --tp-color-text: #212529;
+  --tp-color-text-muted: #6c757d;
+  --tp-color-border: #dee2e6;
+
+  --tp-font-family: system-ui, -apple-system, sans-serif;
+  --tp-font-size-base: 1rem;
+  --tp-font-size-sm: 0.875rem;
+  --tp-font-size-lg: 1.25rem;
+  --tp-font-size-h1: 2.5rem;
+  --tp-font-size-h2: 2rem;
+  --tp-font-size-h3: 1.75rem;
+  --tp-font-weight-normal: 400;
+  --tp-font-weight-medium: 500;
+  --tp-font-weight-bold: 700;
+  --tp-line-height: 1.5;
+
+  --tp-space-1: 0.25rem;
+  --tp-space-2: 0.5rem;
+  --tp-space-3: 1rem;
+  --tp-space-4: 1.5rem;
+  --tp-space-5: 3rem;
+
+  --tp-border-radius: 0.375rem;
+  --tp-border-radius-lg: 0.5rem;
+  --tp-border-radius-pill: 50rem;
+  --tp-border-width: 1px;
+  --tp-shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  --tp-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  --tp-shadow-lg: 0 1rem 3rem rgba(0, 0, 0, 0.175);
+}
+
+// Dark theme tokens
+.tp-dark {
+  --tp-color-background: #1a1d21;
+  --tp-color-surface: #2b2f35;
+  --tp-color-text: #e9ecef;
+  --tp-color-text-muted: #adb5bd;
+  --tp-color-border: #495057;
+}
+
+body {
+  font-family: var(--tp-font-family);
+  font-size: var(--tp-font-size-base);
+  line-height: var(--tp-line-height);
+  color: var(--tp-color-text);
+  background-color: var(--tp-color-background);
+}
