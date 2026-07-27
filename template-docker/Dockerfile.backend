@@ -1,0 +1,37 @@
+# Stage 1: Build
+FROM maven:3.9-eclipse-temurin-21 AS build
+
+WORKDIR /app
+
+# Copy parent POM and module POMs first for dependency caching
+COPY template/pom.xml .
+COPY template/commons/pom.xml commons/
+COPY template/cluster/pom.xml cluster/
+COPY template/domain/pom.xml domain/
+COPY template/core/pom.xml core/
+COPY template/webapp/pom.xml webapp/
+
+# Download dependencies (cached layer)
+RUN mvn dependency:go-offline -B
+
+# Copy source code
+COPY template/commons/src commons/src
+COPY template/cluster/src cluster/src
+COPY template/domain/src domain/src
+COPY template/core/src core/src
+COPY template/webapp/src webapp/src
+
+# Build the project
+RUN mvn clean package -DskipTests -B
+
+# Stage 2: Runtime
+FROM eclipse-temurin:21-jre
+
+WORKDIR /app
+
+# Copy the WAR from the build stage
+COPY --from=build /app/webapp/target/*.war app.war
+
+EXPOSE 8080
+
+ENTRYPOINT ["java", "-jar", "app.war"]

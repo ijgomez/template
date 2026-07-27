@@ -6,7 +6,7 @@ Full-stack enterprise application template implementing authentication/authoriza
 
 ## Tasks
 
-- [ ] 0. Project structure scaffolding
+- [x] 0. Project structure scaffolding
   - [x] 0.1 Create the multi-module Maven project structure (backend)
     - Create parent POM with module declarations and dependency management (Spring Boot 4.1.0, Java 21, PostgreSQL 18 driver, Liquibase, JUnit 5, Mockito, AssertJ, jqwik, Testcontainers, JaCoCo)
     - Create module directories and POMs: template-commons, template-cluster, template-domain, template-core, template-webapp (WAR), template-liquibase
@@ -25,7 +25,7 @@ Full-stack enterprise application template implementing authentication/authoriza
     - Configure environment.ts and environment.prod.ts
     - _Requirements: 10.3, 13.8_
 
-  - [ ] 0.3 Create the Docker infrastructure project (template-docker)
+  - [x] 0.3 Create the Docker infrastructure project (template-docker)
     - Create `template-docker/` directory at the workspace root
     - Create a `docker-compose.yml` with services: PostgreSQL 18 (port 5432, with DB name, user, and password), Backend (port 8080, depends on postgres), Frontend (port 4200, depends on backend)
     - Create a `Dockerfile` for the backend (multi-stage build: Maven build + JDK 21 runtime)
@@ -35,7 +35,7 @@ Full-stack enterprise application template implementing authentication/authoriza
     - The project follows the structure defined in project-structure.md
     - _Requirements: 10.1, 10.2_
 
-  - [ ] 0.4 Create the distribution scripts project (template-dist)
+  - [x] 0.4 Create the distribution scripts project (template-dist)
     - Create `template-dist/` directory at the workspace root
     - Create shell scripts for: build (compile backend + frontend), package (generate deployable artifacts), deploy (placeholder for deployment automation)
     - Create a `README.md` documenting available scripts and usage

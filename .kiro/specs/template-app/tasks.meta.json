@@ -481,6 +481,35 @@
         "executionId": "7e4e944b-d793-4418-b281-fad121f1c951",
         "chatSessionId": "sess_87198c5e-f1b2-45d4-a7ff-72cf0370c331",
         "timestamp": 1785096465660
+      },
+      {
+        "executionId": "c62afc90-7298-4b07-bc65-fdba4d95eb30",
+        "chatSessionId": "sess_7df64e88-7095-4a0d-ba9e-9b22e23c7bd2",
+        "timestamp": 1785178192119
+      }
+    ],
+    "0.3 Create the Docker infrastructure project (template-docker)": [
+      {
+        "executionId": "8ea47524-a22b-49b3-bd3b-c3d6eb356159",
+        "chatSessionId": "sess_dcf32d7a-8f30-406c-bbff-96baf8c681ba",
+        "timestamp": 1785177558524
+      },
+      {
+        "executionId": "8ea47524-a22b-49b3-bd3b-c3d6eb356159",
+        "chatSessionId": "sess_dcf32d7a-8f30-406c-bbff-96baf8c681ba",
+        "timestamp": 1785177810936
+      }
+    ],
+    "0.4 Create the distribution scripts project (template-dist)": [
+      {
+        "executionId": "c62afc90-7298-4b07-bc65-fdba4d95eb30",
+        "chatSessionId": "sess_7df64e88-7095-4a0d-ba9e-9b22e23c7bd2",
+        "timestamp": 1785177937386
+      },
+      {
+        "executionId": "c62afc90-7298-4b07-bc65-fdba4d95eb30",
+        "chatSessionId": "sess_7df64e88-7095-4a0d-ba9e-9b22e23c7bd2",
+        "timestamp": 1785178192081
       }
     ]
   }
