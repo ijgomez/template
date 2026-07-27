@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20250110-create-interface-log-table" author="template" labels="v1.0.0">
+
+        <comment>Creación de la tabla de log de interfaces (append-only, inmutable)</comment>
+
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="interface_log"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="interface_log">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="timestamp" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="operation_type" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="interface_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="request_payload" type="TEXT"/>
+            <column name="response_payload" type="TEXT"/>
+            <column name="status" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createSequence sequenceName="interface_log_SEQ" startValue="1" incrementBy="50"/>
+
+        <createIndex tableName="interface_log" indexName="idx_interface_log_timestamp_interface_name">
+            <column name="timestamp"/>
+            <column name="interface_name"/>
+        </createIndex>
+
+        <createIndex tableName="interface_log" indexName="idx_interface_log_status">
+            <column name="status"/>
+        </createIndex>
+
+        <rollback>
+            <dropIndex tableName="interface_log" indexName="idx_interface_log_status"/>
+            <dropIndex tableName="interface_log" indexName="idx_interface_log_timestamp_interface_name"/>
+            <dropSequence sequenceName="interface_log_SEQ"/>
+            <dropTable tableName="interface_log"/>
+        </rollback>
+
+    </changeSet>
+
+</databaseChangeLog>

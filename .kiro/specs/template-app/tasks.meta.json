@@ -40,6 +40,16 @@
         "executionId": "7e4e944b-d793-4418-b281-fad121f1c951",
         "chatSessionId": "sess_87198c5e-f1b2-45d4-a7ff-72cf0370c331",
         "timestamp": 1785095744879
+      },
+      {
+        "executionId": "9f10bbd1-d26c-4e33-bb26-38b7a25e4363",
+        "chatSessionId": "sess_8cfc30e2-7eaa-4923-8cff-09f565fb18a8",
+        "timestamp": 1785182877445
+      },
+      {
+        "executionId": "9f10bbd1-d26c-4e33-bb26-38b7a25e4363",
+        "chatSessionId": "sess_8cfc30e2-7eaa-4923-8cff-09f565fb18a8",
+        "timestamp": 1785183256589
       }
     ],
     "1.2 Create JPA entities in the domain module": [
@@ -47,6 +57,16 @@
         "executionId": "7e4e944b-d793-4418-b281-fad121f1c951",
         "chatSessionId": "sess_87198c5e-f1b2-45d4-a7ff-72cf0370c331",
         "timestamp": 1785095744919
+      },
+      {
+        "executionId": "9f10bbd1-d26c-4e33-bb26-38b7a25e4363",
+        "chatSessionId": "sess_8cfc30e2-7eaa-4923-8cff-09f565fb18a8",
+        "timestamp": 1785183261250
+      },
+      {
+        "executionId": "9f10bbd1-d26c-4e33-bb26-38b7a25e4363",
+        "chatSessionId": "sess_8cfc30e2-7eaa-4923-8cff-09f565fb18a8",
+        "timestamp": 1785183678925
       }
     ],
     "1.3 Create domain enums in the domain module": [
@@ -54,6 +74,16 @@
         "executionId": "7e4e944b-d793-4418-b281-fad121f1c951",
         "chatSessionId": "sess_87198c5e-f1b2-45d4-a7ff-72cf0370c331",
         "timestamp": 1785095744946
+      },
+      {
+        "executionId": "9f10bbd1-d26c-4e33-bb26-38b7a25e4363",
+        "chatSessionId": "sess_8cfc30e2-7eaa-4923-8cff-09f565fb18a8",
+        "timestamp": 1785182878486
+      },
+      {
+        "executionId": "9f10bbd1-d26c-4e33-bb26-38b7a25e4363",
+        "chatSessionId": "sess_8cfc30e2-7eaa-4923-8cff-09f565fb18a8",
+        "timestamp": 1785183257300
       }
     ],
     "1.4 Create DTOs and Criteria classes in the domain module": [
@@ -61,6 +91,16 @@
         "executionId": "7e4e944b-d793-4418-b281-fad121f1c951",
         "chatSessionId": "sess_87198c5e-f1b2-45d4-a7ff-72cf0370c331",
         "timestamp": 1785095744970
+      },
+      {
+        "executionId": "9f10bbd1-d26c-4e33-bb26-38b7a25e4363",
+        "chatSessionId": "sess_8cfc30e2-7eaa-4923-8cff-09f565fb18a8",
+        "timestamp": 1785183261950
+      },
+      {
+        "executionId": "9f10bbd1-d26c-4e33-bb26-38b7a25e4363",
+        "chatSessionId": "sess_8cfc30e2-7eaa-4923-8cff-09f565fb18a8",
+        "timestamp": 1785183679568
       }
     ],
     "2. Checkpoint - Verify database schema and domain model": [
@@ -510,6 +550,13 @@
         "executionId": "c62afc90-7298-4b07-bc65-fdba4d95eb30",
         "chatSessionId": "sess_7df64e88-7095-4a0d-ba9e-9b22e23c7bd2",
         "timestamp": 1785178192081
+      }
+    ],
+    "1. Database schema and domain model foundation": [
+      {
+        "executionId": "9f10bbd1-d26c-4e33-bb26-38b7a25e4363",
+        "chatSessionId": "sess_8cfc30e2-7eaa-4923-8cff-09f565fb18a8",
+        "timestamp": 1785183679605
       }
     ]
   }

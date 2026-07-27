@@ -43,8 +43,8 @@ Full-stack enterprise application template implementing authentication/authoriza
     - The project follows the structure defined in project-structure.md
     - _Requirements: 10.1, 10.2_
 
-- [ ] 1. Database schema and domain model foundation
-  - [~] 1.1 Create Liquibase XML migrations for all database tables
+- [x] 1. Database schema and domain model foundation
+  - [x] 1.1 Create Liquibase XML migrations for all database tables
     - Create master changelog and versioned changesets for: users, profiles, actions, profile2action, user2report, reports, parameters, audit_log, interfaces, interface_log, cluster_node, cluster_block, cluster_task, cluster_job
     - All timestamp fields use TIMESTAMP WITH TIME ZONE (timestamptz)
     - Define enums, unique constraints, composite keys, foreign keys, and indexes as specified in design
@@ -54,7 +54,7 @@ Full-stack enterprise application template implementing authentication/authoriza
     - _Requirements: 8.1, 8.2, 8.4, 8.5, 8.6, 16.1, 16.2, 16.3, 16.4, 16.5, 16.6, 17.1, 17.2, 17.3, 17.4, 17.5, 26.1, 26.2, 26.3, 26.4, 26.5, 26.6, 27.7, 28.1, 28.2, 28.3, 29.1, 29.2, 29.3, 31.1, 31.2, 31.3, 31.5, 33.1, 33.2, 33.3, 33.4, 33.5, 33.6, 34.1, 34.2, 34.7, 36.1, 36.2, 36.3, 36.4, 36.5, 37.1, 37.2, 37.3_
 
 
-  - [~] 1.2 Create JPA entities in the domain module
+  - [x] 1.2 Create JPA entities in the domain module
     - Implement all entities as Java classes with JPA annotations: User, Profile, Action, Parameter, Report, AuditLog, Interface, InterfaceLog, ClusterNode, ClusterBlock, ClusterTask, ClusterJob
     - Implement join table entities: Profile2Action, User2Report
     - Implement composite key class: ClusterJobPK
@@ -62,11 +62,11 @@ Full-stack enterprise application template implementing authentication/authoriza
     - Domain module must have no Spring dependencies (except JPA)
     - _Requirements: 8.1, 16.1, 17.1, 28.1, 29.1, 31.1, 33.1, 34.2, 34.3, 34.5, 34.6, 36.1, 37.1_
 
-  - [~] 1.3 Create domain enums in the domain module
+  - [x] 1.3 Create domain enums in the domain module
     - Implement enums: ActionType (READ, WRITE, EXECUTE), ParameterType (STRING, INTEGER, BOOLEAN, DATE), OperationType (CREATE, UPDATE, DELETE, EXECUTE), AuditSection (SECURITY, REPORTS, INTERFACES, CLUSTER, SYSTEM), NodeStatus (ALIVE, DEAD), InterfaceStatus (ACTIVE, INACTIVE, ERROR), InterfaceOperationType (IN, OUT), InterfaceLogStatus (SUCCESS, ERROR), ExportFormat (PDF, XLSX, CSV, TXT)
     - _Requirements: 16.3, 28.3, 29.3, 33.3_
 
-  - [~] 1.4 Create DTOs and Criteria classes in the domain module
+  - [x] 1.4 Create DTOs and Criteria classes in the domain module
     - Implement Java records: UserDTO, ProfileDTO, ActionDTO, ParameterDTO, ReportDTO, ReportFilterDTO, AuditLogDTO, InterfaceDTO, InterfaceLogDTO, ClusterNodeDTO, ClusterBlockDTO, ClusterTaskDTO, ClusterJobDTO
     - Implement request/response: LoginRequest, TokenResponse (only non-entity objects allowed)
     - Implement Criteria classes: UserCriteria, ProfileCriteria, ActionCriteria, ParameterCriteria, AuditCriteria, InterfaceLogCriteria, ClusterBlockCriteria

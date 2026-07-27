@@ -5,6 +5,35 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <!-- Changelogs will be included here as they are created -->
+    <!-- v1.0.0 - Schema migrations (ordered by FK dependencies) -->
+
+    <!-- Independent tables (no FK dependencies) -->
+    <include file="migrations/v1.0.0/20250101-create-action-table.xml" relativeToChangelogFile="true"/>
+    <include file="migrations/v1.0.0/20250102-create-profile-table.xml" relativeToChangelogFile="true"/>
+    <include file="migrations/v1.0.0/20250103-create-report-table.xml" relativeToChangelogFile="true"/>
+
+    <!-- Join table: profile2action (depends on profile, action) -->
+    <include file="migrations/v1.0.0/20250104-create-profile2action-table.xml" relativeToChangelogFile="true"/>
+
+    <!-- Users table (depends on profile) -->
+    <include file="migrations/v1.0.0/20250105-create-user-table.xml" relativeToChangelogFile="true"/>
+
+    <!-- Join table: user2report (depends on users, report) -->
+    <include file="migrations/v1.0.0/20250106-create-user2report-table.xml" relativeToChangelogFile="true"/>
+
+    <!-- Independent tables (no FK dependencies) -->
+    <include file="migrations/v1.0.0/20250107-create-parameter-table.xml" relativeToChangelogFile="true"/>
+    <include file="migrations/v1.0.0/20250108-create-audit-log-table.xml" relativeToChangelogFile="true"/>
+    <include file="migrations/v1.0.0/20250109-create-interface-table.xml" relativeToChangelogFile="true"/>
+    <include file="migrations/v1.0.0/20250110-create-interface-log-table.xml" relativeToChangelogFile="true"/>
+
+    <!-- Cluster tables (ordered by FK dependencies) -->
+    <include file="migrations/v1.0.0/20250111-create-cluster-task-table.xml" relativeToChangelogFile="true"/>
+    <include file="migrations/v1.0.0/20250112-create-cluster-node-table.xml" relativeToChangelogFile="true"/>
+    <include file="migrations/v1.0.0/20250113-create-cluster-block-table.xml" relativeToChangelogFile="true"/>
+    <include file="migrations/v1.0.0/20250114-create-cluster-job-table.xml" relativeToChangelogFile="true"/>
+
+    <!-- v1.0.0 - Seed data -->
+    <include file="data/v1.0.0/20250115-seed-actions.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

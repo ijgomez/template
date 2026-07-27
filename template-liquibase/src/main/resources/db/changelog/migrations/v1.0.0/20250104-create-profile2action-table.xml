@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20250104-create-profile2action-table" author="template" labels="v1.0.0">
+
+        <comment>Creación de la tabla intermedia perfil-acción</comment>
+
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="profile2action"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="profile2action">
+            <column name="profile_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="action_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addUniqueConstraint tableName="profile2action" columnNames="profile_id, action_id"
+                             constraintName="profile2action_profile_id_action_id_UK"/>
+
+        <addForeignKeyConstraint baseTableName="profile2action" baseColumnNames="profile_id"
+                                 referencedTableName="profile" referencedColumnNames="id"
+                                 constraintName="profile2action_profile_id_FK"/>
+
+        <addForeignKeyConstraint baseTableName="profile2action" baseColumnNames="action_id"
+                                 referencedTableName="action" referencedColumnNames="id"
+                                 constraintName="profile2action_action_id_FK"/>
+
+        <rollback>
+            <dropTable tableName="profile2action"/>
+        </rollback>
+
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20250106-create-user2report-table" author="template" labels="v1.0.0">
+
+        <comment>Creación de la tabla intermedia usuario-informe</comment>
+
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="user2report"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="user2report">
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="report_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addUniqueConstraint tableName="user2report" columnNames="user_id, report_id"
+                             constraintName="user2report_user_id_report_id_UK"/>
+
+        <addForeignKeyConstraint baseTableName="user2report" baseColumnNames="user_id"
+                                 referencedTableName="users" referencedColumnNames="id"
+                                 constraintName="user2report_user_id_FK"/>
+
+        <addForeignKeyConstraint baseTableName="user2report" baseColumnNames="report_id"
+                                 referencedTableName="report" referencedColumnNames="id"
+                                 constraintName="user2report_report_id_FK"/>
+
+        <rollback>
+            <dropTable tableName="user2report"/>
+        </rollback>
+
+    </changeSet>
+
+</databaseChangeLog>

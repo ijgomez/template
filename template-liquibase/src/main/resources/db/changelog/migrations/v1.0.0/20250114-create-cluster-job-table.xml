@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20250114-create-cluster-job-table" author="template" labels="v1.0.0">
+
+        <comment>Creación de la tabla de trabajos del clúster (composite PK)</comment>
+
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="cluster_job"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="cluster_job">
+            <column name="cluster_node_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cluster_task_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="priority" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="enabled" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey tableName="cluster_job" columnNames="cluster_node_id, cluster_task_id"
+                       constraintName="cluster_job_PK"/>
+
+        <addForeignKeyConstraint baseTableName="cluster_job" baseColumnNames="cluster_node_id"
+                                 referencedTableName="cluster_node" referencedColumnNames="id"
+                                 constraintName="cluster_job_cluster_node_id_FK"/>
+
+        <addForeignKeyConstraint baseTableName="cluster_job" baseColumnNames="cluster_task_id"
+                                 referencedTableName="cluster_task" referencedColumnNames="id"
+                                 constraintName="cluster_job_cluster_task_id_FK"/>
+
+        <rollback>
+            <dropTable tableName="cluster_job"/>
+        </rollback>
+
+    </changeSet>
+
+</databaseChangeLog>

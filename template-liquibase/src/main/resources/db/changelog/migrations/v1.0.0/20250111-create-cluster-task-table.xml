@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20250111-create-cluster-task-table" author="template" labels="v1.0.0">
+
+        <comment>Creación de la tabla de tareas del clúster</comment>
+
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="cluster_task"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="cluster_task">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="description" type="VARCHAR(500)"/>
+            <column name="nodes" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="min_nodes" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createSequence sequenceName="cluster_task_SEQ" startValue="1" incrementBy="50"/>
+
+        <rollback>
+            <dropSequence sequenceName="cluster_task_SEQ"/>
+            <dropTable tableName="cluster_task"/>
+        </rollback>
+
+    </changeSet>
+
+</databaseChangeLog>

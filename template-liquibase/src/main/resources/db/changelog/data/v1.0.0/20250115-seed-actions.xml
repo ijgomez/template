@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20250115-seed-actions" author="template" labels="v1.0.0">
+
+        <comment>Inserción de las 14 acciones predefinidas del sistema de autorización</comment>
+
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="action"/>
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM action</sqlCheck>
+        </preConditions>
+
+        <insert tableName="action">
+            <column name="id" valueNumeric="1"/>
+            <column name="code" value="DASHBOARD_READ"/>
+            <column name="type" value="READ"/>
+            <column name="name" value="Visualizar el panel principal (Dashboard)"/>
+        </insert>
+
+        <insert tableName="action">
+            <column name="id" valueNumeric="2"/>
+            <column name="code" value="REPORT_EXECUTE"/>
+            <column name="type" value="EXECUTE"/>
+            <column name="name" value="Ejecutar informes"/>
+        </insert>
+
+        <insert tableName="action">
+            <column name="id" valueNumeric="3"/>
+            <column name="code" value="INTERFACES_READ"/>
+            <column name="type" value="READ"/>
+            <column name="name" value="Acceder al módulo de Interfaces"/>
+        </insert>
+
+        <insert tableName="action">
+            <column name="id" valueNumeric="4"/>
+            <column name="code" value="USER_READ"/>
+            <column name="type" value="READ"/>
+            <column name="name" value="Consultar usuarios"/>
+        </insert>
+
+        <insert tableName="action">
+            <column name="id" valueNumeric="5"/>
+            <column name="code" value="USER_WRITE"/>
+            <column name="type" value="WRITE"/>
+            <column name="name" value="Crear, editar o eliminar usuarios"/>
+        </insert>
+
+        <insert tableName="action">
+            <column name="id" valueNumeric="6"/>
+            <column name="code" value="PROFILE_READ"/>
+            <column name="type" value="READ"/>
+            <column name="name" value="Consultar perfiles"/>
+        </insert>
+
+        <insert tableName="action">
+            <column name="id" valueNumeric="7"/>
+            <column name="code" value="PROFILE_WRITE"/>
+            <column name="type" value="WRITE"/>
+            <column name="name" value="Crear, editar o eliminar perfiles"/>
+        </insert>
+
+        <insert tableName="action">
+            <column name="id" valueNumeric="8"/>
+            <column name="code" value="ACTION_READ"/>
+            <column name="type" value="READ"/>
+            <column name="name" value="Consultar acciones del sistema"/>
+        </insert>
+
+        <insert tableName="action">
+            <column name="id" valueNumeric="9"/>
+            <column name="code" value="SYSTEM_PARAMETER_READ"/>
+            <column name="type" value="READ"/>
+            <column name="name" value="Consultar parámetros del sistema"/>
+        </insert>
+
+        <insert tableName="action">
+            <column name="id" valueNumeric="10"/>
+            <column name="code" value="SYSTEM_PARAMETER_WRITE"/>
+            <column name="type" value="WRITE"/>
+            <column name="name" value="Modificar parámetros del sistema"/>
+        </insert>
+
+        <insert tableName="action">
+            <column name="id" valueNumeric="11"/>
+            <column name="code" value="SYSTEM_LOG_READ"/>
+            <column name="type" value="READ"/>
+            <column name="name" value="Consultar registros de auditoría"/>
+        </insert>
+
+        <insert tableName="action">
+            <column name="id" valueNumeric="12"/>
+            <column name="code" value="CLUSTER_NODE_READ"/>
+            <column name="type" value="READ"/>
+            <column name="name" value="Consultar nodos del clúster"/>
+        </insert>
+
+        <insert tableName="action">
+            <column name="id" valueNumeric="13"/>
+            <column name="code" value="CLUSTER_NODE_WRITE"/>
+            <column name="type" value="WRITE"/>
+            <column name="name" value="Modificar la configuración de nodos"/>
+        </insert>
+
+        <insert tableName="action">
+            <column name="id" valueNumeric="14"/>
+            <column name="code" value="CLUSTER_LOCK_READ"/>
+            <column name="type" value="READ"/>
+            <column name="name" value="Consultar bloqueos del clúster"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="action">
+                <where>code IN ('DASHBOARD_READ', 'REPORT_EXECUTE', 'INTERFACES_READ', 'USER_READ', 'USER_WRITE', 'PROFILE_READ', 'PROFILE_WRITE', 'ACTION_READ', 'SYSTEM_PARAMETER_READ', 'SYSTEM_PARAMETER_WRITE', 'SYSTEM_LOG_READ', 'CLUSTER_NODE_READ', 'CLUSTER_NODE_WRITE', 'CLUSTER_LOCK_READ')</where>
+            </delete>
+        </rollback>
+
+    </changeSet>
+
+</databaseChangeLog>
