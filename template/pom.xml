@@ -234,6 +234,13 @@
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
                 </plugin>
+
+                <!-- Frontend Maven Plugin -->
+                <plugin>
+                    <groupId>com.github.eirslett</groupId>
+                    <artifactId>frontend-maven-plugin</artifactId>
+                    <version>1.15.1</version>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
@@ -248,6 +255,7 @@
             </activation>
             <properties>
                 <spring.profiles.active>local</spring.profiles.active>
+                <angular.configuration>local</angular.configuration>
             </properties>
         </profile>
 
@@ -256,6 +264,7 @@
             <id>dist</id>
             <properties>
                 <spring.profiles.active>dist</spring.profiles.active>
+                <angular.configuration>dist</angular.configuration>
             </properties>
         </profile>
 
@@ -264,6 +273,7 @@
             <id>test</id>
             <properties>
                 <spring.profiles.active>test</spring.profiles.active>
+                <angular.configuration>test</angular.configuration>
             </properties>
             <build>
                 <plugins>

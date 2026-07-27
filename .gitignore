@@ -26,3 +26,7 @@ Thumbs.db
 
 # Environment
 *.env
+
+# Frontend build artifacts (frontend-maven-plugin)
+template-dashboard/node/
+template-dashboard/node_modules/

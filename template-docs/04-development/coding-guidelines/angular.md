@@ -59,6 +59,26 @@ src/
 
 Convención: `<nombreAplicacion>.<funcionalidad>.<propiedad>` en `environment.ts`.
 
+## Entornos y Perfiles
+
+Las configuraciones de entorno de Angular **deben estar alineadas** con los perfiles Maven del backend. Por cada perfil Maven debe existir un fichero de entorno Angular equivalente y una configuración de build en `angular.json`.
+
+### Correspondencia obligatoria
+
+| Perfil Maven | Configuración Angular | Fichero de entorno             | Descripción                             |
+|--------------|-----------------------|--------------------------------|-----------------------------------------|
+| `local`      | `local`               | `environment.ts`               | Desarrollo local (por defecto en serve) |
+| `dist`       | `dist`                | `environment.dist.ts`          | Distribución (dev, int, qa, pro)        |
+| `test`       | `test`                | `environment.test.ts`          | Testing                                 |
+
+### Reglas
+
+- Si se añade un nuevo perfil Maven, **se debe crear** el fichero `environment.<perfil>.ts` correspondiente y añadir la configuración en `angular.json`.
+- El campo `profile` en cada fichero de entorno debe coincidir con el nombre del perfil Maven.
+- `ng serve` usa la configuración `local` por defecto.
+- `ng build` usa la configuración `dist` por defecto (build de producción/distribución).
+- No utilizar nombres genéricos como `production` o `development` para las configuraciones de Angular; usar siempre los nombres de los perfiles Maven.
+
 ## Testing
 
 - **Jest** como framework principal.

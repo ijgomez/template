@@ -2,7 +2,7 @@
 
 ## Introducción
 
-Tras la ejecución de la tarea inicial de scaffolding del proyecto (Task 0: Project structure scaffolding), se identificaron tres desviaciones respecto a las convenciones definidas en la documentación del proyecto. Todas fueron corregidas antes de continuar con la implementación.
+Tras la ejecución de la tarea inicial de scaffolding del proyecto (Task 0: Project structure scaffolding), se identificaron cinco desviaciones respecto a las convenciones definidas en la documentación del proyecto. Todas fueron corregidas antes de continuar con la implementación.
 
 ---
 
@@ -135,15 +135,122 @@ Se añadieron dos nuevas subtareas al plan de implementación (Task 0.3 y Task 0
 
 ---
 
+## Corrección 4: Entornos de Angular no alineados con perfiles Maven
+
+### Problema detectado
+
+La tarea de scaffolding generó el proyecto Angular con dos configuraciones genéricas: `development` y `production`, con los ficheros `environment.ts` y `environment.prod.ts`:
+
+```json
+"configurations": {
+  "production": { ... },
+  "development": { ... }
+}
+```
+
+### Convención esperada
+
+Las configuraciones de Angular deben estar alineadas 1:1 con los perfiles Maven del backend (`local`, `dist`, `test`). No se deben usar nombres genéricos como `production` o `development`.
+
+### Cambios aplicados
+
+| Aspecto | Antes | Después |
+|---------|-------|---------|
+| Configuraciones Angular | `production`, `development` | `local`, `dist`, `test` |
+| Ficheros de entorno | `environment.ts`, `environment.prod.ts` | `environment.ts`, `environment.dist.ts`, `environment.test.ts` |
+| Default de `ng build` | `production` | `dist` |
+| Default de `ng serve` | `development` | `local` |
+| Campo `profile` en environments | No existía | Añadido, coincide con el perfil Maven |
+
+Ficheros creados/actualizados:
+- `src/environments/environment.ts` — perfil `local` (base, por defecto en `ng serve`)
+- `src/environments/environment.dist.ts` — perfil `dist` (distribución)
+- `src/environments/environment.test.ts` — perfil `test` (testing)
+- Eliminado `src/environments/environment.prod.ts`
+- Actualizado `angular.json` con las 3 configuraciones
+
+Se documentó la regla de alineación en:
+- `template-docs/04-development/coding-guidelines/angular.md` (sección "Entornos y Perfiles")
+- `template-docs/04-development/environments.md` (documento completo de entornos)
+
+---
+
+## Corrección 5: Frontend no integrado en el build Maven
+
+### Problema detectado
+
+La tarea de scaffolding creó el proyecto Angular (`template-dashboard`) de forma completamente independiente, sin integración con el ciclo de vida Maven. Al compilar el WAR con `mvn package`, el frontend no se compilaba ni se incluía en el artefacto desplegable.
+
+Esto significaba que el WAR del backend no podía servir la SPA, requiriendo un servidor separado para el frontend en todos los entornos.
+
+### Convención esperada
+
+El WAR generado por el módulo `webapp` debe incluir los recursos estáticos del frontend compilado, de forma que Spring Boot sirva la SPA directamente desde el mismo artefacto desplegable.
+
+### Cambios aplicados
+
+| Aspecto | Antes | Después |
+|---------|-------|---------|
+| Frontend en WAR | No incluido | Incluido en `WEB-INF/classes/static/` |
+| Plugin Maven | No existía | `frontend-maven-plugin` 1.15.1 |
+| Fases del build | Solo compilación Java | + install-node + npm-install + npm-build + copy-resources |
+| Propiedad `frontend.skip` | No existía | Permite saltar el build frontend con `-Dfrontend.skip=true` |
+| Propiedad `angular.configuration` | No existía | Se resuelve según perfil Maven activo |
+
+Configuración añadida al POM de `webapp`:
+
+```xml
+<!-- frontend-maven-plugin: instala Node, ejecuta npm install y npm run build -->
+<plugin>
+    <groupId>com.github.eirslett</groupId>
+    <artifactId>frontend-maven-plugin</artifactId>
+    <configuration>
+        <workingDirectory>${project.basedir}/../../template-dashboard</workingDirectory>
+        <skip>${frontend.skip}</skip>
+    </configuration>
+    <!-- ... executions: install-node-and-npm, npm-install, npm-build -->
+</plugin>
+
+<!-- maven-resources-plugin: copia el output de Angular a static/ -->
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-resources-plugin</artifactId>
+    <!-- ... copy dist/template-dashboard/browser/ → classes/static/ -->
+</plugin>
+```
+
+Propiedad `angular.configuration` añadida a cada perfil Maven del POM padre:
+
+| Perfil Maven | `angular.configuration` |
+|---|---|
+| `local` | `local` |
+| `dist` | `dist` |
+| `test` | `test` |
+
+Comandos de compilación:
+
+```bash
+# Build completo (backend + frontend)
+mvn clean package -Plocal -DskipTests
+
+# Solo backend (sin frontend)
+mvn clean package -Plocal -DskipTests -Dfrontend.skip=true
+```
+
+---
+
 ## Verificación
 
-Tras aplicar las correcciones, se verificó que:
+Tras aplicar todas las correcciones, se verificó que:
 
 1. `cd template/template && mvn clean install -DskipTests` → **BUILD SUCCESS** (6 módulos)
 2. `cd template/template-liquibase && mvn clean install -DskipTests` → **BUILD SUCCESS** (standalone)
 3. La estructura de directorios coincide exactamente con la definida en `project-structure.md`
 4. Los paquetes Java coinciden con la convención de `java-spring-boot.md`
 5. Se identificaron y planificaron las tareas pendientes para `template-docker` y `template-dist` (Tasks 0.3 y 0.4)
+6. `ng build --configuration=dist` → **BUILD SUCCESS** (configuraciones alineadas con perfiles Maven)
+7. `mvn clean package -Plocal -DskipTests` → **BUILD SUCCESS** (WAR incluye frontend en `classes/static/`)
+8. `mvn clean package -Plocal -DskipTests -Dfrontend.skip=true` → **BUILD SUCCESS** (solo backend)
 
 ---
 
@@ -156,3 +263,7 @@ Tras aplicar las correcciones, se verificó que:
 3. **GroupId alineado con paquete raíz**: El `groupId` de Maven debe coincidir con el paquete raíz Java definido en las coding guidelines (`org.myorganization.template`), no con el dominio del repositorio GitHub.
 
 4. **Scaffolding completo**: El scaffolding inicial debe cubrir todos los componentes definidos en `project-structure.md`, no solo los de código fuente. Los proyectos de infraestructura (Docker, scripts de despliegue, configuración) también forman parte de la estructura base del workspace.
+
+5. **Alineación de perfiles Maven ↔ Angular**: Las configuraciones de build de Angular deben usar los mismos nombres que los perfiles Maven (`local`, `dist`, `test`). No usar nombres genéricos (`production`, `development`). Si se añade un perfil Maven, se debe crear el fichero de entorno Angular correspondiente.
+
+6. **Frontend integrado en el WAR**: El proyecto Angular debe poder compilarse desde Maven mediante `frontend-maven-plugin` y sus recursos estáticos deben incluirse en el WAR del módulo `webapp`. Esto permite desplegar un único artefacto que sirve tanto la API como la SPA. La propiedad `frontend.skip` permite a los desarrolladores backend compilar sin esperar al frontend.

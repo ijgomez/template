@@ -29,6 +29,7 @@ Directrices para la gestión de builds del backend con Maven.
 - `maven-compiler-plugin` con `<release>21</release>` y `annotationProcessorPaths` (Lombok + hibernate-jpamodelgen).
 - `jacoco-maven-plugin` para cobertura de tests.
 - `sonar-maven-plugin` para análisis de calidad.
+- `frontend-maven-plugin` (com.github.eirslett, v1.15.1) en webapp: instala Node.js, ejecuta `npm install` y compila el frontend Angular. Skippable con `-Dfrontend.skip=true`.
 
 ## Estructura Multi-módulo
 

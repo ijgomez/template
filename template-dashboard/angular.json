@@ -37,11 +37,16 @@
             "styles": ["src/styles.scss"]
           },
           "configurations": {
-            "production": {
+            "local": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            },
+            "dist": {
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
+                  "with": "src/environments/environment.dist.ts"
                 }
               ],
               "budgets": [
@@ -59,25 +64,34 @@
               "outputHashing": "all",
               "serviceWorker": "ngsw-config.json"
             },
-            "development": {
+            "test": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.test.ts"
+                }
+              ],
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
             }
           },
-          "defaultConfiguration": "production"
+          "defaultConfiguration": "dist"
         },
         "serve": {
           "builder": "@angular/build:dev-server",
           "configurations": {
-            "production": {
-              "buildTarget": "template-dashboard:build:production"
+            "local": {
+              "buildTarget": "template-dashboard:build:local"
             },
-            "development": {
-              "buildTarget": "template-dashboard:build:development"
+            "dist": {
+              "buildTarget": "template-dashboard:build:dist"
+            },
+            "test": {
+              "buildTarget": "template-dashboard:build:test"
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "local"
         },
         "test": {
           "builder": "@angular/build:unit-test"

@@ -1,7 +1,7 @@
 export const environment = {
-  production: false,
-  profile: 'local',
-  apiUrl: 'http://localhost:8080/api/v1',
+  production: true,
+  profile: 'dist',
+  apiUrl: '/api/v1',
   tokenRefreshMargin: 60000,
   notification: {
     successTimeout: 5000,
