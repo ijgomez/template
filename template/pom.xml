@@ -43,6 +43,9 @@
         <postgresql.version>42.7.5</postgresql.version>
         <liquibase.version>4.31.1</liquibase.version>
 
+        <!-- JWT -->
+        <jjwt.version>0.12.6</jjwt.version>
+
         <!-- Testing -->
         <jqwik.version>1.9.2</jqwik.version>
         <testcontainers.version>1.20.6</testcontainers.version>
@@ -98,6 +101,25 @@
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-core</artifactId>
                 <version>${liquibase.version}</version>
+            </dependency>
+
+            <!-- JWT (JJWT) -->
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-api</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-impl</artifactId>
+                <version>${jjwt.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-jackson</artifactId>
+                <version>${jjwt.version}</version>
+                <scope>runtime</scope>
             </dependency>
 
             <!-- Testing: jqwik (property-based testing) -->

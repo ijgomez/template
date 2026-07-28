@@ -1,6 +1,7 @@
 package org.myorganization.template.domain.entity;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 import org.myorganization.template.domain.enums.NodeStatus;
 
@@ -18,6 +19,7 @@ import jakarta.persistence.Table;
 /**
  * Represents a node in the application cluster.
  * Has started_at and last_modified_at but no created_at.
+ * All timestamps are stored in UTC.
  */
 @Entity
 @Table(name = "cluster_node")
@@ -58,12 +60,12 @@ public class ClusterNode {
 
     @PrePersist
     protected void onCreate() {
-        this.lastModifiedAt = OffsetDateTime.now();
+        this.lastModifiedAt = OffsetDateTime.now(ZoneOffset.UTC);
     }
 
     @PreUpdate
     protected void onUpdate() {
-        this.lastModifiedAt = OffsetDateTime.now();
+        this.lastModifiedAt = OffsetDateTime.now(ZoneOffset.UTC);
     }
 
     public Long getId() {

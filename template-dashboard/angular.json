@@ -94,7 +94,11 @@
           "defaultConfiguration": "local"
         },
         "test": {
-          "builder": "@angular/build:unit-test"
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "buildTarget": "template-dashboard:build:local",
+            "tsConfig": "tsconfig.spec.json"
+          }
         }
       }
     }

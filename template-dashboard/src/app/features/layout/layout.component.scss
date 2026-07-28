@@ -1,0 +1,303 @@
+// Layout Component Styles
+// Follows template-docs/03-technical/frontend/layout.md specification
+
+:host {
+  display: block;
+  height: 100vh;
+}
+
+// ─── Variables ───────────────────────────────────────────────
+$header-height: 56px;
+$sidebar-width: 260px;
+$sidebar-collapsed-width: 64px;
+$transition-duration: 250ms;
+$transition-easing: ease-in-out;
+
+// ─── Wrapper ─────────────────────────────────────────────────
+.tp-wrapper {
+  display: grid;
+  grid-template-areas:
+    "header header"
+    "sidebar main";
+  grid-template-columns: $sidebar-width 1fr;
+  grid-template-rows: $header-height 1fr;
+  height: 100vh;
+  transition: grid-template-columns $transition-duration $transition-easing;
+
+  &.sidebar-collapsed {
+    grid-template-columns: $sidebar-collapsed-width 1fr;
+
+    .sidebar-brand-text,
+    .nav-label {
+      display: none;
+    }
+
+    .sidebar-brand {
+      justify-content: center;
+    }
+
+    .nav-link {
+      justify-content: center;
+      padding-inline: var(--tp-space-2);
+    }
+  }
+}
+
+// ─── Header ──────────────────────────────────────────────────
+.tp-header {
+  grid-area: header;
+  height: $header-height;
+  background-color: var(--tp-color-primary);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  padding-inline: var(--tp-space-3);
+  z-index: 1030;
+  box-shadow: var(--tp-shadow-sm);
+}
+
+.tp-header-content {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: var(--tp-space-2);
+}
+
+.tp-sidebar-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: transparent;
+  color: #ffffff;
+  border-radius: var(--tp-border-radius);
+  cursor: pointer;
+  font-size: 1.25rem;
+  transition: background-color 150ms ease-in-out;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+  }
+
+  &:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+  }
+}
+
+.tp-header-brand {
+  font-size: var(--tp-font-size-lg);
+  font-weight: var(--tp-font-weight-bold);
+  color: #ffffff;
+  text-decoration: none;
+  white-space: nowrap;
+
+  &:hover {
+    color: #ffffff;
+    text-decoration: none;
+  }
+}
+
+.tp-header-spacer {
+  flex: 1;
+}
+
+.tp-header-user {
+  display: flex;
+  align-items: center;
+  gap: var(--tp-space-2);
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: var(--tp-font-size-sm);
+  cursor: pointer;
+  padding: var(--tp-space-1) var(--tp-space-2);
+  border-radius: var(--tp-border-radius);
+  transition: background-color 150ms ease-in-out;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+  }
+
+  &:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+  }
+
+  &::after {
+    // Bootstrap dropdown caret color
+    color: #ffffff;
+  }
+}
+
+.tp-header-username {
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// ─── Sidebar ─────────────────────────────────────────────────
+.tp-sidebar {
+  grid-area: sidebar;
+  background-color: #212529;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: width $transition-duration $transition-easing;
+  z-index: 1020;
+
+  &.collapsed {
+    .sidebar-brand-text,
+    .nav-label {
+      display: none;
+    }
+
+    .sidebar-brand {
+      justify-content: center;
+    }
+
+    .nav-link {
+      justify-content: center;
+      padding-inline: var(--tp-space-2);
+    }
+  }
+}
+
+.sidebar-brand {
+  height: $header-height;
+  display: flex;
+  align-items: center;
+  gap: var(--tp-space-2);
+  padding-inline: var(--tp-space-3);
+  border-bottom: 1px solid var(--tp-color-border);
+  font-size: var(--tp-font-size-lg);
+  font-weight: var(--tp-font-weight-bold);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.sidebar-nav {
+  flex: 1;
+  overflow-y: auto;
+  padding-block: var(--tp-space-2);
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: var(--tp-space-2);
+  padding: var(--tp-space-2) var(--tp-space-3);
+  color: rgba(255, 255, 255, 0.75);
+  font-size: var(--tp-font-size-sm);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 150ms ease-in-out, color 150ms ease-in-out;
+
+  &:hover {
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  &.active {
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.15);
+    font-weight: var(--tp-font-weight-medium);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--tp-color-primary);
+    outline-offset: -2px;
+  }
+}
+
+.nav-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// ─── Main area ───────────────────────────────────────────────
+.tp-main {
+  grid-area: main;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.tp-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--tp-space-3);
+  background-color: var(--tp-color-surface);
+}
+
+// ─── Footer ──────────────────────────────────────────────────
+.tp-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--tp-space-2) var(--tp-space-3);
+  background-color: var(--tp-color-background);
+  border-top: var(--tp-border-width) solid var(--tp-color-border);
+  font-size: var(--tp-font-size-sm);
+  color: var(--tp-color-text-muted);
+  flex-shrink: 0;
+}
+
+.tp-footer-version {
+  font-size: var(--tp-font-size-sm);
+}
+
+// ─── Responsive ──────────────────────────────────────────────
+
+// Tablet: sidebar hidden by default, overlay when expanded
+@media (max-width: 991.98px) {
+  .tp-wrapper {
+    grid-template-columns: 0 1fr;
+
+    &:not(.sidebar-collapsed) {
+      .tp-sidebar {
+        position: fixed;
+        top: $header-height;
+        left: 0;
+        bottom: 0;
+        width: $sidebar-width;
+        box-shadow: var(--tp-shadow-lg);
+      }
+    }
+
+    &.sidebar-collapsed {
+      grid-template-columns: 0 1fr;
+    }
+  }
+
+  .tp-sidebar {
+    width: 0;
+    min-width: 0;
+
+    &:not(.collapsed) {
+      width: $sidebar-width;
+    }
+  }
+}
+
+// Mobile: hide username in header to save space
+@media (max-width: 575.98px) {
+  .tp-header-username {
+    display: none;
+  }
+}
+
+// Respect reduced motion preference
+@media (prefers-reduced-motion: reduce) {
+  .tp-wrapper,
+  .tp-sidebar,
+  .tp-sidebar-toggle,
+  .tp-header-user,
+  .nav-link {
+    transition: none;
+  }
+}

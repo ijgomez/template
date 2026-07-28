@@ -1,0 +1,47 @@
+# =============================================================================
+# Test Profile
+# =============================================================================
+# This profile is activated by the 'test' Maven profile.
+# Uses Testcontainers for PostgreSQL (auto-configured by Spring Boot).
+# Suitable for integration tests and CI/CD pipelines.
+# =============================================================================
+
+spring:
+  datasource:
+    url: jdbc:tc:postgresql:18:///template_test
+    username: test
+    password: test
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+
+# Server configuration (test)
+server:
+  port: 0
+
+# JWT configuration (fixed secret for deterministic test behavior)
+jwt:
+  secret: test-secret-key-for-automated-testing-minimum-32-characters
+  access-token-expiration: 900000
+  refresh-token-expiration: 604800000
+
+# CORS configuration (test - allow all origins)
+cors:
+  allowed-origins: http://localhost:4200
+
+# Cluster configuration (test - shorter intervals for faster tests)
+cluster:
+  heartbeat-interval: 5000
+  dead-node-timeout: 15000
+
+# Logging (concise for CI output)
+logging:
+  level:
+    root: WARN
+    org.myorganization.template: INFO
+    org.testcontainers: WARN
+    com.github.dockerjava: WARN

@@ -1,0 +1,111 @@
+<div class="tp-wrapper" [class.sidebar-collapsed]="sidebarCollapsed()">
+  <!-- Header -->
+  <header class="tp-header" role="banner">
+    <div class="tp-header-content">
+      <!-- Sidebar toggle -->
+      <button
+        class="tp-sidebar-toggle"
+        type="button"
+        (click)="toggleSidebar()"
+        [attr.aria-label]="(sidebarCollapsed() ? 'layout.sidebar.expand' : 'layout.sidebar.collapse') | translate"
+        [attr.aria-expanded]="!sidebarCollapsed()"
+        data-testid="btn-sidebar-toggle"
+      >
+        <i
+          class="bi"
+          [class.bi-list]="sidebarCollapsed()"
+          [class.bi-layout-sidebar-inset]="!sidebarCollapsed()"
+          aria-hidden="true"
+        ></i>
+      </button>
+
+      <!-- Application name / brand -->
+      <a class="tp-header-brand" routerLink="/dashboard" data-testid="link-brand">
+        {{ 'app.title' | translate }}
+      </a>
+
+      <!-- Spacer -->
+      <div class="tp-header-spacer"></div>
+
+      <!-- User menu -->
+      <div class="dropdown">
+        <button
+          class="tp-header-user dropdown-toggle"
+          type="button"
+          id="userMenuDropdown"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+          data-testid="btn-user-menu"
+        >
+          <i class="bi bi-person-circle" aria-hidden="true"></i>
+          <span class="tp-header-username">{{ username() }}</span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenuDropdown">
+          <li>
+            <a class="dropdown-item" routerLink="/profile" data-testid="link-user-profile">
+              <i class="bi bi-person" aria-hidden="true"></i>
+              {{ 'layout.user.profile' | translate }}
+            </a>
+          </li>
+          <li><hr class="dropdown-divider" /></li>
+          <li>
+            <button
+              class="dropdown-item"
+              type="button"
+              (click)="logout()"
+              data-testid="btn-logout"
+            >
+              <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
+              {{ 'layout.user.logout' | translate }}
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <!-- Sidebar -->
+  <aside
+    class="tp-sidebar"
+    [class.collapsed]="sidebarCollapsed()"
+    role="navigation"
+    [attr.aria-label]="'layout.sidebar.navigation' | translate"
+  >
+    <!-- Sidebar brand area (same height as header) -->
+    <div class="sidebar-brand">
+      <i class="bi bi-grid-fill" aria-hidden="true"></i>
+      <span class="sidebar-brand-text">{{ 'app.title' | translate }}</span>
+    </div>
+
+    <!-- Navigation items (placeholder - will be wired in task 18.3) -->
+    <nav class="sidebar-nav">
+      <ul class="nav flex-column">
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            routerLink="/dashboard"
+            routerLinkActive="active"
+            data-testid="nav-dashboard"
+          >
+            <i class="bi bi-speedometer2" aria-hidden="true"></i>
+            <span class="nav-label">{{ 'menu.dashboard' | translate }}</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- Main area -->
+  <div class="tp-main">
+    <!-- Content area -->
+    <main class="tp-content" role="main">
+      <router-outlet />
+    </main>
+
+    <!-- Footer -->
+    <footer class="tp-footer" role="contentinfo">
+      <span>{{ 'app.title' | translate }} &copy; {{ currentYear }}</span>
+      <span class="tp-footer-version">{{ 'layout.footer.version' | translate }}</span>
+    </footer>
+  </div>
+</div>

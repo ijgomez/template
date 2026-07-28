@@ -7,4 +7,6 @@ export const environment = {
     successTimeout: 5000,
     errorTimeout: 8000,
   },
+  defaultLanguage: 'en',
+  supportedLanguages: ['en', 'es'],
 };

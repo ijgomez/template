@@ -1,6 +1,7 @@
 package org.myorganization.template.domain.entity;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 import org.myorganization.template.domain.enums.AuditSection;
 import org.myorganization.template.domain.enums.OperationType;
@@ -53,7 +54,7 @@ public class AuditLog {
     @PrePersist
     protected void onCreate() {
         if (this.timestamp == null) {
-            this.timestamp = OffsetDateTime.now();
+            this.timestamp = OffsetDateTime.now(ZoneOffset.UTC);
         }
     }
 

@@ -1,0 +1,30 @@
+@if (hasUpdate$ | async) {
+  <div
+    class="pwa-update-banner"
+    role="alert"
+    aria-live="polite"
+    aria-atomic="true"
+    data-testid="pwa-update-banner">
+    <div class="pwa-update-banner__content">
+      <i class="bi bi-arrow-repeat" aria-hidden="true"></i>
+      <span class="pwa-update-banner__message">{{ 'pwa.update.available' | translate }}</span>
+    </div>
+    <div class="pwa-update-banner__actions">
+      <button
+        type="button"
+        class="btn btn-sm btn-light"
+        (click)="onUpdate()"
+        [attr.aria-label]="'pwa.update.action' | translate"
+        data-testid="btn-pwa-update">
+        {{ 'pwa.update.action' | translate }}
+      </button>
+      <button
+        type="button"
+        class="btn-close btn-close-white"
+        (click)="onDismiss()"
+        [attr.aria-label]="'pwa.update.dismiss' | translate"
+        data-testid="btn-pwa-dismiss">
+      </button>
+    </div>
+  </div>
+}

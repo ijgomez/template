@@ -1,6 +1,7 @@
 package org.myorganization.template.domain.entity;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
@@ -13,6 +14,7 @@ import jakarta.persistence.PreUpdate;
 /**
  * Base entity with common fields: id, createdAt, lastModifiedAt.
  * Uses JPA lifecycle callbacks for automatic timestamp management.
+ * All timestamps are stored in UTC.
  */
 @MappedSuperclass
 public abstract class BaseEntity {
@@ -30,14 +32,14 @@ public abstract class BaseEntity {
 
     @PrePersist
     protected void onCreate() {
-        OffsetDateTime now = OffsetDateTime.now();
+        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
         this.createdAt = now;
         this.lastModifiedAt = now;
     }
 
     @PreUpdate
     protected void onUpdate() {
-        this.lastModifiedAt = OffsetDateTime.now();
+        this.lastModifiedAt = OffsetDateTime.now(ZoneOffset.UTC);
     }
 
     public Long getId() {

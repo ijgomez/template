@@ -2,6 +2,30 @@
   "app": {
     "title": "Template Dashboard"
   },
+  "layout": {
+    "sidebar": {
+      "expand": "Expand menu",
+      "collapse": "Collapse menu",
+      "navigation": "Main navigation"
+    },
+    "user": {
+      "profile": "My Profile",
+      "logout": "Logout"
+    },
+    "footer": {
+      "version": "v0.0.0"
+    }
+  },
+  "pwa": {
+    "update": {
+      "available": "A new version is available.",
+      "action": "Update now",
+      "dismiss": "Dismiss"
+    },
+    "offline": {
+      "message": "You are currently offline. Some features may be unavailable."
+    }
+  },
   "menu": {
     "dashboard": "Dashboard",
     "reports": "Reports",
@@ -49,6 +73,13 @@
     "email": "Invalid email address",
     "minLength": "Minimum length is {{min}} characters",
     "maxLength": "Maximum length is {{max}} characters"
+  },
+  "error": {
+    "network": "Unable to connect to the server. Please check your internet connection.",
+    "forbidden": "Access denied. You do not have permission for this operation.",
+    "client": "Client error ({{status}}).",
+    "server": "A server error has occurred. Please try again later.",
+    "unknown": "An unexpected error has occurred."
   },
   "common": {
     "loading": "Loading...",

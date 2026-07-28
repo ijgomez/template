@@ -1,3 +1,10 @@
+# =============================================================================
+# Local Development Profile
+# =============================================================================
+# This profile is intended for local developer machines.
+# Uses a local PostgreSQL instance with default credentials.
+# =============================================================================
+
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/template
@@ -11,7 +18,31 @@ spring:
       hibernate:
         format_sql: true
 
+# Server configuration (local)
+server:
+  port: 8080
+
+# JWT configuration (local development - NOT for production)
+jwt:
+  secret: template-local-dev-secret-key-minimum-32-characters-long
+  access-token-expiration: 3600000
+  refresh-token-expiration: 604800000
+
+# CORS configuration (local Angular dev server)
+cors:
+  allowed-origins: http://localhost:4200
+
+# Cluster configuration (local)
+cluster:
+  heartbeat-interval: 30000
+  dead-node-timeout: 300000
+
+# Logging (verbose for local development)
 logging:
   level:
+    root: INFO
     org.myorganization.template: DEBUG
     org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE

@@ -1,6 +1,9 @@
 // Bootstrap
 @use 'bootstrap/scss/bootstrap';
 
+// Bootstrap Icons
+@use 'bootstrap-icons/font/bootstrap-icons';
+
 // Design System tokens
 :root {
   --tp-color-primary: #0d6efd;

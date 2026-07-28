@@ -1,6 +1,7 @@
 package org.myorganization.template.domain.entity;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 import org.myorganization.template.domain.enums.InterfaceLogStatus;
 import org.myorganization.template.domain.enums.InterfaceOperationType;
@@ -50,7 +51,7 @@ public class InterfaceLog {
     @PrePersist
     protected void onCreate() {
         if (this.timestamp == null) {
-            this.timestamp = OffsetDateTime.now();
+            this.timestamp = OffsetDateTime.now(ZoneOffset.UTC);
         }
     }
 

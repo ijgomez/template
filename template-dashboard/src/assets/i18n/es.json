@@ -2,6 +2,30 @@
   "app": {
     "title": "Template Dashboard"
   },
+  "layout": {
+    "sidebar": {
+      "expand": "Expandir menú",
+      "collapse": "Colapsar menú",
+      "navigation": "Navegación principal"
+    },
+    "user": {
+      "profile": "Mi Perfil",
+      "logout": "Cerrar sesión"
+    },
+    "footer": {
+      "version": "v0.0.0"
+    }
+  },
+  "pwa": {
+    "update": {
+      "available": "Hay una nueva versión disponible.",
+      "action": "Actualizar ahora",
+      "dismiss": "Cerrar"
+    },
+    "offline": {
+      "message": "Actualmente estás sin conexión. Algunas funcionalidades pueden no estar disponibles."
+    }
+  },
   "menu": {
     "dashboard": "Panel Principal",
     "reports": "Informes",
@@ -49,6 +73,13 @@
     "email": "Dirección de email inválida",
     "minLength": "La longitud mínima es {{min}} caracteres",
     "maxLength": "La longitud máxima es {{max}} caracteres"
+  },
+  "error": {
+    "network": "No se pudo conectar con el servidor. Verifique su conexión a internet.",
+    "forbidden": "Acceso denegado. No tiene permisos para esta operación.",
+    "client": "Error del cliente ({{status}}).",
+    "server": "Ha ocurrido un error en el servidor. Inténtelo de nuevo más tarde.",
+    "unknown": "Ha ocurrido un error inesperado."
   },
   "common": {
     "loading": "Cargando...",

@@ -1,0 +1,49 @@
+# =============================================================================
+# Test Resources - Application Test Profile
+# =============================================================================
+# Mirrors the main application-test.yml for use when running tests from IDE.
+# Testcontainers provides a fresh PostgreSQL instance per test run.
+# =============================================================================
+
+spring:
+  datasource:
+    url: jdbc:tc:postgresql:18:///template_test
+    username: test
+    password: test
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+
+# Server configuration (random port for test isolation)
+server:
+  port: 0
+
+# JWT configuration (fixed secret for deterministic test behavior)
+jwt:
+  secret: test-secret-key-for-automated-testing-minimum-32-characters
+  access-token-expiration: 900000
+  refresh-token-expiration: 604800000
+
+# CORS configuration (test)
+cors:
+  allowed-origins: http://localhost:4200
+
+# Cluster configuration (test - shorter intervals for faster tests)
+cluster:
+  heartbeat-interval: 5000
+  dead-node-timeout: 15000
+
+# Logging (concise for test output)
+logging:
+  level:
+    root: WARN
+    org.myorganization.template: INFO
+    org.testcontainers: WARN
+    com.github.dockerjava: WARN
