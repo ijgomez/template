@@ -79,6 +79,7 @@ public class AuditService {
      *
      * @param entry the audit log entry data to persist
      */
+    @Transactional(propagation = org.springframework.transaction.annotation.Propagation.REQUIRES_NEW, noRollbackFor = Exception.class)
     public void log(AuditLogEntry entry) {
         AuditLog auditLog = new AuditLog();
         auditLog.setTimestamp(OffsetDateTime.now(ZoneOffset.UTC));
@@ -90,8 +91,6 @@ public class AuditService {
         auditLog.setDetail(entry.detail());
 
         auditLogRepository.save(auditLog);
-
-        archiveIfRetentionExceeded();
     }
 
     /**

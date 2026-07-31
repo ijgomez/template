@@ -7,13 +7,13 @@
 
     <changeSet id="20250110-create-interface-log-table" author="template" labels="v1.0.0">
 
-        <comment>Creación de la tabla de log de interfaces (append-only, inmutable)</comment>
-
-        <preConditions onFail="MARK_RAN">
+                <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="interface_log"/>
             </not>
         </preConditions>
+
+<comment>Creación de la tabla de log de interfaces (append-only, inmutable)</comment>
 
         <createTable tableName="interface_log">
             <column name="id" type="BIGINT">
@@ -35,7 +35,7 @@
             </column>
         </createTable>
 
-        <createSequence sequenceName="interface_log_SEQ" startValue="1" incrementBy="50"/>
+        <createSequence sequenceName="interface_log_seq" startValue="1" incrementBy="50"/>
 
         <createIndex tableName="interface_log" indexName="idx_interface_log_timestamp_interface_name">
             <column name="timestamp"/>
@@ -49,7 +49,7 @@
         <rollback>
             <dropIndex tableName="interface_log" indexName="idx_interface_log_status"/>
             <dropIndex tableName="interface_log" indexName="idx_interface_log_timestamp_interface_name"/>
-            <dropSequence sequenceName="interface_log_SEQ"/>
+            <dropSequence sequenceName="interface_log_seq"/>
             <dropTable tableName="interface_log"/>
         </rollback>
 

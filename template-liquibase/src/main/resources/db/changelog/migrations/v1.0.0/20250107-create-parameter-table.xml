@@ -7,13 +7,13 @@
 
     <changeSet id="20250107-create-parameter-table" author="template" labels="v1.0.0">
 
-        <comment>Creación de la tabla de parámetros del sistema</comment>
-
-        <preConditions onFail="MARK_RAN">
+                <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="parameter"/>
             </not>
         </preConditions>
+
+<comment>Creación de la tabla de parámetros del sistema</comment>
 
         <createTable tableName="parameter">
             <column name="id" type="BIGINT">
@@ -35,10 +35,10 @@
             </column>
         </createTable>
 
-        <createSequence sequenceName="parameter_SEQ" startValue="1" incrementBy="50"/>
+        <createSequence sequenceName="parameter_seq" startValue="1" incrementBy="50"/>
 
         <rollback>
-            <dropSequence sequenceName="parameter_SEQ"/>
+            <dropSequence sequenceName="parameter_seq"/>
             <dropTable tableName="parameter"/>
         </rollback>
 

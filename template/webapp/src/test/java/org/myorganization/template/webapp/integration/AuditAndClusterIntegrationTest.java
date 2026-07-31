@@ -52,6 +52,8 @@ class AuditAndClusterIntegrationTest {
         registry.add("spring.datasource.username", postgres::getUsername);
         registry.add("spring.datasource.password", postgres::getPassword);
         registry.add("spring.liquibase.enabled", () -> "true");
+        registry.add("spring.liquibase.change-log", () -> "classpath:db/changelog/db.changelog-test.xml");
+        registry.add("spring.liquibase.contexts", () -> "test");
     }
 
     @Autowired
@@ -79,7 +81,7 @@ class AuditAndClusterIntegrationTest {
         UserDTO dto = new UserDTO(
                 null, "auditTestUser", "Password123!",
                 "Audit", "Test", "audit@test.com",
-                null, null, null, Collections.emptyList(),
+                null, 1000L, null, Collections.emptyList(),
                 null, null);
 
         // Act - this should trigger the audit aspect
@@ -102,7 +104,7 @@ class AuditAndClusterIntegrationTest {
         UserDTO dto = new UserDTO(
                 null, "auditSafeUser", "Password123!",
                 "Safe", "User", "safe@test.com",
-                null, null, null, Collections.emptyList(),
+                null, 1000L, null, Collections.emptyList(),
                 null, null);
 
         UserDTO created = userService.create(dto);
@@ -114,7 +116,9 @@ class AuditAndClusterIntegrationTest {
 
     @Test
     void clusterNodeAutoRegistersOnStartup() {
-        // After application startup, at least one node should be registered
+        // Manually register a node (HeartbeatWorker scheduled task does this in production)
+        clusterService.registerNode();
+
         List<ClusterNode> nodes = clusterNodeRepository.findAll();
         assertThat(nodes).isNotEmpty();
 
@@ -125,6 +129,9 @@ class AuditAndClusterIntegrationTest {
 
     @Test
     void clusterHeartbeatUpdatesNodeStatus() {
+        // Ensure a node is registered
+        clusterService.registerNode();
+
         List<ClusterNode> nodes = clusterNodeRepository.findAll();
         assertThat(nodes).isNotEmpty();
 

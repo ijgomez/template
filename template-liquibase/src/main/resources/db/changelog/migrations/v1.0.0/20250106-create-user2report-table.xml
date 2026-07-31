@@ -7,13 +7,13 @@
 
     <changeSet id="20250106-create-user2report-table" author="template" labels="v1.0.0">
 
-        <comment>Creación de la tabla intermedia usuario-informe</comment>
-
-        <preConditions onFail="MARK_RAN">
+                <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="user2report"/>
             </not>
         </preConditions>
+
+<comment>Creación de la tabla intermedia usuario-informe</comment>
 
         <createTable tableName="user2report">
             <column name="user_id" type="BIGINT">

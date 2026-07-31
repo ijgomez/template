@@ -7,13 +7,13 @@
 
     <changeSet id="20250113-create-cluster-block-table" author="template" labels="v1.0.0">
 
-        <comment>Creación de la tabla de bloqueos del clúster</comment>
-
-        <preConditions onFail="MARK_RAN">
+                <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="cluster_block"/>
             </not>
         </preConditions>
+
+<comment>Creación de la tabla de bloqueos del clúster</comment>
 
         <createTable tableName="cluster_block">
             <column name="id" type="BIGINT">
@@ -29,7 +29,7 @@
             <column name="total" type="BIGINT"/>
         </createTable>
 
-        <createSequence sequenceName="cluster_block_SEQ" startValue="1" incrementBy="50"/>
+        <createSequence sequenceName="cluster_block_seq" startValue="1" incrementBy="50"/>
 
         <addForeignKeyConstraint baseTableName="cluster_block" baseColumnNames="name"
                                  referencedTableName="cluster_task" referencedColumnNames="name"
@@ -37,7 +37,7 @@
                                  onDelete="RESTRICT" onUpdate="CASCADE"/>
 
         <rollback>
-            <dropSequence sequenceName="cluster_block_SEQ"/>
+            <dropSequence sequenceName="cluster_block_seq"/>
             <dropTable tableName="cluster_block"/>
         </rollback>
 

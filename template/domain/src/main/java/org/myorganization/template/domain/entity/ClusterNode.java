@@ -104,6 +104,15 @@ public class ClusterNode {
         return master;
     }
 
+    /**
+     * Convenience method for boolean checks (e.g. stream filters).
+     *
+     * @return true if this node is the current master
+     */
+    public boolean isMaster() {
+        return Boolean.TRUE.equals(master);
+    }
+
     public void setMaster(Boolean master) {
         this.master = master;
     }

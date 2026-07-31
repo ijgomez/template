@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.myorganization.template.core.audit.Auditable;
 import org.myorganization.template.core.repository.ProfileRepository;
 import org.myorganization.template.core.repository.ReportRepository;
 import org.myorganization.template.core.repository.User2ReportRepository;
@@ -14,6 +15,8 @@ import org.myorganization.template.domain.entity.Profile;
 import org.myorganization.template.domain.entity.Report;
 import org.myorganization.template.domain.entity.User;
 import org.myorganization.template.domain.entity.User2Report;
+import org.myorganization.template.domain.enums.AuditSection;
+import org.myorganization.template.domain.enums.OperationType;
 import org.myorganization.template.domain.exception.DuplicateEntityException;
 import org.myorganization.template.domain.exception.EntityNotFoundException;
 import org.myorganization.template.domain.exception.ValidationException;
@@ -60,6 +63,7 @@ public class UserService {
      * @throws ValidationException      if the report list contains duplicates
      */
     @Transactional
+    @Auditable(operationType = OperationType.CREATE, section = AuditSection.SECURITY, entityName = "User")
     public UserDTO create(UserDTO dto) {
         validateNoDuplicateReports(dto.reportIds());
 

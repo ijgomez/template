@@ -7,13 +7,13 @@
 
     <changeSet id="20250103-create-report-table" author="template" labels="v1.0.0">
 
-        <comment>Creación de la tabla de informes</comment>
-
-        <preConditions onFail="MARK_RAN">
+                <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="report"/>
             </not>
         </preConditions>
+
+<comment>Creación de la tabla de informes</comment>
 
         <createTable tableName="report">
             <column name="id" type="BIGINT">
@@ -31,10 +31,10 @@
             </column>
         </createTable>
 
-        <createSequence sequenceName="report_SEQ" startValue="1" incrementBy="50"/>
+        <createSequence sequenceName="report_seq" startValue="1" incrementBy="50"/>
 
         <rollback>
-            <dropSequence sequenceName="report_SEQ"/>
+            <dropSequence sequenceName="report_seq"/>
             <dropTable tableName="report"/>
         </rollback>
 

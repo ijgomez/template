@@ -5,7 +5,6 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { ReportService } from '../../core/services/report.service';
 import { AuthService } from '../../core/services/auth.service';
 import { NotificationService } from '../../core/services/notification.service';
-import { LocalDatePipe } from '../../shared/pipes/local-date.pipe';
 import { Report, ReportFilter, ReportResult, ExportFormat } from '../../core/models/report.model';
 
 type ViewMode = 'list' | 'execute';
@@ -18,7 +17,7 @@ type ViewMode = 'list' | 'execute';
 @Component({
   selector: 'app-reports',
   standalone: true,
-  imports: [FormsModule, TranslatePipe, LocalDatePipe],
+  imports: [FormsModule, TranslatePipe],
   templateUrl: './reports.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

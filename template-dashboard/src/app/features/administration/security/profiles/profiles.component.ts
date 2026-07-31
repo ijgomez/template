@@ -54,6 +54,9 @@ export class ProfilesComponent implements OnInit {
   // Action-based permissions
   readonly canWrite = computed(() => this.authService.hasAction('PROFILE_WRITE'));
 
+  // Expose Math for template usage
+  protected readonly Math = Math;
+
   ngOnInit(): void {
     this.loadProfiles();
     this.loadActions();
@@ -266,5 +269,23 @@ export class ProfilesComponent implements OnInit {
       pages.push(i);
     }
     return pages;
+  }
+
+  /**
+   * Returns the Bootstrap badge CSS class for a given action type.
+   */
+  getActionTypeBadgeClass(type: string): string {
+    switch (type?.toUpperCase()) {
+      case 'READ':
+        return 'text-bg-info';
+      case 'WRITE':
+        return 'text-bg-success';
+      case 'DELETE':
+        return 'text-bg-danger';
+      case 'ADMIN':
+        return 'text-bg-warning';
+      default:
+        return 'text-bg-secondary';
+    }
   }
 }

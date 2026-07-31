@@ -7,13 +7,13 @@
 
     <changeSet id="20250105-create-user-table" author="template" labels="v1.0.0">
 
-        <comment>Creación de la tabla de usuarios del sistema</comment>
-
-        <preConditions onFail="MARK_RAN">
+                <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="users"/>
             </not>
         </preConditions>
+
+<comment>Creación de la tabla de usuarios del sistema</comment>
 
         <createTable tableName="users">
             <column name="id" type="BIGINT">
@@ -46,14 +46,14 @@
             </column>
         </createTable>
 
-        <createSequence sequenceName="users_SEQ" startValue="1" incrementBy="50"/>
+        <createSequence sequenceName="users_seq" startValue="1" incrementBy="50"/>
 
         <addForeignKeyConstraint baseTableName="users" baseColumnNames="profile_id"
                                  referencedTableName="profile" referencedColumnNames="id"
                                  constraintName="users_profile_id_FK"/>
 
         <rollback>
-            <dropSequence sequenceName="users_SEQ"/>
+            <dropSequence sequenceName="users_seq"/>
             <dropTable tableName="users"/>
         </rollback>
 

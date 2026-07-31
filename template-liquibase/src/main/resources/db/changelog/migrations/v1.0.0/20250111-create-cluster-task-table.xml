@@ -7,13 +7,13 @@
 
     <changeSet id="20250111-create-cluster-task-table" author="template" labels="v1.0.0">
 
-        <comment>Creación de la tabla de tareas del clúster</comment>
-
-        <preConditions onFail="MARK_RAN">
+                <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="cluster_task"/>
             </not>
         </preConditions>
+
+<comment>Creación de la tabla de tareas del clúster</comment>
 
         <createTable tableName="cluster_task">
             <column name="id" type="BIGINT">
@@ -31,10 +31,10 @@
             </column>
         </createTable>
 
-        <createSequence sequenceName="cluster_task_SEQ" startValue="1" incrementBy="50"/>
+        <createSequence sequenceName="cluster_task_seq" startValue="1" incrementBy="50"/>
 
         <rollback>
-            <dropSequence sequenceName="cluster_task_SEQ"/>
+            <dropSequence sequenceName="cluster_task_seq"/>
             <dropTable tableName="cluster_task"/>
         </rollback>
 

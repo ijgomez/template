@@ -7,13 +7,13 @@
 
     <changeSet id="20250102-create-profile-table" author="template" labels="v1.0.0">
 
-        <comment>Creación de la tabla de perfiles de seguridad</comment>
-
-        <preConditions onFail="MARK_RAN">
+                <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="profile"/>
             </not>
         </preConditions>
+
+<comment>Creación de la tabla de perfiles de seguridad</comment>
 
         <createTable tableName="profile">
             <column name="id" type="BIGINT">
@@ -31,10 +31,10 @@
             </column>
         </createTable>
 
-        <createSequence sequenceName="profile_SEQ" startValue="1" incrementBy="50"/>
+        <createSequence sequenceName="profile_seq" startValue="1" incrementBy="50"/>
 
         <rollback>
-            <dropSequence sequenceName="profile_SEQ"/>
+            <dropSequence sequenceName="profile_seq"/>
             <dropTable tableName="profile"/>
         </rollback>
 

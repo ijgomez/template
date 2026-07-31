@@ -71,8 +71,15 @@
 
         <!-- Liquibase (database migrations at startup) -->
         <dependency>
-            <groupId>org.liquibase</groupId>
-            <artifactId>liquibase-core</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-liquibase</artifactId>
+        </dependency>
+
+        <!-- Liquibase changelogs -->
+        <dependency>
+            <groupId>org.myorganization.template</groupId>
+            <artifactId>template-liquibase</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- Servlet API (provided by container for WAR) -->
@@ -86,6 +93,13 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Testing: Spring Boot WebMvc Test (AutoConfigureMockMvc, etc.) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc-test</artifactId>
             <scope>test</scope>
         </dependency>
 

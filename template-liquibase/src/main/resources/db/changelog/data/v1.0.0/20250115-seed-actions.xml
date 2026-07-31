@@ -7,12 +7,12 @@
 
     <changeSet id="20250115-seed-actions" author="template" labels="v1.0.0">
 
-        <comment>Inserción de las 14 acciones predefinidas del sistema de autorización</comment>
-
-        <preConditions onFail="MARK_RAN">
+                <preConditions onFail="MARK_RAN">
             <tableExists tableName="action"/>
             <sqlCheck expectedResult="0">SELECT COUNT(*) FROM action</sqlCheck>
         </preConditions>
+
+<comment>Inserción de las 14 acciones predefinidas del sistema de autorización</comment>
 
         <insert tableName="action">
             <column name="id" valueNumeric="1"/>

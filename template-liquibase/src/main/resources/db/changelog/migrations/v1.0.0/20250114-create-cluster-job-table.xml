@@ -7,13 +7,13 @@
 
     <changeSet id="20250114-create-cluster-job-table" author="template" labels="v1.0.0">
 
-        <comment>Creación de la tabla de trabajos del clúster (composite PK)</comment>
-
-        <preConditions onFail="MARK_RAN">
+                <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="cluster_job"/>
             </not>
         </preConditions>
+
+<comment>Creación de la tabla de trabajos del clúster (composite PK)</comment>
 
         <createTable tableName="cluster_job">
             <column name="cluster_node_id" type="BIGINT">

@@ -7,13 +7,13 @@
 
     <changeSet id="20250104-create-profile2action-table" author="template" labels="v1.0.0">
 
-        <comment>Creación de la tabla intermedia perfil-acción</comment>
-
-        <preConditions onFail="MARK_RAN">
+                <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="profile2action"/>
             </not>
         </preConditions>
+
+<comment>Creación de la tabla intermedia perfil-acción</comment>
 
         <createTable tableName="profile2action">
             <column name="profile_id" type="BIGINT">

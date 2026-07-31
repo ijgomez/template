@@ -7,13 +7,13 @@
 
     <changeSet id="20250101-create-action-table" author="template" labels="v1.0.0">
 
-        <comment>Creación de la tabla de acciones del sistema de autorización</comment>
-
         <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="action"/>
             </not>
         </preConditions>
+
+        <comment>Creación de la tabla de acciones del sistema de autorización</comment>
 
         <createTable tableName="action">
             <column name="id" type="BIGINT">
@@ -37,10 +37,10 @@
             </column>
         </createTable>
 
-        <createSequence sequenceName="action_SEQ" startValue="1" incrementBy="50"/>
+        <createSequence sequenceName="action_seq" startValue="1" incrementBy="50"/>
 
         <rollback>
-            <dropSequence sequenceName="action_SEQ"/>
+            <dropSequence sequenceName="action_seq"/>
             <dropTable tableName="action"/>
         </rollback>
 

@@ -7,13 +7,13 @@
 
     <changeSet id="20250108-create-audit-log-table" author="template" labels="v1.0.0">
 
-        <comment>Creación de la tabla de auditoría del sistema (append-only, inmutable)</comment>
-
-        <preConditions onFail="MARK_RAN">
+                <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="audit_log"/>
             </not>
         </preConditions>
+
+<comment>Creación de la tabla de auditoría del sistema (append-only, inmutable)</comment>
 
         <createTable tableName="audit_log">
             <column name="id" type="BIGINT">
@@ -36,7 +36,7 @@
             <column name="detail" type="TEXT"/>
         </createTable>
 
-        <createSequence sequenceName="audit_log_SEQ" startValue="1" incrementBy="50"/>
+        <createSequence sequenceName="audit_log_seq" startValue="1" incrementBy="50"/>
 
         <createIndex tableName="audit_log" indexName="idx_audit_log_timestamp_username">
             <column name="timestamp"/>
@@ -55,7 +55,7 @@
             <dropIndex tableName="audit_log" indexName="idx_audit_log_section"/>
             <dropIndex tableName="audit_log" indexName="idx_audit_log_operation_type"/>
             <dropIndex tableName="audit_log" indexName="idx_audit_log_timestamp_username"/>
-            <dropSequence sequenceName="audit_log_SEQ"/>
+            <dropSequence sequenceName="audit_log_seq"/>
             <dropTable tableName="audit_log"/>
         </rollback>
 

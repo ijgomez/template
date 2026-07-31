@@ -16,7 +16,7 @@ import jakarta.persistence.Table;
  * Represents a system user with authentication and profile association.
  */
 @Entity
-@Table(name = "\"user\"")
+@Table(name = "users")
 public class User extends BaseEntity {
 
     @Column(name = "username", nullable = false, unique = true)

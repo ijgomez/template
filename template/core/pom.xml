@@ -63,6 +63,18 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Testing: Jackson (for serialization tests) -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <!-- Testing: jqwik (property-based testing) -->
         <dependency>
             <groupId>net.jqwik</groupId>

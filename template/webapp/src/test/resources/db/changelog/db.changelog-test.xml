@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Include all production migrations -->
+    <include file="db/changelog/db.changelog-master.xml"/>
+
+    <!-- Test seed data: admin profile with all actions -->
+    <changeSet id="test-seed-admin-profile" author="test" context="test">
+        <insert tableName="profile">
+            <column name="id" valueNumeric="1000"/>
+            <column name="name" value="Administrator"/>
+            <column name="description" value="Full access profile for testing"/>
+        </insert>
+
+        <!-- Assign all seeded actions to admin profile -->
+        <sql>
+            INSERT INTO profile2action (profile_id, action_id)
+            SELECT 1000, id FROM action;
+        </sql>
+    </changeSet>
+
+    <!-- Test seed data: admin user (password: admin123) -->
+    <changeSet id="test-seed-admin-user" author="test" context="test">
+        <insert tableName="users">
+            <column name="id" valueNumeric="1000"/>
+            <column name="username" value="admin"/>
+            <column name="password" value="$2b$12$WNo1jCaoWb0r5zEuaNL1qeC5LqfbDGStKy4Isf0Ha6o8Zuejktrny"/>
+            <column name="first_name" value="Admin"/>
+            <column name="last_name" value="User"/>
+            <column name="email" value="admin@test.com"/>
+            <column name="profile_id" valueNumeric="1000"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

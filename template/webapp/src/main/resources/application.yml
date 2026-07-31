@@ -23,8 +23,6 @@ spring:
 
   jackson:
     time-zone: UTC
-    serialization:
-      write-dates-as-timestamps: false
 
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml

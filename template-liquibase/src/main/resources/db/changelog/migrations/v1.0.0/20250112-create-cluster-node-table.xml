@@ -7,13 +7,13 @@
 
     <changeSet id="20250112-create-cluster-node-table" author="template" labels="v1.0.0">
 
-        <comment>Creación de la tabla de nodos del clúster</comment>
-
-        <preConditions onFail="MARK_RAN">
+                <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="cluster_node"/>
             </not>
         </preConditions>
+
+<comment>Creación de la tabla de nodos del clúster</comment>
 
         <createTable tableName="cluster_node">
             <column name="id" type="BIGINT">
@@ -42,10 +42,10 @@
             </column>
         </createTable>
 
-        <createSequence sequenceName="cluster_node_SEQ" startValue="1" incrementBy="50"/>
+        <createSequence sequenceName="cluster_node_seq" startValue="1" incrementBy="50"/>
 
         <rollback>
-            <dropSequence sequenceName="cluster_node_SEQ"/>
+            <dropSequence sequenceName="cluster_node_seq"/>
             <dropTable tableName="cluster_node"/>
         </rollback>
 

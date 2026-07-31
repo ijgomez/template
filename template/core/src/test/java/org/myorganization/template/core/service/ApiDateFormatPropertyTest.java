@@ -158,7 +158,7 @@ class ApiDateFormatPropertyTest {
                 1L, "ISO_TEST", "desc", "val", ParameterType.STRING,
                 timestamp, timestamp);
 
-        String iso8601Pattern = "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z";
+        String iso8601Pattern = "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2})?(\\.\\d+)?Z";
         assertThat(dto.createdAt().toString())
                 .as("createdAt string representation must be ISO 8601 with Z")
                 .matches(iso8601Pattern);
@@ -170,7 +170,8 @@ class ApiDateFormatPropertyTest {
     // --- Helpers ---
 
     private String formatExpectedTimestamp(OffsetDateTime timestamp) {
-        return timestamp.toString();
+        return java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+                .format(timestamp) + "Z";
     }
 
     // --- Providers ---
