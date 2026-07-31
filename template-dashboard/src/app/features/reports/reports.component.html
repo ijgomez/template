@@ -1,0 +1,225 @@
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     REPORTS LIST VIEW
+     ═══════════════════════════════════════════════════════════════════════════ -->
+@if (viewMode() === 'list') {
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">{{ 'reports.title' | translate }}</h1>
+  </div>
+
+  <div class="tp-table-responsive">
+    <table class="table table-striped table-hover align-middle" data-testid="reports-table">
+      <thead class="table-light">
+        <tr>
+          <th>{{ 'reports.fields.name' | translate }}</th>
+          <th>{{ 'reports.fields.description' | translate }}</th>
+          <th class="text-end">{{ 'common.actions' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (isLoadingReports()) {
+          <tr>
+            <td colspan="3" class="text-center py-4">
+              <div class="spinner-border spinner-border-sm" role="status">
+                <span class="visually-hidden">{{ 'common.loading' | translate }}</span>
+              </div>
+            </td>
+          </tr>
+        } @else if (reports().length === 0) {
+          <tr>
+            <td colspan="3" class="text-center py-4 text-muted">
+              {{ 'common.noData' | translate }}
+            </td>
+          </tr>
+        } @else {
+          @for (report of reports(); track report.id) {
+            <tr>
+              <td>{{ report.name }}</td>
+              <td>{{ report.description }}</td>
+              <td class="text-end">
+                <button class="btn btn-primary btn-sm"
+                        data-testid="reports-execute-btn"
+                        (click)="openExecution(report)"
+                        [attr.aria-label]="'reports.execute' | translate">
+                  <i class="bi bi-play-fill me-1" aria-hidden="true"></i>{{ 'reports.execute' | translate }}
+                </button>
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+}
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     REPORT EXECUTION VIEW
+     ═══════════════════════════════════════════════════════════════════════════ -->
+@if (viewMode() === 'execute') {
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">{{ 'reports.execution.title' | translate }}: {{ selectedReport()?.name }}</h1>
+    <button class="btn btn-outline-secondary btn-sm"
+            data-testid="reports-back-btn"
+            (click)="backToList()">
+      <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>{{ 'button.back' | translate }}
+    </button>
+  </div>
+
+  <!-- Filters -->
+  @if (isLoadingFilters()) {
+    <div class="text-center py-4">
+      <div class="spinner-border spinner-border-sm" role="status">
+        <span class="visually-hidden">{{ 'common.loading' | translate }}</span>
+      </div>
+    </div>
+  } @else if (filters().length > 0) {
+    <div class="card mb-3">
+      <div class="card-header">
+        <h5 class="mb-0">{{ 'reports.execution.filters' | translate }}</h5>
+      </div>
+      <div class="card-body">
+        <div class="tp-form-grid">
+          @for (filter of filters(); track filter.name) {
+            <div class="form-group">
+              <label [for]="'filter-' + filter.name" class="form-label">
+                {{ filter.label }}@if (filter.required) { *}
+              </label>
+
+              @switch (filter.type) {
+                @case ('TEXT') {
+                  <input [id]="'filter-' + filter.name"
+                         type="text"
+                         class="form-control form-control-sm"
+                         [ngModel]="filterValues()[filter.name]"
+                         (ngModelChange)="updateFilterValue(filter.name, $event)"
+                         [required]="filter.required"
+                         [attr.data-testid]="'report-filter-' + filter.name">
+                }
+                @case ('NUMBER') {
+                  <input [id]="'filter-' + filter.name"
+                         type="number"
+                         class="form-control form-control-sm"
+                         [ngModel]="filterValues()[filter.name]"
+                         (ngModelChange)="updateFilterValue(filter.name, $event)"
+                         [required]="filter.required"
+                         [attr.data-testid]="'report-filter-' + filter.name">
+                }
+                @case ('DATE') {
+                  <input [id]="'filter-' + filter.name"
+                         type="date"
+                         class="form-control form-control-sm"
+                         [ngModel]="filterValues()[filter.name]"
+                         (ngModelChange)="updateFilterValue(filter.name, $event)"
+                         [required]="filter.required"
+                         [attr.data-testid]="'report-filter-' + filter.name">
+                }
+                @case ('SELECT') {
+                  <select [id]="'filter-' + filter.name"
+                          class="form-select form-select-sm"
+                          [ngModel]="filterValues()[filter.name]"
+                          (ngModelChange)="updateFilterValue(filter.name, $event)"
+                          [required]="filter.required"
+                          [attr.data-testid]="'report-filter-' + filter.name">
+                    <option value="">--</option>
+                    @if (filter.options) {
+                      @for (opt of filter.options; track opt) {
+                        <option [value]="opt">{{ opt }}</option>
+                      }
+                    }
+                  </select>
+                }
+              }
+            </div>
+          }
+        </div>
+
+        <div class="d-flex justify-content-end mt-3">
+          <button class="btn btn-primary btn-sm"
+                  data-testid="reports-run-btn"
+                  (click)="executeReport()"
+                  [disabled]="isExecuting()">
+            <i class="bi bi-play-fill me-1" aria-hidden="true"></i>{{ 'reports.execution.run' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Results -->
+  @if (isExecuting()) {
+    <div class="text-center py-4">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">{{ 'common.loading' | translate }}</span>
+      </div>
+    </div>
+  } @else if (hasExecuted()) {
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">{{ 'reports.execution.results' | translate }}</h5>
+        <div class="d-flex gap-1">
+          @for (format of exportFormats; track format) {
+            <button class="btn btn-outline-secondary btn-sm"
+                    [attr.data-testid]="'reports-export-' + format.toLowerCase()"
+                    (click)="exportReport(format)"
+                    [attr.aria-label]="'reports.export.' + format.toLowerCase() | translate">
+              {{ format }}
+            </button>
+          }
+        </div>
+      </div>
+      <div class="card-body p-0">
+        @if (result(); as res) {
+          @if (res.rows.length === 0) {
+            <div class="text-center py-4 text-muted">
+              {{ 'common.noData' | translate }}
+            </div>
+          } @else {
+            <div class="tp-table-responsive">
+              <table class="table table-striped align-middle mb-0" data-testid="reports-results-table">
+                <thead class="table-light">
+                  <tr>
+                    @for (col of res.columns; track col) {
+                      <th>{{ col }}</th>
+                    }
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (row of res.rows; track $index) {
+                    <tr>
+                      @for (col of res.columns; track col) {
+                        <td>{{ row[col] }}</td>
+                      }
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+        }
+      </div>
+
+      <!-- Results Pagination -->
+      @if (resultTotalElements() > 0) {
+        <div class="card-footer d-flex justify-content-between align-items-center">
+          <small class="text-muted">
+            {{ 'common.pagination.showing' | translate: { from: showingFrom(), to: showingTo(), total: resultTotalElements() } }}
+          </small>
+          <nav [attr.aria-label]="'reports.execution.results' | translate">
+            <ul class="pagination pagination-sm mb-0">
+              <li class="page-item" [class.disabled]="resultPage() === 0">
+                <a class="page-link" href="javascript:void(0)" (click)="goToResultPage(resultPage() - 1)">&laquo;</a>
+              </li>
+              @for (p of getPageNumbers(); track p) {
+                <li class="page-item" [class.active]="p === resultPage()">
+                  <a class="page-link" href="javascript:void(0)" (click)="goToResultPage(p)">{{ p + 1 }}</a>
+                </li>
+              }
+              <li class="page-item" [class.disabled]="resultPage() >= resultTotalPages() - 1">
+                <a class="page-link" href="javascript:void(0)" (click)="goToResultPage(resultPage() + 1)">&raquo;</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      }
+    </div>
+  }
+}

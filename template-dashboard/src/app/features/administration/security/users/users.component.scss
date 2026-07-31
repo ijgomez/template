@@ -1,0 +1,18 @@
+@use 'src/app/shared/styles' as shared;
+
+:host {
+  display: block;
+}
+
+.tp-form-grid {
+  @include shared.responsive-form-grid;
+}
+
+.form-field-full {
+  @include shared.form-field-full;
+}
+
+.tp-table-responsive {
+  @include shared.responsive-table-container;
+  position: relative;
+}

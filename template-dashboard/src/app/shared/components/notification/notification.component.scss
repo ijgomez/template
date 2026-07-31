@@ -1,0 +1,21 @@
+.toast-container {
+  z-index: 1080;
+}
+
+.toast {
+  min-width: 300px;
+  max-width: 400px;
+  margin-bottom: 0.5rem;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}

@@ -1,0 +1,162 @@
+// Shared Responsive Utilities
+// Provides responsive mixins and classes for forms and tables across the application.
+// Requirements: 6.2, 6.5, 6.6, 6.7
+//
+// Bootstrap breakpoints reference:
+//   xs: <576px    (mobile)
+//   sm: ≥576px    (tablet start)
+//   md: ≥768px    (tablet)
+//   lg: ≥992px    (desktop start)
+//   xl: ≥1200px   (large desktop)
+//   xxl: ≥1400px  (extra large desktop)
+
+// ─── Breakpoint variables ────────────────────────────────────
+$bp-xs-max: 575.98px;
+$bp-sm: 576px;
+$bp-md: 768px;
+$bp-lg: 992px;
+$bp-xl: 1200px;
+$bp-xxl: 1400px;
+
+// ─── Breakpoint Mixins ───────────────────────────────────────
+
+/// Mobile only (xs): <576px
+@mixin mobile-only {
+  @media (max-width: $bp-xs-max) {
+    @content;
+  }
+}
+
+/// Tablet range: 576px – 991px
+@mixin tablet-only {
+  @media (min-width: $bp-sm) and (max-width: #{$bp-lg - 0.02px}) {
+    @content;
+  }
+}
+
+/// Tablet and up: ≥576px
+@mixin tablet-up {
+  @media (min-width: $bp-sm) {
+    @content;
+  }
+}
+
+/// Desktop and up: ≥992px
+@mixin desktop-up {
+  @media (min-width: $bp-lg) {
+    @content;
+  }
+}
+
+/// Large desktop: ≥1200px
+@mixin large-desktop-up {
+  @media (min-width: $bp-xl) {
+    @content;
+  }
+}
+
+/// Extra large desktop: ≥1400px
+@mixin xlarge-desktop-up {
+  @media (min-width: $bp-xxl) {
+    @content;
+  }
+}
+
+// ─── Responsive Form Layout ──────────────────────────────────
+// Use .tp-form-grid on a form container to get:
+//   - Mobile: single column
+//   - Tablet: two columns
+//   - Desktop: multi-column (up to 3)
+
+@mixin responsive-form-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+
+  @include tablet-only {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include desktop-up {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include large-desktop-up {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+// Full-width form field spanning all columns
+@mixin form-field-full {
+  grid-column: 1 / -1;
+}
+
+// ─── Responsive Table Utilities ──────────────────────────────
+// Use .tp-table-responsive for tables that need to adapt:
+//   - Mobile: stacked card layout or horizontal scroll
+//   - Tablet: two-column condensed
+//   - Desktop: full table layout
+
+@mixin responsive-table-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+
+  @include mobile-only {
+    // On mobile, allow horizontal scrolling with visual hint
+    &::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 2rem;
+      background: linear-gradient(to left, rgba(248, 249, 250, 0.9), transparent);
+      pointer-events: none;
+    }
+  }
+}
+
+// ─── Content Prioritization ──────────────────────────────────
+// Requirement 6.7: Adaptive Design – simplify on mobile, balance on tablet
+
+/// Hide element on mobile, show on tablet+
+@mixin hide-on-mobile {
+  @include mobile-only {
+    display: none !important;
+  }
+}
+
+/// Hide element on mobile and tablet, show on desktop+
+@mixin hide-below-desktop {
+  @media (max-width: #{$bp-lg - 0.02px}) {
+    display: none !important;
+  }
+}
+
+/// Show element only on mobile
+@mixin show-only-mobile {
+  display: none !important;
+
+  @include mobile-only {
+    display: block !important;
+  }
+}
+
+// ─── Touch-friendly spacing ──────────────────────────────────
+// Requirement 6.7: Tablet – tactile interaction balance
+
+@mixin touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+@mixin touch-spacing {
+  @include tablet-only {
+    padding: 0.75rem 1rem;
+  }
+
+  @include mobile-only {
+    padding: 0.75rem;
+  }
+}

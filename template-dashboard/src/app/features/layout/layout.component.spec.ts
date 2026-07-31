@@ -16,11 +16,45 @@ describe('LayoutComponent', () => {
       getCurrentUser: () => ({
         username: 'testuser',
         profile: 'ADMIN',
-        actions: ['DASHBOARD_READ'],
+        actions: [
+          'DASHBOARD_READ',
+          'REPORT_EXECUTE',
+          'INTERFACES_READ',
+          'USER_READ',
+          'USER_WRITE',
+          'PROFILE_READ',
+          'PROFILE_WRITE',
+          'ACTION_READ',
+          'SYSTEM_PARAMETER_READ',
+          'SYSTEM_PARAMETER_WRITE',
+          'SYSTEM_LOG_READ',
+          'CLUSTER_NODE_READ',
+          'CLUSTER_NODE_WRITE',
+          'CLUSTER_LOCK_READ',
+        ],
         exp: Math.floor(Date.now() / 1000) + 3600,
         iat: Math.floor(Date.now() / 1000),
       }),
       logout: () => of(undefined as unknown as void),
+      hasAction: (actionCode: string) => {
+        const actions = [
+          'DASHBOARD_READ',
+          'REPORT_EXECUTE',
+          'INTERFACES_READ',
+          'USER_READ',
+          'USER_WRITE',
+          'PROFILE_READ',
+          'PROFILE_WRITE',
+          'ACTION_READ',
+          'SYSTEM_PARAMETER_READ',
+          'SYSTEM_PARAMETER_WRITE',
+          'SYSTEM_LOG_READ',
+          'CLUSTER_NODE_READ',
+          'CLUSTER_NODE_WRITE',
+          'CLUSTER_LOCK_READ',
+        ];
+        return actions.includes(actionCode);
+      },
     };
 
     await TestBed.configureTestingModule({
@@ -67,7 +101,7 @@ describe('LayoutComponent', () => {
     expect(localStorage.getItem('tp-sidebar-collapsed')).toBe('false');
   });
 
-  it('should restore sidebar state from localStorage on init', async () => {
+  it('should restore sidebar state from localStorage on init', () => {
     localStorage.setItem('tp-sidebar-collapsed', 'true');
 
     const newFixture = TestBed.createComponent(LayoutComponent);
@@ -111,7 +145,6 @@ describe('LayoutComponent', () => {
     expect(compiled.querySelector('[data-testid="btn-sidebar-toggle"]')).toBeTruthy();
     expect(compiled.querySelector('[data-testid="link-brand"]')).toBeTruthy();
     expect(compiled.querySelector('[data-testid="btn-user-menu"]')).toBeTruthy();
-    expect(compiled.querySelector('[data-testid="nav-dashboard"]')).toBeTruthy();
   });
 
   it('should toggle sidebar-collapsed class on wrapper', () => {
@@ -136,6 +169,140 @@ describe('LayoutComponent', () => {
     fixture.detectChanges();
 
     expect(toggleBtn?.getAttribute('aria-expanded')).toBe('false');
+  });
+
+  // ─── Navigation menu tests ───────────────────────────────────
+
+  it('should render the Dashboard navigation item', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    const dashboardNav = compiled.querySelector('[data-testid="nav-menu.dashboard"]');
+    expect(dashboardNav).toBeTruthy();
+  });
+
+  it('should render expandable sections with toggle buttons', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    const interfacesToggle = compiled.querySelector('[data-testid="nav-toggle-menu.interfaces"]');
+    expect(interfacesToggle).toBeTruthy();
+  });
+
+  it('should expand/collapse sections on toggle click', () => {
+    expect(component.isSectionExpanded('menu.interfaces')).toBe(false);
+
+    component.toggleSection('menu.interfaces');
+    expect(component.isSectionExpanded('menu.interfaces')).toBe(true);
+
+    component.toggleSection('menu.interfaces');
+    expect(component.isSectionExpanded('menu.interfaces')).toBe(false);
+  });
+
+  it('should show child items when section is expanded', () => {
+    component.toggleSection('menu.interfaces');
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const monitorLink = compiled.querySelector('[data-testid="nav-menu.interfaces.monitor"]');
+    expect(monitorLink).toBeTruthy();
+  });
+
+  it('should hide child items when section is collapsed', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    const monitorLink = compiled.querySelector('[data-testid="nav-menu.interfaces.monitor"]');
+    expect(monitorLink).toBeNull();
+  });
+
+  it('should support nested expandable sections (Administration > Security)', () => {
+    component.toggleSection('menu.administration');
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const securityToggle = compiled.querySelector(
+      '[data-testid="nav-toggle-menu.administration.security"]',
+    );
+    expect(securityToggle).toBeTruthy();
+  });
+
+  it('should show third-level items when nested section is expanded', () => {
+    component.toggleSection('menu.administration');
+    component.toggleSection('menu.administration.security');
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const usersLink = compiled.querySelector(
+      '[data-testid="nav-menu.administration.security.users"]',
+    );
+    expect(usersLink).toBeTruthy();
+  });
+
+  it('should hide items user does not have actions for', () => {
+    // Create a new test with limited actions
+    const limitedAuthService: Partial<AuthService> = {
+      getCurrentUser: () => ({
+        username: 'limited',
+        profile: 'BASIC',
+        actions: ['DASHBOARD_READ'],
+        exp: Math.floor(Date.now() / 1000) + 3600,
+        iat: Math.floor(Date.now() / 1000),
+      }),
+      logout: () => of(undefined as unknown as void),
+      hasAction: (actionCode: string) => actionCode === 'DASHBOARD_READ',
+    };
+
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      imports: [LayoutComponent],
+      providers: [
+        provideRouter([]),
+        provideTranslateService({ lang: 'en', fallbackLang: 'en' }),
+        { provide: AuthService, useValue: limitedAuthService },
+      ],
+    });
+
+    const limitedFixture = TestBed.createComponent(LayoutComponent);
+    limitedFixture.detectChanges();
+
+    const compiled = limitedFixture.nativeElement as HTMLElement;
+    // Dashboard should be visible
+    const dashboardNav = compiled.querySelector('[data-testid="nav-menu.dashboard"]');
+    expect(dashboardNav).toBeTruthy();
+
+    // Reports should NOT be visible (no REPORT_EXECUTE action)
+    const reportsNav = compiled.querySelector('[data-testid="nav-menu.reports"]');
+    expect(reportsNav).toBeNull();
+
+    // Administration section should NOT be visible
+    const adminToggle = compiled.querySelector('[data-testid="nav-toggle-menu.administration"]');
+    expect(adminToggle).toBeNull();
+  });
+
+  it('should toggle mobile menu', () => {
+    expect(component.mobileMenuOpen()).toBe(false);
+
+    component.toggleMobileMenu();
+    expect(component.mobileMenuOpen()).toBe(true);
+
+    component.closeMobileMenu();
+    expect(component.mobileMenuOpen()).toBe(false);
+  });
+
+  it('should define the complete navigation structure', () => {
+    expect(component.navItems.length).toBe(4); // Dashboard, Reports, Interfaces, Administration
+    expect(component.navItems[0].labelKey).toBe('menu.dashboard');
+    expect(component.navItems[1].labelKey).toBe('menu.reports');
+    expect(component.navItems[2].labelKey).toBe('menu.interfaces');
+    expect(component.navItems[3].labelKey).toBe('menu.administration');
+  });
+
+  it('should have correct navigation hierarchy for Administration', () => {
+    const admin = component.navItems[3];
+    expect(admin.children?.length).toBe(4); // Security, Parameters, Audit, Cluster
+
+    const security = admin.children![0];
+    expect(security.labelKey).toBe('menu.administration.security');
+    expect(security.children?.length).toBe(3); // Users, Profiles, Actions
+
+    const cluster = admin.children![3];
+    expect(cluster.labelKey).toBe('menu.administration.cluster');
+    expect(cluster.children?.length).toBe(2); // Nodes, Blocks
   });
 
   afterEach(() => {

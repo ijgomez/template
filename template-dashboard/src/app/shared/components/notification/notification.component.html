@@ -1,0 +1,31 @@
+@if (notifications$ | async; as notifications) {
+  @if (notifications.length > 0) {
+    <div class="toast-container position-fixed top-0 end-0 p-3" data-testid="notification-container">
+      @for (notification of notifications; track notification.id) {
+        <div class="toast show border-start border-4"
+             [class]="getToastClass(notification)"
+             role="alert"
+             aria-live="assertive"
+             aria-atomic="true"
+             [attr.data-testid]="'notification-' + notification.type">
+          <div class="toast-body d-flex align-items-center gap-2">
+            @if (notification.type === 'progress') {
+              <div class="spinner-border spinner-border-sm text-primary" role="status" data-testid="notification-spinner">
+                <span class="visually-hidden">{{ 'notification.progress' | translate }}</span>
+              </div>
+            } @else {
+              <i [class]="getIconClass(notification)" aria-hidden="true"></i>
+            }
+            <span class="flex-grow-1">{{ notification.messageKey | translate }}</span>
+            <button type="button"
+                    class="btn-close btn-close-sm ms-2"
+                    (click)="dismiss(notification)"
+                    [attr.aria-label]="'button.close' | translate"
+                    data-testid="notification-dismiss">
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+}

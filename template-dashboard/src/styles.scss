@@ -61,3 +61,93 @@ body {
   color: var(--tp-color-text);
   background-color: var(--tp-color-background);
 }
+
+// ─── Responsive Utility Classes ──────────────────────────────
+// Requirements: 6.2, 6.4, 6.5, 6.6, 6.7
+// Bootstrap breakpoints: xs (<576px), sm (≥576px), md (≥768px), lg (≥992px), xl (≥1200px), xxl (≥1400px)
+
+// Responsive form grid: single column on mobile, two columns on tablet, multi-column on desktop
+.tp-form-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+
+  @media (min-width: 576px) and (max-width: 991.98px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: 992px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: 1200px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+// Form field that spans all columns
+.tp-form-field-full {
+  grid-column: 1 / -1;
+}
+
+// Responsive table wrapper for horizontal scroll on small screens
+.tp-table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+
+  @media (max-width: 575.98px) {
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 2rem;
+      background: linear-gradient(to left, rgba(248, 249, 250, 0.9), transparent);
+      pointer-events: none;
+    }
+  }
+}
+
+// Content prioritization helpers (Adaptive Design)
+// Hide secondary info on mobile, show on tablet+
+.tp-hide-mobile {
+  @media (max-width: 575.98px) {
+    display: none !important;
+  }
+}
+
+// Show only on mobile
+.tp-show-mobile-only {
+  display: none !important;
+
+  @media (max-width: 575.98px) {
+    display: block !important;
+  }
+}
+
+// Hide below desktop (mobile + tablet)
+.tp-hide-below-desktop {
+  @media (max-width: 991.98px) {
+    display: none !important;
+  }
+}
+
+// Single column enforcement on mobile
+.tp-single-column {
+  @media (max-width: 575.98px) {
+    grid-template-columns: 1fr !important;
+    flex-direction: column !important;
+  }
+}
+
+// Touch-friendly targets for tablet/mobile
+.tp-touch-target {
+  @media (max-width: 991.98px) {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}

@@ -1,0 +1,126 @@
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     INTERFACE CONFIGURATION LIST VIEW
+     ═══════════════════════════════════════════════════════════════════════════ -->
+@if (viewMode() === 'list') {
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">{{ 'interfaces.configuration.title' | translate }}</h1>
+  </div>
+
+  <!-- Table -->
+  <div class="tp-table-responsive">
+    <table class="table table-striped table-hover align-middle" data-testid="configuration-table">
+      <thead class="table-light">
+        <tr>
+          <th>{{ 'interfaces.configuration.fields.name' | translate }}</th>
+          <th>{{ 'interfaces.configuration.fields.protocol' | translate }}</th>
+          <th>{{ 'interfaces.configuration.fields.url' | translate }}</th>
+          <th>{{ 'interfaces.configuration.fields.status' | translate }}</th>
+          <th class="text-end">{{ 'common.actions' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (isLoading()) {
+          <tr>
+            <td colspan="5" class="text-center py-4">
+              <div class="spinner-border spinner-border-sm" role="status">
+                <span class="visually-hidden">{{ 'common.loading' | translate }}</span>
+              </div>
+            </td>
+          </tr>
+        } @else if (configurations().length === 0) {
+          <tr>
+            <td colspan="5" class="text-center py-4 text-muted">
+              {{ 'common.noData' | translate }}
+            </td>
+          </tr>
+        } @else {
+          @for (config of configurations(); track config.id) {
+            <tr>
+              <td>{{ config.name }}</td>
+              <td>{{ config.protocol }}</td>
+              <td>{{ config.url }}</td>
+              <td>
+                <span class="badge"
+                      [class.bg-success]="config.status === 'ACTIVE'"
+                      [class.bg-danger]="config.status === 'ERROR'"
+                      [class.bg-secondary]="config.status === 'INACTIVE'">
+                  {{ config.status }}
+                </span>
+              </td>
+              <td class="text-end">
+                <button class="btn btn-outline-primary btn-sm"
+                        data-testid="configuration-view-detail"
+                        (click)="viewDetail(config)"
+                        [attr.aria-label]="'common.detail' | translate">
+                  <i class="bi bi-eye" aria-hidden="true"></i>
+                </button>
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+}
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     INTERFACE CONFIGURATION DETAIL VIEW
+     ═══════════════════════════════════════════════════════════════════════════ -->
+@if (viewMode() === 'detail') {
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">{{ 'interfaces.configuration.detail.title' | translate }}</h1>
+    <button class="btn btn-outline-secondary btn-sm"
+            data-testid="configuration-back-to-list"
+            (click)="backToList()">
+      <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>{{ 'button.back' | translate }}
+    </button>
+  </div>
+
+  @if (selectedConfig(); as config) {
+    <div class="card">
+      <div class="card-body">
+        <div class="tp-form-grid">
+          <div class="form-group">
+            <label class="form-label fw-bold">{{ 'interfaces.configuration.fields.name' | translate }}</label>
+            <p class="form-control-plaintext">{{ config.name }}</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label fw-bold">{{ 'interfaces.configuration.fields.status' | translate }}</label>
+            <p class="form-control-plaintext">
+              <span class="badge"
+                    [class.bg-success]="config.status === 'ACTIVE'"
+                    [class.bg-danger]="config.status === 'ERROR'"
+                    [class.bg-secondary]="config.status === 'INACTIVE'">
+                {{ config.status }}
+              </span>
+            </p>
+          </div>
+          <div class="form-group form-field-full">
+            <label class="form-label fw-bold">{{ 'interfaces.configuration.fields.description' | translate }}</label>
+            <p class="form-control-plaintext">{{ config.description }}</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label fw-bold">{{ 'interfaces.configuration.fields.url' | translate }}</label>
+            <p class="form-control-plaintext">{{ config.url }}</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label fw-bold">{{ 'interfaces.configuration.fields.protocol' | translate }}</label>
+            <p class="form-control-plaintext">{{ config.protocol }}</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label fw-bold">{{ 'interfaces.configuration.fields.checkFrequency' | translate }}</label>
+            <p class="form-control-plaintext">{{ config.checkFrequency }}</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label fw-bold">{{ 'interfaces.configuration.fields.createdAt' | translate }}</label>
+            <p class="form-control-plaintext">{{ config.createdAt | localDate }}</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label fw-bold">{{ 'interfaces.configuration.fields.lastModifiedAt' | translate }}</label>
+            <p class="form-control-plaintext">{{ config.lastModifiedAt | localDate }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+}

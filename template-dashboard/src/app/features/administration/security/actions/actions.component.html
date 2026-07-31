@@ -1,0 +1,281 @@
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     ACTIONS LIST VIEW
+     ═══════════════════════════════════════════════════════════════════════════ -->
+@if (viewMode() === 'list') {
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">{{ 'actions.title' | translate }}</h1>
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-secondary btn-sm"
+              (click)="exportCsv()"
+              [attr.aria-label]="'button.export' | translate">
+        <i class="bi bi-download me-1"></i>{{ 'button.export' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="card mb-3">
+    <div class="card-body">
+      <div class="tp-form-grid">
+        <div class="form-group">
+          <label for="filterCode" class="form-label">{{ 'actions.fields.code' | translate }}</label>
+          <input id="filterCode"
+                 type="text"
+                 class="form-control form-control-sm"
+                 [(ngModel)]="filterCode"
+                 [placeholder]="'actions.fields.code' | translate">
+        </div>
+        <div class="form-group">
+          <label for="filterName" class="form-label">{{ 'actions.fields.name' | translate }}</label>
+          <input id="filterName"
+                 type="text"
+                 class="form-control form-control-sm"
+                 [(ngModel)]="filterName"
+                 [placeholder]="'actions.fields.name' | translate">
+        </div>
+        <div class="form-group">
+          <label for="filterType" class="form-label">{{ 'actions.fields.type' | translate }}</label>
+          <select id="filterType"
+                  class="form-select form-select-sm"
+                  [(ngModel)]="filterType">
+            <option value="">{{ 'actions.filters.allTypes' | translate }}</option>
+            @for (type of actionTypes; track type) {
+              <option [value]="type">{{ type }}</option>
+            }
+          </select>
+        </div>
+        <div class="form-group d-flex align-items-end gap-2">
+          <button class="btn btn-primary btn-sm" (click)="applyFilters()">
+            <i class="bi bi-search me-1"></i>{{ 'button.filter' | translate }}
+          </button>
+          <button class="btn btn-outline-secondary btn-sm" (click)="clearFilters()">
+            {{ 'actions.filters.clear' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="tp-table-responsive">
+    <table class="table table-striped table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>{{ 'actions.table.code' | translate }}</th>
+          <th>{{ 'actions.table.name' | translate }}</th>
+          <th>{{ 'actions.table.type' | translate }}</th>
+          <th>{{ 'actions.table.description' | translate }}</th>
+          <th class="text-end">{{ 'common.actions' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (isLoading()) {
+          <tr>
+            <td colspan="5" class="text-center py-4">
+              <div class="spinner-border spinner-border-sm" role="status">
+                <span class="visually-hidden">{{ 'common.loading' | translate }}</span>
+              </div>
+            </td>
+          </tr>
+        } @else if (actions().length === 0) {
+          <tr>
+            <td colspan="5" class="text-center py-4 text-muted">
+              {{ 'common.noData' | translate }}
+            </td>
+          </tr>
+        } @else {
+          @for (action of actions(); track action.id) {
+            <tr>
+              <td>
+                <a href="javascript:void(0)" (click)="viewDetail(action)" class="text-decoration-none">
+                  {{ action.code }}
+                </a>
+              </td>
+              <td>{{ action.name }}</td>
+              <td>
+                <span class="badge"
+                      [class.bg-info]="action.type === 'READ'"
+                      [class.bg-warning]="action.type === 'WRITE'"
+                      [class.bg-success]="action.type === 'EXECUTE'">
+                  {{ action.type }}
+                </span>
+              </td>
+              <td>{{ action.description ?? '-' }}</td>
+              <td class="text-end">
+                @if (canEdit()) {
+                  <button class="btn btn-outline-primary btn-sm"
+                          (click)="editAction(action)"
+                          [attr.aria-label]="'button.edit' | translate">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  @if (totalElements() > 0) {
+    <div class="d-flex justify-content-between align-items-center mt-3">
+      <small class="text-muted">
+        {{ 'common.pagination.showing' | translate: { from: showingFrom(), to: showingTo(), total: totalElements() } }}
+      </small>
+      <nav [attr.aria-label]="'actions.pagination.label' | translate">
+        <ul class="pagination pagination-sm mb-0">
+          <li class="page-item" [class.disabled]="currentPage() === 0">
+            <a class="page-link" href="javascript:void(0)" (click)="goToPage(currentPage() - 1)">
+              &laquo;
+            </a>
+          </li>
+          @for (p of getPageNumbers(); track p) {
+            <li class="page-item" [class.active]="p === currentPage()">
+              <a class="page-link" href="javascript:void(0)" (click)="goToPage(p)">
+                {{ p + 1 }}
+              </a>
+            </li>
+          }
+          <li class="page-item" [class.disabled]="currentPage() >= totalPages() - 1">
+            <a class="page-link" href="javascript:void(0)" (click)="goToPage(currentPage() + 1)">
+              &raquo;
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  }
+}
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     DETAIL VIEW
+     ═══════════════════════════════════════════════════════════════════════════ -->
+@if (viewMode() === 'detail') {
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">{{ 'actions.detail.title' | translate }}</h1>
+    <div class="d-flex gap-2">
+      @if (canEdit()) {
+        <button class="btn btn-primary btn-sm" (click)="editAction(selectedAction()!)">
+          <i class="bi bi-pencil me-1"></i>{{ 'button.edit' | translate }}
+        </button>
+      }
+      <button class="btn btn-outline-secondary btn-sm" (click)="backToList()">
+        <i class="bi bi-arrow-left me-1"></i>{{ 'button.back' | translate }}
+      </button>
+    </div>
+  </div>
+
+  @if (selectedAction(); as action) {
+    <div class="card">
+      <div class="card-body">
+        <div class="tp-form-grid">
+          <div class="form-group">
+            <label class="form-label fw-bold">{{ 'actions.fields.code' | translate }}</label>
+            <p class="form-control-plaintext">{{ action.code }}</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label fw-bold">{{ 'actions.fields.name' | translate }}</label>
+            <p class="form-control-plaintext">{{ action.name }}</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label fw-bold">{{ 'actions.fields.type' | translate }}</label>
+            <p class="form-control-plaintext">
+              <span class="badge"
+                    [class.bg-info]="action.type === 'READ'"
+                    [class.bg-warning]="action.type === 'WRITE'"
+                    [class.bg-success]="action.type === 'EXECUTE'">
+                {{ action.type }}
+              </span>
+            </p>
+          </div>
+          <div class="form-group">
+            <label class="form-label fw-bold">{{ 'actions.fields.description' | translate }}</label>
+            <p class="form-control-plaintext">{{ action.description ?? '-' }}</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label fw-bold">{{ 'actions.fields.createdAt' | translate }}</label>
+            <p class="form-control-plaintext">{{ action.createdAt | localDate }}</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label fw-bold">{{ 'actions.fields.lastModifiedAt' | translate }}</label>
+            <p class="form-control-plaintext">{{ action.lastModifiedAt | localDate }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+}
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     EDIT FORM (No Create - Req 25.11)
+     ═══════════════════════════════════════════════════════════════════════════ -->
+@if (viewMode() === 'edit') {
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">{{ 'actions.form.editTitle' | translate }}</h1>
+    <button class="btn btn-outline-secondary btn-sm" (click)="backToList()">
+      <i class="bi bi-arrow-left me-1"></i>{{ 'button.back' | translate }}
+    </button>
+  </div>
+
+  @if (selectedAction(); as action) {
+    <div class="card">
+      <div class="card-body">
+        <form (ngSubmit)="saveAction()" #actionForm="ngForm">
+          <div class="tp-form-grid">
+            <div class="form-group">
+              <label for="actionCode" class="form-label">{{ 'actions.fields.code' | translate }}</label>
+              <input id="actionCode"
+                     type="text"
+                     class="form-control"
+                     [value]="action.code"
+                     readonly
+                     disabled>
+            </div>
+            <div class="form-group">
+              <label for="actionName" class="form-label">{{ 'actions.fields.name' | translate }} *</label>
+              <input id="actionName"
+                     type="text"
+                     class="form-control"
+                     [(ngModel)]="editName"
+                     name="actionName"
+                     required>
+            </div>
+            <div class="form-group">
+              <label for="actionType" class="form-label">{{ 'actions.fields.type' | translate }} *</label>
+              <select id="actionType"
+                      class="form-select"
+                      [(ngModel)]="editType"
+                      name="actionType"
+                      required>
+                @for (type of actionTypes; track type) {
+                  <option [value]="type">{{ type }}</option>
+                }
+              </select>
+            </div>
+            <div class="form-group form-field-full">
+              <label for="actionDescription" class="form-label">{{ 'actions.fields.description' | translate }}</label>
+              <textarea id="actionDescription"
+                        class="form-control"
+                        [(ngModel)]="editDescription"
+                        name="actionDescription"
+                        rows="3"></textarea>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-end gap-2 mt-3">
+            <button type="button" class="btn btn-outline-secondary" (click)="backToList()">
+              {{ 'button.cancel' | translate }}
+            </button>
+            <button type="submit" class="btn btn-primary" [disabled]="isSaving()">
+              @if (isSaving()) {
+                <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+              }
+              {{ 'button.save' | translate }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+}

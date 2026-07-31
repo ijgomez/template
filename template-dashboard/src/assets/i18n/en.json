@@ -66,7 +66,24 @@
   "notification": {
     "progress": "Processing...",
     "success": "Operation completed successfully",
-    "error": "An error occurred"
+    "error": "An error occurred",
+    "save.progress": "Saving...",
+    "save.success": "Saved successfully",
+    "save.error": "Failed to save",
+    "create.progress": "Creating record...",
+    "create.success": "Record created successfully",
+    "create.error": "Failed to create record",
+    "update.progress": "Updating record...",
+    "update.success": "Record updated successfully",
+    "update.error": "Failed to update record",
+    "delete.progress": "Deleting record...",
+    "delete.success": "Record deleted successfully",
+    "delete.error": "Failed to delete record",
+    "export.progress": "Exporting data...",
+    "export.success": "Export completed successfully",
+    "export.error": "Failed to export data",
+    "pagination.progress": "Loading data...",
+    "filter.progress": "Applying filters..."
   },
   "validation": {
     "required": "This field is required",
@@ -81,13 +98,268 @@
     "server": "A server error has occurred. Please try again later.",
     "unknown": "An unexpected error has occurred."
   },
+  "notFound": {
+    "message": "The page you are looking for does not exist.",
+    "goToDashboard": "Go to Dashboard"
+  },
+  "profile": {
+    "title": "My Profile",
+    "username": "Username",
+    "nombre": "First Name",
+    "apellidos": "Last Name",
+    "email": "Email",
+    "lastAccess": "Last Access",
+    "load.error": "Failed to load profile"
+  },
   "common": {
     "loading": "Loading...",
     "noData": "No data available",
     "actions": "Actions",
     "detail": "Detail",
     "pagination": {
-      "showing": "Showing {{from}} to {{to}} of {{total}} records"
+      "showing": "Showing {{from}} to {{to}} of {{total}} records",
+      "previous": "Previous page",
+      "next": "Next page"
+    }
+  },
+  "users": {
+    "title": "Users",
+    "fields": {
+      "username": "Username",
+      "password": "Password",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "profile": "Profile",
+      "reports": "Reports",
+      "lastAccess": "Last Access",
+      "createdAt": "Created At",
+      "lastModifiedAt": "Last Modified At"
+    },
+    "filters": {
+      "allProfiles": "All profiles",
+      "clear": "Clear"
+    },
+    "detail": {
+      "title": "User Detail"
+    },
+    "form": {
+      "createTitle": "Create User",
+      "editTitle": "Edit User",
+      "selectProfile": "Select a profile..."
+    },
+    "delete": {
+      "confirmTitle": "Delete User",
+      "confirmMessage": "Are you sure you want to delete the user \"{{username}}\"? This action cannot be undone."
+    }
+  },
+  "profiles": {
+    "title": "Profiles",
+    "fields": {
+      "name": "Name",
+      "description": "Description",
+      "actions": "Actions",
+      "createdAt": "Created At",
+      "lastModifiedAt": "Last Modified At"
+    },
+    "filters": {
+      "clear": "Clear"
+    },
+    "detail": {
+      "title": "Profile Detail",
+      "assignedActions": "Assigned Actions",
+      "noActions": "No actions assigned",
+      "actionCode": "Code",
+      "actionName": "Name",
+      "actionType": "Type"
+    },
+    "form": {
+      "createTitle": "Create Profile",
+      "editTitle": "Edit Profile",
+      "assignActions": "Assign Actions"
+    },
+    "delete": {
+      "confirmTitle": "Delete Profile",
+      "confirmMessage": "Are you sure you want to delete the profile \"{{name}}\"? This action cannot be undone."
+    },
+    "pagination": {
+      "label": "Profiles pagination"
+    }
+  },
+  "actions": {
+    "title": "Actions",
+    "table": {
+      "code": "Code",
+      "name": "Name",
+      "type": "Type",
+      "description": "Description",
+      "createdAt": "Created At",
+      "lastModifiedAt": "Last Modified At"
+    },
+    "filters": {
+      "clear": "Clear",
+      "allTypes": "All types"
+    },
+    "detail": {
+      "title": "Action Detail"
+    },
+    "edit": {
+      "title": "Edit Action"
+    }
+  },
+  "parameters": {
+    "title": "Parameters",
+    "fields": {
+      "code": "Code",
+      "description": "Description",
+      "value": "Value",
+      "type": "Type",
+      "createdAt": "Created At",
+      "lastModifiedAt": "Last Modified At"
+    },
+    "filters": {
+      "allTypes": "All types",
+      "clear": "Clear"
+    },
+    "detail": {
+      "title": "Parameter Detail"
+    },
+    "form": {
+      "createTitle": "Create Parameter",
+      "editTitle": "Edit Parameter"
+    },
+    "delete": {
+      "confirmTitle": "Delete Parameter",
+      "confirmMessage": "Are you sure you want to delete the parameter \"{{code}}\"? This action cannot be undone."
+    },
+    "validation": {
+      "integer": "Value must be a valid integer",
+      "boolean": "Value must be \"true\" or \"false\"",
+      "date": "Value must be a valid ISO 8601 date"
+    },
+    "pagination": {
+      "label": "Parameters pagination"
+    }
+  },
+  "audit": {
+    "title": "Audit Log",
+    "fields": {
+      "timestamp": "Timestamp",
+      "username": "User",
+      "operationType": "Operation",
+      "section": "Section",
+      "entityId": "Entity ID",
+      "entityName": "Entity",
+      "detail": "Detail"
+    },
+    "filters": {
+      "dateFrom": "From Date",
+      "dateTo": "To Date",
+      "allTypes": "All operations",
+      "allSections": "All sections",
+      "clear": "Clear"
+    },
+    "detail": {
+      "title": "Audit Entry Detail"
+    }
+  },
+  "interfaces": {
+    "monitor": {
+      "title": "Interface Monitor",
+      "fields": {
+        "timestamp": "Timestamp",
+        "operationType": "Operation Type",
+        "interfaceName": "Interface",
+        "status": "Status",
+        "requestPayload": "Request Payload",
+        "responsePayload": "Response Payload",
+        "errorMessage": "Error Message"
+      },
+      "filters": {
+        "dateFrom": "From Date",
+        "dateTo": "To Date",
+        "allTypes": "All types",
+        "allInterfaces": "All interfaces",
+        "allStatuses": "All statuses",
+        "clear": "Clear"
+      },
+      "detail": {
+        "title": "Operation Detail"
+      }
+    },
+    "configuration": {
+      "title": "Interface Configuration",
+      "fields": {
+        "name": "Name",
+        "description": "Description",
+        "url": "URL",
+        "protocol": "Protocol",
+        "checkFrequency": "Check Frequency (s)",
+        "status": "Status",
+        "createdAt": "Created At",
+        "lastModifiedAt": "Last Modified At"
+      },
+      "detail": {
+        "title": "Interface Detail"
+      }
+    }
+  },
+  "cluster": {
+    "nodes": {
+      "title": "Cluster Nodes",
+      "fields": {
+        "hostname": "Hostname",
+        "status": "Status",
+        "master": "Master",
+        "freeMemory": "Free Memory (MB)",
+        "totalMemory": "Total Memory (MB)",
+        "usedMemory": "Used Memory (MB)",
+        "lastModifiedAt": "Last Heartbeat"
+      },
+      "setMaster": "Set as Master",
+      "confirmMaster": {
+        "title": "Confirm Master Change",
+        "message": "Are you sure you want to set \"{{hostname}}\" as the new master node? The current master will be demoted."
+      }
+    },
+    "blocks": {
+      "title": "Cluster Blocks",
+      "fields": {
+        "name": "Task Name",
+        "startDate": "Start Date",
+        "avgTime": "Avg Time (ms)",
+        "minTime": "Min Time (ms)",
+        "maxTime": "Max Time (ms)",
+        "total": "Total Executions",
+        "createdAt": "Created At",
+        "lastModifiedAt": "Last Modified At"
+      },
+      "filters": {
+        "clear": "Clear"
+      },
+      "detail": {
+        "title": "Block Detail"
+      }
+    }
+  },
+  "reports": {
+    "title": "Reports",
+    "execute": "Execute",
+    "fields": {
+      "name": "Name",
+      "description": "Description"
+    },
+    "execution": {
+      "title": "Report Execution",
+      "filters": "Filters",
+      "run": "Execute",
+      "results": "Results"
+    },
+    "export": {
+      "pdf": "Export PDF",
+      "xlsx": "Export Excel",
+      "csv": "Export CSV",
+      "txt": "Export TXT"
     }
   }
 }

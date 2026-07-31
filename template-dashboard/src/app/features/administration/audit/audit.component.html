@@ -1,0 +1,239 @@
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     AUDIT LOG LIST VIEW
+     ═══════════════════════════════════════════════════════════════════════════ -->
+@if (viewMode() === 'list') {
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">{{ 'audit.title' | translate }}</h1>
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-secondary btn-sm"
+              data-testid="audit-export-csv"
+              (click)="exportCsv()"
+              [attr.aria-label]="'button.export' | translate">
+        <i class="bi bi-download me-1" aria-hidden="true"></i>{{ 'button.export' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="card mb-3">
+    <div class="card-body">
+      <div class="tp-form-grid">
+        <div class="form-group">
+          <label for="filterDateFrom" class="form-label">{{ 'audit.filters.dateFrom' | translate }}</label>
+          <input id="filterDateFrom"
+                 type="date"
+                 class="form-control form-control-sm"
+                 data-testid="audit-filter-date-from"
+                 [(ngModel)]="filterDateFrom">
+        </div>
+        <div class="form-group">
+          <label for="filterDateTo" class="form-label">{{ 'audit.filters.dateTo' | translate }}</label>
+          <input id="filterDateTo"
+                 type="date"
+                 class="form-control form-control-sm"
+                 data-testid="audit-filter-date-to"
+                 [(ngModel)]="filterDateTo">
+        </div>
+        <div class="form-group">
+          <label for="filterUsername" class="form-label">{{ 'audit.fields.username' | translate }}</label>
+          <input id="filterUsername"
+                 type="text"
+                 class="form-control form-control-sm"
+                 data-testid="audit-filter-username"
+                 [(ngModel)]="filterUsername"
+                 [placeholder]="'audit.fields.username' | translate">
+        </div>
+        <div class="form-group">
+          <label for="filterOperationType" class="form-label">{{ 'audit.fields.operationType' | translate }}</label>
+          <select id="filterOperationType"
+                  class="form-select form-select-sm"
+                  data-testid="audit-filter-operation-type"
+                  [(ngModel)]="filterOperationType">
+            <option value="">{{ 'audit.filters.allTypes' | translate }}</option>
+            @for (type of operationTypes; track type) {
+              <option [value]="type">{{ type }}</option>
+            }
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="filterSection" class="form-label">{{ 'audit.fields.section' | translate }}</label>
+          <select id="filterSection"
+                  class="form-select form-select-sm"
+                  data-testid="audit-filter-section"
+                  [(ngModel)]="filterSection">
+            <option value="">{{ 'audit.filters.allSections' | translate }}</option>
+            @for (section of auditSections; track section) {
+              <option [value]="section">{{ section }}</option>
+            }
+          </select>
+        </div>
+        <div class="form-group d-flex align-items-end gap-2">
+          <button class="btn btn-primary btn-sm"
+                  data-testid="audit-apply-filters"
+                  (click)="applyFilters()">
+            <i class="bi bi-search me-1" aria-hidden="true"></i>{{ 'button.filter' | translate }}
+          </button>
+          <button class="btn btn-outline-secondary btn-sm"
+                  data-testid="audit-clear-filters"
+                  (click)="clearFilters()">
+            {{ 'audit.filters.clear' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="tp-table-responsive">
+    <table class="table table-striped table-hover align-middle" data-testid="audit-table">
+      <thead class="table-light">
+        <tr>
+          <th>{{ 'audit.fields.timestamp' | translate }}</th>
+          <th>{{ 'audit.fields.username' | translate }}</th>
+          <th>{{ 'audit.fields.operationType' | translate }}</th>
+          <th>{{ 'audit.fields.section' | translate }}</th>
+          <th>{{ 'audit.fields.entityName' | translate }}</th>
+          <th class="text-end">{{ 'common.actions' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (isLoading()) {
+          <tr>
+            <td colspan="6" class="text-center py-4">
+              <div class="spinner-border spinner-border-sm" role="status">
+                <span class="visually-hidden">{{ 'common.loading' | translate }}</span>
+              </div>
+            </td>
+          </tr>
+        } @else if (auditLogs().length === 0) {
+          <tr>
+            <td colspan="6" class="text-center py-4 text-muted">
+              {{ 'common.noData' | translate }}
+            </td>
+          </tr>
+        } @else {
+          @for (log of auditLogs(); track log.id) {
+            <tr>
+              <td>{{ log.timestamp | localDate }}</td>
+              <td>{{ log.username }}</td>
+              <td>
+                <span class="badge"
+                      [class.bg-success]="log.operationType === 'CREATE'"
+                      [class.bg-info]="log.operationType === 'UPDATE'"
+                      [class.bg-danger]="log.operationType === 'DELETE'"
+                      [class.bg-warning]="log.operationType === 'EXECUTE'">
+                  {{ log.operationType }}
+                </span>
+              </td>
+              <td>
+                <span class="badge bg-secondary">{{ log.section }}</span>
+              </td>
+              <td>{{ log.entityName }}</td>
+              <td class="text-end">
+                <button class="btn btn-outline-primary btn-sm"
+                        data-testid="audit-view-detail"
+                        (click)="viewDetail(log)"
+                        [attr.aria-label]="'common.detail' | translate">
+                  <i class="bi bi-eye" aria-hidden="true"></i>
+                </button>
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  @if (totalElements() > 0) {
+    <div class="d-flex justify-content-between align-items-center mt-3">
+      <small class="text-muted">
+        {{ 'common.pagination.showing' | translate: { from: showingFrom(), to: showingTo(), total: totalElements() } }}
+      </small>
+      <nav [attr.aria-label]="'audit.title' | translate">
+        <ul class="pagination pagination-sm mb-0">
+          <li class="page-item" [class.disabled]="currentPage() === 0">
+            <a class="page-link" href="javascript:void(0)" (click)="goToPage(currentPage() - 1)"
+               [attr.aria-label]="'common.pagination.previous' | translate">
+              &laquo;
+            </a>
+          </li>
+          @for (p of getPageNumbers(); track p) {
+            <li class="page-item" [class.active]="p === currentPage()">
+              <a class="page-link" href="javascript:void(0)" (click)="goToPage(p)">
+                {{ p + 1 }}
+              </a>
+            </li>
+          }
+          <li class="page-item" [class.disabled]="currentPage() >= totalPages() - 1">
+            <a class="page-link" href="javascript:void(0)" (click)="goToPage(currentPage() + 1)"
+               [attr.aria-label]="'common.pagination.next' | translate">
+              &raquo;
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  }
+}
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     AUDIT LOG DETAIL VIEW
+     ═══════════════════════════════════════════════════════════════════════════ -->
+@if (viewMode() === 'detail') {
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">{{ 'audit.detail.title' | translate }}</h1>
+    <button class="btn btn-outline-secondary btn-sm"
+            data-testid="audit-back-to-list"
+            (click)="backToList()">
+      <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>{{ 'button.back' | translate }}
+    </button>
+  </div>
+
+  @if (selectedAuditLog(); as log) {
+    <div class="card">
+      <div class="card-body">
+        <div class="tp-form-grid">
+          <div class="form-group">
+            <label class="form-label fw-bold">{{ 'audit.fields.timestamp' | translate }}</label>
+            <p class="form-control-plaintext">{{ log.timestamp | localDate }}</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label fw-bold">{{ 'audit.fields.username' | translate }}</label>
+            <p class="form-control-plaintext">{{ log.username }}</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label fw-bold">{{ 'audit.fields.operationType' | translate }}</label>
+            <p class="form-control-plaintext">
+              <span class="badge"
+                    [class.bg-success]="log.operationType === 'CREATE'"
+                    [class.bg-info]="log.operationType === 'UPDATE'"
+                    [class.bg-danger]="log.operationType === 'DELETE'"
+                    [class.bg-warning]="log.operationType === 'EXECUTE'">
+                {{ log.operationType }}
+              </span>
+            </p>
+          </div>
+          <div class="form-group">
+            <label class="form-label fw-bold">{{ 'audit.fields.section' | translate }}</label>
+            <p class="form-control-plaintext">
+              <span class="badge bg-secondary">{{ log.section }}</span>
+            </p>
+          </div>
+          <div class="form-group">
+            <label class="form-label fw-bold">{{ 'audit.fields.entityId' | translate }}</label>
+            <p class="form-control-plaintext">{{ log.entityId }}</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label fw-bold">{{ 'audit.fields.entityName' | translate }}</label>
+            <p class="form-control-plaintext">{{ log.entityName }}</p>
+          </div>
+          <div class="form-group form-field-full">
+            <label class="form-label fw-bold">{{ 'audit.fields.detail' | translate }}</label>
+            <p class="form-control-plaintext">{{ log.detail }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+}

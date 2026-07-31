@@ -1,10 +1,10 @@
-<div class="tp-wrapper" [class.sidebar-collapsed]="sidebarCollapsed()">
+<div class="tp-wrapper" [class.sidebar-collapsed]="sidebarCollapsed()" [class.mobile-menu-open]="mobileMenuOpen()">
   <!-- Header -->
   <header class="tp-header" role="banner">
     <div class="tp-header-content">
-      <!-- Sidebar toggle -->
+      <!-- Sidebar toggle (desktop) / Hamburger (mobile) -->
       <button
-        class="tp-sidebar-toggle"
+        class="tp-sidebar-toggle d-none d-lg-flex"
         type="button"
         (click)="toggleSidebar()"
         [attr.aria-label]="(sidebarCollapsed() ? 'layout.sidebar.expand' : 'layout.sidebar.collapse') | translate"
@@ -17,6 +17,18 @@
           [class.bi-layout-sidebar-inset]="!sidebarCollapsed()"
           aria-hidden="true"
         ></i>
+      </button>
+
+      <!-- Mobile hamburger button -->
+      <button
+        class="tp-sidebar-toggle d-flex d-lg-none"
+        type="button"
+        (click)="toggleMobileMenu()"
+        [attr.aria-label]="(mobileMenuOpen() ? 'layout.sidebar.collapse' : 'layout.sidebar.expand') | translate"
+        [attr.aria-expanded]="mobileMenuOpen()"
+        data-testid="btn-mobile-menu"
+      >
+        <i class="bi bi-list" aria-hidden="true"></i>
       </button>
 
       <!-- Application name / brand -->
@@ -38,7 +50,7 @@
           data-testid="btn-user-menu"
         >
           <i class="bi bi-person-circle" aria-hidden="true"></i>
-          <span class="tp-header-username">{{ username() }}</span>
+          <span class="tp-header-username d-none d-sm-inline">{{ username() }}</span>
         </button>
         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenuDropdown">
           <li>
@@ -64,33 +76,127 @@
     </div>
   </header>
 
+  <!-- Mobile overlay backdrop -->
+  @if (mobileMenuOpen()) {
+    <div
+      class="tp-sidebar-backdrop d-lg-none"
+      (click)="closeMobileMenu()"
+      data-testid="sidebar-backdrop"
+    ></div>
+  }
+
   <!-- Sidebar -->
   <aside
     class="tp-sidebar"
     [class.collapsed]="sidebarCollapsed()"
+    [class.mobile-open]="mobileMenuOpen()"
     role="navigation"
     [attr.aria-label]="'layout.sidebar.navigation' | translate"
   >
-    <!-- Sidebar brand area (same height as header) -->
-    <div class="sidebar-brand">
-      <i class="bi bi-grid-fill" aria-hidden="true"></i>
-      <span class="sidebar-brand-text">{{ 'app.title' | translate }}</span>
-    </div>
-
-    <!-- Navigation items (placeholder - will be wired in task 18.3) -->
+    <!-- Navigation items -->
     <nav class="sidebar-nav">
       <ul class="nav flex-column">
-        <li class="nav-item">
-          <a
-            class="nav-link"
-            routerLink="/dashboard"
-            routerLinkActive="active"
-            data-testid="nav-dashboard"
-          >
-            <i class="bi bi-speedometer2" aria-hidden="true"></i>
-            <span class="nav-label">{{ 'menu.dashboard' | translate }}</span>
-          </a>
-        </li>
+        @for (item of navItems; track item.labelKey) {
+          @if (isItemVisible(item)) {
+            <li class="nav-item">
+              @if (item.children) {
+                <!-- Expandable section -->
+                <button
+                  class="nav-link nav-link-toggle"
+                  type="button"
+                  (click)="toggleSection(item.labelKey)"
+                  [attr.aria-expanded]="isSectionExpanded(item.labelKey)"
+                  [attr.data-testid]="'nav-toggle-' + item.labelKey"
+                >
+                  <i class="bi bi-{{ item.icon }}" aria-hidden="true"></i>
+                  <span class="nav-label">{{ item.labelKey | translate }}</span>
+                  <i
+                    class="bi nav-chevron ms-auto"
+                    [class.bi-chevron-down]="isSectionExpanded(item.labelKey)"
+                    [class.bi-chevron-right]="!isSectionExpanded(item.labelKey)"
+                    aria-hidden="true"
+                  ></i>
+                </button>
+
+                <!-- Sub-level items -->
+                @if (isSectionExpanded(item.labelKey)) {
+                  <ul class="nav flex-column nav-sub-level">
+                    @for (child of item.children; track child.labelKey) {
+                      @if (isItemVisible(child)) {
+                        <li class="nav-item">
+                          @if (child.children) {
+                            <!-- Nested expandable section (level 2) -->
+                            <button
+                              class="nav-link nav-link-toggle nav-link-nested"
+                              type="button"
+                              (click)="toggleSection(child.labelKey)"
+                              [attr.aria-expanded]="isSectionExpanded(child.labelKey)"
+                              [attr.data-testid]="'nav-toggle-' + child.labelKey"
+                            >
+                              <i class="bi bi-{{ child.icon }}" aria-hidden="true"></i>
+                              <span class="nav-label">{{ child.labelKey | translate }}</span>
+                              <i
+                                class="bi nav-chevron ms-auto"
+                                [class.bi-chevron-down]="isSectionExpanded(child.labelKey)"
+                                [class.bi-chevron-right]="!isSectionExpanded(child.labelKey)"
+                                aria-hidden="true"
+                              ></i>
+                            </button>
+
+                            @if (isSectionExpanded(child.labelKey)) {
+                              <ul class="nav flex-column nav-sub-level nav-sub-level-2">
+                                @for (grandchild of child.children; track grandchild.labelKey) {
+                                  @if (isItemVisible(grandchild)) {
+                                    <li class="nav-item">
+                                      <a
+                                        class="nav-link nav-link-leaf"
+                                        [routerLink]="grandchild.route"
+                                        routerLinkActive="active"
+                                        (click)="closeMobileMenu()"
+                                        [attr.data-testid]="'nav-' + grandchild.labelKey"
+                                      >
+                                        <i class="bi bi-{{ grandchild.icon }}" aria-hidden="true"></i>
+                                        <span class="nav-label">{{ grandchild.labelKey | translate }}</span>
+                                      </a>
+                                    </li>
+                                  }
+                                }
+                              </ul>
+                            }
+                          } @else {
+                            <!-- Leaf child item -->
+                            <a
+                              class="nav-link nav-link-leaf"
+                              [routerLink]="child.route"
+                              routerLinkActive="active"
+                              (click)="closeMobileMenu()"
+                              [attr.data-testid]="'nav-' + child.labelKey"
+                            >
+                              <i class="bi bi-{{ child.icon }}" aria-hidden="true"></i>
+                              <span class="nav-label">{{ child.labelKey | translate }}</span>
+                            </a>
+                          }
+                        </li>
+                      }
+                    }
+                  </ul>
+                }
+              } @else {
+                <!-- Leaf item (no children) -->
+                <a
+                  class="nav-link"
+                  [routerLink]="item.route"
+                  routerLinkActive="active"
+                  (click)="closeMobileMenu()"
+                  [attr.data-testid]="'nav-' + item.labelKey"
+                >
+                  <i class="bi bi-{{ item.icon }}" aria-hidden="true"></i>
+                  <span class="nav-label">{{ item.labelKey | translate }}</span>
+                </a>
+              }
+            </li>
+          }
+        }
       </ul>
     </nav>
   </aside>

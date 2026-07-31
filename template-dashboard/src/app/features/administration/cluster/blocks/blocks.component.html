@@ -1,0 +1,187 @@
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     CLUSTER BLOCKS LIST VIEW
+     ═══════════════════════════════════════════════════════════════════════════ -->
+@if (viewMode() === 'list') {
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">{{ 'cluster.blocks.title' | translate }}</h1>
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-secondary btn-sm"
+              data-testid="cluster-blocks-export-csv"
+              (click)="exportCsv()"
+              [attr.aria-label]="'button.export' | translate">
+        <i class="bi bi-download me-1" aria-hidden="true"></i>{{ 'button.export' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="card mb-3">
+    <div class="card-body">
+      <div class="tp-form-grid">
+        <div class="form-group">
+          <label for="filterName" class="form-label">{{ 'cluster.blocks.fields.name' | translate }}</label>
+          <input id="filterName"
+                 type="text"
+                 class="form-control form-control-sm"
+                 data-testid="cluster-blocks-filter-name"
+                 [(ngModel)]="filterName"
+                 [placeholder]="'cluster.blocks.fields.name' | translate">
+        </div>
+        <div class="form-group d-flex align-items-end gap-2">
+          <button class="btn btn-primary btn-sm"
+                  data-testid="cluster-blocks-apply-filters"
+                  (click)="applyFilters()">
+            <i class="bi bi-search me-1" aria-hidden="true"></i>{{ 'button.filter' | translate }}
+          </button>
+          <button class="btn btn-outline-secondary btn-sm"
+                  data-testid="cluster-blocks-clear-filters"
+                  (click)="clearFilters()">
+            {{ 'cluster.blocks.filters.clear' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="tp-table-responsive">
+    <table class="table table-striped table-hover align-middle" data-testid="cluster-blocks-table">
+      <thead class="table-light">
+        <tr>
+          <th>{{ 'cluster.blocks.fields.name' | translate }}</th>
+          <th>{{ 'cluster.blocks.fields.startDate' | translate }}</th>
+          <th>{{ 'cluster.blocks.fields.avgTime' | translate }}</th>
+          <th>{{ 'cluster.blocks.fields.minTime' | translate }}</th>
+          <th>{{ 'cluster.blocks.fields.maxTime' | translate }}</th>
+          <th>{{ 'cluster.blocks.fields.total' | translate }}</th>
+          <th>{{ 'cluster.blocks.fields.lastModifiedAt' | translate }}</th>
+          <th class="text-end">{{ 'common.actions' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (isLoading()) {
+          <tr>
+            <td colspan="8" class="text-center py-4">
+              <div class="spinner-border spinner-border-sm" role="status">
+                <span class="visually-hidden">{{ 'common.loading' | translate }}</span>
+              </div>
+            </td>
+          </tr>
+        } @else if (blocks().length === 0) {
+          <tr>
+            <td colspan="8" class="text-center py-4 text-muted">
+              {{ 'common.noData' | translate }}
+            </td>
+          </tr>
+        } @else {
+          @for (block of blocks(); track block.id) {
+            <tr>
+              <td>{{ block.name }}</td>
+              <td>{{ block.startDate | localDate }}</td>
+              <td>{{ block.avgTime }}</td>
+              <td>{{ block.minTime }}</td>
+              <td>{{ block.maxTime }}</td>
+              <td>{{ block.total }}</td>
+              <td>{{ block.lastModifiedAt | localDate }}</td>
+              <td class="text-end">
+                <button class="btn btn-outline-primary btn-sm"
+                        data-testid="cluster-blocks-view-detail"
+                        (click)="viewDetail(block)"
+                        [attr.aria-label]="'common.detail' | translate">
+                  <i class="bi bi-eye" aria-hidden="true"></i>
+                </button>
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  @if (totalElements() > 0) {
+    <div class="d-flex justify-content-between align-items-center mt-3">
+      <small class="text-muted">
+        {{ 'common.pagination.showing' | translate: { from: showingFrom(), to: showingTo(), total: totalElements() } }}
+      </small>
+      <nav [attr.aria-label]="'cluster.blocks.title' | translate">
+        <ul class="pagination pagination-sm mb-0">
+          <li class="page-item" [class.disabled]="currentPage() === 0">
+            <a class="page-link" href="javascript:void(0)" (click)="goToPage(currentPage() - 1)"
+               [attr.aria-label]="'common.pagination.previous' | translate">
+              &laquo;
+            </a>
+          </li>
+          @for (p of getPageNumbers(); track p) {
+            <li class="page-item" [class.active]="p === currentPage()">
+              <a class="page-link" href="javascript:void(0)" (click)="goToPage(p)">
+                {{ p + 1 }}
+              </a>
+            </li>
+          }
+          <li class="page-item" [class.disabled]="currentPage() >= totalPages() - 1">
+            <a class="page-link" href="javascript:void(0)" (click)="goToPage(currentPage() + 1)"
+               [attr.aria-label]="'common.pagination.next' | translate">
+              &raquo;
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  }
+}
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     CLUSTER BLOCK DETAIL VIEW
+     ═══════════════════════════════════════════════════════════════════════════ -->
+@if (viewMode() === 'detail') {
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">{{ 'cluster.blocks.detail.title' | translate }}</h1>
+    <button class="btn btn-outline-secondary btn-sm"
+            data-testid="cluster-blocks-back-to-list"
+            (click)="backToList()">
+      <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>{{ 'button.back' | translate }}
+    </button>
+  </div>
+
+  @if (selectedBlock(); as block) {
+    <div class="card">
+      <div class="card-body">
+        <div class="tp-form-grid">
+          <div class="form-group">
+            <label class="form-label fw-bold">{{ 'cluster.blocks.fields.name' | translate }}</label>
+            <p class="form-control-plaintext">{{ block.name }}</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label fw-bold">{{ 'cluster.blocks.fields.startDate' | translate }}</label>
+            <p class="form-control-plaintext">{{ block.startDate | localDate }}</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label fw-bold">{{ 'cluster.blocks.fields.avgTime' | translate }}</label>
+            <p class="form-control-plaintext">{{ block.avgTime }}</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label fw-bold">{{ 'cluster.blocks.fields.minTime' | translate }}</label>
+            <p class="form-control-plaintext">{{ block.minTime }}</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label fw-bold">{{ 'cluster.blocks.fields.maxTime' | translate }}</label>
+            <p class="form-control-plaintext">{{ block.maxTime }}</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label fw-bold">{{ 'cluster.blocks.fields.total' | translate }}</label>
+            <p class="form-control-plaintext">{{ block.total }}</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label fw-bold">{{ 'cluster.blocks.fields.createdAt' | translate }}</label>
+            <p class="form-control-plaintext">{{ block.createdAt | localDate }}</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label fw-bold">{{ 'cluster.blocks.fields.lastModifiedAt' | translate }}</label>
+            <p class="form-control-plaintext">{{ block.lastModifiedAt | localDate }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+}

@@ -1,0 +1,6 @@
+// Shared Styles Index
+// Import this file from any component that needs responsive utilities:
+//   @use 'src/app/shared/styles' as shared;
+//   or: @use '../../shared/styles' as shared;
+
+@forward 'responsive';

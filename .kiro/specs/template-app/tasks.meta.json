@@ -1,5 +1,82 @@
 {
-  "pbtResults": {},
+  "pbtResults": {
+    "16.9 Write property test for timezone conversion round-trip (Property 13)": {
+      "status": "passed",
+      "lastRunTimestamp": 1785307360965
+    },
+    "16.6 Write property test for action guard redirect (Property 8)": {
+      "status": "passed",
+      "lastRunTimestamp": 1785307364895
+    },
+    "16.5 Write property test for auth guard redirect (Property 7)": {
+      "status": "passed",
+      "lastRunTimestamp": 1785307458267
+    },
+    "5.5 Write property test for duplicate list detection (Property 3 - Users)": {
+      "status": "passed",
+      "lastRunTimestamp": 1785310062130
+    },
+    "3.5 Write property test for JWT payload (Property 4)": {
+      "status": "passed",
+      "lastRunTimestamp": 1785310092454
+    },
+    "5.4 Write property test for uniqueness constraint (Property 2 - Users)": {
+      "status": "passed",
+      "lastRunTimestamp": 1785310103737
+    },
+    "3.6 Write property test for authorization enforcement (Property 5)": {
+      "status": "not_run",
+      "lastRunTimestamp": 1785310221757
+    },
+    "5.3 Write property test for CRUD round-trip (Property 1 - Users)": {
+      "status": "passed",
+      "lastRunTimestamp": 1785313577917
+    },
+    "6.5 Write property test for duplicate list detection (Property 3 - Profiles)": {
+      "status": "passed",
+      "lastRunTimestamp": 1785314360473
+    },
+    "8.4 Write property test for uniqueness constraint (Property 2 - Parameters)": {
+      "status": "passed",
+      "lastRunTimestamp": 1785314420838
+    },
+    "6.3 Write property test for CRUD round-trip (Property 1 - Profiles)": {
+      "status": "passed",
+      "lastRunTimestamp": 1785314472965
+    },
+    "8.3 Write property test for CRUD round-trip (Property 1 - Parameters)": {
+      "status": "passed",
+      "lastRunTimestamp": 1785314504947
+    },
+    "6.4 Write property test for uniqueness constraint (Property 2 - Profiles)": {
+      "status": "passed",
+      "lastRunTimestamp": 1785314545179
+    },
+    "8.5 Write property test for parameter type-value validation (Property 9)": {
+      "status": "passed",
+      "lastRunTimestamp": 1785334469968
+    },
+    "10.4 Write property test for audit log immutability (Property 10)": {
+      "status": "passed",
+      "lastRunTimestamp": 1785334702802
+    },
+    "13.6 Write property test for single master node (Property 11)": {
+      "status": "passed",
+      "lastRunTimestamp": 1785335520254
+    },
+    "15.4 Write property test for API date format compliance (Property 14)": {
+      "status": "not_run",
+      "lastRunTimestamp": 1785335948923
+    },
+    "13.7 Write property test for cluster task execution governance (Property 17)": {
+      "status": "passed",
+      "lastRunTimestamp": 1785336225734
+    },
+    "15.2 Write property test for pagination metadata (Property 12)": {
+      "status": "passed",
+      "lastRunTimestamp": 1785336358154
+    }
+  },
   "executionHistory": {
     "0.1 Create the multi-module Maven project structure (backend)": [
       {
@@ -1004,6 +1081,334 @@
         "executionId": "c36dd5d8-55db-44fa-9347-06b048581571",
         "chatSessionId": "sess_418f83ab-3135-4a49-ab44-d3ad6a794a6d",
         "timestamp": 1785224085354
+      }
+    ],
+    "3.5 Write property test for JWT payload (Property 4)": [
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785305351698
+      },
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785307497870
+      },
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785313594046
+      }
+    ],
+    "3.6 Write property test for authorization enforcement (Property 5)": [
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785305351850
+      },
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785307498023
+      },
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785313595120
+      }
+    ],
+    "5.3 Write property test for CRUD round-trip (Property 1 - Users)": [
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785305351967
+      },
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785307498912
+      },
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785313596423
+      }
+    ],
+    "5.4 Write property test for uniqueness constraint (Property 2 - Users)": [
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785305352092
+      },
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785307499737
+      },
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785313596922
+      }
+    ],
+    "5.5 Write property test for duplicate list detection (Property 3 - Users)": [
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785305352252
+      },
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785307500547
+      },
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785313597737
+      }
+    ],
+    "6.3 Write property test for CRUD round-trip (Property 1 - Profiles)": [
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785305352391
+      },
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785313603383
+      },
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785314559396
+      }
+    ],
+    "6.4 Write property test for uniqueness constraint (Property 2 - Profiles)": [
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785305352519
+      },
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785313604341
+      },
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785314560219
+      }
+    ],
+    "6.5 Write property test for duplicate list detection (Property 3 - Profiles)": [
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785305352641
+      },
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785313606174
+      },
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785314560987
+      }
+    ],
+    "8.3 Write property test for CRUD round-trip (Property 1 - Parameters)": [
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785305352758
+      },
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785313606752
+      },
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785314561902
+      }
+    ],
+    "8.4 Write property test for uniqueness constraint (Property 2 - Parameters)": [
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785305352889
+      },
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785313606959
+      },
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785314562835
+      }
+    ],
+    "8.5 Write property test for parameter type-value validation (Property 9)": [
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785305353036
+      },
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785314570744
+      }
+    ],
+    "10.4 Write property test for audit log immutability (Property 10)": [
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785305353170
+      },
+      {
+        "executionId": "4b258ca1-73a6-499c-8223-a0167dc9d3de",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785330895133
+      }
+    ],
+    "13.6 Write property test for single master node (Property 11)": [
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785305353277
+      },
+      {
+        "executionId": "4b258ca1-73a6-499c-8223-a0167dc9d3de",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785330895928
+      }
+    ],
+    "13.7 Write property test for cluster task execution governance (Property 17)": [
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785305353381
+      },
+      {
+        "executionId": "4b258ca1-73a6-499c-8223-a0167dc9d3de",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785330896696
+      }
+    ],
+    "15.2 Write property test for pagination metadata (Property 12)": [
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785305353466
+      },
+      {
+        "executionId": "4b258ca1-73a6-499c-8223-a0167dc9d3de",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785330897343
+      }
+    ],
+    "15.4 Write property test for API date format compliance (Property 14)": [
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785305353546
+      },
+      {
+        "executionId": "4b258ca1-73a6-499c-8223-a0167dc9d3de",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785330898171
+      }
+    ],
+    "15.5 Write property test for system-managed timestamps (Property 16)": [
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785305353657
+      }
+    ],
+    "16.5 Write property test for auth guard redirect (Property 7)": [
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785305353755
+      },
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785305362171
+      },
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785307475039
+      }
+    ],
+    "16.6 Write property test for action guard redirect (Property 8)": [
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785305353821
+      },
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785305362988
+      },
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785307475792
+      }
+    ],
+    "16.9 Write property test for timezone conversion round-trip (Property 13)": [
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785305353914
+      },
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785305364056
+      },
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785307476604
+      }
+    ],
+    "18.4 Write property test for navigation visibility (Property 6)": [
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785305353999
+      }
+    ],
+    "28.2 Write property test for translation key completeness (Property 15)": [
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785305354089
+      }
+    ],
+    "30.2 Write integration tests for full authentication flow": [
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785305354201
+      }
+    ],
+    "30.3 Write integration tests for audit AOP and cluster": [
+      {
+        "executionId": "a769b1be-89f3-464d-b0a4-b8f4406a933d",
+        "chatSessionId": "sess_9331ec14-495c-4e6e-a6f2-5b23da202ebe",
+        "timestamp": 1785305354303
       }
     ]
   }

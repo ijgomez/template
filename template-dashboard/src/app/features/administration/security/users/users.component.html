@@ -1,0 +1,389 @@
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     USERS LIST VIEW
+     ═══════════════════════════════════════════════════════════════════════════ -->
+@if (viewMode() === 'list') {
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">{{ 'users.title' | translate }}</h1>
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-secondary btn-sm"
+              (click)="exportCsv()"
+              [attr.aria-label]="'button.export' | translate">
+        <i class="bi bi-download me-1"></i>{{ 'button.export' | translate }}
+      </button>
+      @if (canWrite()) {
+        <button class="btn btn-primary btn-sm"
+                (click)="showCreateForm()"
+                [attr.aria-label]="'button.create' | translate">
+          <i class="bi bi-plus-lg me-1"></i>{{ 'button.create' | translate }}
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="card mb-3">
+    <div class="card-body">
+      <div class="tp-form-grid">
+        <div class="form-group">
+          <label for="filterUsername" class="form-label">{{ 'users.fields.username' | translate }}</label>
+          <input id="filterUsername"
+                 type="text"
+                 class="form-control form-control-sm"
+                 [(ngModel)]="filterUsername"
+                 [placeholder]="'users.fields.username' | translate">
+        </div>
+        <div class="form-group">
+          <label for="filterFirstName" class="form-label">{{ 'users.fields.firstName' | translate }}</label>
+          <input id="filterFirstName"
+                 type="text"
+                 class="form-control form-control-sm"
+                 [(ngModel)]="filterFirstName"
+                 [placeholder]="'users.fields.firstName' | translate">
+        </div>
+        <div class="form-group">
+          <label for="filterLastName" class="form-label">{{ 'users.fields.lastName' | translate }}</label>
+          <input id="filterLastName"
+                 type="text"
+                 class="form-control form-control-sm"
+                 [(ngModel)]="filterLastName"
+                 [placeholder]="'users.fields.lastName' | translate">
+        </div>
+        <div class="form-group">
+          <label for="filterEmail" class="form-label">{{ 'users.fields.email' | translate }}</label>
+          <input id="filterEmail"
+                 type="text"
+                 class="form-control form-control-sm"
+                 [(ngModel)]="filterEmail"
+                 [placeholder]="'users.fields.email' | translate">
+        </div>
+        <div class="form-group">
+          <label for="filterProfile" class="form-label">{{ 'users.fields.profile' | translate }}</label>
+          <select id="filterProfile"
+                  class="form-select form-select-sm"
+                  [(ngModel)]="filterProfileId">
+            <option [ngValue]="null">{{ 'users.filters.allProfiles' | translate }}</option>
+            @for (profile of profiles(); track profile.id) {
+              <option [ngValue]="profile.id">{{ profile.name }}</option>
+            }
+          </select>
+        </div>
+        <div class="form-group d-flex align-items-end gap-2">
+          <button class="btn btn-primary btn-sm" (click)="applyFilters()">
+            <i class="bi bi-search me-1"></i>{{ 'button.filter' | translate }}
+          </button>
+          <button class="btn btn-outline-secondary btn-sm" (click)="clearFilters()">
+            {{ 'users.filters.clear' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="tp-table-responsive">
+    <table class="table table-striped table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>{{ 'users.fields.username' | translate }}</th>
+          <th>{{ 'users.fields.firstName' | translate }}</th>
+          <th>{{ 'users.fields.lastName' | translate }}</th>
+          <th>{{ 'users.fields.email' | translate }}</th>
+          <th>{{ 'users.fields.profile' | translate }}</th>
+          <th>{{ 'users.fields.lastAccess' | translate }}</th>
+          <th class="text-end">{{ 'common.actions' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (isLoading()) {
+          <tr>
+            <td colspan="7" class="text-center py-4">
+              <div class="spinner-border spinner-border-sm" role="status">
+                <span class="visually-hidden">{{ 'common.loading' | translate }}</span>
+              </div>
+            </td>
+          </tr>
+        } @else if (users().length === 0) {
+          <tr>
+            <td colspan="7" class="text-center py-4 text-muted">
+              {{ 'common.noData' | translate }}
+            </td>
+          </tr>
+        } @else {
+          @for (user of users(); track user.id) {
+            <tr>
+              <td>
+                <a href="javascript:void(0)" (click)="showDetail(user)" class="text-decoration-none">
+                  {{ user.username }}
+                </a>
+              </td>
+              <td>{{ user.firstName }}</td>
+              <td>{{ user.lastName }}</td>
+              <td>{{ user.email }}</td>
+              <td>{{ user.profileName }}</td>
+              <td>{{ user.lastAccess | localDate }}</td>
+              <td class="text-end">
+                <button class="btn btn-outline-secondary btn-sm me-1"
+                        (click)="showDetail(user)"
+                        [attr.aria-label]="'common.detail' | translate">
+                  <i class="bi bi-eye"></i>
+                </button>
+                @if (canWrite()) {
+                  <button class="btn btn-outline-primary btn-sm me-1"
+                          (click)="showEditForm(user)"
+                          [attr.aria-label]="'button.edit' | translate">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button class="btn btn-outline-danger btn-sm"
+                          (click)="confirmDelete(user)"
+                          [attr.aria-label]="'button.delete' | translate">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  @if (totalElements() > 0) {
+    <div class="d-flex justify-content-between align-items-center mt-3">
+      <small class="text-muted">
+        {{ 'common.pagination.showing' | translate: { from: showingFrom(), to: showingTo(), total: totalElements() } }}
+      </small>
+      <nav aria-label="Users pagination">
+        <ul class="pagination pagination-sm mb-0">
+          <li class="page-item" [class.disabled]="currentPage() === 0">
+            <a class="page-link" href="javascript:void(0)" (click)="goToPage(currentPage() - 1)">
+              &laquo;
+            </a>
+          </li>
+          @for (p of pages(); track p) {
+            <li class="page-item" [class.active]="p === currentPage()">
+              <a class="page-link" href="javascript:void(0)" (click)="goToPage(p)">
+                {{ p + 1 }}
+              </a>
+            </li>
+          }
+          <li class="page-item" [class.disabled]="currentPage() >= totalPages() - 1">
+            <a class="page-link" href="javascript:void(0)" (click)="goToPage(currentPage() + 1)">
+              &raquo;
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  }
+}
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     DETAIL VIEW
+     ═══════════════════════════════════════════════════════════════════════════ -->
+@if (viewMode() === 'detail') {
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">{{ 'users.detail.title' | translate }}</h1>
+    <div class="d-flex gap-2">
+      @if (canWrite()) {
+        <button class="btn btn-primary btn-sm" (click)="showEditForm(selectedUser()!)">
+          <i class="bi bi-pencil me-1"></i>{{ 'button.edit' | translate }}
+        </button>
+        <button class="btn btn-danger btn-sm" (click)="confirmDelete(selectedUser()!)">
+          <i class="bi bi-trash me-1"></i>{{ 'button.delete' | translate }}
+        </button>
+      }
+      <button class="btn btn-outline-secondary btn-sm" (click)="backToList()">
+        <i class="bi bi-arrow-left me-1"></i>{{ 'button.back' | translate }}
+      </button>
+    </div>
+  </div>
+
+  @if (selectedUser(); as user) {
+    <div class="card">
+      <div class="card-body">
+        <div class="tp-form-grid">
+          <div class="form-group">
+            <label class="form-label fw-bold">{{ 'users.fields.username' | translate }}</label>
+            <p class="form-control-plaintext">{{ user.username }}</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label fw-bold">{{ 'users.fields.firstName' | translate }}</label>
+            <p class="form-control-plaintext">{{ user.firstName ?? '-' }}</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label fw-bold">{{ 'users.fields.lastName' | translate }}</label>
+            <p class="form-control-plaintext">{{ user.lastName ?? '-' }}</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label fw-bold">{{ 'users.fields.email' | translate }}</label>
+            <p class="form-control-plaintext">{{ user.email ?? '-' }}</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label fw-bold">{{ 'users.fields.profile' | translate }}</label>
+            <p class="form-control-plaintext">{{ user.profileName ?? '-' }}</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label fw-bold">{{ 'users.fields.lastAccess' | translate }}</label>
+            <p class="form-control-plaintext">{{ user.lastAccess | localDate }}</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label fw-bold">{{ 'users.fields.createdAt' | translate }}</label>
+            <p class="form-control-plaintext">{{ user.createdAt | localDate }}</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label fw-bold">{{ 'users.fields.lastModifiedAt' | translate }}</label>
+            <p class="form-control-plaintext">{{ user.lastModifiedAt | localDate }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+}
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     CREATE / EDIT FORM
+     ═══════════════════════════════════════════════════════════════════════════ -->
+@if (viewMode() === 'create' || viewMode() === 'edit') {
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">
+      {{ (viewMode() === 'create' ? 'users.form.createTitle' : 'users.form.editTitle') | translate }}
+    </h1>
+    <button class="btn btn-outline-secondary btn-sm" (click)="backToList()">
+      <i class="bi bi-arrow-left me-1"></i>{{ 'button.back' | translate }}
+    </button>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <form (ngSubmit)="saveUser()" #userForm="ngForm">
+        <div class="tp-form-grid">
+          <div class="form-group">
+            <label for="username" class="form-label">{{ 'users.fields.username' | translate }} *</label>
+            <input id="username"
+                   type="text"
+                   class="form-control"
+                   [ngModel]="formUser().username"
+                   (ngModelChange)="updateFormField('username', $event)"
+                   name="username"
+                   required
+                   [readonly]="viewMode() === 'edit'">
+          </div>
+          <div class="form-group">
+            <label for="password" class="form-label">
+              {{ 'users.fields.password' | translate }}
+              @if (viewMode() === 'create') { * }
+            </label>
+            <input id="password"
+                   type="password"
+                   class="form-control"
+                   [ngModel]="formUser().password"
+                   (ngModelChange)="updateFormField('password', $event)"
+                   name="password"
+                   [required]="viewMode() === 'create'">
+          </div>
+          <div class="form-group">
+            <label for="firstName" class="form-label">{{ 'users.fields.firstName' | translate }}</label>
+            <input id="firstName"
+                   type="text"
+                   class="form-control"
+                   [ngModel]="formUser().firstName ?? ''"
+                   (ngModelChange)="updateFormField('firstName', $event || null)"
+                   name="firstName">
+          </div>
+          <div class="form-group">
+            <label for="lastName" class="form-label">{{ 'users.fields.lastName' | translate }}</label>
+            <input id="lastName"
+                   type="text"
+                   class="form-control"
+                   [ngModel]="formUser().lastName ?? ''"
+                   (ngModelChange)="updateFormField('lastName', $event || null)"
+                   name="lastName">
+          </div>
+          <div class="form-group">
+            <label for="email" class="form-label">{{ 'users.fields.email' | translate }}</label>
+            <input id="email"
+                   type="email"
+                   class="form-control"
+                   [ngModel]="formUser().email ?? ''"
+                   (ngModelChange)="updateFormField('email', $event || null)"
+                   name="email">
+          </div>
+          <div class="form-group">
+            <label for="profileId" class="form-label">{{ 'users.fields.profile' | translate }}</label>
+            <select id="profileId"
+                    class="form-select"
+                    [ngModel]="formUser().profileId"
+                    (ngModelChange)="updateFormField('profileId', $event)"
+                    name="profileId">
+              <option [ngValue]="null">{{ 'users.form.selectProfile' | translate }}</option>
+              @for (profile of profiles(); track profile.id) {
+                <option [ngValue]="profile.id">{{ profile.name }}</option>
+              }
+            </select>
+          </div>
+          <div class="form-group form-field-full">
+            <label class="form-label">{{ 'users.fields.reports' | translate }}</label>
+            <div class="border rounded p-2" style="max-height: 200px; overflow-y: auto;">
+              @if (reports().length === 0) {
+                <small class="text-muted">{{ 'common.noData' | translate }}</small>
+              } @else {
+                @for (report of reports(); track report.id) {
+                  <div class="form-check">
+                    <input class="form-check-input"
+                           type="checkbox"
+                           [id]="'report-' + report.id"
+                           [checked]="isReportSelected(report.id)"
+                           (change)="updateFormReports(report.id, $any($event.target).checked)">
+                    <label class="form-check-label" [for]="'report-' + report.id">
+                      {{ report.name }}
+                    </label>
+                  </div>
+                }
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-end gap-2 mt-3">
+          <button type="button" class="btn btn-outline-secondary" (click)="backToList()">
+            {{ 'button.cancel' | translate }}
+          </button>
+          <button type="submit" class="btn btn-primary">
+            {{ 'button.save' | translate }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     DELETE CONFIRMATION MODAL
+     ═══════════════════════════════════════════════════════════════════════════ -->
+@if (showDeleteConfirm()) {
+  <div class="modal d-block" tabindex="-1" role="dialog" aria-modal="true"
+       [attr.aria-label]="'users.delete.confirmTitle' | translate">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">{{ 'users.delete.confirmTitle' | translate }}</h5>
+          <button type="button" class="btn-close" (click)="cancelDelete()"
+                  [attr.aria-label]="'button.close' | translate"></button>
+        </div>
+        <div class="modal-body">
+          <p>{{ 'users.delete.confirmMessage' | translate: { username: userToDelete()?.username } }}</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" (click)="cancelDelete()">
+            {{ 'button.cancel' | translate }}
+          </button>
+          <button type="button" class="btn btn-danger" (click)="executeDelete()">
+            {{ 'button.confirm' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-backdrop show"></div>
+}

@@ -66,7 +66,24 @@
   "notification": {
     "progress": "Procesando...",
     "success": "Operación completada correctamente",
-    "error": "Se ha producido un error"
+    "error": "Se ha producido un error",
+    "save.progress": "Guardando...",
+    "save.success": "Guardado correctamente",
+    "save.error": "Error al guardar",
+    "create.progress": "Creando registro...",
+    "create.success": "Registro creado correctamente",
+    "create.error": "Error al crear el registro",
+    "update.progress": "Actualizando registro...",
+    "update.success": "Registro actualizado correctamente",
+    "update.error": "Error al actualizar el registro",
+    "delete.progress": "Eliminando registro...",
+    "delete.success": "Registro eliminado correctamente",
+    "delete.error": "Error al eliminar el registro",
+    "export.progress": "Exportando datos...",
+    "export.success": "Exportación completada correctamente",
+    "export.error": "Error al exportar los datos",
+    "pagination.progress": "Cargando datos...",
+    "filter.progress": "Aplicando filtros..."
   },
   "validation": {
     "required": "Este campo es obligatorio",
@@ -81,13 +98,268 @@
     "server": "Ha ocurrido un error en el servidor. Inténtelo de nuevo más tarde.",
     "unknown": "Ha ocurrido un error inesperado."
   },
+  "notFound": {
+    "message": "La página que busca no existe.",
+    "goToDashboard": "Ir al Panel Principal"
+  },
+  "profile": {
+    "title": "Mi Perfil",
+    "username": "Usuario",
+    "nombre": "Nombre",
+    "apellidos": "Apellidos",
+    "email": "Email",
+    "lastAccess": "Último Acceso",
+    "load.error": "Error al cargar el perfil"
+  },
   "common": {
     "loading": "Cargando...",
     "noData": "No hay datos disponibles",
     "actions": "Acciones",
     "detail": "Detalle",
     "pagination": {
-      "showing": "Mostrando {{from}} a {{to}} de {{total}} registros"
+      "showing": "Mostrando {{from}} a {{to}} de {{total}} registros",
+      "previous": "Página anterior",
+      "next": "Página siguiente"
+    }
+  },
+  "users": {
+    "title": "Usuarios",
+    "fields": {
+      "username": "Usuario",
+      "password": "Contraseña",
+      "firstName": "Nombre",
+      "lastName": "Apellidos",
+      "email": "Email",
+      "profile": "Perfil",
+      "reports": "Informes",
+      "lastAccess": "Último acceso",
+      "createdAt": "Fecha de creación",
+      "lastModifiedAt": "Última modificación"
+    },
+    "filters": {
+      "allProfiles": "Todos los perfiles",
+      "clear": "Limpiar"
+    },
+    "detail": {
+      "title": "Detalle de Usuario"
+    },
+    "form": {
+      "createTitle": "Crear Usuario",
+      "editTitle": "Editar Usuario",
+      "selectProfile": "Seleccione un perfil..."
+    },
+    "delete": {
+      "confirmTitle": "Eliminar Usuario",
+      "confirmMessage": "¿Está seguro de que desea eliminar al usuario \"{{username}}\"? Esta acción no se puede deshacer."
+    }
+  },
+  "profiles": {
+    "title": "Perfiles",
+    "fields": {
+      "name": "Nombre",
+      "description": "Descripción",
+      "actions": "Acciones",
+      "createdAt": "Fecha de creación",
+      "lastModifiedAt": "Última modificación"
+    },
+    "filters": {
+      "clear": "Limpiar"
+    },
+    "detail": {
+      "title": "Detalle de Perfil",
+      "assignedActions": "Acciones Asignadas",
+      "noActions": "Sin acciones asignadas",
+      "actionCode": "Código",
+      "actionName": "Nombre",
+      "actionType": "Tipo"
+    },
+    "form": {
+      "createTitle": "Crear Perfil",
+      "editTitle": "Editar Perfil",
+      "assignActions": "Asignar Acciones"
+    },
+    "delete": {
+      "confirmTitle": "Eliminar Perfil",
+      "confirmMessage": "¿Está seguro de que desea eliminar el perfil \"{{name}}\"? Esta acción no se puede deshacer."
+    },
+    "pagination": {
+      "label": "Paginación de perfiles"
+    }
+  },
+  "actions": {
+    "title": "Acciones",
+    "table": {
+      "code": "Código",
+      "name": "Nombre",
+      "type": "Tipo",
+      "description": "Descripción",
+      "createdAt": "Fecha de creación",
+      "lastModifiedAt": "Última modificación"
+    },
+    "filters": {
+      "clear": "Limpiar",
+      "allTypes": "Todos los tipos"
+    },
+    "detail": {
+      "title": "Detalle de Acción"
+    },
+    "edit": {
+      "title": "Editar Acción"
+    }
+  },
+  "parameters": {
+    "title": "Parámetros",
+    "fields": {
+      "code": "Código",
+      "description": "Descripción",
+      "value": "Valor",
+      "type": "Tipo",
+      "createdAt": "Fecha de creación",
+      "lastModifiedAt": "Última modificación"
+    },
+    "filters": {
+      "allTypes": "Todos los tipos",
+      "clear": "Limpiar"
+    },
+    "detail": {
+      "title": "Detalle de Parámetro"
+    },
+    "form": {
+      "createTitle": "Crear Parámetro",
+      "editTitle": "Editar Parámetro"
+    },
+    "delete": {
+      "confirmTitle": "Eliminar Parámetro",
+      "confirmMessage": "¿Está seguro de que desea eliminar el parámetro \"{{code}}\"? Esta acción no se puede deshacer."
+    },
+    "validation": {
+      "integer": "El valor debe ser un número entero válido",
+      "boolean": "El valor debe ser \"true\" o \"false\"",
+      "date": "El valor debe ser una fecha ISO 8601 válida"
+    },
+    "pagination": {
+      "label": "Paginación de parámetros"
+    }
+  },
+  "audit": {
+    "title": "Registro de Auditoría",
+    "fields": {
+      "timestamp": "Fecha/Hora",
+      "username": "Usuario",
+      "operationType": "Operación",
+      "section": "Sección",
+      "entityId": "ID Entidad",
+      "entityName": "Entidad",
+      "detail": "Detalle"
+    },
+    "filters": {
+      "dateFrom": "Desde",
+      "dateTo": "Hasta",
+      "allTypes": "Todas las operaciones",
+      "allSections": "Todas las secciones",
+      "clear": "Limpiar"
+    },
+    "detail": {
+      "title": "Detalle de Auditoría"
+    }
+  },
+  "interfaces": {
+    "monitor": {
+      "title": "Monitor de Interfaces",
+      "fields": {
+        "timestamp": "Fecha/Hora",
+        "operationType": "Tipo de Operación",
+        "interfaceName": "Interfaz",
+        "status": "Estado",
+        "requestPayload": "Payload de Petición",
+        "responsePayload": "Payload de Respuesta",
+        "errorMessage": "Mensaje de Error"
+      },
+      "filters": {
+        "dateFrom": "Desde",
+        "dateTo": "Hasta",
+        "allTypes": "Todos los tipos",
+        "allInterfaces": "Todas las interfaces",
+        "allStatuses": "Todos los estados",
+        "clear": "Limpiar"
+      },
+      "detail": {
+        "title": "Detalle de Operación"
+      }
+    },
+    "configuration": {
+      "title": "Configuración de Interfaces",
+      "fields": {
+        "name": "Nombre",
+        "description": "Descripción",
+        "url": "URL",
+        "protocol": "Protocolo",
+        "checkFrequency": "Frecuencia de chequeo (s)",
+        "status": "Estado",
+        "createdAt": "Fecha de creación",
+        "lastModifiedAt": "Última modificación"
+      },
+      "detail": {
+        "title": "Detalle de Interfaz"
+      }
+    }
+  },
+  "cluster": {
+    "nodes": {
+      "title": "Nodos del Cluster",
+      "fields": {
+        "hostname": "Hostname",
+        "status": "Estado",
+        "master": "Maestro",
+        "freeMemory": "Memoria Libre (MB)",
+        "totalMemory": "Memoria Total (MB)",
+        "usedMemory": "Memoria Usada (MB)",
+        "lastModifiedAt": "Último Heartbeat"
+      },
+      "setMaster": "Establecer como Maestro",
+      "confirmMaster": {
+        "title": "Confirmar cambio de Maestro",
+        "message": "¿Está seguro de que desea establecer \"{{hostname}}\" como nuevo nodo maestro? El maestro actual será degradado."
+      }
+    },
+    "blocks": {
+      "title": "Bloqueos del Cluster",
+      "fields": {
+        "name": "Nombre de Tarea",
+        "startDate": "Fecha de Inicio",
+        "avgTime": "Tiempo Promedio (ms)",
+        "minTime": "Tiempo Mínimo (ms)",
+        "maxTime": "Tiempo Máximo (ms)",
+        "total": "Total Ejecuciones",
+        "createdAt": "Fecha de creación",
+        "lastModifiedAt": "Última modificación"
+      },
+      "filters": {
+        "clear": "Limpiar"
+      },
+      "detail": {
+        "title": "Detalle de Bloqueo"
+      }
+    }
+  },
+  "reports": {
+    "title": "Informes",
+    "execute": "Ejecutar",
+    "fields": {
+      "name": "Nombre",
+      "description": "Descripción"
+    },
+    "execution": {
+      "title": "Ejecución de Informe",
+      "filters": "Filtros",
+      "run": "Ejecutar",
+      "results": "Resultados"
+    },
+    "export": {
+      "pdf": "Exportar PDF",
+      "xlsx": "Exportar Excel",
+      "csv": "Exportar CSV",
+      "txt": "Exportar TXT"
     }
   }
 }

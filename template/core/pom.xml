@@ -63,6 +63,13 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Testing: jqwik (property-based testing) -->
+        <dependency>
+            <groupId>net.jqwik</groupId>
+            <artifactId>jqwik</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <!-- Testing: Testcontainers -->
         <dependency>
             <groupId>org.testcontainers</groupId>

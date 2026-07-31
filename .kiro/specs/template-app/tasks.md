@@ -108,12 +108,12 @@ Full-stack enterprise application template implementing authentication/authoriza
     - Return 405 Method Not Allowed for restricted operations (create/delete actions, create/delete nodes, CUD blocks, CUD audit, CUD interfaces)
     - _Requirements: 5.4, 15.5, 15.6, 21.7, 22.7, 23.8, 23.9, 24.5, 32.5_
 
-  - [ ]* 3.5 Write property test for JWT payload (Property 4)
+  - [x] 3.5 Write property test for JWT payload (Property 4)
     - **Property 4: JWT payload contains user authorization data**
     - For any authenticated user with profile and actions, decoded JWT payload yields profile name and complete action codes list
     - **Validates: Requirements 5.1**
 
-  - [ ]* 3.6 Write property test for authorization enforcement (Property 5)
+  - [x] 3.6 Write property test for authorization enforcement (Property 5)
     - **Property 5: Authorization enforcement returns 403**
     - For any user without a required action, accessing a protected resource returns 403
     - For any user without report assignment, executing/exporting that report returns 403
@@ -148,18 +148,18 @@ Full-stack enterprise application template implementing authentication/authoriza
     - PUT /api/v1/administration/security/users/me
     - _Requirements: 35.3, 9.1, 9.2, 9.3_
 
-  - [ ]* 5.3 Write property test for CRUD round-trip (Property 1 - Users)
+  - [x] 5.3 Write property test for CRUD round-trip (Property 1 - Users)
     - **Property 1: CRUD round-trip preserves entity data**
     - For any valid user creation request, create then retrieve should return equivalent fields (excluding system-generated)
     - **Validates: Requirements 4.1, 4.3**
 
-  - [ ]* 5.4 Write property test for uniqueness constraint (Property 2 - Users)
+  - [x] 5.4 Write property test for uniqueness constraint (Property 2 - Users)
     - **Property 2: Uniqueness constraint enforcement**
     - For any duplicate username, creation should return 409 Conflict
     - **Validates: Requirements 4.6**
 
 
-  - [ ]* 5.5 Write property test for duplicate list detection (Property 3 - Users)
+  - [x] 5.5 Write property test for duplicate list detection (Property 3 - Users)
     - **Property 3: Duplicate list item detection**
     - For any user creation/update with duplicate reports in list, should return 400 Bad Request
     - **Validates: Requirements 4.8**
@@ -183,18 +183,18 @@ Full-stack enterprise application template implementing authentication/authoriza
     - DELETE /api/v1/administration/security/profiles/{id}
     - _Requirements: 35.4_
 
-  - [ ]* 6.3 Write property test for CRUD round-trip (Property 1 - Profiles)
+  - [x] 6.3 Write property test for CRUD round-trip (Property 1 - Profiles)
     - **Property 1: CRUD round-trip preserves entity data**
     - For any valid profile creation request, create then retrieve should return equivalent fields
     - **Validates: Requirements 14.1, 14.3**
 
-  - [ ]* 6.4 Write property test for uniqueness constraint (Property 2 - Profiles)
+  - [x] 6.4 Write property test for uniqueness constraint (Property 2 - Profiles)
     - **Property 2: Uniqueness constraint enforcement**
     - For any duplicate profile name, creation should return 409 Conflict
     - **Validates: Requirements 14.6**
 
 
-  - [ ]* 6.5 Write property test for duplicate list detection (Property 3 - Profiles)
+  - [x] 6.5 Write property test for duplicate list detection (Property 3 - Profiles)
     - **Property 3: Duplicate list item detection**
     - For any profile creation/update with duplicate actions in list, should return 400 Bad Request
     - **Validates: Requirements 14.9**
@@ -238,17 +238,17 @@ Full-stack enterprise application template implementing authentication/authoriza
     - DELETE /api/v1/administration/parameters/{code}
     - _Requirements: 35.6_
 
-  - [ ]* 8.3 Write property test for CRUD round-trip (Property 1 - Parameters)
+  - [x] 8.3 Write property test for CRUD round-trip (Property 1 - Parameters)
     - **Property 1: CRUD round-trip preserves entity data**
     - For any valid parameter creation request, create then retrieve should return equivalent fields
     - **Validates: Requirements 20.1, 20.3**
 
-  - [ ]* 8.4 Write property test for uniqueness constraint (Property 2 - Parameters)
+  - [x] 8.4 Write property test for uniqueness constraint (Property 2 - Parameters)
     - **Property 2: Uniqueness constraint enforcement**
     - For any duplicate parameter code, creation should return 409 Conflict
     - **Validates: Requirements 20.6**
 
-  - [ ]* 8.5 Write property test for parameter type-value validation (Property 9)
+  - [x] 8.5 Write property test for parameter type-value validation (Property 9)
     - **Property 9: Parameter type-value validation**
     - For any parameter type and invalid value string, create/update returns 400; for valid value string, operation succeeds
     - **Validates: Requirements 20.7, 28.5**
@@ -256,7 +256,7 @@ Full-stack enterprise application template implementing authentication/authoriza
 - [x] 9. Checkpoint - Verify backend CRUD services
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 10. Audit system (backend AOP)
+- [x] 10. Audit system (backend AOP)
   - [x] 10.1 Implement AuditAspect with AOP in core module
     - Create @Aspect that intercepts service methods annotated for audit
     - Record: timestamp, username, operation_type, section, entity_id, entity_name, detail
@@ -273,12 +273,12 @@ Full-stack enterprise application template implementing authentication/authoriza
     - Implement retention archival when configured period exceeded
     - _Requirements: 21.3, 21.5, 21.6, 21.7_
 
-  - [-] 10.3 Implement AuditController in webapp module
+  - [x] 10.3 Implement AuditController in webapp module
     - GET /api/v1/administration/audit (paginated + filters)
     - GET /api/v1/administration/audit/count
     - _Requirements: 35.7_
 
-  - [ ]* 10.4 Write property test for audit log immutability (Property 10)
+  - [x] 10.4 Write property test for audit log immutability (Property 10)
     - **Property 10: Audit log immutability**
     - For any existing audit log record, any UPDATE or DELETE attempt should be rejected
     - **Validates: Requirements 21.5, 26.3**
@@ -320,7 +320,7 @@ Full-stack enterprise application template implementing authentication/authoriza
     - GET /api/v1/interfaces/monitor/{id} (operation detail)
     - _Requirements: 35.8, 35.9_
 
-- [ ] 13. Cluster management (backend)
+- [x] 13. Cluster management (backend)
   - [x] 13.1 Implement ClusterService in core module
     - findAllNodes(): list all cluster nodes
     - findNodeById(id): node detail or 404
@@ -359,7 +359,7 @@ Full-stack enterprise application template implementing authentication/authoriza
     - Ignore DEAD nodes when calculating candidates
     - _Requirements: 38.1, 38.2, 38.3, 38.4, 38.5, 38.6, 38.7, 38.8_
 
-  - [-] 13.5 Implement HeartbeatWorker in cluster module
+  - [x] 13.5 Implement HeartbeatWorker in cluster module
     - Scheduled task (30s configurable interval)
     - Acquire lock on "NODOS" resource before processing
     - Update current node: status ALIVE, memory data, last_modified_at
@@ -370,17 +370,17 @@ Full-stack enterprise application template implementing authentication/authoriza
     - _Requirements: 30.1, 30.2, 30.3, 30.4, 30.5, 30.6, 30.7, 30.8, 30.9, 30.10_
 
 
-  - [ ]* 13.6 Write property test for single master node (Property 11)
+  - [x] 13.6 Write property test for single master node (Property 11)
     - **Property 11: Single master node invariant**
     - For any sequence of setMaster operations, at most one node has master=true at any time
     - **Validates: Requirements 23.4, 29.4**
 
-  - [ ]* 13.7 Write property test for cluster task execution governance (Property 17)
+  - [x] 13.7 Write property test for cluster task execution governance (Property 17)
     - **Property 17: Cluster task execution governance**
     - For any cluster config (task, jobs, node states), AbstractClusterWorker decisions follow: no task→abort, no enabled job→abort, ALIVE<minNodes→abort, not in top N priority→abort, else→execute
     - **Validates: Requirements 38.1, 38.2, 38.3, 38.4, 38.5, 38.8**
 
-- [~] 14. Checkpoint - Verify backend services complete
+- [x] 14. Checkpoint - Verify backend services complete
   - Ensure all tests pass, ask the user if questions arise.
 
 - [x] 15. Backend cross-cutting concerns
@@ -389,7 +389,7 @@ Full-stack enterprise application template implementing authentication/authoriza
     - Standardize Page response serialization across all controllers
     - _Requirements: 25.1, 25.13_
 
-  - [ ]* 15.2 Write property test for pagination metadata (Property 12)
+  - [x] 15.2 Write property test for pagination metadata (Property 12)
     - **Property 12: Pagination metadata consistency**
     - For any valid page size and number, totalPages = ceil(totalElements/size), content ≤ size, page < totalPages → non-empty
     - **Validates: Requirements 25.1, 4.2, 14.2, 20.2**
@@ -400,13 +400,13 @@ Full-stack enterprise application template implementing authentication/authoriza
     - Ensure all API responses use ISO 8601 with Z suffix
     - _Requirements: 27.1, 27.2, 27.7, 34.1_
 
-  - [ ]* 15.4 Write property test for API date format compliance (Property 14)
+  - [x] 15.4 Write property test for API date format compliance (Property 14)
     - **Property 14: API date format compliance**
     - For any API response with timestamp fields, all values conform to ISO 8601 with Z suffix
     - **Validates: Requirements 27.2**
 
 
-  - [ ]* 15.5 Write property test for system-managed timestamps (Property 16)
+  - [x] 15.5 Write property test for system-managed timestamps (Property 16)
     - **Property 16: System-managed timestamps are read-only**
     - For any create/update request with client-provided created_at/last_modified_at, the system ignores them and sets its own values
     - **Validates: Requirements 34.4, 34.5, 34.6**
@@ -446,12 +446,12 @@ Full-stack enterprise application template implementing authentication/authoriza
     - ActionGuard: redirect users without required action to Dashboard
     - _Requirements: 1.5, 5.5_
 
-  - [ ]* 16.5 Write property test for auth guard redirect (Property 7)
+  - [x] 16.5 Write property test for auth guard redirect (Property 7)
     - **Property 7: Auth guard redirects unauthenticated users**
     - For any protected route, unauthenticated user is redirected to login
     - **Validates: Requirements 1.5**
 
-  - [ ]* 16.6 Write property test for action guard redirect (Property 8)
+  - [x] 16.6 Write property test for action guard redirect (Property 8)
     - **Property 8: Action guard redirects unauthorized users**
     - For any route with required action, user without that action is redirected to Dashboard
     - **Validates: Requirements 5.5**
@@ -470,7 +470,7 @@ Full-stack enterprise application template implementing authentication/authoriza
     - Centralized service/pipe used consistently across all components
     - _Requirements: 27.3, 27.4, 27.5, 27.6_
 
-  - [ ]* 16.9 Write property test for timezone conversion round-trip (Property 13)
+  - [x] 16.9 Write property test for timezone conversion round-trip (Property 13)
     - **Property 13: Timezone conversion round-trip**
     - For any valid UTC timestamp and timezone offset, UTC→local→UTC produces original timestamp (within ms precision)
     - **Validates: Requirements 27.3, 27.4**
@@ -479,8 +479,8 @@ Full-stack enterprise application template implementing authentication/authoriza
 - [x] 17. Checkpoint - Verify frontend core infrastructure
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 18. Frontend layout and navigation
-  - [-] 18.1 Implement LayoutComponent (header, sidebar, content, footer)
+- [x] 18. Frontend layout and navigation
+  - [x] 18.1 Implement LayoutComponent (header, sidebar, content, footer)
     - Use Bootstrap 5 grid system and utility classes
     - Header: application name + user menu
     - Sidebar: navigation menu with expand/collapse sub-levels
@@ -488,14 +488,14 @@ Full-stack enterprise application template implementing authentication/authoriza
     - Footer: application info
     - _Requirements: 6.1, 6.3, 6.8_
 
-  - [~] 18.2 Implement responsive behavior (RWD + Adaptive Design)
+  - [x] 18.2 Implement responsive behavior (RWD + Adaptive Design)
     - Mobile (<576px): hide sidebar, hamburger menu, single column, prioritize content
     - Tablet (576px–991px): collapsible slide panel, two-column forms/tables
     - Desktop (≥992px): permanent expanded sidebar, multi-column layout
     - Bootstrap breakpoints: xs, sm, md, lg, xl, xxl
     - _Requirements: 6.2, 6.4, 6.5, 6.6, 6.7_
 
-  - [~] 18.3 Implement navigation with lazy loading and action-based visibility
+  - [x] 18.3 Implement navigation with lazy loading and action-based visibility
     - Client-side routing without full page reloads
     - Lazy load modules on navigation
     - Show/hide menu items based on user actions using the action↔menu mapping: DASHBOARD_READ→Dashboard, REPORT_EXECUTE→Informes, INTERFACES_READ→Interfaces, USER_READ/USER_WRITE→Usuarios, PROFILE_READ/PROFILE_WRITE→Perfiles, ACTION_READ→Acciones, SYSTEM_PARAMETER_READ/SYSTEM_PARAMETER_WRITE→Parámetros, SYSTEM_LOG_READ→Auditoría, CLUSTER_NODE_READ/CLUSTER_NODE_WRITE→Nodos, CLUSTER_LOCK_READ→Bloqueos
@@ -507,14 +507,14 @@ Full-stack enterprise application template implementing authentication/authoriza
     - 404 page with link to Dashboard
     - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7, 7.8, 7.9, 7.10, 7.11, 7.12_
 
-  - [ ]* 18.4 Write property test for navigation visibility (Property 6)
+  - [x] 18.4 Write property test for navigation visibility (Property 6)
     - **Property 6: Navigation visibility matches user actions**
     - For any set of actions, visible nav items = menu items whose required action is in user's set; parent sections inherit visibility from children
     - **Validates: Requirements 5.6, 7.2, 7.8, 7.9, 7.10, 7.11, 7.12**
 
 
-- [ ] 19. Frontend notification system
-  - [~] 19.1 Implement NotificationService and notification component
+- [x] 19. Frontend notification system
+  - [x] 19.1 Implement NotificationService and notification component
     - Three types: progress (in-progress with spinner), success (auto-dismiss 5s), error (auto-dismiss 8s with message)
     - Progress → Success transition on operation completion
     - Progress → Error transition on operation failure
@@ -528,15 +528,15 @@ Full-stack enterprise application template implementing authentication/authoriza
     - API URL, token refresh margin, notification timeouts
     - _Requirements: 10.3_
 
-- [ ] 21. Frontend CRUD views - Security module
-  - [~] 21.1 Implement Users list and form views
+- [x] 21. Frontend CRUD views - Security module
+  - [x] 21.1 Implement Users list and form views
     - List view: paginated table, filters (username, nombre, apellidos, email, perfil), CSV export
     - Create/Edit form: username, password, nombre, apellidos, email, perfil selector, report assignments (multi-select)
     - Detail view: all user fields read-only
     - Action-based button visibility: Create, Edit, Delete (with confirmation)
     - _Requirements: 25.1, 25.2, 25.3, 25.4, 25.6, 25.7, 25.8, 25.9, 25.10_
 
-  - [~] 21.2 Implement Profiles list and form views
+  - [x] 21.2 Implement Profiles list and form views
     - List view: paginated table, filters (nombre), CSV export
     - Create/Edit form: nombre, descripción, action assignments (multi-select)
     - Detail view: profile fields + assigned actions list
@@ -544,94 +544,94 @@ Full-stack enterprise application template implementing authentication/authoriza
     - _Requirements: 25.1, 25.2, 25.3, 25.4, 25.6, 25.7, 25.8, 25.9, 25.10_
 
 
-  - [~] 21.3 Implement Actions list and form views
+  - [x] 21.3 Implement Actions list and form views
     - List view: paginated table, filters (código, nombre, tipo), CSV export
     - Edit form: nombre, descripción, tipo (no create/delete buttons)
     - Detail view: all action fields read-only
     - Only Edit option (no Create/Delete per Req 25.11)
     - _Requirements: 25.1, 25.2, 25.3, 25.4, 25.7, 25.9, 25.11_
 
-  - [~] 21.4 Implement User Profile page (self-service)
+  - [x] 21.4 Implement User Profile page (self-service)
     - Display: username (read-only), nombre, apellidos, email, lastAccess (read-only)
     - Editable fields: nombre, apellidos, email
     - Save calls PUT /api/v1/administration/security/users/me
     - _Requirements: 9.1, 9.2, 9.3_
 
-- [ ] 22. Frontend CRUD views - Parameters module
-  - [~] 22.1 Implement Parameters list and form views
+- [x] 22. Frontend CRUD views - Parameters module
+  - [x] 22.1 Implement Parameters list and form views
     - List view: paginated table, filters (código, descripción, tipo), CSV export
     - Create/Edit form: código, descripción, valor, tipo (with type-value validation feedback)
     - Detail view: all parameter fields read-only
     - Action-based button visibility: Create, Edit, Delete (with confirmation)
     - _Requirements: 25.1, 25.2, 25.3, 25.4, 25.6, 25.7, 25.8, 25.9, 25.10_
 
-- [ ] 23. Frontend CRUD views - Audit module
-  - [~] 23.1 Implement Audit log list view (read-only)
+- [x] 23. Frontend CRUD views - Audit module
+  - [x] 23.1 Implement Audit log list view (read-only)
     - List view: paginated table, filters (fecha desde/hasta, username, operation_type, section), CSV export
     - Detail view only (no Create, Edit, Delete per Req 25.12)
     - _Requirements: 21.3, 21.4, 25.1, 25.2, 25.3, 25.4, 25.9, 25.12_
 
 
-- [ ] 24. Frontend CRUD views - Interfaces module (top-level)
-  - [~] 24.1 Implement Interfaces Monitor view (read-only)
+- [x] 24. Frontend CRUD views - Interfaces module (top-level)
+  - [x] 24.1 Implement Interfaces Monitor view (read-only)
     - List view: paginated table, filters (fecha, tipo operación, interfaz, status), CSV export
     - Detail view: timestamp, operation_type, interface_name, request_payload, response_payload, status
     - No Create/Edit/Delete per Req 25.12
     - _Requirements: 32.2, 32.3, 32.4, 25.1, 25.2, 25.3, 25.4, 25.9, 25.12_
 
-  - [~] 24.2 Implement Interfaces Configuration panel (read-only)
+  - [x] 24.2 Implement Interfaces Configuration panel (read-only)
     - List view: all interfaces with status indicators (green=active, red=error, grey=inactive)
     - Detail view: name, description, URL, protocol, check frequency
     - No Create/Edit/Delete per Req 25.12
     - _Requirements: 22.1, 22.2, 22.4, 25.9, 25.12_
 
-- [ ] 25. Frontend CRUD views - Cluster module
-  - [~] 25.1 Implement Cluster Nodes list and edit views
+- [x] 25. Frontend CRUD views - Cluster module
+  - [x] 25.1 Implement Cluster Nodes list and edit views
     - List view: nodes with status indicators (green=ALIVE, red=DEAD), master indicator
     - All fields read-only except master (editable)
     - Edit form: master toggle only
     - No Create/Delete per Req 25.11
     - _Requirements: 23.1, 23.5, 23.6, 25.1, 25.7, 25.9, 25.11_
 
-  - [~] 25.2 Implement Cluster Blocks list view (read-only)
+  - [x] 25.2 Implement Cluster Blocks list view (read-only)
     - List view: paginated table, filters (nombre de tarea), CSV export
     - Detail view: name, start_date, avg_time, min_time, max_time, total
     - No Create/Edit/Delete per Req 25.12
     - _Requirements: 24.1, 24.2, 24.3, 25.1, 25.2, 25.3, 25.4, 25.9, 25.12_
 
-- [ ] 26. Frontend CRUD views - Reports module
-  - [~] 26.1 Implement Reports list, execution and export views
+- [x] 26. Frontend CRUD views - Reports module
+  - [x] 26.1 Implement Reports list, execution and export views
     - List view: user's assigned reports with "Execute" button per row
     - Execution view: filter form (dynamic based on report definition) + results table (paginated)
     - Export buttons: PDF, XLSX, CSV, TXT (apply same filters as current execution)
     - Download file on successful export
     - _Requirements: 18.1, 18.3, 18.4, 18.5, 18.6, 18.7, 19.1, 19.7_
 
-- [~] 27. Checkpoint - Verify frontend views complete
+- [x] 27. Checkpoint - Verify frontend views complete
   - Ensure all tests pass, ask the user if questions arise.
 
 
-- [ ] 28. Frontend i18n translation files
-  - [~] 28.1 Create complete translation files for en and es
+- [x] 28. Frontend i18n translation files
+  - [x] 28.1 Create complete translation files for en and es
     - en.json: all UI labels, messages, notifications, menu items, errors in English
     - es.json: all UI labels, messages, notifications, menu items, errors in Spanish
     - Ensure every key used in templates exists in both files with non-empty value
     - _Requirements: 12.1, 12.2_
 
-  - [ ]* 28.2 Write property test for translation key completeness (Property 15)
+  - [x] 28.2 Write property test for translation key completeness (Property 15)
     - **Property 15: Translation key completeness**
     - For any translation key in any Angular template/component, that key exists in all locale files (en.json, es.json) with non-empty value
     - **Validates: Requirements 12.1**
 
-- [ ] 29. Frontend PWA offline behavior
-  - [~] 29.1 Implement offline detection and messaging
+- [x] 29. Frontend PWA offline behavior
+  - [x] 29.1 Implement offline detection and messaging
     - Show cached static resources when offline
     - Display connectivity warning message when no internet
     - Auto-recover full functionality when connection restored
     - _Requirements: 13.4, 13.5_
 
-- [ ] 30. Integration and wiring
-  - [~] 30.1 Wire frontend modules with backend API endpoints
+- [x] 30. Integration and wiring
+  - [x] 30.1 Wire frontend modules with backend API endpoints
     - Ensure all Angular services call correct backend URLs per Req 35 conventions
     - Verify lazy loading of all feature modules
     - Verify interceptor attaches JWT to all requests
@@ -639,13 +639,13 @@ Full-stack enterprise application template implementing authentication/authoriza
     - Verify DateService applied consistently across all date displays
     - _Requirements: 35.1, 35.13, 7.3, 27.5_
 
-  - [ ]* 30.2 Write integration tests for full authentication flow
+  - [x] 30.2 Write integration tests for full authentication flow
     - Test login → token issuance → protected access → refresh → logout with Testcontainers PostgreSQL
     - Test Liquibase migrations apply successfully
     - _Requirements: 1.1, 1.2, 1.3, 2.2, 3.1, 3.2_
 
 
-  - [ ]* 30.3 Write integration tests for audit AOP and cluster
+  - [x] 30.3 Write integration tests for audit AOP and cluster
     - Test AuditAspect captures operations end-to-end without contaminating business code
     - Test cluster node auto-registration, heartbeat, dead node detection, master election
     - Test ClusterLockService acquire/release with ClusterBlock metric update

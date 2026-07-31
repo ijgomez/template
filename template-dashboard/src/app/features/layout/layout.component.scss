@@ -1,5 +1,6 @@
 // Layout Component Styles
 // Follows template-docs/03-technical/frontend/layout.md specification
+// Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 6.8
 
 :host {
   display: block;
@@ -27,18 +28,18 @@ $transition-easing: ease-in-out;
   &.sidebar-collapsed {
     grid-template-columns: $sidebar-collapsed-width 1fr;
 
-    .sidebar-brand-text,
-    .nav-label {
+    .nav-label,
+    .nav-chevron {
       display: none;
-    }
-
-    .sidebar-brand {
-      justify-content: center;
     }
 
     .nav-link {
       justify-content: center;
-      padding-inline: var(--tp-space-2);
+      padding-inline: 0.5rem;
+    }
+
+    .nav-sub-level {
+      display: none;
     }
   }
 }
@@ -47,20 +48,20 @@ $transition-easing: ease-in-out;
 .tp-header {
   grid-area: header;
   height: $header-height;
-  background-color: var(--tp-color-primary);
+  background-color: var(--bs-primary, #0d6efd);
   color: #ffffff;
   display: flex;
   align-items: center;
-  padding-inline: var(--tp-space-3);
+  padding-inline: 1rem;
   z-index: 1030;
-  box-shadow: var(--tp-shadow-sm);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
 }
 
 .tp-header-content {
   display: flex;
   align-items: center;
   width: 100%;
-  gap: var(--tp-space-2);
+  gap: 0.5rem;
 }
 
 .tp-sidebar-toggle {
@@ -72,7 +73,7 @@ $transition-easing: ease-in-out;
   border: none;
   background: transparent;
   color: #ffffff;
-  border-radius: var(--tp-border-radius);
+  border-radius: 0.375rem;
   cursor: pointer;
   font-size: 1.25rem;
   transition: background-color 150ms ease-in-out;
@@ -88,8 +89,8 @@ $transition-easing: ease-in-out;
 }
 
 .tp-header-brand {
-  font-size: var(--tp-font-size-lg);
-  font-weight: var(--tp-font-weight-bold);
+  font-size: 1.125rem;
+  font-weight: 600;
   color: #ffffff;
   text-decoration: none;
   white-space: nowrap;
@@ -107,14 +108,14 @@ $transition-easing: ease-in-out;
 .tp-header-user {
   display: flex;
   align-items: center;
-  gap: var(--tp-space-2);
+  gap: 0.5rem;
   background: transparent;
   border: none;
   color: #ffffff;
-  font-size: var(--tp-font-size-sm);
+  font-size: 0.875rem;
   cursor: pointer;
-  padding: var(--tp-space-1) var(--tp-space-2);
-  border-radius: var(--tp-border-radius);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
   transition: background-color 150ms ease-in-out;
 
   &:hover {
@@ -127,7 +128,6 @@ $transition-easing: ease-in-out;
   }
 
   &::after {
-    // Bootstrap dropdown caret color
     color: #ffffff;
   }
 }
@@ -151,50 +151,43 @@ $transition-easing: ease-in-out;
   z-index: 1020;
 
   &.collapsed {
-    .sidebar-brand-text,
-    .nav-label {
+    .nav-label,
+    .nav-chevron {
       display: none;
-    }
-
-    .sidebar-brand {
-      justify-content: center;
     }
 
     .nav-link {
       justify-content: center;
-      padding-inline: var(--tp-space-2);
+      padding-inline: 0.5rem;
+    }
+
+    .nav-sub-level {
+      display: none;
     }
   }
-}
-
-.sidebar-brand {
-  height: $header-height;
-  display: flex;
-  align-items: center;
-  gap: var(--tp-space-2);
-  padding-inline: var(--tp-space-3);
-  border-bottom: 1px solid var(--tp-color-border);
-  font-size: var(--tp-font-size-lg);
-  font-weight: var(--tp-font-weight-bold);
-  white-space: nowrap;
-  overflow: hidden;
 }
 
 .sidebar-nav {
   flex: 1;
   overflow-y: auto;
-  padding-block: var(--tp-space-2);
+  padding-block: 0.5rem;
 }
 
+// ─── Navigation Links ────────────────────────────────────────
 .nav-link {
   display: flex;
   align-items: center;
-  gap: var(--tp-space-2);
-  padding: var(--tp-space-2) var(--tp-space-3);
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
   color: rgba(255, 255, 255, 0.75);
-  font-size: var(--tp-font-size-sm);
+  font-size: 0.875rem;
   text-decoration: none;
   white-space: nowrap;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: start;
+  cursor: pointer;
   transition: background-color 150ms ease-in-out, color 150ms ease-in-out;
 
   &:hover {
@@ -205,18 +198,51 @@ $transition-easing: ease-in-out;
   &.active {
     color: #ffffff;
     background-color: rgba(255, 255, 255, 0.15);
-    font-weight: var(--tp-font-weight-medium);
+    font-weight: 500;
   }
 
   &:focus-visible {
-    outline: 2px solid var(--tp-color-primary);
+    outline: 2px solid var(--bs-primary, #0d6efd);
     outline-offset: -2px;
   }
+}
+
+.nav-link-toggle {
+  cursor: pointer;
+}
+
+.nav-chevron {
+  font-size: 0.75rem;
+  transition: transform 150ms ease-in-out;
 }
 
 .nav-label {
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+// ─── Sub-level Navigation ────────────────────────────────────
+.nav-sub-level {
+  padding-left: 0;
+
+  .nav-link {
+    padding-left: 2.25rem;
+    font-size: 0.8125rem;
+  }
+
+  .nav-link-nested {
+    padding-left: 2.25rem;
+  }
+}
+
+.nav-sub-level-2 {
+  .nav-link {
+    padding-left: 3.25rem;
+  }
+}
+
+.nav-link-leaf {
+  // Leaf items use the default styling from .nav-link
 }
 
 // ─── Main area ───────────────────────────────────────────────
@@ -230,8 +256,8 @@ $transition-easing: ease-in-out;
 .tp-content {
   flex: 1;
   overflow-y: auto;
-  padding: var(--tp-space-3);
-  background-color: var(--tp-color-surface);
+  padding: 1rem;
+  background-color: #f8f9fa;
 }
 
 // ─── Footer ──────────────────────────────────────────────────
@@ -239,65 +265,126 @@ $transition-easing: ease-in-out;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--tp-space-2) var(--tp-space-3);
-  background-color: var(--tp-color-background);
-  border-top: var(--tp-border-width) solid var(--tp-color-border);
-  font-size: var(--tp-font-size-sm);
-  color: var(--tp-color-text-muted);
+  padding: 0.5rem 1rem;
+  background-color: #ffffff;
+  border-top: 1px solid #dee2e6;
+  font-size: 0.875rem;
+  color: #6c757d;
   flex-shrink: 0;
 }
 
 .tp-footer-version {
-  font-size: var(--tp-font-size-sm);
+  font-size: 0.875rem;
 }
 
-// ─── Responsive ──────────────────────────────────────────────
+// ─── Mobile Overlay Backdrop ─────────────────────────────────
+.tp-sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  top: $header-height;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1015;
+}
 
-// Tablet: sidebar hidden by default, overlay when expanded
-@media (max-width: 991.98px) {
+// ─── Desktop (≥992px / lg+) ──────────────────────────────────
+// Default grid already handles desktop: permanent expanded sidebar,
+// multi-column layout via grid-template-columns.
+
+// ─── Tablet (576px – 991px / sm, md) ─────────────────────────
+// Requirement 6.5: Collapsible slide panel, two-column forms/tables
+@media (min-width: 576px) and (max-width: 991.98px) {
   .tp-wrapper {
-    grid-template-columns: 0 1fr;
-
-    &:not(.sidebar-collapsed) {
-      .tp-sidebar {
-        position: fixed;
-        top: $header-height;
-        left: 0;
-        bottom: 0;
-        width: $sidebar-width;
-        box-shadow: var(--tp-shadow-lg);
-      }
-    }
-
-    &.sidebar-collapsed {
-      grid-template-columns: 0 1fr;
-    }
+    grid-template-areas:
+      "header"
+      "main";
+    grid-template-columns: 1fr;
+    grid-template-rows: $header-height 1fr;
   }
 
   .tp-sidebar {
+    position: fixed;
+    top: $header-height;
+    left: 0;
+    bottom: 0;
     width: 0;
     min-width: 0;
+    box-shadow: none;
+    overflow: hidden;
+    transition: width $transition-duration $transition-easing;
 
-    &:not(.collapsed) {
+    &.mobile-open {
       width: $sidebar-width;
+      box-shadow: 4px 0 12px rgba(0, 0, 0, 0.3);
+      overflow-y: auto;
     }
   }
-}
 
-// Mobile: hide username in header to save space
-@media (max-width: 575.98px) {
-  .tp-header-username {
-    display: none;
+  .tp-wrapper.sidebar-collapsed {
+    grid-template-columns: 1fr;
+  }
+
+  .tp-content {
+    padding: 1rem;
   }
 }
 
-// Respect reduced motion preference
+// ─── Mobile (<576px / xs) ────────────────────────────────────
+// Requirement 6.4: Hide sidebar, hamburger menu, single column, prioritize content
+@media (max-width: 575.98px) {
+  .tp-wrapper {
+    grid-template-areas:
+      "header"
+      "main";
+    grid-template-columns: 1fr;
+    grid-template-rows: $header-height 1fr;
+  }
+
+  .tp-sidebar {
+    position: fixed;
+    top: $header-height;
+    left: 0;
+    bottom: 0;
+    width: 0;
+    min-width: 0;
+    box-shadow: none;
+    overflow: hidden;
+    transition: width $transition-duration $transition-easing;
+
+    &.mobile-open {
+      width: 100%;
+      max-width: $sidebar-width;
+      box-shadow: 4px 0 12px rgba(0, 0, 0, 0.3);
+      overflow-y: auto;
+    }
+  }
+
+  .tp-wrapper.sidebar-collapsed {
+    grid-template-columns: 1fr;
+  }
+
+  .tp-header-brand {
+    font-size: 1rem;
+  }
+
+  .tp-content {
+    padding: 0.75rem;
+  }
+
+  .tp-footer {
+    flex-direction: column;
+    gap: 0.25rem;
+    text-align: center;
+  }
+}
+
+// ─── Respect reduced motion preference ──────────────────────
 @media (prefers-reduced-motion: reduce) {
   .tp-wrapper,
   .tp-sidebar,
   .tp-sidebar-toggle,
   .tp-header-user,
-  .nav-link {
+  .nav-link,
+  .nav-chevron {
     transition: none;
   }
 }
