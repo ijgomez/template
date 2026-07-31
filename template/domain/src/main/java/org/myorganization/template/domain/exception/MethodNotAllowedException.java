@@ -8,7 +8,9 @@ package org.myorganization.template.domain.exception;
  */
 public class MethodNotAllowedException extends RuntimeException {
 
-    public MethodNotAllowedException(String message) {
+    private static final long serialVersionUID = -6868705943738035409L;
+
+	public MethodNotAllowedException(String message) {
         super(message);
     }
 

@@ -100,7 +100,8 @@
           "builder": "@angular/build:unit-test",
           "options": {
             "buildTarget": "template-dashboard:build:local",
-            "tsConfig": "tsconfig.spec.json"
+            "tsConfig": "tsconfig.spec.json",
+            "include": ["src/**/*.spec.ts"]
           }
         }
       }

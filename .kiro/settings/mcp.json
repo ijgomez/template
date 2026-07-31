@@ -1,3 +1,14 @@
 {
-  "mcpServers": {}
+  "mcpServers": {
+    "serena": {
+      "command": "serena",
+      "args": [
+        "start-mcp-server",
+        "--project",
+        "/Users/ijgomez/Documents/workspace/template",
+        "--context",
+        "ide-assistant"
+      ]
+    }
+  }
 }

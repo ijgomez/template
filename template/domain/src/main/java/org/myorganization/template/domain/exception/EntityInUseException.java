@@ -8,7 +8,9 @@ package org.myorganization.template.domain.exception;
  */
 public class EntityInUseException extends RuntimeException {
 
-    public EntityInUseException(String message) {
+    private static final long serialVersionUID = -8988540424258083309L;
+
+	public EntityInUseException(String message) {
         super(message);
     }
 

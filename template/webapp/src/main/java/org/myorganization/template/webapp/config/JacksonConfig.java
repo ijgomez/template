@@ -18,7 +18,7 @@ import tools.jackson.databind.cfg.DateTimeFeature;
 public class JacksonConfig {
 
     @Bean
-    public JsonMapperBuilderCustomizer utcTimezoneCustomizer() {
+    JsonMapperBuilderCustomizer utcTimezoneCustomizer() {
         return builder -> builder
                 .defaultTimeZone(TimeZone.getTimeZone("UTC"))
                 .disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS);

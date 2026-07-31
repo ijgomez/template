@@ -7,7 +7,9 @@ package org.myorganization.template.domain.exception;
  */
 public class AuthenticationException extends RuntimeException {
 
-    public AuthenticationException(String message) {
+    private static final long serialVersionUID = 1954726032452845159L;
+
+	public AuthenticationException(String message) {
         super(message);
     }
 

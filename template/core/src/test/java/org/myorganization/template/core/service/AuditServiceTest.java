@@ -135,10 +135,6 @@ class AuditServiceTest {
             return saved;
         });
 
-        // Retention check: parameter not found
-        when(parameterService.findByCode("AUDIT_RETENTION_DAYS"))
-                .thenThrow(new EntityNotFoundException("Parameter", "AUDIT_RETENTION_DAYS"));
-
         // Act
         auditService.log(entry);
 
@@ -165,8 +161,6 @@ class AuditServiceTest {
         );
 
         when(auditLogRepository.save(any(AuditLog.class))).thenAnswer(invocation -> invocation.getArgument(0));
-        when(parameterService.findByCode("AUDIT_RETENTION_DAYS"))
-                .thenThrow(new EntityNotFoundException("Parameter", "AUDIT_RETENTION_DAYS"));
 
         OffsetDateTime before = OffsetDateTime.now(ZoneOffset.UTC);
 

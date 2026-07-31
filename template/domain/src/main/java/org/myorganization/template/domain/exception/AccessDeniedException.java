@@ -7,7 +7,9 @@ package org.myorganization.template.domain.exception;
  */
 public class AccessDeniedException extends RuntimeException {
 
-    public AccessDeniedException(String message) {
+    private static final long serialVersionUID = 126670706047460177L;
+
+	public AccessDeniedException(String message) {
         super(message);
     }
 

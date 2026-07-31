@@ -13,95 +13,115 @@ import esJson from '../../../assets/i18n/es.json';
  */
 describe('Translation Key Completeness - Property 15', () => {
   /**
-   * Recursively extracts all dot-notation keys from a nested JSON object.
+   * Represents a path to a leaf value in the JSON tree.
+   * Each element is one JSON key (which may contain dots).
    */
-  function extractKeys(obj: Record<string, unknown>, prefix = ''): string[] {
-    const keys: string[] = [];
+  type KeyPath = string[];
+
+  /**
+   * Recursively extracts all key paths from a nested JSON object.
+   * Each path is an array of string keys (preserving literal dot characters in keys).
+   */
+  function extractKeyPaths(obj: Record<string, unknown>, prefix: KeyPath = []): KeyPath[] {
+    const paths: KeyPath[] = [];
     for (const [key, value] of Object.entries(obj)) {
-      const fullKey = prefix ? `${prefix}.${key}` : key;
+      const currentPath = [...prefix, key];
       if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-        keys.push(...extractKeys(value as Record<string, unknown>, fullKey));
+        paths.push(...extractKeyPaths(value as Record<string, unknown>, currentPath));
       } else {
-        keys.push(fullKey);
+        paths.push(currentPath);
       }
     }
-    return keys;
+    return paths;
   }
 
   /**
-   * Gets a nested value from an object using dot notation.
+   * Gets a nested value from an object using an array of keys (not dot-splitting).
    */
-  function getNestedValue(obj: Record<string, unknown>, path: string): unknown {
-    const parts = path.split('.');
+  function getByKeyPath(obj: Record<string, unknown>, path: KeyPath): unknown {
     let current: unknown = obj;
-    for (const part of parts) {
+    for (const key of path) {
       if (current === null || current === undefined || typeof current !== 'object') {
         return undefined;
       }
-      current = (current as Record<string, unknown>)[part];
+      current = (current as Record<string, unknown>)[key];
     }
     return current;
   }
 
-  const enKeys = extractKeys(enJson as Record<string, unknown>);
-  const esKeys = extractKeys(esJson as Record<string, unknown>);
-  const allKeys = [...new Set([...enKeys, ...esKeys])];
+  /**
+   * Converts a key path to a display string (for error messages).
+   */
+  function pathToString(path: KeyPath): string {
+    return path.join(' > ');
+  }
+
+  const enPaths = extractKeyPaths(enJson as Record<string, unknown>);
+  const esPaths = extractKeyPaths(esJson as Record<string, unknown>);
 
   it('every key in en.json exists in es.json with non-empty value', () => {
     fc.assert(
-      fc.property(fc.constantFrom(...enKeys), (key) => {
-        const value = getNestedValue(esJson as Record<string, unknown>, key);
-        expect(value).withContext(
-          `Key "${key}" exists in en.json but is missing or empty in es.json`,
+      fc.property(fc.constantFrom(...enPaths), (keyPath) => {
+        const value = getByKeyPath(esJson as Record<string, unknown>, keyPath);
+        expect(
+          value,
+          `Key "${pathToString(keyPath)}" exists in en.json but is missing in es.json`,
         ).toBeDefined();
-        expect(typeof value === 'string' ? value.length > 0 : true).withContext(
-          `Key "${key}" has empty value in es.json`,
+        expect(
+          typeof value === 'string' ? value.length > 0 : true,
+          `Key "${pathToString(keyPath)}" has empty value in es.json`,
         ).toBe(true);
       }),
-      { numRuns: enKeys.length },
+      { numRuns: enPaths.length },
     );
   });
 
   it('every key in es.json exists in en.json with non-empty value', () => {
     fc.assert(
-      fc.property(fc.constantFrom(...esKeys), (key) => {
-        const value = getNestedValue(enJson as Record<string, unknown>, key);
-        expect(value).withContext(
-          `Key "${key}" exists in es.json but is missing or empty in en.json`,
+      fc.property(fc.constantFrom(...esPaths), (keyPath) => {
+        const value = getByKeyPath(enJson as Record<string, unknown>, keyPath);
+        expect(
+          value,
+          `Key "${pathToString(keyPath)}" exists in es.json but is missing in en.json`,
         ).toBeDefined();
-        expect(typeof value === 'string' ? value.length > 0 : true).withContext(
-          `Key "${key}" has empty value in en.json`,
+        expect(
+          typeof value === 'string' ? value.length > 0 : true,
+          `Key "${pathToString(keyPath)}" has empty value in en.json`,
         ).toBe(true);
       }),
-      { numRuns: esKeys.length },
+      { numRuns: esPaths.length },
     );
   });
 
   it('both locale files have the same set of keys', () => {
-    const enSet = new Set(enKeys);
-    const esSet = new Set(esKeys);
+    const enKeyStrings = enPaths.map(pathToString).sort();
+    const esKeyStrings = esPaths.map(pathToString).sort();
 
-    const missingInEs = enKeys.filter((k) => !esSet.has(k));
-    const missingInEn = esKeys.filter((k) => !enSet.has(k));
+    const enSet = new Set(enKeyStrings);
+    const esSet = new Set(esKeyStrings);
 
-    expect(missingInEs).withContext('Keys present in en.json but missing in es.json').toEqual([]);
-    expect(missingInEn).withContext('Keys present in es.json but missing in en.json').toEqual([]);
+    const missingInEs = enKeyStrings.filter((k) => !esSet.has(k));
+    const missingInEn = esKeyStrings.filter((k) => !enSet.has(k));
+
+    expect(missingInEs, 'Keys present in en.json but missing in es.json').toEqual([]);
+    expect(missingInEn, 'Keys present in es.json but missing in en.json').toEqual([]);
   });
 
   it('no key in any locale has an empty string value', () => {
+    const allPaths = [...enPaths]; // Both files should have same keys
     fc.assert(
-      fc.property(fc.constantFrom(...allKeys), (key) => {
-        const enValue = getNestedValue(enJson as Record<string, unknown>, key);
-        const esValue = getNestedValue(esJson as Record<string, unknown>, key);
+      fc.property(fc.constantFrom(...allPaths), (keyPath) => {
+        const enValue = getByKeyPath(enJson as Record<string, unknown>, keyPath);
+        const esValue = getByKeyPath(esJson as Record<string, unknown>, keyPath);
 
         if (typeof enValue === 'string') {
-          expect(enValue.length).withContext(`en.json key "${key}" is empty`).toBeGreaterThan(0);
+          expect(enValue.length, `en.json key "${pathToString(keyPath)}" is empty`).toBeGreaterThan(0);
         }
         if (typeof esValue === 'string') {
-          expect(esValue.length).withContext(`es.json key "${key}" is empty`).toBeGreaterThan(0);
+          expect(esValue.length, `es.json key "${pathToString(keyPath)}" is empty`).toBeGreaterThan(0);
         }
       }),
-      { numRuns: allKeys.length },
+      { numRuns: allPaths.length },
     );
   });
 });

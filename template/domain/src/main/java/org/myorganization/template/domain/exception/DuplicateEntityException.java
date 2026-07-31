@@ -7,7 +7,9 @@ package org.myorganization.template.domain.exception;
  */
 public class DuplicateEntityException extends RuntimeException {
 
-    public DuplicateEntityException(String message) {
+    private static final long serialVersionUID = 1363232062363792206L;
+
+	public DuplicateEntityException(String message) {
         super(message);
     }
 

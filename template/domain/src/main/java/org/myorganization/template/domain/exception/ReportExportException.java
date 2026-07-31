@@ -7,7 +7,9 @@ package org.myorganization.template.domain.exception;
  */
 public class ReportExportException extends RuntimeException {
 
-    public ReportExportException(String message) {
+    private static final long serialVersionUID = 2292783841048332600L;
+
+	public ReportExportException(String message) {
         super(message);
     }
 

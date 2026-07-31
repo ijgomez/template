@@ -109,7 +109,8 @@ describe('LayoutComponent - Property 6: Navigation visibility matches user actio
         for (const item of component.navItems) {
           const actual = component.isItemVisible(item);
           const expected = expectedVisibility(item, userActionSet);
-          expect(actual).withContext(
+          expect(
+            actual,
             `Item "${item.labelKey}" visibility mismatch for actions: [${userActions.join(', ')}]`,
           ).toBe(expected);
         }
@@ -134,7 +135,8 @@ describe('LayoutComponent - Property 6: Navigation visibility matches user actio
               if (childVisible) {
                 // If child is visible but parent is not, this violates the design invariant
                 const parentShouldBeVisible = item.actions!.some((a) => userActionSet.has(a));
-                expect(parentShouldBeVisible).withContext(
+                expect(
+                  parentShouldBeVisible,
                   `Child "${child.labelKey}" is visible but parent "${item.labelKey}" is not. ` +
                   `User actions: [${userActions.join(', ')}]`,
                 ).toBe(true);
@@ -160,7 +162,8 @@ describe('LayoutComponent - Property 6: Navigation visibility matches user actio
             );
 
             if (anyChildActionPresent) {
-              expect(component.isItemVisible(item)).withContext(
+              expect(
+                component.isItemVisible(item),
                 `Parent "${item.labelKey}" should be visible because a child has matching actions. ` +
                 `User actions: [${userActions.join(', ')}]`,
               ).toBe(true);
@@ -176,7 +179,8 @@ describe('LayoutComponent - Property 6: Navigation visibility matches user actio
     const component = createComponent([]);
 
     for (const item of component.navItems) {
-      expect(component.isItemVisible(item)).withContext(
+      expect(
+        component.isItemVisible(item),
         `Item "${item.labelKey}" should be hidden when user has no actions`,
       ).toBe(false);
     }
@@ -186,7 +190,8 @@ describe('LayoutComponent - Property 6: Navigation visibility matches user actio
     const component = createComponent([...ALL_ACTIONS]);
 
     for (const item of component.navItems) {
-      expect(component.isItemVisible(item)).withContext(
+      expect(
+        component.isItemVisible(item),
         `Item "${item.labelKey}" should be visible when user has all actions`,
       ).toBe(true);
     }
@@ -201,7 +206,8 @@ describe('LayoutComponent - Property 6: Navigation visibility matches user actio
         for (const item of component.navItems) {
           const actual = component.isItemVisible(item);
           const expected = expectedVisibility(item, userActionSet);
-          expect(actual).withContext(
+          expect(
+            actual,
             `Item "${item.labelKey}" visibility with single action "${singleAction}"`,
           ).toBe(expected);
 
@@ -209,7 +215,8 @@ describe('LayoutComponent - Property 6: Navigation visibility matches user actio
             for (const child of item.children) {
               const childActual = component.isItemVisible(child);
               const childExpected = expectedVisibility(child, userActionSet);
-              expect(childActual).withContext(
+              expect(
+                childActual,
                 `Child "${child.labelKey}" visibility with single action "${singleAction}"`,
               ).toBe(childExpected);
             }

@@ -7,7 +7,9 @@ package org.myorganization.template.domain.exception;
  */
 public class EntityNotFoundException extends RuntimeException {
 
-    public EntityNotFoundException(String message) {
+    private static final long serialVersionUID = 5799452148962909841L;
+
+	public EntityNotFoundException(String message) {
         super(message);
     }
 
