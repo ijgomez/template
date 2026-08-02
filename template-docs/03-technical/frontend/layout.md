@@ -113,13 +113,13 @@ El menú lateral soporta dos estados visuales controlados por un botón de toggl
 
 #### Botón de toggle
 
-| Propiedad         | Valor                                         |
-|-------------------|-----------------------------------------------|
-| Ubicación         | Barra superior, zona izquierda (primer elemento) |
-| Icono expandido   | `bi-layout-sidebar-inset`                     |
-| Icono contraído   | `bi-list`                                     |
-| `aria-label`      | "Colapsar menú" / "Expandir menú"            |
-| `aria-expanded`   | `true` (expandido) / `false` (contraído)      |
+| Propiedad       | Valor                                            |
+|-----------------|--------------------------------------------------|
+| Ubicación       | Barra superior, zona izquierda (primer elemento) |
+| Icono expandido | `bi-layout-sidebar-inset`                        |
+| Icono contraído | `bi-list`                                        |
+| `aria-label`    | "Colapsar menú" / "Expandir menú"                |
+| `aria-expanded` | `true` (expandido) / `false` (contraído)         |
 
 #### Transición
 
@@ -133,11 +133,11 @@ El menú lateral soporta dos estados visuales controlados por un botón de toggl
 
 #### Interacción con responsive
 
-| Pantalla      | Comportamiento                                                                 |
-|---------------|--------------------------------------------------------------------------------|
-| Escritorio (≥992px) | Toggle funcional: alterna entre 260px y 64px.                            |
-| Tablet (<992px)     | Sidebar oculto por defecto; se muestra como overlay al pulsar toggle.    |
-| Móvil (<576px)      | Sidebar oculto; se despliega completo como overlay con backdrop.          |
+| Pantalla            | Comportamiento                                                        |
+|---------------------|-----------------------------------------------------------------------|
+| Escritorio (≥992px) | Toggle funcional: alterna entre 260px y 64px.                         |
+| Tablet (<992px)     | Sidebar oculto por defecto; se muestra como overlay al pulsar toggle. |
+| Móvil (<576px)      | Sidebar oculto; se despliega completo como overlay con backdrop.      |
 
 #### Implementación Angular
 
@@ -168,12 +168,12 @@ export class SidebarComponent implements OnInit {
 
 #### Clases CSS implicadas
 
-| Clase                          | Elemento         | Descripción                                    |
-|--------------------------------|------------------|------------------------------------------------|
-| `.tp-sidebar`                  | `<aside>`        | Sidebar en estado normal (260px)               |
-| `.tp-sidebar.collapsed`        | `<aside>`        | Sidebar en estado contraído (64px)             |
-| `.tp-wrapper.sidebar-collapsed`| `<div>` raíz     | Wrapper cuando el sidebar está contraído       |
-| `.tp-sidebar-toggle`           | `<button>`       | Botón de toggle en la barra superior           |
+| Clase                           | Elemento     | Descripción                              |
+|---------------------------------|--------------|------------------------------------------|
+| `.tp-sidebar`                   | `<aside>`    | Sidebar en estado normal (260px)         |
+| `.tp-sidebar.collapsed`         | `<aside>`    | Sidebar en estado contraído (64px)       |
+| `.tp-wrapper.sidebar-collapsed` | `<div>` raíz | Wrapper cuando el sidebar está contraído |
+| `.tp-sidebar-toggle`            | `<button>`   | Botón de toggle en la barra superior     |
 
 #### Referencia visual (wireframes)
 

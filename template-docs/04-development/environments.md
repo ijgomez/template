@@ -42,9 +42,9 @@ ng build --configuration=test    # Testing
 
 Cada configuración tiene un fichero de entorno asociado:
 
-| Configuración | Fichero                              |
-|---------------|--------------------------------------|
-| `local`       | `src/environments/environment.ts`    |
+| Configuración | Fichero                                |
+|---------------|----------------------------------------|
+| `local`       | `src/environments/environment.ts`      |
 | `dist`        | `src/environments/environment.dist.ts` |
 | `test`        | `src/environments/environment.test.ts` |
 

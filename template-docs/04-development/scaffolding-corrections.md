@@ -43,13 +43,13 @@ template/                   ← raíz del workspace
 
 ### Cambios aplicados
 
-| Aspecto | Antes | Después |
-|---------|-------|---------|
-| Ubicación del POM padre | `template/pom.xml` (raíz) | `template/template/pom.xml` |
-| Nombres de módulos | `template-commons/`, `template-cluster/`, etc. | `commons/`, `cluster/`, `domain/`, `core/`, `webapp/` |
-| Ubicación de módulos | Raíz del workspace | Dentro de `template/template/` |
-| `template-liquibase` | Submódulo Maven del POM padre | Proyecto independiente en la raíz |
-| Declaración de módulos en POM | `<module>template-commons</module>` | `<module>commons</module>` |
+| Aspecto                       | Antes                                          | Después                                               |
+|-------------------------------|------------------------------------------------|-------------------------------------------------------|
+| Ubicación del POM padre       | `template/pom.xml` (raíz)                      | `template/template/pom.xml`                           |
+| Nombres de módulos            | `template-commons/`, `template-cluster/`, etc. | `commons/`, `cluster/`, `domain/`, `core/`, `webapp/` |
+| Ubicación de módulos          | Raíz del workspace                             | Dentro de `template/template/`                        |
+| `template-liquibase`          | Submódulo Maven del POM padre                  | Proyecto independiente en la raíz                     |
+| Declaración de módulos en POM | `<module>template-commons</module>`            | `<module>commons</module>`                            |
 
 **Nota:** Los `artifactId` de cada módulo se mantienen con el prefijo `template-` (e.g., `template-commons`, `template-core`). Solo los nombres de directorio cambian.
 
@@ -73,23 +73,23 @@ package com.ijgomez.template.core;
 
 Según `template-docs/04-development/coding-guidelines/java-spring-boot.md`, el paquete raíz del proyecto es `org.myorganization.template`:
 
-| Módulo Maven | Paquete base |
-|--------------|--------------|
-| `commons` | `org.myorganization.template.commons` |
-| `cluster` | `org.myorganization.template.cluster` |
-| `domain` | `org.myorganization.template.domain` |
-| `core` | `org.myorganization.template.core` |
-| `webapp` | `org.myorganization.template.web` |
+| Módulo Maven | Paquete base                          |
+|--------------|---------------------------------------|
+| `commons`    | `org.myorganization.template.commons` |
+| `cluster`    | `org.myorganization.template.cluster` |
+| `domain`     | `org.myorganization.template.domain`  |
+| `core`       | `org.myorganization.template.core`    |
+| `webapp`     | `org.myorganization.template.web`     |
 
 ### Cambios aplicados
 
-| Aspecto | Antes | Después |
-|---------|-------|---------|
-| `groupId` en POMs | `com.ijgomez.template` | `org.myorganization.template` |
-| Paquete Java | `com.ijgomez.template.*` | `org.myorganization.template.*` |
-| Directorios de fuentes | `src/main/java/com/ijgomez/template/` | `src/main/java/org/myorganization/template/` |
-| `scanBasePackages` | `com.ijgomez.template` | `org.myorganization.template` |
-| Configuración de logging | `com.ijgomez.template: DEBUG` | `org.myorganization.template: DEBUG` |
+| Aspecto                  | Antes                                 | Después                                      |
+|--------------------------|---------------------------------------|----------------------------------------------|
+| `groupId` en POMs        | `com.ijgomez.template`                | `org.myorganization.template`                |
+| Paquete Java             | `com.ijgomez.template.*`              | `org.myorganization.template.*`              |
+| Directorios de fuentes   | `src/main/java/com/ijgomez/template/` | `src/main/java/org/myorganization/template/` |
+| `scanBasePackages`       | `com.ijgomez.template`                | `org.myorganization.template`                |
+| Configuración de logging | `com.ijgomez.template: DEBUG`         | `org.myorganization.template: DEBUG`         |
 
 Los cambios se aplicaron en:
 - 7 ficheros POM (parent + 5 módulos + template-liquibase)
@@ -126,10 +126,10 @@ template/                          ← Raíz del workspace
 
 Se añadieron dos nuevas subtareas al plan de implementación (Task 0.3 y Task 0.4) para completar el scaffolding:
 
-| Tarea | Proyecto | Contenido esperado |
-|-------|----------|-------------------|
-| 0.3 | `template-docker/` | `docker-compose.yml` (PostgreSQL 18, Backend, Frontend), Dockerfiles multi-stage para backend (Maven + JDK 21) y frontend (Node + Nginx), `.env.example`, `README.md` |
-| 0.4 | `template-dist/` | Scripts de build, package y deploy organizados por SO, `README.md` con documentación de uso |
+| Tarea | Proyecto           | Contenido esperado                                                                                                                                                    |
+|-------|--------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 0.3   | `template-docker/` | `docker-compose.yml` (PostgreSQL 18, Backend, Frontend), Dockerfiles multi-stage para backend (Maven + JDK 21) y frontend (Node + Nginx), `.env.example`, `README.md` |
+| 0.4   | `template-dist/`   | Scripts de build, package y deploy organizados por SO, `README.md` con documentación de uso                                                                           |
 
 **Nota:** `template-properties/` no se incluyó en esta fase porque su contenido depende de la configuración específica de cada entorno, que se definirá en tareas posteriores (Task 15.6).
 
@@ -143,8 +143,8 @@ La tarea de scaffolding generó el proyecto Angular con dos configuraciones gen�
 
 ```json
 "configurations": {
-  "production": { ... },
-  "development": { ... }
+  "development": { ... },
+  "production": { ... }
 }
 ```
 
@@ -154,13 +154,13 @@ Las configuraciones de Angular deben estar alineadas 1:1 con los perfiles Maven 
 
 ### Cambios aplicados
 
-| Aspecto | Antes | Después |
-|---------|-------|---------|
-| Configuraciones Angular | `production`, `development` | `local`, `dist`, `test` |
-| Ficheros de entorno | `environment.ts`, `environment.prod.ts` | `environment.ts`, `environment.dist.ts`, `environment.test.ts` |
-| Default de `ng build` | `production` | `dist` |
-| Default de `ng serve` | `development` | `local` |
-| Campo `profile` en environments | No existía | Añadido, coincide con el perfil Maven |
+| Aspecto                         | Antes                                   | Después                                                        |
+|---------------------------------|-----------------------------------------|----------------------------------------------------------------|
+| Configuraciones Angular         | `production`, `development`             | `local`, `dist`, `test`                                        |
+| Ficheros de entorno             | `environment.ts`, `environment.prod.ts` | `environment.ts`, `environment.dist.ts`, `environment.test.ts` |
+| Default de `ng build`           | `production`                            | `dist`                                                         |
+| Default de `ng serve`           | `development`                           | `local`                                                        |
+| Campo `profile` en environments | No existía                              | Añadido, coincide con el perfil Maven                          |
 
 Ficheros creados/actualizados:
 - `src/environments/environment.ts` — perfil `local` (base, por defecto en `ng serve`)
@@ -189,13 +189,13 @@ El WAR generado por el módulo `webapp` debe incluir los recursos estáticos del
 
 ### Cambios aplicados
 
-| Aspecto | Antes | Después |
-|---------|-------|---------|
-| Frontend en WAR | No incluido | Incluido en `WEB-INF/classes/static/` |
-| Plugin Maven | No existía | `frontend-maven-plugin` 1.15.1 |
-| Fases del build | Solo compilación Java | + install-node + npm-install + npm-build + copy-resources |
-| Propiedad `frontend.skip` | No existía | Permite saltar el build frontend con `-Dfrontend.skip=true` |
-| Propiedad `angular.configuration` | No existía | Se resuelve según perfil Maven activo |
+| Aspecto                           | Antes                 | Después                                                     |
+|-----------------------------------|-----------------------|-------------------------------------------------------------|
+| Frontend en WAR                   | No incluido           | Incluido en `WEB-INF/classes/static/`                       |
+| Plugin Maven                      | No existía            | `frontend-maven-plugin` 1.15.1                              |
+| Fases del build                   | Solo compilación Java | + install-node + npm-install + npm-build + copy-resources   |
+| Propiedad `frontend.skip`         | No existía            | Permite saltar el build frontend con `-Dfrontend.skip=true` |
+| Propiedad `angular.configuration` | No existía            | Se resuelve según perfil Maven activo                       |
 
 Configuración añadida al POM de `webapp`:
 
@@ -222,10 +222,10 @@ Configuración añadida al POM de `webapp`:
 Propiedad `angular.configuration` añadida a cada perfil Maven del POM padre:
 
 | Perfil Maven | `angular.configuration` |
-|---|---|
-| `local` | `local` |
-| `dist` | `dist` |
-| `test` | `test` |
+|--------------|-------------------------|
+| `local`      | `local`                 |
+| `dist`       | `dist`                  |
+| `test`       | `test`                  |
 
 Comandos de compilación:
 

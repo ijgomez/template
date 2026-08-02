@@ -10,17 +10,17 @@ Esta guía describe los pasos necesarios para configurar el entorno de desarroll
 
 ### Software necesario
 
-| Software       | Versión mínima | Descripción                              |
-|----------------|----------------|------------------------------------------|
-| JDK            | 21             | Java Development Kit                     |
-| Maven          | 3.9+           | Gestión de dependencias y build (backend)|
-| Node.js        | 20 LTS         | Runtime para herramientas frontend       |
-| npm            | 10+            | Gestor de paquetes frontend              |
-| Angular CLI    | 22             | Herramienta de línea de comandos Angular |
-| PostgreSQL     | 18             | Base de datos relacional                 |
-| Git            | 2.40+          | Control de versiones                     |
-| Docker         | 24+            | Contenedorización (opcional)             |
-| Docker Compose | 2.20+          | Orquestación de contenedores (opcional)  |
+| Software       | Versión mínima | Descripción                               |
+|----------------|----------------|-------------------------------------------|
+| JDK            | 21             | Java Development Kit                      |
+| Maven          | 3.9+           | Gestión de dependencias y build (backend) |
+| Node.js        | 20 LTS         | Runtime para herramientas frontend        |
+| npm            | 10+            | Gestor de paquetes frontend               |
+| Angular CLI    | 22             | Herramienta de línea de comandos Angular  |
+| PostgreSQL     | 18             | Base de datos relacional                  |
+| Git            | 2.40+          | Control de versiones                      |
+| Docker         | 24+            | Contenedorización (opcional)              |
+| Docker Compose | 2.20+          | Orquestación de contenedores (opcional)   |
 
 ### Verificar versiones instaladas
 
@@ -178,15 +178,15 @@ La configuración específica de cada entorno se gestiona mediante:
 
 Variables clave de configuración:
 
-| Variable                          | Descripción                             | Valor local por defecto         |
-|-----------------------------------|-----------------------------------------|---------------------------------|
-| `spring.datasource.url`           | URL de conexión a PostgreSQL            | `jdbc:postgresql://localhost:5432/template_db` |
-| `spring.datasource.username`      | Usuario de base de datos                | `template_user`                 |
-| `spring.datasource.password`      | Contraseña de base de datos             | `template_pass`                 |
-| `app.jwt.secret`                  | Clave secreta para firmar tokens JWT    | (valor de desarrollo)           |
-| `app.jwt.access-token-expiration` | Tiempo de expiración del access token   | `15m`                           |
-| `app.jwt.refresh-token-expiration`| Tiempo de expiración del refresh token  | `7d`                            |
-| `app.cluster.heartbeat-interval`  | Intervalo del heartbeat del cluster     | `30000` (ms)                    |
+| Variable                           | Descripción                            | Valor local por defecto                        |
+|------------------------------------|----------------------------------------|------------------------------------------------|
+| `spring.datasource.url`            | URL de conexión a PostgreSQL           | `jdbc:postgresql://localhost:5432/template_db` |
+| `spring.datasource.username`       | Usuario de base de datos               | `template_user`                                |
+| `spring.datasource.password`       | Contraseña de base de datos            | `template_pass`                                |
+| `app.jwt.secret`                   | Clave secreta para firmar tokens JWT   | (valor de desarrollo)                          |
+| `app.jwt.access-token-expiration`  | Tiempo de expiración del access token  | `15m`                                          |
+| `app.jwt.refresh-token-expiration` | Tiempo de expiración del refresh token | `7d`                                           |
+| `app.cluster.heartbeat-interval`   | Intervalo del heartbeat del cluster    | `30000` (ms)                                   |
 
 ### Frontend
 
@@ -197,10 +197,10 @@ La configuración del frontend se gestiona mediante los ficheros `environment.ts
 
 Variables clave:
 
-| Variable           | Descripción                   | Valor local por defecto     |
-|--------------------|-------------------------------|-----------------------------|
-| `apiUrl`           | URL base de la API backend    | `http://localhost:8080/api`  |
-| `tokenRefreshMargin` | Margen para renovar token (ms) | `60000`                   |
+| Variable             | Descripción                    | Valor local por defecto     |
+|----------------------|--------------------------------|-----------------------------|
+| `apiUrl`             | URL base de la API backend     | `http://localhost:8080/api` |
+| `tokenRefreshMargin` | Margen para renovar token (ms) | `60000`                     |
 
 ---
 
@@ -241,12 +241,12 @@ Una vez arrancados todos los componentes, verificar:
 
 ## Resolución de problemas
 
-| Problema                               | Solución                                                       |
-|----------------------------------------|----------------------------------------------------------------|
-| `Port 8080 already in use`             | Detener el proceso que ocupa el puerto o cambiar en `application-local.yml` |
-| `Port 4200 already in use`             | Usar `ng serve --port 4201`                                    |
-| Error de conexión a PostgreSQL         | Verificar que PostgreSQL está arrancado y las credenciales son correctas |
-| `JAVA_HOME` no configurado            | Configurar la variable de entorno apuntando al JDK 21          |
-| Error de compilación Maven             | Ejecutar `mvn clean install -U` para forzar actualización de dependencias |
-| `ng: command not found`               | Instalar Angular CLI: `npm install -g @angular/cli@22`         |
-| Migraciones Liquibase fallan           | Verificar conexión a BD y que el schema está limpio            |
+| Problema                       | Solución                                                                    |
+|--------------------------------|-----------------------------------------------------------------------------|
+| `Port 8080 already in use`     | Detener el proceso que ocupa el puerto o cambiar en `application-local.yml` |
+| `Port 4200 already in use`     | Usar `ng serve --port 4201`                                                 |
+| Error de conexión a PostgreSQL | Verificar que PostgreSQL está arrancado y las credenciales son correctas    |
+| `JAVA_HOME` no configurado     | Configurar la variable de entorno apuntando al JDK 21                       |
+| Error de compilación Maven     | Ejecutar `mvn clean install -U` para forzar actualización de dependencias   |
+| `ng: command not found`        | Instalar Angular CLI: `npm install -g @angular/cli@22`                      |
+| Migraciones Liquibase fallan   | Verificar conexión a BD y que el schema está limpio                         |

@@ -19,13 +19,13 @@ Este documento actúa como fuente de verdad para herramientas de generación aut
 
 # Principios de diseño
 
-| Principio      | Descripción                                                                    |
-|----------------|--------------------------------------------------------------------------------|
-| Consistencia   | Todos los elementos visuales siguen las mismas reglas de espaciado y color.    |
-| Accesibilidad  | Contraste mínimo AA (WCAG 2.1). Navegación completa por teclado.              |
-| Simplicidad    | Preferir composiciones claras sobre diseños recargados.                        |
-| Responsividad  | Todo componente debe funcionar en escritorio, tablet y móvil.                  |
-| Reutilización  | Priorizar componentes existentes antes de crear nuevos.                        |
+| Principio     | Descripción                                                                 |
+|---------------|-----------------------------------------------------------------------------|
+| Consistencia  | Todos los elementos visuales siguen las mismas reglas de espaciado y color. |
+| Accesibilidad | Contraste mínimo AA (WCAG 2.1). Navegación completa por teclado.            |
+| Simplicidad   | Preferir composiciones claras sobre diseños recargados.                     |
+| Responsividad | Todo componente debe funcionar en escritorio, tablet y móvil.               |
+| Reutilización | Priorizar componentes existentes antes de crear nuevos.                     |
 
 ---
 
@@ -51,43 +51,43 @@ Los tokens son los valores atómicos que definen la apariencia visual. Todo cód
 
 ## Tipografía
 
-| Token                       | Valor                              |
-|-----------------------------|------------------------------------|
-| `--tp-font-family`          | `system-ui, -apple-system, sans-serif` |
-| `--tp-font-size-base`       | `1rem` (16px)                      |
-| `--tp-font-size-sm`         | `0.875rem`                         |
-| `--tp-font-size-lg`         | `1.25rem`                          |
-| `--tp-font-size-h1`         | `2.5rem`                           |
-| `--tp-font-size-h2`         | `2rem`                             |
-| `--tp-font-size-h3`         | `1.75rem`                          |
-| `--tp-font-weight-normal`   | `400`                              |
-| `--tp-font-weight-medium`   | `500`                              |
-| `--tp-font-weight-bold`     | `700`                              |
-| `--tp-line-height`          | `1.5`                              |
+| Token                     | Valor                                  |
+|---------------------------|----------------------------------------|
+| `--tp-font-family`        | `system-ui, -apple-system, sans-serif` |
+| `--tp-font-size-base`     | `1rem` (16px)                          |
+| `--tp-font-size-sm`       | `0.875rem`                             |
+| `--tp-font-size-lg`       | `1.25rem`                              |
+| `--tp-font-size-h1`       | `2.5rem`                               |
+| `--tp-font-size-h2`       | `2rem`                                 |
+| `--tp-font-size-h3`       | `1.75rem`                              |
+| `--tp-font-weight-normal` | `400`                                  |
+| `--tp-font-weight-medium` | `500`                                  |
+| `--tp-font-weight-bold`   | `700`                                  |
+| `--tp-line-height`        | `1.5`                                  |
 
 ## Espaciado
 
 Basado en una escala de 4px.
 
-| Token             | Valor   |
-|-------------------|---------|
-| `--tp-space-1`    | `0.25rem` (4px)  |
-| `--tp-space-2`    | `0.5rem` (8px)   |
-| `--tp-space-3`    | `1rem` (16px)    |
-| `--tp-space-4`    | `1.5rem` (24px)  |
-| `--tp-space-5`    | `3rem` (48px)    |
+| Token          | Valor           |
+|----------------|-----------------|
+| `--tp-space-1` | `0.25rem` (4px) |
+| `--tp-space-2` | `0.5rem` (8px)  |
+| `--tp-space-3` | `1rem` (16px)   |
+| `--tp-space-4` | `1.5rem` (24px) |
+| `--tp-space-5` | `3rem` (48px)   |
 
 ## Bordes y sombras
 
-| Token                    | Valor                                      |
-|--------------------------|--------------------------------------------|
-| `--tp-border-radius`     | `0.375rem`                                 |
-| `--tp-border-radius-lg`  | `0.5rem`                                   |
-| `--tp-border-radius-pill`| `50rem`                                    |
-| `--tp-border-width`      | `1px`                                      |
-| `--tp-shadow-sm`         | `0 0.125rem 0.25rem rgba(0, 0, 0, 0.075)` |
-| `--tp-shadow`            | `0 0.5rem 1rem rgba(0, 0, 0, 0.15)`       |
-| `--tp-shadow-lg`         | `0 1rem 3rem rgba(0, 0, 0, 0.175)`        |
+| Token                     | Valor                                     |
+|---------------------------|-------------------------------------------|
+| `--tp-border-radius`      | `0.375rem`                                |
+| `--tp-border-radius-lg`   | `0.5rem`                                  |
+| `--tp-border-radius-pill` | `50rem`                                   |
+| `--tp-border-width`       | `1px`                                     |
+| `--tp-shadow-sm`          | `0 0.125rem 0.25rem rgba(0, 0, 0, 0.075)` |
+| `--tp-shadow`             | `0 0.5rem 1rem rgba(0, 0, 0, 0.15)`       |
+| `--tp-shadow-lg`          | `0 1rem 3rem rgba(0, 0, 0, 0.175)`        |
 
 ## Breakpoints
 
@@ -179,11 +179,11 @@ La IA debe respetar los siguientes patrones cuando genere pantallas completas.
 
 Las acciones sobre entidades se agrupan en una **barra de herramientas única** situada entre los filtros y la tabla. No se repiten botones de acción en cada fila.
 
-| Botón      | Variante            | Condición                                       |
-|------------|---------------------|-------------------------------------------------|
-| Nuevo      | `primary`           | Siempre visible (si la entidad permite creación)|
-| Modificar  | `warning`           | Activo cuando hay una fila seleccionada         |
-| Eliminar   | `danger`            | Activo cuando hay una fila seleccionada         |
+| Botón        | Variante            | Condición                                          |
+|--------------|---------------------|----------------------------------------------------|
+| Nuevo        | `primary`           | Siempre visible (si la entidad permite creación)   |
+| Modificar    | `warning`           | Activo cuando hay una fila seleccionada            |
+| Eliminar     | `danger`            | Activo cuando hay una fila seleccionada            |
 | Exportar CSV | `outline-secondary` | Siempre visible, alineado a la derecha (`ms-auto`) |
 
 Para actuar sobre un registro, el usuario primero selecciona la fila (clic en la fila, que se resalta con `table-active`) y luego pulsa el botón correspondiente en la toolbar.
@@ -196,11 +196,11 @@ La columna de identificador interno (ID / PK) no se muestra en las tablas. El si
 
 La zona de paginación se sitúa en el pie de la tabla (`card-footer`) y contiene tres elementos alineados horizontalmente:
 
-| Posición   | Elemento                        | Ejemplo                  |
-|------------|---------------------------------|--------------------------|
-| Izquierda  | Contador de registros           | "Mostrando 1-10 de 150" |
-| Centro     | Navegación de páginas           | `< 1 2 3 ... 15 >`      |
-| Derecha    | Selector de elementos por página| `Elementos por página: [10 ▾]` |
+| Posición  | Elemento                         | Ejemplo                        |
+|-----------|----------------------------------|--------------------------------|
+| Izquierda | Contador de registros            | "Mostrando 1-10 de 150"        |
+| Centro    | Navegación de páginas            | `< 1 2 3 ... 15 >`             |
+| Derecha   | Selector de elementos por página | `Elementos por página: [10 ▾]` |
 
 Opciones disponibles en el selector: 5, 10, 20, 50.
 
@@ -414,9 +414,9 @@ Cuando el atributo es de tipo fecha, el filtro debe permitir la búsqueda por **
 └─────────────────────────────────────────────────────┘
 ```
 
-| Selector               | Descripción                                |
-|------------------------|--------------------------------------------|
-| `<tp-date-range>`      | Selector de rango de fechas (desde - hasta)|
+| Selector          | Descripción                                 |
+|-------------------|---------------------------------------------|
+| `<tp-date-range>` | Selector de rango de fechas (desde - hasta) |
 
 Reglas:
 
@@ -427,14 +427,14 @@ Reglas:
 
 ### Tipos de filtro por atributo
 
-| Tipo de atributo | Componente                        | Comportamiento                                      |
-|------------------|-----------------------------------|-----------------------------------------------------|
-| Texto            | `<tp-input>`                      | Búsqueda parcial (contains). Validación de formato. |
-| Número           | `<tp-input type="number">`        | Validación de rango y formato numérico.             |
-| Fecha            | `<tp-date-range>`                 | Rango desde-hasta.                                  |
-| Boolean          | `<tp-select>` con Sí/No/Todos    | Selección de estado.                                |
-| Enum             | `<tp-select>` con opciones        | Lista de valores posibles.                          |
-| Entidad          | `<tp-entity-filter>`              | Lista de selección (ver sección anterior).          |
+| Tipo de atributo | Componente                    | Comportamiento                                      |
+|------------------|-------------------------------|-----------------------------------------------------|
+| Texto            | `<tp-input>`                  | Búsqueda parcial (contains). Validación de formato. |
+| Número           | `<tp-input type="number">`    | Validación de rango y formato numérico.             |
+| Fecha            | `<tp-date-range>`             | Rango desde-hasta.                                  |
+| Boolean          | `<tp-select>` con Sí/No/Todos | Selección de estado.                                |
+| Enum             | `<tp-select>` con opciones    | Lista de valores posibles.                          |
+| Entidad          | `<tp-entity-filter>`          | Lista de selección (ver sección anterior).          |
 
 ---
 
@@ -555,10 +555,10 @@ Los colores semánticos (primary, success, danger, etc.) mantienen sus valores e
 
 La aplicación soporta dos modos de densidad:
 
-| Modo       | Padding base  | Uso                              |
-|------------|---------------|----------------------------------|
-| `normal`   | `--tp-space-3`| Formularios, vistas de detalle   |
-| `compact`  | `--tp-space-2`| Tablas densas, paneles laterales |
+| Modo      | Padding base   | Uso                              |
+|-----------|----------------|----------------------------------|
+| `normal`  | `--tp-space-3` | Formularios, vistas de detalle   |
+| `compact` | `--tp-space-2` | Tablas densas, paneles laterales |
 
 La IA debe aplicar densidad `compact` en tablas y `normal` en el resto de contextos salvo indicación contraria.
 

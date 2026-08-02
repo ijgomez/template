@@ -191,9 +191,9 @@ Los perfiles únicamente agrupan dichas acciones.
 
 ---
 
-# Seguridad de las API's
+# Seguridad de las API
 
-Todas las API's pueden protegerse mediante mecanismos de autenticación.
+Todas las API pueden protegerse mediante mecanismos de autenticación.
 
 Dependiendo del tipo de API podrán utilizarse:
 
@@ -283,7 +283,7 @@ Durante el desarrollo deben respetarse las siguientes recomendaciones:
 - No exponer información sensible.
 - Utilizar siempre HTTPS.
 - No almacenar contraseñas.
-- Utilizar DTO para todas las API's.
+- Utilizar DTO para todas las API.
 - Centralizar la gestión de permisos.
 - Evitar permisos codificados en la aplicación.
 

@@ -11,29 +11,29 @@ Guía de uso de la integración con Figma mediante el power de Kiro para la impl
 
 ## Capacidades
 
-| Capacidad                  | Descripción                                                                                     |
-|----------------------------|-------------------------------------------------------------------------------------------------|
-| Implementar diseño         | Traduce un diseño de Figma a código Angular + Bootstrap respetando las convenciones del proyecto |
-| Code Connect               | Conecta componentes de Figma con sus implementaciones de código (requiere plan Organization+)   |
-| Reglas de sistema de diseño | Genera reglas específicas del proyecto para guiar flujos consistentes de Figma-a-código         |
+| Capacidad                   | Descripción                                                                                      |
+|-----------------------------|--------------------------------------------------------------------------------------------------|
+| Implementar diseño          | Traduce un diseño de Figma a código Angular + Bootstrap respetando las convenciones del proyecto |
+| Code Connect                | Conecta componentes de Figma con sus implementaciones de código (requiere plan Organization+)    |
+| Reglas de sistema de diseño | Genera reglas específicas del proyecto para guiar flujos consistentes de Figma-a-código          |
 
 ## Herramientas disponibles (MCP)
 
-| Herramienta                   | Uso                                                                     |
-|-------------------------------|-------------------------------------------------------------------------|
-| `get_design_context`          | Obtiene datos estructurados de diseño (layout, tipografía, colores)     |
-| `get_metadata`                | Devuelve estructura XML del nodo con IDs y dimensiones                  |
-| `get_screenshot`              | Captura una imagen visual del diseño para validación                    |
-| `get_variable_defs`           | Recupera variables y estilos (colores, espaciado, tipografía)           |
-| `get_code_connect_suggestions`| Detecta y sugiere mappings de Code Connect                              |
-| `send_code_connect_mappings`  | Confirma los mappings de Code Connect generados                         |
-| `get_code_connect_map`        | Mapea IDs de nodo Figma a componentes de código                         |
-| `add_code_connect_map`        | Establece nuevos mappings entre elementos Figma y código                |
-| `create_design_system_rules`  | Genera ficheros de reglas para guiar la traducción diseño → código      |
-| `generate_figma_design`       | Convierte descripciones de UI en capas de diseño en Figma               |
-| `get_figjam`                  | Convierte diagramas FigJam a formato XML                                |
-| `generate_diagram`            | Crea diagramas FigJam a partir de sintaxis Mermaid                      |
-| `whoami`                      | Devuelve la identidad del usuario autenticado                           |
+| Herramienta                    | Uso                                                                 |
+|--------------------------------|---------------------------------------------------------------------|
+| `get_design_context`           | Obtiene datos estructurados de diseño (layout, tipografía, colores) |
+| `get_metadata`                 | Devuelve estructura XML del nodo con IDs y dimensiones              |
+| `get_screenshot`               | Captura una imagen visual del diseño para validación                |
+| `get_variable_defs`            | Recupera variables y estilos (colores, espaciado, tipografía)       |
+| `get_code_connect_suggestions` | Detecta y sugiere mappings de Code Connect                          |
+| `send_code_connect_mappings`   | Confirma los mappings de Code Connect generados                     |
+| `get_code_connect_map`         | Mapea IDs de nodo Figma a componentes de código                     |
+| `add_code_connect_map`         | Establece nuevos mappings entre elementos Figma y código            |
+| `create_design_system_rules`   | Genera ficheros de reglas para guiar la traducción diseño → código  |
+| `generate_figma_design`        | Convierte descripciones de UI en capas de diseño en Figma           |
+| `get_figjam`                   | Convierte diagramas FigJam a formato XML                            |
+| `generate_diagram`             | Crea diagramas FigJam a partir de sintaxis Mermaid                  |
+| `whoami`                       | Devuelve la identidad del usuario autenticado                       |
 
 ## Flujo de trabajo: Implementar un diseño
 
@@ -187,13 +187,13 @@ export class InfoCardComponent {
 
 ## Solución de problemas
 
-| Problema                         | Causa                                                    | Solución                                                                          |
-|----------------------------------|----------------------------------------------------------|-----------------------------------------------------------------------------------|
-| Servidor MCP no conectado        | El power no está activo o falta autenticación            | Verificar en el panel MCP Servers de Kiro; re-autenticar si es necesario          |
-| Respuesta truncada               | Diseño demasiado complejo para una sola respuesta        | Usar `get_metadata` primero y luego consultar nodos hijos individualmente         |
-| Assets no cargan                 | URLs de assets no accesibles                             | Verificar que el servidor MCP está corriendo; usar URLs localhost sin modificar    |
-| Tokens no coinciden con Figma    | Diferencias entre sistema de diseño del proyecto y Figma | Preferir tokens del proyecto; ajustar spacing/sizing para mantener fidelidad      |
-| Code Connect sin componentes     | Componentes no publicados en librería de equipo          | Publicar el componente a la librería de equipo en Figma                           |
+| Problema                      | Causa                                                    | Solución                                                                        |
+|-------------------------------|----------------------------------------------------------|---------------------------------------------------------------------------------|
+| Servidor MCP no conectado     | El power no está activo o falta autenticación            | Verificar en el panel MCP Servers de Kiro; re-autenticar si es necesario        |
+| Respuesta truncada            | Diseño demasiado complejo para una sola respuesta        | Usar `get_metadata` primero y luego consultar nodos hijos individualmente       |
+| Assets no cargan              | URLs de assets no accesibles                             | Verificar que el servidor MCP está corriendo; usar URLs localhost sin modificar |
+| Tokens no coinciden con Figma | Diferencias entre sistema de diseño del proyecto y Figma | Preferir tokens del proyecto; ajustar spacing/sizing para mantener fidelidad    |
+| Code Connect sin componentes  | Componentes no publicados en librería de equipo          | Publicar el componente a la librería de equipo en Figma                         |
 
 ## Referencias
 

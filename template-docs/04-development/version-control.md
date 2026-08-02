@@ -11,13 +11,13 @@
 
 El proyecto sigue el modelo GitFlow para organizar el desarrollo.
 
-| Rama | Propósito | Origen | Destino merge |
-|------|-----------|--------|---------------|
-| `master` | Código estable y listo para producción | — | — |
-| `develop` | Integración continua del desarrollo | `master` | `master` (via release) |
-| `feature/*` | Desarrollo de nuevas funcionalidades | `develop` | `develop` |
-| `release/*` | Preparación de una nueva versión | `develop` | `master` y `develop` |
-| `hotfix/*` | Correcciones urgentes en producción | `master` | `master` y `develop` |
+| Rama        | Propósito                              | Origen    | Destino merge          |
+|-------------|----------------------------------------|-----------|------------------------|
+| `master`    | Código estable y listo para producción | —         | —                      |
+| `develop`   | Integración continua del desarrollo    | `master`  | `master` (via release) |
+| `feature/*` | Desarrollo de nuevas funcionalidades   | `develop` | `develop`              |
+| `release/*` | Preparación de una nueva versión       | `develop` | `master` y `develop`   |
+| `hotfix/*`  | Correcciones urgentes en producción    | `master`  | `master` y `develop`   |
 
 ### Flujo de trabajo
 
@@ -58,11 +58,11 @@ El proyecto sigue [Semantic Versioning 2.0.0](https://semver.org/):
 MAJOR.MINOR.PATCH
 ```
 
-| Componente | Cuándo incrementar |
-|------------|-------------------|
-| **MAJOR** | Cambios incompatibles en la API o en el modelo de datos |
-| **MINOR** | Nueva funcionalidad compatible con versiones anteriores |
-| **PATCH** | Correcciones de errores compatibles con versiones anteriores |
+| Componente | Cuándo incrementar                                           |
+|------------|--------------------------------------------------------------|
+| **MAJOR**  | Cambios incompatibles en la API o en el modelo de datos      |
+| **MINOR**  | Nueva funcionalidad compatible con versiones anteriores      |
+| **PATCH**  | Correcciones de errores compatibles con versiones anteriores |
 
 ### Reglas de versionado
 
@@ -75,11 +75,11 @@ MAJOR.MINOR.PATCH
 
 ### Ejemplos
 
-| Situación | Versión anterior | Versión nueva |
-|-----------|-----------------|---------------|
-| Nueva funcionalidad (informes) | 2.0.0 | 2.1.0 |
-| Corrección de bug en login | 2.1.0 | 2.1.1 |
-| Cambio en modelo de datos (breaking) | 2.1.1 | 3.0.0 |
+| Situación                            | Versión anterior | Versión nueva |
+|--------------------------------------|------------------|---------------|
+| Nueva funcionalidad (informes)       | 2.0.0            | 2.1.0         |
+| Corrección de bug en login           | 2.1.0            | 2.1.1         |
+| Cambio en modelo de datos (breaking) | 2.1.1            | 3.0.0         |
 
 ---
 
@@ -103,16 +103,16 @@ Los mensajes de commit pueden estar en español o inglés y deben seguir un form
 
 ### Tipos permitidos
 
-| Tipo | Uso |
-|------|-----|
-| `feat` | Nueva funcionalidad |
-| `fix` | Corrección de error |
-| `refactor` | Refactorización sin cambio funcional |
-| `docs` | Cambios en documentación |
-| `test` | Añadir o modificar tests |
-| `chore` | Tareas de mantenimiento (dependencias, CI, etc.) |
-| `style` | Cambios de formato (no afectan lógica) |
-| `perf` | Mejoras de rendimiento |
+| Tipo       | Uso                                              |
+|------------|--------------------------------------------------|
+| `feat`     | Nueva funcionalidad                              |
+| `fix`      | Corrección de error                              |
+| `refactor` | Refactorización sin cambio funcional             |
+| `docs`     | Cambios en documentación                         |
+| `test`     | Añadir o modificar tests                         |
+| `chore`    | Tareas de mantenimiento (dependencias, CI, etc.) |
+| `style`    | Cambios de formato (no afectan lógica)           |
+| `perf`     | Mejoras de rendimiento                           |
 
 ### Ejemplos
 

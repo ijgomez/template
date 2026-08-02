@@ -43,10 +43,10 @@ Operaciones realizadas:
 
 Genera los artefactos de distribución listos para desplegar.
 
-| Plataforma | Comando |
-|------------|---------|
-| Linux/macOS | `./template-dist/linux/package.sh` |
-| Windows | `template-dist\windows\package.bat` |
+| Plataforma  | Comando                             |
+|-------------|-------------------------------------|
+| Linux/macOS | `./template-dist/linux/package.sh`  |
+| Windows     | `template-dist\windows\package.bat` |
 
 Operaciones realizadas:
 1. Backend: `mvn clean package -P dist -DskipTests` (genera WAR con perfil de distribución)
@@ -60,10 +60,10 @@ Artefactos generados:
 
 Placeholder para la automatización del despliegue. Este script debe ser personalizado según la infraestructura y el entorno de destino.
 
-| Plataforma | Comando |
-|------------|---------|
-| Linux/macOS | `./template-dist/linux/deploy.sh [entorno]` |
-| Windows | `template-dist\windows\deploy.bat [entorno]` |
+| Plataforma  | Comando                                      |
+|-------------|----------------------------------------------|
+| Linux/macOS | `./template-dist/linux/deploy.sh [entorno]`  |
+| Windows     | `template-dist\windows\deploy.bat [entorno]` |
 
 El parámetro `entorno` es opcional (por defecto: `dev`). Valores posibles: `dev`, `int`, `qa`, `pro`.
 

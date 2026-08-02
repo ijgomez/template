@@ -75,7 +75,7 @@ El menú principal constituye el mecanismo habitual de acceso a las funcionalida
 Características:
 
 - Organización jerárquica.
-- Menús multinivel.
+- Menús multi-nivel.
 - Iconografía homogénea.
 - Adaptado al perfil del usuario.
 - Colapsable.

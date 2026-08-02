@@ -85,7 +85,7 @@ Cada capa únicamente interactúa con la inmediatamente inferior.
 
 ## Controllers
 
-Los controladores representan el punto de entrada de las distintas API's.
+Los controladores representan el punto de entrada de las distintas API.
 
 Sus responsabilidades son:
 
@@ -278,7 +278,7 @@ Las excepciones se clasifican según su naturaleza:
 - Excepciones técnicas.
 - Errores de validación.
 
-Todas ellas son transformadas en respuestas homogéneas por la capa de API's.
+Todas ellas son transformadas en respuestas homogéneas por la capa de API.
 
 ---
 
@@ -302,7 +302,7 @@ Entre ellos:
 - Servidores SMTP.
 - Otros mecanismos que puedan incorporarse en el futuro.
 
-La arquitectura de las 'API's' se describe en el documento **api.md**.
+La arquitectura de las 'API' se describe en el documento **api.md**.
 
 ---
 
@@ -312,7 +312,7 @@ Todo el desarrollo realizado sobre Template debe respetar las siguientes normas:
 
 - Mantener la lógica de negocio exclusivamente en los servicios.
 - No acceder directamente a la base de datos desde los controladores.
-- Utilizar DTO's para todas las API's.
+- Utilizar DTO para todas las API.
 - Evitar dependencias entre módulos funcionales.
 - Mantener la separación entre configuración y código.
 - Reutilizar los componentes comunes siempre que sea posible.

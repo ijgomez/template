@@ -67,10 +67,10 @@ Ejemplo:
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <databaseChangeLog
-    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns="https://www.liquibase.org/xml/ns/dbchangelog"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+    xsi:schemaLocation="https://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
 
     <includeAll path="migrations/v1.0.0/" relativeToChangelogFile="true"/>
 
@@ -236,7 +236,7 @@ Para ampliar la información consultar:
 - [database-model.md](database-model.md)
 - [backend.md](backend.md)
 - [deployment.md](deployment.md)
-- [configuration.md](../../../04-development/configuration.md)
+- [configuration.md](../../04-development/configuration.md)
 - [Reglas de Codificación — Liquibase](../../04-development/coding-guidelines/liquibase.md)
 
 ---

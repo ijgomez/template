@@ -5,7 +5,7 @@
       "args": [
         "start-mcp-server",
         "--project",
-        "/Users/ijgomez/Documents/workspace/template",
+        "${workspaceFolder}",
         "--context",
         "ide-assistant"
       ]

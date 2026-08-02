@@ -58,37 +58,37 @@ La configuración global define el backend de lenguaje (LSP por defecto), timeou
 
 ## Capacidades
 
-| Capacidad                     | Descripción                                                                  |
-|-------------------------------|------------------------------------------------------------------------------|
-| Navegación de código          | Ir a definición, buscar referencias, encontrar implementaciones              |
-| Búsqueda de símbolos          | Buscar clases, métodos, funciones por nombre en todo el proyecto             |
-| Diagnósticos                  | Obtener errores y warnings del compilador/linter en tiempo real              |
-| Refactoring semántico         | Renombrar símbolos con actualización automática de todas las referencias     |
-| Edición estructural           | Insertar, reemplazar o eliminar símbolos manteniendo la coherencia del código|
-| Memorias de proyecto          | Almacenar y recuperar conocimiento del proyecto para futuras sesiones        |
-| Ejecución de comandos         | Ejecutar comandos shell dentro del contexto del proyecto                     |
+| Capacidad             | Descripción                                                                   |
+|-----------------------|-------------------------------------------------------------------------------|
+| Navegación de código  | Ir a definición, buscar referencias, encontrar implementaciones               |
+| Búsqueda de símbolos  | Buscar clases, métodos, funciones por nombre en todo el proyecto              |
+| Diagnósticos          | Obtener errores y warnings del compilador/linter en tiempo real               |
+| Refactoring semántico | Renombrar símbolos con actualización automática de todas las referencias      |
+| Edición estructural   | Insertar, reemplazar o eliminar símbolos manteniendo la coherencia del código |
+| Memorias de proyecto  | Almacenar y recuperar conocimiento del proyecto para futuras sesiones         |
+| Ejecución de comandos | Ejecutar comandos shell dentro del contexto del proyecto                      |
 
 ## Herramientas disponibles (MCP)
 
 ### Navegación y búsqueda
 
-| Herramienta              | Uso                                                                         |
-|--------------------------|-----------------------------------------------------------------------------|
-| `find_symbol`            | Busca símbolos (clases, métodos, etc.) por nombre en todo el proyecto       |
-| `find_declaration`       | Encuentra la definición/declaración de un símbolo                           |
-| `find_referencing_symbols`| Encuentra todos los lugares que referencian un símbolo                     |
-| `find_implementations`   | Encuentra implementaciones de una interfaz o clase abstracta                |
-| `find_file`              | Busca ficheros por nombre o patrón                                          |
-| `search_for_pattern`     | Busca un patrón (texto/regex) en el proyecto                                |
+| Herramienta                | Uso                                                                   |
+|----------------------------|-----------------------------------------------------------------------|
+| `find_symbol`              | Busca símbolos (clases, métodos, etc.) por nombre en todo el proyecto |
+| `find_declaration`         | Encuentra la definición/declaración de un símbolo                     |
+| `find_referencing_symbols` | Encuentra todos los lugares que referencian un símbolo                |
+| `find_implementations`     | Encuentra implementaciones de una interfaz o clase abstracta          |
+| `find_file`                | Busca ficheros por nombre o patrón                                    |
+| `search_for_pattern`       | Busca un patrón (texto/regex) en el proyecto                          |
 
 ### Inspección de código
 
-| Herramienta              | Uso                                                                         |
-|--------------------------|-----------------------------------------------------------------------------|
-| `get_symbols_overview`   | Obtiene un resumen de los símbolos de nivel superior en un fichero           |
-| `get_diagnostics_for_file`| Obtiene errores, warnings y hints para un fichero                          |
-| `read_file`              | Lee el contenido de un fichero del proyecto                                 |
-| `list_dir`               | Lista ficheros y directorios                                                |
+| Herramienta                | Uso                                                                |
+|----------------------------|--------------------------------------------------------------------|
+| `get_symbols_overview`     | Obtiene un resumen de los símbolos de nivel superior en un fichero |
+| `get_diagnostics_for_file` | Obtiene errores, warnings y hints para un fichero                  |
+| `read_file`                | Lee el contenido de un fichero del proyecto                        |
+| `list_dir`                 | Lista ficheros y directorios                                       |
 
 ### Edición de código
 
@@ -105,14 +105,14 @@ La configuración global define el backend de lenguaje (LSP por defecto), timeou
 
 ### Gestión de memorias
 
-| Herramienta              | Uso                                                                         |
-|--------------------------|-----------------------------------------------------------------------------|
-| `write_memory`           | Escribe información persistente del proyecto para futuras sesiones           |
-| `read_memory`            | Lee una memoria almacenada previamente                                      |
-| `list_memories`          | Lista todas las memorias disponibles del proyecto                           |
-| `edit_memory`            | Edita una memoria existente con búsqueda y reemplazo                        |
-| `delete_memory`          | Elimina una memoria                                                         |
-| `rename_memory`          | Renombra o mueve una memoria                                                |
+| Herramienta     | Uso                                                                |
+|-----------------|--------------------------------------------------------------------|
+| `write_memory`  | Escribe información persistente del proyecto para futuras sesiones |
+| `read_memory`   | Lee una memoria almacenada previamente                             |
+| `list_memories` | Lista todas las memorias disponibles del proyecto                  |
+| `edit_memory`   | Edita una memoria existente con búsqueda y reemplazo               |
+| `delete_memory` | Elimina una memoria                                                |
+| `rename_memory` | Renombra o mueve una memoria                                       |
 
 ### Utilidades
 
@@ -238,15 +238,15 @@ template/
 
 ## Solución de problemas
 
-| Problema                              | Causa                                          | Solución                                                                |
-|---------------------------------------|------------------------------------------------|-------------------------------------------------------------------------|
-| Servidor MCP no conecta               | Serena no instalada o no en PATH               | Verificar con `which serena` y `serena --version`                       |
-| Símbolos no encontrados               | Índice desactualizado o language server caído   | Ejecutar `serena project index` para reindexar                          |
-| Diagnósticos vacíos                   | Language server no soporta el fichero           | Verificar que el lenguaje está en `languages` de `project.yml`          |
-| Memorias no persisten                 | Directorio `.serena/memories/` sin permisos     | Verificar permisos del directorio                                       |
-| Respuestas truncadas                  | Resultado excede `default_max_tool_answer_chars`| Ajustar el valor en `serena_config.yml` o usar filtros más específicos  |
-| Timeout en herramientas               | Operación LSP lenta                            | Aumentar `tool_timeout` en configuración                                |
-| Angular LSP no arranca                | Falta `npm install` en el proyecto             | Ejecutar `npm install` en el directorio del frontend                    |
+| Problema                | Causa                                            | Solución                                                               |
+|-------------------------|--------------------------------------------------|------------------------------------------------------------------------|
+| Servidor MCP no conecta | Serena no instalada o no en PATH                 | Verificar con `which serena` y `serena --version`                      |
+| Símbolos no encontrados | Índice desactualizado o language server caído    | Ejecutar `serena project index` para reindexar                         |
+| Diagnósticos vacíos     | Language server no soporta el fichero            | Verificar que el lenguaje está en `languages` de `project.yml`         |
+| Memorias no persisten   | Directorio `.serena/memories/` sin permisos      | Verificar permisos del directorio                                      |
+| Respuestas truncadas    | Resultado excede `default_max_tool_answer_chars` | Ajustar el valor en `serena_config.yml` o usar filtros más específicos |
+| Timeout en herramientas | Operación LSP lenta                              | Aumentar `tool_timeout` en configuración                               |
+| Angular LSP no arranca  | Falta `npm install` en el proyecto               | Ejecutar `npm install` en el directorio del frontend                   |
 
 ## Referencias
 

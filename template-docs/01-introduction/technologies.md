@@ -89,7 +89,7 @@ La plataforma incorpora un modelo de seguridad basado en estándares ampliamente
 
 ---
 
-# API's e integración
+# API e integración
 
 La comunicación entre el frontend y el backend se realiza mediante servicios REST.
 
@@ -141,7 +141,7 @@ Dependiendo de las necesidades de cada proyecto, la plataforma puede integrarse 
 - Servidores SMTP.
 - OAuth2 / OpenID Connect.
 - Sistemas de monitorización.
-- API's REST de terceros.
+- API REST de terceros.
 
 Estas integraciones no forman parte del núcleo de la plataforma y pueden incorporarse según los requisitos de cada proyecto.
 

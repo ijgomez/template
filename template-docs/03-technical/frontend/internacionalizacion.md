@@ -6,7 +6,7 @@ Template ha sido diseñado para ofrecer soporte multiidioma desde su concepción
 
 La internacionalización afecta tanto al frontend como al backend, proporcionando una experiencia de usuario consistente independientemente del idioma seleccionado.
 
-Actualmente la plataforma soporta múltiples idiomas de forma simultánea y permite incorporar nuevos idiomas de manera sencilla.
+Actualmente, la plataforma soporta múltiples idiomas de forma simultánea y permite incorporar nuevos idiomas de manera sencilla.
 
 ---
 
