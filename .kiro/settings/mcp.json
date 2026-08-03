@@ -5,9 +5,9 @@
       "args": [
         "start-mcp-server",
         "--project",
-        "${workspaceFolder}",
+        "template",
         "--context",
-        "ide-assistant"
+        "claude-code"
       ]
     }
   }

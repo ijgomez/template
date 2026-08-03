@@ -1,37 +1,274 @@
-# Instalación del proyecto
+# Instalación del software
 
 ## Introducción
 
-Esta guía describe los pasos necesarios para configurar el entorno de desarrollo y poner en marcha la plataforma Template en una máquina local.
+Esta guía describe el software necesario para trabajar con la plataforma Template y los pasos para instalarlo en una máquina de desarrollo.
 
 ---
 
-## Requisitos previos
+## Software necesario
 
-### Software necesario
+| Software       | Versión mínima | Descripción                               | Obligatorio |
+|----------------|----------------|-------------------------------------------|:-----------:|
+| JDK            | 21             | Java Development Kit                      | Sí          |
+| Maven          | 3.9+           | Gestión de dependencias y build (backend) | Sí          |
+| Node.js        | 22 LTS         | Runtime para herramientas frontend        | Sí          |
+| npm            | 12+            | Gestor de paquetes frontend               | Sí          |
+| Angular CLI    | 22             | Herramienta de línea de comandos Angular  | Sí          |
+| PostgreSQL     | 18             | Base de datos relacional                  | Sí (*)      |
+| Git            | 2.40+          | Control de versiones                      | Sí          |
+| Python         | 3.12+          | Runtime para herramientas de desarrollo   | Sí          |
+| pip            | 23+            | Gestor de paquetes Python                 | Sí          |
+| uv             | 0.7+           | Gestor de paquetes Python moderno         | No (**)     |
+| Serena         | 1.6+           | MCP toolkit para asistencia de código     | Sí          |
+| Docker         | 24+            | Contenedorización                         | No          |
+| Docker Compose | 2.20+          | Orquestación de contenedores              | No          |
 
-| Software       | Versión mínima | Descripción                               |
-|----------------|----------------|-------------------------------------------|
-| JDK            | 21             | Java Development Kit                      |
-| Maven          | 3.9+           | Gestión de dependencias y build (backend) |
-| Node.js        | 20 LTS         | Runtime para herramientas frontend        |
-| npm            | 10+            | Gestor de paquetes frontend               |
-| Angular CLI    | 22             | Herramienta de línea de comandos Angular  |
-| PostgreSQL     | 18             | Base de datos relacional                  |
-| Git            | 2.40+          | Control de versiones                      |
-| Docker         | 24+            | Contenedorización (opcional)              |
-| Docker Compose | 2.20+          | Orquestación de contenedores (opcional)   |
+(*) PostgreSQL puede instalarse localmente o ejecutarse mediante Docker.
 
-### Verificar versiones instaladas
+(**) `uv` es una alternativa moderna a `pip` más rápida. Se puede usar `pip` o `uv` indistintamente para instalar Serena.
+
+---
+
+## Instalación por componente
+
+### JDK 21
+
+Descargar e instalar la distribución de OpenJDK recomendada:
+
+- [Eclipse Temurin](https://adoptium.net/temurin/releases/?version=21)
+- [Oracle JDK 21](https://www.oracle.com/java/technologies/downloads/#java21)
+
+Configurar las variables de entorno:
+
+```bash
+# Linux / macOS
+export JAVA_HOME=/ruta/al/jdk-21
+export PATH=$JAVA_HOME/bin:$PATH
+
+# Windows (PowerShell — como administrador)
+[Environment]::SetEnvironmentVariable("JAVA_HOME", "C:\Program Files\Java\jdk-21", "Machine")
+[Environment]::SetEnvironmentVariable("Path", "$env:JAVA_HOME\bin;$env:Path", "Machine")
+```
+
+### Maven 3.9+
+
+Descargar desde [Apache Maven](https://maven.apache.org/download.cgi) y configurar:
+
+```bash
+# Linux / macOS
+export MAVEN_HOME=/ruta/al/maven
+export PATH=$MAVEN_HOME/bin:$PATH
+
+# Windows (PowerShell — como administrador)
+[Environment]::SetEnvironmentVariable("MAVEN_HOME", "C:\Program Files\Apache\maven", "Machine")
+[Environment]::SetEnvironmentVariable("Path", "$env:MAVEN_HOME\bin;$env:Path", "Machine")
+```
+
+Opcionalmente se puede instalar mediante un gestor de paquetes:
+
+```bash
+# macOS (Homebrew)
+brew install maven
+
+# Linux (sdkman)
+sdk install maven
+```
+
+### Node.js 22 y npm
+
+Descargar desde [Node.js](https://nodejs.org/) la versión LTS 22.
+
+Alternativamente:
+
+```bash
+# macOS (Homebrew)
+brew install node@22
+
+# Linux (nvm — recomendado)
+nvm install 22
+nvm use 22
+
+# Windows (winget)
+winget install OpenJS.NodeJS.LTS
+```
+
+npm se incluye con Node.js.
+
+### Angular CLI 22
+
+Instalar globalmente una vez configurado Node.js:
+
+```bash
+npm install -g @angular/cli@22
+```
+
+### PostgreSQL 18
+
+#### Instalación local
+
+- [Descargas oficiales](https://www.postgresql.org/download/)
+- En Windows: usar el instalador de EnterpriseDB.
+- En macOS: `brew install postgresql@18`
+- En Linux: seguir las instrucciones del repositorio oficial de PostgreSQL.
+
+#### Alternativa: Docker
+
+Si se prefiere no instalar PostgreSQL localmente, se puede usar el contenedor Docker incluido en el proyecto (ver [configuración](configuration.md)).
+
+### Git 2.40+
+
+- [Descargas oficiales](https://git-scm.com/downloads)
+- En macOS: viene preinstalado o `brew install git`
+- En Windows: usar [Git for Windows](https://gitforwindows.org/)
+
+Habilitar Git LFS (necesario para el proyecto):
+
+```bash
+git lfs install
+```
+
+### Python 3.12+ y pip
+
+Python es necesario para ejecutar herramientas de desarrollo como Serena.
+
+#### Windows
+
+Descargar desde [python.org](https://www.python.org/downloads/) e instalar marcando la opción **"Add Python to PATH"** durante la instalación.
+
+Alternativamente:
+
+```powershell
+winget install Python.Python.3.12
+```
+
+Verificar que el directorio de scripts del usuario está en el PATH:
+
+```powershell
+# Comprobar la ubicación de scripts
+python -m site --user-site
+# Normalmente: C:\Users\<usuario>\AppData\Roaming\Python\Python312\Scripts
+
+# Añadir al PATH del usuario si no está incluido
+$scriptsDir = (python -m site --user-base) + "\Scripts"
+$currentPath = [Environment]::GetEnvironmentVariable("Path", "User")
+if ($currentPath -notlike "*$scriptsDir*") {
+    [Environment]::SetEnvironmentVariable("Path", "$currentPath;$scriptsDir", "User")
+}
+```
+
+#### macOS
+
+```bash
+# Homebrew (recomendado)
+brew install python@3.12
+
+# pip se incluye con Python. Verificar:
+python3 -m ensurepip --upgrade
+```
+
+pip se instala junto con Python. Si necesitas actualizarlo:
+
+```bash
+# Windows
+python -m pip install --upgrade pip
+
+# macOS / Linux
+python3 -m pip install --upgrade pip
+```
+
+### uv (opcional)
+
+`uv` es un gestor de paquetes Python extremadamente rápido que puede reemplazar a `pip`. Es opcional pero recomendado.
+
+#### Windows
+
+```powershell
+# Opción 1: Instalador oficial
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+
+# Opción 2: Con pip
+pip install uv
+
+# Opción 3: Con winget
+winget install astral-sh.uv
+```
+
+#### macOS
+
+```bash
+# Opción 1: Homebrew (recomendado)
+brew install uv
+
+# Opción 2: Instalador oficial
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Opción 3: Con pip
+pip3 install uv
+```
+
+### Serena 1.6+
+
+Serena es el toolkit MCP que proporciona asistencia de código con análisis semántico (LSP) al IDE. Se instala como paquete Python.
+
+#### Instalación con pip
+
+```bash
+# Windows
+pip install --user serena-agent
+
+# macOS / Linux
+pip3 install --user serena-agent
+```
+
+#### Instalación con uv (alternativa)
+
+Si se tiene `uv` instalado, no es necesario instalar Serena explícitamente. El `mcp.json` del proyecto puede configurarse para usar `uvx`, que descarga y ejecuta Serena automáticamente:
+
+```bash
+# No requiere instalación previa; uvx lo gestiona al arrancar el servidor MCP.
+uvx serena start-mcp-server --project . --context ide-assistant
+```
+
+#### Verificar la instalación
+
+```bash
+serena --version   # Debe mostrar Serena 1.6+
+```
+
+Si tras instalar con `pip install --user` el comando `serena` no se encuentra, asegúrate de que el directorio de scripts de Python del usuario está en el PATH (ver sección de Python más arriba).
+
+### Docker y Docker Compose (opcional)
+
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) (Windows/macOS — incluye Docker Compose)
+- [Docker Engine](https://docs.docker.com/engine/install/) (Linux)
+
+Docker Compose viene incluido en Docker Desktop. En Linux puede ser necesario instalarlo por separado:
+
+```bash
+# Linux
+sudo apt install docker-compose-plugin
+```
+
+---
+
+## Verificar la instalación
+
+Ejecutar los siguientes comandos para comprobar que todo está correctamente instalado:
 
 ```bash
 java -version          # Debe mostrar Java 21+
 mvn -version           # Debe mostrar Maven 3.9+
-node -version          # Debe mostrar v20+
-npm -version           # Debe mostrar 10+
+node -v                # Debe mostrar v22+
+npm -v                 # Debe mostrar 12+
 ng version             # Debe mostrar Angular CLI 22+
+python --version       # Debe mostrar Python 3.12+ (en macOS: python3 --version)
+pip --version          # Debe mostrar pip 23+ (en macOS: pip3 --version)
+serena --version       # Debe mostrar Serena 1.6+
 psql --version         # Debe mostrar PostgreSQL 18+
 git --version          # Debe mostrar 2.40+
+git lfs version        # Debe mostrar git-lfs instalado
+uv --version           # Opcional: uv 0.7+
 docker --version       # Opcional: Docker 24+
 docker compose version # Opcional: Docker Compose 2.20+
 ```
@@ -39,6 +276,8 @@ docker compose version # Opcional: Docker Compose 2.20+
 ---
 
 ## Clonar el repositorio
+
+Una vez instalado todo el software:
 
 ```bash
 git clone https://github.com/ijgomez/template.git
@@ -49,204 +288,6 @@ El repositorio contiene todos los componentes del proyecto organizados según la
 
 ---
 
-## Base de datos
+## Siguiente paso
 
-### Opción 1: PostgreSQL local
-
-1. Crear la base de datos y el usuario:
-
-```sql
-CREATE USER template_user WITH PASSWORD 'template_pass';
-CREATE DATABASE template_db OWNER template_user;
-GRANT ALL PRIVILEGES ON DATABASE template_db TO template_user;
-```
-
-2. Verificar la conexión:
-
-```bash
-psql -h localhost -U template_user -d template_db
-```
-
-### Opción 2: Docker
-
-```bash
-cd template-docker
-docker compose up -d postgres
-```
-
-Esto levanta una instancia de PostgreSQL 18 con la configuración predefinida.
-
-### Ejecutar migraciones Liquibase
-
-Las migraciones se ejecutan automáticamente al arrancar la aplicación Spring Boot. Para ejecutarlas manualmente:
-
-```bash
-cd template-liquibase
-mvn liquibase:update -Plocal
-```
-
----
-
-## Backend
-
-### Compilar el proyecto
-
-Desde la raíz del proyecto backend:
-
-```bash
-cd template
-mvn clean install
-```
-
-Esto compila todos los módulos en orden de dependencias:
-
-```
-commons → cluster → domain → core → webapp
-```
-
-### Ejecutar tests
-
-```bash
-mvn test
-```
-
-Para ejecutar tests con cobertura (JaCoCo) y análisis estático (SonarQube):
-
-```bash
-mvn clean verify -Ptest
-```
-
-### Arrancar la aplicación
-
-```bash
-mvn spring-boot:run -pl webapp -Plocal
-```
-
-La aplicación arrancará en `http://localhost:8080` con el perfil `local`.
-
-### Perfiles de compilación
-
-| Perfil  | Uso                                                    |
-|---------|--------------------------------------------------------|
-| `local` | Desarrollo local (BD local, logs en DEBUG)             |
-| `dist`  | Distribución (configuración externalizada)             |
-| `test`  | Ejecución de tests con JaCoCo y SonarQube              |
-
----
-
-## Frontend
-
-### Instalar dependencias
-
-```bash
-cd template-dashboard
-npm install
-```
-
-### Arrancar en modo desarrollo
-
-```bash
-ng serve
-```
-
-La aplicación estará disponible en `http://localhost:4200` y se recargará automáticamente al detectar cambios en el código fuente.
-
-### Compilar para producción
-
-```bash
-ng build
-```
-
-Los artefactos se generan en el directorio `dist/`.
-
-### Ejecutar tests
-
-```bash
-ng test
-```
-
----
-
-## Configuración por entorno
-
-### Backend
-
-La configuración específica de cada entorno se gestiona mediante:
-
-- **Perfil local:** `application-local.yml` dentro del módulo `webapp`.
-- **Perfiles de distribución:** Ficheros externalizados en el repositorio `template-properties`.
-
-Variables clave de configuración:
-
-| Variable                           | Descripción                            | Valor local por defecto                        |
-|------------------------------------|----------------------------------------|------------------------------------------------|
-| `spring.datasource.url`            | URL de conexión a PostgreSQL           | `jdbc:postgresql://localhost:5432/template_db` |
-| `spring.datasource.username`       | Usuario de base de datos               | `template_user`                                |
-| `spring.datasource.password`       | Contraseña de base de datos            | `template_pass`                                |
-| `app.jwt.secret`                   | Clave secreta para firmar tokens JWT   | (valor de desarrollo)                          |
-| `app.jwt.access-token-expiration`  | Tiempo de expiración del access token  | `15m`                                          |
-| `app.jwt.refresh-token-expiration` | Tiempo de expiración del refresh token | `7d`                                           |
-| `app.cluster.heartbeat-interval`   | Intervalo del heartbeat del cluster    | `30000` (ms)                                   |
-
-### Frontend
-
-La configuración del frontend se gestiona mediante los ficheros `environment.ts`:
-
-- `src/environments/environment.ts` — Desarrollo.
-- `src/environments/environment.prod.ts` — Producción.
-
-Variables clave:
-
-| Variable             | Descripción                    | Valor local por defecto     |
-|----------------------|--------------------------------|-----------------------------|
-| `apiUrl`             | URL base de la API backend     | `http://localhost:8080/api` |
-| `tokenRefreshMargin` | Margen para renovar token (ms) | `60000`                     |
-
----
-
-## Docker (entorno completo)
-
-Para levantar todo el stack (base de datos + backend + frontend) con Docker Compose:
-
-```bash
-cd template-docker
-docker compose up -d
-```
-
-Servicios disponibles:
-
-| Servicio   | Puerto | Descripción            |
-|------------|--------|------------------------|
-| PostgreSQL | 5432   | Base de datos          |
-| Backend    | 8080   | API REST               |
-| Frontend   | 4200   | Aplicación Angular     |
-
-Para detener:
-
-```bash
-docker compose down
-```
-
----
-
-## Verificación de la instalación
-
-Una vez arrancados todos los componentes, verificar:
-
-1. **Base de datos:** Conectar con `psql` y comprobar que las tablas existen.
-2. **Backend:** Acceder a `http://localhost:8080/api/v1/auth/login` (debe responder, aunque con 401 si no se envían credenciales).
-3. **Frontend:** Acceder a `http://localhost:4200` (debe mostrar la página de login).
-
----
-
-## Resolución de problemas
-
-| Problema                       | Solución                                                                    |
-|--------------------------------|-----------------------------------------------------------------------------|
-| `Port 8080 already in use`     | Detener el proceso que ocupa el puerto o cambiar en `application-local.yml` |
-| `Port 4200 already in use`     | Usar `ng serve --port 4201`                                                 |
-| Error de conexión a PostgreSQL | Verificar que PostgreSQL está arrancado y las credenciales son correctas    |
-| `JAVA_HOME` no configurado     | Configurar la variable de entorno apuntando al JDK 21                       |
-| Error de compilación Maven     | Ejecutar `mvn clean install -U` para forzar actualización de dependencias   |
-| `ng: command not found`        | Instalar Angular CLI: `npm install -g @angular/cli@22`                      |
-| Migraciones Liquibase fallan   | Verificar conexión a BD y que el schema está limpio                         |
+Con el software instalado y el repositorio clonado, continuar con la [configuración del entorno de desarrollo](configuration.md).
