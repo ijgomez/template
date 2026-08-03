@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.myorganization.template.core.repository.ParameterRepository;
@@ -269,7 +270,7 @@ class ParameterServiceTest {
             Parameter entity = createParameterEntity("APP_NAME", "Application name", "MyApp", ParameterType.STRING);
             Page<Parameter> page = new PageImpl<>(List.of(entity), pageable, 1);
 
-            when(parameterRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(page);
+            when(parameterRepository.findAll(ArgumentMatchers.<Specification<Parameter>>any(), any(Pageable.class))).thenReturn(page);
 
             Page<ParameterDTO> result = parameterService.findByCriteria(criteria, pageable);
 
@@ -288,7 +289,7 @@ class ParameterServiceTest {
         void countByCriteria_returnsTotalCount() {
             ParameterCriteria criteria = new ParameterCriteria("APP", null, null);
 
-            when(parameterRepository.count(any(Specification.class))).thenReturn(5L);
+            when(parameterRepository.count(ArgumentMatchers.<Specification<Parameter>>any())).thenReturn(5L);
 
             long count = parameterService.countByCriteria(criteria);
 

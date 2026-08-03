@@ -249,9 +249,5 @@ class AbstractClusterWorkerGovernancePropertyTest {
         boolean wasExecuted() {
             return executed;
         }
-
-        void reset() {
-            executed = false;
-        }
     }
 }
