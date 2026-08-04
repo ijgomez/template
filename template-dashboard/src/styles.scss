@@ -151,3 +151,46 @@ body {
     min-width: 44px;
   }
 }
+
+// ─── Filter Bar ──────────────────────────────────────────────
+.tp-filter-bar {
+  padding: 1rem 1.25rem;
+  background: var(--tp-color-surface);
+  border: 1px solid var(--tp-color-border);
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+// ─── Table Styles ────────────────────────────────────────────
+.tp-table {
+  font-size: 0.8125rem;
+
+  th {
+    background: var(--tp-color-surface);
+    font-weight: 600;
+    white-space: nowrap;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 2px solid var(--tp-color-border);
+  }
+
+  td {
+    padding: 0.5rem 0.75rem;
+    vertical-align: middle;
+  }
+}
+
+// ─── Card Styles ─────────────────────────────────────────────
+.tp-card {
+  background: white;
+  border: 1px solid var(--tp-color-border);
+  border-radius: 0.5rem;
+  box-shadow: var(--tp-shadow-sm);
+}
+
+// ─── Breadcrumb ──────────────────────────────────────────────
+.tp-breadcrumb {
+  padding: 0.75rem 1.5rem;
+  background: var(--tp-color-surface);
+  border-bottom: 1px solid var(--tp-color-border);
+  font-size: 0.8125rem;
+}

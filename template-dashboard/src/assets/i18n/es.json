@@ -8,12 +8,18 @@
       "collapse": "Colapsar menú",
       "navigation": "Navegación principal"
     },
+    "header": {
+      "search": "Buscar...",
+      "notifications": "Notificaciones",
+      "noNotifications": "No hay notificaciones"
+    },
     "user": {
       "profile": "Mi Perfil",
       "logout": "Cerrar sesión"
     },
     "footer": {
-      "version": "v0.0.0"
+      "version": "v0.0.0",
+      "environment": "Entorno: LOCAL"
     }
   },
   "pwa": {
@@ -57,11 +63,17 @@
     "back": "Volver"
   },
   "login": {
-    "title": "Iniciar Sesión",
+    "title": "Template App",
+    "subtitle": "Introduce tus credenciales para acceder",
     "username": "Usuario",
+    "username.placeholder": "Introduce tu usuario",
     "password": "Contraseña",
-    "submit": "Acceder",
-    "error": "Credenciales inválidas"
+    "password.placeholder": "Introduce tu contraseña",
+    "password.show": "Mostrar contraseña",
+    "password.hide": "Ocultar contraseña",
+    "remember": "Recordarme",
+    "submit": "Iniciar sesión",
+    "error": "Credenciales incorrectas. Inténtalo de nuevo."
   },
   "notification": {
     "progress": "Procesando...",
@@ -119,7 +131,8 @@
     "pagination": {
       "showing": "Mostrando {{from}} a {{to}} de {{total}} registros",
       "previous": "Página anterior",
-      "next": "Página siguiente"
+      "next": "Página siguiente",
+      "pageSize": "Elementos por página"
     }
   },
   "users": {
@@ -360,6 +373,41 @@
       "xlsx": "Exportar Excel",
       "csv": "Exportar CSV",
       "txt": "Exportar TXT"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "lastAccess": "Último acceso: {{date}}",
+    "stats": {
+      "activeUsers": "Usuarios activos",
+      "clusterNodes": "Nodos cluster",
+      "interfaces": "Interfaces",
+      "reportsGenerated": "Informes generados",
+      "allOperational": "Todos operativos",
+      "withError": "{{count}} con error",
+      "thisMonth": "Este mes",
+      "vsLastMonth": "{{percent}}% vs mes anterior"
+    },
+    "recentActivity": {
+      "title": "Actividad reciente",
+      "viewAll": "Ver todo",
+      "date": "Fecha",
+      "user": "Usuario",
+      "operation": "Operación",
+      "section": "Sección"
+    },
+    "systemStatus": {
+      "title": "Estado del sistema",
+      "version": "Versión",
+      "environment": "Entorno",
+      "masterNode": "Nodo maestro",
+      "uptime": "Uptime"
+    },
+    "shortcuts": {
+      "title": "Accesos directos",
+      "manageUsers": "Gestionar usuarios",
+      "viewReports": "Ver informes",
+      "configuration": "Configuración"
     }
   }
 }

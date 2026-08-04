@@ -62,6 +62,9 @@ export class MonitorComponent implements OnInit {
   readonly showingFrom = computed(() => this.totalElements() === 0 ? 0 : this.currentPage() * this.pageSize() + 1);
   readonly showingTo = computed(() => Math.min((this.currentPage() + 1) * this.pageSize(), this.totalElements()));
 
+  // Page size options for the selector
+  readonly pageSizeOptions = [5, 10, 20, 50];
+
   ngOnInit(): void {
     this.loadAvailableInterfaces();
     this.loadLogs();
@@ -135,6 +138,26 @@ export class MonitorComponent implements OnInit {
   viewDetail(log: InterfaceLog): void {
     this.selectedLog.set(log);
     this.viewMode.set('detail');
+  }
+
+  /**
+   * Selects a row in the table (for toolbar actions).
+   */
+  selectRow(log: InterfaceLog): void {
+    if (this.selectedLog()?.id === log.id) {
+      this.selectedLog.set(null);
+    } else {
+      this.selectedLog.set(log);
+    }
+  }
+
+  /**
+   * Changes the page size and reloads from page 0.
+   */
+  changePageSize(size: number | string): void {
+    this.pageSize.set(Number(size));
+    this.currentPage.set(0);
+    this.loadLogs();
   }
 
   /**

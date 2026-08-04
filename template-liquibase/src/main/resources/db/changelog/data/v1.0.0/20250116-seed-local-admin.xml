@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Seed data for local development: admin profile + user -->
+    <!-- Context: local (only applied in local development environment) -->
+
+    <changeSet id="20250116-seed-local-admin-profile" author="template" labels="v1.0.0" context="local">
+
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="profile"/>
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM profile WHERE name = 'Administrador'</sqlCheck>
+        </preConditions>
+
+        <comment>Perfil Administrador con acceso total para desarrollo local</comment>
+
+        <insert tableName="profile">
+            <column name="id" valueNumeric="1"/>
+            <column name="name" value="Administrador"/>
+            <column name="description" value="Perfil con acceso total al sistema (desarrollo local)"/>
+        </insert>
+
+        <!-- Assign all actions to the admin profile -->
+        <sql>
+            INSERT INTO profile2action (profile_id, action_id)
+            SELECT 1, id FROM action;
+        </sql>
+
+        <rollback>
+            <delete tableName="profile2action">
+                <where>profile_id = 1</where>
+            </delete>
+            <delete tableName="profile">
+                <where>id = 1</where>
+            </delete>
+        </rollback>
+
+    </changeSet>
+
+    <changeSet id="20250116-seed-local-admin-user" author="template" labels="v1.0.0" context="local">
+
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="users"/>
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM users WHERE username = 'admin'</sqlCheck>
+        </preConditions>
+
+        <comment>Usuario admin para desarrollo local (password: admin123, BCrypt strength 12)</comment>
+
+        <insert tableName="users">
+            <column name="id" valueNumeric="1"/>
+            <column name="username" value="admin"/>
+            <column name="password" value="$2b$12$WNo1jCaoWb0r5zEuaNL1qeC5LqfbDGStKy4Isf0Ha6o8Zuejktrny"/>
+            <column name="first_name" value="Admin"/>
+            <column name="last_name" value="Usuario"/>
+            <column name="email" value="admin@localhost"/>
+            <column name="profile_id" valueNumeric="1"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="users">
+                <where>id = 1</where>
+            </delete>
+        </rollback>
+
+    </changeSet>
+
+</databaseChangeLog>

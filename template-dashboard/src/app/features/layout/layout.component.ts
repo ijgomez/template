@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit } from '@angular/core';
-import { Router, RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterOutlet, RouterLink, RouterLinkActive, NavigationEnd, ActivatedRoute } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
+import { filter } from 'rxjs';
 
 import { AuthService } from '../../core/services/auth.service';
 
@@ -21,6 +22,14 @@ export interface NavItem {
 }
 
 /**
+ * Represents a breadcrumb segment.
+ */
+export interface BreadcrumbSegment {
+  label: string;
+  path: string;
+}
+
+/**
  * Main layout component that wraps authenticated pages.
  * Provides a fixed header (56px), collapsible sidebar (260px/64px), scrollable content area, and footer.
  * Follows the layout specification defined in template-docs/03-technical/frontend/layout.md.
@@ -38,8 +47,12 @@ export interface NavItem {
 export class LayoutComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly activatedRoute = inject(ActivatedRoute);
 
   private static readonly STORAGE_KEY = 'tp-sidebar-collapsed';
+
+  /** Breadcrumb segments built from current URL. */
+  readonly breadcrumbs = signal<BreadcrumbSegment[]>([]);
 
   /** Whether the sidebar is collapsed. */
   readonly sidebarCollapsed = signal(false);
@@ -55,6 +68,23 @@ export class LayoutComponent implements OnInit {
 
   /** Username for display in the header. */
   readonly username = computed(() => this.authService.getCurrentUser()?.username ?? '');
+
+  /** Full name computed from user profile (first + last). */
+  readonly fullName = computed(() => {
+    const user = this.authService.getCurrentUser();
+    return user?.username ?? '';
+  });
+
+  /** User initials for the avatar. */
+  readonly userInitials = computed(() => {
+    const name = this.fullName();
+    if (!name) return '';
+    const parts = name.split(' ');
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+  });
 
   /** Full navigation menu structure with action-based visibility. */
   readonly navItems: NavItem[] = [
@@ -167,6 +197,47 @@ export class LayoutComponent implements OnInit {
     if (saved === 'true') {
       this.sidebarCollapsed.set(true);
     }
+
+    // Build breadcrumbs on navigation
+    this.updateBreadcrumbs();
+    this.router.events.pipe(
+      filter((event) => event instanceof NavigationEnd),
+    ).subscribe(() => this.updateBreadcrumbs());
+  }
+
+  /** Mapping from URL segments to translation keys. */
+  private readonly segmentLabels: Record<string, string> = {
+    dashboard: 'menu.dashboard',
+    reports: 'menu.reports',
+    interfaces: 'menu.interfaces',
+    monitor: 'menu.interfaces.monitor',
+    configuration: 'menu.interfaces.configuration',
+    administration: 'menu.administration',
+    security: 'menu.administration.security',
+    users: 'menu.administration.security.users',
+    profiles: 'menu.administration.security.profiles',
+    actions: 'menu.administration.security.actions',
+    parameters: 'menu.administration.parameters',
+    audit: 'menu.administration.audit',
+    cluster: 'menu.administration.cluster',
+    nodes: 'menu.administration.cluster.nodes',
+    blocks: 'menu.administration.cluster.blocks',
+    profile: 'profile.title',
+  };
+
+  private updateBreadcrumbs(): void {
+    const url = this.router.url.split('?')[0];
+    const segments = url.split('/').filter((s) => s.length > 0);
+    const crumbs: BreadcrumbSegment[] = [];
+    let path = '';
+
+    for (const segment of segments) {
+      path += '/' + segment;
+      const label = this.segmentLabels[segment] ?? segment;
+      crumbs.push({ label, path });
+    }
+
+    this.breadcrumbs.set(crumbs);
   }
 
   /** Toggle the sidebar collapse state and persist it. */

@@ -1,0 +1,23 @@
+.tp-login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1d21 0%, #2b2f35 100%);
+  padding: var(--tp-space-3);
+}
+
+.tp-login-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 2.5rem;
+  background-color: var(--tp-color-background);
+  border-radius: 0.75rem;
+  box-shadow: var(--tp-shadow-lg);
+}
+
+.tp-login-icon {
+  width: 56px;
+  height: 56px;
+  background-color: var(--tp-color-primary);
+}

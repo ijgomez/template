@@ -1,0 +1,134 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1 class="h3 mb-0" data-testid="dashboard-title">{{ 'dashboard.title' | translate }}</h1>
+  <small class="text-muted">{{ 'dashboard.lastAccess' | translate: { date: lastAccess } }}</small>
+</div>
+
+<!-- Stats cards -->
+<div class="row g-3 mb-4">
+  <div class="col-sm-6 col-xl-3">
+    <div class="card tp-stat-card h-100" data-testid="stat-active-users">
+      <div class="card-body">
+        <div class="stat-label">{{ 'dashboard.stats.activeUsers' | translate }}</div>
+        <div class="stat-value">148</div>
+        <small class="text-success">
+          <i class="bi bi-arrow-up" aria-hidden="true"></i>
+          {{ 'dashboard.stats.vsLastMonth' | translate: { percent: '12' } }}
+        </small>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <div class="card tp-stat-card tp-stat-card-success h-100" data-testid="stat-cluster-nodes">
+      <div class="card-body">
+        <div class="stat-label">{{ 'dashboard.stats.clusterNodes' | translate }}</div>
+        <div class="stat-value">3 <small class="text-muted fs-6">/ 3</small></div>
+        <small class="text-success">
+          <i class="bi bi-check-circle" aria-hidden="true"></i>
+          {{ 'dashboard.stats.allOperational' | translate }}
+        </small>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <div class="card tp-stat-card tp-stat-card-warning h-100" data-testid="stat-interfaces">
+      <div class="card-body">
+        <div class="stat-label">{{ 'dashboard.stats.interfaces' | translate }}</div>
+        <div class="stat-value">12</div>
+        <small class="text-warning">
+          <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
+          {{ 'dashboard.stats.withError' | translate: { count: '1' } }}
+        </small>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <div class="card tp-stat-card tp-stat-card-info h-100" data-testid="stat-reports">
+      <div class="card-body">
+        <div class="stat-label">{{ 'dashboard.stats.reportsGenerated' | translate }}</div>
+        <div class="stat-value">56</div>
+        <small class="text-muted">{{ 'dashboard.stats.thisMonth' | translate }}</small>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Recent Activity and Quick Info -->
+<div class="row g-3">
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span>{{ 'dashboard.recentActivity.title' | translate }}</span>
+        <a routerLink="/administration/audit" class="btn btn-sm btn-outline-primary" data-testid="btn-view-all-activity">
+          {{ 'dashboard.recentActivity.viewAll' | translate }}
+        </a>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0 tp-table" data-testid="table-recent-activity">
+            <thead>
+              <tr>
+                <th>{{ 'dashboard.recentActivity.date' | translate }}</th>
+                <th>{{ 'dashboard.recentActivity.user' | translate }}</th>
+                <th>{{ 'dashboard.recentActivity.operation' | translate }}</th>
+                <th>{{ 'dashboard.recentActivity.section' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (entry of recentActivity; track entry.date) {
+                <tr>
+                  <td>{{ entry.date }}</td>
+                  <td>{{ entry.user }}</td>
+                  <td><span class="badge" [class]="entry.badgeClass">{{ entry.operation }}</span></td>
+                  <td>{{ entry.section }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <!-- System Status -->
+    <div class="card mb-3">
+      <div class="card-header">{{ 'dashboard.systemStatus.title' | translate }}</div>
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <span class="text-muted">{{ 'dashboard.systemStatus.version' | translate }}</span>
+          <span class="fw-medium">1.0.0</span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <span class="text-muted">{{ 'dashboard.systemStatus.environment' | translate }}</span>
+          <span class="badge bg-info-subtle text-info">LOCAL</span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <span class="text-muted">{{ 'dashboard.systemStatus.masterNode' | translate }}</span>
+          <span class="fw-medium">node-01</span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center">
+          <span class="text-muted">{{ 'dashboard.systemStatus.uptime' | translate }}</span>
+          <span class="fw-medium">14d 6h 32m</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Shortcuts -->
+    <div class="card">
+      <div class="card-header">{{ 'dashboard.shortcuts.title' | translate }}</div>
+      <div class="card-body">
+        <div class="d-grid gap-2">
+          <a routerLink="/administration/security/users" class="btn btn-outline-primary btn-sm text-start" data-testid="shortcut-users">
+            <i class="bi bi-people me-2" aria-hidden="true"></i>{{ 'dashboard.shortcuts.manageUsers' | translate }}
+          </a>
+          <a routerLink="/reports" class="btn btn-outline-primary btn-sm text-start" data-testid="shortcut-reports">
+            <i class="bi bi-file-earmark-bar-graph me-2" aria-hidden="true"></i>{{ 'dashboard.shortcuts.viewReports' | translate }}
+          </a>
+          <a routerLink="/administration/parameters" class="btn btn-outline-primary btn-sm text-start" data-testid="shortcut-config">
+            <i class="bi bi-sliders me-2" aria-hidden="true"></i>{{ 'dashboard.shortcuts.configuration' | translate }}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

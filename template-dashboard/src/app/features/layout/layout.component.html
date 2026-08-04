@@ -1,90 +1,4 @@
 <div class="tp-wrapper" [class.sidebar-collapsed]="sidebarCollapsed()" [class.mobile-menu-open]="mobileMenuOpen()">
-  <!-- Header -->
-  <header class="tp-header" role="banner">
-    <div class="tp-header-content">
-      <!-- Sidebar toggle (desktop) / Hamburger (mobile) -->
-      <button
-        class="tp-sidebar-toggle d-none d-lg-flex"
-        type="button"
-        (click)="toggleSidebar()"
-        [attr.aria-label]="(sidebarCollapsed() ? 'layout.sidebar.expand' : 'layout.sidebar.collapse') | translate"
-        [attr.aria-expanded]="!sidebarCollapsed()"
-        data-testid="btn-sidebar-toggle"
-      >
-        <i
-          class="bi"
-          [class.bi-list]="sidebarCollapsed()"
-          [class.bi-layout-sidebar-inset]="!sidebarCollapsed()"
-          aria-hidden="true"
-        ></i>
-      </button>
-
-      <!-- Mobile hamburger button -->
-      <button
-        class="tp-sidebar-toggle d-flex d-lg-none"
-        type="button"
-        (click)="toggleMobileMenu()"
-        [attr.aria-label]="(mobileMenuOpen() ? 'layout.sidebar.collapse' : 'layout.sidebar.expand') | translate"
-        [attr.aria-expanded]="mobileMenuOpen()"
-        data-testid="btn-mobile-menu"
-      >
-        <i class="bi bi-list" aria-hidden="true"></i>
-      </button>
-
-      <!-- Application name / brand -->
-      <a class="tp-header-brand" routerLink="/dashboard" data-testid="link-brand">
-        {{ 'app.title' | translate }}
-      </a>
-
-      <!-- Spacer -->
-      <div class="tp-header-spacer"></div>
-
-      <!-- User menu -->
-      <div class="dropdown">
-        <button
-          class="tp-header-user dropdown-toggle"
-          type="button"
-          id="userMenuDropdown"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-          data-testid="btn-user-menu"
-        >
-          <i class="bi bi-person-circle" aria-hidden="true"></i>
-          <span class="tp-header-username d-none d-sm-inline">{{ username() }}</span>
-        </button>
-        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenuDropdown">
-          <li>
-            <a class="dropdown-item" routerLink="/profile" data-testid="link-user-profile">
-              <i class="bi bi-person" aria-hidden="true"></i>
-              {{ 'layout.user.profile' | translate }}
-            </a>
-          </li>
-          <li><hr class="dropdown-divider" /></li>
-          <li>
-            <button
-              class="dropdown-item"
-              type="button"
-              (click)="logout()"
-              data-testid="btn-logout"
-            >
-              <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
-              {{ 'layout.user.logout' | translate }}
-            </button>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </header>
-
-  <!-- Mobile overlay backdrop -->
-  @if (mobileMenuOpen()) {
-    <div
-      class="tp-sidebar-backdrop d-lg-none"
-      (click)="closeMobileMenu()"
-      data-testid="sidebar-backdrop"
-    ></div>
-  }
-
   <!-- Sidebar -->
   <aside
     class="tp-sidebar"
@@ -93,14 +7,16 @@
     role="navigation"
     [attr.aria-label]="'layout.sidebar.navigation' | translate"
   >
-    <!-- Navigation items -->
+    <div class="sidebar-brand">
+      <div class="brand-icon" aria-hidden="true">T</div>
+      <span class="brand-name">Template</span>
+    </div>
     <nav class="sidebar-nav">
       <ul class="nav flex-column">
         @for (item of navItems; track item.labelKey) {
           @if (isItemVisible(item)) {
             <li class="nav-item">
               @if (item.children) {
-                <!-- Expandable section -->
                 <button
                   class="nav-link nav-link-toggle"
                   type="button"
@@ -118,14 +34,12 @@
                   ></i>
                 </button>
 
-                <!-- Sub-level items -->
                 @if (isSectionExpanded(item.labelKey)) {
                   <ul class="nav flex-column nav-sub-level">
                     @for (child of item.children; track child.labelKey) {
                       @if (isItemVisible(child)) {
                         <li class="nav-item">
                           @if (child.children) {
-                            <!-- Nested expandable section (level 2) -->
                             <button
                               class="nav-link nav-link-toggle nav-link-nested"
                               type="button"
@@ -164,7 +78,6 @@
                               </ul>
                             }
                           } @else {
-                            <!-- Leaf child item -->
                             <a
                               class="nav-link nav-link-leaf"
                               [routerLink]="child.route"
@@ -182,7 +95,6 @@
                   </ul>
                 }
               } @else {
-                <!-- Leaf item (no children) -->
                 <a
                   class="nav-link"
                   [routerLink]="item.route"
@@ -201,17 +113,145 @@
     </nav>
   </aside>
 
-  <!-- Main area -->
-  <div class="tp-main">
+  <!-- Main -->
+  <main class="tp-main">
+    <!-- Header -->
+    <header class="tp-header" role="banner">
+      <div class="header-left">
+        <!-- Sidebar toggle (desktop) -->
+        <button
+          class="tp-sidebar-toggle d-none d-lg-flex"
+          type="button"
+          (click)="toggleSidebar()"
+          [attr.aria-label]="(sidebarCollapsed() ? 'layout.sidebar.expand' : 'layout.sidebar.collapse') | translate"
+          [attr.aria-expanded]="!sidebarCollapsed()"
+          data-testid="btn-sidebar-toggle"
+        >
+          <i
+            class="bi fs-4"
+            [class.bi-list]="sidebarCollapsed()"
+            [class.bi-layout-sidebar-inset]="!sidebarCollapsed()"
+            aria-hidden="true"
+          ></i>
+        </button>
+
+        <!-- Mobile hamburger -->
+        <button
+          class="tp-sidebar-toggle d-flex d-lg-none"
+          type="button"
+          (click)="toggleMobileMenu()"
+          [attr.aria-label]="(mobileMenuOpen() ? 'layout.sidebar.collapse' : 'layout.sidebar.expand') | translate"
+          [attr.aria-expanded]="mobileMenuOpen()"
+          data-testid="btn-mobile-menu"
+        >
+          <i class="bi bi-list fs-4" aria-hidden="true"></i>
+        </button>
+
+        <!-- Search -->
+        <div class="header-search d-none d-md-block">
+          <i class="bi bi-search" aria-hidden="true"></i>
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            [placeholder]="'layout.header.search' | translate"
+            [attr.aria-label]="'layout.header.search' | translate"
+            data-testid="input-global-search" />
+        </div>
+      </div>
+
+      <div class="header-right">
+        <!-- Notifications -->
+        <div class="dropdown">
+          <button
+            class="btn btn-link text-muted position-relative"
+            type="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+            [attr.aria-label]="'layout.header.notifications' | translate"
+            data-testid="btn-notifications"
+          >
+            <i class="bi bi-bell fs-5" aria-hidden="true"></i>
+          </button>
+          <div class="dropdown-menu dropdown-menu-end p-0 tp-notifications-panel">
+            <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom bg-light">
+              <strong class="small">{{ 'layout.header.notifications' | translate }}</strong>
+            </div>
+            <div class="text-center py-3 text-muted small">
+              {{ 'layout.header.noNotifications' | translate }}
+            </div>
+          </div>
+        </div>
+
+        <!-- User menu -->
+        <div class="dropdown">
+          <button
+            class="btn btn-link text-decoration-none d-flex align-items-center gap-2"
+            type="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+            data-testid="btn-user-menu"
+          >
+            <div class="user-avatar" aria-hidden="true">{{ userInitials() }}</div>
+            <span class="text-dark fw-medium d-none d-md-inline">{{ fullName() }}</span>
+            <i class="bi bi-chevron-down text-muted" aria-hidden="true"></i>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li>
+              <a class="dropdown-item" routerLink="/profile" data-testid="link-user-profile">
+                <i class="bi bi-person me-2" aria-hidden="true"></i>
+                {{ 'layout.user.profile' | translate }}
+              </a>
+            </li>
+            <li><hr class="dropdown-divider" /></li>
+            <li>
+              <button
+                class="dropdown-item text-danger"
+                type="button"
+                (click)="logout()"
+                data-testid="btn-logout"
+              >
+                <i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>
+                {{ 'layout.user.logout' | translate }}
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </header>
+
+    <!-- Breadcrumb -->
+    <div class="tp-breadcrumb">
+      <nav aria-label="Breadcrumb">
+        <ol class="breadcrumb mb-0">
+          @for (segment of breadcrumbs(); track segment.path; let last = $last) {
+            @if (last) {
+              <li class="breadcrumb-item active" aria-current="page">{{ segment.label | translate }}</li>
+            } @else {
+              <li class="breadcrumb-item"><a [routerLink]="segment.path">{{ segment.label | translate }}</a></li>
+            }
+          }
+        </ol>
+      </nav>
+    </div>
+
+    <!-- Mobile overlay backdrop -->
+    @if (mobileMenuOpen()) {
+      <div
+        class="tp-sidebar-backdrop d-lg-none"
+        (click)="closeMobileMenu()"
+        data-testid="sidebar-backdrop"
+      ></div>
+    }
+
     <!-- Content area -->
-    <main class="tp-content" role="main">
+    <div class="tp-content" role="main">
       <router-outlet />
-    </main>
+    </div>
 
     <!-- Footer -->
     <footer class="tp-footer" role="contentinfo">
-      <span>{{ 'app.title' | translate }} &copy; {{ currentYear }}</span>
-      <span class="tp-footer-version">{{ 'layout.footer.version' | translate }}</span>
+      <span>{{ 'app.title' | translate }} {{ 'layout.footer.version' | translate }} &mdash; {{ 'layout.footer.environment' | translate }}</span>
+      <span>&copy; {{ currentYear }} Javier Izquierdo G&oacute;mez</span>
     </footer>
-  </div>
+  </main>
 </div>

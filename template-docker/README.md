@@ -75,7 +75,8 @@ template-docker/
 
 - Imagen: `postgres:18`
 - Puerto: configurable via `POSTGRES_PORT` (por defecto 5432)
-- Los datos se persisten en un volumen Docker (`postgres-data`)
+- Los datos se persisten en un volumen Docker (`postgres-data`) montado en `/var/lib/postgresql`
+- `PGDATA` se fija en `/var/lib/postgresql/18/docker` para seguir el esquema recomendado en 18+
 
 ### Backend
 

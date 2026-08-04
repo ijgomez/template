@@ -1,0 +1,135 @@
+<div class="tp-login-page">
+  <div class="tp-login-card">
+    <!-- Header -->
+    <div class="text-center mb-4">
+      <div
+        class="d-inline-flex align-items-center justify-content-center rounded-3 mb-3 tp-login-icon"
+        aria-hidden="true">
+        <i class="bi bi-grid-fill text-white fs-3"></i>
+      </div>
+      <h1 class="fw-bold fs-4" data-testid="login-title">{{ 'login.title' | translate }}</h1>
+      <p class="text-muted mb-0">{{ 'login.subtitle' | translate }}</p>
+    </div>
+
+    <!-- Login form -->
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+      <!-- Username -->
+      <div class="mb-3">
+        <label for="username" class="form-label">{{ 'login.username' | translate }}</label>
+        <div class="input-group">
+          <span class="input-group-text" aria-hidden="true">
+            <i class="bi bi-person"></i>
+          </span>
+          <input
+            type="text"
+            class="form-control"
+            id="username"
+            formControlName="username"
+            [placeholder]="'login.username.placeholder' | translate"
+            [attr.aria-label]="'login.username' | translate"
+            [attr.aria-invalid]="usernameControl.invalid && usernameControl.touched"
+            aria-describedby="username-error"
+            data-testid="input-username"
+            autocomplete="username" />
+        </div>
+        @if (usernameControl.invalid && usernameControl.touched) {
+          <div id="username-error" class="text-danger small mt-1" role="alert">
+            {{ 'validation.required' | translate }}
+          </div>
+        }
+      </div>
+
+      <!-- Password -->
+      <div class="mb-3">
+        <label for="password" class="form-label">{{ 'login.password' | translate }}</label>
+        <div class="input-group">
+          <span class="input-group-text" aria-hidden="true">
+            <i class="bi bi-lock"></i>
+          </span>
+          <input
+            [type]="showPassword() ? 'text' : 'password'"
+            class="form-control"
+            id="password"
+            formControlName="password"
+            [placeholder]="'login.password.placeholder' | translate"
+            [attr.aria-label]="'login.password' | translate"
+            [attr.aria-invalid]="passwordControl.invalid && passwordControl.touched"
+            aria-describedby="password-error"
+            data-testid="input-password"
+            autocomplete="current-password" />
+          <button
+            class="btn btn-outline-secondary"
+            type="button"
+            (click)="togglePasswordVisibility()"
+            [attr.aria-label]="(showPassword() ? 'login.password.hide' : 'login.password.show') | translate"
+            data-testid="btn-toggle-password">
+            <i class="bi" [class.bi-eye]="!showPassword()" [class.bi-eye-slash]="showPassword()" aria-hidden="true"></i>
+          </button>
+        </div>
+        @if (passwordControl.invalid && passwordControl.touched) {
+          <div id="password-error" class="text-danger small mt-1" role="alert">
+            {{ 'validation.required' | translate }}
+          </div>
+        }
+      </div>
+
+      <!-- Remember me -->
+      <div class="mb-4">
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            id="remember"
+            formControlName="remember"
+            data-testid="checkbox-remember" />
+          <label class="form-check-label" for="remember">
+            {{ 'login.remember' | translate }}
+          </label>
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <button
+        type="submit"
+        class="btn btn-primary w-100 py-2 fw-semibold"
+        [disabled]="isLoading()"
+        data-testid="btn-login-submit">
+        @if (isLoading()) {
+          <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+        } @else {
+          <i class="bi bi-box-arrow-in-right me-2" aria-hidden="true"></i>
+        }
+        {{ 'login.submit' | translate }}
+      </button>
+    </form>
+
+    <!-- Error alert -->
+    @if (loginError()) {
+      <div class="alert alert-danger mt-3 d-flex align-items-center" role="alert" data-testid="login-error-alert">
+        <i class="bi bi-exclamation-triangle-fill me-2" aria-hidden="true"></i>
+        <span>{{ 'login.error' | translate }}</span>
+      </div>
+    }
+
+    <!-- Language switcher -->
+    <div class="text-center mt-4">
+      <small class="text-muted">
+        <i class="bi bi-translate me-1" aria-hidden="true"></i>
+        @for (lang of supportedLanguages; track lang) {
+          @if (!$first) {
+            <span> | </span>
+          }
+          <a
+            href="javascript:void(0)"
+            class="text-decoration-none"
+            [class.fw-bold]="currentLanguage() === lang"
+            (click)="switchLanguage(lang)"
+            [attr.aria-label]="lang"
+            [attr.data-testid]="'btn-lang-' + lang">
+            {{ lang | uppercase }}
+          </a>
+        }
+      </small>
+    </div>
+  </div>
+</div>

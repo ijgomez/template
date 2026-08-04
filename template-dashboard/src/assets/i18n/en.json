@@ -8,12 +8,18 @@
       "collapse": "Collapse menu",
       "navigation": "Main navigation"
     },
+    "header": {
+      "search": "Search...",
+      "notifications": "Notifications",
+      "noNotifications": "No notifications"
+    },
     "user": {
       "profile": "My Profile",
       "logout": "Logout"
     },
     "footer": {
-      "version": "v0.0.0"
+      "version": "v0.0.0",
+      "environment": "Environment: LOCAL"
     }
   },
   "pwa": {
@@ -57,11 +63,17 @@
     "back": "Back"
   },
   "login": {
-    "title": "Login",
+    "title": "Template App",
+    "subtitle": "Enter your credentials to access",
     "username": "Username",
+    "username.placeholder": "Enter your username",
     "password": "Password",
+    "password.placeholder": "Enter your password",
+    "password.show": "Show password",
+    "password.hide": "Hide password",
+    "remember": "Remember me",
     "submit": "Sign In",
-    "error": "Invalid credentials"
+    "error": "Invalid credentials. Please try again."
   },
   "notification": {
     "progress": "Processing...",
@@ -119,7 +131,8 @@
     "pagination": {
       "showing": "Showing {{from}} to {{to}} of {{total}} records",
       "previous": "Previous page",
-      "next": "Next page"
+      "next": "Next page",
+      "pageSize": "Items per page"
     }
   },
   "users": {
@@ -360,6 +373,41 @@
       "xlsx": "Export Excel",
       "csv": "Export CSV",
       "txt": "Export TXT"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "lastAccess": "Last access: {{date}}",
+    "stats": {
+      "activeUsers": "Active users",
+      "clusterNodes": "Cluster nodes",
+      "interfaces": "Interfaces",
+      "reportsGenerated": "Reports generated",
+      "allOperational": "All operational",
+      "withError": "{{count}} with error",
+      "thisMonth": "This month",
+      "vsLastMonth": "{{percent}}% vs last month"
+    },
+    "recentActivity": {
+      "title": "Recent activity",
+      "viewAll": "View all",
+      "date": "Date",
+      "user": "User",
+      "operation": "Operation",
+      "section": "Section"
+    },
+    "systemStatus": {
+      "title": "System status",
+      "version": "Version",
+      "environment": "Environment",
+      "masterNode": "Master node",
+      "uptime": "Uptime"
+    },
+    "shortcuts": {
+      "title": "Quick links",
+      "manageUsers": "Manage users",
+      "viewReports": "View reports",
+      "configuration": "Configuration"
     }
   }
 }

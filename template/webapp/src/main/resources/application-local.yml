@@ -12,6 +12,9 @@ spring:
     password: template
     driver-class-name: org.postgresql.Driver
 
+  liquibase:
+    contexts: local
+
   jpa:
     show-sql: true
     properties:
