@@ -7,7 +7,15 @@
         "--project",
         "../template",
         "--context",
-        "claude-code"
+        "ide-assistant"
+      ]
+    },
+    "postgres": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-postgres",
+        "postgresql://template:template@localhost:5432/template"
       ]
     }
   }
