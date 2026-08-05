@@ -74,7 +74,7 @@
 
     <!-- Custom column: actions count (badge) -->
     <ng-template tpColumn="actions" let-profile>
-      <span class="badge bg-primary-subtle text-primary">{{ profile.actions.length }}</span>
+      <span class="badge bg-primary-subtle text-primary">{{ (profile.actions ?? profile.actionIds ?? []).length }}</span>
     </ng-template>
 
     <!-- Custom column: createdAt (localDate pipe) -->

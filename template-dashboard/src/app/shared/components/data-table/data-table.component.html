@@ -30,7 +30,7 @@
               </td>
             </tr>
           } @else {
-            @for (item of data; track item.id) {
+            @for (item of data; track $index) {
               <tr [class.table-active]="isSelected(item)"
                   [style.cursor]="selectable ? 'pointer' : 'default'"
                   [attr.aria-selected]="isSelected(item)"
@@ -55,7 +55,7 @@
   </div>
 
   <!-- Pagination footer -->
-  @if (totalElements > 0) {
+  @if (data.length > 0) {
     <div class="card-footer d-flex justify-content-between align-items-center"
          data-testid="table-pagination">
       <!-- Record counter -->
