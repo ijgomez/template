@@ -36,6 +36,7 @@ Describe los distintos módulos funcionales de la aplicación.
 - [Internacionalización](03-technical/frontend/internacionalizacion.md)
 - [PWA](03-technical/frontend/pwa.md)
 - [Notificaciones](03-technical/frontend/notifications.md)
+- [Componentes](03-technical/frontend/components.md)
 
 #### Backend
 

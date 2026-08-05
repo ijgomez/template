@@ -39,9 +39,11 @@ src/
 
 ## Componentes
 
+- **Principio de Responsabilidad Única (SRP):** cada componente debe tener una única responsabilidad bien definida. Si un componente gestiona más de una funcionalidad (por ejemplo, visualización y edición, o listado y detalle), se debe dividir en componentes más pequeños y cohesivos.
 - Preferir componentes standalone (Angular 22).
 - Separar plantilla (`.html`), estilos (`.scss`) y lógica (`.ts`).
 - Usar `OnPush` como estrategia de detección de cambios cuando sea posible.
+- Delegar la lógica de negocio y acceso a datos a servicios; el componente solo se encarga de la interacción con la vista.
 
 ## Servicios
 
