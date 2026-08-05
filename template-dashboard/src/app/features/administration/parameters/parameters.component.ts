@@ -40,6 +40,12 @@ export class ParametersComponent {
   readonly filterDescription = signal('');
   readonly filterType = signal<ParameterType | ''>('');
 
+  // Row selection
+  readonly selectedRow = signal<Parameter | null>(null);
+
+  // Page size options
+  readonly pageSizes = [5, 10, 20, 50];
+
   // Detail/Form state
   readonly selectedParameter = signal<Parameter | null>(null);
   readonly formData = signal<Parameter>(this.emptyParameter());
@@ -236,6 +242,32 @@ export class ParametersComponent {
         this.deleteTarget.set(null);
       },
     });
+  }
+
+  // ─── Row Selection ────────────────────────────────────────────
+
+  selectRow(parameter: Parameter): void {
+    this.selectedRow.update(current => current?.code === parameter.code ? null : parameter);
+  }
+
+  editSelectedParameter(): void {
+    const row = this.selectedRow();
+    if (row) {
+      this.openEdit(row);
+    }
+  }
+
+  deleteSelectedParameter(): void {
+    const row = this.selectedRow();
+    if (row) {
+      this.confirmDelete(row);
+    }
+  }
+
+  changePageSize(size: number): void {
+    this.pageSize.set(size);
+    this.currentPage.set(0);
+    this.loadParameters();
   }
 
   // ─── Helpers ────────────────────────────────────────────────

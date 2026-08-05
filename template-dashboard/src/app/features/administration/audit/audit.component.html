@@ -2,179 +2,173 @@
      AUDIT LOG LIST VIEW
      ═══════════════════════════════════════════════════════════════════════════ -->
 @if (viewMode() === 'list') {
-  <div class="d-flex justify-content-between align-items-center mb-3">
+  <!-- Title -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
     <h1 class="h3 mb-0">{{ 'audit.title' | translate }}</h1>
-    <div class="d-flex gap-2">
-      <button class="btn btn-outline-secondary btn-sm"
-              data-testid="audit-export-csv"
-              (click)="exportCsv()"
-              [attr.aria-label]="'button.export' | translate">
-        <i class="bi bi-download me-1" aria-hidden="true"></i>{{ 'button.export' | translate }}
-      </button>
-    </div>
   </div>
 
-  <!-- Filters -->
-  <div class="card mb-3">
-    <div class="card-body">
-      <div class="tp-form-grid">
-        <div class="form-group">
-          <label for="filterDateFrom" class="form-label">{{ 'audit.filters.dateFrom' | translate }}</label>
-          <input id="filterDateFrom"
-                 type="date"
-                 class="form-control form-control-sm"
-                 data-testid="audit-filter-date-from"
-                 [(ngModel)]="filterDateFrom">
-        </div>
-        <div class="form-group">
-          <label for="filterDateTo" class="form-label">{{ 'audit.filters.dateTo' | translate }}</label>
-          <input id="filterDateTo"
-                 type="date"
-                 class="form-control form-control-sm"
-                 data-testid="audit-filter-date-to"
-                 [(ngModel)]="filterDateTo">
-        </div>
-        <div class="form-group">
-          <label for="filterUsername" class="form-label">{{ 'audit.fields.username' | translate }}</label>
-          <input id="filterUsername"
-                 type="text"
-                 class="form-control form-control-sm"
-                 data-testid="audit-filter-username"
-                 [(ngModel)]="filterUsername"
-                 [placeholder]="'audit.fields.username' | translate">
-        </div>
-        <div class="form-group">
-          <label for="filterOperationType" class="form-label">{{ 'audit.fields.operationType' | translate }}</label>
-          <select id="filterOperationType"
-                  class="form-select form-select-sm"
-                  data-testid="audit-filter-operation-type"
-                  [(ngModel)]="filterOperationType">
-            <option value="">{{ 'audit.filters.allTypes' | translate }}</option>
-            @for (type of operationTypes; track type) {
-              <option [value]="type">{{ type }}</option>
+  <!-- Filter bar -->
+  <div class="tp-filter-bar">
+    <form class="row g-3 align-items-end" (ngSubmit)="applyFilters()" aria-label="Filtros de búsqueda de auditoría" data-testid="audit-filter-form">
+      <div class="col-md-2">
+        <label for="filterUsername" class="form-label">{{ 'audit.fields.username' | translate }}</label>
+        <input id="filterUsername" type="text" class="form-control form-control-sm"
+               [ngModel]="filterUsername()" (ngModelChange)="filterUsername.set($event)" name="filterUsername"
+               [placeholder]="'audit.fields.username' | translate" data-testid="audit-filter-username">
+      </div>
+      <div class="col-md-2">
+        <label for="filterOperationType" class="form-label">{{ 'audit.fields.operationType' | translate }}</label>
+        <select id="filterOperationType" class="form-select form-select-sm"
+                [ngModel]="filterOperationType()" (ngModelChange)="filterOperationType.set($event)" name="filterOperationType"
+                [attr.aria-label]="'audit.fields.operationType' | translate" data-testid="audit-filter-operation-type">
+          <option value="">{{ 'audit.filters.allTypes' | translate }}</option>
+          @for (type of operationTypes; track type) {
+            <option [value]="type">{{ type }}</option>
+          }
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label for="filterSection" class="form-label">{{ 'audit.fields.section' | translate }}</label>
+        <select id="filterSection" class="form-select form-select-sm"
+                [ngModel]="filterSection()" (ngModelChange)="filterSection.set($event)" name="filterSection"
+                [attr.aria-label]="'audit.fields.section' | translate" data-testid="audit-filter-section">
+          <option value="">{{ 'audit.filters.allSections' | translate }}</option>
+          @for (section of auditSections; track section) {
+            <option [value]="section">{{ section }}</option>
+          }
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label for="filterDateFrom" class="form-label">{{ 'audit.filters.dateFrom' | translate }}</label>
+        <input id="filterDateFrom" type="date" class="form-control form-control-sm"
+               [ngModel]="filterDateFrom()" (ngModelChange)="filterDateFrom.set($event)" name="filterDateFrom"
+               [attr.aria-label]="'audit.filters.dateFrom' | translate" data-testid="audit-filter-date-from">
+      </div>
+      <div class="col-md-2">
+        <label for="filterDateTo" class="form-label">{{ 'audit.filters.dateTo' | translate }}</label>
+        <input id="filterDateTo" type="date" class="form-control form-control-sm"
+               [ngModel]="filterDateTo()" (ngModelChange)="filterDateTo.set($event)" name="filterDateTo"
+               [attr.aria-label]="'audit.filters.dateTo' | translate" data-testid="audit-filter-date-to">
+      </div>
+      <div class="col-12 d-flex justify-content-end gap-2 mt-2">
+        <button type="submit" class="btn btn-primary btn-sm" data-testid="audit-apply-filters">
+          <i class="bi bi-search me-1" aria-hidden="true"></i> {{ 'button.filter' | translate }}
+        </button>
+        <button type="button" class="btn btn-outline-secondary btn-sm" (click)="clearFilters()" data-testid="audit-clear-filters">
+          <i class="bi bi-x-circle me-1" aria-hidden="true"></i> {{ 'audit.filters.clear' | translate }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Action toolbar -->
+  <div class="tp-toolbar d-flex gap-2 mb-3">
+    <button type="button" class="btn btn-outline-secondary btn-sm ms-auto" (click)="exportCsv()" data-testid="audit-export-csv">
+      <i class="bi bi-download me-1" aria-hidden="true"></i> {{ 'button.export' | translate }}
+    </button>
+  </div>
+
+  <!-- Data table -->
+  <div class="card tp-card">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover tp-table mb-0" aria-label="Registros de auditoría del sistema" data-testid="audit-table">
+          <thead>
+            <tr>
+              <th scope="col">{{ 'audit.fields.timestamp' | translate }}</th>
+              <th scope="col">{{ 'audit.fields.username' | translate }}</th>
+              <th scope="col">{{ 'audit.fields.operationType' | translate }}</th>
+              <th scope="col">{{ 'audit.fields.section' | translate }}</th>
+              <th scope="col">{{ 'audit.fields.entityName' | translate }}</th>
+              <th scope="col">{{ 'audit.fields.entityId' | translate }}</th>
+              <th scope="col">{{ 'audit.fields.detail' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @if (isLoading()) {
+              <tr>
+                <td colspan="7" class="text-center py-4">
+                  <div class="spinner-border spinner-border-sm" role="status">
+                    <span class="visually-hidden">{{ 'common.loading' | translate }}</span>
+                  </div>
+                </td>
+              </tr>
+            } @else if (auditLogs().length === 0) {
+              <tr>
+                <td colspan="7" class="text-center py-4 text-muted">
+                  {{ 'common.noData' | translate }}
+                </td>
+              </tr>
+            } @else {
+              @for (log of auditLogs(); track log.id) {
+                <tr (click)="viewDetail(log)" style="cursor: pointer;" role="row">
+                  <td>{{ log.timestamp | localDate }}</td>
+                  <td>{{ log.username }}</td>
+                  <td>
+                    <span class="badge"
+                          [class.bg-success-subtle]="log.operationType === 'CREATE'"
+                          [class.text-success]="log.operationType === 'CREATE'"
+                          [class.bg-primary-subtle]="log.operationType === 'UPDATE'"
+                          [class.text-primary]="log.operationType === 'UPDATE'"
+                          [class.bg-danger-subtle]="log.operationType === 'DELETE'"
+                          [class.text-danger]="log.operationType === 'DELETE'"
+                          [class.bg-info-subtle]="log.operationType === 'EXECUTE'"
+                          [class.text-info]="log.operationType === 'EXECUTE'">
+                      {{ log.operationType }}
+                    </span>
+                  </td>
+                  <td>{{ log.section }}</td>
+                  <td>{{ log.entityName }}</td>
+                  <td>{{ log.entityId }}</td>
+                  <td>{{ log.detail }}</td>
+                </tr>
+              }
             }
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="filterSection" class="form-label">{{ 'audit.fields.section' | translate }}</label>
-          <select id="filterSection"
-                  class="form-select form-select-sm"
-                  data-testid="audit-filter-section"
-                  [(ngModel)]="filterSection">
-            <option value="">{{ 'audit.filters.allSections' | translate }}</option>
-            @for (section of auditSections; track section) {
-              <option [value]="section">{{ section }}</option>
-            }
-          </select>
-        </div>
-        <div class="form-group d-flex align-items-end gap-2">
-          <button class="btn btn-primary btn-sm"
-                  data-testid="audit-apply-filters"
-                  (click)="applyFilters()">
-            <i class="bi bi-search me-1" aria-hidden="true"></i>{{ 'button.filter' | translate }}
-          </button>
-          <button class="btn btn-outline-secondary btn-sm"
-                  data-testid="audit-clear-filters"
-                  (click)="clearFilters()">
-            {{ 'audit.filters.clear' | translate }}
-          </button>
-        </div>
+          </tbody>
+        </table>
       </div>
     </div>
-  </div>
-
-  <!-- Table -->
-  <div class="tp-table-responsive">
-    <table class="table table-striped table-hover align-middle" data-testid="audit-table">
-      <thead class="table-light">
-        <tr>
-          <th>{{ 'audit.fields.timestamp' | translate }}</th>
-          <th>{{ 'audit.fields.username' | translate }}</th>
-          <th>{{ 'audit.fields.operationType' | translate }}</th>
-          <th>{{ 'audit.fields.section' | translate }}</th>
-          <th>{{ 'audit.fields.entityName' | translate }}</th>
-          <th class="text-end">{{ 'common.actions' | translate }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        @if (isLoading()) {
-          <tr>
-            <td colspan="6" class="text-center py-4">
-              <div class="spinner-border spinner-border-sm" role="status">
-                <span class="visually-hidden">{{ 'common.loading' | translate }}</span>
-              </div>
-            </td>
-          </tr>
-        } @else if (auditLogs().length === 0) {
-          <tr>
-            <td colspan="6" class="text-center py-4 text-muted">
-              {{ 'common.noData' | translate }}
-            </td>
-          </tr>
-        } @else {
-          @for (log of auditLogs(); track log.id) {
-            <tr>
-              <td>{{ log.timestamp | localDate }}</td>
-              <td>{{ log.username }}</td>
-              <td>
-                <span class="badge"
-                      [class.bg-success]="log.operationType === 'CREATE'"
-                      [class.bg-info]="log.operationType === 'UPDATE'"
-                      [class.bg-danger]="log.operationType === 'DELETE'"
-                      [class.bg-warning]="log.operationType === 'EXECUTE'">
-                  {{ log.operationType }}
-                </span>
-              </td>
-              <td>
-                <span class="badge bg-secondary">{{ log.section }}</span>
-              </td>
-              <td>{{ log.entityName }}</td>
-              <td class="text-end">
-                <button class="btn btn-outline-primary btn-sm"
-                        data-testid="audit-view-detail"
-                        (click)="viewDetail(log)"
-                        [attr.aria-label]="'common.detail' | translate">
-                  <i class="bi bi-eye" aria-hidden="true"></i>
-                </button>
-              </td>
-            </tr>
-          }
-        }
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Pagination -->
-  @if (totalElements() > 0) {
-    <div class="d-flex justify-content-between align-items-center mt-3">
-      <small class="text-muted">
-        {{ 'common.pagination.showing' | translate: { from: showingFrom(), to: showingTo(), total: totalElements() } }}
-      </small>
-      <nav [attr.aria-label]="'audit.title' | translate">
-        <ul class="pagination pagination-sm mb-0">
-          <li class="page-item" [class.disabled]="currentPage() === 0">
-            <a class="page-link" href="javascript:void(0)" (click)="goToPage(currentPage() - 1)"
-               [attr.aria-label]="'common.pagination.previous' | translate">
-              &laquo;
-            </a>
-          </li>
-          @for (p of getPageNumbers(); track p) {
-            <li class="page-item" [class.active]="p === currentPage()">
-              <a class="page-link" href="javascript:void(0)" (click)="goToPage(p)">
-                {{ p + 1 }}
+    @if (totalElements() > 0) {
+      <div class="card-footer d-flex justify-content-between align-items-center">
+        <span class="text-muted" style="font-size: 0.8125rem;" data-testid="pagination-info">
+          {{ 'common.pagination.showing' | translate: { from: showingFrom(), to: showingTo(), total: totalElements() } }}
+        </span>
+        <nav aria-label="Paginación de auditoría">
+          <ul class="pagination pagination-sm mb-0">
+            <li class="page-item" [class.disabled]="currentPage() === 0">
+              <a class="page-link" href="javascript:void(0)" (click)="goToPage(currentPage() - 1)"
+                 [attr.aria-label]="'common.pagination.previous' | translate" data-testid="pagination-prev">
+                <i class="bi bi-chevron-left" aria-hidden="true"></i>
               </a>
             </li>
-          }
-          <li class="page-item" [class.disabled]="currentPage() >= totalPages() - 1">
-            <a class="page-link" href="javascript:void(0)" (click)="goToPage(currentPage() + 1)"
-               [attr.aria-label]="'common.pagination.next' | translate">
-              &raquo;
-            </a>
-          </li>
-        </ul>
-      </nav>
-    </div>
-  }
+            @for (p of getPageNumbers(); track p) {
+              <li class="page-item" [class.active]="p === currentPage()" [attr.aria-current]="p === currentPage() ? 'page' : null">
+                <a class="page-link" href="javascript:void(0)" (click)="goToPage(p)">{{ p + 1 }}</a>
+              </li>
+            }
+            <li class="page-item" [class.disabled]="currentPage() >= totalPages() - 1">
+              <a class="page-link" href="javascript:void(0)" (click)="goToPage(currentPage() + 1)"
+                 [attr.aria-label]="'common.pagination.next' | translate" data-testid="pagination-next">
+                <i class="bi bi-chevron-right" aria-hidden="true"></i>
+              </a>
+            </li>
+          </ul>
+        </nav>
+        <div class="d-flex align-items-center gap-2 ms-3">
+          <label for="auditPageSize" class="text-muted text-nowrap mb-0" style="font-size: 0.8125rem;">
+            {{ 'common.pagination.pageSize' | translate }}:
+          </label>
+          <select class="form-select form-select-sm" id="auditPageSize" style="width: auto;"
+                  [ngModel]="pageSize()" (ngModelChange)="changePageSize($event)" name="auditPageSize"
+                  [attr.aria-label]="'common.pagination.pageSize' | translate" data-testid="pagination-page-size">
+            @for (size of pageSizes; track size) {
+              <option [ngValue]="size">{{ size }}</option>
+            }
+          </select>
+        </div>
+      </div>
+    }
+  </div>
 }
 
 <!-- ═══════════════════════════════════════════════════════════════════════════

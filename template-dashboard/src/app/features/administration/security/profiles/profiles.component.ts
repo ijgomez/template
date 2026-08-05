@@ -45,11 +45,31 @@ export class ProfilesComponent implements OnInit {
   // Filter
   readonly filterName = signal('');
 
+  // Row selection
+  readonly selectedRow = signal<Profile | null>(null);
+
+  // Page size options
+  readonly pageSizes = [5, 10, 20, 50];
+
+  // Pagination info computeds
+  readonly showingFrom = computed(() => this.currentPage() * this.pageSize() + 1);
+  readonly showingTo = computed(() => Math.min((this.currentPage() + 1) * this.pageSize(), this.totalElements()));
+
   // Detail/Form data
   readonly selectedProfile = signal<Profile | null>(null);
   readonly formProfile = signal<Profile>({ id: null, name: '', description: '', actions: [] });
   readonly availableActions = signal<Action[]>([]);
   readonly selectedActionIds = signal<number[]>([]);
+
+  // Form: action filter & filtered list
+  readonly actionFilter = signal('');
+  readonly assignedActionsFiltered = computed(() => {
+    const ids = this.selectedActionIds();
+    const filter = this.actionFilter().toLowerCase();
+    return this.availableActions()
+      .filter((a) => ids.includes(a.id))
+      .filter((a) => !filter || a.code.toLowerCase().includes(filter) || a.name.toLowerCase().includes(filter));
+  });
 
   // Action-based permissions
   readonly canWrite = computed(() => this.authService.hasAction('PROFILE_WRITE'));
@@ -136,6 +156,32 @@ export class ProfilesComponent implements OnInit {
     this.notificationService.showSuccess('notification.export.success');
   }
 
+  // ─── Row Selection ────────────────────────────────────────────
+
+  selectRow(profile: Profile): void {
+    this.selectedRow.set(this.selectedRow()?.id === profile.id ? null : profile);
+  }
+
+  editSelectedProfile(): void {
+    const row = this.selectedRow();
+    if (row) {
+      this.openEditForm(row);
+    }
+  }
+
+  deleteSelectedProfile(): void {
+    const row = this.selectedRow();
+    if (row) {
+      this.confirmDelete(row);
+    }
+  }
+
+  changePageSize(size: number): void {
+    this.pageSize.set(size);
+    this.currentPage.set(0);
+    this.loadProfiles();
+  }
+
   // ─── Detail View ────────────────────────────────────────────
 
   viewDetail(profile: Profile): void {
@@ -170,6 +216,14 @@ export class ProfilesComponent implements OnInit {
 
   isActionSelected(actionId: number): boolean {
     return this.selectedActionIds().includes(actionId);
+  }
+
+  removeAction(actionId: number): void {
+    this.toggleAction(actionId);
+  }
+
+  openActionModal(): void {
+    // TODO: implement action selection modal
   }
 
   saveProfile(): void {

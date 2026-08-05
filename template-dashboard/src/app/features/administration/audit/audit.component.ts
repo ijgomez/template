@@ -49,6 +49,9 @@ export class AuditComponent implements OnInit {
   readonly showingFrom = computed(() => this.totalElements() === 0 ? 0 : this.currentPage() * this.pageSize() + 1);
   readonly showingTo = computed(() => Math.min((this.currentPage() + 1) * this.pageSize(), this.totalElements()));
 
+  // Page size options
+  readonly pageSizes = [5, 10, 20, 50];
+
   // Filter dropdown options
   readonly operationTypes: OperationType[] = ['CREATE', 'UPDATE', 'DELETE', 'EXECUTE'];
   readonly auditSections: AuditSection[] = ['SECURITY', 'REPORTS', 'INTERFACES', 'CLUSTER', 'SYSTEM'];
@@ -108,6 +111,15 @@ export class AuditComponent implements OnInit {
       this.currentPage.set(page);
       this.loadAuditLogs();
     }
+  }
+
+  /**
+   * Changes the page size, resets to page 0, and reloads.
+   */
+  changePageSize(size: number): void {
+    this.pageSize.set(size);
+    this.currentPage.set(0);
+    this.loadAuditLogs();
   }
 
   /**

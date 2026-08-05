@@ -35,6 +35,7 @@ export class BlocksComponent implements OnInit {
   readonly totalElements = signal(0);
   readonly currentPage = signal(0);
   readonly pageSize = signal(10);
+  readonly pageSizes = [5, 10, 20, 50];
   readonly totalPages = computed(() => Math.ceil(this.totalElements() / this.pageSize()));
   readonly isLoading = signal(false);
 
@@ -96,6 +97,15 @@ export class BlocksComponent implements OnInit {
       this.currentPage.set(page);
       this.loadBlocks();
     }
+  }
+
+  /**
+   * Changes the page size, resets to page 0 and reloads.
+   */
+  changePageSize(size: number): void {
+    this.pageSize.set(size);
+    this.currentPage.set(0);
+    this.loadBlocks();
   }
 
   /**

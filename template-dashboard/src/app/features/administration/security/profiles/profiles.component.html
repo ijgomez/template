@@ -2,137 +2,138 @@
      PROFILES LIST VIEW
      ═══════════════════════════════════════════════════════════════════════════ -->
 @if (viewMode() === 'list') {
-  <div class="d-flex justify-content-between align-items-center mb-3">
+  <!-- Title -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
     <h1 class="h3 mb-0">{{ 'profiles.title' | translate }}</h1>
-    <div class="d-flex gap-2">
-      <button class="btn btn-outline-secondary btn-sm"
-              (click)="exportCsv()"
-              [attr.aria-label]="'button.export' | translate">
-        <i class="bi bi-download me-1"></i>{{ 'button.export' | translate }}
-      </button>
-      @if (canWrite()) {
-        <button class="btn btn-primary btn-sm"
-                (click)="openCreateForm()"
-                [attr.aria-label]="'button.create' | translate">
-          <i class="bi bi-plus-lg me-1"></i>{{ 'button.create' | translate }}
-        </button>
-      }
-    </div>
   </div>
 
-  <!-- Filters -->
-  <div class="card mb-3">
-    <div class="card-body">
-      <div class="tp-form-grid">
-        <div class="form-group">
-          <label for="filterName" class="form-label">{{ 'profiles.fields.name' | translate }}</label>
-          <input id="filterName"
-                 type="text"
-                 class="form-control form-control-sm"
-                 [ngModel]="filterName()"
-                 (ngModelChange)="filterName.set($event)"
-                 [placeholder]="'profiles.fields.name' | translate">
-        </div>
-        <div class="form-group d-flex align-items-end gap-2">
-          <button class="btn btn-primary btn-sm" (click)="applyFilter()">
-            <i class="bi bi-search me-1"></i>{{ 'button.filter' | translate }}
-          </button>
-          <button class="btn btn-outline-secondary btn-sm" (click)="clearFilter()">
-            {{ 'profiles.filters.clear' | translate }}
-          </button>
-        </div>
+  <!-- Filter bar -->
+  <div class="tp-filter-bar">
+    <form class="row g-3 align-items-end" (ngSubmit)="applyFilter()" aria-label="Filtros de búsqueda de perfiles" data-testid="profiles-filter-form">
+      <div class="col-md-4">
+        <label for="filterName" class="form-label">{{ 'profiles.fields.name' | translate }}</label>
+        <input id="filterName" type="text" class="form-control form-control-sm"
+               [ngModel]="filterName()" (ngModelChange)="filterName.set($event)" name="filterName"
+               [placeholder]="'profiles.fields.name' | translate" data-testid="filter-name">
+      </div>
+      <div class="col-12 d-flex justify-content-end gap-2 mt-2">
+        <button type="submit" class="btn btn-primary btn-sm" data-testid="btn-filter-search">
+          <i class="bi bi-search me-1" aria-hidden="true"></i> {{ 'button.filter' | translate }}
+        </button>
+        <button type="button" class="btn btn-outline-secondary btn-sm" (click)="clearFilter()" data-testid="btn-filter-clear">
+          <i class="bi bi-x-circle me-1" aria-hidden="true"></i> {{ 'profiles.filters.clear' | translate }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Action toolbar -->
+  <div class="tp-toolbar d-flex gap-2 mb-3">
+    @if (canWrite()) {
+      <button type="button" class="btn btn-primary btn-sm" (click)="openCreateForm()" data-testid="btn-create">
+        <i class="bi bi-plus-lg me-1" aria-hidden="true"></i> {{ 'button.create' | translate }}
+      </button>
+      <button type="button" class="btn btn-warning btn-sm text-white" [disabled]="!selectedRow()" (click)="editSelectedProfile()" data-testid="btn-edit">
+        <i class="bi bi-pencil me-1" aria-hidden="true"></i> {{ 'button.edit' | translate }}
+      </button>
+      <button type="button" class="btn btn-danger btn-sm" [disabled]="!selectedRow()" (click)="deleteSelectedProfile()" data-testid="btn-delete">
+        <i class="bi bi-trash me-1" aria-hidden="true"></i> {{ 'button.delete' | translate }}
+      </button>
+    }
+    <button type="button" class="btn btn-outline-secondary btn-sm ms-auto" (click)="exportCsv()" data-testid="btn-export">
+      <i class="bi bi-download me-1" aria-hidden="true"></i> {{ 'button.export' | translate }}
+    </button>
+  </div>
+
+  <!-- Data table -->
+  <div class="card tp-card">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover tp-table mb-0" aria-label="Listado de perfiles" data-testid="profiles-table">
+          <thead>
+            <tr>
+              <th scope="col">{{ 'profiles.fields.name' | translate }}</th>
+              <th scope="col">{{ 'profiles.fields.description' | translate }}</th>
+              <th scope="col" class="text-center">{{ 'profiles.fields.actions' | translate }}</th>
+              <th scope="col">{{ 'profiles.fields.createdAt' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @if (isLoading()) {
+              <tr>
+                <td colspan="4" class="text-center py-4">
+                  <div class="spinner-border spinner-border-sm" role="status">
+                    <span class="visually-hidden">{{ 'common.loading' | translate }}</span>
+                  </div>
+                </td>
+              </tr>
+            } @else if (profiles().length === 0) {
+              <tr>
+                <td colspan="4" class="text-center py-4 text-muted">
+                  {{ 'common.noData' | translate }}
+                </td>
+              </tr>
+            } @else {
+              @for (profile of profiles(); track profile.id) {
+                <tr [class.table-active]="selectedRow()?.id === profile.id"
+                    (click)="selectRow(profile)"
+                    style="cursor: pointer;"
+                    [attr.aria-selected]="selectedRow()?.id === profile.id"
+                    role="row">
+                  <td><strong>{{ profile.name }}</strong></td>
+                  <td>{{ profile.description ?? '-' }}</td>
+                  <td class="text-center">
+                    <span class="badge bg-primary-subtle text-primary">{{ profile.actions.length }}</span>
+                  </td>
+                  <td>{{ profile.createdAt | localDate }}</td>
+                </tr>
+              }
+            }
+          </tbody>
+        </table>
       </div>
     </div>
-  </div>
-
-  <!-- Table -->
-  <div class="tp-table-responsive">
-    <table class="table table-striped table-hover align-middle">
-      <thead class="table-light">
-        <tr>
-          <th>{{ 'profiles.fields.name' | translate }}</th>
-          <th>{{ 'profiles.fields.description' | translate }}</th>
-          <th>{{ 'profiles.fields.actions' | translate }}</th>
-          <th>{{ 'profiles.fields.createdAt' | translate }}</th>
-          <th class="text-end">{{ 'common.actions' | translate }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        @if (isLoading()) {
-          <tr>
-            <td colspan="5" class="text-center py-4">
-              <div class="spinner-border spinner-border-sm" role="status">
-                <span class="visually-hidden">{{ 'common.loading' | translate }}</span>
-              </div>
-            </td>
-          </tr>
-        } @else if (profiles().length === 0) {
-          <tr>
-            <td colspan="5" class="text-center py-4 text-muted">
-              {{ 'common.noData' | translate }}
-            </td>
-          </tr>
-        } @else {
-          @for (profile of profiles(); track profile.id) {
-            <tr>
-              <td>
-                <a href="javascript:void(0)" (click)="viewDetail(profile)" class="text-decoration-none">
-                  {{ profile.name }}
-                </a>
-              </td>
-              <td>{{ profile.description ?? '-' }}</td>
-              <td>{{ profile.actions.length }}</td>
-              <td>{{ profile.createdAt | localDate }}</td>
-              <td class="text-end">
-                @if (canWrite()) {
-                  <button class="btn btn-outline-primary btn-sm me-1"
-                          (click)="openEditForm(profile)"
-                          [attr.aria-label]="'button.edit' | translate">
-                    <i class="bi bi-pencil"></i>
-                  </button>
-                  <button class="btn btn-outline-danger btn-sm"
-                          (click)="confirmDelete(profile)"
-                          [attr.aria-label]="'button.delete' | translate">
-                    <i class="bi bi-trash"></i>
-                  </button>
-                }
-              </td>
-            </tr>
-          }
-        }
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Pagination -->
-  @if (totalElements() > 0) {
-    <div class="d-flex justify-content-between align-items-center mt-3">
-      <small class="text-muted">
-        {{ 'common.pagination.showing' | translate: { from: currentPage() * pageSize() + 1, to: Math.min((currentPage() + 1) * pageSize(), totalElements()), total: totalElements() } }}
-      </small>
-      <nav [attr.aria-label]="'profiles.pagination.label' | translate">
-        <ul class="pagination pagination-sm mb-0">
-          <li class="page-item" [class.disabled]="currentPage() === 0">
-            <a class="page-link" href="javascript:void(0)" (click)="previousPage()">
-              &laquo;
-            </a>
-          </li>
-          @for (p of getVisiblePages(); track p) {
-            <li class="page-item" [class.active]="p === currentPage()">
-              <a class="page-link" href="javascript:void(0)" (click)="goToPage(p)">
-                {{ p + 1 }}
+    @if (totalElements() > 0) {
+      <div class="card-footer d-flex justify-content-between align-items-center">
+        <span class="text-muted" style="font-size: 0.8125rem;" data-testid="pagination-info">
+          {{ 'common.pagination.showing' | translate: { from: showingFrom(), to: showingTo(), total: totalElements() } }}
+        </span>
+        <nav aria-label="Paginación de perfiles">
+          <ul class="pagination pagination-sm mb-0">
+            <li class="page-item" [class.disabled]="currentPage() === 0">
+              <a class="page-link" href="javascript:void(0)" (click)="goToPage(currentPage() - 1)"
+                 [attr.aria-label]="'common.pagination.previous' | translate" data-testid="pagination-prev">
+                <i class="bi bi-chevron-left" aria-hidden="true"></i>
               </a>
             </li>
-          }
-          <li class="page-item" [class.disabled]="currentPage() >= totalPages() - 1">
-            <a class="page-link" href="javascript:void(0)" (click)="nextPage()">
-              &raquo;
-            </a>
-          </li>
-        </ul>
-      </nav>
-    </div>
-  }
+            @for (p of getVisiblePages(); track p) {
+              <li class="page-item" [class.active]="p === currentPage()" [attr.aria-current]="p === currentPage() ? 'page' : null">
+                <a class="page-link" href="javascript:void(0)" (click)="goToPage(p)">{{ p + 1 }}</a>
+              </li>
+            }
+            <li class="page-item" [class.disabled]="currentPage() >= totalPages() - 1">
+              <a class="page-link" href="javascript:void(0)" (click)="goToPage(currentPage() + 1)"
+                 [attr.aria-label]="'common.pagination.next' | translate" data-testid="pagination-next">
+                <i class="bi bi-chevron-right" aria-hidden="true"></i>
+              </a>
+            </li>
+          </ul>
+        </nav>
+        <div class="d-flex align-items-center gap-2 ms-3">
+          <label for="profilesPageSize" class="text-muted text-nowrap mb-0" style="font-size: 0.8125rem;">
+            {{ 'common.pagination.pageSize' | translate }}:
+          </label>
+          <select class="form-select form-select-sm" id="profilesPageSize" style="width: auto;"
+                  [ngModel]="pageSize()" (ngModelChange)="changePageSize($event)" name="profilesPageSize"
+                  [attr.aria-label]="'common.pagination.pageSize' | translate" data-testid="pagination-page-size">
+            @for (size of pageSizes; track size) {
+              <option [ngValue]="size">{{ size }}</option>
+            }
+          </select>
+        </div>
+      </div>
+    }
+  </div>
 }
 
 <!-- ═══════════════════════════════════════════════════════════════════════════
@@ -225,73 +226,113 @@
      CREATE / EDIT FORM
      ═══════════════════════════════════════════════════════════════════════════ -->
 @if (viewMode() === 'form') {
+  <!-- Title + actions -->
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h1 class="h3 mb-0">
       {{ (isEditing() ? 'profiles.form.editTitle' : 'profiles.form.createTitle') | translate }}
     </h1>
-    <button class="btn btn-outline-secondary btn-sm" (click)="backToList()">
-      <i class="bi bi-arrow-left me-1"></i>{{ 'button.back' | translate }}
-    </button>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <form (ngSubmit)="saveProfile()" #profileForm="ngForm">
-        <div class="tp-form-grid">
-          <div class="form-group">
-            <label for="profileName" class="form-label">{{ 'profiles.fields.name' | translate }} *</label>
-            <input id="profileName"
-                   type="text"
-                   class="form-control"
-                   [ngModel]="formProfile().name"
-                   (ngModelChange)="formProfile.update(p => ({...p, name: $event}))"
-                   name="profileName"
-                   required>
-          </div>
-          <div class="form-group">
-            <label for="profileDescription" class="form-label">{{ 'profiles.fields.description' | translate }}</label>
-            <input id="profileDescription"
-                   type="text"
-                   class="form-control"
-                   [ngModel]="formProfile().description ?? ''"
-                   (ngModelChange)="formProfile.update(p => ({...p, description: $event || undefined}))"
-                   name="profileDescription">
-          </div>
-          <div class="form-group form-field-full">
-            <label class="form-label">{{ 'profiles.form.assignActions' | translate }}</label>
-            <div class="border rounded p-2" style="max-height: 300px; overflow-y: auto;">
-              @if (availableActions().length === 0) {
-                <small class="text-muted">{{ 'common.noData' | translate }}</small>
-              } @else {
-                @for (action of availableActions(); track action.id) {
-                  <div class="form-check">
-                    <input class="form-check-input"
-                           type="checkbox"
-                           [id]="'action-' + action.id"
-                           [checked]="isActionSelected(action.id)"
-                           (change)="toggleAction(action.id)">
-                    <label class="form-check-label" [for]="'action-' + action.id">
-                      <code class="me-2">{{ action.code }}</code>
-                      <span class="text-muted">{{ action.name }}</span>
-                    </label>
-                  </div>
-                }
-              }
-            </div>
-          </div>
-        </div>
-
-        <div class="d-flex justify-content-end gap-2 mt-3">
-          <button type="button" class="btn btn-outline-secondary" (click)="backToList()">
-            {{ 'button.cancel' | translate }}
-          </button>
-          <button type="submit" class="btn btn-primary">
-            {{ 'button.save' | translate }}
-          </button>
-        </div>
-      </form>
+    <div class="d-flex gap-2">
+      <button type="button" class="btn btn-outline-secondary btn-sm" (click)="backToList()" data-testid="btn-cancel">
+        {{ 'button.cancel' | translate }}
+      </button>
+      <button type="submit" form="profileForm" class="btn btn-primary btn-sm" data-testid="btn-save">
+        <i class="bi bi-check-lg me-1" aria-hidden="true"></i> {{ 'button.save' | translate }}
+      </button>
     </div>
   </div>
+
+  <form id="profileForm" (ngSubmit)="saveProfile()" #profileForm="ngForm" novalidate data-testid="profile-form">
+    <!-- Datos generales -->
+    <h6 class="text-muted text-uppercase fw-semibold mb-2" style="font-size: 0.75rem; letter-spacing: 0.05em;">
+      {{ 'profiles.form.sectionGeneral' | translate }}
+    </h6>
+    <div class="row g-2 mb-3">
+      <div class="col-md-4">
+        <label for="profileName" class="form-label form-label-sm mb-1">
+          {{ 'profiles.fields.name' | translate }} <span class="text-danger">*</span>
+        </label>
+        <input id="profileName"
+               type="text"
+               class="form-control form-control-sm"
+               [ngModel]="formProfile().name"
+               (ngModelChange)="formProfile.update(p => ({...p, name: $event}))"
+               name="profileName"
+               required
+               data-testid="input-name">
+      </div>
+      <div class="col-md-8">
+        <label for="profileDescription" class="form-label form-label-sm mb-1">
+          {{ 'profiles.fields.description' | translate }}
+        </label>
+        <input id="profileDescription"
+               type="text"
+               class="form-control form-control-sm"
+               [ngModel]="formProfile().description ?? ''"
+               (ngModelChange)="formProfile.update(p => ({...p, description: $event || undefined}))"
+               name="profileDescription"
+               data-testid="input-description">
+      </div>
+    </div>
+
+    <!-- Acciones asignadas -->
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h6 class="text-muted text-uppercase fw-semibold mb-0" style="font-size: 0.75rem; letter-spacing: 0.05em;">
+        {{ 'profiles.form.sectionActions' | translate }}
+        <span class="badge bg-secondary-subtle text-secondary ms-1">{{ selectedActionIds().length }}</span>
+      </h6>
+      <div class="d-flex align-items-center gap-2">
+        <input type="text"
+               class="form-control form-control-sm"
+               style="width: 150px; font-size: 0.75rem; height: 26px;"
+               [placeholder]="'profiles.form.filterActions' | translate"
+               [ngModel]="actionFilter()"
+               (ngModelChange)="actionFilter.set($event)"
+               name="actionFilter"
+               [attr.aria-label]="'profiles.form.filterActions' | translate">
+        <button type="button"
+                class="btn btn-outline-primary"
+                style="font-size: 0.7rem; padding: 0.2rem 0.5rem;"
+                (click)="openActionModal()"
+                [attr.aria-label]="'profiles.form.addAction' | translate"
+                data-testid="btn-add-action">
+          <i class="bi bi-plus" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+    <div class="border rounded" style="font-size: 0.8rem;">
+      @if (assignedActionsFiltered().length === 0) {
+        <div class="text-center py-3 text-muted" style="font-size: 0.75rem;">
+          {{ 'common.noData' | translate }}
+        </div>
+      } @else {
+        <div class="list-group list-group-flush">
+          @for (action of assignedActionsFiltered(); track action.id) {
+            <div class="list-group-item d-flex justify-content-between align-items-center py-1 px-3">
+              <div class="d-flex align-items-center gap-2">
+                <span class="badge"
+                      style="font-size: 0.65rem;"
+                      [class.bg-info-subtle]="action.type === 'READ'"
+                      [class.text-info]="action.type === 'READ'"
+                      [class.bg-warning-subtle]="action.type === 'WRITE'"
+                      [class.text-warning]="action.type === 'WRITE'"
+                      [class.bg-success-subtle]="action.type === 'EXECUTE'"
+                      [class.text-success]="action.type === 'EXECUTE'">
+                  {{ action.type }}
+                </span>
+                <span>{{ action.code }} — {{ action.name }}</span>
+              </div>
+              <button type="button"
+                      class="btn-close"
+                      style="font-size: 0.5rem;"
+                      (click)="removeAction(action.id)"
+                      [attr.aria-label]="'profiles.form.removeAction' | translate"
+                      [attr.data-testid]="'btn-remove-action-' + action.code"></button>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </form>
 }
 
 <!-- ═══════════════════════════════════════════════════════════════════════════

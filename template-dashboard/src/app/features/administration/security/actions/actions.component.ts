@@ -31,6 +31,7 @@ export class ActionsComponent implements OnInit {
   // View state
   readonly viewMode = signal<'list' | 'detail' | 'edit'>('list');
   readonly selectedAction = signal<Action | null>(null);
+  readonly selectedRow = signal<Action | null>(null);
 
   // Pagination state
   readonly actions = signal<Action[]>([]);
@@ -57,6 +58,9 @@ export class ActionsComponent implements OnInit {
 
   // Action types for filter dropdown
   readonly actionTypes = ['READ', 'WRITE', 'EXECUTE'];
+
+  // Page size options
+  readonly pageSizes = [5, 10, 20, 50];
 
   /** Whether the current user can edit actions */
   readonly canEdit = computed(() => this.authService.hasAction('ACTION_READ'));
@@ -174,6 +178,7 @@ export class ActionsComponent implements OnInit {
   backToList(): void {
     this.viewMode.set('list');
     this.selectedAction.set(null);
+    this.selectedRow.set(null);
   }
 
   /**
@@ -236,6 +241,33 @@ export class ActionsComponent implements OnInit {
       pages.push(i);
     }
     return pages;
+  }
+
+  /**
+   * Selects or deselects a row in the table.
+   */
+  selectRow(action: Action): void {
+    this.selectedRow.set(this.selectedRow()?.id === action.id ? null : action);
+  }
+
+  /**
+   * Opens the edit form for the currently selected row.
+   */
+  editSelectedAction(): void {
+    const row = this.selectedRow();
+    if (row) {
+      this.editAction(row);
+    }
+  }
+
+  /**
+   * Changes the page size and reloads from page 0.
+   */
+  changePageSize(size: number): void {
+    this.pageSize.set(size);
+    this.currentPage.set(0);
+    this.selectedRow.set(null);
+    this.loadActions();
   }
 
   private buildCriteria(): ActionCriteria {

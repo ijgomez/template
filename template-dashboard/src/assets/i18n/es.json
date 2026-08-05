@@ -128,6 +128,8 @@
     "noData": "No hay datos disponibles",
     "actions": "Acciones",
     "detail": "Detalle",
+    "yes": "Sí",
+    "no": "No",
     "pagination": {
       "showing": "Mostrando {{from}} a {{to}} de {{total}} registros",
       "previous": "Página anterior",
@@ -159,7 +161,12 @@
     "form": {
       "createTitle": "Crear Usuario",
       "editTitle": "Editar Usuario",
-      "selectProfile": "Seleccione un perfil..."
+      "selectProfile": "Seleccione un perfil...",
+      "sectionGeneral": "Datos generales",
+      "sectionReports": "Informes asignados",
+      "filterReports": "Filtrar...",
+      "addReport": "Añadir informe",
+      "removeReport": "Eliminar informe"
     },
     "delete": {
       "confirmTitle": "Eliminar Usuario",
@@ -189,7 +196,12 @@
     "form": {
       "createTitle": "Crear Perfil",
       "editTitle": "Editar Perfil",
-      "assignActions": "Asignar Acciones"
+      "assignActions": "Asignar Acciones",
+      "sectionGeneral": "Datos generales",
+      "sectionActions": "Acciones asignadas",
+      "filterActions": "Filtrar...",
+      "addAction": "Añadir acción",
+      "removeAction": "Eliminar acción"
     },
     "delete": {
       "confirmTitle": "Eliminar Perfil",
@@ -209,6 +221,14 @@
       "createdAt": "Fecha de creación",
       "lastModifiedAt": "Última modificación"
     },
+    "fields": {
+      "code": "Código",
+      "name": "Nombre",
+      "type": "Tipo",
+      "description": "Descripción",
+      "createdAt": "Fecha de creación",
+      "lastModifiedAt": "Última modificación"
+    },
     "filters": {
       "clear": "Limpiar",
       "allTypes": "Todos los tipos"
@@ -216,8 +236,8 @@
     "detail": {
       "title": "Detalle de Acción"
     },
-    "edit": {
-      "title": "Editar Acción"
+    "form": {
+      "editTitle": "Editar Acción"
     }
   },
   "parameters": {
@@ -312,6 +332,11 @@
         "createdAt": "Fecha de creación",
         "lastModifiedAt": "Última modificación"
       },
+      "filters": {
+        "allProtocols": "Todos",
+        "allStatuses": "Todos",
+        "clear": "Limpiar"
+      },
       "detail": {
         "title": "Detalle de Interfaz"
       }
@@ -327,7 +352,14 @@
         "freeMemory": "Memoria Libre (MB)",
         "totalMemory": "Memoria Total (MB)",
         "usedMemory": "Memoria Usada (MB)",
+        "createdAt": "Fecha de inicio",
+        "startDate": "Inicio",
         "lastModifiedAt": "Último Heartbeat"
+      },
+      "filters": {
+        "allStatuses": "Todos",
+        "allMaster": "Todos",
+        "clear": "Limpiar"
       },
       "setMaster": "Establecer como Maestro",
       "confirmMaster": {

@@ -40,12 +40,11 @@ export class UsersComponent implements OnInit {
   readonly criteria = signal<UserCriteria>({});
   filterUsername = '';
   filterFirstName = '';
-  filterLastName = '';
-  filterEmail = '';
   filterProfileId: number | null = null;
 
   // Detail / Form state
   readonly selectedUser = signal<UserDTO | null>(null);
+  readonly selectedRow = signal<UserDTO | null>(null);
   readonly formUser = signal<UserDTO>(this.emptyUser());
 
   // Reference data
@@ -58,6 +57,17 @@ export class UsersComponent implements OnInit {
   // Delete confirmation
   readonly showDeleteConfirm = signal(false);
   readonly userToDelete = signal<UserDTO | null>(null);
+
+  // Report filter (create/edit form)
+  readonly reportFilter = signal('');
+  readonly assignedReportsFiltered = computed(() => {
+    const ids = this.formUser().reportIds;
+    const allReports = this.reports();
+    const filter = this.reportFilter().toLowerCase();
+    return allReports
+      .filter(r => ids.includes(r.id))
+      .filter(r => !filter || r.name.toLowerCase().includes(filter));
+  });
 
   // Pagination computed
   readonly showingFrom = computed(() => this.currentPage() * this.pageSize() + 1);
@@ -125,8 +135,6 @@ export class UsersComponent implements OnInit {
     this.criteria.set({
       username: this.filterUsername || undefined,
       firstName: this.filterFirstName || undefined,
-      lastName: this.filterLastName || undefined,
-      email: this.filterEmail || undefined,
       profileId: this.filterProfileId ?? undefined,
     });
     this.currentPage.set(0);
@@ -136,8 +144,6 @@ export class UsersComponent implements OnInit {
   clearFilters(): void {
     this.filterUsername = '';
     this.filterFirstName = '';
-    this.filterLastName = '';
-    this.filterEmail = '';
     this.filterProfileId = null;
     this.criteria.set({});
     this.currentPage.set(0);
@@ -148,6 +154,30 @@ export class UsersComponent implements OnInit {
     if (page >= 0 && page < this.totalPages()) {
       this.currentPage.set(page);
       this.loadUsersWithProgress();
+    }
+  }
+
+  changePageSize(size: number): void {
+    this.pageSize.set(size);
+    this.currentPage.set(0);
+    this.loadUsersWithProgress();
+  }
+
+  selectRow(user: UserDTO): void {
+    this.selectedRow.set(this.selectedRow()?.id === user.id ? null : user);
+  }
+
+  editSelectedUser(): void {
+    const user = this.selectedRow();
+    if (user) {
+      this.showEditForm(user);
+    }
+  }
+
+  deleteSelectedUser(): void {
+    const user = this.selectedRow();
+    if (user) {
+      this.confirmDelete(user);
     }
   }
 
@@ -295,6 +325,14 @@ export class UsersComponent implements OnInit {
 
   isReportSelected(reportId: number): boolean {
     return this.formUser().reportIds.includes(reportId);
+  }
+
+  removeReport(reportId: number): void {
+    this.updateFormReports(reportId, false);
+  }
+
+  openReportModal(): void {
+    // TODO: implement report selection modal
   }
 
   // ─── Private ───────────────────────────────────────────────

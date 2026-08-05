@@ -128,6 +128,8 @@
     "noData": "No data available",
     "actions": "Actions",
     "detail": "Detail",
+    "yes": "Yes",
+    "no": "No",
     "pagination": {
       "showing": "Showing {{from}} to {{to}} of {{total}} records",
       "previous": "Previous page",
@@ -159,7 +161,12 @@
     "form": {
       "createTitle": "Create User",
       "editTitle": "Edit User",
-      "selectProfile": "Select a profile..."
+      "selectProfile": "Select a profile...",
+      "sectionGeneral": "General data",
+      "sectionReports": "Assigned reports",
+      "filterReports": "Filter...",
+      "addReport": "Add report",
+      "removeReport": "Remove report"
     },
     "delete": {
       "confirmTitle": "Delete User",
@@ -189,7 +196,12 @@
     "form": {
       "createTitle": "Create Profile",
       "editTitle": "Edit Profile",
-      "assignActions": "Assign Actions"
+      "assignActions": "Assign Actions",
+      "sectionGeneral": "General data",
+      "sectionActions": "Assigned actions",
+      "filterActions": "Filter...",
+      "addAction": "Add action",
+      "removeAction": "Remove action"
     },
     "delete": {
       "confirmTitle": "Delete Profile",
@@ -209,6 +221,14 @@
       "createdAt": "Created At",
       "lastModifiedAt": "Last Modified At"
     },
+    "fields": {
+      "code": "Code",
+      "name": "Name",
+      "type": "Type",
+      "description": "Description",
+      "createdAt": "Created At",
+      "lastModifiedAt": "Last Modified At"
+    },
     "filters": {
       "clear": "Clear",
       "allTypes": "All types"
@@ -216,8 +236,8 @@
     "detail": {
       "title": "Action Detail"
     },
-    "edit": {
-      "title": "Edit Action"
+    "form": {
+      "editTitle": "Edit Action"
     }
   },
   "parameters": {
@@ -312,6 +332,11 @@
         "createdAt": "Created At",
         "lastModifiedAt": "Last Modified At"
       },
+      "filters": {
+        "allProtocols": "All",
+        "allStatuses": "All",
+        "clear": "Clear"
+      },
       "detail": {
         "title": "Interface Detail"
       }
@@ -327,7 +352,14 @@
         "freeMemory": "Free Memory (MB)",
         "totalMemory": "Total Memory (MB)",
         "usedMemory": "Used Memory (MB)",
+        "createdAt": "Start Date",
+        "startDate": "Start",
         "lastModifiedAt": "Last Heartbeat"
+      },
+      "filters": {
+        "allStatuses": "All",
+        "allMaster": "All",
+        "clear": "Clear"
       },
       "setMaster": "Set as Master",
       "confirmMaster": {

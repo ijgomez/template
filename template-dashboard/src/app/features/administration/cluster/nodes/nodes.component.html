@@ -1,86 +1,174 @@
 <!-- ═══════════════════════════════════════════════════════════════════════════
      CLUSTER NODES LIST VIEW
      ═══════════════════════════════════════════════════════════════════════════ -->
-<div class="d-flex justify-content-between align-items-center mb-3">
+<!-- Title -->
+<div class="d-flex justify-content-between align-items-center mb-4">
   <h1 class="h3 mb-0">{{ 'cluster.nodes.title' | translate }}</h1>
 </div>
 
-<!-- Table -->
-<div class="tp-table-responsive">
-  <table class="table table-striped table-hover align-middle" data-testid="cluster-nodes-table">
-    <thead class="table-light">
-      <tr>
-        <th>{{ 'cluster.nodes.fields.hostname' | translate }}</th>
-        <th>{{ 'cluster.nodes.fields.status' | translate }}</th>
-        <th>{{ 'cluster.nodes.fields.master' | translate }}</th>
-        <th>{{ 'cluster.nodes.fields.freeMemory' | translate }}</th>
-        <th>{{ 'cluster.nodes.fields.totalMemory' | translate }}</th>
-        <th>{{ 'cluster.nodes.fields.usedMemory' | translate }}</th>
-        <th>{{ 'cluster.nodes.fields.lastModifiedAt' | translate }}</th>
-        @if (canWrite) {
-          <th class="text-end">{{ 'common.actions' | translate }}</th>
-        }
-      </tr>
-    </thead>
-    <tbody>
-      @if (isLoading()) {
-        <tr>
-          <td [attr.colspan]="canWrite ? 8 : 7" class="text-center py-4">
-            <div class="spinner-border spinner-border-sm" role="status">
-              <span class="visually-hidden">{{ 'common.loading' | translate }}</span>
-            </div>
-          </td>
-        </tr>
-      } @else if (nodes().length === 0) {
-        <tr>
-          <td [attr.colspan]="canWrite ? 8 : 7" class="text-center py-4 text-muted">
-            {{ 'common.noData' | translate }}
-          </td>
-        </tr>
-      } @else {
-        @for (node of nodes(); track node.id) {
+<!-- Filter bar -->
+<div class="tp-filter-bar">
+  <form class="row g-3 align-items-end" (ngSubmit)="applyFilters()" aria-label="Filtros de búsqueda de nodos" data-testid="nodes-filter-form">
+    <div class="col-md-3">
+      <label for="filterHostname" class="form-label">{{ 'cluster.nodes.fields.hostname' | translate }}</label>
+      <input id="filterHostname" type="text" class="form-control form-control-sm"
+             [ngModel]="filterHostname()" (ngModelChange)="filterHostname.set($event)" name="filterHostname"
+             [placeholder]="'cluster.nodes.fields.hostname' | translate" data-testid="filter-hostname">
+    </div>
+    <div class="col-md-3">
+      <label for="filterStatus" class="form-label">{{ 'cluster.nodes.fields.status' | translate }}</label>
+      <select id="filterStatus" class="form-select form-select-sm"
+              [ngModel]="filterStatus()" (ngModelChange)="filterStatus.set($event)" name="filterStatus"
+              [attr.aria-label]="'cluster.nodes.fields.status' | translate" data-testid="filter-status">
+        <option value="">{{ 'cluster.nodes.filters.allStatuses' | translate }}</option>
+        <option value="ALIVE">ALIVE</option>
+        <option value="DEAD">DEAD</option>
+      </select>
+    </div>
+    <div class="col-md-3">
+      <label for="filterMaster" class="form-label">{{ 'cluster.nodes.fields.master' | translate }}</label>
+      <select id="filterMaster" class="form-select form-select-sm"
+              [ngModel]="filterMaster()" (ngModelChange)="filterMaster.set($event)" name="filterMaster"
+              [attr.aria-label]="'cluster.nodes.fields.master' | translate" data-testid="filter-master">
+        <option value="">{{ 'cluster.nodes.filters.allMaster' | translate }}</option>
+        <option value="true">{{ 'common.yes' | translate }}</option>
+        <option value="false">{{ 'common.no' | translate }}</option>
+      </select>
+    </div>
+    <div class="col-12 d-flex justify-content-end gap-2 mt-2">
+      <button type="submit" class="btn btn-primary btn-sm" data-testid="btn-filter-search">
+        <i class="bi bi-search me-1" aria-hidden="true"></i> {{ 'button.filter' | translate }}
+      </button>
+      <button type="button" class="btn btn-outline-secondary btn-sm" (click)="clearFilters()" data-testid="btn-filter-clear">
+        <i class="bi bi-x-circle me-1" aria-hidden="true"></i> {{ 'cluster.nodes.filters.clear' | translate }}
+      </button>
+    </div>
+  </form>
+</div>
+
+<!-- Action toolbar -->
+<div class="tp-toolbar d-flex gap-2 mb-3">
+  @if (canWrite) {
+    <button type="button" class="btn btn-primary btn-sm"
+            [disabled]="!selectedRow() || selectedRow()!.master"
+            (click)="designateMasterSelected()" data-testid="btn-set-master">
+      <i class="bi bi-star me-1" aria-hidden="true"></i> {{ 'cluster.nodes.setMaster' | translate }}
+    </button>
+  }
+  <button type="button" class="btn btn-outline-secondary btn-sm ms-auto" (click)="exportCsv()" data-testid="btn-export">
+    <i class="bi bi-download me-1" aria-hidden="true"></i> {{ 'button.export' | translate }}
+  </button>
+</div>
+
+<!-- Data table -->
+<div class="card tp-card">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover tp-table mb-0" aria-label="Listado de nodos del cluster" data-testid="cluster-nodes-table">
+        <thead>
           <tr>
-            <td>{{ node.hostname }}</td>
-            <td>
-              <span class="badge"
-                    [class.bg-success]="node.status === 'ALIVE'"
-                    [class.bg-danger]="node.status === 'DEAD'">
-                {{ node.status }}
-              </span>
-            </td>
-            <td>
-              @if (node.master) {
-                <span class="badge bg-warning">MASTER</span>
-              }
-            </td>
-            <td>{{ node.freeMemory }}</td>
-            <td>{{ node.totalMemory }}</td>
-            <td>{{ node.usedMemory }}</td>
-            <td>{{ node.lastModifiedAt | localDate }}</td>
-            @if (canWrite) {
-              <td class="text-end">
-                @if (!node.master) {
-                  <button class="btn btn-outline-warning btn-sm"
-                          data-testid="cluster-nodes-set-master"
-                          (click)="confirmSetMaster(node)"
-                          [attr.aria-label]="'cluster.nodes.setMaster' | translate">
-                    <i class="bi bi-star me-1" aria-hidden="true"></i>{{ 'cluster.nodes.setMaster' | translate }}
-                  </button>
-                }
-              </td>
-            }
+            <th scope="col">{{ 'cluster.nodes.fields.hostname' | translate }}</th>
+            <th scope="col">{{ 'cluster.nodes.fields.status' | translate }}</th>
+            <th scope="col">{{ 'cluster.nodes.fields.master' | translate }}</th>
+            <th scope="col">{{ 'cluster.nodes.fields.freeMemory' | translate }}</th>
+            <th scope="col">{{ 'cluster.nodes.fields.createdAt' | translate }}</th>
+            <th scope="col">{{ 'cluster.nodes.fields.lastModifiedAt' | translate }}</th>
           </tr>
-        }
-      }
-    </tbody>
-  </table>
+        </thead>
+        <tbody>
+          @if (isLoading()) {
+            <tr>
+              <td colspan="6" class="text-center py-4">
+                <div class="spinner-border spinner-border-sm" role="status">
+                  <span class="visually-hidden">{{ 'common.loading' | translate }}</span>
+                </div>
+              </td>
+            </tr>
+          } @else if (paginatedNodes().length === 0) {
+            <tr>
+              <td colspan="6" class="text-center py-4 text-muted">
+                {{ 'common.noData' | translate }}
+              </td>
+            </tr>
+          } @else {
+            @for (node of paginatedNodes(); track node.id) {
+              <tr class="tp-selectable-row"
+                  [class.table-active]="selectedRow()?.id === node.id"
+                  (click)="selectRow(node)"
+                  [attr.aria-selected]="selectedRow()?.id === node.id"
+                  role="row">
+                <td>{{ node.hostname }}</td>
+                <td>
+                  <span class="badge"
+                        [class.bg-success]="node.status === 'ALIVE'"
+                        [class.bg-danger]="node.status === 'DEAD'">
+                    {{ node.status }}
+                  </span>
+                </td>
+                <td>
+                  @if (node.master) {
+                    <span class="badge bg-primary">MASTER</span>
+                  } @else {
+                    <span class="text-muted">&mdash;</span>
+                  }
+                </td>
+                <td>{{ node.usedMemory }} / {{ node.totalMemory }} GB</td>
+                <td>{{ node.createdAt | localDate }}</td>
+                <td>{{ node.lastModifiedAt | localDate }}</td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+  @if (totalElements() > 0) {
+    <div class="card-footer d-flex justify-content-between align-items-center">
+      <span class="text-muted small" data-testid="pagination-info">
+        {{ 'common.pagination.showing' | translate: { from: showingFrom(), to: showingTo(), total: totalElements() } }}
+      </span>
+      <nav aria-label="Paginación de nodos">
+        <ul class="pagination pagination-sm mb-0">
+          <li class="page-item" [class.disabled]="currentPage() === 0">
+            <a class="page-link" href="javascript:void(0)" (click)="goToPage(currentPage() - 1)"
+               [attr.aria-label]="'common.pagination.previous' | translate" data-testid="pagination-prev">
+              <i class="bi bi-chevron-left" aria-hidden="true"></i>
+            </a>
+          </li>
+          @for (p of getPageNumbers(); track p) {
+            <li class="page-item" [class.active]="p === currentPage()" [attr.aria-current]="p === currentPage() ? 'page' : null">
+              <a class="page-link" href="javascript:void(0)" (click)="goToPage(p)">{{ p + 1 }}</a>
+            </li>
+          }
+          <li class="page-item" [class.disabled]="currentPage() >= totalPages() - 1">
+            <a class="page-link" href="javascript:void(0)" (click)="goToPage(currentPage() + 1)"
+               [attr.aria-label]="'common.pagination.next' | translate" data-testid="pagination-next">
+              <i class="bi bi-chevron-right" aria-hidden="true"></i>
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <div class="d-flex align-items-center gap-2 ms-3">
+        <label for="nodesPageSize" class="text-muted text-nowrap mb-0 small">
+          {{ 'common.pagination.pageSize' | translate }}:
+        </label>
+        <select class="form-select form-select-sm tp-page-size-select" id="nodesPageSize"
+                [ngModel]="pageSize()" (ngModelChange)="changePageSize($event)" name="nodesPageSize"
+                [attr.aria-label]="'common.pagination.pageSize' | translate" data-testid="pagination-page-size">
+          @for (size of pageSizes; track size) {
+            <option [ngValue]="size">{{ size }}</option>
+          }
+        </select>
+      </div>
+    </div>
+  }
 </div>
 
 <!-- Confirmation Dialog -->
 @if (showConfirmDialog()) {
   <div class="modal d-block" tabindex="-1" role="dialog" data-testid="cluster-nodes-confirm-dialog"
        [attr.aria-label]="'cluster.nodes.confirmMaster.title' | translate">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">{{ 'cluster.nodes.confirmMaster.title' | translate }}</h5>
@@ -93,7 +181,7 @@
           <p>{{ 'cluster.nodes.confirmMaster.message' | translate: { hostname: confirmNodeHostname() } }}</p>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary"
+          <button type="button" class="btn btn-outline-secondary"
                   data-testid="cluster-nodes-confirm-cancel"
                   (click)="cancelSetMaster()">
             {{ 'button.cancel' | translate }}
