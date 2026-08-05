@@ -51,102 +51,40 @@
   </div>
 
   <!-- Data table -->
-  <div class="card tp-card">
-    <div class="card-body p-0">
-      <div class="table-responsive">
-        <table class="table table-hover tp-table mb-0" aria-label="Listado de acciones" data-testid="actions-table">
-          <thead>
-            <tr>
-              <th scope="col">{{ 'actions.table.code' | translate }}</th>
-              <th scope="col">{{ 'actions.table.name' | translate }}</th>
-              <th scope="col">{{ 'actions.table.type' | translate }}</th>
-              <th scope="col">{{ 'actions.table.description' | translate }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            @if (isLoading()) {
-              <tr>
-                <td colspan="4" class="text-center py-4">
-                  <div class="spinner-border spinner-border-sm" role="status">
-                    <span class="visually-hidden">{{ 'common.loading' | translate }}</span>
-                  </div>
-                </td>
-              </tr>
-            } @else if (actions().length === 0) {
-              <tr>
-                <td colspan="4" class="text-center py-4 text-muted">
-                  {{ 'common.noData' | translate }}
-                </td>
-              </tr>
-            } @else {
-              @for (action of actions(); track action.id) {
-                <tr [class.table-active]="selectedRow()?.id === action.id"
-                    (click)="selectRow(action)"
-                    style="cursor: pointer;"
-                    [attr.aria-selected]="selectedRow()?.id === action.id"
-                    role="row">
-                  <td>{{ action.code }}</td>
-                  <td>{{ action.name }}</td>
-                  <td>
-                    <span class="badge"
-                          [class.bg-info-subtle]="action.type === 'READ'"
-                          [class.text-info]="action.type === 'READ'"
-                          [class.bg-warning-subtle]="action.type === 'WRITE'"
-                          [class.text-warning]="action.type === 'WRITE'"
-                          [class.bg-success-subtle]="action.type === 'EXECUTE'"
-                          [class.text-success]="action.type === 'EXECUTE'">
-                      {{ action.type }}
-                    </span>
-                  </td>
-                  <td>{{ action.description ?? '-' }}</td>
-                </tr>
-              }
-            }
-          </tbody>
-        </table>
-      </div>
-    </div>
-    @if (totalElements() > 0) {
-      <div class="card-footer d-flex justify-content-between align-items-center">
-        <span class="text-muted" style="font-size: 0.8125rem;" data-testid="pagination-info">
-          {{ 'common.pagination.showing' | translate: { from: showingFrom(), to: showingTo(), total: totalElements() } }}
-        </span>
-        <nav aria-label="Paginación de acciones">
-          <ul class="pagination pagination-sm mb-0">
-            <li class="page-item" [class.disabled]="currentPage() === 0">
-              <a class="page-link" href="javascript:void(0)" (click)="goToPage(currentPage() - 1)"
-                 [attr.aria-label]="'common.pagination.previous' | translate" data-testid="pagination-prev">
-                <i class="bi bi-chevron-left" aria-hidden="true"></i>
-              </a>
-            </li>
-            @for (p of getPageNumbers(); track p) {
-              <li class="page-item" [class.active]="p === currentPage()" [attr.aria-current]="p === currentPage() ? 'page' : null">
-                <a class="page-link" href="javascript:void(0)" (click)="goToPage(p)">{{ p + 1 }}</a>
-              </li>
-            }
-            <li class="page-item" [class.disabled]="currentPage() >= totalPages() - 1">
-              <a class="page-link" href="javascript:void(0)" (click)="goToPage(currentPage() + 1)"
-                 [attr.aria-label]="'common.pagination.next' | translate" data-testid="pagination-next">
-                <i class="bi bi-chevron-right" aria-hidden="true"></i>
-              </a>
-            </li>
-          </ul>
-        </nav>
-        <div class="d-flex align-items-center gap-2 ms-3">
-          <label for="actionsPageSize" class="text-muted text-nowrap mb-0" style="font-size: 0.8125rem;">
-            {{ 'common.pagination.pageSize' | translate }}:
-          </label>
-          <select class="form-select form-select-sm" id="actionsPageSize" style="width: auto;"
-                  [ngModel]="pageSize()" (ngModelChange)="changePageSize($event)" name="actionsPageSize"
-                  [attr.aria-label]="'common.pagination.pageSize' | translate" data-testid="pagination-page-size">
-            @for (size of pageSizes; track size) {
-              <option [ngValue]="size">{{ size }}</option>
-            }
-          </select>
-        </div>
-      </div>
-    }
-  </div>
+  <tp-data-table
+    [columns]="columns"
+    [data]="actions()"
+    [loading]="isLoading()"
+    [totalElements]="totalElements()"
+    [currentPage]="currentPage()"
+    [pageSize]="pageSize()"
+    [selectable]="true"
+    [selectedItem]="selectedRow()"
+    (rowSelect)="selectRow($event)"
+    (rowDoubleClick)="viewDetail($event)"
+    (pageChange)="goToPage($event)"
+    (pageSizeChange)="changePageSize($event)"
+    ariaLabel="Listado de acciones"
+    testId="actions-table">
+
+    <!-- Custom column: type (colored badge) -->
+    <ng-template tpColumn="type" let-action>
+      <span class="badge"
+            [class.bg-info-subtle]="action.type === 'READ'"
+            [class.text-info]="action.type === 'READ'"
+            [class.bg-warning-subtle]="action.type === 'WRITE'"
+            [class.text-warning]="action.type === 'WRITE'"
+            [class.bg-success-subtle]="action.type === 'EXECUTE'"
+            [class.text-success]="action.type === 'EXECUTE'">
+        {{ action.type }}
+      </span>
+    </ng-template>
+
+    <!-- Custom column: description (fallback) -->
+    <ng-template tpColumn="description" let-action>
+      {{ action.description ?? '-' }}
+    </ng-template>
+  </tp-data-table>
 }
 
 <!-- ═══════════════════════════════════════════════════════════════════════════
@@ -158,11 +96,11 @@
     <div class="d-flex gap-2">
       @if (canEdit()) {
         <button class="btn btn-primary btn-sm" (click)="editAction(selectedAction()!)">
-          <i class="bi bi-pencil me-1"></i>{{ 'button.edit' | translate }}
+          <i class="bi bi-pencil me-1" aria-hidden="true"></i>{{ 'button.edit' | translate }}
         </button>
       }
       <button class="btn btn-outline-secondary btn-sm" (click)="backToList()">
-        <i class="bi bi-arrow-left me-1"></i>{{ 'button.back' | translate }}
+        <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>{{ 'button.back' | translate }}
       </button>
     </div>
   </div>
@@ -183,9 +121,12 @@
             <label class="form-label fw-bold">{{ 'actions.fields.type' | translate }}</label>
             <p class="form-control-plaintext">
               <span class="badge"
-                    [class.bg-info]="action.type === 'READ'"
-                    [class.bg-warning]="action.type === 'WRITE'"
-                    [class.bg-success]="action.type === 'EXECUTE'">
+                    [class.bg-info-subtle]="action.type === 'READ'"
+                    [class.text-info]="action.type === 'READ'"
+                    [class.bg-warning-subtle]="action.type === 'WRITE'"
+                    [class.text-warning]="action.type === 'WRITE'"
+                    [class.bg-success-subtle]="action.type === 'EXECUTE'"
+                    [class.text-success]="action.type === 'EXECUTE'">
                 {{ action.type }}
               </span>
             </p>
@@ -214,69 +155,75 @@
 @if (viewMode() === 'edit') {
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h1 class="h3 mb-0">{{ 'actions.form.editTitle' | translate }}</h1>
-    <button class="btn btn-outline-secondary btn-sm" (click)="backToList()">
-      <i class="bi bi-arrow-left me-1"></i>{{ 'button.back' | translate }}
-    </button>
+    <div class="d-flex gap-2">
+      <button type="button" class="btn btn-outline-secondary btn-sm" (click)="backToList()" data-testid="btn-cancel">
+        {{ 'button.cancel' | translate }}
+      </button>
+      <button type="submit" form="actionForm" class="btn btn-primary btn-sm" [disabled]="isSaving()" data-testid="btn-save">
+        @if (isSaving()) {
+          <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+        }
+        <i class="bi bi-check-lg me-1" aria-hidden="true"></i> {{ 'button.save' | translate }}
+      </button>
+    </div>
   </div>
 
   @if (selectedAction(); as action) {
-    <div class="card">
-      <div class="card-body">
-        <form (ngSubmit)="saveAction()" #actionForm="ngForm">
-          <div class="tp-form-grid">
-            <div class="form-group">
-              <label for="actionCode" class="form-label">{{ 'actions.fields.code' | translate }}</label>
-              <input id="actionCode"
-                     type="text"
-                     class="form-control"
-                     [value]="action.code"
-                     readonly
-                     disabled>
-            </div>
-            <div class="form-group">
-              <label for="actionName" class="form-label">{{ 'actions.fields.name' | translate }} *</label>
-              <input id="actionName"
-                     type="text"
-                     class="form-control"
-                     [(ngModel)]="editName"
-                     name="actionName"
-                     required>
-            </div>
-            <div class="form-group">
-              <label for="actionType" class="form-label">{{ 'actions.fields.type' | translate }} *</label>
-              <select id="actionType"
-                      class="form-select"
-                      [(ngModel)]="editType"
-                      name="actionType"
-                      required>
-                @for (type of actionTypes; track type) {
-                  <option [value]="type">{{ type }}</option>
-                }
-              </select>
-            </div>
-            <div class="form-group form-field-full">
-              <label for="actionDescription" class="form-label">{{ 'actions.fields.description' | translate }}</label>
-              <textarea id="actionDescription"
-                        class="form-control"
-                        [(ngModel)]="editDescription"
-                        name="actionDescription"
-                        rows="3"></textarea>
-            </div>
-          </div>
-
-          <div class="d-flex justify-content-end gap-2 mt-3">
-            <button type="button" class="btn btn-outline-secondary" (click)="backToList()">
-              {{ 'button.cancel' | translate }}
-            </button>
-            <button type="submit" class="btn btn-primary" [disabled]="isSaving()">
-              @if (isSaving()) {
-                <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
-              }
-              {{ 'button.save' | translate }}
-            </button>
-          </div>
-        </form>
+    <form id="actionForm" (ngSubmit)="saveAction()" #actionForm="ngForm" novalidate data-testid="action-form">
+      <h6 class="text-muted text-uppercase fw-semibold mb-2" style="font-size: 0.75rem; letter-spacing: 0.05em;">
+        {{ 'actions.form.sectionGeneral' | translate }}
+      </h6>
+      <div class="row g-2 mb-3">
+        <div class="col-md-4">
+          <label for="actionCode" class="form-label form-label-sm mb-1">{{ 'actions.fields.code' | translate }}</label>
+          <input id="actionCode"
+                 type="text"
+                 class="form-control form-control-sm"
+                 [value]="action.code"
+                 readonly
+                 disabled
+                 data-testid="input-code">
+        </div>
+        <div class="col-md-4">
+          <label for="actionName" class="form-label form-label-sm mb-1">
+            {{ 'actions.fields.name' | translate }} <span class="text-danger">*</span>
+          </label>
+          <input id="actionName"
+                 type="text"
+                 class="form-control form-control-sm"
+                 [ngModel]="editName()"
+                 (ngModelChange)="editName.set($event)"
+                 name="actionName"
+                 required
+                 data-testid="input-name">
+        </div>
+        <div class="col-md-4">
+          <label for="actionType" class="form-label form-label-sm mb-1">
+            {{ 'actions.fields.type' | translate }} <span class="text-danger">*</span>
+          </label>
+          <select id="actionType"
+                  class="form-select form-select-sm"
+                  [ngModel]="editType()"
+                  (ngModelChange)="editType.set($event)"
+                  name="actionType"
+                  required
+                  data-testid="select-type">
+            @for (type of actionTypes; track type) {
+              <option [value]="type">{{ type }}</option>
+            }
+          </select>
+        </div>
+        <div class="col-12">
+          <label for="actionDescription" class="form-label form-label-sm mb-1">{{ 'actions.fields.description' | translate }}</label>
+          <textarea id="actionDescription"
+                    class="form-control form-control-sm"
+                    [ngModel]="editDescription()"
+                    (ngModelChange)="editDescription.set($event)"
+                    name="actionDescription"
+                    rows="3"
+                    data-testid="input-description"></textarea>
+        </div>
       </div>
-    </div>
+    </form>
   }
 }

@@ -45,7 +45,15 @@ src/
             │   ├── button.component.html
             │   ├── button.component.scss
             │   └── button.component.spec.ts
-            ├── table/
+            ├── data-table/
+            │   ├── data-table.component.ts
+            │   ├── data-table.component.html
+            │   ├── data-table.component.scss
+            │   ├── index.ts
+            │   ├── models/
+            │   │   └── column-def.model.ts
+            │   └── directives/
+            │       └── tp-column.directive.ts
             ├── modal/
             ├── card/
             ├── alert/
@@ -140,27 +148,124 @@ Cada componente sigue la convencion de un directorio propio con sus ficheros `.t
 
 ---
 
-## Tabla (`tp-table`)
+## Tabla de datos (`tp-data-table`)
 
-| Propiedad    | Tipo                          | Defecto | Descripcion                                |
-|--------------|-------------------------------|---------|--------------------------------------------|
-| `data`       | `Array<T>`                    | `[]`    | Datos a mostrar                            |
-| `columns`    | `Array<ColumnDef>`            | `[]`    | Definicion de columnas                     |
-| `loading`    | `boolean`                     | `false` | Muestra estado de carga                    |
-| `pagination` | `boolean`                     | `true`  | Habilita paginacion                        |
-| `pageSize`   | `number`                      | `10`    | Elementos por pagina                       |
-| `selectable` | `boolean`                     | `false` | Permite seleccion de filas                 |
-| `sortable`   | `boolean`                     | `true`  | Permite ordenacion por columnas            |
+Componente reutilizable que encapsula una tabla con paginacion, seleccion de filas, estados de carga/vacio y soporte para templates de celda personalizados.
 
-**Eventos:**
-- `(sort)`: Emitido al cambiar la ordenacion.
-- `(pageChange)`: Emitido al cambiar de pagina.
-- `(rowSelect)`: Emitido al seleccionar una fila.
+**Selector:** `<tp-data-table>`
 
-**Estados:**
-- Carga: Muestra `<tp-spinner>` superpuesto.
-- Vacio: Muestra mensaje "No hay datos disponibles" (traducido).
-- Error: Muestra `<tp-alert variant="danger">` con mensaje de error.
+**Ubicacion:** `shared/components/data-table/`
+
+### Inputs
+
+| Propiedad       | Tipo                          | Defecto           | Descripcion                                |
+|-----------------|-------------------------------|-------------------|--------------------------------------------|
+| `columns`       | `ColumnDef[]`                 | `[]` (required)   | Definicion de columnas                     |
+| `data`          | `Array<T>`                    | `[]` (required)   | Datos de la pagina actual                  |
+| `loading`       | `boolean`                     | `false`           | Muestra estado de carga (spinner)          |
+| `totalElements` | `number`                      | `0`               | Total de elementos (para paginacion)       |
+| `currentPage`   | `number`                      | `0`               | Pagina actual (0-indexed)                  |
+| `pageSize`      | `number`                      | `10`              | Elementos por pagina                       |
+| `pageSizes`     | `number[]`                    | `[5, 10, 20, 50]` | Opciones de tamano de pagina              |
+| `selectable`    | `boolean`                     | `true`            | Permite seleccion de filas                 |
+| `selectedItem`  | `T \| null`                   | `null`            | Item seleccionado (comparado por `id`)     |
+| `ariaLabel`     | `string`                      | `''`              | Label de accesibilidad para la tabla       |
+| `testId`        | `string`                      | `''`              | Atributo `data-testid` de la tabla         |
+
+### Outputs
+
+| Evento            | Tipo                    | Descripcion                              |
+|-------------------|-------------------------|------------------------------------------|
+| `(pageChange)`    | `EventEmitter<number>`  | Emitido al cambiar de pagina             |
+| `(pageSizeChange)`| `EventEmitter<number>`  | Emitido al cambiar tamano de pagina      |
+| `(rowSelect)`     | `EventEmitter<T>`       | Emitido al seleccionar/deseleccionar fila|
+| `(rowDoubleClick)`| `EventEmitter<T>`       | Emitido al hacer doble clic en una fila  |
+
+### Modelo ColumnDef
+
+```typescript
+interface ColumnDef {
+  key: string;        // Clave que identifica la columna (propiedad del objeto)
+  header: string;     // Clave de traduccion para la cabecera
+  sortable?: boolean; // Si la columna es ordenable
+  cssClass?: string;  // Clase CSS aplicada a <th> y <td>
+}
+```
+
+### Templates de celda personalizados (TpColumnDirective)
+
+Para personalizar el renderizado de una celda, se usa la directiva `tpColumn`:
+
+```html
+<tp-data-table [columns]="columns" [data]="users()" ...>
+  <ng-template tpColumn="profileName" let-user>
+    <span class="badge bg-primary-subtle text-primary">{{ user.profileName }}</span>
+  </ng-template>
+  <ng-template tpColumn="lastAccess" let-user>
+    {{ user.lastAccess | localDate }}
+  </ng-template>
+</tp-data-table>
+```
+
+Si no se define un template para una columna, se muestra el valor plano de `item[column.key]`.
+
+### Estados
+
+| Estado  | Comportamiento                                                   |
+|---------|------------------------------------------------------------------|
+| Carga   | Muestra `spinner-border` centrado en el tbody                    |
+| Vacio   | Muestra mensaje traducido `common.noData` centrado               |
+| Datos   | Renderiza las filas con seleccion visual (`table-active`)        |
+
+### Paginacion integrada
+
+El componente incluye un `card-footer` con:
+- Contador de registros: "Mostrando X-Y de Z"
+- Navegacion de paginas (maximo 5 visibles)
+- Selector de elementos por pagina
+
+### Accesibilidad
+
+- `aria-label` configurable en la tabla.
+- `aria-selected` en las filas seleccionadas.
+- `aria-current="page"` en la pagina activa.
+- `aria-hidden="true"` en iconos decorativos (chevrons).
+- `role="row"` en las filas de datos.
+- `role="status"` en el spinner con texto oculto.
+- Navegacion del selector de pagina por teclado.
+
+### Ejemplo de uso completo
+
+```html
+<tp-data-table
+  [columns]="columns"
+  [data]="profiles()"
+  [loading]="isLoading()"
+  [totalElements]="totalElements()"
+  [currentPage]="currentPage()"
+  [pageSize]="pageSize()"
+  [selectable]="true"
+  [selectedItem]="selectedRow()"
+  (rowSelect)="selectRow($event)"
+  (rowDoubleClick)="viewDetail($event)"
+  (pageChange)="goToPage($event)"
+  (pageSizeChange)="changePageSize($event)"
+  ariaLabel="Listado de perfiles"
+  testId="profiles-table">
+
+  <ng-template tpColumn="name" let-profile>
+    <strong>{{ profile.name }}</strong>
+  </ng-template>
+
+  <ng-template tpColumn="actions" let-profile>
+    <span class="badge bg-primary-subtle text-primary">{{ profile.actions.length }}</span>
+  </ng-template>
+
+  <ng-template tpColumn="createdAt" let-profile>
+    {{ profile.createdAt | localDate }}
+  </ng-template>
+</tp-data-table>
+```
 
 ---
 

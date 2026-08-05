@@ -96,114 +96,34 @@
   </div>
 
   <!-- Data table -->
-  <div class="card tp-card">
-    <div class="card-body p-0">
-      <div class="table-responsive">
-        <table class="table table-hover tp-table mb-0" aria-label="Listado de usuarios" data-testid="users-table">
-          <thead>
-            <tr>
-              <th scope="col">{{ 'users.fields.username' | translate }}</th>
-              <th scope="col">{{ 'users.fields.firstName' | translate }}</th>
-              <th scope="col">{{ 'users.fields.lastName' | translate }}</th>
-              <th scope="col">{{ 'users.fields.email' | translate }}</th>
-              <th scope="col">{{ 'users.fields.profile' | translate }}</th>
-              <th scope="col">{{ 'users.fields.lastAccess' | translate }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            @if (isLoading()) {
-              <tr>
-                <td colspan="6" class="text-center py-4">
-                  <div class="spinner-border spinner-border-sm" role="status">
-                    <span class="visually-hidden">{{ 'common.loading' | translate }}</span>
-                  </div>
-                </td>
-              </tr>
-            } @else if (users().length === 0) {
-              <tr>
-                <td colspan="6" class="text-center py-4 text-muted">
-                  {{ 'common.noData' | translate }}
-                </td>
-              </tr>
-            } @else {
-              @for (user of users(); track user.id) {
-                <tr [class.table-active]="selectedRow()?.id === user.id"
-                    (click)="selectRow(user)"
-                    style="cursor: pointer;"
-                    [attr.aria-selected]="selectedRow()?.id === user.id"
-                    role="row">
-                  <td>{{ user.username }}</td>
-                  <td>{{ user.firstName }}</td>
-                  <td>{{ user.lastName }}</td>
-                  <td>{{ user.email }}</td>
-                  <td>
-                    @if (user.profileName) {
-                      <span class="badge bg-primary-subtle text-primary">{{ user.profileName }}</span>
-                    }
-                  </td>
-                  <td>{{ user.lastAccess | localDate }}</td>
-                </tr>
-              }
-            }
-          </tbody>
-        </table>
-      </div>
-    </div>
-    @if (totalElements() > 0) {
-      <div class="card-footer d-flex justify-content-between align-items-center">
-        <span class="text-muted" style="font-size: 0.8125rem;" data-testid="pagination-info">
-          {{ 'common.pagination.showing' | translate: { from: showingFrom(), to: showingTo(), total: totalElements() } }}
-        </span>
-        <nav aria-label="Paginación de usuarios">
-          <ul class="pagination pagination-sm mb-0">
-            <li class="page-item" [class.disabled]="currentPage() === 0">
-              <a class="page-link"
-                 href="javascript:void(0)"
-                 (click)="goToPage(currentPage() - 1)"
-                 [attr.aria-label]="'common.pagination.previous' | translate"
-                 data-testid="pagination-prev">
-                <i class="bi bi-chevron-left" aria-hidden="true"></i>
-              </a>
-            </li>
-            @for (p of pages(); track p) {
-              <li class="page-item" [class.active]="p === currentPage()" [attr.aria-current]="p === currentPage() ? 'page' : null">
-                <a class="page-link" href="javascript:void(0)" (click)="goToPage(p)">
-                  {{ p + 1 }}
-                </a>
-              </li>
-            }
-            <li class="page-item" [class.disabled]="currentPage() >= totalPages() - 1">
-              <a class="page-link"
-                 href="javascript:void(0)"
-                 (click)="goToPage(currentPage() + 1)"
-                 [attr.aria-label]="'common.pagination.next' | translate"
-                 data-testid="pagination-next">
-                <i class="bi bi-chevron-right" aria-hidden="true"></i>
-              </a>
-            </li>
-          </ul>
-        </nav>
-        <div class="d-flex align-items-center gap-2 ms-3">
-          <label for="pageSize" class="text-muted text-nowrap mb-0" style="font-size: 0.8125rem;">
-            {{ 'common.pagination.pageSize' | translate }}:
-          </label>
-          <select class="form-select form-select-sm"
-                  id="pageSize"
-                  style="width: auto;"
-                  [ngModel]="pageSize()"
-                  (ngModelChange)="changePageSize($event)"
-                  name="pageSize"
-                  [attr.aria-label]="'common.pagination.pageSize' | translate"
-                  data-testid="pagination-page-size">
-            <option [ngValue]="5">5</option>
-            <option [ngValue]="10">10</option>
-            <option [ngValue]="20">20</option>
-            <option [ngValue]="50">50</option>
-          </select>
-        </div>
-      </div>
-    }
-  </div>
+  <tp-data-table
+    [columns]="columns"
+    [data]="users()"
+    [loading]="isLoading()"
+    [totalElements]="totalElements()"
+    [currentPage]="currentPage()"
+    [pageSize]="pageSize()"
+    [selectable]="true"
+    [selectedItem]="selectedRow()"
+    (rowSelect)="selectRow($event)"
+    (rowDoubleClick)="showDetail($event)"
+    (pageChange)="goToPage($event)"
+    (pageSizeChange)="changePageSize($event)"
+    ariaLabel="Listado de usuarios"
+    testId="users-table">
+
+    <!-- Custom column: profileName (badge) -->
+    <ng-template tpColumn="profileName" let-user>
+      @if (user.profileName) {
+        <span class="badge bg-primary-subtle text-primary">{{ user.profileName }}</span>
+      }
+    </ng-template>
+
+    <!-- Custom column: lastAccess (localDate pipe) -->
+    <ng-template tpColumn="lastAccess" let-user>
+      {{ user.lastAccess | localDate }}
+    </ng-template>
+  </tp-data-table>
 }
 
 <!-- ═══════════════════════════════════════════════════════════════════════════
@@ -215,14 +135,14 @@
     <div class="d-flex gap-2">
       @if (canWrite()) {
         <button class="btn btn-primary btn-sm" (click)="showEditForm(selectedUser()!)">
-          <i class="bi bi-pencil me-1"></i>{{ 'button.edit' | translate }}
+          <i class="bi bi-pencil me-1" aria-hidden="true"></i>{{ 'button.edit' | translate }}
         </button>
         <button class="btn btn-danger btn-sm" (click)="confirmDelete(selectedUser()!)">
-          <i class="bi bi-trash me-1"></i>{{ 'button.delete' | translate }}
+          <i class="bi bi-trash me-1" aria-hidden="true"></i>{{ 'button.delete' | translate }}
         </button>
       }
       <button class="btn btn-outline-secondary btn-sm" (click)="backToList()">
-        <i class="bi bi-arrow-left me-1"></i>{{ 'button.back' | translate }}
+        <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>{{ 'button.back' | translate }}
       </button>
     </div>
   </div>
@@ -450,7 +370,7 @@
           <button type="button" class="btn btn-outline-secondary" (click)="cancelDelete()">
             {{ 'button.cancel' | translate }}
           </button>
-          <button type="button" class="btn btn-danger" (click)="executeDelete()">
+          <button type="button" class="btn btn-danger" (click)="executeDelete()" data-testid="btn-confirm-delete">
             {{ 'button.confirm' | translate }}
           </button>
         </div>

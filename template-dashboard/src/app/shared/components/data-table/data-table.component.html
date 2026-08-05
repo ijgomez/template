@@ -1,0 +1,120 @@
+<!-- tp-data-table: Reusable table with pagination, selection, loading/empty states -->
+<div class="card tp-card">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover tp-table mb-0"
+             [attr.aria-label]="ariaLabel"
+             [attr.data-testid]="testId">
+        <thead>
+          <tr>
+            @for (col of columns; track col.key) {
+              <th scope="col" [class]="col.cssClass ?? ''">
+                {{ col.header | translate }}
+              </th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @if (loading) {
+            <tr>
+              <td [attr.colspan]="columns.length" class="text-center py-4">
+                <div class="spinner-border spinner-border-sm" role="status">
+                  <span class="visually-hidden">{{ 'common.loading' | translate }}</span>
+                </div>
+              </td>
+            </tr>
+          } @else if (data.length === 0) {
+            <tr>
+              <td [attr.colspan]="columns.length" class="text-center py-4 text-muted">
+                {{ 'common.noData' | translate }}
+              </td>
+            </tr>
+          } @else {
+            @for (item of data; track item.id) {
+              <tr [class.table-active]="isSelected(item)"
+                  [style.cursor]="selectable ? 'pointer' : 'default'"
+                  [attr.aria-selected]="isSelected(item)"
+                  role="row"
+                  (click)="onRowClick(item)"
+                  (dblclick)="onRowDoubleClick(item)">
+                @for (col of columns; track col.key) {
+                  <td [class]="col.cssClass ?? ''">
+                    @if (getColumnTemplate(col.key); as tmpl) {
+                      <ng-container *ngTemplateOutlet="tmpl.templateRef; context: { $implicit: item }"></ng-container>
+                    } @else {
+                      {{ getCellValue(item, col.key) }}
+                    }
+                  </td>
+                }
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Pagination footer -->
+  @if (totalElements > 0) {
+    <div class="card-footer d-flex justify-content-between align-items-center"
+         data-testid="table-pagination">
+      <!-- Record counter -->
+      <span class="text-muted" style="font-size: 0.8125rem;" data-testid="pagination-info">
+        {{ 'common.pagination.showing' | translate: { from: showingFrom, to: showingTo, total: totalElements } }}
+      </span>
+
+      <!-- Page navigation -->
+      <nav [attr.aria-label]="'common.pagination.nav' | translate">
+        <ul class="pagination pagination-sm mb-0">
+          <li class="page-item" [class.disabled]="currentPage === 0">
+            <a class="page-link"
+               href="javascript:void(0)"
+               (click)="goToPage(currentPage - 1)"
+               [attr.aria-label]="'common.pagination.previous' | translate"
+               data-testid="pagination-prev">
+              <i class="bi bi-chevron-left" aria-hidden="true"></i>
+            </a>
+          </li>
+          @for (p of visiblePages; track p) {
+            <li class="page-item"
+                [class.active]="p === currentPage"
+                [attr.aria-current]="p === currentPage ? 'page' : null">
+              <a class="page-link" href="javascript:void(0)" (click)="goToPage(p)">
+                {{ p + 1 }}
+              </a>
+            </li>
+          }
+          <li class="page-item" [class.disabled]="currentPage >= totalPages - 1">
+            <a class="page-link"
+               href="javascript:void(0)"
+               (click)="goToPage(currentPage + 1)"
+               [attr.aria-label]="'common.pagination.next' | translate"
+               data-testid="pagination-next">
+              <i class="bi bi-chevron-right" aria-hidden="true"></i>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Page size selector -->
+      <div class="d-flex align-items-center gap-2 ms-3">
+        <label for="tp-table-page-size"
+               class="text-muted text-nowrap mb-0"
+               style="font-size: 0.8125rem;">
+          {{ 'common.pagination.pageSize' | translate }}:
+        </label>
+        <select class="form-select form-select-sm"
+                id="tp-table-page-size"
+                style="width: auto;"
+                [ngModel]="pageSize"
+                (ngModelChange)="onPageSizeChange($event)"
+                [attr.aria-label]="'common.pagination.pageSize' | translate"
+                data-testid="pagination-page-size">
+          @for (size of pageSizes; track size) {
+            <option [ngValue]="size">{{ size }}</option>
+          }
+        </select>
+      </div>
+    </div>
+  }
+</div>

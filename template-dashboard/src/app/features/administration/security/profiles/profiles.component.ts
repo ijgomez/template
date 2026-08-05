@@ -1,12 +1,14 @@
 import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { AuthService } from '../../../../core/services/auth.service';
 import { NotificationService } from '../../../../core/services/notification.service';
+import { CsvExportService } from '../../../../core/services/csv-export.service';
 import { ProfileService } from '../../../../core/services/profile.service';
 import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
+import { TpDataTableComponent, TpColumnDirective, ColumnDef } from '../../../../shared/components/data-table';
 import { Action, Profile, ProfileCriteria } from './models/profile.model';
 
 type ViewMode = 'list' | 'detail' | 'form';
@@ -19,7 +21,7 @@ type ViewMode = 'list' | 'detail' | 'form';
 @Component({
   selector: 'app-profiles',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, LocalDatePipe],
+  imports: [CommonModule, FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective],
   templateUrl: './profiles.component.html',
   styleUrls: ['./profiles.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -28,6 +30,8 @@ export class ProfilesComponent implements OnInit {
   private readonly profileService = inject(ProfileService);
   private readonly authService = inject(AuthService);
   private readonly notificationService = inject(NotificationService);
+  private readonly csvExportService = inject(CsvExportService);
+  private readonly translateService = inject(TranslateService);
 
   // View state
   readonly viewMode = signal<ViewMode>('list');
@@ -42,18 +46,19 @@ export class ProfilesComponent implements OnInit {
   readonly pageSize = signal(10);
   readonly totalPages = computed(() => Math.ceil(this.totalElements() / this.pageSize()));
 
+  // Table columns
+  readonly columns: ColumnDef[] = [
+    { key: 'name', header: 'profiles.fields.name' },
+    { key: 'description', header: 'profiles.fields.description' },
+    { key: 'actions', header: 'profiles.fields.actions', cssClass: 'text-center' },
+    { key: 'createdAt', header: 'profiles.fields.createdAt' },
+  ];
+
   // Filter
   readonly filterName = signal('');
 
   // Row selection
   readonly selectedRow = signal<Profile | null>(null);
-
-  // Page size options
-  readonly pageSizes = [5, 10, 20, 50];
-
-  // Pagination info computeds
-  readonly showingFrom = computed(() => this.currentPage() * this.pageSize() + 1);
-  readonly showingTo = computed(() => Math.min((this.currentPage() + 1) * this.pageSize(), this.totalElements()));
 
   // Detail/Form data
   readonly selectedProfile = signal<Profile | null>(null);
@@ -73,9 +78,6 @@ export class ProfilesComponent implements OnInit {
 
   // Action-based permissions
   readonly canWrite = computed(() => this.authService.hasAction('PROFILE_WRITE'));
-
-  // Expose Math for template usage
-  protected readonly Math = Math;
 
   ngOnInit(): void {
     this.loadProfiles();
@@ -122,18 +124,25 @@ export class ProfilesComponent implements OnInit {
     }
   }
 
-  previousPage(): void {
-    this.goToPage(this.currentPage() - 1);
-  }
-
-  nextPage(): void {
-    this.goToPage(this.currentPage() + 1);
+  changePageSize(size: number): void {
+    this.pageSize.set(size);
+    this.currentPage.set(0);
+    this.loadProfiles();
   }
 
   exportCsv(): void {
-    const headers = ['ID', 'Name', 'Description', 'Actions', 'Created At', 'Last Modified At'];
-    const rows = this.profiles().map((p) => [
-      p.id?.toString() ?? '',
+    const data = this.profiles();
+    if (data.length === 0) return;
+
+    const headers = [
+      this.translateService.instant('profiles.fields.name'),
+      this.translateService.instant('profiles.fields.description'),
+      this.translateService.instant('profiles.fields.actions'),
+      this.translateService.instant('profiles.fields.createdAt'),
+      this.translateService.instant('profiles.fields.lastModifiedAt'),
+    ];
+
+    const rows = data.map((p) => [
       p.name,
       p.description ?? '',
       p.actions.map((a) => a.code).join('; '),
@@ -141,18 +150,7 @@ export class ProfilesComponent implements OnInit {
       p.lastModifiedAt ?? '',
     ]);
 
-    const csvContent = [headers, ...rows]
-      .map((row) => row.map((field) => `"${field.replace(/"/g, '""')}"`).join(','))
-      .join('\n');
-
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'profiles.csv';
-    link.click();
-    URL.revokeObjectURL(url);
-
+    this.csvExportService.export(headers, rows, 'profiles');
     this.notificationService.showSuccess('notification.export.success');
   }
 
@@ -174,12 +172,6 @@ export class ProfilesComponent implements OnInit {
     if (row) {
       this.confirmDelete(row);
     }
-  }
-
-  changePageSize(size: number): void {
-    this.pageSize.set(size);
-    this.currentPage.set(0);
-    this.loadProfiles();
   }
 
   // ─── Detail View ────────────────────────────────────────────
@@ -307,22 +299,6 @@ export class ProfilesComponent implements OnInit {
         this.notificationService.showError('notification.error');
       },
     });
-  }
-
-  /**
-   * Returns visible page numbers for pagination.
-   */
-  getVisiblePages(): number[] {
-    const total = this.totalPages();
-    const current = this.currentPage();
-    const pages: number[] = [];
-    const start = Math.max(0, current - 2);
-    const end = Math.min(total - 1, current + 2);
-
-    for (let i = start; i <= end; i++) {
-      pages.push(i);
-    }
-    return pages;
   }
 
   /**

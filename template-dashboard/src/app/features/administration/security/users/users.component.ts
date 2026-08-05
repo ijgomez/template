@@ -6,7 +6,9 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { UserService } from '../../../../core/services/user.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { NotificationService } from '../../../../core/services/notification.service';
+import { CsvExportService } from '../../../../core/services/csv-export.service';
 import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
+import { TpDataTableComponent, TpColumnDirective, ColumnDef } from '../../../../shared/components/data-table';
 import { UserDTO, UserCriteria, ProfileRef, ReportRef } from '../../../../core/models/user.model';
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit';
@@ -14,7 +16,7 @@ type ViewMode = 'list' | 'detail' | 'create' | 'edit';
 @Component({
   selector: 'app-users',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, LocalDatePipe],
+  imports: [CommonModule, FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -23,6 +25,7 @@ export class UsersComponent implements OnInit {
   private readonly userService = inject(UserService);
   private readonly authService = inject(AuthService);
   private readonly notificationService = inject(NotificationService);
+  private readonly csvExportService = inject(CsvExportService);
   private readonly translateService = inject(TranslateService);
 
   // View state
@@ -35,6 +38,16 @@ export class UsersComponent implements OnInit {
   readonly totalPages = signal(0);
   readonly currentPage = signal(0);
   readonly pageSize = signal(10);
+
+  // Table columns
+  readonly columns: ColumnDef[] = [
+    { key: 'username', header: 'users.fields.username' },
+    { key: 'firstName', header: 'users.fields.firstName' },
+    { key: 'lastName', header: 'users.fields.lastName' },
+    { key: 'email', header: 'users.fields.email' },
+    { key: 'profileName', header: 'users.fields.profile' },
+    { key: 'lastAccess', header: 'users.fields.lastAccess' },
+  ];
 
   // Filter state
   readonly criteria = signal<UserCriteria>({});
@@ -67,23 +80,6 @@ export class UsersComponent implements OnInit {
     return allReports
       .filter(r => ids.includes(r.id))
       .filter(r => !filter || r.name.toLowerCase().includes(filter));
-  });
-
-  // Pagination computed
-  readonly showingFrom = computed(() => this.currentPage() * this.pageSize() + 1);
-  readonly showingTo = computed(() => Math.min((this.currentPage() + 1) * this.pageSize(), this.totalElements()));
-  readonly pages = computed(() => {
-    const total = this.totalPages();
-    const current = this.currentPage();
-    const pages: number[] = [];
-    const maxVisible = 5;
-    let start = Math.max(0, current - Math.floor(maxVisible / 2));
-    const end = Math.min(total, start + maxVisible);
-    start = Math.max(0, end - maxVisible);
-    for (let i = start; i < end; i++) {
-      pages.push(i);
-    }
-    return pages;
   });
 
   ngOnInit(): void {
@@ -189,33 +185,25 @@ export class UsersComponent implements OnInit {
 
     const notifId = this.notificationService.showProgress('notification.export.progress');
 
-    const headers = ['username', 'firstName', 'lastName', 'email', 'profileName', 'lastAccess'];
-    const csvRows = [
-      headers.join(','),
-      ...data.map(u =>
-        [
-          this.escapeCsv(u.username),
-          this.escapeCsv(u.firstName ?? ''),
-          this.escapeCsv(u.lastName ?? ''),
-          this.escapeCsv(u.email ?? ''),
-          this.escapeCsv(u.profileName ?? ''),
-          this.escapeCsv(u.lastAccess ?? ''),
-        ].join(',')
-      ),
+    const headers = [
+      this.translateService.instant('users.fields.username'),
+      this.translateService.instant('users.fields.firstName'),
+      this.translateService.instant('users.fields.lastName'),
+      this.translateService.instant('users.fields.email'),
+      this.translateService.instant('users.fields.profile'),
+      this.translateService.instant('users.fields.lastAccess'),
     ];
 
-    const csvContent = csvRows.join('\n');
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.setAttribute('href', url);
-    link.setAttribute('download', 'users.csv');
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    const rows = data.map(u => [
+      u.username,
+      u.firstName ?? '',
+      u.lastName ?? '',
+      u.email ?? '',
+      u.profileName ?? '',
+      u.lastAccess ?? '',
+    ]);
 
+    this.csvExportService.export(headers, rows, 'users');
     this.notificationService.updateToSuccess(notifId, 'notification.export.success');
   }
 
@@ -365,12 +353,5 @@ export class UsersComponent implements OnInit {
       createdAt: null,
       lastModifiedAt: null,
     };
-  }
-
-  private escapeCsv(value: string): string {
-    if (value.includes(',') || value.includes('"') || value.includes('\n')) {
-      return `"${value.replace(/"/g, '""')}"`;
-    }
-    return value;
   }
 }
