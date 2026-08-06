@@ -145,7 +145,7 @@ export class ProfilesComponent implements OnInit {
     const rows = data.map((p) => [
       p.name,
       p.description ?? '',
-      p.actions.map((a) => a.code).join('; '),
+      p.actions?.map((a) => a.code).join('; ') ?? '',
       p.createdAt ?? '',
       p.lastModifiedAt ?? '',
     ]);
@@ -192,7 +192,7 @@ export class ProfilesComponent implements OnInit {
 
   openEditForm(profile: Profile): void {
     this.formProfile.set({ ...profile });
-    this.selectedActionIds.set(profile.actions.map((a) => a.id));
+    this.selectedActionIds.set((profile.actions ?? []).map((a) => a.id));
     this.isEditing.set(true);
     this.viewMode.set('form');
   }
