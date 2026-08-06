@@ -166,7 +166,16 @@
       "sectionReports": "Assigned reports",
       "filterReports": "Filter...",
       "addReport": "Add report",
-      "removeReport": "Remove report"
+      "removeReport": "Remove report",
+      "modal": {
+        "title": "Select reports",
+        "search": "Search report...",
+        "selectAll": "Select all",
+        "selectReport": "Select report",
+        "selected": "selected",
+        "accept": "Accept",
+        "paginationLabel": "Report selection pagination"
+      }
     },
     "delete": {
       "confirmTitle": "Delete User",

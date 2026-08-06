@@ -71,6 +71,13 @@ export class UsersComponent implements OnInit {
   readonly showDeleteConfirm = signal(false);
   readonly userToDelete = signal<UserDTO | null>(null);
 
+  // Report modal state
+  readonly showReportModal = signal(false);
+  readonly modalReportSearch = signal('');
+  readonly modalReportPage = signal(0);
+  readonly modalReportPageSize = signal(5);
+  readonly modalSelectedIds = signal<number[]>([]);
+
   // Report filter (create/edit form)
   readonly reportFilter = signal('');
   readonly assignedReportsFiltered = computed(() => {
@@ -81,6 +88,25 @@ export class UsersComponent implements OnInit {
       .filter(r => ids.includes(r.id))
       .filter(r => !filter || r.name.toLowerCase().includes(filter));
   });
+
+  // Report modal computeds
+  readonly modalFilteredReports = computed(() => {
+    const search = this.modalReportSearch().toLowerCase();
+    const all = this.reports();
+    if (!search) return all;
+    return all.filter(r => r.name.toLowerCase().includes(search));
+  });
+
+  readonly modalTotalElements = computed(() => this.modalFilteredReports().length);
+  readonly modalTotalPages = computed(() => Math.ceil(this.modalTotalElements() / this.modalReportPageSize()) || 1);
+  readonly modalPaginatedReports = computed(() => {
+    const start = this.modalReportPage() * this.modalReportPageSize();
+    return this.modalFilteredReports().slice(start, start + this.modalReportPageSize());
+  });
+  readonly modalShowingFrom = computed(() => this.modalTotalElements() === 0 ? 0 : this.modalReportPage() * this.modalReportPageSize() + 1);
+  readonly modalShowingTo = computed(() => Math.min((this.modalReportPage() + 1) * this.modalReportPageSize(), this.modalTotalElements()));
+  readonly modalSelectedCount = computed(() => this.modalSelectedIds().length);
+  readonly modalPageNumbers = computed(() => Array.from({ length: this.modalTotalPages() }, (_, i) => i));
 
   ngOnInit(): void {
     this.loadUsers();
@@ -320,7 +346,57 @@ export class UsersComponent implements OnInit {
   }
 
   openReportModal(): void {
-    // TODO: implement report selection modal
+    this.modalSelectedIds.set([...this.formUser().reportIds]);
+    this.modalReportSearch.set('');
+    this.modalReportPage.set(0);
+    this.showReportModal.set(true);
+  }
+
+  closeReportModal(): void {
+    this.showReportModal.set(false);
+  }
+
+  toggleModalReport(reportId: number): void {
+    this.modalSelectedIds.update(ids => {
+      if (ids.includes(reportId)) {
+        return ids.filter(id => id !== reportId);
+      }
+      return [...ids, reportId];
+    });
+  }
+
+  isModalReportSelected(reportId: number): boolean {
+    return this.modalSelectedIds().includes(reportId);
+  }
+
+  modalGoToPage(page: number): void {
+    if (page >= 0 && page < this.modalTotalPages()) {
+      this.modalReportPage.set(page);
+    }
+  }
+
+  confirmReportSelection(): void {
+    this.formUser.update(u => ({ ...u, reportIds: [...this.modalSelectedIds()] }));
+    this.showReportModal.set(false);
+  }
+
+  toggleAllModalReports(): void {
+    const currentPage = this.modalPaginatedReports();
+    const allSelected = currentPage.every(r => this.modalSelectedIds().includes(r.id));
+    if (allSelected) {
+      this.modalSelectedIds.update(ids => ids.filter(id => !currentPage.some(r => r.id === id)));
+    } else {
+      this.modalSelectedIds.update(ids => {
+        const newIds = [...ids];
+        currentPage.forEach(r => { if (!newIds.includes(r.id)) newIds.push(r.id); });
+        return newIds;
+      });
+    }
+  }
+
+  get allPageReportsSelected(): boolean {
+    const currentPage = this.modalPaginatedReports();
+    return currentPage.length > 0 && currentPage.every(r => this.modalSelectedIds().includes(r.id));
   }
 
   // ─── Private ───────────────────────────────────────────────

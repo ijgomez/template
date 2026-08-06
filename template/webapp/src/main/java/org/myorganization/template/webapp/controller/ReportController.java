@@ -56,6 +56,18 @@ public class ReportController {
     }
 
     /**
+     * Lists all available reports in the system.
+     * Used by the admin UI to assign reports to users.
+     *
+     * @return 200 OK with the list of all reports
+     */
+    @GetMapping("/all")
+    public ResponseEntity<List<ReportDTO>> findAll() {
+        List<ReportDTO> reports = reportService.findAll();
+        return ResponseEntity.ok(reports);
+    }
+
+    /**
      * Retrieves filter definitions for a given report.
      *
      * @param id the report identifier

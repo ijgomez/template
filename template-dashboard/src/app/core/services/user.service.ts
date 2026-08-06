@@ -107,6 +107,6 @@ export class UserService {
    * Fetches all reports for the report multi-select.
    */
   getReports(): Observable<ReportRef[]> {
-    return this.http.get<ReportRef[]>(this.reportsUrl);
+    return this.http.get<ReportRef[]>(`${this.reportsUrl}/all`);
   }
 }

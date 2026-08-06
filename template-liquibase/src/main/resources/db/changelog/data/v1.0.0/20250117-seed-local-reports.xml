@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Seed data for local development: sample reports -->
+    <!-- Context: local (only applied in local development environment) -->
+
+    <changeSet id="20250117-seed-local-reports" author="template" labels="v1.0.0" context="local">
+
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="report"/>
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM report</sqlCheck>
+        </preConditions>
+
+        <comment>Informes de ejemplo para desarrollo local</comment>
+
+        <insert tableName="report">
+            <column name="id" valueNumeric="1"/>
+            <column name="name" value="Informe de actividad mensual"/>
+            <column name="description" value="Resumen de la actividad de usuarios agrupada por mes"/>
+        </insert>
+
+        <insert tableName="report">
+            <column name="id" valueNumeric="2"/>
+            <column name="name" value="Resumen de accesos"/>
+            <column name="description" value="Accesos al sistema por usuario y periodo"/>
+        </insert>
+
+        <insert tableName="report">
+            <column name="id" valueNumeric="3"/>
+            <column name="name" value="Estadísticas de uso del sistema"/>
+            <column name="description" value="Métricas de uso de las funcionalidades del sistema"/>
+        </insert>
+
+        <insert tableName="report">
+            <column name="id" valueNumeric="4"/>
+            <column name="name" value="Informe de errores"/>
+            <column name="description" value="Errores registrados en el sistema por periodo"/>
+        </insert>
+
+        <insert tableName="report">
+            <column name="id" valueNumeric="5"/>
+            <column name="name" value="Consumo de interfaces"/>
+            <column name="description" value="Operaciones IN/OUT por interfaz y periodo"/>
+        </insert>
+
+        <insert tableName="report">
+            <column name="id" valueNumeric="6"/>
+            <column name="name" value="Informe de seguridad"/>
+            <column name="description" value="Eventos de seguridad y accesos no autorizados"/>
+        </insert>
+
+        <insert tableName="report">
+            <column name="id" valueNumeric="7"/>
+            <column name="name" value="Estado del cluster"/>
+            <column name="description" value="Estado y rendimiento de los nodos del cluster"/>
+        </insert>
+
+        <insert tableName="report">
+            <column name="id" valueNumeric="8"/>
+            <column name="name" value="Informe de auditoría"/>
+            <column name="description" value="Registro completo de operaciones auditadas"/>
+        </insert>
+
+        <!-- Update sequence to avoid conflicts with future inserts -->
+        <sql>ALTER SEQUENCE report_seq RESTART WITH 100;</sql>
+
+        <rollback>
+            <delete tableName="report"/>
+            <sql>ALTER SEQUENCE report_seq RESTART WITH 1;</sql>
+        </rollback>
+
+    </changeSet>
+
+</databaseChangeLog>

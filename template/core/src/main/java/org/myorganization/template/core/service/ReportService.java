@@ -59,6 +59,17 @@ public class ReportService {
     }
 
     /**
+     * Lists all available reports in the system.
+     *
+     * @return list of all reports
+     */
+    public List<ReportDTO> findAll() {
+        return reportRepository.findAll().stream()
+                .map(this::toDTO)
+                .toList();
+    }
+
+    /**
      * Returns the filter definitions for a given report.
      * <p>
      * This is a placeholder implementation that returns an empty list.

@@ -166,7 +166,16 @@
       "sectionReports": "Informes asignados",
       "filterReports": "Filtrar...",
       "addReport": "Añadir informe",
-      "removeReport": "Eliminar informe"
+      "removeReport": "Eliminar informe",
+      "modal": {
+        "title": "Seleccionar informes",
+        "search": "Buscar informe...",
+        "selectAll": "Seleccionar todos",
+        "selectReport": "Seleccionar informe",
+        "selected": "seleccionados",
+        "accept": "Aceptar",
+        "paginationLabel": "Paginación de selección de informes"
+      }
     },
     "delete": {
       "confirmTitle": "Eliminar Usuario",
