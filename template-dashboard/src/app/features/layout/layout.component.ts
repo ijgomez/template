@@ -4,6 +4,8 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 
 import { AuthService } from '../../core/services/auth.service';
+import { ReportService } from '../../core/services/report.service';
+import { Report } from '../../core/models/report.model';
 
 /**
  * Represents a navigation menu item in the sidebar.
@@ -19,6 +21,8 @@ export interface NavItem {
   children?: NavItem[];
   /** Action codes that grant visibility — item shows if user has at least one. */
   actions?: string[];
+  /** If true, labelKey is displayed as-is (not translated). Used for dynamic data like report names. */
+  isRawLabel?: boolean;
 }
 
 /**
@@ -46,6 +50,7 @@ export interface BreadcrumbSegment {
 })
 export class LayoutComponent implements OnInit {
   private readonly authService = inject(AuthService);
+  private readonly reportService = inject(ReportService);
   private readonly router = inject(Router);
   private readonly activatedRoute = inject(ActivatedRoute);
 
@@ -86,116 +91,139 @@ export class LayoutComponent implements OnInit {
     return name.substring(0, 2).toUpperCase();
   });
 
-  /** Full navigation menu structure with action-based visibility. */
-  readonly navItems: NavItem[] = [
-    {
-      labelKey: 'menu.dashboard',
-      icon: 'speedometer2',
-      route: '/dashboard',
-      actions: ['DASHBOARD_READ'],
-    },
-    {
-      labelKey: 'menu.reports',
-      icon: 'file-earmark-bar-graph',
-      route: '/reports',
+  /** User's assigned reports loaded dynamically for sidebar. */
+  readonly userReports = signal<Report[]>([]);
+
+  /** Dynamic nav items computed with user reports as children of "Informes". */
+  readonly computedNavItems = computed<NavItem[]>(() => {
+    const reports = this.userReports();
+    const reportChildren: NavItem[] = reports.map((r) => ({
+      labelKey: r.name,
+      icon: 'file-earmark-text',
+      route: `/reports/${r.id}`,
       actions: ['REPORT_EXECUTE'],
-    },
-    {
-      labelKey: 'menu.interfaces',
-      icon: 'diagram-3',
-      actions: ['INTERFACES_READ'],
-      children: [
-        {
-          labelKey: 'menu.interfaces.monitor',
-          icon: 'activity',
-          route: '/interfaces/monitor',
-          actions: ['INTERFACES_READ'],
-        },
-        {
-          labelKey: 'menu.interfaces.configuration',
-          icon: 'gear',
-          route: '/interfaces/configuration',
-          actions: ['INTERFACES_READ'],
-        },
-      ],
-    },
-    {
-      labelKey: 'menu.administration',
-      icon: 'shield-lock',
-      actions: [
-        'USER_READ', 'USER_WRITE',
-        'PROFILE_READ', 'PROFILE_WRITE',
-        'ACTION_READ',
-        'SYSTEM_PARAMETER_READ', 'SYSTEM_PARAMETER_WRITE',
-        'SYSTEM_LOG_READ',
-        'CLUSTER_NODE_READ', 'CLUSTER_NODE_WRITE',
-        'CLUSTER_LOCK_READ',
-      ],
-      children: [
-        {
-          labelKey: 'menu.administration.security',
-          icon: 'people',
-          actions: ['USER_READ', 'USER_WRITE', 'PROFILE_READ', 'PROFILE_WRITE', 'ACTION_READ'],
-          children: [
-            {
-              labelKey: 'menu.administration.security.users',
-              icon: 'person',
-              route: '/administration/security/users',
-              actions: ['USER_READ', 'USER_WRITE'],
-            },
-            {
-              labelKey: 'menu.administration.security.profiles',
-              icon: 'person-badge',
-              route: '/administration/security/profiles',
-              actions: ['PROFILE_READ', 'PROFILE_WRITE'],
-            },
-            {
-              labelKey: 'menu.administration.security.actions',
-              icon: 'key',
-              route: '/administration/security/actions',
-              actions: ['ACTION_READ'],
-            },
-          ],
-        },
-        {
-          labelKey: 'menu.administration.parameters',
-          icon: 'sliders',
-          route: '/administration/parameters',
-          actions: ['SYSTEM_PARAMETER_READ', 'SYSTEM_PARAMETER_WRITE'],
-        },
-        {
-          labelKey: 'menu.administration.audit',
-          icon: 'journal-text',
-          route: '/administration/audit',
-          actions: ['SYSTEM_LOG_READ'],
-        },
-        {
-          labelKey: 'menu.administration.cluster',
-          icon: 'hdd-network',
-          actions: ['CLUSTER_NODE_READ', 'CLUSTER_NODE_WRITE', 'CLUSTER_LOCK_READ'],
-          children: [
-            {
-              labelKey: 'menu.administration.cluster.nodes',
-              icon: 'hdd-rack',
-              route: '/administration/cluster/nodes',
-              actions: ['CLUSTER_NODE_READ', 'CLUSTER_NODE_WRITE'],
-            },
-            {
-              labelKey: 'menu.administration.cluster.blocks',
-              icon: 'lock',
-              route: '/administration/cluster/blocks',
-              actions: ['CLUSTER_LOCK_READ'],
-            },
-          ],
-        },
-      ],
-    },
-  ];
+      isRawLabel: true,
+    }));
+
+    return [
+      {
+        labelKey: 'menu.dashboard',
+        icon: 'speedometer2',
+        route: '/dashboard',
+        actions: ['DASHBOARD_READ'],
+      },
+      {
+        labelKey: 'menu.reports',
+        icon: 'file-earmark-bar-graph',
+        actions: ['REPORT_EXECUTE'],
+        children: reportChildren.length > 0 ? reportChildren : undefined,
+        route: reportChildren.length === 0 ? '/reports' : undefined,
+      },
+      {
+        labelKey: 'menu.interfaces',
+        icon: 'diagram-3',
+        actions: ['INTERFACES_READ'],
+        children: [
+          {
+            labelKey: 'menu.interfaces.monitor',
+            icon: 'activity',
+            route: '/interfaces/monitor',
+            actions: ['INTERFACES_READ'],
+          },
+          {
+            labelKey: 'menu.interfaces.configuration',
+            icon: 'gear',
+            route: '/interfaces/configuration',
+            actions: ['INTERFACES_READ'],
+          },
+        ],
+      },
+      {
+        labelKey: 'menu.administration',
+        icon: 'shield-lock',
+        actions: [
+          'USER_READ', 'USER_WRITE',
+          'PROFILE_READ', 'PROFILE_WRITE',
+          'ACTION_READ',
+          'SYSTEM_PARAMETER_READ', 'SYSTEM_PARAMETER_WRITE',
+          'SYSTEM_LOG_READ',
+          'CLUSTER_NODE_READ', 'CLUSTER_NODE_WRITE',
+          'CLUSTER_LOCK_READ',
+        ],
+        children: [
+          {
+            labelKey: 'menu.administration.security',
+            icon: 'people',
+            actions: ['USER_READ', 'USER_WRITE', 'PROFILE_READ', 'PROFILE_WRITE', 'ACTION_READ'],
+            children: [
+              {
+                labelKey: 'menu.administration.security.users',
+                icon: 'person',
+                route: '/administration/security/users',
+                actions: ['USER_READ', 'USER_WRITE'],
+              },
+              {
+                labelKey: 'menu.administration.security.profiles',
+                icon: 'person-badge',
+                route: '/administration/security/profiles',
+                actions: ['PROFILE_READ', 'PROFILE_WRITE'],
+              },
+              {
+                labelKey: 'menu.administration.security.actions',
+                icon: 'key',
+                route: '/administration/security/actions',
+                actions: ['ACTION_READ'],
+              },
+            ],
+          },
+          {
+            labelKey: 'menu.administration.parameters',
+            icon: 'sliders',
+            route: '/administration/parameters',
+            actions: ['SYSTEM_PARAMETER_READ', 'SYSTEM_PARAMETER_WRITE'],
+          },
+          {
+            labelKey: 'menu.administration.audit',
+            icon: 'journal-text',
+            route: '/administration/audit',
+            actions: ['SYSTEM_LOG_READ'],
+          },
+          {
+            labelKey: 'menu.administration.cluster',
+            icon: 'hdd-network',
+            actions: ['CLUSTER_NODE_READ', 'CLUSTER_NODE_WRITE', 'CLUSTER_LOCK_READ'],
+            children: [
+              {
+                labelKey: 'menu.administration.cluster.nodes',
+                icon: 'hdd-rack',
+                route: '/administration/cluster/nodes',
+                actions: ['CLUSTER_NODE_READ', 'CLUSTER_NODE_WRITE'],
+              },
+              {
+                labelKey: 'menu.administration.cluster.blocks',
+                icon: 'lock',
+                route: '/administration/cluster/blocks',
+                actions: ['CLUSTER_LOCK_READ'],
+              },
+            ],
+          },
+        ],
+      },
+    ];
+  });
 
   ngOnInit(): void {
     const saved = localStorage.getItem(LayoutComponent.STORAGE_KEY);
     if (saved === 'true') {
       this.sidebarCollapsed.set(true);
+    }
+
+    // Load user's assigned reports for sidebar navigation
+    if (this.authService.hasAction('REPORT_EXECUTE')) {
+      this.reportService.findUserReports().subscribe({
+        next: (reports) => this.userReports.set(reports),
+        error: () => { /* Sidebar will show "Informes" without children */ },
+      });
     }
 
     // Build breadcrumbs on navigation

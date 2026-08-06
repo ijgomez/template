@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Seed data for local development: audit_log -->
+    <!-- Context: local (only applied in local development environment) -->
+
+    <changeSet id="20250119-seed-local-audit-log" author="template" labels="v1.0.0" context="local">
+
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="audit_log"/>
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM audit_log</sqlCheck>
+        </preConditions>
+
+        <comment>Registros de auditoría para desarrollo local (324 registros simulados)</comment>
+
+        <sql dbms="postgresql" splitStatements="false">
+            INSERT INTO audit_log (id, timestamp, username, operation_type, section, entity_id, entity_name, detail)
+            SELECT
+                s.id,
+                TIMESTAMP WITH TIME ZONE '2025-01-01 08:00:00+01:00' + (s.id * INTERVAL '1 hour 20 minutes'),
+                (ARRAY['admin', 'jgarcia', 'mlopez', 'aruiz', 'pfernandez'])[1 + (s.id % 5)],
+                (ARRAY['CREATE', 'UPDATE', 'DELETE', 'READ', 'LOGIN', 'LOGOUT'])[1 + (s.id % 6)],
+                (ARRAY['USERS', 'REPORTS', 'PARAMETERS', 'INTERFACES', 'PROFILES'])[1 + (s.id % 5)],
+                CAST(1 + (s.id % 50) AS VARCHAR),
+                (ARRAY[
+                    'Usuario Admin', 'Informe mensual', 'Parámetro timeout',
+                    'Interfaz REST clientes', 'Perfil operador',
+                    'Usuario García', 'Informe diario', 'Parámetro reintentos',
+                    'Interfaz SOAP pagos', 'Perfil auditor',
+                    'Usuario López', 'Informe semanal', 'Parámetro batch_size',
+                    'Interfaz FTP ficheros', 'Perfil consulta',
+                    'Usuario Ruiz', 'Informe anual', 'Parámetro max_connections',
+                    'Interfaz SFTP backup', 'Perfil administrador'
+                ])[1 + (s.id % 20)],
+                CASE
+                    WHEN s.id % 6 = 0 THEN 'Creación de nuevo registro en el sistema'
+                    WHEN s.id % 6 = 1 THEN 'Actualización de campos: nombre, descripción'
+                    WHEN s.id % 6 = 2 THEN 'Eliminación lógica del registro'
+                    WHEN s.id % 6 = 3 THEN 'Consulta de detalle del registro'
+                    WHEN s.id % 6 = 4 THEN 'Inicio de sesión desde 192.168.1.' || (10 + s.id % 50)
+                    ELSE 'Cierre de sesión del usuario'
+                END
+            FROM generate_series(1, 324) AS s(id);
+
+            -- Actualizar la secuencia para evitar conflictos con futuros inserts
+            SELECT setval('audit_log_seq', 350);
+        </sql>
+
+        <rollback>
+            <sql>DELETE FROM audit_log WHERE id BETWEEN 1 AND 324;</sql>
+        </rollback>
+
+    </changeSet>
+
+</databaseChangeLog>

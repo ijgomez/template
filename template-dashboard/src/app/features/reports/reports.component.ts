@@ -1,18 +1,20 @@
-import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit, OnDestroy } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
 
 import { ReportService } from '../../core/services/report.service';
-import { AuthService } from '../../core/services/auth.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { Report, ReportFilter, ReportResult, ExportFormat } from '../../core/models/report.model';
 
-type ViewMode = 'list' | 'execute';
-
 /**
- * Reports component.
- * Displays the user's assigned reports, allows execution with dynamic filters,
- * paginated results, and multi-format export (PDF, XLSX, CSV, TXT).
+ * Report execution component.
+ * Loaded via /reports/:id — displays the report's dynamic filters and results table.
+ * Data is NOT loaded until the user clicks "Ejecutar".
+ * Follows the standard list-view pattern: filter bar + export toolbar + paginated table.
+ *
+ * Requirements: 18.1, 18.4, 18.5, 18.6, 18.7, 19.1
  */
 @Component({
   selector: 'app-reports',
@@ -21,92 +23,78 @@ type ViewMode = 'list' | 'execute';
   templateUrl: './reports.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ReportsComponent implements OnInit {
+export class ReportsComponent implements OnInit, OnDestroy {
+  private readonly route = inject(ActivatedRoute);
   private readonly reportService = inject(ReportService);
-  private readonly authService = inject(AuthService);
   private readonly notificationService = inject(NotificationService);
+  private routeSub?: Subscription;
 
-  // View state
-  readonly viewMode = signal<ViewMode>('list');
-  readonly isLoadingReports = signal(false);
+  // Report metadata
+  readonly report = signal<Report | null>(null);
+  readonly isLoadingFilters = signal(false);
 
-  // Reports list
-  readonly reports = signal<Report[]>([]);
-
-  // Execution state
-  readonly selectedReport = signal<Report | null>(null);
+  // Filters
   readonly filters = signal<ReportFilter[]>([]);
   readonly filterValues = signal<Record<string, string>>({});
-  readonly isLoadingFilters = signal(false);
+
+  // Execution state
   readonly isExecuting = signal(false);
   readonly hasExecuted = signal(false);
 
-  // Results state
+  // Results
   readonly result = signal<ReportResult | null>(null);
   readonly resultPage = signal(0);
   readonly resultSize = signal(10);
-  readonly resultTotalPages = computed(() => {
-    const r = this.result();
-    return r ? r.totalPages : 0;
-  });
-  readonly resultTotalElements = computed(() => {
-    const r = this.result();
-    return r ? r.totalElements : 0;
-  });
 
-  // Pagination display
+  readonly resultTotalPages = computed(() => this.result()?.totalPages ?? 0);
+  readonly resultTotalElements = computed(() => this.result()?.totalElements ?? 0);
   readonly showingFrom = computed(() => this.resultTotalElements() === 0 ? 0 : this.resultPage() * this.resultSize() + 1);
   readonly showingTo = computed(() => Math.min((this.resultPage() + 1) * this.resultSize(), this.resultTotalElements()));
 
   // Export formats
   readonly exportFormats: ExportFormat[] = ['PDF', 'XLSX', 'CSV', 'TXT'];
 
+  // Page size options
+  readonly pageSizeOptions = [5, 10, 20, 50];
+
   ngOnInit(): void {
-    this.loadReports();
-  }
-
-  // ─── List View ─────────────────────────────────────────────
-
-  loadReports(): void {
-    this.isLoadingReports.set(true);
-    this.reportService.findUserReports().subscribe({
-      next: (reports) => {
-        this.reports.set(reports);
-        this.isLoadingReports.set(false);
-      },
-      error: () => {
-        this.isLoadingReports.set(false);
-        this.notificationService.showError('notification.error');
-      },
+    this.routeSub = this.route.paramMap.subscribe((params) => {
+      const idParam = params.get('id');
+      if (idParam) {
+        const reportId = Number(idParam);
+        this.loadReport(reportId);
+      }
     });
   }
 
-  // ─── Execute View ──────────────────────────────────────────
+  ngOnDestroy(): void {
+    this.routeSub?.unsubscribe();
+  }
 
-  openExecution(report: Report): void {
-    this.selectedReport.set(report);
+  /**
+   * Loads report metadata and filter definitions for the given report ID.
+   */
+  private loadReport(reportId: number): void {
+    // Reset state when navigating to a different report
     this.hasExecuted.set(false);
     this.result.set(null);
     this.resultPage.set(0);
     this.filterValues.set({});
-    this.viewMode.set('execute');
-    this.loadFilters(report.id);
-  }
-
-  backToList(): void {
-    this.viewMode.set('list');
-    this.selectedReport.set(null);
     this.filters.set([]);
-    this.filterValues.set({});
-    this.result.set(null);
-    this.hasExecuted.set(false);
-  }
-
-  /**
-   * Loads filter definitions for the selected report.
-   */
-  private loadFilters(reportId: number): void {
     this.isLoadingFilters.set(true);
+
+    // Load report metadata from user's assigned reports
+    this.reportService.findUserReports().subscribe({
+      next: (reports) => {
+        const found = reports.find((r) => r.id === reportId) ?? null;
+        this.report.set(found);
+      },
+      error: () => {
+        this.report.set(null);
+      },
+    });
+
+    // Load filter definitions
     this.reportService.getFilters(reportId).subscribe({
       next: (filters) => {
         this.filters.set(filters);
@@ -133,9 +121,10 @@ export class ReportsComponent implements OnInit {
 
   /**
    * Executes the report with current filter values.
+   * This is the only way data gets loaded — the user must explicitly click "Ejecutar".
    */
   executeReport(): void {
-    const report = this.selectedReport();
+    const report = this.report();
     if (!report) return;
 
     // Validate mandatory filters
@@ -163,6 +152,20 @@ export class ReportsComponent implements OnInit {
   }
 
   /**
+   * Clears all filter values and resets the results.
+   */
+  clearFilters(): void {
+    const values: Record<string, string> = {};
+    for (const f of this.filters()) {
+      values[f.name] = '';
+    }
+    this.filterValues.set(values);
+    this.hasExecuted.set(false);
+    this.result.set(null);
+    this.resultPage.set(0);
+  }
+
+  /**
    * Navigates to a result page.
    */
   goToResultPage(page: number): void {
@@ -173,10 +176,21 @@ export class ReportsComponent implements OnInit {
   }
 
   /**
+   * Changes the page size and re-executes from page 0.
+   */
+  changePageSize(size: number): void {
+    this.resultSize.set(size);
+    this.resultPage.set(0);
+    if (this.hasExecuted()) {
+      this.executeReport();
+    }
+  }
+
+  /**
    * Exports the report in the given format.
    */
   exportReport(format: ExportFormat): void {
-    const report = this.selectedReport();
+    const report = this.report();
     if (!report) return;
 
     const progressId = this.notificationService.showProgress('notification.export.progress');

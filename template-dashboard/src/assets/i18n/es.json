@@ -128,6 +128,7 @@
     "noData": "No hay datos disponibles",
     "actions": "Acciones",
     "detail": "Detalle",
+    "all": "Todos",
     "yes": "Sí",
     "no": "No",
     "pagination": {
@@ -403,6 +404,9 @@
       "name": "Nombre",
       "description": "Descripción"
     },
+    "filters": {
+      "clear": "Limpiar"
+    },
     "execution": {
       "title": "Ejecución de Informe",
       "filters": "Filtros",
@@ -414,6 +418,9 @@
       "xlsx": "Exportar Excel",
       "csv": "Exportar CSV",
       "txt": "Exportar TXT"
+    },
+    "pagination": {
+      "label": "Paginación de resultados del informe"
     }
   },
   "dashboard": {

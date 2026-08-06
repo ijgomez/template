@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Seed data for local development: interface_log -->
+    <!-- Context: local (only applied in local development environment) -->
+
+    <changeSet id="20250120-seed-local-interface-log" author="template" labels="v1.0.0" context="local">
+
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="interface_log"/>
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM interface_log</sqlCheck>
+        </preConditions>
+
+        <comment>Registros de log de interfaces para desarrollo local (755 registros simulados)</comment>
+
+        <sql dbms="postgresql" splitStatements="false">
+            INSERT INTO interface_log (id, timestamp, operation_type, interface_name, request_payload, response_payload, status)
+            SELECT
+                s.id,
+                TIMESTAMP WITH TIME ZONE '2025-01-01 00:00:00+01:00' + (s.id * INTERVAL '35 minutes'),
+                (ARRAY['GET', 'POST', 'PUT', 'DELETE', 'PATCH'])[1 + (s.id % 5)],
+                (ARRAY[
+                    'api/users', 'api/reports', 'api/parameters', 'api/profiles',
+                    'api/audit', 'api/interfaces', 'api/cluster/nodes', 'api/cluster/jobs',
+                    'api/auth/login', 'api/auth/refresh', 'api/exports/csv', 'api/exports/pdf',
+                    'api/notifications', 'api/health', 'api/metrics'
+                ])[1 + (s.id % 15)],
+                CASE
+                    WHEN s.id % 5 = 0 THEN '{"params":{"page":' || (s.id % 10) || ',"size":20}}'
+                    WHEN s.id % 5 = 1 THEN '{"body":{"name":"Registro ' || s.id || '","active":true}}'
+                    WHEN s.id % 5 = 2 THEN '{"body":{"id":' || (s.id % 100) || ',"description":"Actualización ' || s.id || '"}}'
+                    WHEN s.id % 5 = 3 THEN '{"params":{"id":' || (s.id % 100) || '}}'
+                    ELSE '{"body":{"field":"value_' || s.id || '","timestamp":"2025-01-' || LPAD(CAST(1 + (s.id % 28) AS TEXT), 2, '0') || '"}}'
+                END,
+                CASE
+                    WHEN s.id % 7 = 6 THEN '{"error":"Internal Server Error","code":500,"message":"Timeout de conexión con servicio externo"}'
+                    WHEN s.id % 7 = 5 THEN '{"error":"Not Found","code":404,"message":"Recurso no encontrado: id=' || (s.id % 100) || '"}'
+                    WHEN s.id % 7 = 4 THEN '{"error":"Bad Request","code":400,"message":"Validación fallida: campo obligatorio"}'
+                    ELSE '{"data":{"id":' || s.id || ',"success":true,"records":' || (s.id % 50) || '}}'
+                END,
+                CASE
+                    WHEN s.id % 7 = 6 THEN 'ERROR'
+                    WHEN s.id % 7 = 5 THEN 'NOT_FOUND'
+                    WHEN s.id % 7 = 4 THEN 'BAD_REQUEST'
+                    ELSE 'SUCCESS'
+                END
+            FROM generate_series(1, 755) AS s(id);
+
+            -- Actualizar la secuencia para evitar conflictos con futuros inserts
+            SELECT setval('interface_log_seq', 800);
+        </sql>
+
+        <rollback>
+            <sql>DELETE FROM interface_log WHERE id BETWEEN 1 AND 755;</sql>
+        </rollback>
+
+    </changeSet>
+
+</databaseChangeLog>

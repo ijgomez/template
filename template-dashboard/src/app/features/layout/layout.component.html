@@ -13,7 +13,7 @@
     </div>
     <nav class="sidebar-nav">
       <ul class="nav flex-column">
-        @for (item of navItems; track item.labelKey) {
+        @for (item of computedNavItems(); track item.labelKey) {
           @if (isItemVisible(item)) {
             <li class="nav-item">
               @if (item.children) {
@@ -48,7 +48,7 @@
                               [attr.data-testid]="'nav-toggle-' + child.labelKey"
                             >
                               <i class="bi bi-{{ child.icon }}" aria-hidden="true"></i>
-                              <span class="nav-label">{{ child.labelKey | translate }}</span>
+                              <span class="nav-label">{{ child.isRawLabel ? child.labelKey : (child.labelKey | translate) }}</span>
                               <i
                                 class="bi nav-chevron ms-auto"
                                 [class.bi-chevron-down]="isSectionExpanded(child.labelKey)"
@@ -70,7 +70,7 @@
                                         [attr.data-testid]="'nav-' + grandchild.labelKey"
                                       >
                                         <i class="bi bi-{{ grandchild.icon }}" aria-hidden="true"></i>
-                                        <span class="nav-label">{{ grandchild.labelKey | translate }}</span>
+                                        <span class="nav-label">{{ grandchild.isRawLabel ? grandchild.labelKey : (grandchild.labelKey | translate) }}</span>
                                       </a>
                                     </li>
                                   }
@@ -86,7 +86,7 @@
                               [attr.data-testid]="'nav-' + child.labelKey"
                             >
                               <i class="bi bi-{{ child.icon }}" aria-hidden="true"></i>
-                              <span class="nav-label">{{ child.labelKey | translate }}</span>
+                              <span class="nav-label">{{ child.isRawLabel ? child.labelKey : (child.labelKey | translate) }}</span>
                             </a>
                           }
                         </li>
