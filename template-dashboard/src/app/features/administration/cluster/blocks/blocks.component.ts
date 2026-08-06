@@ -6,6 +6,7 @@ import { ClusterService } from '../../../../core/services/cluster.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
+import { TpDataTableComponent, TpColumnDirective, ColumnDef } from '../../../../shared/components/data-table';
 import { ClusterBlock, ClusterBlockCriteria } from '../../../../core/models/cluster.model';
 
 /**
@@ -16,7 +17,7 @@ import { ClusterBlock, ClusterBlockCriteria } from '../../../../core/models/clus
 @Component({
   selector: 'app-cluster-blocks',
   standalone: true,
-  imports: [FormsModule, TranslatePipe, LocalDatePipe],
+  imports: [FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective],
   templateUrl: './blocks.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -25,6 +26,17 @@ export class BlocksComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly notificationService = inject(NotificationService);
   private readonly translateService = inject(TranslateService);
+
+  // Column definitions for tp-data-table
+  readonly columns: ColumnDef[] = [
+    { key: 'name', header: 'cluster.blocks.fields.name' },
+    { key: 'startDate', header: 'cluster.blocks.fields.startDate' },
+    { key: 'avgTime', header: 'cluster.blocks.fields.avgTime' },
+    { key: 'minTime', header: 'cluster.blocks.fields.minTime' },
+    { key: 'maxTime', header: 'cluster.blocks.fields.maxTime' },
+    { key: 'total', header: 'cluster.blocks.fields.total' },
+    { key: 'lastModifiedAt', header: 'cluster.blocks.fields.lastModifiedAt' },
+  ];
 
   // View state
   readonly viewMode = signal<'list' | 'detail'>('list');
@@ -166,28 +178,6 @@ export class BlocksComponent implements OnInit {
     } catch {
       this.notificationService.updateToError(progressId, 'notification.export.error');
     }
-  }
-
-  /**
-   * Returns an array of page numbers for pagination display.
-   */
-  getPageNumbers(): number[] {
-    const total = this.totalPages();
-    const current = this.currentPage();
-    const pages: number[] = [];
-    const maxVisible = 5;
-
-    let start = Math.max(0, current - Math.floor(maxVisible / 2));
-    const end = Math.min(total, start + maxVisible);
-
-    if (end - start < maxVisible) {
-      start = Math.max(0, end - maxVisible);
-    }
-
-    for (let i = start; i < end; i++) {
-      pages.push(i);
-    }
-    return pages;
   }
 
   private buildCriteria(): ClusterBlockCriteria {

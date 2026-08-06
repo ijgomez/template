@@ -111,116 +111,47 @@
   </div>
 
   <!-- Data table -->
-  <div class="card">
-    <div class="card-body p-0">
-      <div class="table-responsive">
-        <table class="table table-hover mb-0 tp-table" data-testid="monitor-table"
-               [attr.aria-label]="'interfaces.monitor.title' | translate">
-          <thead>
-            <tr>
-              <th scope="col">{{ 'interfaces.monitor.fields.timestamp' | translate }}</th>
-              <th scope="col">{{ 'interfaces.monitor.fields.operationType' | translate }}</th>
-              <th scope="col">{{ 'interfaces.monitor.fields.interfaceName' | translate }}</th>
-              <th scope="col">{{ 'interfaces.monitor.fields.status' | translate }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            @if (isLoading()) {
-              <tr>
-                <td colspan="4" class="text-center py-4">
-                  <div class="spinner-border spinner-border-sm" role="status">
-                    <span class="visually-hidden">{{ 'common.loading' | translate }}</span>
-                  </div>
-                </td>
-              </tr>
-            } @else if (logs().length === 0) {
-              <tr>
-                <td colspan="4" class="text-center py-4 text-muted">
-                  {{ 'common.noData' | translate }}
-                </td>
-              </tr>
-            } @else {
-              @for (log of logs(); track log.id) {
-                <tr [class.table-active]="selectedLog()?.id === log.id"
-                    (click)="selectRow(log)"
-                    style="cursor: pointer;"
-                    [attr.aria-selected]="selectedLog()?.id === log.id">
-                  <td>{{ log.timestamp | localDate }}</td>
-                  <td>
-                    <span class="badge"
-                          [class.bg-primary-subtle]="log.operationType === 'IN'"
-                          [class.text-primary]="log.operationType === 'IN'"
-                          [class.bg-info-subtle]="log.operationType === 'OUT'"
-                          [class.text-info]="log.operationType === 'OUT'">
-                      {{ log.operationType }}
-                    </span>
-                  </td>
-                  <td>{{ log.interfaceName }}</td>
-                  <td>
-                    <span class="badge"
-                          [class.bg-success-subtle]="log.status === 'SUCCESS'"
-                          [class.text-success]="log.status === 'SUCCESS'"
-                          [class.bg-danger-subtle]="log.status === 'ERROR'"
-                          [class.text-danger]="log.status === 'ERROR'">
-                      {{ log.status }}
-                    </span>
-                  </td>
-                </tr>
-              }
-            }
-          </tbody>
-        </table>
-      </div>
-    </div>
-    <!-- Pagination footer -->
-    @if (totalElements() > 0) {
-      <div class="card-footer d-flex justify-content-between align-items-center">
-        <span class="text-muted small">
-          {{ 'common.pagination.showing' | translate: { from: showingFrom(), to: showingTo(), total: totalElements() } }}
-        </span>
-        <nav [attr.aria-label]="'common.pagination.next' | translate">
-          <ul class="pagination pagination-sm mb-0">
-            <li class="page-item" [class.disabled]="currentPage() === 0">
-              <a class="page-link" href="javascript:void(0)"
-                 (click)="goToPage(currentPage() - 1)"
-                 [attr.aria-label]="'common.pagination.previous' | translate">
-                <i class="bi bi-chevron-left" aria-hidden="true"></i>
-              </a>
-            </li>
-            @for (p of getPageNumbers(); track p) {
-              <li class="page-item" [class.active]="p === currentPage()" [attr.aria-current]="p === currentPage() ? 'page' : null">
-                <a class="page-link" href="javascript:void(0)" (click)="goToPage(p)">
-                  {{ p + 1 }}
-                </a>
-              </li>
-            }
-            <li class="page-item" [class.disabled]="currentPage() >= totalPages() - 1">
-              <a class="page-link" href="javascript:void(0)"
-                 (click)="goToPage(currentPage() + 1)"
-                 [attr.aria-label]="'common.pagination.next' | translate">
-                <i class="bi bi-chevron-right" aria-hidden="true"></i>
-              </a>
-            </li>
-          </ul>
-        </nav>
-        <div class="d-flex align-items-center gap-2">
-          <label class="text-muted text-nowrap mb-0 small" for="pageSizeSelect">{{ 'common.pagination.pageSize' | translate }}:</label>
-          <select
-            id="pageSizeSelect"
-            class="form-select form-select-sm"
-            style="width: auto;"
-            [attr.aria-label]="'common.pagination.pageSize' | translate"
-            data-testid="monitor-page-size"
-            [ngModel]="pageSize()"
-            (ngModelChange)="changePageSize($event)">
-            @for (size of pageSizeOptions; track size) {
-              <option [value]="size">{{ size }}</option>
-            }
-          </select>
-        </div>
-      </div>
-    }
-  </div>
+  <tp-data-table
+    [columns]="columns"
+    [data]="logs()"
+    [loading]="isLoading()"
+    [totalElements]="totalElements()"
+    [currentPage]="currentPage()"
+    [pageSize]="pageSize()"
+    [pageSizes]="pageSizeOptions"
+    [selectable]="true"
+    [selectedItem]="selectedLog()"
+    (rowSelect)="selectRow($event)"
+    (rowDoubleClick)="viewDetail($event)"
+    (pageChange)="goToPage($event)"
+    (pageSizeChange)="changePageSize($event)"
+    ariaLabel="Listado de monitor de interfaces"
+    testId="monitor-table">
+
+    <ng-template tpColumn="timestamp" let-log>
+      {{ log.timestamp | localDate }}
+    </ng-template>
+
+    <ng-template tpColumn="operationType" let-log>
+      <span class="badge"
+            [class.bg-primary-subtle]="log.operationType === 'IN'"
+            [class.text-primary]="log.operationType === 'IN'"
+            [class.bg-info-subtle]="log.operationType === 'OUT'"
+            [class.text-info]="log.operationType === 'OUT'">
+        {{ log.operationType }}
+      </span>
+    </ng-template>
+
+    <ng-template tpColumn="status" let-log>
+      <span class="badge"
+            [class.bg-success-subtle]="log.status === 'SUCCESS'"
+            [class.text-success]="log.status === 'SUCCESS'"
+            [class.bg-danger-subtle]="log.status === 'ERROR'"
+            [class.text-danger]="log.status === 'ERROR'">
+        {{ log.status }}
+      </span>
+    </ng-template>
+  </tp-data-table>
 }
 
 <!-- ═══════════════════════════════════════════════════════════════════════════

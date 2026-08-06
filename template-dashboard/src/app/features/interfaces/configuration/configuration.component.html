@@ -61,111 +61,54 @@
   </div>
 
   <!-- Data table -->
-  <div class="card tp-card">
-    <div class="card-body p-0">
-      <div class="table-responsive">
-        <table class="table table-hover tp-table mb-0" aria-label="Listado de interfaces" data-testid="configuration-table">
-          <thead>
-            <tr>
-              <th scope="col">{{ 'interfaces.configuration.fields.name' | translate }}</th>
-              <th scope="col">{{ 'interfaces.configuration.fields.protocol' | translate }}</th>
-              <th scope="col">{{ 'interfaces.configuration.fields.url' | translate }}</th>
-              <th scope="col">{{ 'interfaces.configuration.fields.status' | translate }}</th>
-              <th scope="col">{{ 'interfaces.configuration.fields.checkFrequency' | translate }}</th>
-              <th scope="col">{{ 'interfaces.configuration.fields.lastModifiedAt' | translate }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            @if (isLoading()) {
-              <tr>
-                <td colspan="6" class="text-center py-4">
-                  <div class="spinner-border spinner-border-sm" role="status">
-                    <span class="visually-hidden">{{ 'common.loading' | translate }}</span>
-                  </div>
-                </td>
-              </tr>
-            } @else if (paginatedConfigs().length === 0) {
-              <tr>
-                <td colspan="6" class="text-center py-4 text-muted">
-                  {{ 'common.noData' | translate }}
-                </td>
-              </tr>
-            } @else {
-              @for (config of paginatedConfigs(); track config.id) {
-                <tr [class.table-active]="selectedRow()?.id === config.id"
-                    (click)="selectRow(config)"
-                    style="cursor: pointer;"
-                    [attr.aria-selected]="selectedRow()?.id === config.id"
-                    role="row">
-                  <td>{{ config.name }}</td>
-                  <td>
-                    <span class="badge"
-                          [class.bg-primary-subtle]="config.protocol === 'REST'"
-                          [class.text-primary]="config.protocol === 'REST'"
-                          [class.bg-secondary-subtle]="config.protocol !== 'REST'"
-                          [class.text-secondary]="config.protocol !== 'REST'">
-                      {{ config.protocol }}
-                    </span>
-                  </td>
-                  <td><code class="small">{{ config.url }}</code></td>
-                  <td>
-                    <span class="badge"
-                          [class.bg-success]="config.status === 'ACTIVE'"
-                          [class.bg-danger]="config.status === 'ERROR'"
-                          [class.bg-secondary]="config.status === 'INACTIVE'">
-                      {{ config.status }}
-                    </span>
-                  </td>
-                  <td>{{ config.checkFrequency }}s</td>
-                  <td>{{ config.lastModifiedAt | localDate }}</td>
-                </tr>
-              }
-            }
-          </tbody>
-        </table>
-      </div>
-    </div>
-    @if (totalElements() > 0) {
-      <div class="card-footer d-flex justify-content-between align-items-center">
-        <span class="text-muted" style="font-size: 0.8125rem;" data-testid="pagination-info">
-          {{ 'common.pagination.showing' | translate: { from: showingFrom(), to: showingTo(), total: totalElements() } }}
-        </span>
-        <nav aria-label="Paginación de interfaces">
-          <ul class="pagination pagination-sm mb-0">
-            <li class="page-item" [class.disabled]="currentPage() === 0">
-              <a class="page-link" href="javascript:void(0)" (click)="goToPage(currentPage() - 1)"
-                 [attr.aria-label]="'common.pagination.previous' | translate" data-testid="pagination-prev">
-                <i class="bi bi-chevron-left" aria-hidden="true"></i>
-              </a>
-            </li>
-            @for (p of getPageNumbers(); track p) {
-              <li class="page-item" [class.active]="p === currentPage()" [attr.aria-current]="p === currentPage() ? 'page' : null">
-                <a class="page-link" href="javascript:void(0)" (click)="goToPage(p)">{{ p + 1 }}</a>
-              </li>
-            }
-            <li class="page-item" [class.disabled]="currentPage() >= totalPages() - 1">
-              <a class="page-link" href="javascript:void(0)" (click)="goToPage(currentPage() + 1)"
-                 [attr.aria-label]="'common.pagination.next' | translate" data-testid="pagination-next">
-                <i class="bi bi-chevron-right" aria-hidden="true"></i>
-              </a>
-            </li>
-          </ul>
-        </nav>
-        <div class="d-flex align-items-center gap-2 ms-3">
-          <label for="configPageSize" class="text-muted text-nowrap mb-0" style="font-size: 0.8125rem;">
-            {{ 'common.pagination.pageSize' | translate }}:
-          </label>
-          <select class="form-select form-select-sm" id="configPageSize" style="width: auto;"
-                  [ngModel]="pageSize()" (ngModelChange)="changePageSize($event)" name="configPageSize"
-                  [attr.aria-label]="'common.pagination.pageSize' | translate" data-testid="pagination-page-size">
-            @for (size of pageSizes; track size) {
-              <option [ngValue]="size">{{ size }}</option>
-            }
-          </select>
-        </div>
-      </div>
-    }
-  </div>
+  <tp-data-table
+    [columns]="columns"
+    [data]="paginatedConfigs()"
+    [loading]="isLoading()"
+    [totalElements]="totalElements()"
+    [currentPage]="currentPage()"
+    [pageSize]="pageSize()"
+    [pageSizes]="pageSizes"
+    [selectable]="true"
+    [selectedItem]="selectedRow()"
+    (rowSelect)="selectRow($event)"
+    (rowDoubleClick)="viewDetail($event)"
+    (pageChange)="goToPage($event)"
+    (pageSizeChange)="changePageSize($event)"
+    ariaLabel="Listado de interfaces"
+    testId="configuration-table">
+
+    <ng-template tpColumn="protocol" let-config>
+      <span class="badge"
+            [class.bg-primary-subtle]="config.protocol === 'REST'"
+            [class.text-primary]="config.protocol === 'REST'"
+            [class.bg-secondary-subtle]="config.protocol !== 'REST'"
+            [class.text-secondary]="config.protocol !== 'REST'">
+        {{ config.protocol }}
+      </span>
+    </ng-template>
+
+    <ng-template tpColumn="url" let-config>
+      <code class="small">{{ config.url }}</code>
+    </ng-template>
+
+    <ng-template tpColumn="status" let-config>
+      <span class="badge"
+            [class.bg-success]="config.status === 'ACTIVE'"
+            [class.bg-danger]="config.status === 'ERROR'"
+            [class.bg-secondary]="config.status === 'INACTIVE'">
+        {{ config.status }}
+      </span>
+    </ng-template>
+
+    <ng-template tpColumn="checkFrequency" let-config>
+      {{ config.checkFrequency }}s
+    </ng-template>
+
+    <ng-template tpColumn="lastModifiedAt" let-config>
+      {{ config.lastModifiedAt | localDate }}
+    </ng-template>
+  </tp-data-table>
 }
 
 <!-- ═══════════════════════════════════════════════════════════════════════════

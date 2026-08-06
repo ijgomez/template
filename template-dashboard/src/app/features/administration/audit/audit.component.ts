@@ -6,6 +6,7 @@ import { AuditService } from '../../../core/services/audit.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { LocalDatePipe } from '../../../shared/pipes/local-date.pipe';
+import { TpDataTableComponent, TpColumnDirective, ColumnDef } from '../../../shared/components/data-table';
 import { AuditLog, AuditCriteria, OperationType, AuditSection } from '../../../core/models/audit.model';
 
 /**
@@ -16,7 +17,7 @@ import { AuditLog, AuditCriteria, OperationType, AuditSection } from '../../../c
 @Component({
   selector: 'app-audit',
   standalone: true,
-  imports: [FormsModule, TranslatePipe, LocalDatePipe],
+  imports: [FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective],
   templateUrl: './audit.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -55,6 +56,17 @@ export class AuditComponent implements OnInit {
   // Filter dropdown options
   readonly operationTypes: OperationType[] = ['CREATE', 'UPDATE', 'DELETE', 'EXECUTE'];
   readonly auditSections: AuditSection[] = ['SECURITY', 'REPORTS', 'INTERFACES', 'CLUSTER', 'SYSTEM'];
+
+  // Column definitions for tp-data-table
+  readonly columns: ColumnDef[] = [
+    { key: 'timestamp', header: 'audit.fields.timestamp' },
+    { key: 'username', header: 'audit.fields.username' },
+    { key: 'operationType', header: 'audit.fields.operationType' },
+    { key: 'section', header: 'audit.fields.section' },
+    { key: 'entityName', header: 'audit.fields.entityName' },
+    { key: 'entityId', header: 'audit.fields.entityId' },
+    { key: 'detail', header: 'audit.fields.detail' },
+  ];
 
   ngOnInit(): void {
     this.loadAuditLogs();
@@ -178,28 +190,6 @@ export class AuditComponent implements OnInit {
     } catch {
       this.notificationService.updateToError(progressId, 'notification.export.error');
     }
-  }
-
-  /**
-   * Returns an array of page numbers for pagination display.
-   */
-  getPageNumbers(): number[] {
-    const total = this.totalPages();
-    const current = this.currentPage();
-    const pages: number[] = [];
-    const maxVisible = 5;
-
-    let start = Math.max(0, current - Math.floor(maxVisible / 2));
-    const end = Math.min(total, start + maxVisible);
-
-    if (end - start < maxVisible) {
-      start = Math.max(0, end - maxVisible);
-    }
-
-    for (let i = start; i < end; i++) {
-      pages.push(i);
-    }
-    return pages;
   }
 
   private buildCriteria(): AuditCriteria {

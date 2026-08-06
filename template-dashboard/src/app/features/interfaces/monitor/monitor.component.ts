@@ -6,6 +6,7 @@ import { InterfaceService } from '../../../core/services/interface.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { LocalDatePipe } from '../../../shared/pipes/local-date.pipe';
+import { TpDataTableComponent, TpColumnDirective, ColumnDef } from '../../../shared/components/data-table';
 import {
   InterfaceConfig,
   InterfaceLog,
@@ -22,7 +23,7 @@ import {
 @Component({
   selector: 'app-interfaces-monitor',
   standalone: true,
-  imports: [FormsModule, TranslatePipe, LocalDatePipe],
+  imports: [FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective],
   templateUrl: './monitor.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -64,6 +65,14 @@ export class MonitorComponent implements OnInit {
 
   // Page size options for the selector
   readonly pageSizeOptions = [5, 10, 20, 50];
+
+  // Column definitions for tp-data-table
+  readonly columns: ColumnDef[] = [
+    { key: 'timestamp', header: 'interfaces.monitor.fields.timestamp' },
+    { key: 'operationType', header: 'interfaces.monitor.fields.operationType' },
+    { key: 'interfaceName', header: 'interfaces.monitor.fields.interfaceName' },
+    { key: 'status', header: 'interfaces.monitor.fields.status' },
+  ];
 
   ngOnInit(): void {
     this.loadAvailableInterfaces();
@@ -208,28 +217,6 @@ export class MonitorComponent implements OnInit {
     } catch {
       this.notificationService.updateToError(progressId, 'notification.export.error');
     }
-  }
-
-  /**
-   * Returns an array of page numbers for pagination display.
-   */
-  getPageNumbers(): number[] {
-    const total = this.totalPages();
-    const current = this.currentPage();
-    const pages: number[] = [];
-    const maxVisible = 5;
-
-    let start = Math.max(0, current - Math.floor(maxVisible / 2));
-    const end = Math.min(total, start + maxVisible);
-
-    if (end - start < maxVisible) {
-      start = Math.max(0, end - maxVisible);
-    }
-
-    for (let i = start; i < end; i++) {
-      pages.push(i);
-    }
-    return pages;
   }
 
   private buildCriteria(): InterfaceLogCriteria {

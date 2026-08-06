@@ -57,106 +57,39 @@
   </div>
 
   <!-- Data table -->
-  <div class="card tp-card">
-    <div class="card-body p-0">
-      <div class="table-responsive">
-        <table class="table table-hover tp-table mb-0" aria-label="Listado de parámetros" data-testid="parameters-table">
-          <thead>
-            <tr>
-              <th scope="col">{{ 'parameters.fields.code' | translate }}</th>
-              <th scope="col">{{ 'parameters.fields.description' | translate }}</th>
-              <th scope="col">{{ 'parameters.fields.type' | translate }}</th>
-              <th scope="col">{{ 'parameters.fields.value' | translate }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            @if (isLoading()) {
-              <tr>
-                <td colspan="4" class="text-center py-4">
-                  <div class="spinner-border spinner-border-sm" role="status">
-                    <span class="visually-hidden">{{ 'common.loading' | translate }}</span>
-                  </div>
-                </td>
-              </tr>
-            } @else if (parameters().length === 0) {
-              <tr>
-                <td colspan="4" class="text-center py-4 text-muted">
-                  {{ 'common.noData' | translate }}
-                </td>
-              </tr>
-            } @else {
-              @for (param of parameters(); track param.code) {
-                <tr [class.table-active]="selectedRow()?.code === param.code"
-                    (click)="selectRow(param)"
-                    [attr.aria-selected]="selectedRow()?.code === param.code"
-                    role="row"
-                    tabindex="0"
-                    (keydown.enter)="selectRow(param)"
-                    (keydown.space)="selectRow(param); $event.preventDefault()">
-                  <td>{{ param.code }}</td>
-                  <td>{{ param.description || '-' }}</td>
-                  <td>
-                    <span class="badge"
-                          [class.bg-primary-subtle]="param.type === 'STRING'"
-                          [class.text-primary]="param.type === 'STRING'"
-                          [class.bg-info-subtle]="param.type === 'INTEGER'"
-                          [class.text-info]="param.type === 'INTEGER'"
-                          [class.bg-warning-subtle]="param.type === 'BOOLEAN'"
-                          [class.text-warning]="param.type === 'BOOLEAN'"
-                          [class.bg-secondary-subtle]="param.type === 'DATE'"
-                          [class.text-secondary]="param.type === 'DATE'">
-                      {{ param.type }}
-                    </span>
-                  </td>
-                  <td>{{ param.value }}</td>
-                </tr>
-              }
-            }
-          </tbody>
-        </table>
-      </div>
-    </div>
-    @if (totalElements() > 0) {
-      <div class="card-footer d-flex justify-content-between align-items-center">
-        <span class="text-muted" style="font-size: 0.8125rem;" data-testid="pagination-info">
-          {{ 'common.pagination.showing' | translate: { from: showingFrom(), to: showingTo(), total: totalElements() } }}
-        </span>
-        <nav aria-label="Paginación de parámetros">
-          <ul class="pagination pagination-sm mb-0">
-            <li class="page-item" [class.disabled]="currentPage() === 0">
-              <a class="page-link" href="javascript:void(0)" (click)="goToPage(currentPage() - 1)"
-                 [attr.aria-label]="'common.pagination.previous' | translate" data-testid="pagination-prev">
-                <i class="bi bi-chevron-left" aria-hidden="true"></i>
-              </a>
-            </li>
-            @for (p of getPageNumbers(); track p) {
-              <li class="page-item" [class.active]="p === currentPage()" [attr.aria-current]="p === currentPage() ? 'page' : null">
-                <a class="page-link" href="javascript:void(0)" (click)="goToPage(p)">{{ p + 1 }}</a>
-              </li>
-            }
-            <li class="page-item" [class.disabled]="currentPage() >= totalPages() - 1">
-              <a class="page-link" href="javascript:void(0)" (click)="goToPage(currentPage() + 1)"
-                 [attr.aria-label]="'common.pagination.next' | translate" data-testid="pagination-next">
-                <i class="bi bi-chevron-right" aria-hidden="true"></i>
-              </a>
-            </li>
-          </ul>
-        </nav>
-        <div class="d-flex align-items-center gap-2">
-          <label for="parametersPageSize" class="text-muted text-nowrap mb-0" style="font-size: 0.8125rem;">
-            {{ 'common.pagination.pageSize' | translate }}:
-          </label>
-          <select class="form-select form-select-sm" id="parametersPageSize" style="width: auto;"
-                  [ngModel]="pageSize()" (ngModelChange)="changePageSize($event)" name="parametersPageSize"
-                  [attr.aria-label]="'common.pagination.pageSize' | translate" data-testid="pagination-page-size">
-            @for (size of pageSizes; track size) {
-              <option [ngValue]="size">{{ size }}</option>
-            }
-          </select>
-        </div>
-      </div>
-    }
-  </div>
+  <tp-data-table
+    [columns]="columns"
+    [data]="parameters()"
+    [loading]="isLoading()"
+    [totalElements]="totalElements()"
+    [currentPage]="currentPage()"
+    [pageSize]="pageSize()"
+    [selectable]="true"
+    [selectedItem]="selectedRow()"
+    (rowSelect)="selectRow($event)"
+    (pageChange)="goToPage($event)"
+    (pageSizeChange)="changePageSize($event)"
+    ariaLabel="Listado de parámetros"
+    testId="parameters-table">
+
+    <ng-template tpColumn="description" let-param>
+      {{ param.description || '-' }}
+    </ng-template>
+
+    <ng-template tpColumn="type" let-param>
+      <span class="badge"
+            [class.bg-primary-subtle]="param.type === 'STRING'"
+            [class.text-primary]="param.type === 'STRING'"
+            [class.bg-info-subtle]="param.type === 'INTEGER'"
+            [class.text-info]="param.type === 'INTEGER'"
+            [class.bg-warning-subtle]="param.type === 'BOOLEAN'"
+            [class.text-warning]="param.type === 'BOOLEAN'"
+            [class.bg-secondary-subtle]="param.type === 'DATE'"
+            [class.text-secondary]="param.type === 'DATE'">
+        {{ param.type }}
+      </span>
+    </ng-template>
+  </tp-data-table>
 }
 
 <!-- ═══════════════════════════════════════════════════════════════════════════

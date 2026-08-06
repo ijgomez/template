@@ -6,6 +6,7 @@ import { ClusterService } from '../../../../core/services/cluster.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
+import { TpDataTableComponent, TpColumnDirective, ColumnDef } from '../../../../shared/components/data-table';
 import { ClusterNode } from '../../../../core/models/cluster.model';
 
 /**
@@ -18,7 +19,7 @@ import { ClusterNode } from '../../../../core/models/cluster.model';
 @Component({
   selector: 'app-cluster-nodes',
   standalone: true,
-  imports: [FormsModule, TranslatePipe, LocalDatePipe],
+  imports: [FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective],
   templateUrl: './nodes.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -79,6 +80,16 @@ export class NodesComponent implements OnInit {
   readonly showConfirmDialog = signal(false);
   readonly confirmNodeId = signal<number | null>(null);
   readonly confirmNodeHostname = signal('');
+
+  // Column definitions for tp-data-table
+  readonly columns: ColumnDef[] = [
+    { key: 'hostname', header: 'cluster.nodes.fields.hostname' },
+    { key: 'status', header: 'cluster.nodes.fields.status' },
+    { key: 'master', header: 'cluster.nodes.fields.master' },
+    { key: 'memory', header: 'cluster.nodes.fields.freeMemory' },
+    { key: 'createdAt', header: 'cluster.nodes.fields.createdAt' },
+    { key: 'lastModifiedAt', header: 'cluster.nodes.fields.lastModifiedAt' },
+  ];
 
   // Permission
   readonly canWrite = this.authService.hasAction('CLUSTER_NODE_WRITE');
@@ -148,13 +159,6 @@ export class NodesComponent implements OnInit {
   changePageSize(size: number): void {
     this.pageSize.set(size);
     this.currentPage.set(0);
-  }
-
-  /**
-   * Returns an array of page numbers for pagination controls.
-   */
-  getPageNumbers(): number[] {
-    return Array.from({ length: this.totalPages() }, (_, i) => i);
   }
 
   /**

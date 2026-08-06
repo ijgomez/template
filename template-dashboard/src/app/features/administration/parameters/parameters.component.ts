@@ -7,6 +7,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { ParameterService } from '../../../core/services/parameter.service';
 import { LocalDatePipe } from '../../../shared/pipes/local-date.pipe';
+import { TpDataTableComponent, TpColumnDirective, ColumnDef } from '../../../shared/components/data-table';
 import { Parameter, ParameterCriteria, ParameterType } from '../../../core/models/parameter.model';
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit';
@@ -14,7 +15,7 @@ type ViewMode = 'list' | 'detail' | 'create' | 'edit';
 @Component({
   selector: 'app-parameters',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, LocalDatePipe],
+  imports: [CommonModule, FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective],
   templateUrl: './parameters.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -45,6 +46,14 @@ export class ParametersComponent {
 
   // Page size options
   readonly pageSizes = [5, 10, 20, 50];
+
+  // Column definitions for tp-data-table
+  readonly columns: ColumnDef[] = [
+    { key: 'code', header: 'parameters.fields.code' },
+    { key: 'description', header: 'parameters.fields.description' },
+    { key: 'type', header: 'parameters.fields.type' },
+    { key: 'value', header: 'parameters.fields.value' },
+  ];
 
   // Detail/Form state
   readonly selectedParameter = signal<Parameter | null>(null);
@@ -313,35 +322,5 @@ export class ParametersComponent {
   private isValidIso8601(value: string): boolean {
     const date = new Date(value);
     return !isNaN(date.getTime()) && /^\d{4}-\d{2}-\d{2}/.test(value);
-  }
-
-  /** Generate page numbers array for pagination */
-  getPageNumbers(): number[] {
-    const total = this.totalPages();
-    if (total <= 7) {
-      return Array.from({ length: total }, (_, i) => i);
-    }
-
-    const current = this.currentPage();
-    const pages: number[] = [0];
-
-    let start = Math.max(1, current - 1);
-    let end = Math.min(total - 2, current + 1);
-
-    if (current <= 2) {
-      end = Math.min(4, total - 2);
-    }
-    if (current >= total - 3) {
-      start = Math.max(1, total - 5);
-    }
-
-    if (start > 1) pages.push(-1); // ellipsis marker
-    for (let i = start; i <= end; i++) {
-      pages.push(i);
-    }
-    if (end < total - 2) pages.push(-1); // ellipsis marker
-    pages.push(total - 1);
-
-    return pages;
   }
 }

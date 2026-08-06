@@ -6,6 +6,7 @@ import { InterfaceService } from '../../../core/services/interface.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { LocalDatePipe } from '../../../shared/pipes/local-date.pipe';
+import { TpDataTableComponent, TpColumnDirective, ColumnDef } from '../../../shared/components/data-table';
 import { InterfaceConfig } from '../../../core/models/interface.model';
 
 /**
@@ -17,7 +18,7 @@ import { InterfaceConfig } from '../../../core/models/interface.model';
 @Component({
   selector: 'app-interfaces-configuration',
   standalone: true,
-  imports: [FormsModule, TranslatePipe, LocalDatePipe],
+  imports: [FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective],
   templateUrl: './configuration.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -47,6 +48,16 @@ export class ConfigurationComponent implements OnInit {
   readonly pageSizes = [5, 10, 20, 50];
   readonly pageSize = signal(10);
   readonly currentPage = signal(0);
+
+  // Column definitions for tp-data-table
+  readonly columns: ColumnDef[] = [
+    { key: 'name', header: 'interfaces.configuration.fields.name' },
+    { key: 'protocol', header: 'interfaces.configuration.fields.protocol' },
+    { key: 'url', header: 'interfaces.configuration.fields.url' },
+    { key: 'status', header: 'interfaces.configuration.fields.status' },
+    { key: 'checkFrequency', header: 'interfaces.configuration.fields.checkFrequency' },
+    { key: 'lastModifiedAt', header: 'interfaces.configuration.fields.lastModifiedAt' },
+  ];
 
   // Computed: filtered configurations
   readonly filteredConfigs = computed(() => {
@@ -142,13 +153,6 @@ export class ConfigurationComponent implements OnInit {
   changePageSize(size: number): void {
     this.pageSize.set(size);
     this.currentPage.set(0);
-  }
-
-  /**
-   * Returns an array of page numbers for pagination controls.
-   */
-  getPageNumbers(): number[] {
-    return Array.from({ length: this.totalPages() }, (_, i) => i);
   }
 
   /**
