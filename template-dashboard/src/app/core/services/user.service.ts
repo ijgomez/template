@@ -3,7 +3,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { UserDTO, UserCriteria, Page, ProfileRef, ReportRef } from '../models/user.model';
+import { UserDTO, UserCriteria, ProfileRef, ReportRef } from '../models/user.model';
+import { Page } from '../models/page.model';
 
 /**
  * Service for managing user CRUD operations via the backend API.

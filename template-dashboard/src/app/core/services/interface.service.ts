@@ -3,7 +3,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { InterfaceConfig, InterfaceLog, InterfaceLogCriteria, Page } from '../models/interface.model';
+import { InterfaceConfig, InterfaceLog, InterfaceLogCriteria } from '../models/interface.model';
+import { Page } from '../models/page.model';
 
 /**
  * Service for querying interface configurations and operation logs.

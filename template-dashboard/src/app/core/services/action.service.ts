@@ -3,7 +3,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { Action, ActionCriteria, PageResponse } from '../../features/administration/security/actions/models/action.model';
+import { Action, ActionCriteria } from '../../features/administration/security/actions/models/action.model';
+import { Page } from '../models/page.model';
 
 /**
  * Service for managing system actions (permissions).
@@ -17,7 +18,7 @@ export class ActionService {
   /**
    * Retrieves a paginated list of actions with optional filters.
    */
-  findByCriteria(criteria: ActionCriteria, page: number, size: number, sort?: string): Observable<PageResponse<Action>> {
+  findByCriteria(criteria: ActionCriteria, page: number, size: number, sort?: string): Observable<Page<Action>> {
     let params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
@@ -36,7 +37,7 @@ export class ActionService {
       params = params.set('type', criteria.type);
     }
 
-    return this.http.get<PageResponse<Action>>(this.baseUrl, { params });
+    return this.http.get<Page<Action>>(this.baseUrl, { params });
   }
 
   /**

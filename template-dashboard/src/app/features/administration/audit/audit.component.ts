@@ -86,7 +86,7 @@ export class AuditComponent implements OnInit {
     this.auditService.findByCriteria(criteria, this.currentPage(), this.pageSize(), this.sortParam()).subscribe({
       next: (page) => {
         this.auditLogs.set(page.content);
-        this.totalElements.set(page.totalElements);
+        this.totalElements.set(page.page.totalElements);
         this.isLoading.set(false);
         this.notificationService.dismiss(progressId);
       },

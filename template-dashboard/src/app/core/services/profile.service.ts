@@ -3,7 +3,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { Action, Page, Profile, ProfileCriteria } from '../../features/administration/security/profiles/models/profile.model';
+import { Action, Profile, ProfileCriteria } from '../../features/administration/security/profiles/models/profile.model';
+import { Page } from '../models/page.model';
 
 /**
  * Service for managing security profiles via the backend API.

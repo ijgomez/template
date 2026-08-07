@@ -3,7 +3,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { AuditLog, AuditCriteria, Page } from '../models/audit.model';
+import { AuditLog, AuditCriteria } from '../models/audit.model';
+import { Page } from '../models/page.model';
 
 /**
  * Service for querying audit log entries via the backend API.

@@ -76,7 +76,7 @@ export class BlocksComponent implements OnInit {
     this.clusterService.findBlocksByCriteria(criteria, this.currentPage(), this.pageSize(), this.sortParam()).subscribe({
       next: (page) => {
         this.blocks.set(page.content);
-        this.totalElements.set(page.totalElements);
+        this.totalElements.set(page.page.totalElements);
         this.isLoading.set(false);
         this.notificationService.dismiss(progressId);
       },

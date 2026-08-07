@@ -102,7 +102,7 @@ export class MonitorComponent implements OnInit {
     this.interfaceService.findLogsByCriteria(criteria, this.currentPage(), this.pageSize(), this.sortParam()).subscribe({
       next: (page) => {
         this.logs.set(page.content);
-        this.totalElements.set(page.totalElements);
+        this.totalElements.set(page.page.totalElements);
         this.isLoading.set(false);
         this.notificationService.dismiss(progressId);
       },

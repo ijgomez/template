@@ -20,13 +20,3 @@ export interface ActionCriteria {
   type?: string;
 }
 
-/**
- * Paginated response wrapper matching backend Page structure.
- */
-export interface PageResponse<T> {
-  content: T[];
-  totalElements: number;
-  totalPages: number;
-  size: number;
-  number: number;
-}

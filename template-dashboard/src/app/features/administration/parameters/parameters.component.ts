@@ -95,8 +95,8 @@ export class ParametersComponent {
     this.parameterService.findByCriteria(criteria, this.currentPage(), this.pageSize(), this.sortParam()).subscribe({
       next: (page) => {
         this.parameters.set(page.content);
-        this.totalElements.set(page.totalElements);
-        this.totalPages.set(page.totalPages);
+        this.totalElements.set(page.page.totalElements);
+        this.totalPages.set(page.page.totalPages);
         this.isLoading.set(false);
       },
       error: () => {

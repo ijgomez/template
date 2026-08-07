@@ -124,8 +124,8 @@ export class UsersComponent implements OnInit {
     this.userService.findByCriteria(this.criteria(), this.currentPage(), this.pageSize(), this.sortParam()).subscribe({
       next: (page) => {
         this.users.set(page.content);
-        this.totalElements.set(page.totalElements);
-        this.totalPages.set(page.totalPages);
+        this.totalElements.set(page.page.totalElements);
+        this.totalPages.set(page.page.totalPages);
         this.isLoading.set(false);
       },
       error: () => {
@@ -144,8 +144,8 @@ export class UsersComponent implements OnInit {
     this.userService.findByCriteria(this.criteria(), this.currentPage(), this.pageSize(), this.sortParam()).subscribe({
       next: (page) => {
         this.users.set(page.content);
-        this.totalElements.set(page.totalElements);
-        this.totalPages.set(page.totalPages);
+        this.totalElements.set(page.page.totalElements);
+        this.totalPages.set(page.page.totalPages);
         this.isLoading.set(false);
         this.notificationService.dismiss(notifId);
       },

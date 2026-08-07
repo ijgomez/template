@@ -3,7 +3,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { ClusterNode, ClusterBlock, ClusterBlockCriteria, Page } from '../models/cluster.model';
+import { ClusterNode, ClusterBlock, ClusterBlockCriteria } from '../models/cluster.model';
+import { Page } from '../models/page.model';
 
 /**
  * Service for querying cluster nodes and blocks via the backend API.

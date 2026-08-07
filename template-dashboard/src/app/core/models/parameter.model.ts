@@ -26,13 +26,3 @@ export interface ParameterCriteria {
   type?: ParameterType;
 }
 
-/**
- * Paginated response structure from the backend.
- */
-export interface Page<T> {
-  content: T[];
-  totalElements: number;
-  totalPages: number;
-  size: number;
-  number: number;
-}

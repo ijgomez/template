@@ -3,7 +3,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { Page, Parameter, ParameterCriteria } from '../models/parameter.model';
+import { Parameter, ParameterCriteria } from '../models/parameter.model';
+import { Page } from '../models/page.model';
 
 /**
  * Service for managing system parameters via the backend API.

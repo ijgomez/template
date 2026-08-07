@@ -84,7 +84,7 @@ export class ActionsComponent implements OnInit {
     this.actionService.findByCriteria(criteria, this.currentPage(), this.pageSize(), this.sortParam()).subscribe({
       next: (page) => {
         this.actions.set(page.content);
-        this.totalElements.set(page.totalElements);
+        this.totalElements.set(page.page.totalElements);
         this.isLoading.set(false);
         this.notificationService.dismiss(progressId);
       },
