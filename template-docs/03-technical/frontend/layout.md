@@ -181,6 +181,60 @@ Los mockups en `template-docs/specification/mockups/` implementan este comportam
 
 ---
 
+### Ancho ajustable por el usuario
+
+Además del comportamiento colapsable, el menú lateral permite al usuario ajustar libremente su ancho mediante arrastre.
+
+#### Funcionamiento
+
+- En el borde derecho del sidebar se muestra un **resize handle** (separador) que el usuario puede arrastrar horizontalmente.
+- El cursor cambia a `col-resize` al posicionarse sobre el handle, indicando que es arrastrable.
+- Al hacer **doble clic** sobre el handle, el ancho se restablece al valor por defecto (260px).
+
+#### Restricciones
+
+| Propiedad    | Valor  |
+|--------------|--------|
+| Ancho mínimo | 180px  |
+| Ancho máximo | 480px  |
+| Ancho por defecto | 260px |
+
+#### Persistencia
+
+- El ancho personalizado se persiste en `localStorage` con la clave `tp-sidebar-width`.
+- Al iniciar la aplicación, se restaura el último ancho configurado por el usuario.
+
+#### Interacción con otros estados
+
+| Estado del sidebar | Comportamiento del resize |
+|--------------------|---------------------------|
+| Expandido          | Resize habilitado         |
+| Colapsado (64px)   | Resize deshabilitado (handle oculto) |
+| Mobile/Tablet      | Resize no disponible (handle oculto) |
+
+#### Transiciones
+
+- Durante el arrastre, las transiciones CSS se desactivan para ofrecer respuesta instantánea.
+- Al soltar, las transiciones se restauran para que el toggle collapse/expand siga siendo animado.
+
+#### Accesibilidad
+
+| Propiedad          | Valor                            |
+|--------------------|----------------------------------|
+| `role`             | `separator`                      |
+| `aria-orientation` | `vertical`                       |
+| `aria-label`       | `layout.sidebar.resize` (i18n)   |
+
+#### Clases CSS implicadas
+
+| Clase                        | Elemento     | Descripción                                        |
+|------------------------------|--------------|----------------------------------------------------|
+| `.sidebar-resize-handle`     | `<div>`      | Handle de arrastre en el borde derecho del sidebar |
+| `.sidebar-resizing`          | `.tp-wrapper`| Aplicada durante el arrastre (desactiva transiciones) |
+| `body.tp-sidebar-resizing`   | `<body>`     | Previene selección de texto durante el arrastre    |
+
+---
+
 ## Breadcrumb
 
 El breadcrumb muestra la posición actual del usuario dentro de la aplicación.
