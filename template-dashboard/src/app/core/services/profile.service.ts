@@ -18,10 +18,14 @@ export class ProfileService {
   /**
    * Retrieves a paginated list of profiles with optional filtering.
    */
-  findByCriteria(criteria: ProfileCriteria, page: number, size: number): Observable<Page<Profile>> {
+  findByCriteria(criteria: ProfileCriteria, page: number, size: number, sort?: string): Observable<Page<Profile>> {
     let params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
+
+    if (sort) {
+      params = params.set('sort', sort);
+    }
 
     if (criteria.name) {
       params = params.set('name', criteria.name);

@@ -17,10 +17,14 @@ export class AuditService {
   /**
    * Retrieves a paginated list of audit log entries with optional filters.
    */
-  findByCriteria(criteria: AuditCriteria, page: number, size: number): Observable<Page<AuditLog>> {
+  findByCriteria(criteria: AuditCriteria, page: number, size: number, sort?: string): Observable<Page<AuditLog>> {
     let params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
+
+    if (sort) {
+      params = params.set('sort', sort);
+    }
 
     if (criteria.dateFrom) {
       params = params.set('dateFrom', criteria.dateFrom);

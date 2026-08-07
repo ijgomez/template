@@ -327,7 +327,7 @@ class PaginationMetadataConsistencyTest {
             Page<ActionDTO> pageResult = new PageImpl<>(actions, pageable, 14);
             when(actionService.findByCriteria(any(ActionCriteria.class), eq(pageable))).thenReturn(pageResult);
 
-            ResponseEntity<Page<ActionDTO>> response = actionController.findAll(page, size, null, null, null);
+            ResponseEntity<Page<ActionDTO>> response = actionController.findAll(page, size, null, null, null, null);
 
             assertThat(response.getBody()).isNotNull();
             assertPaginationMetadata(response.getBody(), size);
@@ -344,7 +344,7 @@ class PaginationMetadataConsistencyTest {
             Page<ActionDTO> pageResult = new PageImpl<>(actions, pageable, 14);
             when(actionService.findByCriteria(any(ActionCriteria.class), eq(pageable))).thenReturn(pageResult);
 
-            ResponseEntity<Page<ActionDTO>> response = actionController.findAll(page, size, null, null, null);
+            ResponseEntity<Page<ActionDTO>> response = actionController.findAll(page, size, null, null, null, null);
 
             assertThat(response.getBody()).isNotNull();
             assertPaginationMetadata(response.getBody(), size);

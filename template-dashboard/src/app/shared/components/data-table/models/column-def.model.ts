@@ -11,6 +11,18 @@ export interface ColumnDef {
   /** Whether the column is sortable. Defaults to false. */
   sortable?: boolean;
 
+  /** Whether the column is resizable by the user. Defaults to false. */
+  resizable?: boolean;
+
+  /** Initial width of the column (CSS value, e.g. '150px', '20%'). */
+  width?: string;
+
+  /** Minimum width when resizing (in pixels). Defaults to 50. */
+  minWidth?: number;
+
+  /** Maximum width when resizing (in pixels). If not set, no maximum is enforced. */
+  maxWidth?: number;
+
   /** CSS class(es) applied to both <th> and <td> of this column. */
   cssClass?: string;
 }

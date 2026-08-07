@@ -37,7 +37,8 @@ public interface ActionController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String code,
             @RequestParam(required = false) String name,
-            @RequestParam(required = false) ActionType type);
+            @RequestParam(required = false) ActionType type,
+            @RequestParam(required = false) String sort);
 
     /**
      * Counts actions matching the given filters.

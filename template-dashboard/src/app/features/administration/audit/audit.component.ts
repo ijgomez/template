@@ -6,7 +6,7 @@ import { AuditService } from '../../../core/services/audit.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { LocalDatePipe } from '../../../shared/pipes/local-date.pipe';
-import { TpDataTableComponent, TpColumnDirective, ColumnDef } from '../../../shared/components/data-table';
+import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../shared/components/data-table';
 import { AuditLog, AuditCriteria, OperationType, AuditSection } from '../../../core/models/audit.model';
 
 /**
@@ -39,6 +39,9 @@ export class AuditComponent implements OnInit {
   readonly totalPages = computed(() => Math.ceil(this.totalElements() / this.pageSize()));
   readonly isLoading = signal(false);
 
+  // Sort state
+  readonly sortParam = signal('');
+
   // Filter state
   readonly filterDateFrom = signal('');
   readonly filterDateTo = signal('');
@@ -59,11 +62,11 @@ export class AuditComponent implements OnInit {
 
   // Column definitions for tp-data-table
   readonly columns: ColumnDef[] = [
-    { key: 'timestamp', header: 'audit.fields.timestamp' },
-    { key: 'username', header: 'audit.fields.username' },
-    { key: 'operationType', header: 'audit.fields.operationType' },
-    { key: 'section', header: 'audit.fields.section' },
-    { key: 'entityName', header: 'audit.fields.entityName' },
+    { key: 'timestamp', header: 'audit.fields.timestamp', sortable: true },
+    { key: 'username', header: 'audit.fields.username', sortable: true },
+    { key: 'operationType', header: 'audit.fields.operationType', sortable: true },
+    { key: 'section', header: 'audit.fields.section', sortable: true },
+    { key: 'entityName', header: 'audit.fields.entityName', sortable: true },
     { key: 'entityId', header: 'audit.fields.entityId' },
     { key: 'detail', header: 'audit.fields.detail' },
   ];
@@ -80,7 +83,7 @@ export class AuditComponent implements OnInit {
     const criteria = this.buildCriteria();
     const progressId = this.notificationService.showProgress('notification.pagination.progress');
 
-    this.auditService.findByCriteria(criteria, this.currentPage(), this.pageSize()).subscribe({
+    this.auditService.findByCriteria(criteria, this.currentPage(), this.pageSize(), this.sortParam()).subscribe({
       next: (page) => {
         this.auditLogs.set(page.content);
         this.totalElements.set(page.totalElements);
@@ -111,6 +114,15 @@ export class AuditComponent implements OnInit {
     this.filterUsername.set('');
     this.filterOperationType.set('');
     this.filterSection.set('');
+    this.currentPage.set(0);
+    this.loadAuditLogs();
+  }
+
+  /**
+   * Handles sort events from the data table.
+   */
+  onSort(event: SortEvent): void {
+    this.sortParam.set(event.direction ? `${event.column},${event.direction}` : '');
     this.currentPage.set(0);
     this.loadAuditLogs();
   }

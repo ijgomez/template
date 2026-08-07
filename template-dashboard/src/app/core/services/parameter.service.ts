@@ -17,10 +17,14 @@ export class ParameterService {
   /**
    * Retrieves a paginated list of parameters with optional filters.
    */
-  findByCriteria(criteria: ParameterCriteria, page: number, size: number): Observable<Page<Parameter>> {
+  findByCriteria(criteria: ParameterCriteria, page: number, size: number, sort?: string): Observable<Page<Parameter>> {
     let params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
+
+    if (sort) {
+      params = params.set('sort', sort);
+    }
 
     if (criteria.code) {
       params = params.set('code', criteria.code);

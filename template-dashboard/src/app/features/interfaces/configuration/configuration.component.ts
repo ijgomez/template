@@ -6,7 +6,7 @@ import { InterfaceService } from '../../../core/services/interface.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { LocalDatePipe } from '../../../shared/pipes/local-date.pipe';
-import { TpDataTableComponent, TpColumnDirective, ColumnDef } from '../../../shared/components/data-table';
+import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../shared/components/data-table';
 import { InterfaceConfig } from '../../../core/models/interface.model';
 
 /**
@@ -39,6 +39,10 @@ export class ConfigurationComponent implements OnInit {
   // Selection
   readonly selectedRow = signal<InterfaceConfig | null>(null);
 
+  // Sort state
+  readonly sortColumn = signal('');
+  readonly sortDirection = signal('');
+
   // Filters
   readonly filterName = signal('');
   readonly filterProtocol = signal('');
@@ -51,12 +55,12 @@ export class ConfigurationComponent implements OnInit {
 
   // Column definitions for tp-data-table
   readonly columns: ColumnDef[] = [
-    { key: 'name', header: 'interfaces.configuration.fields.name' },
-    { key: 'protocol', header: 'interfaces.configuration.fields.protocol' },
+    { key: 'name', header: 'interfaces.configuration.fields.name', sortable: true },
+    { key: 'protocol', header: 'interfaces.configuration.fields.protocol', sortable: true },
     { key: 'url', header: 'interfaces.configuration.fields.url' },
-    { key: 'status', header: 'interfaces.configuration.fields.status' },
-    { key: 'checkFrequency', header: 'interfaces.configuration.fields.checkFrequency' },
-    { key: 'lastModifiedAt', header: 'interfaces.configuration.fields.lastModifiedAt' },
+    { key: 'status', header: 'interfaces.configuration.fields.status', sortable: true },
+    { key: 'checkFrequency', header: 'interfaces.configuration.fields.checkFrequency', sortable: true },
+    { key: 'lastModifiedAt', header: 'interfaces.configuration.fields.lastModifiedAt', sortable: true },
   ];
 
   // Computed: filtered configurations
@@ -75,6 +79,19 @@ export class ConfigurationComponent implements OnInit {
     if (status) {
       configs = configs.filter((c) => c.status === status);
     }
+
+    // Apply sort
+    const col = this.sortColumn();
+    const dir = this.sortDirection();
+    if (col && dir) {
+      configs = [...configs].sort((a, b) => {
+        const aVal = (a as unknown as Record<string, unknown>)[col];
+        const bVal = (b as unknown as Record<string, unknown>)[col];
+        const comparison = String(aVal ?? '').localeCompare(String(bVal ?? ''), undefined, { numeric: true, sensitivity: 'base' });
+        return dir === 'asc' ? comparison : -comparison;
+      });
+    }
+
     return configs;
   });
 
@@ -136,6 +153,15 @@ export class ConfigurationComponent implements OnInit {
     this.filterStatus.set('');
     this.currentPage.set(0);
     this.selectedRow.set(null);
+  }
+
+  /**
+   * Handles sort events from the data table.
+   */
+  onSort(event: SortEvent): void {
+    this.sortColumn.set(event.column);
+    this.sortDirection.set(event.direction);
+    this.currentPage.set(0);
   }
 
   /**

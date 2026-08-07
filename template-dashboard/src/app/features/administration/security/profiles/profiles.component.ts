@@ -8,7 +8,7 @@ import { NotificationService } from '../../../../core/services/notification.serv
 import { CsvExportService } from '../../../../core/services/csv-export.service';
 import { ProfileService } from '../../../../core/services/profile.service';
 import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
-import { TpDataTableComponent, TpColumnDirective, ColumnDef } from '../../../../shared/components/data-table';
+import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../shared/components/data-table';
 import { Action, Profile, ProfileCriteria } from './models/profile.model';
 
 type ViewMode = 'list' | 'detail' | 'form';
@@ -48,11 +48,14 @@ export class ProfilesComponent implements OnInit {
 
   // Table columns
   readonly columns: ColumnDef[] = [
-    { key: 'name', header: 'profiles.fields.name' },
-    { key: 'description', header: 'profiles.fields.description' },
+    { key: 'name', header: 'profiles.fields.name', sortable: true },
+    { key: 'description', header: 'profiles.fields.description', sortable: true },
     { key: 'actions', header: 'profiles.fields.actions', cssClass: 'text-center' },
-    { key: 'createdAt', header: 'profiles.fields.createdAt' },
+    { key: 'createdAt', header: 'profiles.fields.createdAt', sortable: true },
   ];
+
+  // Sort state
+  readonly sortParam = signal('');
 
   // Filter
   readonly filterName = signal('');
@@ -93,7 +96,7 @@ export class ProfilesComponent implements OnInit {
       criteria.name = this.filterName();
     }
 
-    this.profileService.findByCriteria(criteria, this.currentPage(), this.pageSize()).subscribe({
+    this.profileService.findByCriteria(criteria, this.currentPage(), this.pageSize(), this.sortParam()).subscribe({
       next: (page) => {
         this.profiles.set(page.content);
         this.totalElements.set(page.totalElements);
@@ -113,6 +116,12 @@ export class ProfilesComponent implements OnInit {
 
   clearFilter(): void {
     this.filterName.set('');
+    this.currentPage.set(0);
+    this.loadProfiles();
+  }
+
+  onSort(event: SortEvent): void {
+    this.sortParam.set(event.direction ? `${event.column},${event.direction}` : '');
     this.currentPage.set(0);
     this.loadProfiles();
   }

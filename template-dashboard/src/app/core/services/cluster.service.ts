@@ -43,10 +43,14 @@ export class ClusterService {
   /**
    * Retrieves a paginated list of cluster blocks with optional filters.
    */
-  findBlocksByCriteria(criteria: ClusterBlockCriteria, page: number, size: number): Observable<Page<ClusterBlock>> {
+  findBlocksByCriteria(criteria: ClusterBlockCriteria, page: number, size: number, sort?: string): Observable<Page<ClusterBlock>> {
     let params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
+
+    if (sort) {
+      params = params.set('sort', sort);
+    }
 
     if (criteria.name) {
       params = params.set('name', criteria.name);

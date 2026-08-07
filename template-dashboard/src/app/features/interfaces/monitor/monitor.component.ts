@@ -6,7 +6,7 @@ import { InterfaceService } from '../../../core/services/interface.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { LocalDatePipe } from '../../../shared/pipes/local-date.pipe';
-import { TpDataTableComponent, TpColumnDirective, ColumnDef } from '../../../shared/components/data-table';
+import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../shared/components/data-table';
 import {
   InterfaceConfig,
   InterfaceLog,
@@ -45,6 +45,9 @@ export class MonitorComponent implements OnInit {
   readonly totalPages = computed(() => Math.ceil(this.totalElements() / this.pageSize()));
   readonly isLoading = signal(false);
 
+  // Sort state
+  readonly sortParam = signal('');
+
   // Filter state
   readonly filterDateFrom = signal('');
   readonly filterDateTo = signal('');
@@ -68,10 +71,10 @@ export class MonitorComponent implements OnInit {
 
   // Column definitions for tp-data-table
   readonly columns: ColumnDef[] = [
-    { key: 'timestamp', header: 'interfaces.monitor.fields.timestamp' },
-    { key: 'operationType', header: 'interfaces.monitor.fields.operationType' },
-    { key: 'interfaceName', header: 'interfaces.monitor.fields.interfaceName' },
-    { key: 'status', header: 'interfaces.monitor.fields.status' },
+    { key: 'timestamp', header: 'interfaces.monitor.fields.timestamp', sortable: true },
+    { key: 'operationType', header: 'interfaces.monitor.fields.operationType', sortable: true },
+    { key: 'interfaceName', header: 'interfaces.monitor.fields.interfaceName', sortable: true },
+    { key: 'status', header: 'interfaces.monitor.fields.status', sortable: true },
   ];
 
   ngOnInit(): void {
@@ -96,7 +99,7 @@ export class MonitorComponent implements OnInit {
     const criteria = this.buildCriteria();
     const progressId = this.notificationService.showProgress('notification.pagination.progress');
 
-    this.interfaceService.findLogsByCriteria(criteria, this.currentPage(), this.pageSize()).subscribe({
+    this.interfaceService.findLogsByCriteria(criteria, this.currentPage(), this.pageSize(), this.sortParam()).subscribe({
       next: (page) => {
         this.logs.set(page.content);
         this.totalElements.set(page.totalElements);
@@ -127,6 +130,15 @@ export class MonitorComponent implements OnInit {
     this.filterOperationType.set('');
     this.filterInterfaceId.set('');
     this.filterStatus.set('');
+    this.currentPage.set(0);
+    this.loadLogs();
+  }
+
+  /**
+   * Handles sort events from the data table.
+   */
+  onSort(event: SortEvent): void {
+    this.sortParam.set(event.direction ? `${event.column},${event.direction}` : '');
     this.currentPage.set(0);
     this.loadLogs();
   }

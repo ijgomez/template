@@ -17,10 +17,14 @@ export class ActionService {
   /**
    * Retrieves a paginated list of actions with optional filters.
    */
-  findByCriteria(criteria: ActionCriteria, page: number, size: number): Observable<PageResponse<Action>> {
+  findByCriteria(criteria: ActionCriteria, page: number, size: number, sort?: string): Observable<PageResponse<Action>> {
     let params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
+
+    if (sort) {
+      params = params.set('sort', sort);
+    }
 
     if (criteria.code) {
       params = params.set('code', criteria.code);

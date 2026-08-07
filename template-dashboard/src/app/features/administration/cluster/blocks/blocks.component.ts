@@ -6,7 +6,7 @@ import { ClusterService } from '../../../../core/services/cluster.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
-import { TpDataTableComponent, TpColumnDirective, ColumnDef } from '../../../../shared/components/data-table';
+import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../shared/components/data-table';
 import { ClusterBlock, ClusterBlockCriteria } from '../../../../core/models/cluster.model';
 
 /**
@@ -29,13 +29,13 @@ export class BlocksComponent implements OnInit {
 
   // Column definitions for tp-data-table
   readonly columns: ColumnDef[] = [
-    { key: 'name', header: 'cluster.blocks.fields.name' },
-    { key: 'startDate', header: 'cluster.blocks.fields.startDate' },
-    { key: 'avgTime', header: 'cluster.blocks.fields.avgTime' },
-    { key: 'minTime', header: 'cluster.blocks.fields.minTime' },
-    { key: 'maxTime', header: 'cluster.blocks.fields.maxTime' },
-    { key: 'total', header: 'cluster.blocks.fields.total' },
-    { key: 'lastModifiedAt', header: 'cluster.blocks.fields.lastModifiedAt' },
+    { key: 'name', header: 'cluster.blocks.fields.name', sortable: true },
+    { key: 'startDate', header: 'cluster.blocks.fields.startDate', sortable: true },
+    { key: 'avgTime', header: 'cluster.blocks.fields.avgTime', sortable: true },
+    { key: 'minTime', header: 'cluster.blocks.fields.minTime', sortable: true },
+    { key: 'maxTime', header: 'cluster.blocks.fields.maxTime', sortable: true },
+    { key: 'total', header: 'cluster.blocks.fields.total', sortable: true },
+    { key: 'lastModifiedAt', header: 'cluster.blocks.fields.lastModifiedAt', sortable: true },
   ];
 
   // View state
@@ -50,6 +50,9 @@ export class BlocksComponent implements OnInit {
   readonly pageSizes = [5, 10, 20, 50];
   readonly totalPages = computed(() => Math.ceil(this.totalElements() / this.pageSize()));
   readonly isLoading = signal(false);
+
+  // Sort state
+  readonly sortParam = signal('');
 
   // Filter state
   readonly filterName = signal('');
@@ -70,7 +73,7 @@ export class BlocksComponent implements OnInit {
     const criteria = this.buildCriteria();
     const progressId = this.notificationService.showProgress('notification.pagination.progress');
 
-    this.clusterService.findBlocksByCriteria(criteria, this.currentPage(), this.pageSize()).subscribe({
+    this.clusterService.findBlocksByCriteria(criteria, this.currentPage(), this.pageSize(), this.sortParam()).subscribe({
       next: (page) => {
         this.blocks.set(page.content);
         this.totalElements.set(page.totalElements);
@@ -97,6 +100,15 @@ export class BlocksComponent implements OnInit {
    */
   clearFilters(): void {
     this.filterName.set('');
+    this.currentPage.set(0);
+    this.loadBlocks();
+  }
+
+  /**
+   * Handles sort events from the data table.
+   */
+  onSort(event: SortEvent): void {
+    this.sortParam.set(event.direction ? `${event.column},${event.direction}` : '');
     this.currentPage.set(0);
     this.loadBlocks();
   }

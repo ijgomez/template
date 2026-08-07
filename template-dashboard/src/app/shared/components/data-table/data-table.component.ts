@@ -1,22 +1,31 @@
 import {
   Component,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Input,
   Output,
   EventEmitter,
   ContentChildren,
   QueryList,
+  Renderer2,
+  DestroyRef,
+  inject,
+  OnInit,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { fromEvent, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { ColumnDef } from './models/column-def.model';
+import { SortDirection, SortEvent } from './models/sort-event.model';
 import { TpColumnDirective } from './directives/tp-column.directive';
 
 /**
  * Reusable data table component with pagination, row selection,
- * loading/empty states, and custom cell templates.
+ * column sorting, column resizing, loading/empty states, and custom cell templates.
  *
  * Follows the Design System `tp-table` pattern defined in design-system.md.
  */
@@ -28,7 +37,11 @@ import { TpColumnDirective } from './directives/tp-column.directive';
   styleUrls: ['./data-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TpDataTableComponent<T extends { id?: number | string | null }> {
+export class TpDataTableComponent<T extends { id?: number | string | null }> implements OnInit {
+  private readonly renderer = inject(Renderer2);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly cdr = inject(ChangeDetectorRef);
+
   // ─── Inputs ────────────────────────────────────────────────
 
   /** Column definitions. */
@@ -78,9 +91,41 @@ export class TpDataTableComponent<T extends { id?: number | string | null }> {
   /** Emitted on double-click on a row. */
   @Output() readonly rowDoubleClick = new EventEmitter<T>();
 
+  /** Emitted when the user changes the sort state. */
+  @Output() readonly sortChange = new EventEmitter<SortEvent>();
+
+  /** Emitted when a column is resized. Emits the column key and new width in pixels. */
+  @Output() readonly columnResize = new EventEmitter<{ column: string; width: number }>();
+
   // ─── Content Children ──────────────────────────────────────
 
   @ContentChildren(TpColumnDirective) columnTemplates!: QueryList<TpColumnDirective>;
+
+  // ─── Sort State ────────────────────────────────────────────
+
+  /** Currently sorted column key. */
+  sortColumn = '';
+
+  /** Current sort direction. */
+  sortDirection: SortDirection = '';
+
+  // ─── Resize State ──────────────────────────────────────────
+
+  /** Runtime column widths (in pixels), keyed by column key. */
+  columnWidths: Record<string, number> = {};
+
+  /** Whether a resize operation is in progress. */
+  private resizing = false;
+
+  /** Subject to cancel the current resize drag. */
+  private readonly resizeStop$ = new Subject<void>();
+
+  // ─── Lifecycle ─────────────────────────────────────────────
+
+  ngOnInit(): void {
+    // Initialize column widths from ColumnDef.width if provided
+    this.initColumnWidths();
+  }
 
   // ─── Computed Values ───────────────────────────────────────
 
@@ -115,7 +160,105 @@ export class TpDataTableComponent<T extends { id?: number | string | null }> {
     return pages;
   }
 
-  // ─── Methods ───────────────────────────────────────────────
+  // ─── Sort Methods ──────────────────────────────────────────
+
+  /**
+   * Handles column header click for sorting.
+   * Cycles through: asc → desc → none.
+   */
+  onSortColumn(col: ColumnDef): void {
+    if (!col.sortable) return;
+
+    let direction: SortDirection;
+
+    if (this.sortColumn !== col.key) {
+      // New column: start ascending
+      direction = 'asc';
+    } else {
+      // Same column: cycle direction
+      switch (this.sortDirection) {
+        case 'asc':
+          direction = 'desc';
+          break;
+        case 'desc':
+          direction = '';
+          break;
+        default:
+          direction = 'asc';
+      }
+    }
+
+    this.sortColumn = direction ? col.key : '';
+    this.sortDirection = direction;
+    this.sortChange.emit({ column: this.sortColumn, direction: this.sortDirection });
+  }
+
+  /**
+   * Returns the aria-sort value for a column header.
+   */
+  getAriaSort(col: ColumnDef): string {
+    if (!col.sortable) return 'none';
+    if (this.sortColumn !== col.key) return 'none';
+    return this.sortDirection === 'asc' ? 'ascending' : this.sortDirection === 'desc' ? 'descending' : 'none';
+  }
+
+  // ─── Resize Methods ────────────────────────────────────────
+
+  /**
+   * Starts a column resize operation on mousedown on the resize handle.
+   */
+  onResizeStart(event: MouseEvent, col: ColumnDef, thElement: HTMLElement): void {
+    if (!col.resizable) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    this.resizing = true;
+    const startX = event.clientX;
+    const startWidth = thElement.offsetWidth;
+    const minWidth = col.minWidth ?? 50;
+    const maxWidth = col.maxWidth ?? Infinity;
+
+    // Add resizing class to body to change cursor globally during drag
+    this.renderer.addClass(document.body, 'tp-table-resizing');
+
+    fromEvent<MouseEvent>(document, 'mousemove')
+      .pipe(takeUntil(this.resizeStop$), takeUntilDestroyed(this.destroyRef))
+      .subscribe(moveEvent => {
+        const diff = moveEvent.clientX - startX;
+        let newWidth = startWidth + diff;
+        newWidth = Math.max(minWidth, Math.min(maxWidth, newWidth));
+        this.columnWidths[col.key] = newWidth;
+        this.cdr.markForCheck();
+      });
+
+    fromEvent<MouseEvent>(document, 'mouseup')
+      .pipe(takeUntil(this.resizeStop$), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.resizeStop$.next();
+        this.resizing = false;
+        this.renderer.removeClass(document.body, 'tp-table-resizing');
+        if (this.columnWidths[col.key]) {
+          this.columnResize.emit({ column: col.key, width: this.columnWidths[col.key] });
+        }
+      });
+  }
+
+  /**
+   * Returns the computed style for a column width.
+   */
+  getColumnStyle(col: ColumnDef): Record<string, string> {
+    const width = this.columnWidths[col.key];
+    if (width) {
+      return { width: `${width}px`, minWidth: `${width}px`, maxWidth: `${width}px` };
+    }
+    if (col.width) {
+      return { width: col.width };
+    }
+    return {};
+  }
+
+  // ─── Template Methods ──────────────────────────────────────
 
   /**
    * Returns the custom template for a given column key, if defined.
@@ -168,5 +311,21 @@ export class TpDataTableComponent<T extends { id?: number | string | null }> {
    */
   onPageSizeChange(size: number): void {
     this.pageSizeChange.emit(size);
+  }
+
+  // ─── Private Helpers ───────────────────────────────────────
+
+  /**
+   * Initializes runtime column widths from ColumnDef.width values that are in pixels.
+   */
+  private initColumnWidths(): void {
+    for (const col of this.columns) {
+      if (col.width && col.width.endsWith('px')) {
+        const parsed = parseInt(col.width, 10);
+        if (!isNaN(parsed)) {
+          this.columnWidths[col.key] = parsed;
+        }
+      }
+    }
   }
 }

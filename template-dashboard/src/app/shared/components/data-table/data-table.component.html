@@ -1,15 +1,49 @@
-<!-- tp-data-table: Reusable table with pagination, selection, loading/empty states -->
+<!-- tp-data-table: Reusable table with pagination, selection, sorting, resizing, loading/empty states -->
 <div class="card tp-card">
   <div class="card-body p-0">
     <div class="table-responsive">
       <table class="table table-hover tp-table mb-0"
+             [class.tp-table--fixed]="columns.some(c => c.width || c.resizable)"
              [attr.aria-label]="ariaLabel"
              [attr.data-testid]="testId">
         <thead>
           <tr>
             @for (col of columns; track col.key) {
-              <th scope="col" [class]="col.cssClass ?? ''">
-                {{ col.header | translate }}
+              <th #thEl
+                  scope="col"
+                  [ngClass]="col.cssClass ?? ''"
+                  [class.tp-table__th--sortable]="col.sortable"
+                  [class.tp-table__th--resizable]="col.resizable"
+                  [ngStyle]="getColumnStyle(col)"
+                  [attr.aria-sort]="getAriaSort(col)"
+                  (click)="onSortColumn(col)"
+                  (keydown.enter)="onSortColumn(col)"
+                  (keydown.space)="onSortColumn(col); $event.preventDefault()"
+                  [attr.tabindex]="col.sortable ? 0 : null"
+                  [attr.role]="col.sortable ? 'columnheader button' : 'columnheader'"
+                  [attr.data-testid]="testId ? testId + '-th-' + col.key : null">
+                <span class="tp-table__header-content">
+                  <span class="tp-table__header-label">{{ col.header | translate }}</span>
+                  @if (col.sortable) {
+                    <span class="tp-table__sort-icon" aria-hidden="true"
+                          [attr.data-testid]="testId ? testId + '-sort-' + col.key : null">
+                      @if (sortColumn === col.key && sortDirection === 'asc') {
+                        <i class="bi bi-sort-up"></i>
+                      } @else if (sortColumn === col.key && sortDirection === 'desc') {
+                        <i class="bi bi-sort-down"></i>
+                      } @else {
+                        <i class="bi bi-arrow-down-up"></i>
+                      }
+                    </span>
+                  }
+                </span>
+                @if (col.resizable) {
+                  <span class="tp-table__resize-handle"
+                        aria-hidden="true"
+                        (mousedown)="onResizeStart($event, col, thEl)"
+                        [attr.data-testid]="testId ? testId + '-resize-' + col.key : null">
+                  </span>
+                }
               </th>
             }
           </tr>
@@ -38,7 +72,7 @@
                   (click)="onRowClick(item)"
                   (dblclick)="onRowDoubleClick(item)">
                 @for (col of columns; track col.key) {
-                  <td [class]="col.cssClass ?? ''">
+                  <td [ngClass]="col.cssClass ?? ''" [ngStyle]="getColumnStyle(col)">
                     @if (getColumnTemplate(col.key); as tmpl) {
                       <ng-container *ngTemplateOutlet="tmpl.templateRef; context: { $implicit: item }"></ng-container>
                     } @else {

@@ -7,7 +7,7 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { CsvExportService } from '../../../../core/services/csv-export.service';
 import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
-import { TpDataTableComponent, TpColumnDirective, ColumnDef } from '../../../../shared/components/data-table';
+import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../shared/components/data-table';
 import { Action, ActionCriteria } from './models/action.model';
 
 /**
@@ -44,11 +44,14 @@ export class ActionsComponent implements OnInit {
 
   // Table columns
   readonly columns: ColumnDef[] = [
-    { key: 'code', header: 'actions.table.code' },
-    { key: 'name', header: 'actions.table.name' },
-    { key: 'type', header: 'actions.table.type' },
+    { key: 'code', header: 'actions.table.code', sortable: true },
+    { key: 'name', header: 'actions.table.name', sortable: true },
+    { key: 'type', header: 'actions.table.type', sortable: true },
     { key: 'description', header: 'actions.table.description' },
   ];
+
+  // Sort state
+  readonly sortParam = signal('');
 
   // Filter state
   readonly filterCode = signal('');
@@ -78,7 +81,7 @@ export class ActionsComponent implements OnInit {
     const criteria = this.buildCriteria();
     const progressId = this.notificationService.showProgress('notification.pagination.progress');
 
-    this.actionService.findByCriteria(criteria, this.currentPage(), this.pageSize()).subscribe({
+    this.actionService.findByCriteria(criteria, this.currentPage(), this.pageSize(), this.sortParam()).subscribe({
       next: (page) => {
         this.actions.set(page.content);
         this.totalElements.set(page.totalElements);
@@ -106,6 +109,15 @@ export class ActionsComponent implements OnInit {
   clearFilters(): void {
     this.filterCode.set('');
     this.filterType.set('');
+    this.currentPage.set(0);
+    this.loadActions();
+  }
+
+  /**
+   * Handles sort events from the data table.
+   */
+  onSort(event: SortEvent): void {
+    this.sortParam.set(event.direction ? `${event.column},${event.direction}` : '');
     this.currentPage.set(0);
     this.loadActions();
   }

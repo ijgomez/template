@@ -18,10 +18,14 @@ export class UserService {
   /**
    * Fetches a paginated list of users with optional filters.
    */
-  findByCriteria(criteria: UserCriteria, page: number, size: number): Observable<Page<UserDTO>> {
+  findByCriteria(criteria: UserCriteria, page: number, size: number, sort?: string): Observable<Page<UserDTO>> {
     let params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
+
+    if (sort) {
+      params = params.set('sort', sort);
+    }
 
     if (criteria.username) {
       params = params.set('username', criteria.username);

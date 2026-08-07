@@ -6,7 +6,7 @@ import { ClusterService } from '../../../../core/services/cluster.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
-import { TpDataTableComponent, TpColumnDirective, ColumnDef } from '../../../../shared/components/data-table';
+import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../shared/components/data-table';
 import { ClusterNode } from '../../../../core/models/cluster.model';
 
 /**
@@ -36,6 +36,10 @@ export class NodesComponent implements OnInit {
   // Selection
   readonly selectedRow = signal<ClusterNode | null>(null);
 
+  // Sort state
+  readonly sortColumn = signal('');
+  readonly sortDirection = signal('');
+
   // Filters
   readonly filterHostname = signal('');
   readonly filterStatus = signal('');
@@ -63,6 +67,19 @@ export class NodesComponent implements OnInit {
       const isMaster = master === 'true';
       nodes = nodes.filter((n) => n.master === isMaster);
     }
+
+    // Apply sort
+    const col = this.sortColumn();
+    const dir = this.sortDirection();
+    if (col && dir) {
+      nodes = [...nodes].sort((a, b) => {
+        const aVal = (a as unknown as Record<string, unknown>)[col];
+        const bVal = (b as unknown as Record<string, unknown>)[col];
+        const comparison = String(aVal ?? '').localeCompare(String(bVal ?? ''), undefined, { numeric: true, sensitivity: 'base' });
+        return dir === 'asc' ? comparison : -comparison;
+      });
+    }
+
     return nodes;
   });
 
@@ -83,12 +100,12 @@ export class NodesComponent implements OnInit {
 
   // Column definitions for tp-data-table
   readonly columns: ColumnDef[] = [
-    { key: 'hostname', header: 'cluster.nodes.fields.hostname' },
-    { key: 'status', header: 'cluster.nodes.fields.status' },
-    { key: 'master', header: 'cluster.nodes.fields.master' },
-    { key: 'memory', header: 'cluster.nodes.fields.freeMemory' },
-    { key: 'createdAt', header: 'cluster.nodes.fields.createdAt' },
-    { key: 'lastModifiedAt', header: 'cluster.nodes.fields.lastModifiedAt' },
+    { key: 'hostname', header: 'cluster.nodes.fields.hostname', sortable: true },
+    { key: 'status', header: 'cluster.nodes.fields.status', sortable: true },
+    { key: 'master', header: 'cluster.nodes.fields.master', sortable: true },
+    { key: 'memory', header: 'cluster.nodes.fields.freeMemory', sortable: true },
+    { key: 'createdAt', header: 'cluster.nodes.fields.createdAt', sortable: true },
+    { key: 'lastModifiedAt', header: 'cluster.nodes.fields.lastModifiedAt', sortable: true },
   ];
 
   // Permission
@@ -142,6 +159,15 @@ export class NodesComponent implements OnInit {
     this.filterMaster.set('');
     this.currentPage.set(0);
     this.selectedRow.set(null);
+  }
+
+  /**
+   * Handles sort events from the data table.
+   */
+  onSort(event: SortEvent): void {
+    this.sortColumn.set(event.column);
+    this.sortDirection.set(event.direction);
+    this.currentPage.set(0);
   }
 
   /**

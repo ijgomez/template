@@ -7,7 +7,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { ParameterService } from '../../../core/services/parameter.service';
 import { LocalDatePipe } from '../../../shared/pipes/local-date.pipe';
-import { TpDataTableComponent, TpColumnDirective, ColumnDef } from '../../../shared/components/data-table';
+import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../shared/components/data-table';
 import { Parameter, ParameterCriteria, ParameterType } from '../../../core/models/parameter.model';
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit';
@@ -36,6 +36,9 @@ export class ParametersComponent {
   readonly currentPage = signal(0);
   readonly pageSize = signal(10);
 
+  // Sort state
+  readonly sortParam = signal('');
+
   // Filter state
   readonly filterCode = signal('');
   readonly filterDescription = signal('');
@@ -49,9 +52,9 @@ export class ParametersComponent {
 
   // Column definitions for tp-data-table
   readonly columns: ColumnDef[] = [
-    { key: 'code', header: 'parameters.fields.code' },
-    { key: 'description', header: 'parameters.fields.description' },
-    { key: 'type', header: 'parameters.fields.type' },
+    { key: 'code', header: 'parameters.fields.code', sortable: true },
+    { key: 'description', header: 'parameters.fields.description', sortable: true },
+    { key: 'type', header: 'parameters.fields.type', sortable: true },
     { key: 'value', header: 'parameters.fields.value' },
   ];
 
@@ -89,7 +92,7 @@ export class ParametersComponent {
     if (this.filterDescription()) criteria.description = this.filterDescription();
     if (this.filterType()) criteria.type = this.filterType() as ParameterType;
 
-    this.parameterService.findByCriteria(criteria, this.currentPage(), this.pageSize()).subscribe({
+    this.parameterService.findByCriteria(criteria, this.currentPage(), this.pageSize(), this.sortParam()).subscribe({
       next: (page) => {
         this.parameters.set(page.content);
         this.totalElements.set(page.totalElements);
@@ -111,6 +114,12 @@ export class ParametersComponent {
     this.filterCode.set('');
     this.filterDescription.set('');
     this.filterType.set('');
+    this.currentPage.set(0);
+    this.loadParameters();
+  }
+
+  onSort(event: SortEvent): void {
+    this.sortParam.set(event.direction ? `${event.column},${event.direction}` : '');
     this.currentPage.set(0);
     this.loadParameters();
   }

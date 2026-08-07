@@ -47,7 +47,7 @@ class ActionControllerTest {
         Page<ActionDTO> page = new PageImpl<>(List.of(dto), pageable, 1);
         when(actionService.findByCriteria(any(ActionCriteria.class), eq(pageable))).thenReturn(page);
 
-        ResponseEntity<Page<ActionDTO>> response = actionController.findAll(0, 10, null, null, null);
+        ResponseEntity<Page<ActionDTO>> response = actionController.findAll(0, 10, null, null, null, null);
 
         assertThat(response.getStatusCode().value()).isEqualTo(200);
         assertThat(response.getBody()).isNotNull();
@@ -61,7 +61,7 @@ class ActionControllerTest {
         Page<ActionDTO> page = new PageImpl<>(List.of(), pageable, 0);
         when(actionService.findByCriteria(any(ActionCriteria.class), eq(pageable))).thenReturn(page);
 
-        ResponseEntity<Page<ActionDTO>> response = actionController.findAll(0, 10, "USER", "Read", ActionType.READ);
+        ResponseEntity<Page<ActionDTO>> response = actionController.findAll(0, 10, "USER", "Read", ActionType.READ, null);
 
         assertThat(response.getStatusCode().value()).isEqualTo(200);
         verify(actionService).findByCriteria(any(ActionCriteria.class), eq(pageable));

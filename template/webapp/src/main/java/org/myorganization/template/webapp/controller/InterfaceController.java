@@ -62,7 +62,8 @@ public interface InterfaceController {
             @RequestParam(required = false) OffsetDateTime toDate,
             @RequestParam(required = false) InterfaceOperationType operationType,
             @RequestParam(required = false) String interfaceName,
-            @RequestParam(required = false) InterfaceLogStatus status);
+            @RequestParam(required = false) InterfaceLogStatus status,
+            @RequestParam(required = false) String sort);
 
     /**
      * Counts interface operation logs matching the given filters.

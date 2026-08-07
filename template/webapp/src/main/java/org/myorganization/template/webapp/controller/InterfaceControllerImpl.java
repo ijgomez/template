@@ -12,6 +12,7 @@ import org.myorganization.template.domain.enums.InterfaceOperationType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -59,10 +60,11 @@ public class InterfaceControllerImpl implements InterfaceController {
             @RequestParam(required = false) OffsetDateTime toDate,
             @RequestParam(required = false) InterfaceOperationType operationType,
             @RequestParam(required = false) String interfaceName,
-            @RequestParam(required = false) InterfaceLogStatus status) {
+            @RequestParam(required = false) InterfaceLogStatus status,
+            @RequestParam(required = false) String sort) {
 
         InterfaceLogCriteria criteria = new InterfaceLogCriteria(fromDate, toDate, operationType, interfaceName, status);
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = buildPageable(page, size, sort);
         Page<InterfaceLogDTO> result = interfaceService.findLogsByCriteria(criteria, pageable);
         return ResponseEntity.ok(result);
     }
@@ -84,6 +86,26 @@ public class InterfaceControllerImpl implements InterfaceController {
     public ResponseEntity<InterfaceLogDTO> findLogById(@PathVariable Long id) {
         InterfaceLogDTO dto = interfaceService.findLogById(id);
         return ResponseEntity.ok(dto);
+    }
+
+    /**
+     * Builds a Pageable from page, size and an optional sort string.
+     *
+     * @param page zero-indexed page number
+     * @param size page size
+     * @param sort sort string in format "field,direction" (e.g. "timestamp,desc")
+     * @return a Pageable with sorting if specified
+     */
+    private Pageable buildPageable(int page, int size, String sort) {
+        if (sort != null && !sort.isBlank()) {
+            String[] parts = sort.split(",");
+            String property = parts[0];
+            Sort.Direction direction = parts.length > 1 && "desc".equalsIgnoreCase(parts[1])
+                    ? Sort.Direction.DESC
+                    : Sort.Direction.ASC;
+            return PageRequest.of(page, size, Sort.by(direction, property));
+        }
+        return PageRequest.of(page, size);
     }
 
 }

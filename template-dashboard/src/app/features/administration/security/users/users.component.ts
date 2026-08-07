@@ -8,7 +8,7 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { CsvExportService } from '../../../../core/services/csv-export.service';
 import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
-import { TpDataTableComponent, TpColumnDirective, ColumnDef } from '../../../../shared/components/data-table';
+import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../shared/components/data-table';
 import { UserDTO, UserCriteria, ProfileRef, ReportRef } from '../../../../core/models/user.model';
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit';
@@ -41,13 +41,16 @@ export class UsersComponent implements OnInit {
 
   // Table columns
   readonly columns: ColumnDef[] = [
-    { key: 'username', header: 'users.fields.username' },
-    { key: 'firstName', header: 'users.fields.firstName' },
-    { key: 'lastName', header: 'users.fields.lastName' },
-    { key: 'email', header: 'users.fields.email' },
-    { key: 'profileName', header: 'users.fields.profile' },
-    { key: 'lastAccess', header: 'users.fields.lastAccess' },
+    { key: 'username', header: 'users.fields.username', sortable: true },
+    { key: 'firstName', header: 'users.fields.firstName', sortable: true },
+    { key: 'lastName', header: 'users.fields.lastName', sortable: true },
+    { key: 'email', header: 'users.fields.email', sortable: true },
+    { key: 'profileName', header: 'users.fields.profile', sortable: true },
+    { key: 'lastAccess', header: 'users.fields.lastAccess', sortable: true },
   ];
+
+  // Sort state
+  readonly sortParam = signal('');
 
   // Filter state
   readonly criteria = signal<UserCriteria>({});
@@ -118,7 +121,7 @@ export class UsersComponent implements OnInit {
 
   loadUsers(): void {
     this.isLoading.set(true);
-    this.userService.findByCriteria(this.criteria(), this.currentPage(), this.pageSize()).subscribe({
+    this.userService.findByCriteria(this.criteria(), this.currentPage(), this.pageSize(), this.sortParam()).subscribe({
       next: (page) => {
         this.users.set(page.content);
         this.totalElements.set(page.totalElements);
@@ -138,7 +141,7 @@ export class UsersComponent implements OnInit {
   private loadUsersWithProgress(): void {
     this.isLoading.set(true);
     const notifId = this.notificationService.showProgress('notification.pagination.progress');
-    this.userService.findByCriteria(this.criteria(), this.currentPage(), this.pageSize()).subscribe({
+    this.userService.findByCriteria(this.criteria(), this.currentPage(), this.pageSize(), this.sortParam()).subscribe({
       next: (page) => {
         this.users.set(page.content);
         this.totalElements.set(page.totalElements);
@@ -181,6 +184,12 @@ export class UsersComponent implements OnInit {
 
   changePageSize(size: number): void {
     this.pageSize.set(size);
+    this.currentPage.set(0);
+    this.loadUsersWithProgress();
+  }
+
+  onSort(event: SortEvent): void {
+    this.sortParam.set(event.direction ? `${event.column},${event.direction}` : '');
     this.currentPage.set(0);
     this.loadUsersWithProgress();
   }

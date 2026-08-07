@@ -32,10 +32,14 @@ export class InterfaceService {
   /**
    * Retrieves a paginated list of interface operation logs with optional filters.
    */
-  findLogsByCriteria(criteria: InterfaceLogCriteria, page: number, size: number): Observable<Page<InterfaceLog>> {
+  findLogsByCriteria(criteria: InterfaceLogCriteria, page: number, size: number, sort?: string): Observable<Page<InterfaceLog>> {
     let params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
+
+    if (sort) {
+      params = params.set('sort', sort);
+    }
 
     if (criteria.dateFrom) {
       params = params.set('dateFrom', criteria.dateFrom);

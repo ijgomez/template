@@ -97,7 +97,7 @@ class InterfaceControllerTest {
         Page<InterfaceLogDTO> page = new PageImpl<>(List.of(logDto), pageable, 1);
         when(interfaceService.findLogsByCriteria(any(InterfaceLogCriteria.class), eq(pageable))).thenReturn(page);
 
-        ResponseEntity<Page<InterfaceLogDTO>> response = controller.findLogs(0, 10, null, null, null, null, null);
+        ResponseEntity<Page<InterfaceLogDTO>> response = controller.findLogs(0, 10, null, null, null, null, null, null);
 
         assertThat(response.getStatusCode().value()).isEqualTo(200);
         assertThat(response.getBody()).isNotNull();
@@ -114,7 +114,7 @@ class InterfaceControllerTest {
         when(interfaceService.findLogsByCriteria(any(InterfaceLogCriteria.class), eq(pageable))).thenReturn(page);
 
         ResponseEntity<Page<InterfaceLogDTO>> response = controller.findLogs(
-                0, 10, from, to, InterfaceOperationType.IN, "REST", InterfaceLogStatus.SUCCESS);
+                0, 10, from, to, InterfaceOperationType.IN, "REST", InterfaceLogStatus.SUCCESS, null);
 
         assertThat(response.getStatusCode().value()).isEqualTo(200);
         verify(interfaceService).findLogsByCriteria(any(InterfaceLogCriteria.class), eq(pageable));
