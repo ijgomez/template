@@ -38,10 +38,10 @@ cluster:
   heartbeat-interval: 5000
   dead-node-timeout: 15000
 
-# Logging (concise for CI output)
+# Logging (minimal output - only errors)
 logging:
   level:
-    root: WARN
-    org.myorganization.template: INFO
-    org.testcontainers: WARN
-    com.github.dockerjava: WARN
+    root: ERROR
+    org.myorganization.template: ERROR
+    org.testcontainers: ERROR
+    com.github.dockerjava: ERROR
