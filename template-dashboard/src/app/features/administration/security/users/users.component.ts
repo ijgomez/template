@@ -9,14 +9,15 @@ import { NotificationService } from '../../../../core/services/notification.serv
 import { CsvExportService } from '../../../../core/services/csv-export.service';
 import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
 import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../shared/components/data-table';
-import { UserDTO, UserCriteria, ProfileRef, ReportRef } from '../../../../core/models/user.model';
+import { TpSelectedReportsComponent } from '../../../../shared/components/selected-reports';
+import { UserDTO, UserCriteria, ProfileRef } from '../../../../core/models/user.model';
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit';
 
 @Component({
   selector: 'app-users',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective],
+  imports: [CommonModule, FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective, TpSelectedReportsComponent],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -65,7 +66,6 @@ export class UsersComponent implements OnInit {
 
   // Reference data
   readonly profiles = signal<ProfileRef[]>([]);
-  readonly reports = signal<ReportRef[]>([]);
 
   // Permissions
   readonly canWrite = computed(() => this.authService.hasAction('USER_WRITE'));
@@ -74,47 +74,9 @@ export class UsersComponent implements OnInit {
   readonly showDeleteConfirm = signal(false);
   readonly userToDelete = signal<UserDTO | null>(null);
 
-  // Report modal state
-  readonly showReportModal = signal(false);
-  readonly modalReportSearch = signal('');
-  readonly modalReportPage = signal(0);
-  readonly modalReportPageSize = signal(5);
-  readonly modalSelectedIds = signal<number[]>([]);
-
-  // Report filter (create/edit form)
-  readonly reportFilter = signal('');
-  readonly assignedReportsFiltered = computed(() => {
-    const ids = this.formUser().reportIds;
-    const allReports = this.reports();
-    const filter = this.reportFilter().toLowerCase();
-    return allReports
-      .filter(r => ids.includes(r.id))
-      .filter(r => !filter || r.name.toLowerCase().includes(filter));
-  });
-
-  // Report modal computeds
-  readonly modalFilteredReports = computed(() => {
-    const search = this.modalReportSearch().toLowerCase();
-    const all = this.reports();
-    if (!search) return all;
-    return all.filter(r => r.name.toLowerCase().includes(search));
-  });
-
-  readonly modalTotalElements = computed(() => this.modalFilteredReports().length);
-  readonly modalTotalPages = computed(() => Math.ceil(this.modalTotalElements() / this.modalReportPageSize()) || 1);
-  readonly modalPaginatedReports = computed(() => {
-    const start = this.modalReportPage() * this.modalReportPageSize();
-    return this.modalFilteredReports().slice(start, start + this.modalReportPageSize());
-  });
-  readonly modalShowingFrom = computed(() => this.modalTotalElements() === 0 ? 0 : this.modalReportPage() * this.modalReportPageSize() + 1);
-  readonly modalShowingTo = computed(() => Math.min((this.modalReportPage() + 1) * this.modalReportPageSize(), this.modalTotalElements()));
-  readonly modalSelectedCount = computed(() => this.modalSelectedIds().length);
-  readonly modalPageNumbers = computed(() => Array.from({ length: this.modalTotalPages() }, (_, i) => i));
-
   ngOnInit(): void {
     this.loadUsers();
     this.loadProfiles();
-    this.loadReports();
   }
 
   // ─── List Actions ──────────────────────────────────────────
@@ -331,82 +293,8 @@ export class UsersComponent implements OnInit {
     this.formUser.update(u => ({ ...u, [field]: value }));
   }
 
-  updateFormReports(reportId: number, checked: boolean): void {
-    this.formUser.update(u => {
-      const currentIds = [...u.reportIds];
-      if (checked && !currentIds.includes(reportId)) {
-        currentIds.push(reportId);
-      } else if (!checked) {
-        const index = currentIds.indexOf(reportId);
-        if (index > -1) {
-          currentIds.splice(index, 1);
-        }
-      }
-      return { ...u, reportIds: currentIds };
-    });
-  }
 
-  isReportSelected(reportId: number): boolean {
-    return this.formUser().reportIds.includes(reportId);
-  }
 
-  removeReport(reportId: number): void {
-    this.updateFormReports(reportId, false);
-  }
-
-  openReportModal(): void {
-    this.modalSelectedIds.set([...this.formUser().reportIds]);
-    this.modalReportSearch.set('');
-    this.modalReportPage.set(0);
-    this.showReportModal.set(true);
-  }
-
-  closeReportModal(): void {
-    this.showReportModal.set(false);
-  }
-
-  toggleModalReport(reportId: number): void {
-    this.modalSelectedIds.update(ids => {
-      if (ids.includes(reportId)) {
-        return ids.filter(id => id !== reportId);
-      }
-      return [...ids, reportId];
-    });
-  }
-
-  isModalReportSelected(reportId: number): boolean {
-    return this.modalSelectedIds().includes(reportId);
-  }
-
-  modalGoToPage(page: number): void {
-    if (page >= 0 && page < this.modalTotalPages()) {
-      this.modalReportPage.set(page);
-    }
-  }
-
-  confirmReportSelection(): void {
-    this.formUser.update(u => ({ ...u, reportIds: [...this.modalSelectedIds()] }));
-    this.showReportModal.set(false);
-  }
-
-  toggleAllModalReports(): void {
-    const currentPage = this.modalPaginatedReports();
-    const allSelected = currentPage.every(r => this.modalSelectedIds().includes(r.id));
-    if (allSelected) {
-      this.modalSelectedIds.update(ids => ids.filter(id => !currentPage.some(r => r.id === id)));
-    } else {
-      this.modalSelectedIds.update(ids => {
-        const newIds = [...ids];
-        currentPage.forEach(r => { if (!newIds.includes(r.id)) newIds.push(r.id); });
-        return newIds;
-      });
-    }
-  }
-
-  get allPageReportsSelected(): boolean {
-    const currentPage = this.modalPaginatedReports();
-    return currentPage.length > 0 && currentPage.every(r => this.modalSelectedIds().includes(r.id));
-  }
 
   // ─── Private ───────────────────────────────────────────────
 
@@ -417,12 +305,6 @@ export class UsersComponent implements OnInit {
     });
   }
 
-  private loadReports(): void {
-    this.userService.getReports().subscribe({
-      next: (reports) => this.reports.set(reports),
-      error: () => {},
-    });
-  }
 
   private emptyUser(): UserDTO {
     return {

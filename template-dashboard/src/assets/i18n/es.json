@@ -462,5 +462,36 @@
       "viewReports": "Ver informes",
       "configuration": "Configuración"
     }
+  },
+  "selected-reports": {
+    "count": "Total",
+    "filter": {
+      "placeholder": "Filtrar...",
+      "aria": "Filtrar informes seleccionados"
+    },
+    "add": {
+      "aria": "Añadir informe"
+    },
+    "remove": {
+      "aria": "Eliminar informe"
+    },
+    "loading": "Cargando informes...",
+    "empty": {
+      "filtered": "No se encontraron informes con ese filtro",
+      "none": "No hay informes asignados"
+    },
+    "modal": {
+      "title": "Seleccionar informes",
+      "search": "Buscar informe...",
+      "selectAll": "Seleccionar todos",
+      "selectReport": "Seleccionar informe",
+      "columnName": "Nombre",
+      "columnDescription": "Descripción",
+      "noData": "No hay informes disponibles",
+      "showing": "Mostrando {{from}} a {{to}} de {{total}}",
+      "paginationLabel": "Paginación de informes",
+      "selected": "seleccionados",
+      "accept": "Aceptar"
+    }
   }
 }

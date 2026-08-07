@@ -21,6 +21,13 @@ export class ReportService {
   }
 
   /**
+   * Retrieves all available reports in the system.
+   */
+  findAll(): Observable<Report[]> {
+    return this.http.get<Report[]>(`${this.baseUrl}/all`);
+  }
+
+  /**
    * Retrieves the filter definitions for a specific report.
    */
   getFilters(reportId: number): Observable<ReportFilter[]> {

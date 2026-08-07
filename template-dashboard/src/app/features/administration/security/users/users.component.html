@@ -296,51 +296,13 @@
     </div>
 
     <!-- Informes asignados -->
-    <div class="d-flex justify-content-between align-items-center mb-2">
-      <h6 class="text-muted text-uppercase fw-semibold mb-0" style="font-size: 0.75rem; letter-spacing: 0.05em;">
-        {{ 'users.form.sectionReports' | translate }}
-        <span class="badge bg-secondary-subtle text-secondary ms-1">{{ formUser().reportIds.length }}</span>
-      </h6>
-      <div class="d-flex align-items-center gap-2">
-        <input type="text"
-               class="form-control form-control-sm"
-               style="width: 150px; font-size: 0.75rem; height: 26px;"
-               [placeholder]="'users.form.filterReports' | translate"
-               [ngModel]="reportFilter()"
-               (ngModelChange)="reportFilter.set($event)"
-               name="reportFilter"
-               [attr.aria-label]="'users.form.filterReports' | translate">
-        <button type="button"
-                class="btn btn-outline-primary"
-                style="font-size: 0.7rem; padding: 0.2rem 0.5rem;"
-                (click)="openReportModal()"
-                [attr.aria-label]="'users.form.addReport' | translate"
-                data-testid="btn-add-report">
-          <i class="bi bi-plus" aria-hidden="true"></i>
-        </button>
-      </div>
-    </div>
-    <div class="border rounded" style="font-size: 0.8rem;">
-      @if (assignedReportsFiltered().length === 0) {
-        <div class="text-center py-3 text-muted" style="font-size: 0.75rem;">
-          {{ 'common.noData' | translate }}
-        </div>
-      } @else {
-        <div class="list-group list-group-flush">
-          @for (report of assignedReportsFiltered(); track report.id) {
-            <div class="list-group-item d-flex justify-content-between align-items-center py-1 px-3">
-              <span>{{ report.name }}</span>
-              <button type="button"
-                      class="btn-close"
-                      style="font-size: 0.5rem;"
-                      (click)="removeReport(report.id)"
-                      [attr.aria-label]="'users.form.removeReport' | translate"
-                      [attr.data-testid]="'btn-remove-report-' + report.id"></button>
-            </div>
-          }
-        </div>
-      }
-    </div>
+    <tp-selected-reports
+      [ngModel]="formUser().reportIds"
+      (ngModelChange)="updateFormField('reportIds', $event)"
+      name="reportIds"
+      [title]="'users.form.sectionReports' | translate"
+      testId="user-reports">
+    </tp-selected-reports>
 
     <!-- Botones de acción -->
     <div class="col-12 d-flex justify-content-end gap-2 mt-2">
@@ -359,117 +321,7 @@
   </form>
   </div>
 
-  <!-- ═══════════════════════════════════════════════════════════════════════════
-       REPORT SELECTION MODAL
-       ═══════════════════════════════════════════════════════════════════════════ -->
-  @if (showReportModal()) {
-    <div class="modal d-block" tabindex="-1" role="dialog" aria-modal="true"
-         [attr.aria-labelledby]="'modalSelectReportsTitle'"
-         data-testid="report-selection-modal">
-      <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header py-2">
-            <h5 class="modal-title" id="modalSelectReportsTitle" style="font-size: 1rem;">
-              {{ 'users.form.modal.title' | translate }}
-            </h5>
-            <button type="button" class="btn-close" (click)="closeReportModal()"
-                    [attr.aria-label]="'button.close' | translate"
-                    data-testid="modal-report-close"></button>
-          </div>
-          <div class="modal-body p-0">
-            <!-- Search -->
-            <div class="p-3 border-bottom">
-              <div class="input-group input-group-sm">
-                <span class="input-group-text"><i class="bi bi-search" aria-hidden="true"></i></span>
-                <input type="text" class="form-control"
-                       [placeholder]="'users.form.modal.search' | translate"
-                       [attr.aria-label]="'users.form.modal.search' | translate"
-                       [ngModel]="modalReportSearch()"
-                       (ngModelChange)="modalReportSearch.set($event); modalReportPage.set(0)"
-                       name="modalReportSearch"
-                       data-testid="modal-report-search">
-              </div>
-            </div>
-            <!-- Table -->
-            <div class="table-responsive">
-              <table class="table table-hover tp-table mb-0">
-                <thead>
-                  <tr>
-                    <th scope="col" style="width: 40px;">
-                      <input type="checkbox" class="form-check-input"
-                             [checked]="allPageReportsSelected"
-                             (change)="toggleAllModalReports()"
-                             [attr.aria-label]="'users.form.modal.selectAll' | translate">
-                    </th>
-                    <th scope="col">{{ 'reports.fields.name' | translate }}</th>
-                    <th scope="col">{{ 'reports.fields.description' | translate }}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @if (modalPaginatedReports().length === 0) {
-                    <tr>
-                      <td colspan="3" class="text-center py-3 text-muted">
-                        {{ 'common.noData' | translate }}
-                      </td>
-                    </tr>
-                  } @else {
-                    @for (report of modalPaginatedReports(); track report.id) {
-                      <tr [class.table-active]="isModalReportSelected(report.id)"
-                          (click)="toggleModalReport(report.id)"
-                          style="cursor: pointer;">
-                        <td>
-                          <input type="checkbox" class="form-check-input"
-                                 [checked]="isModalReportSelected(report.id)"
-                                 (click)="$event.stopPropagation()"
-                                 (change)="toggleModalReport(report.id)"
-                                 [attr.aria-label]="'users.form.modal.selectReport' | translate">
-                        </td>
-                        <td class="fw-medium">{{ report.name }}</td>
-                        <td class="text-muted"></td>
-                      </tr>
-                    }
-                  }
-                </tbody>
-              </table>
-            </div>
-            <!-- Pagination -->
-            @if (modalTotalElements() > 0) {
-              <div class="d-flex justify-content-between align-items-center px-3 py-2 border-top">
-                <small class="text-muted" style="font-size: 0.75rem;">
-                  {{ 'common.pagination.showing' | translate: { from: modalShowingFrom(), to: modalShowingTo(), total: modalTotalElements() } }}
-                </small>
-                <nav [attr.aria-label]="'users.form.modal.paginationLabel' | translate">
-                  <ul class="pagination pagination-sm mb-0">
-                    <li class="page-item" [class.disabled]="modalReportPage() === 0">
-                      <a class="page-link py-0 px-2" href="javascript:void(0)" (click)="modalGoToPage(modalReportPage() - 1)">&laquo;</a>
-                    </li>
-                    @for (p of modalPageNumbers(); track p) {
-                      <li class="page-item" [class.active]="p === modalReportPage()">
-                        <a class="page-link py-0 px-2" href="javascript:void(0)" (click)="modalGoToPage(p)">{{ p + 1 }}</a>
-                      </li>
-                    }
-                    <li class="page-item" [class.disabled]="modalReportPage() >= modalTotalPages() - 1">
-                      <a class="page-link py-0 px-2" href="javascript:void(0)" (click)="modalGoToPage(modalReportPage() + 1)">&raquo;</a>
-                    </li>
-                  </ul>
-                </nav>
-              </div>
-            }
-          </div>
-          <div class="modal-footer py-2">
-            <small class="text-muted me-auto">{{ modalSelectedCount() }} {{ 'users.form.modal.selected' | translate }}</small>
-            <button type="button" class="btn btn-outline-secondary btn-sm" (click)="closeReportModal()" data-testid="modal-report-cancel">
-              {{ 'button.cancel' | translate }}
-            </button>
-            <button type="button" class="btn btn-primary btn-sm" (click)="confirmReportSelection()" data-testid="modal-report-accept">
-              <i class="bi bi-check-lg me-1" aria-hidden="true"></i> {{ 'users.form.modal.accept' | translate }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="modal-backdrop show"></div>
-  }
+
 }
 
 <!-- ═══════════════════════════════════════════════════════════════════════════

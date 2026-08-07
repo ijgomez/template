@@ -1,0 +1,113 @@
+:host {
+  display: block;
+}
+
+.tp-selected-reports {
+  border: var(--tp-border-width) solid var(--tp-color-border);
+  border-radius: var(--tp-border-radius);
+  background: var(--tp-color-background);
+
+  // ─── Disabled State ──────────────────────────────────────
+  &--disabled {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  // ─── Header ──────────────────────────────────────────────
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--tp-space-2);
+    padding: var(--tp-space-2) var(--tp-space-3);
+    border-bottom: var(--tp-border-width) solid var(--tp-color-border);
+    background: var(--tp-color-surface);
+  }
+
+  &__title-group {
+    display: flex;
+    align-items: center;
+    gap: var(--tp-space-2);
+    min-width: 0;
+  }
+
+  &__title {
+    font-size: var(--tp-font-size-sm);
+    font-weight: var(--tp-font-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    color: var(--tp-color-text);
+    white-space: nowrap;
+  }
+
+  &__badge {
+    font-size: 0.75rem;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--tp-space-2);
+    flex-shrink: 0;
+  }
+
+  &__filter {
+    width: 8rem;
+    transition: width 0.2s ease;
+
+    &:focus {
+      width: 12rem;
+    }
+  }
+
+  &__btn-add {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+  }
+
+  // ─── Loading ─────────────────────────────────────────────
+  &__loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--tp-space-3);
+    font-size: var(--tp-font-size-sm);
+  }
+
+  // ─── List ────────────────────────────────────────────────
+  &__list-wrapper {
+    font-size: 0.8rem;
+  }
+
+  // ─── Empty State ─────────────────────────────────────────
+  &__empty {
+    padding: var(--tp-space-3);
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--tp-color-text-muted);
+  }
+}
+
+// ─── Responsive ──────────────────────────────────────────────
+@media (max-width: 575.98px) {
+  .tp-selected-reports {
+    &__header {
+      flex-wrap: wrap;
+    }
+
+    &__filter {
+      width: 100%;
+      order: 1;
+      margin-top: var(--tp-space-2);
+
+      &:focus {
+        width: 100%;
+      }
+    }
+
+    &__actions {
+      flex-wrap: wrap;
+      width: 100%;
+    }
+  }
+}

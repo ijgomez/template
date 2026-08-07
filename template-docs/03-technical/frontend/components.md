@@ -55,6 +55,11 @@ src/
             │   │   └── sort-event.model.ts
             │   └── directives/
             │       └── tp-column.directive.ts
+            ├── selected-reports/
+            │   ├── selected-reports.component.ts
+            │   ├── selected-reports.component.html
+            │   ├── selected-reports.component.scss
+            │   └── index.ts
             ├── modal/
             ├── card/
             ├── alert/
@@ -504,6 +509,195 @@ Agrupa un label, un control de formulario y un mensaje de error/ayuda. Gestiona 
 - `role="combobox"` con `aria-expanded`.
 - Lista de sugerencias con `role="listbox"`.
 - Navegacion con flechas y seleccion con `Enter`.
+
+---
+
+## Selector de Items (`tp-selected-*`)
+
+Patron de componente reutilizable para gestionar una lista de items seleccionados con un modal de seleccion paginado. Implementado como `ControlValueAccessor` para integrarse directamente con formularios (template-driven y reactive).
+
+**Implementacion de referencia:** `tp-selected-reports` en `shared/components/selected-reports/`
+
+**Selector:** `<tp-selected-reports>`
+
+**Ubicacion:** `shared/components/selected-reports/`
+
+### Concepto
+
+El componente encapsula el patron completo de:
+1. **Listado de items seleccionados** con filtro de texto y boton de eliminar por fila.
+2. **Boton "+"** que abre un **modal** de seleccion.
+3. **Modal** con tabla paginada, checkboxes, busqueda, select-all por pagina, y botones Aceptar/Cancelar.
+4. **ControlValueAccessor** que escribe un array de IDs (`number[]`) como valor del formulario.
+
+El componente carga internamente los datos disponibles desde un servicio (sin depender del padre).
+
+### Estructura visual
+
+```
++-------------------------------------------------------------+
+| TITULO  (4)                         [Filtrar...]  [+]       | <- Header
++-------------------------------------------------------------+
+| Item seleccionado 1                                    [x]  | <- Lista
+| Item seleccionado 2                                    [x]  |
+| Item seleccionado 3                                    [x]  |
+| Item seleccionado 4                                    [x]  |
++-------------------------------------------------------------+
+```
+
+Al pulsar `[+]` se abre el modal:
+
+```
++-------------------------------------------------------------+
+|  Seleccionar informes                                  [x]  | <- Modal header
++-------------------------------------------------------------+
+|  [buscar informe...]                                        | <- Busqueda
++-------------------------------------------------------------+
+|  [ ]  Nombre              Descripcion                       | <- Tabla
+|  [v]  Informe actividad   Resumen mensual...                |
+|  [ ]  Resumen accesos     Accesos al sistema...             |
+|  [v]  Estadisticas uso    Metricas de uso...                |
+|  [ ]  Informe errores     Errores registrados...            |
+|  [ ]  Consumo interfaces  Operaciones IN/OUT...             |
++-------------------------------------------------------------+
+|  Mostrando 1 a 5 de 8    [<] [1] [2] [>]   Pag: [5 v]     | <- Paginacion
++-------------------------------------------------------------+
+|  2 seleccionados              [Cancelar]  [Aceptar]         | <- Footer
++-------------------------------------------------------------+
+```
+
+### Inputs
+
+| Propiedad          | Tipo      | Defecto            | Descripcion                                    |
+|--------------------|-----------|--------------------|------------------------------------------------|
+| `title`            | `string`  | `''`               | Titulo en el header (uppercase, bold)          |
+| `showAdd`          | `boolean` | `true`             | Muestra el boton "+"                           |
+| `showRemove`       | `boolean` | `true`             | Muestra los botones "x" en cada item           |
+| `filterPlaceholder`| `string`  | `''`               | Placeholder del filtro (fallback a i18n)       |
+| `ariaLabel`        | `string`  | `''`               | Label de accesibilidad de la lista             |
+| `testId`           | `string`  | `'selected-reports'`| Prefijo para `data-testid`                    |
+
+### ControlValueAccessor
+
+- **Valor**: `number[]` — array de IDs de items seleccionados.
+- Compatible con `ngModel`, `formControlName` y `formControl`.
+- Soporta `setDisabledState` (opacidad reducida, sin interaccion).
+
+### Estilos del header
+
+| Elemento      | Estilo                                                            |
+|---------------|-------------------------------------------------------------------|
+| Titulo        | `font-size: var(--tp-font-size-sm)`, `font-weight: bold`, `uppercase`, `letter-spacing: 0.025em` |
+| Badge         | `badge bg-secondary-subtle text-secondary`, `font-size: 0.75rem` |
+| Filtro        | `form-control form-control-sm`, ancho `8rem` (expandible a `12rem` en focus) |
+| Boton +       | `btn btn-outline-primary`, `font-size: 0.7rem`, `padding: 0.2rem 0.5rem` |
+
+### Estilos de la lista
+
+| Elemento      | Estilo                                                            |
+|---------------|-------------------------------------------------------------------|
+| Contenedor    | `border-radius: var(--tp-border-radius)`, border, `font-size: 0.8rem` |
+| Items         | `list-group-item`, `py-1 px-3`, flex con justify-between         |
+| Boton remove  | `btn-close`, `font-size: 0.5rem`                                 |
+| Estado vacio  | Centrado, `font-size: 0.75rem`, `text-muted`                     |
+
+### Modal de seleccion
+
+El modal sigue el patron estandar de Bootstrap:
+
+| Aspecto           | Especificacion                                                  |
+|-------------------|-----------------------------------------------------------------|
+| Tamano            | `modal-lg`, `modal-dialog-centered`                             |
+| Busqueda          | `input-group input-group-sm` con icono `bi-search`              |
+| Tabla             | `table table-hover tp-table`, columnas: checkbox, nombre, descripcion |
+| Checkbox header   | Select-all de la pagina actual                                  |
+| Fila seleccionada | Clase `table-active`, click en fila togglea checkbox            |
+| Paginacion        | Identica a `tp-data-table`: chevrons, max 5 paginas visibles, selector de page-size (5/10/20) |
+| Counter           | `"Mostrando X a Y de Z"` usando `common.pagination.showing`    |
+| Footer            | Counter de seleccionados + Cancelar + Aceptar                   |
+
+### Paginacion (identica a tp-data-table)
+
+- **Navegacion**: Chevrons `bi-chevron-left` / `bi-chevron-right`.
+- **Paginas visibles**: Maximo 5, centradas en la pagina actual.
+- **Selector page-size**: `form-select form-select-sm` con opciones 5, 10, 20.
+- **Counter**: Reutiliza la clave i18n `common.pagination.showing`.
+- **Accesibilidad**: `aria-current="page"`, `aria-label` en prev/next.
+
+### Estados
+
+| Estado    | Comportamiento                                                     |
+|-----------|--------------------------------------------------------------------|
+| Carga     | Spinner centrado con texto "Cargando informes..."                  |
+| Vacio     | Mensaje centrado: "No hay informes asignados" / "No se encontraron informes con ese filtro" |
+| Disabled  | Opacidad 0.6, `pointer-events: none`, inputs y botones deshabilitados |
+| Modal vacio | Mensaje en tabla: "No hay informes disponibles"                  |
+
+### Accesibilidad
+
+- `aria-label` en filtro, boton add, boton remove (incluye nombre del item).
+- `aria-modal="true"`, `aria-labelledby` en el modal.
+- `role="dialog"` en el modal.
+- `aria-hidden="true"` en iconos decorativos (`bi-plus`, `bi-search`, `bi-chevron-*`, `bi-check-lg`).
+- `aria-current="page"` en la pagina activa de la paginacion.
+- Checkboxes con `aria-label` individual.
+- Keyboard: Tab navega entre controles, Enter/Space activan.
+
+### Claves de traduccion (i18n)
+
+El componente usa las siguientes claves bajo el namespace `selected-reports`:
+
+```json
+{
+  "selected-reports": {
+    "count": "Total",
+    "filter": { "placeholder": "Filtrar...", "aria": "Filtrar informes seleccionados" },
+    "add": { "aria": "Anadir informe" },
+    "remove": { "aria": "Eliminar informe" },
+    "loading": "Cargando informes...",
+    "empty": { "filtered": "No se encontraron informes con ese filtro", "none": "No hay informes asignados" },
+    "modal": {
+      "title": "Seleccionar informes",
+      "search": "Buscar informe...",
+      "selectAll": "Seleccionar todos",
+      "selectReport": "Seleccionar informe",
+      "columnName": "Nombre",
+      "columnDescription": "Descripcion",
+      "noData": "No hay informes disponibles",
+      "paginationLabel": "Paginacion de informes",
+      "selected": "seleccionados",
+      "accept": "Aceptar"
+    }
+  }
+}
+```
+
+Ademas reutiliza: `common.pagination.showing`, `common.pagination.previous`, `common.pagination.next`, `common.pagination.pageSize`, `button.cancel`, `button.close`.
+
+### Ejemplo de uso
+
+```html
+<tp-selected-reports
+  [ngModel]="formUser().reportIds"
+  (ngModelChange)="updateFormField('reportIds', $event)"
+  name="reportIds"
+  [title]="'users.form.sectionReports' | translate"
+  testId="user-reports">
+</tp-selected-reports>
+```
+
+### Crear un nuevo componente con este patron
+
+Para crear un componente similar (e.g. `tp-selected-profiles`, `tp-selected-actions`):
+
+1. Copiar la estructura de `shared/components/selected-reports/`.
+2. Renombrar ficheros y clases (e.g. `TpSelectedProfilesComponent`).
+3. Cambiar el servicio inyectado y el metodo `loadAvailableReports()` por el servicio correspondiente (e.g. `ProfileService.findAll()`).
+4. Ajustar el modelo de datos (debe tener al menos `id: number` y `name: string`; opcionalmente `description`).
+5. Crear las claves de traduccion bajo un nuevo namespace (e.g. `selected-profiles`).
+6. El selector sera `tp-selected-profiles`, el testId default `'selected-profiles'`.
+7. El valor del formulario siempre es `number[]` (array de IDs).
+8. Mantener la misma estetica (header, boton `btn-outline-primary`, lista `list-group-flush`, modal `modal-lg` con tabla paginada).
 
 ---
 

@@ -462,5 +462,36 @@
       "viewReports": "View reports",
       "configuration": "Configuration"
     }
+  },
+  "selected-reports": {
+    "count": "Total",
+    "filter": {
+      "placeholder": "Filter...",
+      "aria": "Filter selected reports"
+    },
+    "add": {
+      "aria": "Add report"
+    },
+    "remove": {
+      "aria": "Remove report"
+    },
+    "loading": "Loading reports...",
+    "empty": {
+      "filtered": "No reports found matching that filter",
+      "none": "No reports assigned"
+    },
+    "modal": {
+      "title": "Select reports",
+      "search": "Search report...",
+      "selectAll": "Select all",
+      "selectReport": "Select report",
+      "columnName": "Name",
+      "columnDescription": "Description",
+      "noData": "No reports available",
+      "showing": "Showing {{from}} to {{to}} of {{total}}",
+      "paginationLabel": "Report pagination",
+      "selected": "selected",
+      "accept": "Accept"
+    }
   }
 }
