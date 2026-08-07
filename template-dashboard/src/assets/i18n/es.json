@@ -247,7 +247,8 @@
       "title": "Detalle de Acción"
     },
     "form": {
-      "editTitle": "Editar Acción"
+      "editTitle": "Editar Acción",
+      "sectionGeneral": "Datos generales"
     }
   },
   "parameters": {

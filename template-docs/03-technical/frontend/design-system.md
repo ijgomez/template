@@ -210,21 +210,27 @@ Al cambiar el tamaño de página se recarga la primera página con el nuevo tama
 
 ```text
 ┌─────────────────────────────────────────────┐
-│ Título: Nuevo/Editar [Entidad]   [Cancelar] [Guardar]│
+│ Título: Nuevo/Editar [Entidad]              │
 ├─────────────────────────────────────────────┤
-│ SECCION 1                                   │
-│   campo1     campo2     campo3              │
-│   campo4     campo5     campo6              │
-├─────────────────────────────────────────────┤
-│ SECCION 2 (tabla asociada)                  │
-│   [Añadir]                     N elementos  │
-│   Tabla compacta con botón eliminar por fila│
+│ ┌─ tp-filter-bar ─────────────────────────┐ │
+│ │ SECCION 1                               │ │
+│ │   campo1     campo2     campo3          │ │
+│ │   campo4     campo5     campo6          │ │
+│ ├─────────────────────────────────────────┤ │
+│ │ SECCION 2 (tabla asociada)              │ │
+│ │   [Añadir]                 N elementos  │ │
+│ │   Tabla compacta con botón eliminar     │ │
+│ ├─────────────────────────────────────────┤ │
+│ │                    [Cancelar] [Guardar]  │ │
+│ └─────────────────────────────────────────┘ │
 └─────────────────────────────────────────────┘
 ```
 
 ### Reglas de diseño de formularios
 
-- **Botones de acción (Cancelar/Guardar)**: Se sitúan a la derecha del título, en la misma línea. Tamaño `btn-sm`.
+- **Contenedor del formulario**: Todo el formulario (campos + botones) se envuelve en un `div.tp-filter-bar`. Esto le da el mismo estilo visual que la barra de filtros de los listados: fondo `var(--tp-color-surface)`, borde `1px solid var(--tp-color-border)`, `border-radius: 0.5rem` y padding `1rem 1.25rem`.
+- **Botones de acción (Cancelar/Guardar)**: Se sitúan al final del formulario, alineados a la derecha, dentro de un `div.col-12.d-flex.justify-content-end.gap-2.mt-2` — exactamente el mismo patrón que los botones [Buscar] [Limpiar] de la barra de filtros. Tamaño `btn-sm`.
+- **Título**: Se muestra fuera del contenedor `tp-filter-bar`, en un `div.d-flex.justify-content-between.align-items-center.mb-3` solo con el título (`h1.h3.mb-0`). No lleva botones de acción.
 - **Campos**: Usar `form-control-sm` y `form-label-sm` para densidad compacta.
 - **Grid**: Preferir 3 columnas (`col-md-4`) para campos cortos. Usar `col-md-8` o `col-12` solo para campos largos (descripción, textarea).
 - **Secciones**: Separar con un título ligero (`h6`, uppercase, muted, letter-spacing) sin cards pesadas. Los campos van directamente debajo sin card wrapper.
@@ -235,6 +241,42 @@ Al cambiar el tamaño de página se recarga la primera página con el nuevo tama
   - El filtro es búsqueda local (client-side) sobre los elementos ya asignados.
   - Al pulsar el botón Añadir se abre un modal de selección (ver patrón Modal de Selección).
 - **Spacing**: Usar `g-2` en los rows (8px gap) en lugar de `g-3` (16px).
+
+### Ejemplo de estructura HTML
+
+```html
+<!-- Título fuera del contenedor -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 mb-0">{{ título }}</h1>
+</div>
+
+<!-- Formulario con estilo tp-filter-bar -->
+<div class="tp-filter-bar">
+  <form id="entityForm" (ngSubmit)="save()" #form="ngForm" novalidate>
+    <!-- Sección de campos -->
+    <h6 class="text-muted text-uppercase fw-semibold mb-2"
+        style="font-size: 0.75rem; letter-spacing: 0.05em;">
+      {{ sección }}
+    </h6>
+    <div class="row g-2 mb-3">
+      <div class="col-md-4">...</div>
+      <div class="col-md-4">...</div>
+      <div class="col-md-4">...</div>
+    </div>
+
+    <!-- Botones al final, alineados a la derecha -->
+    <div class="col-12 d-flex justify-content-end gap-2 mt-2">
+      <button type="button" class="btn btn-outline-secondary btn-sm">
+        {{ 'button.cancel' | translate }}
+      </button>
+      <button type="submit" class="btn btn-primary btn-sm">
+        <i class="bi bi-check-lg me-1" aria-hidden="true"></i>
+        {{ 'button.save' | translate }}
+      </button>
+    </div>
+  </form>
+</div>
+```
 
 ## Detalle (CRUD - Read one)
 

@@ -154,22 +154,13 @@
      EDIT FORM (No Create - Req 25.11)
      ═══════════════════════════════════════════════════════════════════════════ -->
 @if (viewMode() === 'edit') {
+  <!-- Title -->
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h1 class="h3 mb-0">{{ 'actions.form.editTitle' | translate }}</h1>
-    <div class="d-flex gap-2">
-      <button type="button" class="btn btn-outline-secondary btn-sm" (click)="backToList()" data-testid="btn-cancel">
-        {{ 'button.cancel' | translate }}
-      </button>
-      <button type="submit" form="actionForm" class="btn btn-primary btn-sm" [disabled]="isSaving()" data-testid="btn-save">
-        @if (isSaving()) {
-          <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
-        }
-        <i class="bi bi-check-lg me-1" aria-hidden="true"></i> {{ 'button.save' | translate }}
-      </button>
-    </div>
   </div>
 
   @if (selectedAction(); as action) {
+    <div class="tp-filter-bar">
     <form id="actionForm" (ngSubmit)="saveAction()" #actionForm="ngForm" novalidate data-testid="action-form">
       <h6 class="text-muted text-uppercase fw-semibold mb-2" style="font-size: 0.75rem; letter-spacing: 0.05em;">
         {{ 'actions.form.sectionGeneral' | translate }}
@@ -225,6 +216,26 @@
                     data-testid="input-description"></textarea>
         </div>
       </div>
+
+      <!-- Botones de acción -->
+      <div class="col-12 d-flex justify-content-end gap-2 mt-2">
+        <button type="button"
+                class="btn btn-outline-secondary btn-sm"
+                (click)="backToList()"
+                data-testid="btn-cancel">
+          {{ 'button.cancel' | translate }}
+        </button>
+        <button type="submit"
+                class="btn btn-primary btn-sm"
+                [disabled]="isSaving()"
+                data-testid="btn-save">
+          @if (isSaving()) {
+            <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+          }
+          <i class="bi bi-check-lg me-1" aria-hidden="true"></i> {{ 'button.save' | translate }}
+        </button>
+      </div>
     </form>
+    </div>
   }
 }
