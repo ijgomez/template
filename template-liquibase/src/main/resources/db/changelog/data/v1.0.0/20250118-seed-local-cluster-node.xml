@@ -26,8 +26,8 @@
             <column name="used_memory" valueNumeric="2147483648"/>
             <column name="free_memory" valueNumeric="6442450944"/>
             <column name="total_memory" valueNumeric="8589934592"/>
-            <column name="started_at" valueDate="2025-01-10T08:00:00+01:00"/>
-            <column name="last_modified_at" valueDate="2025-01-15T12:30:00+01:00"/>
+            <column name="started_at" valueDate="2025-01-10 07:00:00"/>
+            <column name="last_modified_at" valueDate="2025-01-15 11:30:00"/>
         </insert>
 
         <insert tableName="cluster_node">
@@ -39,8 +39,8 @@
             <column name="used_memory" valueNumeric="3221225472"/>
             <column name="free_memory" valueNumeric="5368709120"/>
             <column name="total_memory" valueNumeric="8589934592"/>
-            <column name="started_at" valueDate="2025-01-10T08:05:00+01:00"/>
-            <column name="last_modified_at" valueDate="2025-01-15T12:30:00+01:00"/>
+            <column name="started_at" valueDate="2025-01-10 07:05:00"/>
+            <column name="last_modified_at" valueDate="2025-01-15 11:30:00"/>
         </insert>
 
         <insert tableName="cluster_node">
@@ -52,8 +52,8 @@
             <column name="used_memory" valueNumeric="1073741824"/>
             <column name="free_memory" valueNumeric="7516192768"/>
             <column name="total_memory" valueNumeric="8589934592"/>
-            <column name="started_at" valueDate="2025-01-10T08:10:00+01:00"/>
-            <column name="last_modified_at" valueDate="2025-01-15T12:30:00+01:00"/>
+            <column name="started_at" valueDate="2025-01-10 07:10:00"/>
+            <column name="last_modified_at" valueDate="2025-01-15 11:30:00"/>
         </insert>
 
         <insert tableName="cluster_node">
@@ -65,8 +65,8 @@
             <column name="used_memory" valueNumeric="0"/>
             <column name="free_memory" valueNumeric="0"/>
             <column name="total_memory" valueNumeric="8589934592"/>
-            <column name="started_at" valueDate="2025-01-10T08:15:00+01:00"/>
-            <column name="last_modified_at" valueDate="2025-01-14T22:00:00+01:00"/>
+            <column name="started_at" valueDate="2025-01-10 07:15:00"/>
+            <column name="last_modified_at" valueDate="2025-01-14 21:00:00"/>
         </insert>
 
         <rollback>

@@ -5,6 +5,7 @@ import { BehaviorSubject, Observable, catchError, filter, switchMap, take, throw
 
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../services/auth.service';
+import { NotificationService } from '../services/notification.service';
 
 /**
  * URLs that should NOT have the Authorization header attached.
@@ -72,6 +73,7 @@ function addAuthHeader(req: HttpRequest<unknown>, token: string): HttpRequest<un
 export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn) => {
   const authService = inject(AuthService);
   const router = inject(Router);
+  const notificationService = inject(NotificationService);
 
   // Skip auth endpoints to avoid infinite loops
   if (isAuthEndpoint(req.url)) {
@@ -82,21 +84,21 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, ne
 
   // No token available — send request as-is
   if (!token) {
-    return next(req).pipe(catchError((error) => handleHttpError(error)));
+    return next(req).pipe(catchError((error) => handleHttpError(error, notificationService)));
   }
 
   // Token is near expiry — proactively refresh before sending
   if (isTokenNearExpiry(authService)) {
-    return handleTokenRefresh(req, next, authService, router);
+    return handleTokenRefresh(req, next, authService, router, notificationService);
   }
 
   // Token is valid — attach header and proceed
   return next(addAuthHeader(req, token)).pipe(
     catchError((error) => {
       if (error instanceof HttpErrorResponse && error.status === 401) {
-        return handleTokenRefresh(req, next, authService, router);
+        return handleTokenRefresh(req, next, authService, router, notificationService);
       }
-      return handleHttpError(error);
+      return handleHttpError(error, notificationService);
     }),
   );
 };
@@ -105,12 +107,17 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, ne
  * Handles the token refresh flow.
  * If a refresh is already in progress, queues the request to be retried
  * once the new token is available.
+ *
+ * Logout is triggered ONLY when the refresh fails due to authentication reasons
+ * (401 or 403). Other errors (500, network, etc.) are propagated to the caller
+ * so the user sees a notification instead of being unexpectedly logged out.
  */
 function handleTokenRefresh(
   req: HttpRequest<unknown>,
   next: HttpHandlerFn,
   authService: AuthService,
   router: Router,
+  notificationService: NotificationService,
 ): Observable<any> {
   if (isRefreshing) {
     // Wait for the ongoing refresh to complete
@@ -118,7 +125,7 @@ function handleTokenRefresh(
       filter((token) => token !== null),
       take(1),
       switchMap((token) => next(addAuthHeader(req, token!))),
-      catchError((error) => handleHttpError(error)),
+      catchError((error) => handleHttpError(error, notificationService)),
     );
   }
 
@@ -134,17 +141,27 @@ function handleTokenRefresh(
     catchError((error) => {
       isRefreshing = false;
       refreshSubject$.next(null);
-      authService.logout().subscribe({
-        complete: () => router.navigate(['/login']),
-        error: () => router.navigate(['/login']),
-      });
-      return throwError(() => error);
+
+      // Only logout when the refresh token is truly invalid (auth failure)
+      if (error instanceof HttpErrorResponse && (error.status === 401 || error.status === 403)) {
+        authService.logout().subscribe({
+          complete: () => router.navigate(['/login']),
+          error: () => router.navigate(['/login']),
+        });
+        return throwError(() => error);
+      }
+
+      // For non-auth errors (500, network, etc.) propagate so the user sees a notification
+      return handleHttpError(error, notificationService);
     }),
   );
 }
 
 /**
  * Centralized HTTP error handler implementing the error pipeline.
+ *
+ * Shows a toast notification automatically so errors are always visible to the user,
+ * even if the calling component does not implement an explicit error handler.
  *
  * Error classification:
  * - 401: handled upstream via refresh logic (never reaches here)
@@ -154,11 +171,12 @@ function handleTokenRefresh(
  * - Network errors (status 0 or non-HttpErrorResponse): mark as offline
  *
  * The error objects use i18n translation keys where applicable.
- * The notification service is responsible for resolving keys to localized strings.
+ * The notification service resolves keys to localized strings.
  */
-function handleHttpError(error: HttpErrorResponse | Error): Observable<never> {
+function handleHttpError(error: HttpErrorResponse | Error, notificationService: NotificationService): Observable<never> {
   if (!(error instanceof HttpErrorResponse)) {
     // Network error (no HTTP response received)
+    notificationService.showError('error.network');
     return throwError(() => ({
       status: 0,
       messageKey: 'error.network',
@@ -170,6 +188,7 @@ function handleHttpError(error: HttpErrorResponse | Error): Observable<never> {
 
   if (error.status === 0) {
     // Status 0 in HttpErrorResponse indicates network failure
+    notificationService.showError('error.network');
     return throwError(() => ({
       status: 0,
       messageKey: 'error.network',
@@ -180,6 +199,7 @@ function handleHttpError(error: HttpErrorResponse | Error): Observable<never> {
   }
 
   if (error.status === 403) {
+    notificationService.showError('error.forbidden');
     return throwError(() => ({
       status: 403,
       messageKey: 'error.forbidden',
@@ -189,6 +209,7 @@ function handleHttpError(error: HttpErrorResponse | Error): Observable<never> {
   }
 
   if (error.status >= 400 && error.status < 500) {
+    notificationService.showError('error.client');
     return throwError(() => ({
       status: error.status,
       messageKey: 'error.client',
@@ -198,6 +219,7 @@ function handleHttpError(error: HttpErrorResponse | Error): Observable<never> {
   }
 
   if (error.status >= 500) {
+    notificationService.showError('error.server');
     return throwError(() => ({
       status: error.status,
       messageKey: 'error.server',
@@ -206,6 +228,7 @@ function handleHttpError(error: HttpErrorResponse | Error): Observable<never> {
     }));
   }
 
+  notificationService.showError('error.unknown');
   return throwError(() => ({
     status: error.status,
     messageKey: 'error.unknown',

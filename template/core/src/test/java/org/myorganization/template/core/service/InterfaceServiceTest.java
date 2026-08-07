@@ -162,7 +162,7 @@ class InterfaceServiceTest {
     @DisplayName("findLogsByCriteria: returns paginated results with no filters")
     @SuppressWarnings("unchecked")
     void findLogsByCriteria_noFilters_returnsPaginatedResults() {
-        InterfaceLog log = createInterfaceLog(1L, InterfaceOperationType.OUT, "REST API",
+        InterfaceLog log = createInterfaceLog(1L, InterfaceOperationType.POST, "REST API",
                 "{\"key\":\"value\"}", "{\"result\":\"ok\"}", InterfaceLogStatus.SUCCESS);
         Page<InterfaceLog> page = new PageImpl<>(List.of(log), PageRequest.of(0, 10), 1);
         InterfaceLogCriteria criteria = new InterfaceLogCriteria(null, null, null, null, null);
@@ -185,7 +185,7 @@ class InterfaceServiceTest {
         OffsetDateTime from = OffsetDateTime.of(2024, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC);
         OffsetDateTime to = OffsetDateTime.of(2024, 12, 31, 23, 59, 59, 0, ZoneOffset.UTC);
         InterfaceLogCriteria criteria = new InterfaceLogCriteria(from, to,
-                InterfaceOperationType.IN, "SOAP", InterfaceLogStatus.ERROR);
+                InterfaceOperationType.GET, "SOAP", InterfaceLogStatus.ERROR);
         Pageable pageable = PageRequest.of(0, 10);
         Page<InterfaceLog> emptyPage = new PageImpl<>(List.of(), pageable, 0);
 
@@ -204,7 +204,7 @@ class InterfaceServiceTest {
     @SuppressWarnings("unchecked")
     void countLogsByCriteria_returnsCount() {
         InterfaceLogCriteria criteria = new InterfaceLogCriteria(null, null,
-                InterfaceOperationType.OUT, null, InterfaceLogStatus.SUCCESS);
+                InterfaceOperationType.POST, null, InterfaceLogStatus.SUCCESS);
 
         when(interfaceLogRepository.count(any(Specification.class))).thenReturn(42L);
 
@@ -218,7 +218,7 @@ class InterfaceServiceTest {
     @Test
     @DisplayName("findLogById: existing log returns InterfaceLogDTO")
     void findLogById_existingLog_returnsDTO() {
-        InterfaceLog log = createInterfaceLog(5L, InterfaceOperationType.IN, "Payment Gateway",
+        InterfaceLog log = createInterfaceLog(5L, InterfaceOperationType.GET, "Payment Gateway",
                 "{\"amount\":100}", "{\"status\":\"approved\"}", InterfaceLogStatus.SUCCESS);
 
         when(interfaceLogRepository.findById(5L)).thenReturn(Optional.of(log));
@@ -226,7 +226,7 @@ class InterfaceServiceTest {
         InterfaceLogDTO result = interfaceService.findLogById(5L);
 
         assertThat(result.id()).isEqualTo(5L);
-        assertThat(result.operationType()).isEqualTo(InterfaceOperationType.IN);
+        assertThat(result.operationType()).isEqualTo(InterfaceOperationType.GET);
         assertThat(result.interfaceName()).isEqualTo("Payment Gateway");
         assertThat(result.requestPayload()).isEqualTo("{\"amount\":100}");
         assertThat(result.responsePayload()).isEqualTo("{\"status\":\"approved\"}");
@@ -253,7 +253,7 @@ class InterfaceServiceTest {
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
         interfaceService.logOperation(
-                InterfaceOperationType.OUT,
+                InterfaceOperationType.POST,
                 "REST API",
                 "{\"request\":\"data\"}",
                 "{\"response\":\"ok\"}",
@@ -264,7 +264,7 @@ class InterfaceServiceTest {
         verify(interfaceLogRepository).save(captor.capture());
 
         InterfaceLog saved = captor.getValue();
-        assertThat(saved.getOperationType()).isEqualTo(InterfaceOperationType.OUT);
+        assertThat(saved.getOperationType()).isEqualTo(InterfaceOperationType.POST);
         assertThat(saved.getInterfaceName()).isEqualTo("REST API");
         assertThat(saved.getRequestPayload()).isEqualTo("{\"request\":\"data\"}");
         assertThat(saved.getResponsePayload()).isEqualTo("{\"response\":\"ok\"}");
@@ -278,7 +278,7 @@ class InterfaceServiceTest {
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
         interfaceService.logOperation(
-                InterfaceOperationType.IN,
+                InterfaceOperationType.GET,
                 "Notification Service",
                 null,
                 null,
@@ -289,7 +289,7 @@ class InterfaceServiceTest {
         verify(interfaceLogRepository).save(captor.capture());
 
         InterfaceLog saved = captor.getValue();
-        assertThat(saved.getOperationType()).isEqualTo(InterfaceOperationType.IN);
+        assertThat(saved.getOperationType()).isEqualTo(InterfaceOperationType.GET);
         assertThat(saved.getInterfaceName()).isEqualTo("Notification Service");
         assertThat(saved.getRequestPayload()).isNull();
         assertThat(saved.getResponsePayload()).isNull();

@@ -136,7 +136,7 @@ class AuditAndClusterIntegrationTest {
         assertThat(nodes).isNotEmpty();
 
         ClusterNode node = nodes.get(0);
-        assertThat(node.getStatus().name()).isEqualTo("ALIVE");
+        assertThat(node.getStatus().name()).isEqualTo("ACTIVE");
         assertThat(node.getLastModifiedAt()).isNotNull();
     }
 

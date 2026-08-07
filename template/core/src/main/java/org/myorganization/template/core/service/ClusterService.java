@@ -113,7 +113,7 @@ public class ClusterService implements HeartbeatClusterService {
 
         clusterNodeRepository.findByHostname(hostname).ifPresentOrElse(
                 existingNode -> {
-                    existingNode.setStatus(NodeStatus.ALIVE);
+                    existingNode.setStatus(NodeStatus.ACTIVE);
                     existingNode.setIp(ip);
                     existingNode.setUsedMemory(getUsedMemory());
                     existingNode.setFreeMemory(getFreeMemory());
@@ -126,7 +126,7 @@ public class ClusterService implements HeartbeatClusterService {
                     ClusterNode newNode = new ClusterNode();
                     newNode.setHostname(hostname);
                     newNode.setIp(ip);
-                    newNode.setStatus(NodeStatus.ALIVE);
+                    newNode.setStatus(NodeStatus.ACTIVE);
                     newNode.setMaster(false);
                     newNode.setUsedMemory(getUsedMemory());
                     newNode.setFreeMemory(getFreeMemory());
@@ -152,7 +152,7 @@ public class ClusterService implements HeartbeatClusterService {
             return;
         }
 
-        node.setStatus(NodeStatus.ALIVE);
+        node.setStatus(NodeStatus.ACTIVE);
         node.setUsedMemory(getUsedMemory());
         node.setFreeMemory(getFreeMemory());
         node.setTotalMemory(getTotalMemory());
@@ -171,11 +171,11 @@ public class ClusterService implements HeartbeatClusterService {
                 .minusMinutes(DEAD_NODE_TIMEOUT_MINUTES);
 
         List<ClusterNode> deadNodes = clusterNodeRepository
-                .findByStatusAndLastModifiedAtBefore(NodeStatus.ALIVE, threshold);
+                .findByStatusAndLastModifiedAtBefore(NodeStatus.ACTIVE, threshold);
 
         List<String> deadHostnames = new ArrayList<>();
         for (ClusterNode node : deadNodes) {
-            node.setStatus(NodeStatus.DEAD);
+            node.setStatus(NodeStatus.INACTIVE);
             clusterNodeRepository.save(node);
             deadHostnames.add(node.getHostname());
             log.warn("Cluster node marked as DEAD: hostname={}, id={}", node.getHostname(), node.getId());
@@ -191,11 +191,11 @@ public class ClusterService implements HeartbeatClusterService {
     @Transactional
     public void electMaster() {
         boolean masterExists = clusterNodeRepository
-                .findByMasterTrueAndStatus(NodeStatus.ALIVE)
+                .findByMasterTrueAndStatus(NodeStatus.ACTIVE)
                 .isPresent();
 
         if (!masterExists) {
-            clusterNodeRepository.findFirstByStatusOrderByIdAsc(NodeStatus.ALIVE)
+            clusterNodeRepository.findFirstByStatusOrderByIdAsc(NodeStatus.ACTIVE)
                     .ifPresent(candidate -> {
                         clusterNodeRepository.deactivateAllMasters();
                         candidate.setMaster(true);

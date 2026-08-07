@@ -114,7 +114,7 @@ class InterfaceControllerTest {
         when(interfaceService.findLogsByCriteria(any(InterfaceLogCriteria.class), eq(pageable))).thenReturn(page);
 
         ResponseEntity<Page<InterfaceLogDTO>> response = controller.findLogs(
-                0, 10, from, to, InterfaceOperationType.IN, "REST", InterfaceLogStatus.SUCCESS, null);
+                0, 10, from, to, InterfaceOperationType.GET, "REST", InterfaceLogStatus.SUCCESS, null);
 
         assertThat(response.getStatusCode().value()).isEqualTo(200);
         verify(interfaceService).findLogsByCriteria(any(InterfaceLogCriteria.class), eq(pageable));
@@ -136,7 +136,7 @@ class InterfaceControllerTest {
         when(interfaceService.countLogsByCriteria(any(InterfaceLogCriteria.class))).thenReturn(5L);
 
         ResponseEntity<Long> response = controller.countLogs(
-                from, null, InterfaceOperationType.OUT, "SOAP", InterfaceLogStatus.ERROR);
+                from, null, InterfaceOperationType.POST, "SOAP", InterfaceLogStatus.ERROR);
 
         assertThat(response.getStatusCode().value()).isEqualTo(200);
         assertThat(response.getBody()).isEqualTo(5L);
@@ -153,7 +153,7 @@ class InterfaceControllerTest {
         assertThat(response.getStatusCode().value()).isEqualTo(200);
         assertThat(response.getBody()).isNotNull();
         assertThat(response.getBody().id()).isEqualTo(1L);
-        assertThat(response.getBody().operationType()).isEqualTo(InterfaceOperationType.IN);
+        assertThat(response.getBody().operationType()).isEqualTo(InterfaceOperationType.GET);
     }
 
     @Test
@@ -174,7 +174,7 @@ class InterfaceControllerTest {
 
     private InterfaceLogDTO sampleLog(Long id) {
         return new InterfaceLogDTO(id, OffsetDateTime.now(),
-                InterfaceOperationType.IN, "REST API",
+                InterfaceOperationType.GET, "REST API",
                 "{\"key\":\"value\"}", "{\"result\":\"ok\"}",
                 InterfaceLogStatus.SUCCESS);
     }

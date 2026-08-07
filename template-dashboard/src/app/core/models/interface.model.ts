@@ -6,12 +6,12 @@ export type InterfaceStatus = 'ACTIVE' | 'INACTIVE' | 'ERROR';
 /**
  * Interface operation types.
  */
-export type InterfaceOperationType = 'IN' | 'OUT';
+export type InterfaceOperationType = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
 /**
  * Interface log status.
  */
-export type InterfaceLogStatus = 'SUCCESS' | 'ERROR';
+export type InterfaceLogStatus = 'SUCCESS' | 'ERROR' | 'BAD_REQUEST' | 'NOT_FOUND';
 
 /**
  * Represents a system interface configuration.

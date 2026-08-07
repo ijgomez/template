@@ -372,6 +372,10 @@
         "clear": "Clear"
       },
       "setMaster": "Set as Master",
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
       "confirmMaster": {
         "title": "Confirm Master Change",
         "message": "Are you sure you want to set \"{{hostname}}\" as the new master node? The current master will be demoted."

@@ -1,10 +1,13 @@
 package org.myorganization.template.domain.enums;
 
 /**
- * Direction of an interface operation.
+ * HTTP method of an interface operation.
  */
 public enum InterfaceOperationType {
 
-    IN,
-    OUT
+    GET,
+    POST,
+    PUT,
+    PATCH,
+    DELETE
 }

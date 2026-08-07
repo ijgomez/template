@@ -59,8 +59,8 @@ export class MonitorComponent implements OnInit {
   readonly availableInterfaces = signal<InterfaceConfig[]>([]);
 
   // Filter dropdown options
-  readonly operationTypes: InterfaceOperationType[] = ['IN', 'OUT'];
-  readonly logStatuses: InterfaceLogStatus[] = ['SUCCESS', 'ERROR'];
+  readonly operationTypes: InterfaceOperationType[] = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
+  readonly logStatuses: InterfaceLogStatus[] = ['SUCCESS', 'ERROR', 'BAD_REQUEST', 'NOT_FOUND'];
 
   // Pagination display helpers
   readonly showingFrom = computed(() => this.totalElements() === 0 ? 0 : this.currentPage() * this.pageSize() + 1);

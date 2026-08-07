@@ -372,6 +372,10 @@
         "clear": "Limpiar"
       },
       "setMaster": "Establecer como Maestro",
+      "status": {
+        "active": "Activo",
+        "inactive": "Inactivo"
+      },
       "confirmMaster": {
         "title": "Confirmar cambio de Maestro",
         "message": "¿Está seguro de que desea establecer \"{{hostname}}\" como nuevo nodo maestro? El maestro actual será degradado."

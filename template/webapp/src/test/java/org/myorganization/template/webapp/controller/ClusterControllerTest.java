@@ -215,7 +215,7 @@ class ClusterControllerTest {
         OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
         return new ClusterNodeDTO(
                 id,
-                NodeStatus.ALIVE,
+                NodeStatus.ACTIVE,
                 "node-1",
                 "192.168.1.100",
                 master,

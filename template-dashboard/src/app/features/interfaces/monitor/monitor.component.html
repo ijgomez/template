@@ -134,11 +134,7 @@
     </ng-template>
 
     <ng-template tpColumn="operationType" let-log>
-      <span class="badge"
-            [class.bg-primary-subtle]="log.operationType === 'IN'"
-            [class.text-primary]="log.operationType === 'IN'"
-            [class.bg-info-subtle]="log.operationType === 'OUT'"
-            [class.text-info]="log.operationType === 'OUT'">
+      <span class="badge bg-secondary-subtle text-secondary">
         {{ log.operationType }}
       </span>
     </ng-template>
@@ -147,8 +143,8 @@
       <span class="badge"
             [class.bg-success-subtle]="log.status === 'SUCCESS'"
             [class.text-success]="log.status === 'SUCCESS'"
-            [class.bg-danger-subtle]="log.status === 'ERROR'"
-            [class.text-danger]="log.status === 'ERROR'">
+            [class.bg-danger-subtle]="log.status !== 'SUCCESS'"
+            [class.text-danger]="log.status !== 'SUCCESS'">
         {{ log.status }}
       </span>
     </ng-template>
@@ -179,11 +175,7 @@
           <div class="col-md-4">
             <label class="form-label fw-bold">{{ 'interfaces.monitor.fields.operationType' | translate }}</label>
             <p class="form-control-plaintext">
-              <span class="badge"
-                    [class.bg-primary-subtle]="log.operationType === 'IN'"
-                    [class.text-primary]="log.operationType === 'IN'"
-                    [class.bg-info-subtle]="log.operationType === 'OUT'"
-                    [class.text-info]="log.operationType === 'OUT'">
+              <span class="badge bg-secondary-subtle text-secondary">
                 {{ log.operationType }}
               </span>
             </p>
@@ -198,8 +190,8 @@
               <span class="badge"
                     [class.bg-success-subtle]="log.status === 'SUCCESS'"
                     [class.text-success]="log.status === 'SUCCESS'"
-                    [class.bg-danger-subtle]="log.status === 'ERROR'"
-                    [class.text-danger]="log.status === 'ERROR'">
+                    [class.bg-danger-subtle]="log.status !== 'SUCCESS'"
+                    [class.text-danger]="log.status !== 'SUCCESS'">
                 {{ log.status }}
               </span>
             </p>

@@ -6,5 +6,7 @@ package org.myorganization.template.domain.enums;
 public enum InterfaceLogStatus {
 
     SUCCESS,
-    ERROR
+    ERROR,
+    BAD_REQUEST,
+    NOT_FOUND
 }

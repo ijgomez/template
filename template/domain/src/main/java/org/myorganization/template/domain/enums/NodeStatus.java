@@ -5,6 +5,6 @@ package org.myorganization.template.domain.enums;
  */
 public enum NodeStatus {
 
-    ALIVE,
-    DEAD
+    ACTIVE,
+    INACTIVE
 }

@@ -1,7 +1,7 @@
 /**
  * Node status in the cluster.
  */
-export type NodeStatus = 'ALIVE' | 'DEAD';
+export type NodeStatus = 'ACTIVE' | 'INACTIVE';
 
 /**
  * Represents a cluster node.
@@ -40,3 +40,14 @@ export interface ClusterBlockCriteria {
   name?: string;
 }
 
+
+/**
+ * Paginated response from the backend.
+ */
+export interface Page<T> {
+  content: T[];
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
+}

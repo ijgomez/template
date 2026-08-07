@@ -117,7 +117,7 @@ class ClusterServiceSingleMasterPropertyTest {
             node.setId((long) (i + 1));
             node.setHostname("node-" + (i + 1));
             node.setIp("192.168.1." + (i + 1));
-            node.setStatus(NodeStatus.ALIVE);
+            node.setStatus(NodeStatus.ACTIVE);
             node.setMaster(false);
             nodes.add(node);
         }

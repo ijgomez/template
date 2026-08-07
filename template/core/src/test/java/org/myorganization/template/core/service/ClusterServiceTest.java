@@ -64,8 +64,8 @@ class ClusterServiceTest {
         @Test
         @DisplayName("returns all nodes as DTOs")
         void returnsAllNodesAsDTOs() {
-            ClusterNode node1 = createNode(1L, "host1", NodeStatus.ALIVE, true);
-            ClusterNode node2 = createNode(2L, "host2", NodeStatus.DEAD, false);
+            ClusterNode node1 = createNode(1L, "host1", NodeStatus.ACTIVE, true);
+            ClusterNode node2 = createNode(2L, "host2", NodeStatus.INACTIVE, false);
 
             when(clusterNodeRepository.findAll()).thenReturn(List.of(node1, node2));
 
@@ -74,11 +74,11 @@ class ClusterServiceTest {
             assertThat(result).hasSize(2);
             assertThat(result.get(0).id()).isEqualTo(1L);
             assertThat(result.get(0).hostname()).isEqualTo("host1");
-            assertThat(result.get(0).status()).isEqualTo(NodeStatus.ALIVE);
+            assertThat(result.get(0).status()).isEqualTo(NodeStatus.ACTIVE);
             assertThat(result.get(0).master()).isTrue();
             assertThat(result.get(1).id()).isEqualTo(2L);
             assertThat(result.get(1).hostname()).isEqualTo("host2");
-            assertThat(result.get(1).status()).isEqualTo(NodeStatus.DEAD);
+            assertThat(result.get(1).status()).isEqualTo(NodeStatus.INACTIVE);
         }
 
         @Test
@@ -99,14 +99,14 @@ class ClusterServiceTest {
         @Test
         @DisplayName("existing node returns ClusterNodeDTO")
         void existingNodeReturnsDTO() {
-            ClusterNode node = createNode(1L, "host1", NodeStatus.ALIVE, true);
+            ClusterNode node = createNode(1L, "host1", NodeStatus.ACTIVE, true);
             when(clusterNodeRepository.findById(1L)).thenReturn(Optional.of(node));
 
             ClusterNodeDTO result = clusterService.findNodeById(1L);
 
             assertThat(result.id()).isEqualTo(1L);
             assertThat(result.hostname()).isEqualTo("host1");
-            assertThat(result.status()).isEqualTo(NodeStatus.ALIVE);
+            assertThat(result.status()).isEqualTo(NodeStatus.ACTIVE);
             assertThat(result.master()).isTrue();
         }
 
@@ -129,7 +129,7 @@ class ClusterServiceTest {
         @Test
         @DisplayName("deactivates all masters and sets target as master")
         void deactivatesAllMastersAndSetsTarget() {
-            ClusterNode node = createNode(2L, "host2", NodeStatus.ALIVE, false);
+            ClusterNode node = createNode(2L, "host2", NodeStatus.ACTIVE, false);
             when(clusterNodeRepository.findById(2L)).thenReturn(Optional.of(node));
             when(clusterNodeRepository.save(any(ClusterNode.class)))
                     .thenAnswer(invocation -> invocation.getArgument(0));
@@ -160,13 +160,13 @@ class ClusterServiceTest {
     class DetectDeadNodes {
 
         @Test
-        @DisplayName("marks nodes with old lastModifiedAt as DEAD")
-        void marksOldNodesAsDead() {
-            ClusterNode staleNode = createNode(1L, "host1", NodeStatus.ALIVE, false);
+        @DisplayName("marks nodes with old lastModifiedAt as INACTIVE")
+        void marksOldNodesAsInactive() {
+            ClusterNode staleNode = createNode(1L, "host1", NodeStatus.ACTIVE, false);
             staleNode.setLastModifiedAt(OffsetDateTime.now(ZoneOffset.UTC).minusMinutes(10));
 
             when(clusterNodeRepository.findByStatusAndLastModifiedAtBefore(
-                    eq(NodeStatus.ALIVE), any(OffsetDateTime.class)))
+                    eq(NodeStatus.ACTIVE), any(OffsetDateTime.class)))
                     .thenReturn(List.of(staleNode));
             when(clusterNodeRepository.save(any(ClusterNode.class)))
                     .thenAnswer(invocation -> invocation.getArgument(0));
@@ -175,14 +175,14 @@ class ClusterServiceTest {
 
             ArgumentCaptor<ClusterNode> captor = ArgumentCaptor.forClass(ClusterNode.class);
             verify(clusterNodeRepository).save(captor.capture());
-            assertThat(captor.getValue().getStatus()).isEqualTo(NodeStatus.DEAD);
+            assertThat(captor.getValue().getStatus()).isEqualTo(NodeStatus.INACTIVE);
         }
 
         @Test
         @DisplayName("does nothing when no stale nodes found")
         void doesNothingWhenNoStaleNodes() {
             when(clusterNodeRepository.findByStatusAndLastModifiedAtBefore(
-                    eq(NodeStatus.ALIVE), any(OffsetDateTime.class)))
+                    eq(NodeStatus.ACTIVE), any(OffsetDateTime.class)))
                     .thenReturn(List.of());
 
             clusterService.detectDeadNodes();
@@ -196,13 +196,13 @@ class ClusterServiceTest {
     class ElectMaster {
 
         @Test
-        @DisplayName("elects first ALIVE node when no master exists")
-        void electsFirstAliveNodeWhenNoMaster() {
-            ClusterNode candidate = createNode(1L, "host1", NodeStatus.ALIVE, false);
+        @DisplayName("elects first ACTIVE node when no master exists")
+        void electsFirstActiveNodeWhenNoMaster() {
+            ClusterNode candidate = createNode(1L, "host1", NodeStatus.ACTIVE, false);
 
-            when(clusterNodeRepository.findByMasterTrueAndStatus(NodeStatus.ALIVE))
+            when(clusterNodeRepository.findByMasterTrueAndStatus(NodeStatus.ACTIVE))
                     .thenReturn(Optional.empty());
-            when(clusterNodeRepository.findFirstByStatusOrderByIdAsc(NodeStatus.ALIVE))
+            when(clusterNodeRepository.findFirstByStatusOrderByIdAsc(NodeStatus.ACTIVE))
                     .thenReturn(Optional.of(candidate));
             when(clusterNodeRepository.save(any(ClusterNode.class)))
                     .thenAnswer(invocation -> invocation.getArgument(0));
@@ -216,11 +216,11 @@ class ClusterServiceTest {
         }
 
         @Test
-        @DisplayName("does nothing when an ALIVE master already exists")
+        @DisplayName("does nothing when an ACTIVE master already exists")
         void doesNothingWhenMasterExists() {
-            ClusterNode master = createNode(1L, "host1", NodeStatus.ALIVE, true);
+            ClusterNode master = createNode(1L, "host1", NodeStatus.ACTIVE, true);
 
-            when(clusterNodeRepository.findByMasterTrueAndStatus(NodeStatus.ALIVE))
+            when(clusterNodeRepository.findByMasterTrueAndStatus(NodeStatus.ACTIVE))
                     .thenReturn(Optional.of(master));
 
             clusterService.electMaster();
@@ -230,11 +230,11 @@ class ClusterServiceTest {
         }
 
         @Test
-        @DisplayName("does nothing when no ALIVE nodes available")
-        void doesNothingWhenNoAliveNodes() {
-            when(clusterNodeRepository.findByMasterTrueAndStatus(NodeStatus.ALIVE))
+        @DisplayName("does nothing when no ACTIVE nodes available")
+        void doesNothingWhenNoActiveNodes() {
+            when(clusterNodeRepository.findByMasterTrueAndStatus(NodeStatus.ACTIVE))
                     .thenReturn(Optional.empty());
-            when(clusterNodeRepository.findFirstByStatusOrderByIdAsc(NodeStatus.ALIVE))
+            when(clusterNodeRepository.findFirstByStatusOrderByIdAsc(NodeStatus.ACTIVE))
                     .thenReturn(Optional.empty());
 
             clusterService.electMaster();

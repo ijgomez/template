@@ -21,8 +21,8 @@
               [ngModel]="filterStatus()" (ngModelChange)="filterStatus.set($event)" name="filterStatus"
               [attr.aria-label]="'cluster.nodes.fields.status' | translate" data-testid="filter-status">
         <option value="">{{ 'cluster.nodes.filters.allStatuses' | translate }}</option>
-        <option value="ALIVE">ALIVE</option>
-        <option value="DEAD">DEAD</option>
+        <option value="ACTIVE">{{ 'cluster.nodes.status.active' | translate }}</option>
+        <option value="INACTIVE">{{ 'cluster.nodes.status.inactive' | translate }}</option>
       </select>
     </div>
     <div class="col-md-3">
@@ -79,9 +79,9 @@
 
     <ng-template tpColumn="status" let-node>
       <span class="badge"
-            [class.bg-success]="node.status === 'ALIVE'"
-            [class.bg-danger]="node.status === 'DEAD'">
-        {{ node.status }}
+            [class.bg-success]="node.status === 'ACTIVE'"
+            [class.bg-danger]="node.status === 'INACTIVE'">
+        {{ 'cluster.nodes.status.' + node.status.toLowerCase() | translate }}
       </span>
     </ng-template>
 

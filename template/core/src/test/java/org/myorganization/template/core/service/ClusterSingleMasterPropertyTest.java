@@ -44,7 +44,7 @@ class ClusterSingleMasterPropertyTest {
             ClusterNode node = new ClusterNode();
             node.setId((long) (i + 1));
             node.setHostname("node-" + (i + 1));
-            node.setStatus(NodeStatus.ALIVE);
+            node.setStatus(NodeStatus.ACTIVE);
             node.setMaster(i == 0);
             nodes.add(node);
         }
@@ -77,7 +77,7 @@ class ClusterSingleMasterPropertyTest {
             ClusterNode node = new ClusterNode();
             node.setId((long) (i + 1));
             node.setHostname("node-" + (i + 1));
-            node.setStatus(NodeStatus.ALIVE);
+            node.setStatus(NodeStatus.ACTIVE);
             node.setMaster(i == 0);
             nodes.add(node);
         }
