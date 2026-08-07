@@ -25,7 +25,8 @@ import { TpColumnDirective } from './directives/tp-column.directive';
 
 /**
  * Reusable data table component with pagination, row selection,
- * column sorting, column resizing, loading/empty states, and custom cell templates.
+ * column sorting, column resizing, column reordering (drag & drop),
+ * loading/empty states, and custom cell templates.
  *
  * Follows the Design System `tp-table` pattern defined in design-system.md.
  */
@@ -97,6 +98,9 @@ export class TpDataTableComponent<T extends { id?: number | string | null }> imp
   /** Emitted when a column is resized. Emits the column key and new width in pixels. */
   @Output() readonly columnResize = new EventEmitter<{ column: string; width: number }>();
 
+  /** Emitted when columns are reordered via drag & drop. Emits the new column order. */
+  @Output() readonly columnsReorder = new EventEmitter<ColumnDef[]>();
+
   // ─── Content Children ──────────────────────────────────────
 
   @ContentChildren(TpColumnDirective) columnTemplates!: QueryList<TpColumnDirective>;
@@ -120,10 +124,17 @@ export class TpDataTableComponent<T extends { id?: number | string | null }> imp
   /** Subject to cancel the current resize drag. */
   private readonly resizeStop$ = new Subject<void>();
 
+  // ─── Drag & Drop State ─────────────────────────────────────
+
+  /** The column key being dragged. */
+  dragColumnKey: string | null = null;
+
+  /** The column key currently being hovered over during drag. */
+  dragOverColumnKey: string | null = null;
+
   // ─── Lifecycle ─────────────────────────────────────────────
 
   ngOnInit(): void {
-    // Initialize column widths from ColumnDef.width if provided
     this.initColumnWidths();
   }
 
@@ -172,10 +183,8 @@ export class TpDataTableComponent<T extends { id?: number | string | null }> imp
     let direction: SortDirection;
 
     if (this.sortColumn !== col.key) {
-      // New column: start ascending
       direction = 'asc';
     } else {
-      // Same column: cycle direction
       switch (this.sortDirection) {
         case 'asc':
           direction = 'desc';
@@ -219,7 +228,6 @@ export class TpDataTableComponent<T extends { id?: number | string | null }> imp
     const minWidth = col.minWidth ?? 50;
     const maxWidth = col.maxWidth ?? Infinity;
 
-    // Add resizing class to body to change cursor globally during drag
     this.renderer.addClass(document.body, 'tp-table-resizing');
 
     fromEvent<MouseEvent>(document, 'mousemove')
@@ -256,6 +264,76 @@ export class TpDataTableComponent<T extends { id?: number | string | null }> imp
       return { width: col.width };
     }
     return {};
+  }
+
+  // ─── Drag & Drop Methods ───────────────────────────────────
+
+  /**
+   * Handles the start of a column drag operation.
+   */
+  onDragStart(event: DragEvent, col: ColumnDef): void {
+    if (!col.reorderable || this.resizing) {
+      event.preventDefault();
+      return;
+    }
+    this.dragColumnKey = col.key;
+    if (event.dataTransfer) {
+      event.dataTransfer.effectAllowed = 'move';
+      event.dataTransfer.setData('text/plain', col.key);
+    }
+  }
+
+  /**
+   * Handles dragover to allow drop.
+   */
+  onDragOver(event: DragEvent, col: ColumnDef): void {
+    if (!col.reorderable || !this.dragColumnKey) return;
+    event.preventDefault();
+    if (event.dataTransfer) {
+      event.dataTransfer.dropEffect = 'move';
+    }
+    this.dragOverColumnKey = col.key;
+  }
+
+  /**
+   * Handles dragleave to clear drop target indicator.
+   */
+  onDragLeave(col: ColumnDef): void {
+    if (this.dragOverColumnKey === col.key) {
+      this.dragOverColumnKey = null;
+    }
+  }
+
+  /**
+   * Handles drop to reorder columns.
+   */
+  onDrop(event: DragEvent, targetCol: ColumnDef): void {
+    event.preventDefault();
+    if (!this.dragColumnKey || this.dragColumnKey === targetCol.key) {
+      this.resetDragState();
+      return;
+    }
+
+    const fromIndex = this.columns.findIndex(c => c.key === this.dragColumnKey);
+    const toIndex = this.columns.findIndex(c => c.key === targetCol.key);
+
+    if (fromIndex >= 0 && toIndex >= 0) {
+      const newColumns = [...this.columns];
+      const [moved] = newColumns.splice(fromIndex, 1);
+      newColumns.splice(toIndex, 0, moved);
+      this.columns = newColumns;
+      this.columnsReorder.emit(newColumns);
+      this.cdr.markForCheck();
+    }
+
+    this.resetDragState();
+  }
+
+  /**
+   * Handles drag end (cleanup).
+   */
+  onDragEnd(): void {
+    this.resetDragState();
   }
 
   // ─── Template Methods ──────────────────────────────────────
@@ -327,5 +405,13 @@ export class TpDataTableComponent<T extends { id?: number | string | null }> imp
         }
       }
     }
+  }
+
+  /**
+   * Resets drag & drop state.
+   */
+  private resetDragState(): void {
+    this.dragColumnKey = null;
+    this.dragOverColumnKey = null;
   }
 }

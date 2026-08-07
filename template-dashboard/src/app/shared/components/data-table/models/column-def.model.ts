@@ -14,6 +14,9 @@ export interface ColumnDef {
   /** Whether the column is resizable by the user. Defaults to false. */
   resizable?: boolean;
 
+  /** Whether the column can be reordered via drag & drop. Defaults to false. */
+  reorderable?: boolean;
+
   /** Initial width of the column (CSS value, e.g. '150px', '20%'). */
   width?: string;
 

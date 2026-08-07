@@ -71,10 +71,10 @@ export class MonitorComponent implements OnInit {
 
   // Column definitions for tp-data-table
   readonly columns: ColumnDef[] = [
-    { key: 'timestamp', header: 'interfaces.monitor.fields.timestamp', sortable: true },
-    { key: 'operationType', header: 'interfaces.monitor.fields.operationType', sortable: true },
-    { key: 'interfaceName', header: 'interfaces.monitor.fields.interfaceName', sortable: true },
-    { key: 'status', header: 'interfaces.monitor.fields.status', sortable: true },
+    { key: 'timestamp', header: 'interfaces.monitor.fields.timestamp', sortable: true, resizable: true, reorderable: true },
+    { key: 'operationType', header: 'interfaces.monitor.fields.operationType', sortable: true, resizable: true, reorderable: true },
+    { key: 'interfaceName', header: 'interfaces.monitor.fields.interfaceName', sortable: true, resizable: true, reorderable: true },
+    { key: 'status', header: 'interfaces.monitor.fields.status', sortable: true, resizable: true, reorderable: true },
   ];
 
   ngOnInit(): void {

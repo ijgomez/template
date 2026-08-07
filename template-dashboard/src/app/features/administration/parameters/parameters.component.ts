@@ -52,9 +52,9 @@ export class ParametersComponent {
 
   // Column definitions for tp-data-table
   readonly columns: ColumnDef[] = [
-    { key: 'code', header: 'parameters.fields.code', sortable: true },
-    { key: 'description', header: 'parameters.fields.description', sortable: true },
-    { key: 'type', header: 'parameters.fields.type', sortable: true },
+    { key: 'code', header: 'parameters.fields.code', sortable: true, resizable: true, reorderable: true },
+    { key: 'description', header: 'parameters.fields.description', sortable: true, resizable: true, reorderable: true },
+    { key: 'type', header: 'parameters.fields.type', sortable: true, resizable: true, reorderable: true },
     { key: 'value', header: 'parameters.fields.value' },
   ];
 

@@ -100,12 +100,12 @@ export class NodesComponent implements OnInit {
 
   // Column definitions for tp-data-table
   readonly columns: ColumnDef[] = [
-    { key: 'hostname', header: 'cluster.nodes.fields.hostname', sortable: true },
-    { key: 'status', header: 'cluster.nodes.fields.status', sortable: true },
-    { key: 'master', header: 'cluster.nodes.fields.master', sortable: true },
-    { key: 'memory', header: 'cluster.nodes.fields.freeMemory', sortable: true },
-    { key: 'createdAt', header: 'cluster.nodes.fields.createdAt', sortable: true },
-    { key: 'lastModifiedAt', header: 'cluster.nodes.fields.lastModifiedAt', sortable: true },
+    { key: 'hostname', header: 'cluster.nodes.fields.hostname', sortable: true, resizable: true, reorderable: true },
+    { key: 'status', header: 'cluster.nodes.fields.status', sortable: true, resizable: true, reorderable: true },
+    { key: 'master', header: 'cluster.nodes.fields.master', sortable: true, resizable: true, reorderable: true },
+    { key: 'memory', header: 'cluster.nodes.fields.freeMemory', sortable: true, resizable: true, reorderable: true },
+    { key: 'createdAt', header: 'cluster.nodes.fields.createdAt', sortable: true, resizable: true, reorderable: true },
+    { key: 'lastModifiedAt', header: 'cluster.nodes.fields.lastModifiedAt', sortable: true, resizable: true, reorderable: true },
   ];
 
   // Permission

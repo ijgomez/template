@@ -62,11 +62,11 @@ export class AuditComponent implements OnInit {
 
   // Column definitions for tp-data-table
   readonly columns: ColumnDef[] = [
-    { key: 'timestamp', header: 'audit.fields.timestamp', sortable: true },
-    { key: 'username', header: 'audit.fields.username', sortable: true },
-    { key: 'operationType', header: 'audit.fields.operationType', sortable: true },
-    { key: 'section', header: 'audit.fields.section', sortable: true },
-    { key: 'entityName', header: 'audit.fields.entityName', sortable: true },
+    { key: 'timestamp', header: 'audit.fields.timestamp', sortable: true, resizable: true, reorderable: true },
+    { key: 'username', header: 'audit.fields.username', sortable: true, resizable: true, reorderable: true },
+    { key: 'operationType', header: 'audit.fields.operationType', sortable: true, resizable: true, reorderable: true },
+    { key: 'section', header: 'audit.fields.section', sortable: true, resizable: true, reorderable: true },
+    { key: 'entityName', header: 'audit.fields.entityName', sortable: true, resizable: true, reorderable: true },
     { key: 'entityId', header: 'audit.fields.entityId' },
     { key: 'detail', header: 'audit.fields.detail' },
   ];

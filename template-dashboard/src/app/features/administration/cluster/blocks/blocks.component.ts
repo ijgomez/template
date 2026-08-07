@@ -29,13 +29,13 @@ export class BlocksComponent implements OnInit {
 
   // Column definitions for tp-data-table
   readonly columns: ColumnDef[] = [
-    { key: 'name', header: 'cluster.blocks.fields.name', sortable: true },
-    { key: 'startDate', header: 'cluster.blocks.fields.startDate', sortable: true },
-    { key: 'avgTime', header: 'cluster.blocks.fields.avgTime', sortable: true },
-    { key: 'minTime', header: 'cluster.blocks.fields.minTime', sortable: true },
-    { key: 'maxTime', header: 'cluster.blocks.fields.maxTime', sortable: true },
-    { key: 'total', header: 'cluster.blocks.fields.total', sortable: true },
-    { key: 'lastModifiedAt', header: 'cluster.blocks.fields.lastModifiedAt', sortable: true },
+    { key: 'name', header: 'cluster.blocks.fields.name', sortable: true, resizable: true, reorderable: true },
+    { key: 'startDate', header: 'cluster.blocks.fields.startDate', sortable: true, resizable: true, reorderable: true },
+    { key: 'avgTime', header: 'cluster.blocks.fields.avgTime', sortable: true, resizable: true, reorderable: true },
+    { key: 'minTime', header: 'cluster.blocks.fields.minTime', sortable: true, resizable: true, reorderable: true },
+    { key: 'maxTime', header: 'cluster.blocks.fields.maxTime', sortable: true, resizable: true, reorderable: true },
+    { key: 'total', header: 'cluster.blocks.fields.total', sortable: true, resizable: true, reorderable: true },
+    { key: 'lastModifiedAt', header: 'cluster.blocks.fields.lastModifiedAt', sortable: true, resizable: true, reorderable: true },
   ];
 
   // View state

@@ -44,9 +44,9 @@ export class ActionsComponent implements OnInit {
 
   // Table columns
   readonly columns: ColumnDef[] = [
-    { key: 'code', header: 'actions.table.code', sortable: true },
-    { key: 'name', header: 'actions.table.name', sortable: true },
-    { key: 'type', header: 'actions.table.type', sortable: true },
+    { key: 'code', header: 'actions.table.code', sortable: true, resizable: true, reorderable: true },
+    { key: 'name', header: 'actions.table.name', sortable: true, resizable: true, reorderable: true },
+    { key: 'type', header: 'actions.table.type', sortable: true, resizable: true, reorderable: true },
     { key: 'description', header: 'actions.table.description' },
   ];
 

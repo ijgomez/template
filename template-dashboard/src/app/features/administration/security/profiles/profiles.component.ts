@@ -48,10 +48,10 @@ export class ProfilesComponent implements OnInit {
 
   // Table columns
   readonly columns: ColumnDef[] = [
-    { key: 'name', header: 'profiles.fields.name', sortable: true },
-    { key: 'description', header: 'profiles.fields.description', sortable: true },
+    { key: 'name', header: 'profiles.fields.name', sortable: true, resizable: true, reorderable: true },
+    { key: 'description', header: 'profiles.fields.description', sortable: true, resizable: true, reorderable: true },
     { key: 'actions', header: 'profiles.fields.actions', cssClass: 'text-center' },
-    { key: 'createdAt', header: 'profiles.fields.createdAt', sortable: true },
+    { key: 'createdAt', header: 'profiles.fields.createdAt', sortable: true, resizable: true, reorderable: true },
   ];
 
   // Sort state

@@ -1,4 +1,4 @@
-<!-- tp-data-table: Reusable table with pagination, selection, sorting, resizing, loading/empty states -->
+<!-- tp-data-table: Reusable table with pagination, selection, sorting, resizing, drag & drop, loading/empty states -->
 <div class="card tp-card">
   <div class="card-body p-0">
     <div class="table-responsive">
@@ -14,8 +14,17 @@
                   [ngClass]="col.cssClass ?? ''"
                   [class.tp-table__th--sortable]="col.sortable"
                   [class.tp-table__th--resizable]="col.resizable"
+                  [class.tp-table__th--draggable]="col.reorderable"
+                  [class.tp-table__th--drag-over]="dragOverColumnKey === col.key && dragColumnKey !== col.key"
+                  [class.tp-table__th--dragging]="dragColumnKey === col.key"
                   [ngStyle]="getColumnStyle(col)"
                   [attr.aria-sort]="getAriaSort(col)"
+                  [attr.draggable]="col.reorderable ? 'true' : null"
+                  (dragstart)="onDragStart($event, col)"
+                  (dragover)="onDragOver($event, col)"
+                  (dragleave)="onDragLeave(col)"
+                  (drop)="onDrop($event, col)"
+                  (dragend)="onDragEnd()"
                   (click)="onSortColumn(col)"
                   (keydown.enter)="onSortColumn(col)"
                   (keydown.space)="onSortColumn(col); $event.preventDefault()"

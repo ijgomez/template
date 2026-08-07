@@ -51,7 +51,8 @@ src/
             │   ├── data-table.component.scss
             │   ├── index.ts
             │   ├── models/
-            │   │   └── column-def.model.ts
+            │   │   ├── column-def.model.ts
+            │   │   └── sort-event.model.ts
             │   └── directives/
             │       └── tp-column.directive.ts
             ├── modal/
@@ -150,7 +151,7 @@ Cada componente sigue la convencion de un directorio propio con sus ficheros `.t
 
 ## Tabla de datos (`tp-data-table`)
 
-Componente reutilizable que encapsula una tabla con paginacion, seleccion de filas, estados de carga/vacio y soporte para templates de celda personalizados.
+Componente reutilizable que encapsula una tabla con paginacion, seleccion de filas, ordenacion por columna, redimensionamiento de columnas, reordenacion por drag & drop, estados de carga/vacio y soporte para templates de celda personalizados.
 
 **Selector:** `<tp-data-table>`
 
@@ -174,23 +175,74 @@ Componente reutilizable que encapsula una tabla con paginacion, seleccion de fil
 
 ### Outputs
 
-| Evento            | Tipo                    | Descripcion                              |
-|-------------------|-------------------------|------------------------------------------|
-| `(pageChange)`    | `EventEmitter<number>`  | Emitido al cambiar de pagina             |
-| `(pageSizeChange)`| `EventEmitter<number>`  | Emitido al cambiar tamano de pagina      |
-| `(rowSelect)`     | `EventEmitter<T>`       | Emitido al seleccionar/deseleccionar fila|
-| `(rowDoubleClick)`| `EventEmitter<T>`       | Emitido al hacer doble clic en una fila  |
+| Evento              | Tipo                          | Descripcion                                    |
+|---------------------|-------------------------------|------------------------------------------------|
+| `(pageChange)`      | `EventEmitter<number>`        | Emitido al cambiar de pagina                   |
+| `(pageSizeChange)`  | `EventEmitter<number>`        | Emitido al cambiar tamano de pagina            |
+| `(rowSelect)`       | `EventEmitter<T>`             | Emitido al seleccionar/deseleccionar fila      |
+| `(rowDoubleClick)`  | `EventEmitter<T>`             | Emitido al hacer doble clic en una fila        |
+| `(sortChange)`      | `EventEmitter<SortEvent>`     | Emitido al cambiar la ordenacion               |
+| `(columnResize)`    | `EventEmitter<{column, width}>` | Emitido al redimensionar una columna        |
+| `(columnsReorder)`  | `EventEmitter<ColumnDef[]>`   | Emitido al reordenar columnas (drag & drop)    |
 
 ### Modelo ColumnDef
 
 ```typescript
 interface ColumnDef {
-  key: string;        // Clave que identifica la columna (propiedad del objeto)
-  header: string;     // Clave de traduccion para la cabecera
-  sortable?: boolean; // Si la columna es ordenable
-  cssClass?: string;  // Clase CSS aplicada a <th> y <td>
+  key: string;           // Clave que identifica la columna (propiedad del objeto)
+  header: string;        // Clave de traduccion para la cabecera
+  sortable?: boolean;    // Si la columna es ordenable (click en cabecera)
+  resizable?: boolean;   // Si el usuario puede redimensionar la columna
+  reorderable?: boolean; // Si la columna puede reordenarse por drag & drop
+  width?: string;        // Ancho inicial (valor CSS, e.g. '150px', '20%')
+  minWidth?: number;     // Ancho minimo al redimensionar (px). Defecto: 50
+  maxWidth?: number;     // Ancho maximo al redimensionar (px). Sin limite por defecto
+  cssClass?: string;     // Clase CSS aplicada a <th> y <td>
 }
 ```
+
+### Modelo SortEvent
+
+```typescript
+type SortDirection = 'asc' | 'desc' | '';
+
+interface SortEvent {
+  column: string;        // Clave de la columna ordenada
+  direction: SortDirection; // Direccion del orden (vacio = sin orden)
+}
+```
+
+### Ordenacion por columna
+
+Las columnas con `sortable: true` permiten al usuario hacer clic en la cabecera para ciclar entre los estados: ascendente, descendente y sin orden.
+
+- **Indicadores visuales**: Icono `bi-sort-up` (asc), `bi-sort-down` (desc), `bi-arrow-down-up` (sin orden).
+- **Icono activo**: Color `--bs-primary` cuando la columna esta ordenada.
+- **Navegacion por teclado**: `Enter` y `Space` activan el sort.
+- **Accesibilidad**: `aria-sort` con valores `ascending`, `descending` o `none`.
+- **Integracion backend**: El evento `(sortChange)` emite `{column, direction}`. Los componentes consumidores construyen el parametro `sort=field,direction` (formato Spring Data) y lo envian al backend.
+
+### Redimensionamiento de columnas
+
+Las columnas con `resizable: true` muestran un handle de arrastre en el borde derecho de la cabecera.
+
+- **Handle visual**: Linea de 4px transparente que se ilumina en `--bs-primary` al hover.
+- **Cursor**: `col-resize` durante el arrastre.
+- **Limites**: Configurable via `minWidth` (defecto 50px) y `maxWidth` (sin limite).
+- **Layout**: Cuando alguna columna tiene `width` o `resizable`, la tabla usa `table-layout: fixed`.
+- **Evento**: `(columnResize)` emite la clave y el nuevo ancho en px.
+
+### Reordenacion de columnas (Drag & Drop)
+
+Las columnas con `reorderable: true` pueden arrastrarse y soltarse para cambiar el orden.
+
+- **API**: HTML5 Drag and Drop nativo (`draggable="true"`).
+- **Feedback visual**:
+  - Cursor `grab`/`grabbing` en cabeceras arrastrables.
+  - La columna arrastrada se muestra con opacidad reducida (0.4).
+  - El destino muestra un borde izquierdo azul (`--bs-primary`) como indicador de drop.
+- **Evento**: `(columnsReorder)` emite el nuevo array de `ColumnDef[]` tras soltar.
+- **Compatibilidad**: No interfiere con la funcionalidad de sort (el drag solo se activa al arrastrar, no al hacer clic simple).
 
 ### Templates de celda personalizados (TpColumnDirective)
 
@@ -227,19 +279,21 @@ El componente incluye un `card-footer` con:
 ### Accesibilidad
 
 - `aria-label` configurable en la tabla.
+- `aria-sort` en cabeceras ordenables (`ascending`, `descending`, `none`).
 - `aria-selected` en las filas seleccionadas.
 - `aria-current="page"` en la pagina activa.
-- `aria-hidden="true"` en iconos decorativos (chevrons).
+- `aria-hidden="true"` en iconos decorativos (chevrons, sort icons, resize handles).
 - `role="row"` en las filas de datos.
 - `role="status"` en el spinner con texto oculto.
-- Navegacion del selector de pagina por teclado.
+- `tabindex="0"` en cabeceras sortables para navegacion por teclado.
+- Soporte de `Enter` y `Space` para activar ordenacion.
 
 ### Ejemplo de uso completo
 
 ```html
 <tp-data-table
   [columns]="columns"
-  [data]="profiles()"
+  [data]="users()"
   [loading]="isLoading()"
   [totalElements]="totalElements()"
   [currentPage]="currentPage()"
@@ -250,22 +304,34 @@ El componente incluye un `card-footer` con:
   (rowDoubleClick)="viewDetail($event)"
   (pageChange)="goToPage($event)"
   (pageSizeChange)="changePageSize($event)"
-  ariaLabel="Listado de perfiles"
-  testId="profiles-table">
+  (sortChange)="onSort($event)"
+  (columnResize)="onResize($event)"
+  (columnsReorder)="onReorder($event)"
+  ariaLabel="Listado de usuarios"
+  testId="users-table">
 
-  <ng-template tpColumn="name" let-profile>
-    <strong>{{ profile.name }}</strong>
+  <ng-template tpColumn="profileName" let-user>
+    <span class="badge bg-primary-subtle text-primary">{{ user.profileName }}</span>
   </ng-template>
 
-  <ng-template tpColumn="actions" let-profile>
-    <span class="badge bg-primary-subtle text-primary">{{ profile.actions.length }}</span>
-  </ng-template>
-
-  <ng-template tpColumn="createdAt" let-profile>
-    {{ profile.createdAt | localDate }}
+  <ng-template tpColumn="lastAccess" let-user>
+    {{ user.lastAccess | localDate }}
   </ng-template>
 </tp-data-table>
 ```
+
+### Definicion de columnas con todas las opciones
+
+```typescript
+readonly columns: ColumnDef[] = [
+  { key: 'username', header: 'users.fields.username', sortable: true, resizable: true, reorderable: true },
+  { key: 'firstName', header: 'users.fields.firstName', sortable: true, resizable: true, reorderable: true },
+  { key: 'email', header: 'users.fields.email', sortable: true, resizable: true, reorderable: true, width: '200px', minWidth: 100, maxWidth: 400 },
+  { key: 'profileName', header: 'users.fields.profile', sortable: true, resizable: true, reorderable: true },
+  { key: 'lastAccess', header: 'users.fields.lastAccess', sortable: true, resizable: true, reorderable: true },
+];
+```
+
 
 ---
 

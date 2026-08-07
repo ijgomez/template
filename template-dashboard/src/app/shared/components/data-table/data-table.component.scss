@@ -87,3 +87,22 @@ th[aria-sort='descending'] .tp-table__sort-icon {
   cursor: col-resize;
   user-select: none;
 }
+
+// ─── Draggable column header ─────────────────────────────────
+.tp-table__th--draggable {
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+// Column being dragged (ghost origin)
+.tp-table__th--dragging {
+  opacity: 0.4;
+}
+
+// Drop target indicator
+.tp-table__th--drag-over {
+  border-left: 3px solid var(--bs-primary, #0d6efd);
+}

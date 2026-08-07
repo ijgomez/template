@@ -55,12 +55,12 @@ export class ConfigurationComponent implements OnInit {
 
   // Column definitions for tp-data-table
   readonly columns: ColumnDef[] = [
-    { key: 'name', header: 'interfaces.configuration.fields.name', sortable: true },
-    { key: 'protocol', header: 'interfaces.configuration.fields.protocol', sortable: true },
+    { key: 'name', header: 'interfaces.configuration.fields.name', sortable: true, resizable: true, reorderable: true },
+    { key: 'protocol', header: 'interfaces.configuration.fields.protocol', sortable: true, resizable: true, reorderable: true },
     { key: 'url', header: 'interfaces.configuration.fields.url' },
-    { key: 'status', header: 'interfaces.configuration.fields.status', sortable: true },
-    { key: 'checkFrequency', header: 'interfaces.configuration.fields.checkFrequency', sortable: true },
-    { key: 'lastModifiedAt', header: 'interfaces.configuration.fields.lastModifiedAt', sortable: true },
+    { key: 'status', header: 'interfaces.configuration.fields.status', sortable: true, resizable: true, reorderable: true },
+    { key: 'checkFrequency', header: 'interfaces.configuration.fields.checkFrequency', sortable: true, resizable: true, reorderable: true },
+    { key: 'lastModifiedAt', header: 'interfaces.configuration.fields.lastModifiedAt', sortable: true, resizable: true, reorderable: true },
   ];
 
   // Computed: filtered configurations

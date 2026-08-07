@@ -41,12 +41,12 @@ export class UsersComponent implements OnInit {
 
   // Table columns
   readonly columns: ColumnDef[] = [
-    { key: 'username', header: 'users.fields.username', sortable: true },
-    { key: 'firstName', header: 'users.fields.firstName', sortable: true },
-    { key: 'lastName', header: 'users.fields.lastName', sortable: true },
-    { key: 'email', header: 'users.fields.email', sortable: true },
-    { key: 'profileName', header: 'users.fields.profile', sortable: true },
-    { key: 'lastAccess', header: 'users.fields.lastAccess', sortable: true },
+    { key: 'username', header: 'users.fields.username', sortable: true, resizable: true, reorderable: true },
+    { key: 'firstName', header: 'users.fields.firstName', sortable: true, resizable: true, reorderable: true },
+    { key: 'lastName', header: 'users.fields.lastName', sortable: true, resizable: true, reorderable: true },
+    { key: 'email', header: 'users.fields.email', sortable: true, resizable: true, reorderable: true },
+    { key: 'profileName', header: 'users.fields.profile', sortable: true, resizable: true, reorderable: true },
+    { key: 'lastAccess', header: 'users.fields.lastAccess', sortable: true, resizable: true, reorderable: true },
   ];
 
   // Sort state
