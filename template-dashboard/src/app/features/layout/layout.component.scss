@@ -18,6 +18,14 @@ $transition-easing: ease-in-out;
   display: flex;
   min-height: 100vh;
 
+  // Disable transitions during resize drag for instant feedback
+  &.sidebar-resizing {
+    .tp-sidebar,
+    .tp-main {
+      transition: none;
+    }
+  }
+
   &.sidebar-collapsed {
     .tp-sidebar {
       width: $sidebar-collapsed-width;
@@ -40,6 +48,10 @@ $transition-easing: ease-in-out;
       .sidebar-brand {
         justify-content: center;
         padding: 0 0.5rem;
+      }
+
+      .sidebar-resize-handle {
+        display: none;
       }
     }
 
@@ -174,6 +186,24 @@ $transition-easing: ease-in-out;
   .nav-link {
     padding-left: 4rem;
     font-size: 0.8125rem;
+  }
+}
+
+// ─── Sidebar Resize Handle ───────────────────────────────────
+.sidebar-resize-handle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 4px;
+  cursor: col-resize;
+  background: transparent;
+  transition: background 150ms ease-in-out;
+  z-index: 1;
+
+  &:hover,
+  &:active {
+    background: var(--tp-color-primary);
   }
 }
 

@@ -1,9 +1,10 @@
-<div class="tp-wrapper" [class.sidebar-collapsed]="sidebarCollapsed()" [class.mobile-menu-open]="mobileMenuOpen()">
+<div class="tp-wrapper" [class.sidebar-collapsed]="sidebarCollapsed()" [class.mobile-menu-open]="mobileMenuOpen()" [class.sidebar-resizing]="resizing()">
   <!-- Sidebar -->
   <aside
     class="tp-sidebar"
     [class.collapsed]="sidebarCollapsed()"
     [class.mobile-open]="mobileMenuOpen()"
+    [style.width.px]="sidebarCollapsed() ? null : sidebarWidth()"
     role="navigation"
     [attr.aria-label]="'layout.sidebar.navigation' | translate"
   >
@@ -111,10 +112,21 @@
         }
       </ul>
     </nav>
+
+    <!-- Resize handle (desktop only) -->
+    <div
+      class="sidebar-resize-handle d-none d-lg-block"
+      (mousedown)="onSidebarResizeStart($event)"
+      (dblclick)="onSidebarResizeReset()"
+      [attr.aria-label]="'layout.sidebar.resize' | translate"
+      role="separator"
+      aria-orientation="vertical"
+      data-testid="sidebar-resize-handle"
+    ></div>
   </aside>
 
   <!-- Main -->
-  <main class="tp-main">
+  <main class="tp-main" [style.margin-left.px]="sidebarCollapsed() ? null : sidebarWidth()">
     <!-- Header -->
     <header class="tp-header" role="banner">
       <div class="header-left">

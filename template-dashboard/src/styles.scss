@@ -194,3 +194,14 @@ body {
   border-bottom: 1px solid var(--tp-color-border);
   font-size: 0.8125rem;
 }
+
+// ─── Sidebar Resize ──────────────────────────────────────────
+// Prevents text selection and enforces col-resize cursor during sidebar resize drag.
+body.tp-sidebar-resizing {
+  user-select: none;
+  cursor: col-resize !important;
+
+  * {
+    cursor: col-resize !important;
+  }
+}

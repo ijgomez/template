@@ -1,7 +1,8 @@
-import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit, DestroyRef, Renderer2 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterOutlet, RouterLink, RouterLinkActive, NavigationEnd, ActivatedRoute } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
-import { filter } from 'rxjs';
+import { filter, fromEvent, Subject, takeUntil } from 'rxjs';
 
 import { AuthService } from '../../core/services/auth.service';
 import { ReportService } from '../../core/services/report.service';
@@ -53,14 +54,29 @@ export class LayoutComponent implements OnInit {
   private readonly reportService = inject(ReportService);
   private readonly router = inject(Router);
   private readonly activatedRoute = inject(ActivatedRoute);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly renderer = inject(Renderer2);
+
+  /** Subject to signal end of a resize drag operation. */
+  private readonly resizeStop$ = new Subject<void>();
 
   private static readonly STORAGE_KEY = 'tp-sidebar-collapsed';
+  private static readonly WIDTH_STORAGE_KEY = 'tp-sidebar-width';
+  private static readonly DEFAULT_WIDTH = 260;
+  private static readonly MIN_WIDTH = 180;
+  private static readonly MAX_WIDTH = 480;
 
   /** Breadcrumb segments built from current URL. */
   readonly breadcrumbs = signal<BreadcrumbSegment[]>([]);
 
   /** Whether the sidebar is collapsed. */
   readonly sidebarCollapsed = signal(false);
+
+  /** Custom sidebar width in pixels (user-resizable). */
+  readonly sidebarWidth = signal(LayoutComponent.DEFAULT_WIDTH);
+
+  /** Whether a resize drag is in progress. */
+  readonly resizing = signal(false);
 
   /** Whether the mobile menu overlay is open (< 992px). */
   readonly mobileMenuOpen = signal(false);
@@ -218,6 +234,15 @@ export class LayoutComponent implements OnInit {
       this.sidebarCollapsed.set(true);
     }
 
+    // Restore persisted sidebar width
+    const savedWidth = localStorage.getItem(LayoutComponent.WIDTH_STORAGE_KEY);
+    if (savedWidth) {
+      const width = parseInt(savedWidth, 10);
+      if (!isNaN(width) && width >= LayoutComponent.MIN_WIDTH && width <= LayoutComponent.MAX_WIDTH) {
+        this.sidebarWidth.set(width);
+      }
+    }
+
     // Load user's assigned reports for sidebar navigation
     if (this.authService.hasAction('REPORT_EXECUTE')) {
       this.reportService.findUserReports().subscribe({
@@ -316,5 +341,49 @@ export class LayoutComponent implements OnInit {
       next: () => this.router.navigate(['/login']),
       error: () => this.router.navigate(['/login']),
     });
+  }
+
+  // ─── Sidebar Resize ──────────────────────────────────────────
+
+  /**
+   * Starts a sidebar resize drag operation on mousedown on the resize handle.
+   * Listens to mousemove/mouseup on document to update width in real-time.
+   */
+  onSidebarResizeStart(event: MouseEvent): void {
+    if (this.sidebarCollapsed()) return;
+
+    event.preventDefault();
+    this.resizing.set(true);
+
+    const startX = event.clientX;
+    const startWidth = this.sidebarWidth();
+
+    this.renderer.addClass(document.body, 'tp-sidebar-resizing');
+
+    fromEvent<MouseEvent>(document, 'mousemove')
+      .pipe(takeUntil(this.resizeStop$), takeUntilDestroyed(this.destroyRef))
+      .subscribe((moveEvent) => {
+        const diff = moveEvent.clientX - startX;
+        const newWidth = Math.max(
+          LayoutComponent.MIN_WIDTH,
+          Math.min(LayoutComponent.MAX_WIDTH, startWidth + diff),
+        );
+        this.sidebarWidth.set(newWidth);
+      });
+
+    fromEvent<MouseEvent>(document, 'mouseup')
+      .pipe(takeUntil(this.resizeStop$), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.resizeStop$.next();
+        this.resizing.set(false);
+        this.renderer.removeClass(document.body, 'tp-sidebar-resizing');
+        localStorage.setItem(LayoutComponent.WIDTH_STORAGE_KEY, String(this.sidebarWidth()));
+      });
+  }
+
+  /** Resets the sidebar width to default on double-click on the resize handle. */
+  onSidebarResizeReset(): void {
+    this.sidebarWidth.set(LayoutComponent.DEFAULT_WIDTH);
+    localStorage.setItem(LayoutComponent.WIDTH_STORAGE_KEY, String(LayoutComponent.DEFAULT_WIDTH));
   }
 }
