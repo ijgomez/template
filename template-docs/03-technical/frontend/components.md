@@ -60,6 +60,11 @@ src/
             │   ├── selected-reports.component.html
             │   ├── selected-reports.component.scss
             │   └── index.ts
+            ├── selected-actions/
+            │   ├── selected-actions.component.ts
+            │   ├── selected-actions.component.html
+            │   ├── selected-actions.component.scss
+            │   └── index.ts
             ├── modal/
             ├── card/
             ├── alert/
@@ -516,11 +521,14 @@ Agrupa un label, un control de formulario y un mensaje de error/ayuda. Gestiona 
 
 Patron de componente reutilizable para gestionar una lista de items seleccionados con un modal de seleccion paginado. Implementado como `ControlValueAccessor` para integrarse directamente con formularios (template-driven y reactive).
 
+**Implementaciones:**
+
+| Componente             | Selector                | Ubicacion                            | Entidad   | Servicio                           |
+|------------------------|-------------------------|--------------------------------------|-----------|------------------------------------|
+| `TpSelectedReportsComponent` | `<tp-selected-reports>` | `shared/components/selected-reports/` | `Report`  | `ReportService.search()` (server-side) |
+| `TpSelectedActionsComponent` | `<tp-selected-actions>` | `shared/components/selected-actions/` | `Action`  | `ProfileService.findAllActions()` (client-side) |
+
 **Implementacion de referencia:** `tp-selected-reports` en `shared/components/selected-reports/`
-
-**Selector:** `<tp-selected-reports>`
-
-**Ubicacion:** `shared/components/selected-reports/`
 
 ### Concepto
 
@@ -686,18 +694,42 @@ Ademas reutiliza: `common.pagination.showing`, `common.pagination.previous`, `co
 </tp-selected-reports>
 ```
 
+### Variante: `tp-selected-actions`
+
+Componente que gestiona la asignacion de acciones de seguridad a un perfil. Diferencias respecto a `tp-selected-reports`:
+
+- **Paginacion client-side**: Carga todas las acciones via `ProfileService.findAllActions()` en `ngOnInit` y pagina/filtra en memoria.
+- **Columnas del modal**: checkbox | codigo | tipo (badge coloreado) | nombre.
+- **Items seleccionados**: Muestran badge de tipo (READ/WRITE/EXECUTE) + `code — name`.
+- **Badges de tipo**: `READ` → `bg-info-subtle text-info`, `WRITE` → `bg-warning-subtle text-warning`, `EXECUTE` → `bg-success-subtle text-success`.
+- **Namespace i18n**: `selected-actions.*`.
+- **testId default**: `'selected-actions'`.
+
+Ejemplo de uso (en formulario de perfiles):
+
+```html
+<tp-selected-actions
+  [ngModel]="selectedActionIds()"
+  (ngModelChange)="selectedActionIds.set($event)"
+  name="actionIds"
+  [title]="'profiles.form.sectionActions' | translate"
+  testId="profile-actions">
+</tp-selected-actions>
+```
+
 ### Crear un nuevo componente con este patron
 
-Para crear un componente similar (e.g. `tp-selected-profiles`, `tp-selected-actions`):
+Para crear un componente similar (e.g. `tp-selected-profiles`):
 
 1. Copiar la estructura de `shared/components/selected-reports/`.
 2. Renombrar ficheros y clases (e.g. `TpSelectedProfilesComponent`).
-3. Cambiar el servicio inyectado y el metodo `loadAvailableReports()` por el servicio correspondiente (e.g. `ProfileService.findAll()`).
+3. Cambiar el servicio inyectado y el metodo de carga por el servicio correspondiente.
 4. Ajustar el modelo de datos (debe tener al menos `id: number` y `name: string`; opcionalmente `description`).
 5. Crear las claves de traduccion bajo un nuevo namespace (e.g. `selected-profiles`).
 6. El selector sera `tp-selected-profiles`, el testId default `'selected-profiles'`.
 7. El valor del formulario siempre es `number[]` (array de IDs).
 8. Mantener la misma estetica (header, boton `btn-outline-primary`, lista `list-group-flush`, modal `modal-lg` con tabla paginada).
+9. Decidir si la paginacion es server-side (como reports) o client-side (como actions, cuando el dataset es pequeno).
 
 ---
 
