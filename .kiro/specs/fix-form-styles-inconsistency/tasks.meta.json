@@ -1,0 +1,148 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1. Write bug condition exploration test": [
+      {
+        "executionId": "016ec8aa-4842-420d-bc42-48e3c47ecc89",
+        "chatSessionId": "sess_3bfb282f-d40f-4c90-860b-e003852422f9",
+        "timestamp": 1786383371975
+      },
+      {
+        "executionId": "016ec8aa-4842-420d-bc42-48e3c47ecc89",
+        "chatSessionId": "sess_3bfb282f-d40f-4c90-860b-e003852422f9",
+        "timestamp": 1786383408333
+      },
+      {
+        "executionId": "016ec8aa-4842-420d-bc42-48e3c47ecc89",
+        "chatSessionId": "sess_3bfb282f-d40f-4c90-860b-e003852422f9",
+        "timestamp": 1786383860210
+      }
+    ],
+    "2. Write preservation property tests (BEFORE implementing fix)": [
+      {
+        "executionId": "016ec8aa-4842-420d-bc42-48e3c47ecc89",
+        "chatSessionId": "sess_3bfb282f-d40f-4c90-860b-e003852422f9",
+        "timestamp": 1786383372004
+      },
+      {
+        "executionId": "016ec8aa-4842-420d-bc42-48e3c47ecc89",
+        "chatSessionId": "sess_3bfb282f-d40f-4c90-860b-e003852422f9",
+        "timestamp": 1786383864534
+      },
+      {
+        "executionId": "016ec8aa-4842-420d-bc42-48e3c47ecc89",
+        "chatSessionId": "sess_3bfb282f-d40f-4c90-860b-e003852422f9",
+        "timestamp": 1786384123582
+      }
+    ],
+    "3.1 Fix Parameters form template (`parameters.component.html`)": [
+      {
+        "executionId": "016ec8aa-4842-420d-bc42-48e3c47ecc89",
+        "chatSessionId": "sess_3bfb282f-d40f-4c90-860b-e003852422f9",
+        "timestamp": 1786383372033
+      },
+      {
+        "executionId": "016ec8aa-4842-420d-bc42-48e3c47ecc89",
+        "chatSessionId": "sess_3bfb282f-d40f-4c90-860b-e003852422f9",
+        "timestamp": 1786384132914
+      },
+      {
+        "executionId": "016ec8aa-4842-420d-bc42-48e3c47ecc89",
+        "chatSessionId": "sess_3bfb282f-d40f-4c90-860b-e003852422f9",
+        "timestamp": 1786384251572
+      }
+    ],
+    "3.2 Fix Profiles form template (`profiles.component.html`)": [
+      {
+        "executionId": "016ec8aa-4842-420d-bc42-48e3c47ecc89",
+        "chatSessionId": "sess_3bfb282f-d40f-4c90-860b-e003852422f9",
+        "timestamp": 1786383372055
+      },
+      {
+        "executionId": "016ec8aa-4842-420d-bc42-48e3c47ecc89",
+        "chatSessionId": "sess_3bfb282f-d40f-4c90-860b-e003852422f9",
+        "timestamp": 1786384256110
+      },
+      {
+        "executionId": "016ec8aa-4842-420d-bc42-48e3c47ecc89",
+        "chatSessionId": "sess_3bfb282f-d40f-4c90-860b-e003852422f9",
+        "timestamp": 1786384384497
+      }
+    ],
+    "3.3 Fix Profile personal form template (`profile.component.html`)": [
+      {
+        "executionId": "016ec8aa-4842-420d-bc42-48e3c47ecc89",
+        "chatSessionId": "sess_3bfb282f-d40f-4c90-860b-e003852422f9",
+        "timestamp": 1786383372084
+      },
+      {
+        "executionId": "016ec8aa-4842-420d-bc42-48e3c47ecc89",
+        "chatSessionId": "sess_3bfb282f-d40f-4c90-860b-e003852422f9",
+        "timestamp": 1786384388513
+      },
+      {
+        "executionId": "016ec8aa-4842-420d-bc42-48e3c47ecc89",
+        "chatSessionId": "sess_3bfb282f-d40f-4c90-860b-e003852422f9",
+        "timestamp": 1786384492198
+      }
+    ],
+    "3.4 Verify bug condition exploration test now passes": [
+      {
+        "executionId": "016ec8aa-4842-420d-bc42-48e3c47ecc89",
+        "chatSessionId": "sess_3bfb282f-d40f-4c90-860b-e003852422f9",
+        "timestamp": 1786383372107
+      },
+      {
+        "executionId": "016ec8aa-4842-420d-bc42-48e3c47ecc89",
+        "chatSessionId": "sess_3bfb282f-d40f-4c90-860b-e003852422f9",
+        "timestamp": 1786384496918
+      },
+      {
+        "executionId": "016ec8aa-4842-420d-bc42-48e3c47ecc89",
+        "chatSessionId": "sess_3bfb282f-d40f-4c90-860b-e003852422f9",
+        "timestamp": 1786384563212
+      }
+    ],
+    "3.5 Verify preservation tests still pass": [
+      {
+        "executionId": "016ec8aa-4842-420d-bc42-48e3c47ecc89",
+        "chatSessionId": "sess_3bfb282f-d40f-4c90-860b-e003852422f9",
+        "timestamp": 1786383372128
+      },
+      {
+        "executionId": "016ec8aa-4842-420d-bc42-48e3c47ecc89",
+        "chatSessionId": "sess_3bfb282f-d40f-4c90-860b-e003852422f9",
+        "timestamp": 1786384567431
+      },
+      {
+        "executionId": "016ec8aa-4842-420d-bc42-48e3c47ecc89",
+        "chatSessionId": "sess_3bfb282f-d40f-4c90-860b-e003852422f9",
+        "timestamp": 1786384614595
+      }
+    ],
+    "4. Checkpoint - Ensure all tests pass": [
+      {
+        "executionId": "016ec8aa-4842-420d-bc42-48e3c47ecc89",
+        "chatSessionId": "sess_3bfb282f-d40f-4c90-860b-e003852422f9",
+        "timestamp": 1786383372150
+      },
+      {
+        "executionId": "016ec8aa-4842-420d-bc42-48e3c47ecc89",
+        "chatSessionId": "sess_3bfb282f-d40f-4c90-860b-e003852422f9",
+        "timestamp": 1786384619331
+      },
+      {
+        "executionId": "016ec8aa-4842-420d-bc42-48e3c47ecc89",
+        "chatSessionId": "sess_3bfb282f-d40f-4c90-860b-e003852422f9",
+        "timestamp": 1786384702865
+      }
+    ],
+    "3. Fix form styles inconsistency across affected components": [
+      {
+        "executionId": "016ec8aa-4842-420d-bc42-48e3c47ecc89",
+        "chatSessionId": "sess_3bfb282f-d40f-4c90-860b-e003852422f9",
+        "timestamp": 1786384614620
+      }
+    ]
+  }
+}

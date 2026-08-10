@@ -1,0 +1,106 @@
+# Implementation Plan
+
+- [x] 1. Write bug condition exploration test
+  - **Property 1: Bug Condition** - Form Styling Diverges from Reference Pattern
+  - **IMPORTANT**: Write this property-based test BEFORE implementing the fix
+  - **CRITICAL**: This test MUST FAIL on unfixed code — failure confirms the bug exists
+  - **DO NOT attempt to fix the test or the code when it fails**
+  - **NOTE**: This test encodes the expected behavior — it will validate the fix when it passes after implementation
+  - **GOAL**: Surface counterexamples that demonstrate the bug exists in Parameters, Profiles, and Profile personal forms
+  - **Scoped PBT Approach**: For each affected component, scope the property to the concrete form view modes (create/edit/form) and assert the expected DOM structure
+  - Write Angular TestBed component tests that render each affected component in form mode:
+    - Parameters component in `create` and `edit` modes: assert `.tp-filter-bar` container, `input.form-control-sm`, `label.form-label-sm`, `.row.g-2.mb-3` layout, `h6.text-muted.text-uppercase.fw-semibold` heading, `button.btn-sm`
+    - Profiles component in `form` mode: assert `.tp-filter-bar` container, buttons are inside the `<form>` element (not in header)
+    - Profile component: assert `.tp-filter-bar` container, `input.form-control-sm`, `label.form-label-sm`, `.row.g-2.mb-3` layout, `h6.text-muted.text-uppercase.fw-semibold` heading, `button.btn-sm`
+  - Run tests on UNFIXED code
+  - **EXPECTED OUTCOME**: Tests FAIL (this is correct — it proves the bug exists)
+  - Document counterexamples found:
+    - Parameters: DOM queries for `.tp-filter-bar` return null (uses `.card > .card-body`), `input.form-control-sm` returns empty (uses `form-control`), layout uses `tp-form-grid` instead of `row g-2 mb-3`
+    - Profiles: DOM queries for `.tp-filter-bar` return null (no container), buttons found outside `<form>` element (in page header)
+    - Profile: DOM queries for `.tp-filter-bar` return null (uses `.card > .card-body`), `input.form-control-sm` returns empty (uses `form-control`), layout uses `tp-form-grid` instead of `row g-2 mb-3`
+  - Mark task complete when tests are written, run, and failure is documented
+  - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 1.10, 1.11, 1.12, 1.13, 1.14, 1.15_
+
+- [x] 2. Write preservation property tests (BEFORE implementing fix)
+  - **Property 2: Preservation** - Unchanged Components and Views
+  - **IMPORTANT**: Follow observation-first methodology
+  - Observe behavior on UNFIXED code for non-buggy views:
+    - Observe: Users create/edit form renders with `tp-filter-bar`, `form-control-sm`, `btn-sm`, `row g-2 mb-3` layout
+    - Observe: Actions edit form renders with `tp-filter-bar`, `form-control-sm`, `btn-sm`
+    - Observe: Parameters list view renders filter bar and data table with current styling
+    - Observe: Profiles detail view renders card with `tp-form-grid` styling
+    - Observe: Login form renders with its card-centered design
+    - Observe: Profile loading state renders spinner correctly
+  - Write property-based tests that assert observed behavior is preserved:
+    - For Users form: assert `tp-filter-bar`, `form-control-sm`, `form-label-sm`, `btn-sm`, `row g-2 mb-3` layout remain present in create/edit modes
+    - For Actions form: assert existing correct styling remains unchanged
+    - For Parameters list view: assert filter bar, toolbar, and table DOM structure is identical
+    - For Profiles detail view: assert card + `tp-form-grid` structure is identical
+    - For Login form: assert card-centered design is completely untouched
+  - Run tests on UNFIXED code
+  - **EXPECTED OUTCOME**: Tests PASS (this confirms baseline behavior to preserve)
+  - Mark task complete when tests are written, run, and passing on unfixed code
+  - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7_
+
+- [x] 3. Fix form styles inconsistency across affected components
+
+  - [x] 3.1 Fix Parameters form template (`parameters.component.html`)
+    - Replace `<div class="card"><div class="card-body">` container with `<div class="tp-filter-bar">`
+    - Replace `<div class="tp-form-grid">` layout with `<div class="row g-2 mb-3">` and column wrappers (`col-md-4`, `col-12`)
+    - Add section heading `<h6 class="text-muted text-uppercase fw-semibold mb-2" style="font-size: 0.75rem; letter-spacing: 0.05em;">`
+    - Change `class="form-label"` to `class="form-label form-label-sm mb-1"` on all labels
+    - Change `class="form-control"` to `class="form-control form-control-sm"` on all inputs (preserve `[class.is-invalid]` binding)
+    - Change `class="form-select"` to `class="form-select form-select-sm"` on all selects
+    - Add `btn-sm` class to Save and Cancel buttons; change `mt-3` to `mt-2`
+    - Replace `form-group` and `form-group form-field-full` divs with `col-md-4` and `col-12` respectively
+    - _Bug_Condition: isBugCondition({ component: 'parameters', viewMode: 'create'|'edit' }) — form renders with card/card-body, tp-form-grid, no sm classes_
+    - _Expected_Behavior: tp-filter-bar container, form-control-sm, form-label-sm mb-1, form-select-sm, row g-2 mb-3, h6 heading, btn-sm_
+    - _Preservation: List view filter bar, toolbar, and table remain unchanged_
+    - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7_
+
+  - [x] 3.2 Fix Profiles form template (`profiles.component.html`)
+    - Wrap the `<form>` element content inside `<div class="tp-filter-bar">`
+    - Remove Save and Cancel buttons from the page header div
+    - Place buttons at end of form inside `<div class="col-12 d-flex justify-content-end gap-2 mt-2">`
+    - Ensure header only contains the title (no action buttons in form mode)
+    - _Bug_Condition: isBugCondition({ component: 'profiles', viewMode: 'form' }) — form has no container, buttons in header_
+    - _Expected_Behavior: tp-filter-bar wrapper, buttons at end of form with d-flex justify-content-end gap-2 mt-2_
+    - _Preservation: Form fields (name, description, action assignment) continue to use form-control-sm with same internal structure_
+    - _Requirements: 2.8, 2.9, 3.6_
+
+  - [x] 3.3 Fix Profile personal form template (`profile.component.html`)
+    - Replace `<div class="card"><div class="card-body">` container with `<div class="tp-filter-bar">`
+    - Replace `<div class="tp-form-grid">` layout with `<div class="row g-2 mb-3">` and `<div class="col-md-4">` wrappers
+    - Add section heading `<h6 class="text-muted text-uppercase fw-semibold mb-2" style="font-size: 0.75rem; letter-spacing: 0.05em;">`
+    - Change `class="form-label"` to `class="form-label form-label-sm mb-1"` on all labels
+    - Change `class="form-control"` to `class="form-control form-control-sm"` on all inputs (preserve `readonly` and `[class.is-invalid]` bindings)
+    - Add `btn-sm` to the save button; change `mt-4` to `mt-2`
+    - Replace `<div class="mb-3">` field wrappers with `<div class="col-md-4">` (row layout handles spacing via `g-2`)
+    - _Bug_Condition: isBugCondition({ component: 'profile', viewMode: 'edit' }) — form renders with card/card-body, tp-form-grid, no sm classes_
+    - _Expected_Behavior: tp-filter-bar container, form-control-sm, form-label-sm mb-1, row g-2 mb-3, h6 heading, btn-sm, mt-2_
+    - _Preservation: Loading spinner state unchanged, form functionality (submit, validate) unchanged_
+    - _Requirements: 2.10, 2.11, 2.12, 2.13, 2.14, 2.15_
+
+  - [x] 3.4 Verify bug condition exploration test now passes
+    - **Property 1: Expected Behavior** - Form Styling Matches Reference Pattern
+    - **IMPORTANT**: Re-run the SAME test from task 1 — do NOT write a new test
+    - The test from task 1 encodes the expected behavior (tp-filter-bar, form-control-sm, form-label-sm, row g-2 mb-3, h6 heading, btn-sm)
+    - When this test passes, it confirms the expected behavior is satisfied for all three components
+    - Run bug condition exploration test from step 1
+    - **EXPECTED OUTCOME**: Test PASSES (confirms bug is fixed)
+    - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 2.10, 2.11, 2.12, 2.13, 2.14, 2.15_
+
+  - [x] 3.5 Verify preservation tests still pass
+    - **Property 2: Preservation** - Unchanged Components and Views
+    - **IMPORTANT**: Re-run the SAME tests from task 2 — do NOT write new tests
+    - Run preservation property tests from step 2
+    - **EXPECTED OUTCOME**: Tests PASS (confirms no regressions)
+    - Confirm Users form, Actions form, login form, list views, detail views, and filter bars are all unchanged
+    - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7_
+
+- [x] 4. Checkpoint - Ensure all tests pass
+  - Run full test suite (`ng test`) to verify no regressions
+  - Ensure all exploration tests (Property 1) pass after fix
+  - Ensure all preservation tests (Property 2) still pass after fix
+  - Verify no TypeScript files were modified (HTML-only changes)
+  - Ask the user if questions arise

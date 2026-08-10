@@ -163,73 +163,74 @@
     </button>
   </div>
 
-  <div class="card">
-    <div class="card-body">
-      <form (ngSubmit)="saveParameter()" #paramForm="ngForm">
-        <div class="tp-form-grid">
-          <div class="form-group">
-            <label for="paramCode" class="form-label">{{ 'parameters.fields.code' | translate }} *</label>
-            <input id="paramCode"
-                   type="text"
-                   class="form-control"
-                   [ngModel]="formData().code"
-                   (ngModelChange)="formData.update(p => ({...p, code: $event}))"
-                   name="paramCode"
-                   required
-                   [readonly]="viewMode() === 'edit'"
-                   data-testid="input-code">
-          </div>
-          <div class="form-group">
-            <label for="paramType" class="form-label">{{ 'parameters.fields.type' | translate }} *</label>
-            <select id="paramType"
-                    class="form-select"
-                    [ngModel]="formData().type"
-                    (ngModelChange)="formData.update(p => ({...p, type: $event})); onTypeChange()"
-                    name="paramType"
-                    required
-                    data-testid="select-type">
-              @for (type of parameterTypes; track type) {
-                <option [value]="type">{{ type }}</option>
-              }
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="paramValue" class="form-label">{{ 'parameters.fields.value' | translate }} *</label>
-            <input id="paramValue"
-                   type="text"
-                   class="form-control"
-                   [class.is-invalid]="typeValueError()"
-                   [ngModel]="formData().value"
-                   (ngModelChange)="formData.update(p => ({...p, value: $event})); onValueChange()"
-                   name="paramValue"
-                   required
-                   data-testid="input-value">
-            @if (typeValueError()) {
-              <div class="invalid-feedback">{{ typeValueError() }}</div>
+  <div class="tp-filter-bar">
+    <form (ngSubmit)="saveParameter()" #paramForm="ngForm">
+      <h6 class="text-muted text-uppercase fw-semibold mb-2" style="font-size: 0.75rem; letter-spacing: 0.05em;">
+        {{ 'parameters.form.sectionGeneral' | translate }}
+      </h6>
+      <div class="row g-2 mb-3">
+        <div class="col-md-4">
+          <label for="paramCode" class="form-label form-label-sm mb-1">{{ 'parameters.fields.code' | translate }} *</label>
+          <input id="paramCode"
+                 type="text"
+                 class="form-control form-control-sm"
+                 [ngModel]="formData().code"
+                 (ngModelChange)="formData.update(p => ({...p, code: $event}))"
+                 name="paramCode"
+                 required
+                 [readonly]="viewMode() === 'edit'"
+                 data-testid="input-code">
+        </div>
+        <div class="col-md-4">
+          <label for="paramType" class="form-label form-label-sm mb-1">{{ 'parameters.fields.type' | translate }} *</label>
+          <select id="paramType"
+                  class="form-select form-select-sm"
+                  [ngModel]="formData().type"
+                  (ngModelChange)="formData.update(p => ({...p, type: $event})); onTypeChange()"
+                  name="paramType"
+                  required
+                  data-testid="select-type">
+            @for (type of parameterTypes; track type) {
+              <option [value]="type">{{ type }}</option>
             }
-          </div>
-          <div class="form-group form-field-full">
-            <label for="paramDescription" class="form-label">{{ 'parameters.fields.description' | translate }}</label>
-            <input id="paramDescription"
-                   type="text"
-                   class="form-control"
-                   [ngModel]="formData().description"
-                   (ngModelChange)="formData.update(p => ({...p, description: $event}))"
-                   name="paramDescription"
-                   data-testid="input-description">
-          </div>
+          </select>
         </div>
+        <div class="col-md-4">
+          <label for="paramValue" class="form-label form-label-sm mb-1">{{ 'parameters.fields.value' | translate }} *</label>
+          <input id="paramValue"
+                 type="text"
+                 class="form-control form-control-sm"
+                 [class.is-invalid]="typeValueError()"
+                 [ngModel]="formData().value"
+                 (ngModelChange)="formData.update(p => ({...p, value: $event})); onValueChange()"
+                 name="paramValue"
+                 required
+                 data-testid="input-value">
+          @if (typeValueError()) {
+            <div class="invalid-feedback">{{ typeValueError() }}</div>
+          }
+        </div>
+        <div class="col-12">
+          <label for="paramDescription" class="form-label form-label-sm mb-1">{{ 'parameters.fields.description' | translate }}</label>
+          <input id="paramDescription"
+                 type="text"
+                 class="form-control form-control-sm"
+                 [ngModel]="formData().description"
+                 (ngModelChange)="formData.update(p => ({...p, description: $event}))"
+                 name="paramDescription"
+                 data-testid="input-description">
+        </div>
+      </div>
 
-        <div class="d-flex justify-content-end gap-2 mt-3">
-          <button type="button" class="btn btn-outline-secondary" (click)="backToList()">
-            {{ 'button.cancel' | translate }}
-          </button>
-          <button type="submit" class="btn btn-primary" data-testid="btn-save">
-            {{ 'button.save' | translate }}
-          </button>
-        </div>
-      </form>
-    </div>
+      <div class="d-flex justify-content-end gap-2 mt-2">
+        <button type="button" class="btn btn-outline-secondary btn-sm" (click)="backToList()">
+          {{ 'button.cancel' | translate }}
+        </button>
+        <button type="submit" class="btn btn-primary btn-sm" data-testid="btn-save">
+          {{ 'button.save' | translate }}
+        </button>
+      </div>
+    </form>
   </div>
 }
 

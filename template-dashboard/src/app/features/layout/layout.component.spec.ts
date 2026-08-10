@@ -285,15 +285,15 @@ describe('LayoutComponent', () => {
   });
 
   it('should define the complete navigation structure', () => {
-    expect(component.navItems.length).toBe(4); // Dashboard, Reports, Interfaces, Administration
-    expect(component.navItems[0].labelKey).toBe('menu.dashboard');
-    expect(component.navItems[1].labelKey).toBe('menu.reports');
-    expect(component.navItems[2].labelKey).toBe('menu.interfaces');
-    expect(component.navItems[3].labelKey).toBe('menu.administration');
+    expect(component.computedNavItems().length).toBe(4); // Dashboard, Reports, Interfaces, Administration
+    expect(component.computedNavItems()[0].labelKey).toBe('menu.dashboard');
+    expect(component.computedNavItems()[1].labelKey).toBe('menu.reports');
+    expect(component.computedNavItems()[2].labelKey).toBe('menu.interfaces');
+    expect(component.computedNavItems()[3].labelKey).toBe('menu.administration');
   });
 
   it('should have correct navigation hierarchy for Administration', () => {
-    const admin = component.navItems[3];
+    const admin = component.computedNavItems()[3];
     expect(admin.children?.length).toBe(4); // Security, Parameters, Audit, Cluster
 
     const security = admin.children![0];

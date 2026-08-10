@@ -106,7 +106,7 @@ describe('LayoutComponent - Property 6: Navigation visibility matches user actio
         const component = createComponent(userActions);
         const userActionSet = new Set(userActions);
 
-        for (const item of component.navItems) {
+        for (const item of component.computedNavItems()) {
           const actual = component.isItemVisible(item);
           const expected = expectedVisibility(item, userActionSet);
           expect(
@@ -125,7 +125,7 @@ describe('LayoutComponent - Property 6: Navigation visibility matches user actio
         const component = createComponent(userActions);
         const userActionSet = new Set(userActions);
 
-        for (const item of component.navItems) {
+        for (const item of component.computedNavItems()) {
           if (item.children && !component.isItemVisible(item)) {
             for (const child of item.children) {
               // Parent NOT visible means parent.actions has no intersection with user actions.
@@ -155,7 +155,7 @@ describe('LayoutComponent - Property 6: Navigation visibility matches user actio
         const component = createComponent(userActions);
         const userActionSet = new Set(userActions);
 
-        for (const item of component.navItems) {
+        for (const item of component.computedNavItems()) {
           if (item.children && item.children.length > 0) {
             const anyChildActionPresent = item.children.some(
               (child) => child.actions?.some((a) => userActionSet.has(a)) ?? true,
@@ -178,7 +178,7 @@ describe('LayoutComponent - Property 6: Navigation visibility matches user actio
   it('should hide all items when user has no actions', () => {
     const component = createComponent([]);
 
-    for (const item of component.navItems) {
+    for (const item of component.computedNavItems()) {
       expect(
         component.isItemVisible(item),
         `Item "${item.labelKey}" should be hidden when user has no actions`,
@@ -189,7 +189,7 @@ describe('LayoutComponent - Property 6: Navigation visibility matches user actio
   it('should show all items when user has all actions', () => {
     const component = createComponent([...ALL_ACTIONS]);
 
-    for (const item of component.navItems) {
+    for (const item of component.computedNavItems()) {
       expect(
         component.isItemVisible(item),
         `Item "${item.labelKey}" should be visible when user has all actions`,
@@ -203,7 +203,7 @@ describe('LayoutComponent - Property 6: Navigation visibility matches user actio
         const component = createComponent([singleAction]);
         const userActionSet = new Set([singleAction]);
 
-        for (const item of component.navItems) {
+        for (const item of component.computedNavItems()) {
           const actual = component.isItemVisible(item);
           const expected = expectedVisibility(item, userActionSet);
           expect(
