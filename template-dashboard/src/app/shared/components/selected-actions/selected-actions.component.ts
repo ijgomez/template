@@ -198,13 +198,20 @@ export class TpSelectedActionsComponent implements ControlValueAccessor, OnInit 
   // ─── Lifecycle ─────────────────────────────────────────────
 
   ngOnInit(): void {
-    this.loadAllActions();
+    // Load actions if not already triggered by writeValue
+    if (this.allActions().length === 0 && !this.loading()) {
+      this.loadAllActions();
+    }
   }
 
   // ─── ControlValueAccessor ──────────────────────────────────
 
   writeValue(value: number[] | null): void {
     this.selectedIds.set(value ?? []);
+    // Ensure actions are loaded to resolve IDs to Action objects
+    if (this.allActions().length === 0 && (value ?? []).length > 0) {
+      this.loadAllActions();
+    }
   }
 
   registerOnChange(fn: (value: number[]) => void): void {
@@ -356,6 +363,9 @@ export class TpSelectedActionsComponent implements ControlValueAccessor, OnInit 
    * Loads all available actions from the backend.
    */
   private loadAllActions(): void {
+    if (this.loading()) {
+      return; // Already loading
+    }
     this.loading.set(true);
     this.profileService.findAllActions().subscribe({
       next: (page) => {
