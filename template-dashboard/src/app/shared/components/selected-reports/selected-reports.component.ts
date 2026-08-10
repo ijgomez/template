@@ -13,13 +13,14 @@ import { FormsModule, NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/f
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { Report } from '../../../core/models/report.model';
+import { Page } from '../../../core/models/page.model';
 import { ReportService } from '../../../core/services/report.service';
 
 /**
  * Reusable ControlValueAccessor component that manages a list of selected reports.
  *
  * - Displays the currently selected reports with filter and remove button
- * - Opens a paginated modal with checkboxes to add/remove reports
+ * - Opens a paginated modal with server-side search to add/remove reports
  * - Writes the selected report IDs (number[]) as form value
  *
  * Usage:
@@ -70,8 +71,8 @@ export class TpSelectedReportsComponent implements ControlValueAccessor, OnInit 
 
   // ─── Internal State ────────────────────────────────────────
 
-  /** All available reports loaded from backend. */
-  readonly availableReports = signal<Report[]>([]);
+  /** Cache of reports loaded (for resolving selected IDs to names). */
+  readonly reportsCache = signal<Map<number, Report>>(new Map());
 
   /** IDs of selected reports (form model value). */
   readonly selectedIds = signal<number[]>([]);
@@ -82,7 +83,7 @@ export class TpSelectedReportsComponent implements ControlValueAccessor, OnInit 
   /** Whether the component is disabled. */
   readonly disabled = signal(false);
 
-  /** Whether available reports are being loaded. */
+  /** Whether selected reports are being loaded. */
   readonly loading = signal(false);
 
   // ─── Modal State ───────────────────────────────────────────
@@ -99,16 +100,25 @@ export class TpSelectedReportsComponent implements ControlValueAccessor, OnInit 
   /** Page size in the modal. */
   readonly modalPageSize = signal(5);
 
+  /** Reports on the current modal page (from backend). */
+  readonly modalReports = signal<Report[]>([]);
+
+  /** Total elements in the backend (for pagination). */
+  readonly modalTotalElements = signal(0);
+
+  /** Whether the modal is loading data. */
+  readonly modalLoading = signal(false);
+
   /** Temporary selection state within the modal (IDs). */
   readonly modalSelectedIds = signal<number[]>([]);
 
   // ─── Computed: Selected List ───────────────────────────────
 
-  /** Selected reports resolved from IDs and available list. */
+  /** Selected reports resolved from IDs and cache. */
   readonly selectedReports = computed(() => {
     const ids = this.selectedIds();
-    const all = this.availableReports();
-    return all.filter(r => ids.includes(r.id));
+    const cache = this.reportsCache();
+    return ids.map(id => cache.get(id)).filter((r): r is Report => r != null);
   });
 
   /** Filtered selected reports based on the filter text. */
@@ -126,27 +136,8 @@ export class TpSelectedReportsComponent implements ControlValueAccessor, OnInit 
 
   // ─── Computed: Modal ───────────────────────────────────────
 
-  /** All reports filtered by modal search. */
-  readonly modalFilteredReports = computed(() => {
-    const search = this.modalSearch().toLowerCase().trim();
-    const all = this.availableReports();
-    if (!search) {
-      return all;
-    }
-    return all.filter(r => r.name.toLowerCase().includes(search));
-  });
-
-  /** Total elements in modal (after search filter). */
-  readonly modalTotalElements = computed(() => this.modalFilteredReports().length);
-
   /** Total pages in modal. */
   readonly modalTotalPages = computed(() => Math.ceil(this.modalTotalElements() / this.modalPageSize()) || 1);
-
-  /** Current page of reports in modal. */
-  readonly modalPaginatedReports = computed(() => {
-    const start = this.modalPage() * this.modalPageSize();
-    return this.modalFilteredReports().slice(start, start + this.modalPageSize());
-  });
 
   /** Showing from index. */
   readonly modalShowingFrom = computed(() =>
@@ -161,7 +152,7 @@ export class TpSelectedReportsComponent implements ControlValueAccessor, OnInit 
   /** Number of reports selected in modal. */
   readonly modalSelectedCount = computed(() => this.modalSelectedIds().length);
 
-  /** Page numbers for pagination (max 5 visible). */
+  /** Visible page numbers (max 5). */
   readonly modalVisiblePages = computed(() => {
     const total = this.modalTotalPages();
     const current = this.modalPage();
@@ -178,7 +169,7 @@ export class TpSelectedReportsComponent implements ControlValueAccessor, OnInit 
 
   /** Whether all reports on the current page are selected. */
   get allPageReportsSelected(): boolean {
-    const currentPage = this.modalPaginatedReports();
+    const currentPage = this.modalReports();
     return currentPage.length > 0 && currentPage.every(r => this.modalSelectedIds().includes(r.id));
   }
 
@@ -190,13 +181,14 @@ export class TpSelectedReportsComponent implements ControlValueAccessor, OnInit 
   // ─── Lifecycle ─────────────────────────────────────────────
 
   ngOnInit(): void {
-    this.loadAvailableReports();
+    this.loadSelectedReports();
   }
 
   // ─── ControlValueAccessor ──────────────────────────────────
 
   writeValue(value: number[] | null): void {
     this.selectedIds.set(value ?? []);
+    this.loadSelectedReports();
   }
 
   registerOnChange(fn: (value: number[]) => void): void {
@@ -233,7 +225,7 @@ export class TpSelectedReportsComponent implements ControlValueAccessor, OnInit 
   // ─── Modal Actions ─────────────────────────────────────────
 
   /**
-   * Opens the selection modal.
+   * Opens the selection modal and loads the first page.
    */
   openModal(): void {
     if (this.disabled()) {
@@ -243,6 +235,7 @@ export class TpSelectedReportsComponent implements ControlValueAccessor, OnInit 
     this.modalSearch.set('');
     this.modalPage.set(0);
     this.modalOpen.set(true);
+    this.loadModalPage();
     this.onTouched();
   }
 
@@ -261,6 +254,7 @@ export class TpSelectedReportsComponent implements ControlValueAccessor, OnInit 
     this.selectedIds.set(selected);
     this.onChange(selected);
     this.modalOpen.set(false);
+    this.loadSelectedReports();
   }
 
   /**
@@ -286,7 +280,7 @@ export class TpSelectedReportsComponent implements ControlValueAccessor, OnInit 
    * Toggles all reports on the current page.
    */
   toggleAllModalReports(): void {
-    const currentPage = this.modalPaginatedReports();
+    const currentPage = this.modalReports();
     const allSelected = currentPage.every(r => this.modalSelectedIds().includes(r.id));
     if (allSelected) {
       this.modalSelectedIds.update(ids => ids.filter(id => !currentPage.some(r => r.id === id)));
@@ -300,29 +294,88 @@ export class TpSelectedReportsComponent implements ControlValueAccessor, OnInit 
   }
 
   /**
-   * Navigates to a page in the modal.
+   * Navigates to a page in the modal (triggers server-side fetch).
    */
   modalGoToPage(page: number): void {
     if (page >= 0 && page < this.modalTotalPages()) {
       this.modalPage.set(page);
+      this.loadModalPage();
     }
+  }
+
+  /**
+   * Handles search text change in the modal (resets to page 0).
+   */
+  onModalSearchChange(value: string): void {
+    this.modalSearch.set(value);
+    this.modalPage.set(0);
+    this.loadModalPage();
+  }
+
+  /**
+   * Handles page size change in the modal.
+   */
+  onModalPageSizeChange(size: number): void {
+    this.modalPageSize.set(size);
+    this.modalPage.set(0);
+    this.loadModalPage();
   }
 
   // ─── Private ───────────────────────────────────────────────
 
   /**
-   * Loads all available reports from the backend.
+   * Loads a page of reports from the backend for the modal.
    */
-  private loadAvailableReports(): void {
+  private loadModalPage(): void {
+    this.modalLoading.set(true);
+    this.reportService.search(this.modalSearch(), this.modalPage(), this.modalPageSize()).subscribe({
+      next: (page) => {
+        this.modalReports.set(page.content);
+        this.modalTotalElements.set(page.page.totalElements);
+        this.updateCache(page.content);
+        this.modalLoading.set(false);
+      },
+      error: () => {
+        this.modalLoading.set(false);
+      },
+    });
+  }
+
+  /**
+   * Loads the reports that are currently selected (to resolve names for the list).
+   * Uses findAll to populate the cache for all selected IDs.
+   */
+  private loadSelectedReports(): void {
+    const ids = this.selectedIds();
+    if (ids.length === 0) {
+      return;
+    }
+    // Check if all IDs are already cached
+    const cache = this.reportsCache();
+    const uncached = ids.filter(id => !cache.has(id));
+    if (uncached.length === 0) {
+      return;
+    }
     this.loading.set(true);
     this.reportService.findAll().subscribe({
       next: (reports) => {
-        this.availableReports.set(reports);
+        this.updateCache(reports);
         this.loading.set(false);
       },
       error: () => {
         this.loading.set(false);
       },
+    });
+  }
+
+  /**
+   * Updates the internal cache with new report data.
+   */
+  private updateCache(reports: Report[]): void {
+    this.reportsCache.update(cache => {
+      const newCache = new Map(cache);
+      reports.forEach(r => newCache.set(r.id, r));
+      return newCache;
     });
   }
 }

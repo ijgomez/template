@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { Report, ReportFilter, ReportResult, ExportFormat } from '../models/report.model';
+import { Page } from '../models/page.model';
 
 /**
  * Service for report operations: list user reports, get filters, execute, and export.
@@ -25,6 +26,21 @@ export class ReportService {
    */
   findAll(): Observable<Report[]> {
     return this.http.get<Report[]>(`${this.baseUrl}/all`);
+  }
+
+  /**
+   * Searches reports with server-side pagination and optional name filter.
+   */
+  search(name: string, page: number, size: number): Observable<Page<Report>> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+
+    if (name) {
+      params = params.set('name', name);
+    }
+
+    return this.http.get<Page<Report>>(`${this.baseUrl}/search`, { params });
   }
 
   /**

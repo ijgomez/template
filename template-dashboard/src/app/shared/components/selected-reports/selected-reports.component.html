@@ -107,7 +107,7 @@
                      [placeholder]="'selected-reports.modal.search' | translate"
                      [attr.aria-label]="'selected-reports.modal.search' | translate"
                      [ngModel]="modalSearch()"
-                     (ngModelChange)="modalSearch.set($event); modalPage.set(0)"
+                     (ngModelChange)="onModalSearchChange($event)"
                      name="modalReportSearch"
                      [attr.data-testid]="testId + '-modal-search'">
             </div>
@@ -128,14 +128,14 @@
                 </tr>
               </thead>
               <tbody>
-                @if (modalPaginatedReports().length === 0) {
+                @if (modalReports().length === 0) {
                   <tr>
                     <td colspan="3" class="text-center py-3 text-muted">
                       {{ 'selected-reports.modal.noData' | translate }}
                     </td>
                   </tr>
                 } @else {
-                  @for (report of modalPaginatedReports(); track report.id) {
+                  @for (report of modalReports(); track report.id) {
                     <tr [class.table-active]="isModalReportSelected(report.id)"
                         (click)="toggleModalReport(report.id)"
                         style="cursor: pointer;"
@@ -200,7 +200,7 @@
                 </label>
                 <select class="form-select form-select-sm" style="width: auto;"
                         [ngModel]="modalPageSize()"
-                        (ngModelChange)="modalPageSize.set($event); modalPage.set(0)"
+                        (ngModelChange)="onModalPageSizeChange($event)"
                         name="modalPageSize"
                         [attr.aria-label]="'common.pagination.pageSize' | translate"
                         [attr.data-testid]="testId + '-modal-page-size'">

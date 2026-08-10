@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -65,6 +66,22 @@ public class ReportController {
     public ResponseEntity<List<ReportDTO>> findAll() {
         List<ReportDTO> reports = reportService.findAll();
         return ResponseEntity.ok(reports);
+    }
+
+    /**
+     * Lists all reports with server-side pagination and optional name filter.
+     * Used by selection modals that need paginated results.
+     *
+     * @param name     optional partial name filter
+     * @param pageable pagination parameters (page, size, sort)
+     * @return 200 OK with paginated report results
+     */
+    @GetMapping("/search")
+    public ResponseEntity<Page<ReportDTO>> search(
+            @RequestParam(required = false) String name,
+            Pageable pageable) {
+        Page<ReportDTO> page = reportService.findAll(name, pageable);
+        return ResponseEntity.ok(page);
     }
 
     /**

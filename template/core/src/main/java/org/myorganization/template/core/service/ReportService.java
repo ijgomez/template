@@ -70,6 +70,23 @@ public class ReportService {
     }
 
     /**
+     * Lists all reports with pagination and optional name filter.
+     *
+     * @param name     optional partial name filter (case-insensitive)
+     * @param pageable pagination parameters
+     * @return paginated results
+     */
+    public Page<ReportDTO> findAll(String name, Pageable pageable) {
+        Page<Report> page;
+        if (name != null && !name.isBlank()) {
+            page = reportRepository.findByNameContainingIgnoreCase(name.trim(), pageable);
+        } else {
+            page = reportRepository.findAll(pageable);
+        }
+        return page.map(this::toDTO);
+    }
+
+    /**
      * Returns the filter definitions for a given report.
      * <p>
      * This is a placeholder implementation that returns an empty list.
