@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { EMPTY, of, Subject, throwError } from 'rxjs';
 
 import { AuthService } from '../services/auth.service';
-import { TokenResponse, User } from '../models/auth.model';
+import { AccessTokenResponse, User } from '../models/auth.model';
 import { authInterceptor, resetRefreshState } from './auth.interceptor';
 import { environment } from '../../../environments/environment';
 
@@ -134,9 +134,8 @@ describe('authInterceptor', () => {
       authServiceMock.getAccessToken.mockReturnValue('expiring-token');
       authServiceMock.getCurrentUser.mockReturnValue(createUser(30));
 
-      const newTokenResponse: TokenResponse = {
+      const newTokenResponse: AccessTokenResponse = {
         accessToken: 'new-token',
-        refreshToken: 'new-refresh',
       };
       authServiceMock.refreshToken.mockReturnValue(of(newTokenResponse));
 
@@ -166,9 +165,8 @@ describe('authInterceptor', () => {
       authServiceMock.getAccessToken.mockReturnValue('expired-token');
       authServiceMock.getCurrentUser.mockReturnValue(createUser(3600));
 
-      const newTokenResponse: TokenResponse = {
+      const newTokenResponse: AccessTokenResponse = {
         accessToken: 'refreshed-token',
-        refreshToken: 'new-refresh',
       };
       authServiceMock.refreshToken.mockReturnValue(of(newTokenResponse));
 
@@ -281,7 +279,7 @@ describe('authInterceptor', () => {
       authServiceMock.getAccessToken.mockReturnValue('expiring-token');
       authServiceMock.getCurrentUser.mockReturnValue(createUser(30));
 
-      const refreshSubject = new Subject<TokenResponse>();
+      const refreshSubject = new Subject<AccessTokenResponse>();
       authServiceMock.refreshToken.mockReturnValue(refreshSubject.asObservable());
 
       // First request triggers refresh
@@ -291,7 +289,7 @@ describe('authInterceptor', () => {
       httpClient.get(`${apiUrl}/administration/security/profiles`).subscribe();
 
       // Complete the refresh
-      refreshSubject.next({ accessToken: 'new-token', refreshToken: 'new-refresh' });
+      refreshSubject.next({ accessToken: 'new-token' });
       refreshSubject.complete();
 
       // Both requests should now be sent with new token

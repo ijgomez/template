@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20250121-create-refresh-token-table" author="template" labels="v1.0.0">
+
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="refresh_token"/>
+            </not>
+        </preConditions>
+
+        <comment>Creación de la tabla de refresh tokens para persistencia de sesiones</comment>
+
+        <createTable tableName="refresh_token">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="token" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="expires_at" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="revoked" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createSequence sequenceName="refresh_token_seq" startValue="1" incrementBy="50"/>
+
+        <addForeignKeyConstraint baseTableName="refresh_token" baseColumnNames="user_id"
+                                 referencedTableName="users" referencedColumnNames="id"
+                                 constraintName="refresh_token_user_id_FK"/>
+
+        <createIndex tableName="refresh_token" indexName="refresh_token_token_IDX">
+            <column name="token"/>
+        </createIndex>
+
+        <createIndex tableName="refresh_token" indexName="refresh_token_user_id_IDX">
+            <column name="user_id"/>
+        </createIndex>
+
+        <rollback>
+            <dropSequence sequenceName="refresh_token_seq"/>
+            <dropTable tableName="refresh_token"/>
+        </rollback>
+
+    </changeSet>
+
+</databaseChangeLog>

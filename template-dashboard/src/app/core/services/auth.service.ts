@@ -1,13 +1,20 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { Observable, of, tap, catchError, map } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { LoginRequest, TokenResponse, User } from '../models/auth.model';
+import { AccessTokenResponse, LoginRequest, User } from '../models/auth.model';
 
 /**
  * Service responsible for authentication and token management.
- * Tokens are stored in memory (private fields) for security — not localStorage.
+ *
+ * Security model:
+ * - Access token: stored in memory only (private field) — never in localStorage/sessionStorage.
+ * - Refresh token: managed entirely by the browser as an HttpOnly cookie — never accessible to JS.
+ *
+ * Session recovery:
+ * On application startup, `tryRestoreSession()` attempts a silent refresh via the cookie.
+ * If the cookie is valid, a new access token is obtained without user interaction.
  */
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -15,38 +22,70 @@ export class AuthService {
   private readonly authUrl = `${environment.apiUrl}/auth`;
 
   private accessToken: string | null = null;
-  private refreshTokenValue: string | null = null;
   private currentUser: User | null = null;
+  private sessionRestored = false;
 
   /**
    * Authenticates the user with credentials.
-   * Stores tokens in memory and decodes the JWT payload.
+   * The access token is stored in memory; the refresh token is set as a cookie by the server.
    */
-  login(credentials: LoginRequest): Observable<TokenResponse> {
-    return this.http.post<TokenResponse>(`${this.authUrl}/login`, credentials).pipe(
-      tap((response) => this.storeTokens(response)),
-    );
+  login(credentials: LoginRequest): Observable<AccessTokenResponse> {
+    return this.http
+      .post<AccessTokenResponse>(`${this.authUrl}/login`, credentials, { withCredentials: true })
+      .pipe(tap((response) => this.storeAccessToken(response.accessToken)));
   }
 
   /**
    * Logs out the user by invalidating the refresh token on the server
-   * and clearing local token state.
+   * (which also clears the cookie) and clearing local token state.
    */
   logout(): Observable<void> {
-    const body = { refreshToken: this.refreshTokenValue };
-    return this.http.post<void>(`${this.authUrl}/logout`, body).pipe(
+    return this.http.post<void>(`${this.authUrl}/logout`, null, { withCredentials: true }).pipe(
       tap(() => this.clearTokens()),
+      catchError(() => {
+        this.clearTokens();
+        return of(undefined);
+      }),
     );
   }
 
   /**
-   * Refreshes the access token using the stored refresh token.
+   * Refreshes the access token using the HttpOnly cookie (sent automatically by the browser).
+   * No request body is needed — the server reads the refresh token from the cookie.
    */
-  refreshToken(): Observable<TokenResponse> {
-    const body = { refreshToken: this.refreshTokenValue };
-    return this.http.post<TokenResponse>(`${this.authUrl}/refresh`, body).pipe(
-      tap((response) => this.storeTokens(response)),
-    );
+  refreshToken(): Observable<AccessTokenResponse> {
+    return this.http
+      .post<AccessTokenResponse>(`${this.authUrl}/refresh`, null, { withCredentials: true })
+      .pipe(tap((response) => this.storeAccessToken(response.accessToken)));
+  }
+
+  /**
+   * Attempts to restore a session on application startup.
+   * Calls the refresh endpoint; if the cookie exists and is valid, obtains a new access token.
+   * Returns true if the session was recovered, false otherwise.
+   */
+  tryRestoreSession(): Observable<boolean> {
+    return this.http
+      .post<AccessTokenResponse>(`${this.authUrl}/refresh`, null, { withCredentials: true })
+      .pipe(
+        tap((response) => this.storeAccessToken(response.accessToken)),
+        map(() => {
+          this.sessionRestored = true;
+          return true;
+        }),
+        catchError(() => {
+          this.sessionRestored = true;
+          return of(false);
+        }),
+      );
+  }
+
+  /**
+   * Returns whether the session restore attempt has completed.
+   * Used by guards to avoid premature redirect to login.
+   */
+  isSessionRestored(): boolean {
+    return this.sessionRestored;
   }
 
   /**
@@ -85,12 +124,11 @@ export class AuthService {
   }
 
   /**
-   * Stores tokens in memory and decodes the access token payload.
+   * Stores access token in memory and decodes the JWT payload.
    */
-  private storeTokens(response: TokenResponse): void {
-    this.accessToken = response.accessToken;
-    this.refreshTokenValue = response.refreshToken;
-    this.currentUser = this.decodeJwtPayload(response.accessToken);
+  private storeAccessToken(token: string): void {
+    this.accessToken = token;
+    this.currentUser = this.decodeJwtPayload(token);
   }
 
   /**
@@ -98,7 +136,6 @@ export class AuthService {
    */
   private clearTokens(): void {
     this.accessToken = null;
-    this.refreshTokenValue = null;
     this.currentUser = null;
   }
 

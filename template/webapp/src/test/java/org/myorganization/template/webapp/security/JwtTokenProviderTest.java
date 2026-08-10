@@ -14,13 +14,12 @@ class JwtTokenProviderTest {
 
     private static final String SECRET = "test-secret-key-that-is-at-least-32-characters-long";
     private static final long ACCESS_TOKEN_EXPIRATION = 900_000L;
-    private static final long REFRESH_TOKEN_EXPIRATION = 604_800_000L;
 
     private JwtTokenProvider jwtTokenProvider;
 
     @BeforeEach
     void setUp() {
-        jwtTokenProvider = new JwtTokenProvider(SECRET, ACCESS_TOKEN_EXPIRATION, REFRESH_TOKEN_EXPIRATION);
+        jwtTokenProvider = new JwtTokenProvider(SECRET, ACCESS_TOKEN_EXPIRATION);
     }
 
     @Test
@@ -42,26 +41,16 @@ class JwtTokenProviderTest {
     }
 
     @Test
-    void generateRefreshToken_shouldReturnValidToken() {
-        String token = jwtTokenProvider.generateRefreshToken("admin");
-
-        assertThat(token).isNotBlank();
-        assertThat(jwtTokenProvider.validateToken(token)).isTrue();
-    }
-
-    @Test
-    void generateRefreshToken_shouldContainUsernameOnly() {
-        String token = jwtTokenProvider.generateRefreshToken("testuser");
-
-        assertThat(jwtTokenProvider.extractUsername(token)).isEqualTo("testuser");
-        assertThat(jwtTokenProvider.isRefreshToken(token)).isTrue();
-    }
-
-    @Test
     void isRefreshToken_shouldReturnFalseForAccessToken() {
         String token = jwtTokenProvider.generateAccessToken("admin", "Admin", List.of("USER_READ"));
 
         assertThat(jwtTokenProvider.isRefreshToken(token)).isFalse();
+    }
+
+    @Test
+    void isRefreshToken_shouldReturnFalseForOpaqueToken() {
+        // Opaque tokens (UUIDs) are not valid JWTs, so isRefreshToken should return false
+        assertThat(jwtTokenProvider.isRefreshToken("550e8400-e29b-41d4-a716-446655440000")).isFalse();
     }
 
     @Test
@@ -73,8 +62,7 @@ class JwtTokenProviderTest {
     void validateToken_shouldReturnFalseForTokenWithWrongSignature() {
         JwtTokenProvider otherProvider = new JwtTokenProvider(
                 "another-secret-key-that-is-at-least-32-characters-long",
-                ACCESS_TOKEN_EXPIRATION,
-                REFRESH_TOKEN_EXPIRATION);
+                ACCESS_TOKEN_EXPIRATION);
 
         String token = otherProvider.generateAccessToken("admin", "Admin", List.of("USER_READ"));
 
@@ -83,7 +71,7 @@ class JwtTokenProviderTest {
 
     @Test
     void validateToken_shouldReturnFalseForExpiredToken() {
-        JwtTokenProvider shortLivedProvider = new JwtTokenProvider(SECRET, 0L, 0L);
+        JwtTokenProvider shortLivedProvider = new JwtTokenProvider(SECRET, 0L);
 
         String token = shortLivedProvider.generateAccessToken("admin", "Admin", List.of("USER_READ"));
 

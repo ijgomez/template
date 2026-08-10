@@ -69,6 +69,9 @@ function addAuthHeader(req: HttpRequest<unknown>, token: string): HttpRequest<un
  * - Proactively refreshes token when near expiry
  * - Queues concurrent requests during a refresh cycle
  * - Handles error responses: 401, 403, 4xx, 5xx, network errors
+ *
+ * The refresh token is sent automatically by the browser as an HttpOnly cookie
+ * (withCredentials: true is set by the AuthService on auth endpoints).
  */
 export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn) => {
   const authService = inject(AuthService);

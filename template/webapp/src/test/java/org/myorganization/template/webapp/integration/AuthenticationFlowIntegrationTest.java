@@ -16,6 +16,8 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import jakarta.servlet.http.Cookie;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -24,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Integration test for the full authentication flow.
  *
- * <p>Tests: login, token issuance, protected access, refresh, logout
+ * <p>Tests: login, token issuance via cookie, protected access, refresh via cookie, logout
  * using a real PostgreSQL database via Testcontainers.</p>
  *
  * <p>Also verifies that Liquibase migrations apply successfully on startup.</p>
@@ -51,13 +53,18 @@ class AuthenticationFlowIntegrationTest {
         registry.add("spring.liquibase.enabled", () -> "true");
         registry.add("spring.liquibase.change-log", () -> "classpath:db/changelog/db.changelog-test.xml");
         registry.add("spring.liquibase.contexts", () -> "test");
+        registry.add("auth.cookie.name", () -> "refresh-token");
+        registry.add("auth.cookie.path", () -> "/template/api/v1/auth");
+        registry.add("auth.cookie.max-age-seconds", () -> "604800");
+        registry.add("auth.cookie.secure", () -> "false");
+        registry.add("auth.cookie.same-site", () -> "Lax");
     }
 
     @Autowired
     private MockMvc mockMvc;
 
     private static String accessToken;
-    private static String refreshToken;
+    private static Cookie refreshTokenCookie;
 
     @Test
     @Order(1)
@@ -77,12 +84,15 @@ class AuthenticationFlowIntegrationTest {
                         .content(loginBody))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accessToken").isNotEmpty())
-                .andExpect(jsonPath("$.refreshToken").isNotEmpty())
                 .andReturn();
 
         String response = result.getResponse().getContentAsString();
         accessToken = extractJsonField(response, "accessToken");
-        refreshToken = extractJsonField(response, "refreshToken");
+
+        // Refresh token should be in a Set-Cookie header, not in the body
+        refreshTokenCookie = result.getResponse().getCookie("refresh-token");
+        assert refreshTokenCookie != null : "refresh-token cookie should be set";
+        assert refreshTokenCookie.isHttpOnly() : "cookie should be HttpOnly";
     }
 
     @Test
@@ -103,40 +113,37 @@ class AuthenticationFlowIntegrationTest {
     @Test
     @Order(5)
     void refreshToken_returnsNewTokenPair() throws Exception {
-        String refreshBody = String.format("""
-                {"refreshToken": "%s"}
-                """, refreshToken);
-
         MvcResult result = mockMvc.perform(post("/api/v1/auth/refresh")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(refreshBody))
+                        .cookie(refreshTokenCookie))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accessToken").isNotEmpty())
-                .andExpect(jsonPath("$.refreshToken").isNotEmpty())
                 .andReturn();
 
         String response = result.getResponse().getContentAsString();
         accessToken = extractJsonField(response, "accessToken");
-        refreshToken = extractJsonField(response, "refreshToken");
+
+        // A rotated cookie should be set
+        refreshTokenCookie = result.getResponse().getCookie("refresh-token");
+        assert refreshTokenCookie != null : "rotated refresh-token cookie should be set";
     }
 
     @Test
     @Order(6)
-    void logout_invalidatesRefreshToken() throws Exception {
-        String logoutBody = String.format("""
-                {"refreshToken": "%s"}
-                """, refreshToken);
+    void refreshWithNoCookie_returns401() throws Exception {
+        mockMvc.perform(post("/api/v1/auth/refresh"))
+                .andExpect(status().isUnauthorized());
+    }
 
+    @Test
+    @Order(7)
+    void logout_invalidatesRefreshToken() throws Exception {
         mockMvc.perform(post("/api/v1/auth/logout")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(logoutBody)
-                        .header("Authorization", "Bearer " + accessToken))
+                        .cookie(refreshTokenCookie))
                 .andExpect(status().isOk());
 
         // Attempt to refresh with the invalidated token should fail
         mockMvc.perform(post("/api/v1/auth/refresh")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(logoutBody))
+                        .cookie(refreshTokenCookie))
                 .andExpect(status().isUnauthorized());
     }
 

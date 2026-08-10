@@ -82,7 +82,7 @@ class AuthorizationEnforcementProperties {
             "/api/v1/reports", Set.of("REPORT_EXECUTE")
     );
 
-    private final JwtTokenProvider tokenProvider = new JwtTokenProvider(JWT_SECRET, 900000L, 604800000L);
+    private final JwtTokenProvider tokenProvider = new JwtTokenProvider(JWT_SECRET, 900000L);
     private final JwtAuthenticationFilter jwtFilter = new JwtAuthenticationFilter(tokenProvider);
 
     /**

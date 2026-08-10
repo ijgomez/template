@@ -35,7 +35,7 @@ class JwtTokenProviderProperties {
     );
 
     private final JwtTokenProvider jwtTokenProvider =
-            new JwtTokenProvider(SECRET, ACCESS_TOKEN_EXPIRATION, REFRESH_TOKEN_EXPIRATION);
+            new JwtTokenProvider(SECRET, ACCESS_TOKEN_EXPIRATION);
 
     /**
      * Property 4: JWT payload contains user authorization data.

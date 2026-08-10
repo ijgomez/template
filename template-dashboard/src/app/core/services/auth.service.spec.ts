@@ -3,7 +3,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { provideHttpClient } from '@angular/common/http';
 
 import { AuthService } from './auth.service';
-import { LoginRequest, TokenResponse } from '../models/auth.model';
+import { AccessTokenResponse, LoginRequest } from '../models/auth.model';
 import { environment } from '../../../environments/environment';
 
 /**
@@ -31,9 +31,8 @@ describe('AuthService', () => {
     iat: Math.floor(Date.now() / 1000),
   };
 
-  const mockTokenResponse: TokenResponse = {
+  const mockAccessTokenResponse: AccessTokenResponse = {
     accessToken: createFakeJwt(mockPayload),
-    refreshToken: 'mock-refresh-token',
   };
 
   beforeEach(() => {
@@ -49,19 +48,20 @@ describe('AuthService', () => {
   });
 
   describe('login', () => {
-    it('should call POST /auth/login and store tokens', () => {
+    it('should call POST /auth/login with withCredentials and store access token', () => {
       const credentials: LoginRequest = { username: 'admin', password: 'secret' };
 
       service.login(credentials).subscribe((response) => {
-        expect(response).toEqual(mockTokenResponse);
+        expect(response).toEqual(mockAccessTokenResponse);
       });
 
       const req = httpMock.expectOne(`${authUrl}/login`);
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual(credentials);
-      req.flush(mockTokenResponse);
+      expect(req.request.withCredentials).toBe(true);
+      req.flush(mockAccessTokenResponse);
 
-      expect(service.getAccessToken()).toBe(mockTokenResponse.accessToken);
+      expect(service.getAccessToken()).toBe(mockAccessTokenResponse.accessToken);
       expect(service.isAuthenticated()).toBe(true);
     });
 
@@ -71,7 +71,7 @@ describe('AuthService', () => {
       service.login(credentials).subscribe();
 
       const req = httpMock.expectOne(`${authUrl}/login`);
-      req.flush(mockTokenResponse);
+      req.flush(mockAccessTokenResponse);
 
       const user = service.getCurrentUser();
       expect(user).not.toBeNull();
@@ -82,46 +82,118 @@ describe('AuthService', () => {
   });
 
   describe('logout', () => {
-    it('should call POST /auth/logout and clear tokens', () => {
+    it('should call POST /auth/logout with withCredentials and clear tokens', () => {
       // First login
       service.login({ username: 'admin', password: 'secret' }).subscribe();
-      httpMock.expectOne(`${authUrl}/login`).flush(mockTokenResponse);
+      httpMock.expectOne(`${authUrl}/login`).flush(mockAccessTokenResponse);
 
       // Then logout
       service.logout().subscribe();
       const req = httpMock.expectOne(`${authUrl}/logout`);
       expect(req.request.method).toBe('POST');
-      expect(req.request.body).toEqual({ refreshToken: 'mock-refresh-token' });
+      expect(req.request.body).toBeNull();
+      expect(req.request.withCredentials).toBe(true);
       req.flush(null);
 
       expect(service.getAccessToken()).toBeNull();
       expect(service.getCurrentUser()).toBeNull();
       expect(service.isAuthenticated()).toBe(false);
     });
+
+    it('should clear tokens even if logout request fails', () => {
+      // First login
+      service.login({ username: 'admin', password: 'secret' }).subscribe();
+      httpMock.expectOne(`${authUrl}/login`).flush(mockAccessTokenResponse);
+
+      // Logout fails
+      service.logout().subscribe();
+      const req = httpMock.expectOne(`${authUrl}/logout`);
+      req.flush(null, { status: 500, statusText: 'Server Error' });
+
+      expect(service.getAccessToken()).toBeNull();
+      expect(service.isAuthenticated()).toBe(false);
+    });
   });
 
   describe('refreshToken', () => {
-    it('should call POST /auth/refresh and update tokens', () => {
+    it('should call POST /auth/refresh with withCredentials and no body', () => {
       // First login
       service.login({ username: 'admin', password: 'secret' }).subscribe();
-      httpMock.expectOne(`${authUrl}/login`).flush(mockTokenResponse);
+      httpMock.expectOne(`${authUrl}/login`).flush(mockAccessTokenResponse);
 
       const newPayload = { ...mockPayload, exp: mockPayload.exp + 3600 };
-      const newTokenResponse: TokenResponse = {
+      const newResponse: AccessTokenResponse = {
         accessToken: createFakeJwt(newPayload),
-        refreshToken: 'new-refresh-token',
       };
 
       service.refreshToken().subscribe((response) => {
-        expect(response).toEqual(newTokenResponse);
+        expect(response).toEqual(newResponse);
       });
 
       const req = httpMock.expectOne(`${authUrl}/refresh`);
       expect(req.request.method).toBe('POST');
-      expect(req.request.body).toEqual({ refreshToken: 'mock-refresh-token' });
-      req.flush(newTokenResponse);
+      expect(req.request.body).toBeNull();
+      expect(req.request.withCredentials).toBe(true);
+      req.flush(newResponse);
 
-      expect(service.getAccessToken()).toBe(newTokenResponse.accessToken);
+      expect(service.getAccessToken()).toBe(newResponse.accessToken);
+    });
+  });
+
+  describe('tryRestoreSession', () => {
+    it('should return true and set token when refresh succeeds', () => {
+      let result: boolean | undefined;
+      service.tryRestoreSession().subscribe((r) => (result = r));
+
+      const req = httpMock.expectOne(`${authUrl}/refresh`);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.withCredentials).toBe(true);
+      req.flush(mockAccessTokenResponse);
+
+      expect(result).toBe(true);
+      expect(service.isAuthenticated()).toBe(true);
+      expect(service.isSessionRestored()).toBe(true);
+    });
+
+    it('should return false and mark session restored when refresh fails', () => {
+      let result: boolean | undefined;
+      service.tryRestoreSession().subscribe((r) => (result = r));
+
+      const req = httpMock.expectOne(`${authUrl}/refresh`);
+      req.flush(null, { status: 401, statusText: 'Unauthorized' });
+
+      expect(result).toBe(false);
+      expect(service.isAuthenticated()).toBe(false);
+      expect(service.isSessionRestored()).toBe(true);
+    });
+
+    it('should not throw on network error', () => {
+      let result: boolean | undefined;
+      service.tryRestoreSession().subscribe((r) => (result = r));
+
+      const req = httpMock.expectOne(`${authUrl}/refresh`);
+      req.error(new ProgressEvent('error'));
+
+      expect(result).toBe(false);
+      expect(service.isSessionRestored()).toBe(true);
+    });
+  });
+
+  describe('isSessionRestored', () => {
+    it('should return false initially', () => {
+      expect(service.isSessionRestored()).toBe(false);
+    });
+
+    it('should return true after tryRestoreSession completes successfully', () => {
+      service.tryRestoreSession().subscribe();
+      httpMock.expectOne(`${authUrl}/refresh`).flush(mockAccessTokenResponse);
+      expect(service.isSessionRestored()).toBe(true);
+    });
+
+    it('should return true after tryRestoreSession fails', () => {
+      service.tryRestoreSession().subscribe();
+      httpMock.expectOne(`${authUrl}/refresh`).flush(null, { status: 401, statusText: 'Unauthorized' });
+      expect(service.isSessionRestored()).toBe(true);
     });
   });
 
@@ -132,9 +204,9 @@ describe('AuthService', () => {
 
     it('should return the access token after login', () => {
       service.login({ username: 'admin', password: 'secret' }).subscribe();
-      httpMock.expectOne(`${authUrl}/login`).flush(mockTokenResponse);
+      httpMock.expectOne(`${authUrl}/login`).flush(mockAccessTokenResponse);
 
-      expect(service.getAccessToken()).toBe(mockTokenResponse.accessToken);
+      expect(service.getAccessToken()).toBe(mockAccessTokenResponse.accessToken);
     });
   });
 
@@ -145,7 +217,7 @@ describe('AuthService', () => {
 
     it('should return the user after login', () => {
       service.login({ username: 'admin', password: 'secret' }).subscribe();
-      httpMock.expectOne(`${authUrl}/login`).flush(mockTokenResponse);
+      httpMock.expectOne(`${authUrl}/login`).flush(mockAccessTokenResponse);
 
       const user = service.getCurrentUser();
       expect(user).not.toBeNull();
@@ -161,20 +233,19 @@ describe('AuthService', () => {
 
     it('should return true when token is valid and not expired', () => {
       service.login({ username: 'admin', password: 'secret' }).subscribe();
-      httpMock.expectOne(`${authUrl}/login`).flush(mockTokenResponse);
+      httpMock.expectOne(`${authUrl}/login`).flush(mockAccessTokenResponse);
 
       expect(service.isAuthenticated()).toBe(true);
     });
 
     it('should return false when token is expired', () => {
       const expiredPayload = { ...mockPayload, exp: Math.floor(Date.now() / 1000) - 60 };
-      const expiredTokenResponse: TokenResponse = {
+      const expiredResponse: AccessTokenResponse = {
         accessToken: createFakeJwt(expiredPayload),
-        refreshToken: 'mock-refresh-token',
       };
 
       service.login({ username: 'admin', password: 'secret' }).subscribe();
-      httpMock.expectOne(`${authUrl}/login`).flush(expiredTokenResponse);
+      httpMock.expectOne(`${authUrl}/login`).flush(expiredResponse);
 
       expect(service.isAuthenticated()).toBe(false);
     });
@@ -183,7 +254,7 @@ describe('AuthService', () => {
   describe('hasAction', () => {
     beforeEach(() => {
       service.login({ username: 'admin', password: 'secret' }).subscribe();
-      httpMock.expectOne(`${authUrl}/login`).flush(mockTokenResponse);
+      httpMock.expectOne(`${authUrl}/login`).flush(mockAccessTokenResponse);
     });
 
     it('should return true for an action the user has', () => {
@@ -217,10 +288,7 @@ describe('AuthService', () => {
       const token = createFakeJwt(payloadWithSpecialChars);
 
       service.login({ username: 'user', password: 'pass' }).subscribe();
-      httpMock.expectOne(`${authUrl}/login`).flush({
-        accessToken: token,
-        refreshToken: 'ref',
-      });
+      httpMock.expectOne(`${authUrl}/login`).flush({ accessToken: token });
 
       const user = service.getCurrentUser();
       expect(user).not.toBeNull();
@@ -229,10 +297,7 @@ describe('AuthService', () => {
 
     it('should return null user for an invalid token format', () => {
       service.login({ username: 'user', password: 'pass' }).subscribe();
-      httpMock.expectOne(`${authUrl}/login`).flush({
-        accessToken: 'not-a-valid-jwt',
-        refreshToken: 'ref',
-      });
+      httpMock.expectOne(`${authUrl}/login`).flush({ accessToken: 'not-a-valid-jwt' });
 
       expect(service.getCurrentUser()).toBeNull();
       expect(service.isAuthenticated()).toBe(false);
@@ -248,10 +313,7 @@ describe('AuthService', () => {
       const token = createFakeJwt(payloadNoActions);
 
       service.login({ username: 'admin', password: 'pass' }).subscribe();
-      httpMock.expectOne(`${authUrl}/login`).flush({
-        accessToken: token,
-        refreshToken: 'ref',
-      });
+      httpMock.expectOne(`${authUrl}/login`).flush({ accessToken: token });
 
       const user = service.getCurrentUser();
       expect(user).not.toBeNull();

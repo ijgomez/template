@@ -16,11 +16,14 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
 /**
- * Provides JWT token generation, validation and claim extraction.
+ * Provides JWT access token generation, validation and claim extraction.
  * <p>
  * Access tokens include the user's profile name and action codes list in the payload.
- * Refresh tokens contain minimal claims (subject only) with a longer expiry.
  * Signing uses HMAC-SHA256.
+ * <p>
+ * Refresh tokens are no longer JWTs — they are opaque UUID tokens stored in the database.
+ * The {@link #isRefreshToken(String)} method is retained to reject any legacy JWT
+ * refresh tokens that might be presented as access tokens.
  */
 @Component
 public class JwtTokenProvider implements TokenProvider {
@@ -33,15 +36,12 @@ public class JwtTokenProvider implements TokenProvider {
 
     private final SecretKey secretKey;
     private final long accessTokenExpiration;
-    private final long refreshTokenExpiration;
 
     public JwtTokenProvider(
             @Value("${jwt.secret}") String secret,
-            @Value("${jwt.access-token-expiration:900000}") long accessTokenExpiration,
-            @Value("${jwt.refresh-token-expiration:604800000}") long refreshTokenExpiration) {
+            @Value("${jwt.access-token-expiration:900000}") long accessTokenExpiration) {
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes());
         this.accessTokenExpiration = accessTokenExpiration;
-        this.refreshTokenExpiration = refreshTokenExpiration;
     }
 
     /**
@@ -62,26 +62,6 @@ public class JwtTokenProvider implements TokenProvider {
                 .claim(CLAIM_PROFILE, profileName)
                 .claim(CLAIM_ACTIONS, actionCodes)
                 .claim(CLAIM_TYPE, TOKEN_TYPE_ACCESS)
-                .issuedAt(Date.from(now))
-                .expiration(Date.from(expiry))
-                .signWith(secretKey)
-                .compact();
-    }
-
-    /**
-     * Generates a refresh token with minimal claims and longer expiry.
-     *
-     * @param username the username (subject)
-     * @return signed JWT refresh token
-     */
-    @Override
-    public String generateRefreshToken(String username) {
-        Instant now = Instant.now();
-        Instant expiry = now.plusMillis(refreshTokenExpiration);
-
-        return Jwts.builder()
-                .subject(username)
-                .claim(CLAIM_TYPE, TOKEN_TYPE_REFRESH)
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(expiry))
                 .signWith(secretKey)
@@ -142,14 +122,21 @@ public class JwtTokenProvider implements TokenProvider {
     }
 
     /**
-     * Checks if a token is a refresh token.
+     * Checks if a token is a refresh token (legacy JWT refresh tokens).
+     * <p>
+     * Since refresh tokens are now opaque UUIDs, this method is only used
+     * to reject any legacy JWT refresh tokens presented as access tokens.
      *
      * @param token the JWT token
      * @return true if the token type is "refresh"
      */
     @Override
     public boolean isRefreshToken(String token) {
-        return TOKEN_TYPE_REFRESH.equals(extractClaims(token).get(CLAIM_TYPE, String.class));
+        try {
+            return TOKEN_TYPE_REFRESH.equals(extractClaims(token).get(CLAIM_TYPE, String.class));
+        } catch (JwtException | IllegalArgumentException e) {
+            return false;
+        }
     }
 
     private Claims extractClaims(String token) {

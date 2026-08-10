@@ -5,9 +5,13 @@ import java.util.List;
 /**
  * Port interface for JWT token operations.
  * <p>
- * Defines the contract for token generation, validation and claim extraction.
+ * Defines the contract for access token generation, validation and claim extraction.
  * Implementations reside in the webapp module (e.g. JwtTokenProvider),
  * allowing the core module to remain independent of JWT libraries.
+ * <p>
+ * Refresh tokens are now opaque (UUID-based) and managed via the database
+ * ({@link org.myorganization.template.domain.entity.RefreshToken}),
+ * so this interface only handles access tokens.
  */
 public interface TokenProvider {
 
@@ -22,15 +26,7 @@ public interface TokenProvider {
     String generateAccessToken(String username, String profileName, List<String> actionCodes);
 
     /**
-     * Generates a refresh token with minimal claims and longer expiry.
-     *
-     * @param username the username (subject)
-     * @return signed JWT refresh token
-     */
-    String generateRefreshToken(String username);
-
-    /**
-     * Validates a token by verifying its signature and expiration.
+     * Validates an access token by verifying its signature and expiration.
      *
      * @param token the JWT token to validate
      * @return true if the token is valid, false otherwise

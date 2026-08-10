@@ -31,6 +31,15 @@ jwt:
   access-token-expiration: 3600000
   refresh-token-expiration: 604800000
 
+# Refresh token cookie configuration (local - HTTP compatible)
+auth:
+  cookie:
+    name: refresh-token
+    path: /template/api/v1/auth
+    max-age-seconds: 604800
+    secure: false
+    same-site: Lax
+
 # CORS configuration (local Angular dev server)
 cors:
   allowed-origins: http://localhost:4200

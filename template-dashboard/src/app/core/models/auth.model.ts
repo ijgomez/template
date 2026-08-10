@@ -7,11 +7,11 @@ export interface LoginRequest {
 }
 
 /**
- * Response payload from authentication endpoints (login/refresh).
+ * Response payload from the login endpoint.
+ * Only contains the access token — the refresh token is delivered via HttpOnly cookie.
  */
-export interface TokenResponse {
+export interface AccessTokenResponse {
   accessToken: string;
-  refreshToken: string;
 }
 
 /**
