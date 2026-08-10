@@ -67,7 +67,6 @@ export class ProfilesComponent implements OnInit {
   // Detail/Form data
   readonly selectedProfile = signal<Profile | null>(null);
   readonly formProfile = signal<Profile>({ id: null, name: '', description: '', actions: [] });
-  readonly availableActions = signal<Action[]>([]);
   readonly selectedActionIds = signal<number[]>([]);
 
   // Form: action filter & filtered list - handled by TpSelectedActionsComponent
@@ -77,7 +76,6 @@ export class ProfilesComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadProfiles();
-    this.loadActions();
   }
 
   // ─── List View ──────────────────────────────────────────────
@@ -194,23 +192,32 @@ export class ProfilesComponent implements OnInit {
 
   openEditForm(profile: Profile): void {
     this.formProfile.set({ ...profile });
-    this.selectedActionIds.set((profile.actions ?? []).map((a) => a.id));
+    // Support both formats: actionIds from backend DTO, or actions from enriched data
+    const ids = profile.actionIds ?? profile.actions?.map((a) => a.id) ?? [];
+    this.selectedActionIds.set(ids);
     this.isEditing.set(true);
     this.viewMode.set('form');
   }
 
   saveProfile(): void {
     const profile = this.formProfile();
-    const actions = this.availableActions().filter((a) => this.selectedActionIds().includes(a.id));
-    const payload: Profile = { ...profile, actions };
+    const actionIds = this.selectedActionIds();
+
+    // Backend expects { name, description, actionIds } (ProfileDTO format)
+    const payload = {
+      id: profile.id,
+      name: profile.name,
+      description: profile.description ?? null,
+      actionIds,
+    };
 
     const progressId = this.notificationService.showProgress(
       this.isEditing() ? 'notification.update.progress' : 'notification.create.progress'
     );
 
     const operation = this.isEditing()
-      ? this.profileService.update(profile.id!, payload)
-      : this.profileService.create(payload);
+      ? this.profileService.update(profile.id!, payload as any)
+      : this.profileService.create(payload as any);
 
     operation.subscribe({
       next: () => {
@@ -271,16 +278,6 @@ export class ProfilesComponent implements OnInit {
 
   // ─── Helpers ────────────────────────────────────────────────
 
-  private loadActions(): void {
-    this.profileService.findAllActions().subscribe({
-      next: (page) => {
-        this.availableActions.set(page.content);
-      },
-      error: () => {
-        this.notificationService.showError('notification.error');
-      },
-    });
-  }
 
   /**
    * Returns the Bootstrap badge CSS class for a given action type.
