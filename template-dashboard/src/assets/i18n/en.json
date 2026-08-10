@@ -493,5 +493,36 @@
       "selected": "selected",
       "accept": "Accept"
     }
+  },
+  "selected-actions": {
+    "count": "Total",
+    "filter": {
+      "placeholder": "Filter...",
+      "aria": "Filter selected actions"
+    },
+    "add": {
+      "aria": "Add action"
+    },
+    "remove": {
+      "aria": "Remove action"
+    },
+    "loading": "Loading actions...",
+    "empty": {
+      "none": "No actions assigned",
+      "filtered": "No actions found"
+    },
+    "modal": {
+      "title": "Select actions",
+      "search": "Search by code or name...",
+      "selectAll": "Select all",
+      "selectAction": "Select action",
+      "columnCode": "Code",
+      "columnType": "Type",
+      "columnName": "Name",
+      "noData": "No actions found",
+      "selected": "selected",
+      "accept": "Accept",
+      "paginationLabel": "Actions pagination"
+    }
   }
 }

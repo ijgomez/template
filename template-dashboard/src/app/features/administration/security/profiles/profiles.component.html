@@ -217,63 +217,13 @@
     </div>
 
     <!-- Acciones asignadas -->
-    <div class="d-flex justify-content-between align-items-center mb-2">
-      <h6 class="text-muted text-uppercase fw-semibold mb-0" style="font-size: 0.75rem; letter-spacing: 0.05em;">
-        {{ 'profiles.form.sectionActions' | translate }}
-        <span class="badge bg-secondary-subtle text-secondary ms-1">{{ selectedActionIds().length }}</span>
-      </h6>
-      <div class="d-flex align-items-center gap-2">
-        <input type="text"
-               class="form-control form-control-sm"
-               style="width: 150px; font-size: 0.75rem; height: 26px;"
-               [placeholder]="'profiles.form.filterActions' | translate"
-               [ngModel]="actionFilter()"
-               (ngModelChange)="actionFilter.set($event)"
-               name="actionFilter"
-               [attr.aria-label]="'profiles.form.filterActions' | translate">
-        <button type="button"
-                class="btn btn-outline-primary"
-                style="font-size: 0.7rem; padding: 0.2rem 0.5rem;"
-                (click)="openActionModal()"
-                [attr.aria-label]="'profiles.form.addAction' | translate"
-                data-testid="btn-add-action">
-          <i class="bi bi-plus" aria-hidden="true"></i>
-        </button>
-      </div>
-    </div>
-    <div class="border rounded" style="font-size: 0.8rem;">
-      @if (assignedActionsFiltered().length === 0) {
-        <div class="text-center py-3 text-muted" style="font-size: 0.75rem;">
-          {{ 'common.noData' | translate }}
-        </div>
-      } @else {
-        <div class="list-group list-group-flush">
-          @for (action of assignedActionsFiltered(); track action.id) {
-            <div class="list-group-item d-flex justify-content-between align-items-center py-1 px-3">
-              <div class="d-flex align-items-center gap-2">
-                <span class="badge"
-                      style="font-size: 0.65rem;"
-                      [class.bg-info-subtle]="action.type === 'READ'"
-                      [class.text-info]="action.type === 'READ'"
-                      [class.bg-warning-subtle]="action.type === 'WRITE'"
-                      [class.text-warning]="action.type === 'WRITE'"
-                      [class.bg-success-subtle]="action.type === 'EXECUTE'"
-                      [class.text-success]="action.type === 'EXECUTE'">
-                  {{ action.type }}
-                </span>
-                <span>{{ action.code }} — {{ action.name }}</span>
-              </div>
-              <button type="button"
-                      class="btn-close"
-                      style="font-size: 0.5rem;"
-                      (click)="removeAction(action.id)"
-                      [attr.aria-label]="'profiles.form.removeAction' | translate"
-                      [attr.data-testid]="'btn-remove-action-' + action.code"></button>
-            </div>
-          }
-        </div>
-      }
-    </div>
+    <tp-selected-actions
+      [ngModel]="selectedActionIds()"
+      (ngModelChange)="selectedActionIds.set($event)"
+      name="actionIds"
+      [title]="'profiles.form.sectionActions' | translate"
+      testId="profile-actions">
+    </tp-selected-actions>
 
     <!-- Botones de acción -->
     <div class="col-12 d-flex justify-content-end gap-2 mt-2">

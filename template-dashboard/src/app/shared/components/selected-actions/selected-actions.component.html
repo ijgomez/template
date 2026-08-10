@@ -1,0 +1,244 @@
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SELECTED ACTIONS - ControlValueAccessor with modal selection
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<div class="tp-selected-actions" [class.tp-selected-actions--disabled]="disabled()" [attr.data-testid]="testId">
+
+  <!-- Header -->
+  <div class="tp-selected-actions__header">
+    <div class="tp-selected-actions__title-group">
+      <span class="tp-selected-actions__title">{{ title }}</span>
+      <span class="badge bg-secondary-subtle text-secondary tp-selected-actions__badge"
+            [attr.aria-label]="('selected-actions.count' | translate) + ': ' + totalCount()">
+        {{ totalCount() }}
+      </span>
+    </div>
+
+    <div class="tp-selected-actions__actions">
+      <input
+        type="text"
+        class="form-control form-control-sm tp-selected-actions__filter"
+        [placeholder]="filterPlaceholder || ('selected-actions.filter.placeholder' | translate)"
+        [ngModel]="filterText()"
+        (ngModelChange)="onFilterChange($event)"
+        [disabled]="disabled()"
+        [attr.aria-label]="'selected-actions.filter.aria' | translate"
+        [attr.data-testid]="testId + '-filter'" />
+
+      @if (showAdd) {
+        <button
+          type="button"
+          class="btn btn-outline-primary tp-selected-actions__btn-add"
+          [disabled]="disabled()"
+          (click)="openModal()"
+          [attr.aria-label]="'selected-actions.add.aria' | translate"
+          [attr.data-testid]="testId + '-btn-add'">
+          <i class="bi bi-plus" aria-hidden="true"></i>
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Loading state -->
+  @if (loading()) {
+    <div class="tp-selected-actions__loading" [attr.data-testid]="testId + '-loading'">
+      <span class="spinner-border spinner-border-sm text-secondary me-2" role="status" aria-hidden="true"></span>
+      <span class="text-muted">{{ 'selected-actions.loading' | translate }}</span>
+    </div>
+  }
+
+  <!-- List -->
+  @if (!loading()) {
+    <div class="tp-selected-actions__list-wrapper">
+      @if (filteredSelectedActions().length === 0) {
+        <div class="tp-selected-actions__empty" [attr.data-testid]="testId + '-empty'">
+          @if (filterText()) {
+            <span class="text-muted">{{ 'selected-actions.empty.filtered' | translate }}</span>
+          } @else {
+            <span class="text-muted">{{ 'selected-actions.empty.none' | translate }}</span>
+          }
+        </div>
+      } @else {
+        <div class="list-group list-group-flush">
+          @for (action of filteredSelectedActions(); track action.id) {
+            <div class="list-group-item d-flex justify-content-between align-items-center py-1 px-3"
+                 [attr.data-testid]="testId + '-item-' + action.id">
+              <div class="d-flex align-items-center gap-2">
+                <span class="badge"
+                      style="font-size: 0.65rem;"
+                      [class]="getTypeBadgeClasses(action.type)">
+                  {{ action.type }}
+                </span>
+                <span>{{ action.code }} — {{ action.name }}</span>
+              </div>
+              @if (showRemove && !disabled()) {
+                <button
+                  type="button"
+                  class="btn-close"
+                  style="font-size: 0.5rem;"
+                  (click)="removeAction(action)"
+                  [attr.aria-label]="('selected-actions.remove.aria' | translate) + ' ' + action.name"
+                  [attr.data-testid]="testId + '-btn-remove-' + action.id">
+                </button>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     ACTION SELECTION MODAL
+     ═══════════════════════════════════════════════════════════════════════════ -->
+@if (modalOpen()) {
+  <div class="modal d-block" tabindex="-1" role="dialog" aria-modal="true"
+       [attr.aria-labelledby]="testId + '-modal-title'"
+       [attr.data-testid]="testId + '-modal'">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header py-2">
+          <h5 class="modal-title" [id]="testId + '-modal-title'" style="font-size: 1rem;">
+            {{ 'selected-actions.modal.title' | translate }}
+          </h5>
+          <button type="button" class="btn-close" (click)="closeModal()"
+                  [attr.aria-label]="'button.close' | translate"
+                  [attr.data-testid]="testId + '-modal-close'"></button>
+        </div>
+        <div class="modal-body p-0">
+          <!-- Search -->
+          <div class="p-3 border-bottom">
+            <div class="input-group input-group-sm">
+              <span class="input-group-text"><i class="bi bi-search" aria-hidden="true"></i></span>
+              <input type="text" class="form-control"
+                     [placeholder]="'selected-actions.modal.search' | translate"
+                     [attr.aria-label]="'selected-actions.modal.search' | translate"
+                     [ngModel]="modalSearch()"
+                     (ngModelChange)="onModalSearchChange($event)"
+                     name="modalActionSearch"
+                     [attr.data-testid]="testId + '-modal-search'">
+            </div>
+          </div>
+          <!-- Table -->
+          <div class="table-responsive">
+            <table class="table table-hover tp-table mb-0">
+              <thead>
+                <tr>
+                  <th scope="col" style="width: 40px;">
+                    <input type="checkbox" class="form-check-input"
+                           [checked]="allPageActionsSelected"
+                           (change)="toggleAllModalActions()"
+                           [attr.aria-label]="'selected-actions.modal.selectAll' | translate">
+                  </th>
+                  <th scope="col">{{ 'selected-actions.modal.columnCode' | translate }}</th>
+                  <th scope="col">{{ 'selected-actions.modal.columnType' | translate }}</th>
+                  <th scope="col">{{ 'selected-actions.modal.columnName' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                @if (modalPageActions().length === 0) {
+                  <tr>
+                    <td colspan="4" class="text-center py-3 text-muted">
+                      {{ 'selected-actions.modal.noData' | translate }}
+                    </td>
+                  </tr>
+                } @else {
+                  @for (action of modalPageActions(); track action.id) {
+                    <tr [class.table-active]="isModalActionSelected(action.id)"
+                        (click)="toggleModalAction(action.id)"
+                        style="cursor: pointer;"
+                        [attr.data-testid]="testId + '-modal-row-' + action.id">
+                      <td>
+                        <input type="checkbox" class="form-check-input"
+                               [checked]="isModalActionSelected(action.id)"
+                               (click)="$event.stopPropagation()"
+                               (change)="toggleModalAction(action.id)"
+                               [attr.aria-label]="'selected-actions.modal.selectAction' | translate">
+                      </td>
+                      <td class="fw-medium">{{ action.code }}</td>
+                      <td>
+                        <span class="badge" style="font-size: 0.65rem;"
+                              [class]="getTypeBadgeClasses(action.type)">
+                          {{ action.type }}
+                        </span>
+                      </td>
+                      <td class="text-muted">{{ action.name }}</td>
+                    </tr>
+                  }
+                }
+              </tbody>
+            </table>
+          </div>
+          <!-- Pagination -->
+          @if (modalTotalElements() > 0) {
+            <div class="d-flex justify-content-between align-items-center px-3 py-2 border-top"
+                 [attr.data-testid]="testId + '-modal-pagination'">
+              <!-- Record counter -->
+              <span class="text-muted" style="font-size: 0.8125rem;">
+                {{ 'common.pagination.showing' | translate: { from: modalShowingFrom(), to: modalShowingTo(), total: modalTotalElements() } }}
+              </span>
+
+              <!-- Page navigation -->
+              <nav [attr.aria-label]="'selected-actions.modal.paginationLabel' | translate">
+                <ul class="pagination pagination-sm mb-0">
+                  <li class="page-item" [class.disabled]="modalPage() === 0">
+                    <a class="page-link" href="javascript:void(0)"
+                       (click)="modalGoToPage(modalPage() - 1)"
+                       [attr.aria-label]="'common.pagination.previous' | translate">
+                      <i class="bi bi-chevron-left" aria-hidden="true"></i>
+                    </a>
+                  </li>
+                  @for (p of modalVisiblePages(); track p) {
+                    <li class="page-item"
+                        [class.active]="p === modalPage()"
+                        [attr.aria-current]="p === modalPage() ? 'page' : null">
+                      <a class="page-link" href="javascript:void(0)" (click)="modalGoToPage(p)">
+                        {{ p + 1 }}
+                      </a>
+                    </li>
+                  }
+                  <li class="page-item" [class.disabled]="modalPage() >= modalTotalPages() - 1">
+                    <a class="page-link" href="javascript:void(0)"
+                       (click)="modalGoToPage(modalPage() + 1)"
+                       [attr.aria-label]="'common.pagination.next' | translate">
+                      <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                    </a>
+                  </li>
+                </ul>
+              </nav>
+
+              <!-- Page size selector -->
+              <div class="d-flex align-items-center gap-2 ms-3">
+                <label class="text-muted text-nowrap mb-0" style="font-size: 0.8125rem;">
+                  {{ 'common.pagination.pageSize' | translate }}:
+                </label>
+                <select class="form-select form-select-sm" style="width: auto;"
+                        [ngModel]="modalPageSize()"
+                        (ngModelChange)="onModalPageSizeChange($event)"
+                        name="modalPageSize"
+                        [attr.aria-label]="'common.pagination.pageSize' | translate"
+                        [attr.data-testid]="testId + '-modal-page-size'">
+                  <option [ngValue]="5">5</option>
+                  <option [ngValue]="10">10</option>
+                  <option [ngValue]="20">20</option>
+                </select>
+              </div>
+            </div>
+          }
+        </div>
+        <div class="modal-footer py-2">
+          <small class="text-muted me-auto">{{ modalSelectedCount() }} {{ 'selected-actions.modal.selected' | translate }}</small>
+          <button type="button" class="btn btn-outline-secondary btn-sm" (click)="closeModal()"
+                  [attr.data-testid]="testId + '-modal-cancel'">
+            {{ 'button.cancel' | translate }}
+          </button>
+          <button type="button" class="btn btn-primary btn-sm" (click)="confirmSelection()"
+                  [attr.data-testid]="testId + '-modal-accept'">
+            <i class="bi bi-check-lg me-1" aria-hidden="true"></i> {{ 'selected-actions.modal.accept' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-backdrop show"></div>
+}

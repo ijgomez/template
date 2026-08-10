@@ -493,5 +493,36 @@
       "selected": "seleccionados",
       "accept": "Aceptar"
     }
+  },
+  "selected-actions": {
+    "count": "Total",
+    "filter": {
+      "placeholder": "Filtrar...",
+      "aria": "Filtrar acciones seleccionadas"
+    },
+    "add": {
+      "aria": "Añadir acción"
+    },
+    "remove": {
+      "aria": "Eliminar acción"
+    },
+    "loading": "Cargando acciones...",
+    "empty": {
+      "none": "No hay acciones asignadas",
+      "filtered": "No se encontraron acciones"
+    },
+    "modal": {
+      "title": "Seleccionar acciones",
+      "search": "Buscar por código o nombre...",
+      "selectAll": "Seleccionar todos",
+      "selectAction": "Seleccionar acción",
+      "columnCode": "Código",
+      "columnType": "Tipo",
+      "columnName": "Nombre",
+      "noData": "No se encontraron acciones",
+      "selected": "seleccionada(s)",
+      "accept": "Aceptar",
+      "paginationLabel": "Paginación de acciones"
+    }
   }
 }

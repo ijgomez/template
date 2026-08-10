@@ -9,6 +9,7 @@ import { CsvExportService } from '../../../../core/services/csv-export.service';
 import { ProfileService } from '../../../../core/services/profile.service';
 import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
 import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../shared/components/data-table';
+import { TpSelectedActionsComponent } from '../../../../shared/components/selected-actions';
 import { Action, Profile, ProfileCriteria } from './models/profile.model';
 
 type ViewMode = 'list' | 'detail' | 'form';
@@ -21,7 +22,7 @@ type ViewMode = 'list' | 'detail' | 'form';
 @Component({
   selector: 'app-profiles',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective],
+  imports: [CommonModule, FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective, TpSelectedActionsComponent],
   templateUrl: './profiles.component.html',
   styleUrls: ['./profiles.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -69,15 +70,7 @@ export class ProfilesComponent implements OnInit {
   readonly availableActions = signal<Action[]>([]);
   readonly selectedActionIds = signal<number[]>([]);
 
-  // Form: action filter & filtered list
-  readonly actionFilter = signal('');
-  readonly assignedActionsFiltered = computed(() => {
-    const ids = this.selectedActionIds();
-    const filter = this.actionFilter().toLowerCase();
-    return this.availableActions()
-      .filter((a) => ids.includes(a.id))
-      .filter((a) => !filter || a.code.toLowerCase().includes(filter) || a.name.toLowerCase().includes(filter));
-  });
+  // Form: action filter & filtered list - handled by TpSelectedActionsComponent
 
   // Action-based permissions
   readonly canWrite = computed(() => this.authService.hasAction('PROFILE_WRITE'));
@@ -204,27 +197,6 @@ export class ProfilesComponent implements OnInit {
     this.selectedActionIds.set((profile.actions ?? []).map((a) => a.id));
     this.isEditing.set(true);
     this.viewMode.set('form');
-  }
-
-  toggleAction(actionId: number): void {
-    const current = this.selectedActionIds();
-    if (current.includes(actionId)) {
-      this.selectedActionIds.set(current.filter((id) => id !== actionId));
-    } else {
-      this.selectedActionIds.set([...current, actionId]);
-    }
-  }
-
-  isActionSelected(actionId: number): boolean {
-    return this.selectedActionIds().includes(actionId);
-  }
-
-  removeAction(actionId: number): void {
-    this.toggleAction(actionId);
-  }
-
-  openActionModal(): void {
-    // TODO: implement action selection modal
   }
 
   saveProfile(): void {
