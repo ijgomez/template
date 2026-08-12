@@ -241,6 +241,7 @@ Al cambiar el tamaño de página se recarga la primera página con el nuevo tama
   - **Footer**: Barra compacta con fondo `bg-light`, contador de paginación y mini-pagination.
   - El filtro es búsqueda local (client-side) sobre los elementos ya asignados.
   - Al pulsar el botón Añadir se abre un modal de selección (ver patrón Modal de Selección).
+- **Campos obligatorios**: Los campos requeridos deben indicarse con un asterisco (`*`) de color rojo (`text-danger`) junto al label. El marcado es `<span class="text-danger">*</span>` inmediatamente después del texto del label. Ejemplo: `{{ 'entity.fields.name' | translate }} <span class="text-danger">*</span>`. Esto proporciona una señal visual clara y consistente en todos los formularios.
 - **Spacing**: Usar `g-2` en los rows (8px gap) en lugar de `g-3` (16px).
 
 ### Ejemplo de estructura HTML
