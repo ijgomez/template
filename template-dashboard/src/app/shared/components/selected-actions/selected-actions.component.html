@@ -1,92 +1,34 @@
 <!-- ═══════════════════════════════════════════════════════════════════════════
      SELECTED ACTIONS - ControlValueAccessor with modal selection
+     Uses tp-data-list for the list display (header, filter, list, empty/loading)
      ═══════════════════════════════════════════════════════════════════════════ -->
-<div class="tp-selected-actions" [class.tp-selected-actions--disabled]="disabled()" [attr.data-testid]="testId">
+<tp-data-list
+  [data]="filteredSelectedActions()"
+  [loading]="loading()"
+  [totalElements]="totalCount()"
+  [title]="title"
+  [filterable]="true"
+  [filterPlaceholder]="filterPlaceholder || ('selected-actions.filter.placeholder' | translate)"
+  [filterText]="filterText()"
+  [showAdd]="showAdd"
+  [showRemove]="showRemove && !disabled()"
+  [disabled]="disabled()"
+  [showPagination]="false"
+  [ariaLabel]="ariaLabel || ('selected-actions.list.aria' | translate)"
+  [testId]="testId"
+  (filterChange)="onFilterChange($event)"
+  (add)="openModal()"
+  (remove)="removeAction($event)">
 
-  <!-- Header -->
-  <div class="tp-selected-actions__header">
-    <div class="tp-selected-actions__title-group">
-      <span class="tp-selected-actions__title">{{ title }}</span>
-      <span class="badge bg-secondary-subtle text-secondary tp-selected-actions__badge"
-            [attr.aria-label]="('selected-actions.count' | translate) + ': ' + totalCount()">
-        {{ totalCount() }}
-      </span>
-    </div>
-
-    <div class="tp-selected-actions__actions">
-      <input
-        type="text"
-        class="form-control form-control-sm tp-selected-actions__filter"
-        [placeholder]="filterPlaceholder || ('selected-actions.filter.placeholder' | translate)"
-        [ngModel]="filterText()"
-        (ngModelChange)="onFilterChange($event)"
-        [disabled]="disabled()"
-        [attr.aria-label]="'selected-actions.filter.aria' | translate"
-        [attr.data-testid]="testId + '-filter'" />
-
-      @if (showAdd) {
-        <button
-          type="button"
-          class="btn btn-outline-primary tp-selected-actions__btn-add"
-          [disabled]="disabled()"
-          (click)="openModal()"
-          [attr.aria-label]="'selected-actions.add.aria' | translate"
-          [attr.data-testid]="testId + '-btn-add'">
-          <i class="bi bi-plus" aria-hidden="true"></i>
-        </button>
-      }
-    </div>
-  </div>
-
-  <!-- Loading state -->
-  @if (loading()) {
-    <div class="tp-selected-actions__loading" [attr.data-testid]="testId + '-loading'">
-      <span class="spinner-border spinner-border-sm text-secondary me-2" role="status" aria-hidden="true"></span>
-      <span class="text-muted">{{ 'selected-actions.loading' | translate }}</span>
-    </div>
-  }
-
-  <!-- List -->
-  @if (!loading()) {
-    <div class="tp-selected-actions__list-wrapper">
-      @if (filteredSelectedActions().length === 0) {
-        <div class="tp-selected-actions__empty" [attr.data-testid]="testId + '-empty'">
-          @if (filterText()) {
-            <span class="text-muted">{{ 'selected-actions.empty.filtered' | translate }}</span>
-          } @else {
-            <span class="text-muted">{{ 'selected-actions.empty.none' | translate }}</span>
-          }
-        </div>
-      } @else {
-        <div class="list-group list-group-flush">
-          @for (action of filteredSelectedActions(); track action.id) {
-            <div class="list-group-item d-flex justify-content-between align-items-center py-1 px-3"
-                 [attr.data-testid]="testId + '-item-' + action.id">
-              <div class="d-flex align-items-center gap-2">
-                <span class="badge"
-                      style="font-size: 0.65rem;"
-                      [class]="getTypeBadgeClasses(action.type)">
-                  {{ action.type }}
-                </span>
-                <span>{{ action.code }} — {{ action.name }}</span>
-              </div>
-              @if (showRemove && !disabled()) {
-                <button
-                  type="button"
-                  class="btn-close"
-                  style="font-size: 0.5rem;"
-                  (click)="removeAction(action)"
-                  [attr.aria-label]="('selected-actions.remove.aria' | translate) + ' ' + action.name"
-                  [attr.data-testid]="testId + '-btn-remove-' + action.id">
-                </button>
-              }
-            </div>
-          }
-        </div>
-      }
-    </div>
-  }
-</div>
+  <ng-template tpListItem let-action>
+    <span class="badge"
+          style="font-size: 0.65rem;"
+          [class]="getTypeBadgeClasses(action.type)">
+      {{ action.type }}
+    </span>
+    <span>{{ action.code }} — {{ action.name }}</span>
+  </ng-template>
+</tp-data-list>
 
 <!-- ═══════════════════════════════════════════════════════════════════════════
      ACTION SELECTION MODAL

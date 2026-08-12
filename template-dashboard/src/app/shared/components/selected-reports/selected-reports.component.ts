@@ -12,6 +12,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 
+import { TpDataListComponent, TpListItemDirective } from '../data-list';
+
 import { Report } from '../../../core/models/report.model';
 import { Page } from '../../../core/models/page.model';
 import { ReportService } from '../../../core/services/report.service';
@@ -34,7 +36,7 @@ import { ReportService } from '../../../core/services/report.service';
 @Component({
   selector: 'tp-selected-reports',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe],
+  imports: [CommonModule, FormsModule, TranslatePipe, TpDataListComponent, TpListItemDirective],
   templateUrl: './selected-reports.component.html',
   styleUrls: ['./selected-reports.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

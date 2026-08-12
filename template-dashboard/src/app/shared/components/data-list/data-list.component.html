@@ -1,0 +1,161 @@
+<!-- tp-data-list: Reusable list with header, filter, pagination, loading/empty states -->
+<div class="tp-data-list"
+     [class.tp-data-list--disabled]="disabled"
+     [attr.data-testid]="testId">
+
+  <!-- Header -->
+  <div class="tp-data-list__header">
+    <div class="tp-data-list__title-group">
+      @if (title) {
+        <span class="tp-data-list__title">{{ title }}</span>
+      }
+      <span class="badge bg-secondary-subtle text-secondary tp-data-list__badge"
+            [attr.aria-label]="('data-list.count' | translate) + ': ' + totalElements">
+        {{ totalElements }}
+      </span>
+    </div>
+
+    <div class="tp-data-list__actions">
+      @if (filterable) {
+        <input
+          type="text"
+          class="form-control form-control-sm tp-data-list__filter"
+          [placeholder]="filterPlaceholder || ('data-list.filter.placeholder' | translate)"
+          [ngModel]="filterText"
+          (ngModelChange)="onFilterChange($event)"
+          [disabled]="disabled"
+          [attr.aria-label]="'data-list.filter.aria' | translate"
+          [attr.data-testid]="testId + '-filter'" />
+      }
+
+      @if (showAdd) {
+        <button
+          type="button"
+          class="btn btn-outline-primary tp-data-list__btn-add"
+          [disabled]="disabled"
+          (click)="onAdd()"
+          [attr.aria-label]="'data-list.add.aria' | translate"
+          [attr.data-testid]="testId + '-btn-add'">
+          <i class="bi bi-plus" aria-hidden="true"></i>
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Loading state -->
+  @if (loading) {
+    <div class="tp-data-list__loading" [attr.data-testid]="testId + '-loading'">
+      <span class="spinner-border spinner-border-sm text-secondary me-2"
+            role="status"
+            aria-hidden="true"></span>
+      <span class="text-muted">{{ 'common.loading' | translate }}</span>
+    </div>
+  }
+
+  <!-- List content -->
+  @if (!loading) {
+    <div class="tp-data-list__list-wrapper">
+      @if (data.length === 0) {
+        <div class="tp-data-list__empty" [attr.data-testid]="testId + '-empty'">
+          @if (filterText) {
+            <span class="text-muted">{{ 'data-list.empty.filtered' | translate }}</span>
+          } @else {
+            <span class="text-muted">{{ 'data-list.empty.none' | translate }}</span>
+          }
+        </div>
+      } @else {
+        <div class="list-group list-group-flush"
+             role="list"
+             [attr.aria-label]="ariaLabel">
+          @for (item of data; track $index) {
+            <div class="list-group-item d-flex justify-content-between align-items-center py-1 px-3"
+                 role="listitem"
+                 [attr.data-testid]="testId + '-item-' + $index">
+              <div class="tp-data-list__item-content">
+                @if (itemTemplate) {
+                  <ng-container *ngTemplateOutlet="itemTemplate.templateRef; context: { $implicit: item }"></ng-container>
+                } @else {
+                  <span>{{ item }}</span>
+                }
+              </div>
+              @if (showRemove && !disabled) {
+                <button
+                  type="button"
+                  class="btn-close tp-data-list__btn-remove"
+                  (click)="onRemove(item)"
+                  [attr.aria-label]="'data-list.remove.aria' | translate"
+                  [attr.data-testid]="testId + '-btn-remove-' + $index">
+                </button>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Pagination footer -->
+  @if (showPagination && !loading && data.length > 0) {
+    <div class="tp-data-list__footer"
+         [attr.data-testid]="testId + '-pagination'">
+      <!-- Record counter -->
+      <span class="text-muted tp-data-list__footer-info"
+            [attr.data-testid]="testId + '-pagination-info'">
+        {{ 'common.pagination.showing' | translate: { from: showingFrom, to: showingTo, total: totalElements } }}
+      </span>
+
+      <!-- Page navigation -->
+      <nav [attr.aria-label]="'common.pagination.nav' | translate">
+        <ul class="pagination pagination-sm mb-0">
+          <li class="page-item" [class.disabled]="currentPage === 0">
+            <a class="page-link"
+               href="javascript:void(0)"
+               (click)="goToPage(currentPage - 1)"
+               [attr.aria-label]="'common.pagination.previous' | translate"
+               [attr.data-testid]="testId + '-pagination-prev'">
+              <i class="bi bi-chevron-left" aria-hidden="true"></i>
+            </a>
+          </li>
+          @for (p of visiblePages; track p) {
+            <li class="page-item"
+                [class.active]="p === currentPage"
+                [attr.aria-current]="p === currentPage ? 'page' : null">
+              <a class="page-link"
+                 href="javascript:void(0)"
+                 (click)="goToPage(p)">
+                {{ p + 1 }}
+              </a>
+            </li>
+          }
+          <li class="page-item" [class.disabled]="currentPage >= totalPages - 1">
+            <a class="page-link"
+               href="javascript:void(0)"
+               (click)="goToPage(currentPage + 1)"
+               [attr.aria-label]="'common.pagination.next' | translate"
+               [attr.data-testid]="testId + '-pagination-next'">
+              <i class="bi bi-chevron-right" aria-hidden="true"></i>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Page size selector -->
+      <div class="d-flex align-items-center gap-2 ms-3">
+        <label class="text-muted text-nowrap mb-0 tp-data-list__footer-label"
+               [attr.for]="testId + '-page-size'">
+          {{ 'common.pagination.pageSize' | translate }}:
+        </label>
+        <select class="form-select form-select-sm tp-data-list__page-size-select"
+                [id]="testId + '-page-size'"
+                [ngModel]="pageSize"
+                (ngModelChange)="onPageSizeChange($event)"
+                [attr.aria-label]="'common.pagination.pageSize' | translate"
+                [attr.data-testid]="testId + '-page-size'">
+          @for (size of pageSizes; track size) {
+            <option [ngValue]="size">{{ size }}</option>
+          }
+        </select>
+      </div>
+    </div>
+  }
+</div>

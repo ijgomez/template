@@ -1,85 +1,29 @@
 <!-- ═══════════════════════════════════════════════════════════════════════════
      SELECTED REPORTS - ControlValueAccessor with modal selection
+     Uses tp-data-list for the list display (header, filter, list, empty/loading)
      ═══════════════════════════════════════════════════════════════════════════ -->
-<div class="tp-selected-reports" [class.tp-selected-reports--disabled]="disabled()" [attr.data-testid]="testId">
+<tp-data-list
+  [data]="filteredSelectedReports()"
+  [loading]="loading()"
+  [totalElements]="totalCount()"
+  [title]="title"
+  [filterable]="true"
+  [filterPlaceholder]="filterPlaceholder || ('selected-reports.filter.placeholder' | translate)"
+  [filterText]="filterText()"
+  [showAdd]="showAdd"
+  [showRemove]="showRemove && !disabled()"
+  [disabled]="disabled()"
+  [showPagination]="false"
+  [ariaLabel]="ariaLabel || ('selected-reports.list.aria' | translate)"
+  [testId]="testId"
+  (filterChange)="onFilterChange($event)"
+  (add)="openModal()"
+  (remove)="removeReport($event)">
 
-  <!-- Header -->
-  <div class="tp-selected-reports__header">
-    <div class="tp-selected-reports__title-group">
-      <span class="tp-selected-reports__title">{{ title }}</span>
-      <span class="badge bg-secondary-subtle text-secondary tp-selected-reports__badge"
-            [attr.aria-label]="('selected-reports.count' | translate) + ': ' + totalCount()">
-        {{ totalCount() }}
-      </span>
-    </div>
-
-    <div class="tp-selected-reports__actions">
-      <input
-        type="text"
-        class="form-control form-control-sm tp-selected-reports__filter"
-        [placeholder]="filterPlaceholder || ('selected-reports.filter.placeholder' | translate)"
-        [ngModel]="filterText()"
-        (ngModelChange)="onFilterChange($event)"
-        [disabled]="disabled()"
-        [attr.aria-label]="'selected-reports.filter.aria' | translate"
-        [attr.data-testid]="testId + '-filter'" />
-
-      @if (showAdd) {
-        <button
-          type="button"
-          class="btn btn-outline-primary tp-selected-reports__btn-add"
-          [disabled]="disabled()"
-          (click)="openModal()"
-          [attr.aria-label]="'selected-reports.add.aria' | translate"
-          [attr.data-testid]="testId + '-btn-add'">
-          <i class="bi bi-plus" aria-hidden="true"></i>
-        </button>
-      }
-    </div>
-  </div>
-
-  <!-- Loading state -->
-  @if (loading()) {
-    <div class="tp-selected-reports__loading" [attr.data-testid]="testId + '-loading'">
-      <span class="spinner-border spinner-border-sm text-secondary me-2" role="status" aria-hidden="true"></span>
-      <span class="text-muted">{{ 'selected-reports.loading' | translate }}</span>
-    </div>
-  }
-
-  <!-- List -->
-  @if (!loading()) {
-    <div class="tp-selected-reports__list-wrapper">
-      @if (filteredSelectedReports().length === 0) {
-        <div class="tp-selected-reports__empty" [attr.data-testid]="testId + '-empty'">
-          @if (filterText()) {
-            <span class="text-muted">{{ 'selected-reports.empty.filtered' | translate }}</span>
-          } @else {
-            <span class="text-muted">{{ 'selected-reports.empty.none' | translate }}</span>
-          }
-        </div>
-      } @else {
-        <div class="list-group list-group-flush">
-          @for (report of filteredSelectedReports(); track report.id) {
-            <div class="list-group-item d-flex justify-content-between align-items-center py-1 px-3"
-                 [attr.data-testid]="testId + '-item-' + report.id">
-              <span>{{ report.name }}</span>
-              @if (showRemove && !disabled()) {
-                <button
-                  type="button"
-                  class="btn-close"
-                  style="font-size: 0.5rem;"
-                  (click)="removeReport(report)"
-                  [attr.aria-label]="('selected-reports.remove.aria' | translate) + ' ' + report.name"
-                  [attr.data-testid]="testId + '-btn-remove-' + report.id">
-                </button>
-              }
-            </div>
-          }
-        </div>
-      }
-    </div>
-  }
-</div>
+  <ng-template tpListItem let-report>
+    <span>{{ report.name }}</span>
+  </ng-template>
+</tp-data-list>
 
 <!-- ═══════════════════════════════════════════════════════════════════════════
      REPORT SELECTION MODAL
