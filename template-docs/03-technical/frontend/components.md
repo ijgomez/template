@@ -55,6 +55,15 @@ src/
             │   │   └── sort-event.model.ts
             │   └── directives/
             │       └── tp-column.directive.ts
+            ├── data-list/
+            │   ├── data-list.component.ts
+            │   ├── data-list.component.html
+            │   ├── data-list.component.scss
+            │   ├── index.ts
+            │   ├── models/
+            │   │   └── list-item-def.model.ts
+            │   └── directives/
+            │       └── tp-list-item.directive.ts
             ├── selected-reports/
             │   ├── selected-reports.component.ts
             │   ├── selected-reports.component.html
@@ -342,6 +351,141 @@ readonly columns: ColumnDef[] = [
 ];
 ```
 
+
+---
+
+## Lista de datos (`tp-data-list`)
+
+Componente reutilizable que encapsula una lista vertical con header (titulo + badge contador), filtro de texto, estados de carga/vacio, paginacion y soporte para templates de item personalizados. Es el equivalente de `tp-data-table` para representaciones en formato lista (list-group) en lugar de tabla.
+
+**Selector:** `<tp-data-list>`
+
+**Ubicacion:** `shared/components/data-list/`
+
+### Inputs
+
+| Propiedad          | Tipo       | Defecto           | Descripcion                                    |
+|--------------------|------------|-------------------|------------------------------------------------|
+| `data`             | `Array<T>` | `[]` (required)   | Items de la pagina actual                      |
+| `loading`          | `boolean`  | `false`           | Muestra estado de carga (spinner)              |
+| `totalElements`    | `number`   | `0`               | Total de elementos (para paginacion y badge)   |
+| `currentPage`      | `number`   | `0`               | Pagina actual (0-indexed)                      |
+| `pageSize`         | `number`   | `10`              | Elementos por pagina                           |
+| `pageSizes`        | `number[]` | `[5, 10, 20, 50]` | Opciones de tamano de pagina                  |
+| `title`            | `string`   | `''`              | Titulo en el header (uppercase, bold)          |
+| `filterable`       | `boolean`  | `true`            | Muestra el input de filtro                     |
+| `filterPlaceholder`| `string`   | `''`              | Placeholder del filtro (fallback a i18n)       |
+| `filterText`       | `string`   | `''`              | Texto del filtro actual                        |
+| `showAdd`          | `boolean`  | `false`           | Muestra boton "+" en el header                 |
+| `showRemove`       | `boolean`  | `false`           | Muestra boton "x" en cada item                 |
+| `disabled`         | `boolean`  | `false`           | Deshabilita toda interaccion                   |
+| `showPagination`   | `boolean`  | `true`            | Muestra controles de paginacion                |
+| `ariaLabel`        | `string`   | `''`              | Label de accesibilidad de la lista             |
+| `testId`           | `string`   | `'data-list'`     | Prefijo para `data-testid`                     |
+
+### Outputs
+
+| Evento             | Tipo                   | Descripcion                                    |
+|--------------------|------------------------|------------------------------------------------|
+| `(pageChange)`     | `EventEmitter<number>` | Emitido al cambiar de pagina                   |
+| `(pageSizeChange)` | `EventEmitter<number>` | Emitido al cambiar tamano de pagina            |
+| `(filterChange)`   | `EventEmitter<string>` | Emitido al cambiar el texto del filtro         |
+| `(add)`            | `EventEmitter<void>`   | Emitido al pulsar el boton "+"                 |
+| `(remove)`         | `EventEmitter<T>`      | Emitido al pulsar "x" en un item              |
+
+### Template de item personalizado (TpListItemDirective)
+
+Para personalizar el renderizado de cada item de la lista, se usa la directiva `tpListItem`:
+
+```html
+<tp-data-list [data]="items()" ...>
+  <ng-template tpListItem let-item>
+    <span class="badge bg-primary-subtle text-primary">{{ item.type }}</span>
+    <span>{{ item.code }} — {{ item.name }}</span>
+  </ng-template>
+</tp-data-list>
+```
+
+Si no se define un template, se muestra `{{ item }}` como texto plano.
+
+### Estructura visual
+
+```
++-------------------------------------------------------------+
+| TITULO  (N)                         [Filtrar...]  [+]       | <- Header
++-------------------------------------------------------------+
+| Item 1 contenido personalizado                         [x]  | <- Lista
+| Item 2 contenido personalizado                         [x]  |
+| Item 3 contenido personalizado                         [x]  |
++-------------------------------------------------------------+
+| Mostrando 1-3 de 8   [<] [1] [2] [>]   Pag: [5 v]         | <- Paginacion
++-------------------------------------------------------------+
+```
+
+### Estados
+
+| Estado  | Comportamiento                                                   |
+|---------|------------------------------------------------------------------|
+| Carga   | Muestra `spinner-border` centrado con texto "Cargando..."        |
+| Vacio   | Mensaje diferenciado: "sin datos" o "sin resultados del filtro"  |
+| Datos   | Renderiza items con `list-group list-group-flush`                |
+
+### Paginacion integrada
+
+El componente incluye un footer con:
+- Contador de registros: "Mostrando X-Y de Z"
+- Navegacion de paginas (maximo 5 visibles, ventana deslizante)
+- Selector de elementos por pagina
+
+Se puede ocultar con `[showPagination]="false"` cuando la paginacion se gestiona externamente (ej: dentro de `tp-selected-*`).
+
+### Accesibilidad
+
+- `role="list"` en el contenedor de items.
+- `role="listitem"` en cada item.
+- `aria-label` configurable en la lista.
+- `aria-label` en el filtro, botones "+" y "x".
+- `aria-hidden="true"` en iconos decorativos (chevrons, plus).
+- `aria-current="page"` en la pagina activa.
+
+### Estilos
+
+- Usa tokens del Design System (`--tp-border-width`, `--tp-color-border`, `--tp-border-radius`, `--tp-color-background`, `--tp-color-surface`, `--tp-space-*`, `--tp-font-size-sm`, `--tp-font-weight-bold`).
+- BEM: `.tp-data-list`, `.tp-data-list__header`, `.tp-data-list__list-wrapper`, etc.
+- Responsive: el header y footer se reordenan en pantallas < 576px.
+- Estado deshabilitado: `opacity: 0.6`, `pointer-events: none`.
+
+### Ejemplo de uso completo
+
+```html
+<tp-data-list
+  [data]="filteredReports()"
+  [loading]="isLoading()"
+  [totalElements]="totalReports()"
+  [currentPage]="currentPage()"
+  [pageSize]="pageSize()"
+  [title]="'INFORMES ASIGNADOS'"
+  [filterable]="true"
+  [showAdd]="true"
+  [showRemove]="true"
+  [showPagination]="true"
+  (pageChange)="goToPage($event)"
+  (pageSizeChange)="changePageSize($event)"
+  (filterChange)="onFilter($event)"
+  (add)="openModal()"
+  (remove)="removeItem($event)"
+  ariaLabel="Lista de informes asignados"
+  testId="assigned-reports">
+
+  <ng-template tpListItem let-report>
+    <span>{{ report.name }}</span>
+  </ng-template>
+</tp-data-list>
+```
+
+### Uso interno en componentes tp-selected-*
+
+Los componentes `tp-selected-reports` y `tp-selected-actions` utilizan `tp-data-list` internamente para renderizar la lista de items seleccionados (con `[showPagination]="false"`), delegando toda la logica visual de header, filtro, lista y estados al componente compartido. Cada uno proporciona su template personalizado via `tpListItem`.
 
 ---
 

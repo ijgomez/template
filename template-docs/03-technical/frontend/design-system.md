@@ -115,6 +115,7 @@ La IA debe generar código utilizando exclusivamente los componentes listados a 
 | Checkbox         | `<tp-checkbox>`            | Selección múltiple                            |
 | Radio            | `<tp-radio>`               | Selección única                               |
 | Tabla            | `<tp-table>`               | Listados con paginación, orden y filtrado     |
+| Lista de datos   | `<tp-data-list>`           | Listas verticales con filtro y paginación     |
 | Modal            | `<tp-modal>`               | Diálogos y confirmaciones                     |
 | Card             | `<tp-card>`                | Contenedor con cabecera y cuerpo              |
 | Alert            | `<tp-alert>`               | Mensajes informativos                         |
