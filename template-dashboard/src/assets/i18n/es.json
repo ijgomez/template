@@ -270,7 +270,8 @@
     },
     "form": {
       "createTitle": "Crear Parámetro",
-      "editTitle": "Editar Parámetro"
+      "editTitle": "Editar Parámetro",
+      "sectionGeneral": "Datos generales"
     },
     "delete": {
       "confirmTitle": "Eliminar Parámetro",

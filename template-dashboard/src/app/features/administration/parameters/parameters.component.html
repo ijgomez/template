@@ -170,7 +170,9 @@
       </h6>
       <div class="row g-2 mb-3">
         <div class="col-md-4">
-          <label for="paramCode" class="form-label form-label-sm mb-1">{{ 'parameters.fields.code' | translate }} *</label>
+          <label for="paramCode" class="form-label form-label-sm mb-1">
+            {{ 'parameters.fields.code' | translate }} <span class="text-danger">*</span>
+          </label>
           <input id="paramCode"
                  type="text"
                  class="form-control form-control-sm"
@@ -182,7 +184,9 @@
                  data-testid="input-code">
         </div>
         <div class="col-md-4">
-          <label for="paramType" class="form-label form-label-sm mb-1">{{ 'parameters.fields.type' | translate }} *</label>
+          <label for="paramType" class="form-label form-label-sm mb-1">
+            {{ 'parameters.fields.type' | translate }} <span class="text-danger">*</span>
+          </label>
           <select id="paramType"
                   class="form-select form-select-sm"
                   [ngModel]="formData().type"
@@ -196,7 +200,9 @@
           </select>
         </div>
         <div class="col-md-4">
-          <label for="paramValue" class="form-label form-label-sm mb-1">{{ 'parameters.fields.value' | translate }} *</label>
+          <label for="paramValue" class="form-label form-label-sm mb-1">
+            {{ 'parameters.fields.value' | translate }} <span class="text-danger">*</span>
+          </label>
           <input id="paramValue"
                  type="text"
                  class="form-control form-control-sm"
