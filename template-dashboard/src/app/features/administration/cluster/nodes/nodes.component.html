@@ -50,7 +50,7 @@
 <div class="tp-toolbar d-flex gap-2 mb-3">
   @if (canWrite) {
     <button type="button" class="btn btn-primary btn-sm"
-            [disabled]="!selectedRow() || selectedRow()!.master"
+            [disabled]="!selectedRow() || selectedRow()!.master || selectedRow()!.status === 'INACTIVE'"
             (click)="designateMasterSelected()" data-testid="btn-set-master">
       <i class="bi bi-star me-1" aria-hidden="true"></i> {{ 'cluster.nodes.setMaster' | translate }}
     </button>
@@ -93,16 +93,24 @@
       }
     </ng-template>
 
-    <ng-template tpColumn="memory" let-node>
-      {{ node.usedMemory }} / {{ node.totalMemory }} GB
-    </ng-template>
-
-    <ng-template tpColumn="createdAt" let-node>
-      {{ node.createdAt | localDate }}
+    <ng-template tpColumn="startedAt" let-node>
+      {{ node.startedAt | localDate }}
     </ng-template>
 
     <ng-template tpColumn="lastModifiedAt" let-node>
       {{ node.lastModifiedAt | localDate }}
+    </ng-template>
+
+    <ng-template tpColumn="usedMemoryGb" let-node>
+      {{ node.usedMemory / 1073741824 | number:'1.2-2' }} GB
+    </ng-template>
+
+    <ng-template tpColumn="totalMemoryGb" let-node>
+      {{ node.totalMemory / 1073741824 | number:'1.2-2' }} GB
+    </ng-template>
+
+    <ng-template tpColumn="freeMemoryPercent" let-node>
+      {{ (node.totalMemory > 0 ? ((node.totalMemory - node.usedMemory) / node.totalMemory * 100) : 0) | number:'1.1-1' }}%
     </ng-template>
   </tp-data-table>
 

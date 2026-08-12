@@ -359,14 +359,14 @@
       "title": "Cluster Nodes",
       "fields": {
         "hostname": "Hostname",
+        "ip": "IP",
         "status": "Status",
         "master": "Master",
-        "freeMemory": "Free Memory (MB)",
-        "totalMemory": "Total Memory (MB)",
-        "usedMemory": "Used Memory (MB)",
-        "createdAt": "Start Date",
-        "startDate": "Start",
-        "lastModifiedAt": "Last Heartbeat"
+        "startedAt": "Start Date",
+        "lastModifiedAt": "Last Heartbeat",
+        "usedMemoryGb": "Used (GB)",
+        "totalMemoryGb": "Total (GB)",
+        "freeMemoryPercent": "Free (%)"
       },
       "filters": {
         "allStatuses": "All",

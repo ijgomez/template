@@ -359,14 +359,14 @@
       "title": "Nodos del Cluster",
       "fields": {
         "hostname": "Hostname",
+        "ip": "IP",
         "status": "Estado",
         "master": "Maestro",
-        "freeMemory": "Memoria Libre (MB)",
-        "totalMemory": "Memoria Total (MB)",
-        "usedMemory": "Memoria Usada (MB)",
-        "createdAt": "Fecha de inicio",
-        "startDate": "Inicio",
-        "lastModifiedAt": "Último Heartbeat"
+        "startedAt": "Fecha de Inicio",
+        "lastModifiedAt": "Último Heartbeat",
+        "usedMemoryGb": "Usada (GB)",
+        "totalMemoryGb": "Total (GB)",
+        "freeMemoryPercent": "Libre (%)"
       },
       "filters": {
         "allStatuses": "Todos",

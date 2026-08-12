@@ -9,12 +9,13 @@ export type NodeStatus = 'ACTIVE' | 'INACTIVE';
 export interface ClusterNode {
   id: number;
   hostname: string;
+  ip: string;
   status: NodeStatus;
   master: boolean;
   freeMemory: number;
   totalMemory: number;
   usedMemory: number;
-  createdAt: string;
+  startedAt: string;
   lastModifiedAt: string;
 }
 

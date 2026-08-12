@@ -1,4 +1,5 @@
 import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
@@ -19,7 +20,7 @@ import { ClusterNode } from '../../../../core/models/cluster.model';
 @Component({
   selector: 'app-cluster-nodes',
   standalone: true,
-  imports: [FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective],
+  imports: [FormsModule, DecimalPipe, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective],
   templateUrl: './nodes.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -100,12 +101,15 @@ export class NodesComponent implements OnInit {
 
   // Column definitions for tp-data-table
   readonly columns: ColumnDef[] = [
-    { key: 'hostname', header: 'cluster.nodes.fields.hostname', sortable: true, resizable: true, reorderable: true },
-    { key: 'status', header: 'cluster.nodes.fields.status', sortable: true, resizable: true, reorderable: true },
-    { key: 'master', header: 'cluster.nodes.fields.master', sortable: true, resizable: true, reorderable: true },
-    { key: 'memory', header: 'cluster.nodes.fields.freeMemory', sortable: true, resizable: true, reorderable: true },
-    { key: 'createdAt', header: 'cluster.nodes.fields.createdAt', sortable: true, resizable: true, reorderable: true },
+    { key: 'hostname', header: 'cluster.nodes.fields.hostname', sortable: true, resizable: true, reorderable: true, width: '15%' },
+    { key: 'ip', header: 'cluster.nodes.fields.ip', sortable: true, resizable: true, reorderable: true },
+    { key: 'status', header: 'cluster.nodes.fields.status', sortable: true, resizable: true, reorderable: true, width: '80px' },
+    { key: 'master', header: 'cluster.nodes.fields.master', sortable: true, resizable: true, reorderable: true, width: '80px' },
+    { key: 'startedAt', header: 'cluster.nodes.fields.startedAt', sortable: true, resizable: true, reorderable: true },
     { key: 'lastModifiedAt', header: 'cluster.nodes.fields.lastModifiedAt', sortable: true, resizable: true, reorderable: true },
+    { key: 'usedMemoryGb', header: 'cluster.nodes.fields.usedMemoryGb', sortable: true, resizable: true, reorderable: true, width: '100px' },
+    { key: 'totalMemoryGb', header: 'cluster.nodes.fields.totalMemoryGb', sortable: true, resizable: true, reorderable: true, width: '100px' },
+    { key: 'freeMemoryPercent', header: 'cluster.nodes.fields.freeMemoryPercent', sortable: true, resizable: true, reorderable: true, width: '90px' },
   ];
 
   // Permission
@@ -254,24 +258,30 @@ export class NodesComponent implements OnInit {
 
     const headers = [
       this.translateService.instant('cluster.nodes.fields.hostname'),
+      this.translateService.instant('cluster.nodes.fields.ip'),
       this.translateService.instant('cluster.nodes.fields.status'),
       this.translateService.instant('cluster.nodes.fields.master'),
-      this.translateService.instant('cluster.nodes.fields.freeMemory'),
-      this.translateService.instant('cluster.nodes.fields.totalMemory'),
-      this.translateService.instant('cluster.nodes.fields.usedMemory'),
-      this.translateService.instant('cluster.nodes.fields.createdAt'),
+      this.translateService.instant('cluster.nodes.fields.startedAt'),
       this.translateService.instant('cluster.nodes.fields.lastModifiedAt'),
+      this.translateService.instant('cluster.nodes.fields.usedMemoryGb'),
+      this.translateService.instant('cluster.nodes.fields.totalMemoryGb'),
+      this.translateService.instant('cluster.nodes.fields.freeMemoryPercent'),
     ];
+
+    const bytesToGb = (bytes: number): string => (bytes / 1_073_741_824).toFixed(2);
+    const freePercent = (used: number, total: number): string =>
+      total > 0 ? (((total - used) / total) * 100).toFixed(1) + '%' : '0%';
 
     const rows = nodes.map((n) => [
       n.hostname,
+      n.ip ?? '',
       n.status,
       n.master ? 'MASTER' : '',
-      n.freeMemory,
-      n.totalMemory,
-      n.usedMemory,
-      n.createdAt,
+      n.startedAt,
       n.lastModifiedAt,
+      bytesToGb(n.usedMemory),
+      bytesToGb(n.totalMemory),
+      freePercent(n.usedMemory, n.totalMemory),
     ]);
 
     const csvContent = [headers, ...rows].map((row) => row.join(';')).join('\n');
