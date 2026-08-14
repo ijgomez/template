@@ -9,11 +9,16 @@ import java.util.UUID;
 import org.myorganization.template.core.repository.RefreshTokenRepository;
 import org.myorganization.template.core.repository.UserRepository;
 import org.myorganization.template.core.security.TokenProvider;
+import org.myorganization.template.domain.dto.AuditLogEntry;
 import org.myorganization.template.domain.dto.LoginRequest;
 import org.myorganization.template.domain.dto.TokenResponse;
 import org.myorganization.template.domain.entity.Profile2Action;
 import org.myorganization.template.domain.entity.RefreshToken;
 import org.myorganization.template.domain.entity.User;
+import org.myorganization.template.domain.enums.AuditSection;
+import org.myorganization.template.domain.enums.OperationType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,21 +34,26 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class AuthService {
 
+    private static final Logger log = LoggerFactory.getLogger(AuthService.class);
+
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
+    private final AuditService auditService;
     private final long refreshTokenExpiration;
 
     public AuthService(UserRepository userRepository,
                        RefreshTokenRepository refreshTokenRepository,
                        PasswordEncoder passwordEncoder,
                        TokenProvider tokenProvider,
+                       AuditService auditService,
                        @Value("${jwt.refresh-token-expiration:604800000}") long refreshTokenExpiration) {
         this.userRepository = userRepository;
         this.refreshTokenRepository = refreshTokenRepository;
         this.passwordEncoder = passwordEncoder;
         this.tokenProvider = tokenProvider;
+        this.auditService = auditService;
         this.refreshTokenExpiration = refreshTokenExpiration;
     }
 
@@ -71,6 +81,15 @@ public class AuthService {
 
         String accessToken = generateAccessTokenForUser(user);
         String refreshToken = createRefreshToken(user);
+
+        try {
+            auditService.log(new AuditLogEntry(
+                    user.getUsername(), OperationType.EXECUTE, AuditSection.SECURITY,
+                    user.getId() != null ? user.getId().toString() : null, "User",
+                    "Login successful"));
+        } catch (Exception e) {
+            log.error("Failed to record login audit for user {}: {}", user.getUsername(), e.getMessage());
+        }
 
         return new TokenResponse(accessToken, refreshToken);
     }

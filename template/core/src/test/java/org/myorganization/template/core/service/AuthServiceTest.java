@@ -51,6 +51,9 @@ class AuthServiceTest {
     @Mock
     private TokenProvider tokenProvider;
 
+    @Mock
+    private AuditService auditService;
+
     private AuthService authService;
 
     private static final long REFRESH_TOKEN_EXPIRATION = 604800000L; // 7 days
@@ -58,7 +61,7 @@ class AuthServiceTest {
     @BeforeEach
     void setUp() {
         authService = new AuthService(userRepository, refreshTokenRepository,
-                passwordEncoder, tokenProvider, REFRESH_TOKEN_EXPIRATION);
+                passwordEncoder, tokenProvider, auditService, REFRESH_TOKEN_EXPIRATION);
     }
 
     // ========== authenticate ==========
