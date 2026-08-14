@@ -37,7 +37,7 @@ class ClusterSingleMasterPropertyTest {
 
         ClusterNodeRepository nodeRepository = Mockito.mock(ClusterNodeRepository.class);
         ClusterBlockRepository blockRepository = Mockito.mock(ClusterBlockRepository.class);
-        ClusterService clusterService = new ClusterService(nodeRepository, blockRepository);
+        ClusterService clusterService = new ClusterService(nodeRepository, blockRepository, Mockito.mock(org.myorganization.template.core.service.AuditService.class));
 
         List<ClusterNode> nodes = new ArrayList<>();
         for (int i = 0; i < nodeCount; i++) {
@@ -70,7 +70,7 @@ class ClusterSingleMasterPropertyTest {
 
         ClusterNodeRepository nodeRepository = Mockito.mock(ClusterNodeRepository.class);
         ClusterBlockRepository blockRepository = Mockito.mock(ClusterBlockRepository.class);
-        ClusterService clusterService = new ClusterService(nodeRepository, blockRepository);
+        ClusterService clusterService = new ClusterService(nodeRepository, blockRepository, Mockito.mock(org.myorganization.template.core.service.AuditService.class));
 
         List<ClusterNode> nodes = new ArrayList<>();
         for (int i = 0; i < nodeCount; i++) {

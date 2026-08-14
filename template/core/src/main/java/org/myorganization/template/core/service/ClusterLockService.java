@@ -1,7 +1,7 @@
 package org.myorganization.template.core.service;
 
 import java.time.Duration;
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -32,7 +32,7 @@ public class ClusterLockService implements HeartbeatLockService {
     private static final Logger log = LoggerFactory.getLogger(ClusterLockService.class);
 
     private final ConcurrentHashMap<String, ReentrantLock> intraInstanceLocks = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<String, OffsetDateTime> lockStartTimes = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Instant> lockStartTimes = new ConcurrentHashMap<>();
 
     private final ClusterBlockRepository clusterBlockRepository;
 
@@ -68,7 +68,7 @@ public class ClusterLockService implements HeartbeatLockService {
             clusterBlockRepository.updateStartDateWithDbTime(resourceName);
 
             // Store DB time for duration calculation on release
-            OffsetDateTime dbTime = clusterBlockRepository.getDatabaseTime();
+            Instant dbTime = clusterBlockRepository.getDatabaseTime();
             lockStartTimes.put(resourceName, dbTime);
 
             log.debug("Lock acquired for resource: {}", resourceName);
@@ -97,8 +97,8 @@ public class ClusterLockService implements HeartbeatLockService {
     public void releaseLock(String resourceName) {
         try {
             // 1. Calculate duration using database time
-            OffsetDateTime startTime = lockStartTimes.remove(resourceName);
-            OffsetDateTime endTime = clusterBlockRepository.getDatabaseTime();
+            Instant startTime = lockStartTimes.remove(resourceName);
+            Instant endTime = clusterBlockRepository.getDatabaseTime();
 
             if (startTime != null && endTime != null) {
                 long durationMs = Duration.between(startTime, endTime).toMillis();

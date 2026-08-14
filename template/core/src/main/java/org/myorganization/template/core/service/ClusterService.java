@@ -12,11 +12,14 @@ import org.myorganization.template.cluster.HeartbeatClusterService;
 import org.myorganization.template.core.repository.ClusterBlockRepository;
 import org.myorganization.template.core.repository.ClusterNodeRepository;
 import org.myorganization.template.domain.criteria.ClusterBlockCriteria;
+import org.myorganization.template.domain.dto.AuditLogEntry;
 import org.myorganization.template.domain.dto.ClusterBlockDTO;
 import org.myorganization.template.domain.dto.ClusterNodeDTO;
 import org.myorganization.template.domain.entity.ClusterBlock;
 import org.myorganization.template.domain.entity.ClusterNode;
+import org.myorganization.template.domain.enums.AuditSection;
 import org.myorganization.template.domain.enums.NodeStatus;
+import org.myorganization.template.domain.enums.OperationType;
 import org.myorganization.template.domain.exception.EntityNotFoundException;
 import org.myorganization.template.domain.exception.MethodNotAllowedException;
 import org.slf4j.Logger;
@@ -43,11 +46,14 @@ public class ClusterService implements HeartbeatClusterService {
 
     private final ClusterNodeRepository clusterNodeRepository;
     private final ClusterBlockRepository clusterBlockRepository;
+    private final AuditService auditService;
 
     public ClusterService(ClusterNodeRepository clusterNodeRepository,
-                          ClusterBlockRepository clusterBlockRepository) {
+                          ClusterBlockRepository clusterBlockRepository,
+                          AuditService auditService) {
         this.clusterNodeRepository = clusterNodeRepository;
         this.clusterBlockRepository = clusterBlockRepository;
+        this.auditService = auditService;
     }
 
     // =====================================================================
@@ -119,8 +125,13 @@ public class ClusterService implements HeartbeatClusterService {
                     existingNode.setFreeMemory(getFreeMemory());
                     existingNode.setTotalMemory(getTotalMemory());
                     existingNode.setStartedAt(now);
+                    existingNode.setLastModifiedAt(now);
                     clusterNodeRepository.save(existingNode);
                     log.info("Cluster node re-registered: hostname={}", hostname);
+                    auditService.log(new AuditLogEntry(
+                            "SYSTEM", OperationType.UPDATE, AuditSection.CLUSTER,
+                            existingNode.getId().toString(), "ClusterNode",
+                            "Node re-registered: hostname=" + hostname + ", ip=" + ip));
                 },
                 () -> {
                     ClusterNode newNode = new ClusterNode();
@@ -132,8 +143,12 @@ public class ClusterService implements HeartbeatClusterService {
                     newNode.setFreeMemory(getFreeMemory());
                     newNode.setTotalMemory(getTotalMemory());
                     newNode.setStartedAt(now);
-                    clusterNodeRepository.save(newNode);
+                    ClusterNode saved = clusterNodeRepository.save(newNode);
                     log.info("Cluster node registered: hostname={}", hostname);
+                    auditService.log(new AuditLogEntry(
+                            "SYSTEM", OperationType.CREATE, AuditSection.CLUSTER,
+                            saved.getId().toString(), "ClusterNode",
+                            "Node registered: hostname=" + hostname + ", ip=" + ip));
                 }
         );
     }
@@ -156,6 +171,7 @@ public class ClusterService implements HeartbeatClusterService {
         node.setUsedMemory(getUsedMemory());
         node.setFreeMemory(getFreeMemory());
         node.setTotalMemory(getTotalMemory());
+        node.setLastModifiedAt(OffsetDateTime.now(ZoneOffset.UTC));
         clusterNodeRepository.save(node);
     }
 
@@ -179,6 +195,10 @@ public class ClusterService implements HeartbeatClusterService {
             clusterNodeRepository.save(node);
             deadHostnames.add(node.getHostname());
             log.warn("Cluster node marked as DEAD: hostname={}, id={}", node.getHostname(), node.getId());
+            auditService.log(new AuditLogEntry(
+                    "SYSTEM", OperationType.UPDATE, AuditSection.CLUSTER,
+                    node.getId().toString(), "ClusterNode",
+                    "Node marked as INACTIVE: hostname=" + node.getHostname()));
         }
         return deadHostnames;
     }

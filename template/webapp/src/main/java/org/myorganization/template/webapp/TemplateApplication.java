@@ -8,6 +8,7 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.data.web.config.EnableSpringDataWebSupport.PageSerializationMode;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * Spring Boot application entry point.
@@ -17,6 +18,7 @@ import org.springframework.data.web.config.EnableSpringDataWebSupport.PageSerial
 @EntityScan(basePackages = "org.myorganization.template.domain.entity")
 @EnableJpaRepositories(basePackages = "org.myorganization.template.core.repository")
 @EnableSpringDataWebSupport(pageSerializationMode = PageSerializationMode.VIA_DTO)
+@EnableScheduling
 public class TemplateApplication extends SpringBootServletInitializer {
 
     @Override

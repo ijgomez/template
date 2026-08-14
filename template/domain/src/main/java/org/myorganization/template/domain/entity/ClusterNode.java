@@ -13,7 +13,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
 /**
@@ -26,7 +26,8 @@ import jakarta.persistence.Table;
 public class ClusterNode {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cluster_node_gen")
+    @SequenceGenerator(name = "cluster_node_gen", sequenceName = "cluster_node_seq", allocationSize = 50)
     @Column(name = "id")
     private Long id;
 
@@ -60,11 +61,6 @@ public class ClusterNode {
 
     @PrePersist
     protected void onCreate() {
-        this.lastModifiedAt = OffsetDateTime.now(ZoneOffset.UTC);
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
         this.lastModifiedAt = OffsetDateTime.now(ZoneOffset.UTC);
     }
 

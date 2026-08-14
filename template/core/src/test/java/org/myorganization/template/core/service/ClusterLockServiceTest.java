@@ -1,5 +1,6 @@
 package org.myorganization.template.core.service;
 
+import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Optional;
@@ -45,7 +46,7 @@ class ClusterLockServiceTest {
         @DisplayName("acquires intra-instance and inter-instance lock and records start time")
         void acquiresLockAndRecordsStartTime() {
             String resourceName = "TEST_RESOURCE";
-            OffsetDateTime dbTime = OffsetDateTime.now(ZoneOffset.UTC);
+            Instant dbTime = Instant.now();
 
             when(clusterBlockRepository.findByName(resourceName)).thenReturn(Optional.of(createBlock(resourceName)));
             when(clusterBlockRepository.getDatabaseTime()).thenReturn(dbTime);
@@ -71,7 +72,7 @@ class ClusterLockServiceTest {
         @DisplayName("creates ClusterBlock if not exists on first acquire")
         void createsClusterBlockIfNotExists() {
             String resourceName = "NEW_RESOURCE";
-            OffsetDateTime dbTime = OffsetDateTime.now(ZoneOffset.UTC);
+            Instant dbTime = Instant.now();
 
             when(clusterBlockRepository.findByName(resourceName)).thenReturn(Optional.empty());
             when(clusterBlockRepository.save(any(ClusterBlock.class))).thenAnswer(inv -> inv.getArgument(0));
@@ -116,7 +117,7 @@ class ClusterLockServiceTest {
         @DisplayName("uses hashCode of resource name as advisory lock key")
         void usesHashCodeAsLockKey() {
             String resourceName = "NODOS";
-            OffsetDateTime dbTime = OffsetDateTime.now(ZoneOffset.UTC);
+            Instant dbTime = Instant.now();
 
             when(clusterBlockRepository.findByName(resourceName)).thenReturn(Optional.of(createBlock(resourceName)));
             when(clusterBlockRepository.getDatabaseTime()).thenReturn(dbTime);
@@ -140,8 +141,8 @@ class ClusterLockServiceTest {
         @DisplayName("releases lock and updates metrics with calculated duration")
         void releasesLockAndUpdatesMetrics() {
             String resourceName = "TASK_A";
-            OffsetDateTime startTime = OffsetDateTime.of(2024, 6, 15, 10, 0, 0, 0, ZoneOffset.UTC);
-            OffsetDateTime endTime = OffsetDateTime.of(2024, 6, 15, 10, 0, 2, 0, ZoneOffset.UTC); // 2 seconds later
+            Instant startTime = Instant.parse("2024-06-15T10:00:00Z");
+            Instant endTime = Instant.parse("2024-06-15T10:00:02Z"); // 2 seconds later
 
             ClusterBlock block = createBlock(resourceName);
             block.setTotal(0L);
@@ -181,8 +182,8 @@ class ClusterLockServiceTest {
         @DisplayName("updates running average correctly on second release")
         void updatesRunningAverageCorrectly() {
             String resourceName = "TASK_B";
-            OffsetDateTime startTime = OffsetDateTime.of(2024, 6, 15, 10, 0, 0, 0, ZoneOffset.UTC);
-            OffsetDateTime endTime = OffsetDateTime.of(2024, 6, 15, 10, 0, 3, 0, ZoneOffset.UTC); // 3s = 3000ms
+            Instant startTime = Instant.parse("2024-06-15T10:00:00Z");
+            Instant endTime = Instant.parse("2024-06-15T10:00:03Z"); // 3s = 3000ms
 
             // Block already has one execution: avg=1000, min=1000, max=1000, total=1
             ClusterBlock block = createBlock(resourceName);
@@ -218,7 +219,7 @@ class ClusterLockServiceTest {
         @DisplayName("releases intra-instance lock even when DB operations fail")
         void releasesIntraLockOnDbFailure() {
             String resourceName = "FAILING_RELEASE";
-            OffsetDateTime startTime = OffsetDateTime.now(ZoneOffset.UTC);
+            Instant startTime = Instant.now();
 
             // Acquire first
             when(clusterBlockRepository.findByName(resourceName)).thenReturn(Optional.of(createBlock(resourceName)));
@@ -255,7 +256,7 @@ class ClusterLockServiceTest {
         @DisplayName("returns true when lock is held")
         void returnsTrueWhenLockHeld() {
             String resourceName = "LOCKED_RESOURCE";
-            OffsetDateTime dbTime = OffsetDateTime.now(ZoneOffset.UTC);
+            Instant dbTime = Instant.now();
 
             when(clusterBlockRepository.findByName(resourceName)).thenReturn(Optional.of(createBlock(resourceName)));
             when(clusterBlockRepository.getDatabaseTime()).thenReturn(dbTime);
@@ -274,7 +275,7 @@ class ClusterLockServiceTest {
         @DisplayName("returns false after lock is released")
         void returnsFalseAfterRelease() {
             String resourceName = "RELEASED_RESOURCE";
-            OffsetDateTime dbTime = OffsetDateTime.now(ZoneOffset.UTC);
+            Instant dbTime = Instant.now();
 
             when(clusterBlockRepository.findByName(resourceName)).thenReturn(Optional.of(createBlock(resourceName)));
             when(clusterBlockRepository.getDatabaseTime()).thenReturn(dbTime);
@@ -298,8 +299,8 @@ class ClusterLockServiceTest {
         @DisplayName("first lock sets min equal to duration")
         void firstLockSetsMinToDuration() {
             String resourceName = "FIRST_LOCK";
-            OffsetDateTime startTime = OffsetDateTime.of(2024, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC);
-            OffsetDateTime endTime = OffsetDateTime.of(2024, 1, 1, 0, 0, 5, 0, ZoneOffset.UTC); // 5s
+            Instant startTime = Instant.parse("2024-01-01T00:00:00Z");
+            Instant endTime = Instant.parse("2024-01-01T00:00:05Z"); // 5s
 
             ClusterBlock block = createBlock(resourceName);
             block.setTotal(0L);
@@ -331,8 +332,8 @@ class ClusterLockServiceTest {
         @DisplayName("min is updated when new duration is shorter")
         void minUpdatedWhenShorter() {
             String resourceName = "MIN_TEST";
-            OffsetDateTime startTime = OffsetDateTime.of(2024, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC);
-            OffsetDateTime endTime = OffsetDateTime.of(2024, 1, 1, 0, 0, 1, 0, ZoneOffset.UTC); // 1s
+            Instant startTime = Instant.parse("2024-01-01T00:00:00Z");
+            Instant endTime = Instant.parse("2024-01-01T00:00:01Z"); // 1s
 
             // Previous: avg=5000, min=3000, max=7000, total=2
             ClusterBlock block = createBlock(resourceName);
@@ -367,8 +368,8 @@ class ClusterLockServiceTest {
         @DisplayName("max is updated when new duration is longer")
         void maxUpdatedWhenLonger() {
             String resourceName = "MAX_TEST";
-            OffsetDateTime startTime = OffsetDateTime.of(2024, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC);
-            OffsetDateTime endTime = OffsetDateTime.of(2024, 1, 1, 0, 0, 10, 0, ZoneOffset.UTC); // 10s
+            Instant startTime = Instant.parse("2024-01-01T00:00:00Z");
+            Instant endTime = Instant.parse("2024-01-01T00:00:10Z"); // 10s
 
             // Previous: avg=5000, min=3000, max=7000, total=2
             ClusterBlock block = createBlock(resourceName);

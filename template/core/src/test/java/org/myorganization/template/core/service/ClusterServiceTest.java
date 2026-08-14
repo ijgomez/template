@@ -46,11 +46,14 @@ class ClusterServiceTest {
     @Mock
     private ClusterBlockRepository clusterBlockRepository;
 
+    @Mock
+    private AuditService auditService;
+
     private ClusterService clusterService;
 
     @BeforeEach
     void setUp() {
-        clusterService = new ClusterService(clusterNodeRepository, clusterBlockRepository);
+        clusterService = new ClusterService(clusterNodeRepository, clusterBlockRepository, auditService);
     }
 
     // =====================================================================

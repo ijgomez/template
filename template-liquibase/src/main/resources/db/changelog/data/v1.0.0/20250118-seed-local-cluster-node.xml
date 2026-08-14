@@ -77,4 +77,20 @@
 
     </changeSet>
 
+    <!-- Reset sequence to avoid conflicts with seed data -->
+    <changeSet id="20250118-seed-local-cluster-node-seq-reset" author="template" labels="v1.0.0" context="local">
+
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="cluster_node"/>
+            <sequenceExists sequenceName="cluster_node_seq"/>
+        </preConditions>
+
+        <comment>Ajusta la secuencia cluster_node_seq para evitar conflictos con los datos seed (ids 1-4)</comment>
+
+        <sql>SELECT setval('cluster_node_seq', (SELECT COALESCE(MAX(id), 0) + 1 FROM cluster_node), false)</sql>
+
+        <rollback/>
+
+    </changeSet>
+
 </databaseChangeLog>

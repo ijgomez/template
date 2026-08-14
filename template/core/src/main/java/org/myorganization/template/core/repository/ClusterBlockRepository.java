@@ -1,6 +1,6 @@
 package org.myorganization.template.core.repository;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.Optional;
 
 import org.myorganization.template.domain.entity.ClusterBlock;
@@ -49,7 +49,7 @@ public interface ClusterBlockRepository extends JpaRepository<ClusterBlock, Long
      * @return the current database timestamp
      */
     @Query(value = "SELECT CURRENT_TIMESTAMP", nativeQuery = true)
-    OffsetDateTime getDatabaseTime();
+    Instant getDatabaseTime();
 
     /**
      * Updates start_date of a ClusterBlock using the database current timestamp.

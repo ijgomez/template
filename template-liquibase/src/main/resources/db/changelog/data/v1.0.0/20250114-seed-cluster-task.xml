@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20250114-seed-cluster-task" author="template" labels="v1.0.0">
+
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="cluster_task"/>
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM cluster_task WHERE name = 'NODOS'</sqlCheck>
+        </preConditions>
+
+        <comment>Tarea de clúster NODOS requerida por HeartbeatWorker para el bloqueo de heartbeat</comment>
+
+        <insert tableName="cluster_task">
+            <column name="id" valueNumeric="nextval('cluster_task_seq')"/>
+            <column name="name" value="NODOS"/>
+            <column name="description" value="Gestión de nodos del clúster (heartbeat, detección de nodos caídos, elección de master)"/>
+            <column name="nodes" valueNumeric="1"/>
+            <column name="min_nodes" valueNumeric="1"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="cluster_task">
+                <where>name = 'NODOS'</where>
+            </delete>
+        </rollback>
+
+    </changeSet>
+
+</databaseChangeLog>

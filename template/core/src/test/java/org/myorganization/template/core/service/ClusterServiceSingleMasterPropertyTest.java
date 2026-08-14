@@ -42,7 +42,7 @@ class ClusterServiceSingleMasterPropertyTest {
         ClusterNodeRepository clusterNodeRepository = Mockito.mock(ClusterNodeRepository.class);
         ClusterBlockRepository clusterBlockRepository = Mockito.mock(ClusterBlockRepository.class);
 
-        ClusterService clusterService = new ClusterService(clusterNodeRepository, clusterBlockRepository);
+        ClusterService clusterService = new ClusterService(clusterNodeRepository, clusterBlockRepository, Mockito.mock(org.myorganization.template.core.service.AuditService.class));
 
         // Mock findById to return node from in-memory list
         when(clusterNodeRepository.findById(any(Long.class))).thenAnswer(invocation -> {

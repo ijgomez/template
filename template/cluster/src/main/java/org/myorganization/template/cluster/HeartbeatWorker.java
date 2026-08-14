@@ -6,6 +6,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 /**
  * Scheduled task that performs the cluster heartbeat cycle every 30 seconds (configurable).
@@ -30,6 +31,7 @@ import org.springframework.scheduling.annotation.Scheduled;
  * @see HeartbeatClusterService
  * @see HeartbeatLockService
  */
+@Component
 public class HeartbeatWorker {
 
     private static final Logger log = LoggerFactory.getLogger(HeartbeatWorker.class);
