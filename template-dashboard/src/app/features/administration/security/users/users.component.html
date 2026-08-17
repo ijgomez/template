@@ -131,62 +131,13 @@
      DETAIL VIEW
      ═══════════════════════════════════════════════════════════════════════════ -->
 @if (viewMode() === 'detail') {
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="h3 mb-0">{{ 'users.detail.title' | translate }}</h1>
-    <div class="d-flex gap-2">
-      @if (canWrite()) {
-        <button class="btn btn-primary btn-sm" (click)="showEditForm(selectedUser()!)">
-          <i class="bi bi-pencil me-1" aria-hidden="true"></i>{{ 'button.edit' | translate }}
-        </button>
-        <button class="btn btn-danger btn-sm" (click)="confirmDelete(selectedUser()!)">
-          <i class="bi bi-trash me-1" aria-hidden="true"></i>{{ 'button.delete' | translate }}
-        </button>
-      }
-      <button class="btn btn-outline-secondary btn-sm" (click)="backToList()">
-        <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>{{ 'button.back' | translate }}
-      </button>
-    </div>
-  </div>
-
   @if (selectedUser(); as user) {
-    <div class="card">
-      <div class="card-body">
-        <div class="tp-form-grid">
-          <div class="form-group">
-            <label class="form-label fw-bold">{{ 'users.fields.username' | translate }}</label>
-            <p class="form-control-plaintext">{{ user.username }}</p>
-          </div>
-          <div class="form-group">
-            <label class="form-label fw-bold">{{ 'users.fields.firstName' | translate }}</label>
-            <p class="form-control-plaintext">{{ user.firstName ?? '-' }}</p>
-          </div>
-          <div class="form-group">
-            <label class="form-label fw-bold">{{ 'users.fields.lastName' | translate }}</label>
-            <p class="form-control-plaintext">{{ user.lastName ?? '-' }}</p>
-          </div>
-          <div class="form-group">
-            <label class="form-label fw-bold">{{ 'users.fields.email' | translate }}</label>
-            <p class="form-control-plaintext">{{ user.email ?? '-' }}</p>
-          </div>
-          <div class="form-group">
-            <label class="form-label fw-bold">{{ 'users.fields.profile' | translate }}</label>
-            <p class="form-control-plaintext">{{ user.profileName ?? '-' }}</p>
-          </div>
-          <div class="form-group">
-            <label class="form-label fw-bold">{{ 'users.fields.lastAccess' | translate }}</label>
-            <p class="form-control-plaintext">{{ user.lastAccess | localDate }}</p>
-          </div>
-          <div class="form-group">
-            <label class="form-label fw-bold">{{ 'users.fields.createdAt' | translate }}</label>
-            <p class="form-control-plaintext">{{ user.createdAt | localDate }}</p>
-          </div>
-          <div class="form-group">
-            <label class="form-label fw-bold">{{ 'users.fields.lastModifiedAt' | translate }}</label>
-            <p class="form-control-plaintext">{{ user.lastModifiedAt | localDate }}</p>
-          </div>
-        </div>
-      </div>
-    </div>
+    <app-user-detail
+      [user]="user"
+      [canWrite]="canWrite()"
+      (back)="backToList()"
+      (edit)="showEditForm($event)"
+      (delete)="confirmDelete($event)" />
   }
 }
 
@@ -194,134 +145,12 @@
      CREATE / EDIT FORM
      ═══════════════════════════════════════════════════════════════════════════ -->
 @if (viewMode() === 'create' || viewMode() === 'edit') {
-  <!-- Title -->
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="h3 mb-0">
-      {{ (viewMode() === 'create' ? 'users.form.createTitle' : 'users.form.editTitle') | translate }}
-    </h1>
-  </div>
-
-  <div class="tp-filter-bar">
-  <form id="userForm" (ngSubmit)="saveUser()" #userForm="ngForm" novalidate data-testid="user-form">
-    <!-- Datos generales -->
-    <h6 class="text-muted text-uppercase fw-semibold mb-2" style="font-size: 0.75rem; letter-spacing: 0.05em;">
-      {{ 'users.form.sectionGeneral' | translate }}
-    </h6>
-    <div class="row g-2 mb-3">
-      <div class="col-md-4">
-        <label for="username" class="form-label form-label-sm mb-1">
-          {{ 'users.fields.username' | translate }} <span class="text-danger">*</span>
-        </label>
-        <input id="username"
-               type="text"
-               class="form-control form-control-sm"
-               [ngModel]="formUser().username"
-               (ngModelChange)="updateFormField('username', $event)"
-               name="username"
-               required
-               [readonly]="viewMode() === 'edit'"
-               data-testid="input-username">
-      </div>
-      <div class="col-md-4">
-        <label for="password" class="form-label form-label-sm mb-1">
-          {{ 'users.fields.password' | translate }}
-          @if (viewMode() === 'create') { <span class="text-danger">*</span> }
-        </label>
-        <input id="password"
-               type="password"
-               class="form-control form-control-sm"
-               [ngModel]="formUser().password"
-               (ngModelChange)="updateFormField('password', $event)"
-               name="password"
-               [required]="viewMode() === 'create'"
-               data-testid="input-password">
-      </div>
-      <div class="col-md-4">
-        <label for="email" class="form-label form-label-sm mb-1">
-          {{ 'users.fields.email' | translate }} <span class="text-danger">*</span>
-        </label>
-        <input id="email"
-               type="email"
-               class="form-control form-control-sm"
-               [ngModel]="formUser().email ?? ''"
-               (ngModelChange)="updateFormField('email', $event || null)"
-               name="email"
-               required
-               placeholder="usuario@ejemplo.com"
-               data-testid="input-email">
-      </div>
-      <div class="col-md-4">
-        <label for="firstName" class="form-label form-label-sm mb-1">
-          {{ 'users.fields.firstName' | translate }} <span class="text-danger">*</span>
-        </label>
-        <input id="firstName"
-               type="text"
-               class="form-control form-control-sm"
-               [ngModel]="formUser().firstName ?? ''"
-               (ngModelChange)="updateFormField('firstName', $event || null)"
-               name="firstName"
-               required
-               data-testid="input-first-name">
-      </div>
-      <div class="col-md-4">
-        <label for="lastName" class="form-label form-label-sm mb-1">
-          {{ 'users.fields.lastName' | translate }} <span class="text-danger">*</span>
-        </label>
-        <input id="lastName"
-               type="text"
-               class="form-control form-control-sm"
-               [ngModel]="formUser().lastName ?? ''"
-               (ngModelChange)="updateFormField('lastName', $event || null)"
-               name="lastName"
-               required
-               data-testid="input-last-name">
-      </div>
-      <div class="col-md-4">
-        <label for="profileId" class="form-label form-label-sm mb-1">
-          {{ 'users.fields.profile' | translate }} <span class="text-danger">*</span>
-        </label>
-        <select id="profileId"
-                class="form-select form-select-sm"
-                [ngModel]="formUser().profileId"
-                (ngModelChange)="updateFormField('profileId', $event)"
-                name="profileId"
-                required
-                data-testid="select-profile">
-          <option [ngValue]="null" disabled>{{ 'users.form.selectProfile' | translate }}</option>
-          @for (profile of profiles(); track profile.id) {
-            <option [ngValue]="profile.id">{{ profile.name }}</option>
-          }
-        </select>
-      </div>
-    </div>
-
-    <!-- Informes asignados -->
-    <tp-selected-reports
-      [ngModel]="formUser().reportIds"
-      (ngModelChange)="updateFormField('reportIds', $event)"
-      name="reportIds"
-      [title]="'users.form.sectionReports' | translate"
-      testId="user-reports">
-    </tp-selected-reports>
-
-    <!-- Botones de acción -->
-    <div class="col-12 d-flex justify-content-end gap-2 mt-2">
-      <button type="button"
-              class="btn btn-outline-secondary btn-sm"
-              (click)="backToList()"
-              data-testid="btn-cancel">
-        {{ 'button.cancel' | translate }}
-      </button>
-      <button type="submit"
-              class="btn btn-primary btn-sm"
-              data-testid="btn-save">
-        <i class="bi bi-check-lg me-1" aria-hidden="true"></i> {{ 'button.save' | translate }}
-      </button>
-    </div>
-  </form>
-  </div>
-
-
+  <app-user-form
+    [mode]="formMode()"
+    [user]="formUser()"
+    [profiles]="profiles()"
+    (save)="saveUser($event)"
+    (cancel)="backToList()" />
 }
 
 <!-- ═══════════════════════════════════════════════════════════════════════════

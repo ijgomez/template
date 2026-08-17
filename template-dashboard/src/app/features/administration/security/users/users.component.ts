@@ -9,15 +9,16 @@ import { NotificationService } from '../../../../core/services/notification.serv
 import { CsvExportService } from '../../../../core/services/csv-export.service';
 import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
 import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../shared/components/data-table';
-import { TpSelectedReportsComponent } from '../../../../shared/components/selected-reports';
 import { UserDTO, UserCriteria, ProfileRef } from '../../../../core/models/user.model';
+import { UserDetailComponent } from './user-detail/user-detail.component';
+import { UserFormComponent } from './user-form/user-form.component';
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit';
 
 @Component({
   selector: 'app-users',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective, TpSelectedReportsComponent],
+  imports: [CommonModule, FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective, UserDetailComponent, UserFormComponent],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -63,6 +64,7 @@ export class UsersComponent implements OnInit {
   readonly selectedUser = signal<UserDTO | null>(null);
   readonly selectedRow = signal<UserDTO | null>(null);
   readonly formUser = signal<UserDTO>(this.emptyUser());
+  readonly formMode = signal<'create' | 'edit'>('create');
 
   // Reference data
   readonly profiles = signal<ProfileRef[]>([]);
@@ -213,11 +215,13 @@ export class UsersComponent implements OnInit {
 
   showCreateForm(): void {
     this.formUser.set(this.emptyUser());
+    this.formMode.set('create');
     this.viewMode.set('create');
   }
 
   showEditForm(user: UserDTO): void {
     this.formUser.set({ ...user });
+    this.formMode.set('edit');
     this.viewMode.set('edit');
   }
 
@@ -228,9 +232,8 @@ export class UsersComponent implements OnInit {
 
   // ─── CRUD Actions ──────────────────────────────────────────
 
-  saveUser(): void {
-    const user = this.formUser();
-    if (this.viewMode() === 'create') {
+  saveUser(user: UserDTO): void {
+    if (this.formMode() === 'create') {
       const notifId = this.notificationService.showProgress('notification.create.progress');
       this.userService.create(user).subscribe({
         next: () => {
@@ -288,10 +291,6 @@ export class UsersComponent implements OnInit {
   }
 
   // ─── Form Helpers ──────────────────────────────────────────
-
-  updateFormField(field: keyof UserDTO, value: unknown): void {
-    this.formUser.update(u => ({ ...u, [field]: value }));
-  }
 
 
 
