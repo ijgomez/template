@@ -95,6 +95,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/v1/administration/security/users/**").hasAuthority("USER_WRITE")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/administration/security/users/**").hasAuthority("USER_WRITE")
 
+                        // Profiles: references endpoint accessible to users who can view users
+                        .requestMatchers(HttpMethod.GET, "/api/v1/administration/security/profiles/references").hasAnyAuthority("USER_READ", "USER_WRITE", "PROFILE_READ", "PROFILE_WRITE")
+
                         // Profiles: read vs write
                         .requestMatchers(HttpMethod.GET, "/api/v1/administration/security/profiles/**").hasAnyAuthority("PROFILE_READ", "PROFILE_WRITE")
                         .requestMatchers(HttpMethod.POST, "/api/v1/administration/security/profiles/**").hasAuthority("PROFILE_WRITE")

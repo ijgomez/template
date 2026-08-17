@@ -82,7 +82,7 @@ class AuthServiceTest {
         user.setPassword("$2a$12$hashedpassword");
         user.setProfile(profile);
 
-        when(userRepository.findByUsername("admin")).thenReturn(Optional.of(user));
+        when(userRepository.findByUsernameWithProfileActions("admin")).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("secret", "$2a$12$hashedpassword")).thenReturn(true);
         when(userRepository.save(any(User.class))).thenReturn(user);
         when(tokenProvider.generateAccessToken(eq("admin"), eq("ADMIN"), eq(List.of("USER_READ"))))
@@ -110,7 +110,7 @@ class AuthServiceTest {
     @Test
     @DisplayName("authenticate: invalid username throws BadCredentialsException")
     void authenticate_invalidUsername_throwsBadCredentials() {
-        when(userRepository.findByUsername("unknown")).thenReturn(Optional.empty());
+        when(userRepository.findByUsernameWithProfileActions("unknown")).thenReturn(Optional.empty());
 
         LoginRequest request = new LoginRequest("unknown", "password");
 
@@ -129,7 +129,7 @@ class AuthServiceTest {
         user.setUsername("admin");
         user.setPassword("$2a$12$hashedpassword");
 
-        when(userRepository.findByUsername("admin")).thenReturn(Optional.of(user));
+        when(userRepository.findByUsernameWithProfileActions("admin")).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("wrong", "$2a$12$hashedpassword")).thenReturn(false);
 
         LoginRequest request = new LoginRequest("admin", "wrong");
@@ -151,7 +151,7 @@ class AuthServiceTest {
         user.setPassword("$2a$12$hashed");
         user.setProfile(null);
 
-        when(userRepository.findByUsername("basic")).thenReturn(Optional.of(user));
+        when(userRepository.findByUsernameWithProfileActions("basic")).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("pass", "$2a$12$hashed")).thenReturn(true);
         when(userRepository.save(any(User.class))).thenReturn(user);
         when(tokenProvider.generateAccessToken(eq("basic"), eq(""), eq(Collections.emptyList())))
@@ -186,6 +186,7 @@ class AuthServiceTest {
 
         when(refreshTokenRepository.findByToken("valid-refresh")).thenReturn(Optional.of(storedToken));
         when(refreshTokenRepository.save(any(RefreshToken.class))).thenAnswer(inv -> inv.getArgument(0));
+        when(userRepository.findByUsernameWithProfileActions("admin")).thenReturn(Optional.of(user));
         when(tokenProvider.generateAccessToken(eq("admin"), eq("ADMIN"), eq(Collections.emptyList())))
                 .thenReturn("new-access");
 
@@ -269,6 +270,7 @@ class AuthServiceTest {
 
         when(refreshTokenRepository.findByToken("old-token")).thenReturn(Optional.of(storedToken));
         when(refreshTokenRepository.save(any(RefreshToken.class))).thenAnswer(inv -> inv.getArgument(0));
+        when(userRepository.findByUsernameWithProfileActions("user1")).thenReturn(Optional.of(user));
         when(tokenProvider.generateAccessToken(eq("user1"), eq("USER"), eq(Collections.emptyList())))
                 .thenReturn("new-access");
 
@@ -348,7 +350,7 @@ class AuthServiceTest {
         user.setPassword("$2a$12$hashed");
         user.setProfile(profile);
 
-        when(userRepository.findByUsername("admin")).thenReturn(Optional.of(user));
+        when(userRepository.findByUsernameWithProfileActions("admin")).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("pass", "$2a$12$hashed")).thenReturn(true);
         when(userRepository.save(any(User.class))).thenReturn(user);
         when(tokenProvider.generateAccessToken(anyString(), anyString(), anyList())).thenReturn("token");

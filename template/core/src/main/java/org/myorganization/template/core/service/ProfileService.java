@@ -9,6 +9,7 @@ import org.myorganization.template.core.repository.Profile2ActionRepository;
 import org.myorganization.template.core.repository.ProfileRepository;
 import org.myorganization.template.domain.criteria.ProfileCriteria;
 import org.myorganization.template.domain.dto.ProfileDTO;
+import org.myorganization.template.domain.dto.ProfileRefDTO;
 import org.myorganization.template.domain.entity.Action;
 import org.myorganization.template.domain.entity.Profile;
 import org.myorganization.template.domain.entity.Profile2Action;
@@ -18,6 +19,7 @@ import org.myorganization.template.domain.exception.EntityNotFoundException;
 import org.myorganization.template.domain.exception.ValidationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -169,6 +171,20 @@ public class ProfileService {
 
         profile2ActionRepository.deleteByIdProfileId(id);
         profileRepository.delete(profile);
+    }
+
+    /**
+     * Returns a lightweight list of all profiles (id and name only), sorted by name.
+     * <p>
+     * Intended for dropdown/selector usage where the full profile details are not needed.
+     *
+     * @return list of profile references
+     */
+    @Transactional(readOnly = true)
+    public List<ProfileRefDTO> findAllReferences() {
+        return profileRepository.findAll(Sort.by("name")).stream()
+                .map(profile -> new ProfileRefDTO(profile.getId(), profile.getName()))
+                .toList();
     }
 
     // --- Private helper methods ---

@@ -103,9 +103,8 @@ export class UserService {
   /**
    * Fetches all profiles for the profile selector.
    */
-  getProfiles(): Observable<Page<ProfileRef>> {
-    const params = new HttpParams().set('page', '0').set('size', '1000');
-    return this.http.get<Page<ProfileRef>>(this.profilesUrl, { params });
+  getProfiles(): Observable<ProfileRef[]> {
+    return this.http.get<ProfileRef[]>(`${this.profilesUrl}/references`);
   }
 
   /**

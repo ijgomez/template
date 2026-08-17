@@ -3,6 +3,7 @@ package org.myorganization.template.webapp.controller;
 import org.myorganization.template.core.service.ProfileService;
 import org.myorganization.template.domain.criteria.ProfileCriteria;
 import org.myorganization.template.domain.dto.ProfileDTO;
+import org.myorganization.template.domain.dto.ProfileRefDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 
+import java.util.List;
+
 /**
  * REST controller for profile management.
  * <p>
@@ -33,6 +36,20 @@ public class ProfileController {
 
     public ProfileController(ProfileService profileService) {
         this.profileService = profileService;
+    }
+
+    /**
+     * Returns a lightweight list of all profiles (id and name only) for selectors.
+     * <p>
+     * This endpoint requires only {@code USER_READ} authority, so users who can
+     * view the user list can also load profile references for filtering.
+     *
+     * @return list of profile references sorted by name
+     */
+    @GetMapping("/references")
+    public ResponseEntity<List<ProfileRefDTO>> findAllReferences() {
+        List<ProfileRefDTO> references = profileService.findAllReferences();
+        return ResponseEntity.ok(references);
     }
 
     /**

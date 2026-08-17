@@ -69,7 +69,7 @@ public class AuthService {
      */
     @Transactional
     public TokenResponse authenticate(LoginRequest loginRequest) {
-        User user = userRepository.findByUsername(loginRequest.username())
+        User user = userRepository.findByUsernameWithProfileActions(loginRequest.username())
                 .orElseThrow(() -> new BadCredentialsException("Invalid username or password"));
 
         if (!passwordEncoder.matches(loginRequest.password(), user.getPassword())) {
@@ -122,8 +122,9 @@ public class AuthService {
         storedToken.setRevoked(true);
         refreshTokenRepository.save(storedToken);
 
-        // Generate new token pair
-        User user = storedToken.getUser();
+        // Generate new token pair — reload user with full profile/actions graph
+        User user = userRepository.findByUsernameWithProfileActions(storedToken.getUser().getUsername())
+                .orElseThrow(() -> new BadCredentialsException("Invalid or expired refresh token"));
         String accessToken = generateAccessTokenForUser(user);
         String newRefreshToken = createRefreshToken(user);
 

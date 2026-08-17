@@ -299,7 +299,7 @@ export class UsersComponent implements OnInit {
 
   private loadProfiles(): void {
     this.userService.getProfiles().subscribe({
-      next: (page) => this.profiles.set(page.content),
+      next: (profiles) => this.profiles.set(profiles),
       error: () => {},
     });
   }
