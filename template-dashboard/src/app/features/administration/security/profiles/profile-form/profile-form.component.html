@@ -1,0 +1,66 @@
+<!-- Title -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 mb-0">
+    {{ (mode() === 'create' ? 'profiles.form.createTitle' : 'profiles.form.editTitle') | translate }}
+  </h1>
+</div>
+
+<div class="tp-filter-bar">
+  <form id="profileForm" (ngSubmit)="onSubmit()" #profileForm="ngForm" novalidate data-testid="profile-form">
+    <!-- Datos generales -->
+    <h6 class="text-muted text-uppercase fw-semibold mb-2" style="font-size: 0.75rem; letter-spacing: 0.05em;">
+      {{ 'profiles.form.sectionGeneral' | translate }}
+    </h6>
+    <div class="row g-2 mb-3">
+      <div class="col-md-4">
+        <label for="profileName" class="form-label form-label-sm mb-1">
+          {{ 'profiles.fields.name' | translate }} <span class="text-danger">*</span>
+        </label>
+        <input id="profileName"
+               type="text"
+               class="form-control form-control-sm"
+               [ngModel]="formProfile().name"
+               (ngModelChange)="updateField('name', $event)"
+               name="profileName"
+               required
+               data-testid="input-name">
+      </div>
+      <div class="col-md-8">
+        <label for="profileDescription" class="form-label form-label-sm mb-1">
+          {{ 'profiles.fields.description' | translate }}
+        </label>
+        <input id="profileDescription"
+               type="text"
+               class="form-control form-control-sm"
+               [ngModel]="formProfile().description ?? ''"
+               (ngModelChange)="updateField('description', $event || undefined)"
+               name="profileDescription"
+               data-testid="input-description">
+      </div>
+    </div>
+
+    <!-- Acciones asignadas -->
+    <tp-selected-actions
+      [ngModel]="selectedActionIds()"
+      (ngModelChange)="selectedActionIds.set($event)"
+      name="actionIds"
+      [title]="'profiles.form.sectionActions' | translate"
+      testId="profile-actions">
+    </tp-selected-actions>
+
+    <!-- Botones de acción -->
+    <div class="col-12 d-flex justify-content-end gap-2 mt-2">
+      <button type="button"
+              class="btn btn-outline-secondary btn-sm"
+              (click)="onCancel()"
+              data-testid="btn-cancel">
+        {{ 'button.cancel' | translate }}
+      </button>
+      <button type="submit"
+              class="btn btn-primary btn-sm"
+              data-testid="btn-save">
+        <i class="bi bi-check-lg me-1" aria-hidden="true"></i> {{ 'button.save' | translate }}
+      </button>
+    </div>
+  </form>
+</div>

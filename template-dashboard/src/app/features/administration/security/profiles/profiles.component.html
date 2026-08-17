@@ -30,7 +30,7 @@
   <!-- Action toolbar -->
   <div class="tp-toolbar d-flex gap-2 mb-3">
     @if (canWrite()) {
-      <button type="button" class="btn btn-primary btn-sm" (click)="openCreateForm()" data-testid="btn-create">
+      <button type="button" class="btn btn-primary btn-sm" (click)="showCreateForm()" data-testid="btn-create">
         <i class="bi bi-plus-lg me-1" aria-hidden="true"></i> {{ 'button.create' | translate }}
       </button>
       <button type="button" class="btn btn-warning btn-sm text-white" [disabled]="!selectedRow()" (click)="editSelectedProfile()" data-testid="btn-edit">
@@ -56,7 +56,7 @@
     [selectable]="true"
     [selectedItem]="selectedRow()"
     (rowSelect)="selectRow($event)"
-    (rowDoubleClick)="viewDetail($event)"
+    (rowDoubleClick)="showDetail($event)"
     (pageChange)="goToPage($event)"
     (pageSizeChange)="changePageSize($event)"
     (sortChange)="onSort($event)"
@@ -89,153 +89,26 @@
      DETAIL VIEW
      ═══════════════════════════════════════════════════════════════════════════ -->
 @if (viewMode() === 'detail') {
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="h3 mb-0">{{ 'profiles.detail.title' | translate }}</h1>
-    <div class="d-flex gap-2">
-      @if (canWrite()) {
-        <button class="btn btn-primary btn-sm" (click)="openEditForm(selectedProfile()!)">
-          <i class="bi bi-pencil me-1" aria-hidden="true"></i>{{ 'button.edit' | translate }}
-        </button>
-        <button class="btn btn-danger btn-sm" (click)="confirmDelete(selectedProfile()!)">
-          <i class="bi bi-trash me-1" aria-hidden="true"></i>{{ 'button.delete' | translate }}
-        </button>
-      }
-      <button class="btn btn-outline-secondary btn-sm" (click)="backToList()">
-        <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>{{ 'button.back' | translate }}
-      </button>
-    </div>
-  </div>
-
   @if (selectedProfile(); as profile) {
-    <div class="card mb-3">
-      <div class="card-body">
-        <div class="tp-form-grid">
-          <div class="form-group">
-            <label class="form-label fw-bold">{{ 'profiles.fields.name' | translate }}</label>
-            <p class="form-control-plaintext">{{ profile.name }}</p>
-          </div>
-          <div class="form-group">
-            <label class="form-label fw-bold">{{ 'profiles.fields.description' | translate }}</label>
-            <p class="form-control-plaintext">{{ profile.description ?? '-' }}</p>
-          </div>
-          <div class="form-group">
-            <label class="form-label fw-bold">{{ 'profiles.fields.createdAt' | translate }}</label>
-            <p class="form-control-plaintext">{{ profile.createdAt | localDate }}</p>
-          </div>
-          <div class="form-group">
-            <label class="form-label fw-bold">{{ 'profiles.fields.lastModifiedAt' | translate }}</label>
-            <p class="form-control-plaintext">{{ profile.lastModifiedAt | localDate }}</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Assigned Actions List -->
-    <div class="card">
-      <div class="card-header">
-        <h5 class="mb-0">{{ 'profiles.detail.assignedActions' | translate }}</h5>
-      </div>
-      <div class="card-body p-0">
-        @if (profile.actions.length === 0) {
-          <div class="text-center py-4 text-muted">
-            {{ 'profiles.detail.noActions' | translate }}
-          </div>
-        } @else {
-          <div class="table-responsive">
-            <table class="table table-striped align-middle mb-0" aria-label="Acciones asignadas al perfil">
-              <thead class="table-light">
-                <tr>
-                  <th scope="col">{{ 'profiles.detail.actionCode' | translate }}</th>
-                  <th scope="col">{{ 'profiles.detail.actionName' | translate }}</th>
-                  <th scope="col">{{ 'profiles.detail.actionType' | translate }}</th>
-                </tr>
-              </thead>
-              <tbody>
-                @for (action of profile.actions; track action.id) {
-                  <tr>
-                    <td><code>{{ action.code }}</code></td>
-                    <td>{{ action.name }}</td>
-                    <td>
-                      <span class="badge" [class]="getActionTypeBadgeClass(action.type)">
-                        {{ action.type }}
-                      </span>
-                    </td>
-                  </tr>
-                }
-              </tbody>
-            </table>
-          </div>
-        }
-      </div>
-    </div>
+    <app-profile-detail
+      [profile]="profile"
+      [canWrite]="canWrite()"
+      (back)="backToList()"
+      (edit)="showEditForm($event)"
+      (delete)="confirmDelete($event)" />
   }
 }
 
 <!-- ═══════════════════════════════════════════════════════════════════════════
      CREATE / EDIT FORM
      ═══════════════════════════════════════════════════════════════════════════ -->
-@if (viewMode() === 'form') {
-  <!-- Title -->
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="h3 mb-0">
-      {{ (isEditing() ? 'profiles.form.editTitle' : 'profiles.form.createTitle') | translate }}
-    </h1>
-  </div>
-
-  <div class="tp-filter-bar">
-  <form id="profileForm" (ngSubmit)="saveProfile()" #profileForm="ngForm" novalidate data-testid="profile-form">
-    <!-- Datos generales -->
-    <h6 class="text-muted text-uppercase fw-semibold mb-2" style="font-size: 0.75rem; letter-spacing: 0.05em;">
-      {{ 'profiles.form.sectionGeneral' | translate }}
-    </h6>
-    <div class="row g-2 mb-3">
-      <div class="col-md-4">
-        <label for="profileName" class="form-label form-label-sm mb-1">
-          {{ 'profiles.fields.name' | translate }} <span class="text-danger">*</span>
-        </label>
-        <input id="profileName"
-               type="text"
-               class="form-control form-control-sm"
-               [ngModel]="formProfile().name"
-               (ngModelChange)="formProfile.update(p => ({...p, name: $event}))"
-               name="profileName"
-               required
-               data-testid="input-name">
-      </div>
-      <div class="col-md-8">
-        <label for="profileDescription" class="form-label form-label-sm mb-1">
-          {{ 'profiles.fields.description' | translate }}
-        </label>
-        <input id="profileDescription"
-               type="text"
-               class="form-control form-control-sm"
-               [ngModel]="formProfile().description ?? ''"
-               (ngModelChange)="formProfile.update(p => ({...p, description: $event || undefined}))"
-               name="profileDescription"
-               data-testid="input-description">
-      </div>
-    </div>
-
-    <!-- Acciones asignadas -->
-    <tp-selected-actions
-      [ngModel]="selectedActionIds()"
-      (ngModelChange)="selectedActionIds.set($event)"
-      name="actionIds"
-      [title]="'profiles.form.sectionActions' | translate"
-      testId="profile-actions">
-    </tp-selected-actions>
-
-    <!-- Botones de acción -->
-    <div class="col-12 d-flex justify-content-end gap-2 mt-2">
-      <button type="button" class="btn btn-outline-secondary btn-sm" (click)="backToList()" data-testid="btn-cancel">
-        {{ 'button.cancel' | translate }}
-      </button>
-      <button type="submit" class="btn btn-primary btn-sm" data-testid="btn-save">
-        <i class="bi bi-check-lg me-1" aria-hidden="true"></i> {{ 'button.save' | translate }}
-      </button>
-    </div>
-  </form>
-  </div>
+@if (viewMode() === 'create' || viewMode() === 'edit') {
+  <app-profile-form
+    [mode]="formMode()"
+    [profile]="formProfile()"
+    [actionIds]="formActionIds()"
+    (save)="saveProfile($event)"
+    (cancel)="backToList()" />
 }
 
 <!-- ═══════════════════════════════════════════════════════════════════════════
@@ -252,7 +125,7 @@
                   [attr.aria-label]="'button.close' | translate"></button>
         </div>
         <div class="modal-body">
-          <p>{{ 'profiles.delete.confirmMessage' | translate: { name: selectedProfile()?.name } }}</p>
+          <p>{{ 'profiles.delete.confirmMessage' | translate: { name: profileToDelete()?.name } }}</p>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-outline-secondary" (click)="cancelDelete()">

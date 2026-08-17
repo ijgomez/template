@@ -9,20 +9,21 @@ import { CsvExportService } from '../../../../core/services/csv-export.service';
 import { ProfileService } from '../../../../core/services/profile.service';
 import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
 import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../shared/components/data-table';
-import { TpSelectedActionsComponent } from '../../../../shared/components/selected-actions';
-import { Action, Profile, ProfileCriteria } from './models/profile.model';
+import { Profile, ProfileCriteria } from './models/profile.model';
+import { ProfileDetailComponent } from './profile-detail/profile-detail.component';
+import { ProfileFormComponent } from './profile-form/profile-form.component';
 
-type ViewMode = 'list' | 'detail' | 'form';
+type ViewMode = 'list' | 'detail' | 'create' | 'edit';
 
 /**
  * Profiles management component.
- * Provides list (paginated, filterable, CSV export), create/edit form,
- * and detail views for security profiles.
+ * Coordinates list (paginated, filterable, CSV export), detail and form views
+ * for security profiles. Detail and form views are delegated to child components.
  */
 @Component({
   selector: 'app-profiles',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective, TpSelectedActionsComponent],
+  imports: [CommonModule, FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective, ProfileDetailComponent, ProfileFormComponent],
   templateUrl: './profiles.component.html',
   styleUrls: ['./profiles.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -36,9 +37,7 @@ export class ProfilesComponent implements OnInit {
 
   // View state
   readonly viewMode = signal<ViewMode>('list');
-  readonly isEditing = signal(false);
   readonly isLoading = signal(false);
-  readonly showDeleteConfirm = signal(false);
 
   // List data
   readonly profiles = signal<Profile[]>([]);
@@ -64,12 +63,15 @@ export class ProfilesComponent implements OnInit {
   // Row selection
   readonly selectedRow = signal<Profile | null>(null);
 
-  // Detail/Form data
+  // Detail / Form state
   readonly selectedProfile = signal<Profile | null>(null);
   readonly formProfile = signal<Profile>({ id: null, name: '', description: '', actions: [] });
-  readonly selectedActionIds = signal<number[]>([]);
+  readonly formActionIds = signal<number[]>([]);
+  readonly formMode = signal<'create' | 'edit'>('create');
 
-  // Form: action filter & filtered list - handled by TpSelectedActionsComponent
+  // Delete confirmation
+  readonly showDeleteConfirm = signal(false);
+  readonly profileToDelete = signal<Profile | null>(null);
 
   // Action-based permissions
   readonly canWrite = computed(() => this.authService.hasAction('PROFILE_WRITE'));
@@ -78,7 +80,7 @@ export class ProfilesComponent implements OnInit {
     this.loadProfiles();
   }
 
-  // ─── List View ──────────────────────────────────────────────
+  // ─── List Actions ──────────────────────────────────────────
 
   loadProfiles(): void {
     this.isLoading.set(true);
@@ -130,6 +132,24 @@ export class ProfilesComponent implements OnInit {
     this.loadProfiles();
   }
 
+  selectRow(profile: Profile): void {
+    this.selectedRow.set(this.selectedRow()?.id === profile.id ? null : profile);
+  }
+
+  editSelectedProfile(): void {
+    const row = this.selectedRow();
+    if (row) {
+      this.showEditForm(row);
+    }
+  }
+
+  deleteSelectedProfile(): void {
+    const row = this.selectedRow();
+    if (row) {
+      this.confirmDelete(row);
+    }
+  }
+
   exportCsv(): void {
     const data = this.profiles();
     if (data.length === 0) return;
@@ -154,121 +174,27 @@ export class ProfilesComponent implements OnInit {
     this.notificationService.showSuccess('notification.export.success');
   }
 
-  // ─── Row Selection ────────────────────────────────────────────
+  // ─── Navigation ────────────────────────────────────────────
 
-  selectRow(profile: Profile): void {
-    this.selectedRow.set(this.selectedRow()?.id === profile.id ? null : profile);
-  }
-
-  editSelectedProfile(): void {
-    const row = this.selectedRow();
-    if (row) {
-      this.openEditForm(row);
-    }
-  }
-
-  deleteSelectedProfile(): void {
-    const row = this.selectedRow();
-    if (row) {
-      this.confirmDelete(row);
-    }
-  }
-
-  // ─── Detail View ────────────────────────────────────────────
-
-  viewDetail(profile: Profile): void {
+  showDetail(profile: Profile): void {
     this.selectedProfile.set(profile);
     this.viewMode.set('detail');
   }
 
-  // ─── Form View ──────────────────────────────────────────────
-
-  openCreateForm(): void {
+  showCreateForm(): void {
     this.formProfile.set({ id: null, name: '', description: '', actions: [] });
-    this.selectedActionIds.set([]);
-    this.isEditing.set(false);
-    this.viewMode.set('form');
+    this.formActionIds.set([]);
+    this.formMode.set('create');
+    this.viewMode.set('create');
   }
 
-  openEditForm(profile: Profile): void {
+  showEditForm(profile: Profile): void {
     this.formProfile.set({ ...profile });
-    // Support both formats: actionIds from backend DTO, or actions from enriched data
     const ids = profile.actionIds ?? profile.actions?.map((a) => a.id) ?? [];
-    this.selectedActionIds.set(ids);
-    this.isEditing.set(true);
-    this.viewMode.set('form');
+    this.formActionIds.set(ids);
+    this.formMode.set('edit');
+    this.viewMode.set('edit');
   }
-
-  saveProfile(): void {
-    const profile = this.formProfile();
-    const actionIds = this.selectedActionIds();
-
-    // Backend expects { name, description, actionIds } (ProfileDTO format)
-    const payload = {
-      id: profile.id,
-      name: profile.name,
-      description: profile.description ?? null,
-      actionIds,
-    };
-
-    const progressId = this.notificationService.showProgress(
-      this.isEditing() ? 'notification.update.progress' : 'notification.create.progress'
-    );
-
-    const operation = this.isEditing()
-      ? this.profileService.update(profile.id!, payload as any)
-      : this.profileService.create(payload as any);
-
-    operation.subscribe({
-      next: () => {
-        this.notificationService.updateToSuccess(
-          progressId,
-          this.isEditing() ? 'notification.update.success' : 'notification.create.success'
-        );
-        this.backToList();
-      },
-      error: () => {
-        this.notificationService.updateToError(
-          progressId,
-          this.isEditing() ? 'notification.update.error' : 'notification.create.error'
-        );
-      },
-    });
-  }
-
-  // ─── Delete ─────────────────────────────────────────────────
-
-  confirmDelete(profile: Profile): void {
-    this.selectedProfile.set(profile);
-    this.showDeleteConfirm.set(true);
-  }
-
-  cancelDelete(): void {
-    this.showDeleteConfirm.set(false);
-    this.selectedProfile.set(null);
-  }
-
-  executeDelete(): void {
-    const profile = this.selectedProfile();
-    if (!profile?.id) return;
-
-    const progressId = this.notificationService.showProgress('notification.delete.progress');
-
-    this.profileService.delete(profile.id).subscribe({
-      next: () => {
-        this.notificationService.updateToSuccess(progressId, 'notification.delete.success');
-        this.showDeleteConfirm.set(false);
-        this.selectedProfile.set(null);
-        this.loadProfiles();
-      },
-      error: () => {
-        this.notificationService.updateToError(progressId, 'notification.delete.error');
-        this.showDeleteConfirm.set(false);
-      },
-    });
-  }
-
-  // ─── Navigation ─────────────────────────────────────────────
 
   backToList(): void {
     this.viewMode.set('list');
@@ -276,24 +202,71 @@ export class ProfilesComponent implements OnInit {
     this.loadProfiles();
   }
 
-  // ─── Helpers ────────────────────────────────────────────────
+  // ─── CRUD Actions ──────────────────────────────────────────
 
+  saveProfile(event: { profile: Profile; actionIds: number[] }): void {
+    const { profile, actionIds } = event;
 
-  /**
-   * Returns the Bootstrap badge CSS class for a given action type.
-   */
-  getActionTypeBadgeClass(type: string): string {
-    switch (type?.toUpperCase()) {
-      case 'READ':
-        return 'text-bg-info';
-      case 'WRITE':
-        return 'text-bg-success';
-      case 'DELETE':
-        return 'text-bg-danger';
-      case 'ADMIN':
-        return 'text-bg-warning';
-      default:
-        return 'text-bg-secondary';
-    }
+    const payload = {
+      id: profile.id,
+      name: profile.name,
+      description: profile.description ?? null,
+      actionIds,
+    };
+
+    const isEdit = this.formMode() === 'edit';
+    const progressId = this.notificationService.showProgress(
+      isEdit ? 'notification.update.progress' : 'notification.create.progress'
+    );
+
+    const operation = isEdit
+      ? this.profileService.update(profile.id!, payload as any)
+      : this.profileService.create(payload as any);
+
+    operation.subscribe({
+      next: () => {
+        this.notificationService.updateToSuccess(
+          progressId,
+          isEdit ? 'notification.update.success' : 'notification.create.success'
+        );
+        this.backToList();
+      },
+      error: () => {
+        this.notificationService.updateToError(
+          progressId,
+          isEdit ? 'notification.update.error' : 'notification.create.error'
+        );
+      },
+    });
+  }
+
+  confirmDelete(profile: Profile): void {
+    this.profileToDelete.set(profile);
+    this.showDeleteConfirm.set(true);
+  }
+
+  cancelDelete(): void {
+    this.showDeleteConfirm.set(false);
+    this.profileToDelete.set(null);
+  }
+
+  executeDelete(): void {
+    const profile = this.profileToDelete();
+    if (!profile?.id) return;
+
+    this.showDeleteConfirm.set(false);
+    const progressId = this.notificationService.showProgress('notification.delete.progress');
+
+    this.profileService.delete(profile.id).subscribe({
+      next: () => {
+        this.notificationService.updateToSuccess(progressId, 'notification.delete.success');
+        this.profileToDelete.set(null);
+        this.loadProfiles();
+      },
+      error: () => {
+        this.notificationService.updateToError(progressId, 'notification.delete.error');
+        this.profileToDelete.set(null);
+      },
+    });
   }
 }
