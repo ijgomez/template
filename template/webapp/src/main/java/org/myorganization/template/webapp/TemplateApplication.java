@@ -14,7 +14,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * Spring Boot application entry point.
  * Extends SpringBootServletInitializer for WAR deployment.
  */
-@SpringBootApplication(scanBasePackages = "org.myorganization.template")
+@SpringBootApplication(
+    scanBasePackages = "org.myorganization.template",
+    exclude = org.springframework.boot.security.autoconfigure.UserDetailsServiceAutoConfiguration.class
+)
 @EntityScan(basePackages = "org.myorganization.template.domain.entity")
 @EnableJpaRepositories(basePackages = "org.myorganization.template.core.repository")
 @EnableSpringDataWebSupport(pageSerializationMode = PageSerializationMode.VIA_DTO)
