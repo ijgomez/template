@@ -49,6 +49,10 @@ export const routes: Routes = [
         },
       },
       {
+        path: 'forbidden',
+        loadComponent: () => import('./features/forbidden/forbidden.component').then((m) => m.ForbiddenComponent),
+      },
+      {
         path: '',
         redirectTo: 'dashboard',
         pathMatch: 'full',

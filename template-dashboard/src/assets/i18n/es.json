@@ -114,6 +114,11 @@
     "message": "La página que busca no existe.",
     "goToDashboard": "Ir al Panel Principal"
   },
+  "forbidden": {
+    "title": "Acceso Denegado",
+    "message": "No tiene permisos para acceder a esta página.",
+    "goToDashboard": "Ir al Panel Principal"
+  },
   "profile": {
     "title": "Mi Perfil",
     "username": "Usuario",

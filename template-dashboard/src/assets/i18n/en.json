@@ -114,6 +114,11 @@
     "message": "The page you are looking for does not exist.",
     "goToDashboard": "Go to Dashboard"
   },
+  "forbidden": {
+    "title": "Access Denied",
+    "message": "You do not have permission to access this page.",
+    "goToDashboard": "Go to Dashboard"
+  },
   "profile": {
     "title": "My Profile",
     "username": "Username",

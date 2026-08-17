@@ -276,6 +276,7 @@ export class LayoutComponent implements OnInit {
     nodes: 'menu.administration.cluster.nodes',
     blocks: 'menu.administration.cluster.blocks',
     profile: 'profile.title',
+    forbidden: 'forbidden.title',
   };
 
   private updateBreadcrumbs(): void {

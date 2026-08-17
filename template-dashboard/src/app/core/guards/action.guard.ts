@@ -25,6 +25,6 @@ export const actionGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
     return true;
   }
 
-  router.navigate(['/dashboard']);
+  router.navigate(['/forbidden']);
   return false;
 };
