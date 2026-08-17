@@ -60,7 +60,8 @@
     "filter": "Filtrar",
     "close": "Cerrar",
     "confirm": "Confirmar",
-    "back": "Volver"
+    "back": "Volver",
+    "accept": "Aceptar"
   },
   "login": {
     "title": "Template App",
@@ -104,6 +105,7 @@
     "maxLength": "La longitud máxima es {{max}} caracteres"
   },
   "error": {
+    "title": "Error",
     "network": "No se pudo conectar con el servidor. Verifique su conexión a internet.",
     "forbidden": "Acceso denegado. No tiene permisos para esta operación.",
     "client": "Error del cliente ({{status}}).",

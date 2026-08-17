@@ -10,5 +10,6 @@ export interface Notification {
   id: string;
   type: NotificationType;
   messageKey: string;
+  message?: string;
   createdAt: number;
 }

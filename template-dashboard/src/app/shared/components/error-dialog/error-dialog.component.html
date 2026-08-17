@@ -1,0 +1,45 @@
+@if (errorNotifications$ | async; as errors) {
+  @if (errors.length > 0) {
+    <div class="error-dialog-backdrop"
+         role="presentation"
+         data-testid="error-dialog-backdrop">
+      <div class="modal d-block"
+           tabindex="-1"
+           role="dialog"
+           aria-modal="true"
+           [attr.aria-labelledby]="'error-title-' + errors[0].id"
+           data-testid="error-dialog">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+              <h5 class="modal-title" [id]="'error-title-' + errors[0].id">
+                <i class="bi bi-exclamation-triangle-fill me-2" aria-hidden="true"></i>
+                {{ 'error.title' | translate }}
+              </h5>
+            </div>
+            <div class="modal-body">
+              @for (error of errors; track error.id) {
+                <p class="mb-2" [attr.data-testid]="'error-message-' + error.id">
+                  @if (error.message) {
+                    {{ error.message }}
+                  } @else {
+                    {{ error.messageKey | translate }}
+                  }
+                </p>
+              }
+            </div>
+            <div class="modal-footer justify-content-end">
+              <button type="button"
+                      class="btn btn-primary"
+                      (click)="dismissAll(errors)"
+                      data-testid="error-dialog-accept"
+                      autofocus>
+                {{ 'button.accept' | translate }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+}

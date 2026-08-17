@@ -1,12 +1,15 @@
 import { Component, inject } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { NotificationService } from '../../../core/services/notification.service';
 import { Notification } from '../../../core/models/notification.model';
 
 /**
  * Toast-style notification container rendered at the top-right of the viewport.
- * Subscribes to NotificationService.notifications$ and renders each active notification.
+ * Subscribes to NotificationService.notifications$ and renders progress/success notifications.
+ * Error notifications are handled by ErrorDialogComponent as a modal dialog.
  */
 @Component({
   selector: 'app-notification',
@@ -18,7 +21,9 @@ import { Notification } from '../../../core/models/notification.model';
 export class NotificationComponent {
   private readonly notificationService = inject(NotificationService);
 
-  readonly notifications$ = this.notificationService.notifications$;
+  readonly notifications$: Observable<Notification[]> = this.notificationService.notifications$.pipe(
+    map(notifications => notifications.filter(n => n.type !== 'error'))
+  );
 
   dismiss(notification: Notification): void {
     this.notificationService.dismiss(notification.id);

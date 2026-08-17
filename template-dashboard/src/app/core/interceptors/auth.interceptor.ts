@@ -202,7 +202,7 @@ function handleHttpError(error: HttpErrorResponse | Error, notificationService: 
   }
 
   if (error.status === 403) {
-    notificationService.showError('error.forbidden');
+    notificationService.showError('error.forbidden', error.error?.message);
     return throwError(() => ({
       status: 403,
       messageKey: 'error.forbidden',
@@ -212,7 +212,7 @@ function handleHttpError(error: HttpErrorResponse | Error, notificationService: 
   }
 
   if (error.status >= 400 && error.status < 500) {
-    notificationService.showError('error.client');
+    notificationService.showError('error.client', error.error?.message);
     return throwError(() => ({
       status: error.status,
       messageKey: 'error.client',
@@ -222,7 +222,7 @@ function handleHttpError(error: HttpErrorResponse | Error, notificationService: 
   }
 
   if (error.status >= 500) {
-    notificationService.showError('error.server');
+    notificationService.showError('error.server', error.error?.message);
     return throwError(() => ({
       status: error.status,
       messageKey: 'error.server',

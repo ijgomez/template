@@ -3,12 +3,12 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { Notification, NotificationType } from '../models/notification.model';
 
 /**
- * Service for managing user-facing notifications (toasts).
+ * Service for managing user-facing notifications (toasts and error dialogs).
  *
  * Supports three types:
  * - progress: shown while an operation is in-flight (spinner indicator)
  * - success: shown on completion, auto-dismisses after 5 seconds
- * - error: shown on failure with error message, auto-dismisses after 8 seconds
+ * - error: shown as a modal dialog requiring user acknowledgment (no auto-dismiss)
  *
  * Progress notifications can transition to success or error via
  * updateToSuccess() / updateToError().
@@ -44,12 +44,17 @@ export class NotificationService {
   }
 
   /**
-   * Shows an error notification that auto-dismisses after 8 seconds.
+   * Shows an error notification displayed as a modal dialog.
+   * Does NOT auto-dismiss — the user must acknowledge the error manually.
+   * @param messageKey i18n translation key for the error category.
+   * @param message Optional literal message from the backend for additional detail.
    */
-  showError(messageKey: string): void {
+  showError(messageKey: string, message?: string): void {
     const notification = this.createNotification('error', messageKey);
+    if (message) {
+      notification.message = message;
+    }
     this.addNotification(notification);
-    this.scheduleAutoDismiss(notification.id, NotificationService.ERROR_DISMISS_MS);
   }
 
   /**
@@ -61,11 +66,10 @@ export class NotificationService {
   }
 
   /**
-   * Transitions a progress notification to error (auto-dismiss 8s).
+   * Transitions a progress notification to error (displayed as modal, no auto-dismiss).
    */
   updateToError(notificationId: string, messageKey: string): void {
     this.updateNotification(notificationId, 'error', messageKey);
-    this.scheduleAutoDismiss(notificationId, NotificationService.ERROR_DISMISS_MS);
   }
 
   /**
