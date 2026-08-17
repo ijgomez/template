@@ -1,0 +1,39 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 mb-0">{{ 'cluster.blocks.detail.title' | translate }}</h1>
+  <button class="btn btn-outline-secondary btn-sm"
+          data-testid="cluster-blocks-back-to-list"
+          (click)="onBack()">
+    <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>{{ 'button.back' | translate }}
+  </button>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <div class="tp-form-grid">
+      <div class="form-group">
+        <label class="form-label fw-bold">{{ 'cluster.blocks.fields.name' | translate }}</label>
+        <p class="form-control-plaintext">{{ block().name }}</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label fw-bold">{{ 'cluster.blocks.fields.startDate' | translate }}</label>
+        <p class="form-control-plaintext">{{ block().startDate | localDate }}</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label fw-bold">{{ 'cluster.blocks.fields.avgTime' | translate }}</label>
+        <p class="form-control-plaintext">{{ block().avgTime }}</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label fw-bold">{{ 'cluster.blocks.fields.minTime' | translate }}</label>
+        <p class="form-control-plaintext">{{ block().minTime }}</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label fw-bold">{{ 'cluster.blocks.fields.maxTime' | translate }}</label>
+        <p class="form-control-plaintext">{{ block().maxTime }}</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label fw-bold">{{ 'cluster.blocks.fields.total' | translate }}</label>
+        <p class="form-control-plaintext">{{ block().total }}</p>
+      </div>
+    </div>
+  </div>
+</div>

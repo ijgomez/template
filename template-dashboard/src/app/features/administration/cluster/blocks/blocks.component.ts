@@ -8,16 +8,17 @@ import { NotificationService } from '../../../../core/services/notification.serv
 import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
 import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../shared/components/data-table';
 import { ClusterBlock, ClusterBlockCriteria } from '../../../../core/models/cluster.model';
+import { BlockDetailComponent } from './block-detail/block-detail.component';
 
 /**
  * Cluster blocks component.
  * Displays a paginated, filterable table of cluster blocks (read-only per Req 25.12).
- * Supports detail view and CSV export.
+ * Delegates detail rendering to BlockDetailComponent (SRP).
  */
 @Component({
   selector: 'app-cluster-blocks',
   standalone: true,
-  imports: [FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective],
+  imports: [FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective, BlockDetailComponent],
   templateUrl: './blocks.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -35,7 +36,6 @@ export class BlocksComponent implements OnInit {
     { key: 'minTime', header: 'cluster.blocks.fields.minTime', sortable: true, resizable: true, reorderable: true },
     { key: 'maxTime', header: 'cluster.blocks.fields.maxTime', sortable: true, resizable: true, reorderable: true },
     { key: 'total', header: 'cluster.blocks.fields.total', sortable: true, resizable: true, reorderable: true },
-    { key: 'lastModifiedAt', header: 'cluster.blocks.fields.lastModifiedAt', sortable: true, resizable: true, reorderable: true },
   ];
 
   // View state
@@ -162,8 +162,6 @@ export class BlocksComponent implements OnInit {
         this.translateService.instant('cluster.blocks.fields.minTime'),
         this.translateService.instant('cluster.blocks.fields.maxTime'),
         this.translateService.instant('cluster.blocks.fields.total'),
-        this.translateService.instant('cluster.blocks.fields.createdAt'),
-        this.translateService.instant('cluster.blocks.fields.lastModifiedAt'),
       ];
 
       const rows = this.blocks().map((block) => [
@@ -173,8 +171,6 @@ export class BlocksComponent implements OnInit {
         this.escapeCsvField(String(block.minTime)),
         this.escapeCsvField(String(block.maxTime)),
         this.escapeCsvField(String(block.total)),
-        this.escapeCsvField(block.createdAt),
-        this.escapeCsvField(block.lastModifiedAt),
       ]);
 
       const csvContent = [headers.join(','), ...rows.map((row) => row.join(','))].join('\n');
