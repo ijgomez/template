@@ -42,7 +42,7 @@
       </div>
       <div class="col-md-4">
         <label for="email" class="form-label form-label-sm mb-1">
-          {{ 'users.fields.email' | translate }} <span class="text-danger">*</span>
+          {{ 'users.fields.email' | translate }}
         </label>
         <input id="email"
                type="email"
@@ -50,13 +50,12 @@
                [ngModel]="formUser().email ?? ''"
                (ngModelChange)="updateField('email', $event || null)"
                name="email"
-               required
                placeholder="usuario@ejemplo.com"
                data-testid="input-email">
       </div>
       <div class="col-md-4">
         <label for="firstName" class="form-label form-label-sm mb-1">
-          {{ 'users.fields.firstName' | translate }} <span class="text-danger">*</span>
+          {{ 'users.fields.firstName' | translate }}
         </label>
         <input id="firstName"
                type="text"
@@ -64,12 +63,11 @@
                [ngModel]="formUser().firstName ?? ''"
                (ngModelChange)="updateField('firstName', $event || null)"
                name="firstName"
-               required
                data-testid="input-first-name">
       </div>
       <div class="col-md-4">
         <label for="lastName" class="form-label form-label-sm mb-1">
-          {{ 'users.fields.lastName' | translate }} <span class="text-danger">*</span>
+          {{ 'users.fields.lastName' | translate }}
         </label>
         <input id="lastName"
                type="text"
@@ -77,7 +75,6 @@
                [ngModel]="formUser().lastName ?? ''"
                (ngModelChange)="updateField('lastName', $event || null)"
                name="lastName"
-               required
                data-testid="input-last-name">
       </div>
       <div class="col-md-4">

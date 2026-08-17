@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20260817-users-nullable-optional-fields" author="template" labels="v2.0.0">
+
+        <comment>Make first_name, last_name and email nullable in users table</comment>
+
+        <dropNotNullConstraint tableName="users" columnName="first_name" columnDataType="VARCHAR(100)"/>
+        <dropNotNullConstraint tableName="users" columnName="last_name" columnDataType="VARCHAR(100)"/>
+        <dropNotNullConstraint tableName="users" columnName="email" columnDataType="VARCHAR(255)"/>
+
+        <rollback>
+            <addNotNullConstraint tableName="users" columnName="first_name" columnDataType="VARCHAR(100)"/>
+            <addNotNullConstraint tableName="users" columnName="last_name" columnDataType="VARCHAR(100)"/>
+            <addNotNullConstraint tableName="users" columnName="email" columnDataType="VARCHAR(255)"/>
+        </rollback>
+
+    </changeSet>
+
+</databaseChangeLog>
