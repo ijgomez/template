@@ -1,6 +1,28 @@
 <!-- Title -->
 <div class="d-flex justify-content-between align-items-center mb-3">
-  <h1 class="h3 mb-0">{{ 'actions.form.editTitle' | translate }}</h1>
+  <h1 class="h3 mb-0">
+    @if (isReadonly()) {
+      {{ 'actions.detail.title' | translate }}
+    } @else {
+      {{ 'actions.form.editTitle' | translate }}
+    }
+  </h1>
+  @if (isReadonly()) {
+    <div class="d-flex gap-2">
+      @if (canEdit()) {
+        <button class="btn btn-primary btn-sm"
+                (click)="onEdit()"
+                data-testid="action-form-btn-edit">
+          <i class="bi bi-pencil me-1" aria-hidden="true"></i>{{ 'button.edit' | translate }}
+        </button>
+      }
+      <button class="btn btn-outline-secondary btn-sm"
+              (click)="onCancel()"
+              data-testid="action-form-btn-back">
+        <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>{{ 'button.back' | translate }}
+      </button>
+    </div>
+  }
 </div>
 
 <div class="tp-filter-bar">
@@ -10,18 +32,22 @@
     </h6>
     <div class="row g-2 mb-3">
       <div class="col-md-4">
-        <label for="actionCode" class="form-label form-label-sm mb-1">{{ 'actions.fields.code' | translate }}</label>
+        <label for="actionCode" class="form-label form-label-sm mb-1">
+          {{ 'actions.fields.code' | translate }}
+        </label>
         <input id="actionCode"
                type="text"
                class="form-control form-control-sm"
                [value]="action().code"
                readonly
                disabled
+               [attr.aria-label]="'actions.fields.code' | translate"
                data-testid="input-code">
       </div>
       <div class="col-md-4">
         <label for="actionName" class="form-label form-label-sm mb-1">
-          {{ 'actions.fields.name' | translate }} <span class="text-danger">*</span>
+          {{ 'actions.fields.name' | translate }}
+          @if (!isReadonly()) { <span class="text-danger">*</span> }
         </label>
         <input id="actionName"
                type="text"
@@ -29,55 +55,119 @@
                [ngModel]="editName()"
                (ngModelChange)="editName.set($event)"
                name="actionName"
-               required
+               [required]="!isReadonly()"
+               [readonly]="isReadonly()"
+               [disabled]="isReadonly()"
+               [attr.aria-label]="'actions.fields.name' | translate"
                data-testid="input-name">
       </div>
       <div class="col-md-4">
         <label for="actionType" class="form-label form-label-sm mb-1">
-          {{ 'actions.fields.type' | translate }} <span class="text-danger">*</span>
+          {{ 'actions.fields.type' | translate }}
+          @if (!isReadonly()) { <span class="text-danger">*</span> }
         </label>
-        <select id="actionType"
-                class="form-select form-select-sm"
-                [ngModel]="editType()"
-                (ngModelChange)="editType.set($event)"
-                name="actionType"
-                required
-                [attr.aria-label]="'actions.fields.type' | translate"
-                data-testid="select-type">
-          @for (type of actionTypes; track type) {
-            <option [value]="type">{{ type }}</option>
-          }
-        </select>
+        @if (isReadonly()) {
+          <input id="actionType"
+                 type="text"
+                 class="form-control form-control-sm"
+                 [value]="action().type"
+                 readonly
+                 disabled
+                 [attr.aria-label]="'actions.fields.type' | translate"
+                 data-testid="input-type-readonly">
+        } @else {
+          <select id="actionType"
+                  class="form-select form-select-sm"
+                  [ngModel]="editType()"
+                  (ngModelChange)="editType.set($event)"
+                  name="actionType"
+                  required
+                  [attr.aria-label]="'actions.fields.type' | translate"
+                  data-testid="select-type">
+            @for (type of actionTypes; track type) {
+              <option [value]="type">{{ type }}</option>
+            }
+          </select>
+        }
       </div>
       <div class="col-12">
-        <label for="actionDescription" class="form-label form-label-sm mb-1">{{ 'actions.fields.description' | translate }}</label>
-        <textarea id="actionDescription"
-                  class="form-control form-control-sm"
-                  [ngModel]="editDescription()"
-                  (ngModelChange)="editDescription.set($event)"
-                  name="actionDescription"
-                  rows="3"
-                  data-testid="input-description"></textarea>
+        <label for="actionDescription" class="form-label form-label-sm mb-1">
+          {{ 'actions.fields.description' | translate }}
+        </label>
+        @if (isReadonly()) {
+          <input id="actionDescription"
+                 type="text"
+                 class="form-control form-control-sm"
+                 [value]="action().description ?? ''"
+                 readonly
+                 disabled
+                 [attr.aria-label]="'actions.fields.description' | translate"
+                 data-testid="input-description">
+        } @else {
+          <textarea id="actionDescription"
+                    class="form-control form-control-sm"
+                    [ngModel]="editDescription()"
+                    (ngModelChange)="editDescription.set($event)"
+                    name="actionDescription"
+                    rows="3"
+                    [attr.aria-label]="'actions.fields.description' | translate"
+                    data-testid="input-description"></textarea>
+        }
       </div>
     </div>
 
-    <!-- Botones de acción -->
-    <div class="col-12 d-flex justify-content-end gap-2 mt-2">
-      <button type="button"
-              class="btn btn-outline-secondary btn-sm"
-              (click)="onCancel()"
-              data-testid="btn-cancel">
-        {{ 'button.cancel' | translate }}
-      </button>
-      <button type="submit"
-              class="btn btn-primary btn-sm"
-              [disabled]="saving()"
-              data-testid="btn-save">
-        @if (saving()) {
-          <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
-        }
-        <i class="bi bi-check-lg me-1" aria-hidden="true"></i> {{ 'button.save' | translate }}
-      </button>
-    </div>
+    <!-- Información de auditoría (solo en modo view) -->
+    @if (isReadonly()) {
+      <h6 class="text-muted text-uppercase fw-semibold mb-2" style="font-size: 0.75rem; letter-spacing: 0.05em;">
+        {{ 'actions.detail.sectionAudit' | translate }}
+      </h6>
+      <div class="row g-2 mb-3">
+        <div class="col-md-4">
+          <label class="form-label form-label-sm mb-1">
+            {{ 'actions.fields.createdAt' | translate }}
+          </label>
+          <input type="text"
+                 class="form-control form-control-sm"
+                 [value]="(action().createdAt | localDate) ?? ''"
+                 readonly
+                 disabled
+                 [attr.aria-label]="'actions.fields.createdAt' | translate"
+                 data-testid="input-created-at">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label form-label-sm mb-1">
+            {{ 'actions.fields.lastModifiedAt' | translate }}
+          </label>
+          <input type="text"
+                 class="form-control form-control-sm"
+                 [value]="(action().lastModifiedAt | localDate) ?? ''"
+                 readonly
+                 disabled
+                 [attr.aria-label]="'actions.fields.lastModifiedAt' | translate"
+                 data-testid="input-last-modified-at">
+        </div>
+      </div>
+    }
+
+    <!-- Botones de acción (solo en modo edición) -->
+    @if (!isReadonly()) {
+      <div class="col-12 d-flex justify-content-end gap-2 mt-2">
+        <button type="button"
+                class="btn btn-outline-secondary btn-sm"
+                (click)="onCancel()"
+                data-testid="btn-cancel">
+          {{ 'button.cancel' | translate }}
+        </button>
+        <button type="submit"
+                class="btn btn-primary btn-sm"
+                [disabled]="saving()"
+                data-testid="btn-save">
+          @if (saving()) {
+            <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+          }
+          <i class="bi bi-check-lg me-1" aria-hidden="true"></i> {{ 'button.save' | translate }}
+        </button>
+      </div>
+    }
   </form>
 </div>

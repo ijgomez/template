@@ -8,7 +8,6 @@ import { NotificationService } from '../../../../core/services/notification.serv
 import { CsvExportService } from '../../../../core/services/csv-export.service';
 import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../shared/components/data-table';
 import { Action, ActionCriteria } from './models/action.model';
-import { ActionDetailComponent } from './action-detail/action-detail.component';
 import { ActionFormComponent } from './action-form/action-form.component';
 
 type ViewMode = 'list' | 'detail' | 'edit';
@@ -22,7 +21,7 @@ type ViewMode = 'list' | 'detail' | 'edit';
 @Component({
   selector: 'app-actions',
   standalone: true,
-  imports: [FormsModule, TranslatePipe, TpDataTableComponent, TpColumnDirective, ActionDetailComponent, ActionFormComponent],
+  imports: [FormsModule, TranslatePipe, TpDataTableComponent, TpColumnDirective, ActionFormComponent],
   templateUrl: './actions.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

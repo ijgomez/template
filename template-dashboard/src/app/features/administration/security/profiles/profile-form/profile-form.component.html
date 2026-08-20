@@ -1,8 +1,33 @@
 <!-- Title -->
 <div class="d-flex justify-content-between align-items-center mb-3">
   <h1 class="h3 mb-0">
-    {{ (mode() === 'create' ? 'profiles.form.createTitle' : 'profiles.form.editTitle') | translate }}
+    @switch (mode()) {
+      @case ('create') { {{ 'profiles.form.createTitle' | translate }} }
+      @case ('edit') { {{ 'profiles.form.editTitle' | translate }} }
+      @case ('view') { {{ 'profiles.detail.title' | translate }} }
+    }
   </h1>
+  @if (isReadonly()) {
+    <div class="d-flex gap-2">
+      @if (canWrite()) {
+        <button class="btn btn-primary btn-sm"
+                (click)="onEdit()"
+                data-testid="profile-form-btn-edit">
+          <i class="bi bi-pencil me-1" aria-hidden="true"></i>{{ 'button.edit' | translate }}
+        </button>
+        <button class="btn btn-danger btn-sm"
+                (click)="onDelete()"
+                data-testid="profile-form-btn-delete">
+          <i class="bi bi-trash me-1" aria-hidden="true"></i>{{ 'button.delete' | translate }}
+        </button>
+      }
+      <button class="btn btn-outline-secondary btn-sm"
+              (click)="onCancel()"
+              data-testid="profile-form-btn-back">
+        <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>{{ 'button.back' | translate }}
+      </button>
+    </div>
+  }
 </div>
 
 <div class="tp-filter-bar">
@@ -14,7 +39,8 @@
     <div class="row g-2 mb-3">
       <div class="col-md-4">
         <label for="profileName" class="form-label form-label-sm mb-1">
-          {{ 'profiles.fields.name' | translate }} <span class="text-danger">*</span>
+          {{ 'profiles.fields.name' | translate }}
+          @if (!isReadonly()) { <span class="text-danger">*</span> }
         </label>
         <input id="profileName"
                type="text"
@@ -22,7 +48,10 @@
                [ngModel]="formProfile().name"
                (ngModelChange)="updateField('name', $event)"
                name="profileName"
-               required
+               [required]="!isReadonly()"
+               [readonly]="isReadonly()"
+               [disabled]="isReadonly()"
+               [attr.aria-label]="'profiles.fields.name' | translate"
                data-testid="input-name">
       </div>
       <div class="col-md-8">
@@ -35,9 +64,45 @@
                [ngModel]="formProfile().description ?? ''"
                (ngModelChange)="updateField('description', $event || undefined)"
                name="profileDescription"
+               [readonly]="isReadonly()"
+               [disabled]="isReadonly()"
+               [attr.aria-label]="'profiles.fields.description' | translate"
                data-testid="input-description">
       </div>
     </div>
+
+    <!-- Información de auditoría (solo en modo view) -->
+    @if (isReadonly()) {
+      <h6 class="text-muted text-uppercase fw-semibold mb-2" style="font-size: 0.75rem; letter-spacing: 0.05em;">
+        {{ 'profiles.detail.sectionAudit' | translate }}
+      </h6>
+      <div class="row g-2 mb-3">
+        <div class="col-md-4">
+          <label class="form-label form-label-sm mb-1">
+            {{ 'profiles.fields.createdAt' | translate }}
+          </label>
+          <input type="text"
+                 class="form-control form-control-sm"
+                 [value]="(formProfile().createdAt | localDate) ?? ''"
+                 readonly
+                 disabled
+                 [attr.aria-label]="'profiles.fields.createdAt' | translate"
+                 data-testid="input-created-at">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label form-label-sm mb-1">
+            {{ 'profiles.fields.lastModifiedAt' | translate }}
+          </label>
+          <input type="text"
+                 class="form-control form-control-sm"
+                 [value]="(formProfile().lastModifiedAt | localDate) ?? ''"
+                 readonly
+                 disabled
+                 [attr.aria-label]="'profiles.fields.lastModifiedAt' | translate"
+                 data-testid="input-last-modified-at">
+        </div>
+      </div>
+    }
 
     <!-- Acciones asignadas -->
     <tp-selected-actions
@@ -45,22 +110,27 @@
       (ngModelChange)="selectedActionIds.set($event)"
       name="actionIds"
       [title]="'profiles.form.sectionActions' | translate"
+      [disabled]="isReadonly()"
+      [showAdd]="!isReadonly()"
+      [showRemove]="!isReadonly()"
       testId="profile-actions">
     </tp-selected-actions>
 
-    <!-- Botones de acción -->
-    <div class="col-12 d-flex justify-content-end gap-2 mt-2">
-      <button type="button"
-              class="btn btn-outline-secondary btn-sm"
-              (click)="onCancel()"
-              data-testid="btn-cancel">
-        {{ 'button.cancel' | translate }}
-      </button>
-      <button type="submit"
-              class="btn btn-primary btn-sm"
-              data-testid="btn-save">
-        <i class="bi bi-check-lg me-1" aria-hidden="true"></i> {{ 'button.save' | translate }}
-      </button>
-    </div>
+    <!-- Botones de acción (solo en modo edición/creación) -->
+    @if (!isReadonly()) {
+      <div class="col-12 d-flex justify-content-end gap-2 mt-2">
+        <button type="button"
+                class="btn btn-outline-secondary btn-sm"
+                (click)="onCancel()"
+                data-testid="btn-cancel">
+          {{ 'button.cancel' | translate }}
+        </button>
+        <button type="submit"
+                class="btn btn-primary btn-sm"
+                data-testid="btn-save">
+          <i class="bi bi-check-lg me-1" aria-hidden="true"></i> {{ 'button.save' | translate }}
+        </button>
+      </div>
+    }
   </form>
 </div>

@@ -93,10 +93,11 @@
      ═══════════════════════════════════════════════════════════════════════════ -->
 @if (viewMode() === 'detail') {
   @if (selectedAction(); as action) {
-    <app-action-detail
+    <app-action-form
+      [mode]="'view'"
       [action]="action"
       [canEdit]="canEdit()"
-      (back)="backToList()"
+      (cancel)="backToList()"
       (edit)="showEditForm($event)" />
   }
 }
@@ -107,8 +108,10 @@
 @if (viewMode() === 'edit') {
   @if (selectedAction(); as action) {
     <app-action-form
+      [mode]="'edit'"
       [action]="action"
       [saving]="isSaving()"
+      [canEdit]="canEdit()"
       (save)="saveAction($event)"
       (cancel)="backToList()" />
   }

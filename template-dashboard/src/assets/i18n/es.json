@@ -205,6 +205,7 @@
     },
     "detail": {
       "title": "Detalle de Perfil",
+      "sectionAudit": "Información de auditoría",
       "assignedActions": "Acciones Asignadas",
       "noActions": "Sin acciones asignadas",
       "actionCode": "Código",
@@ -252,7 +253,8 @@
       "allTypes": "Todos los tipos"
     },
     "detail": {
-      "title": "Detalle de Acción"
+      "title": "Detalle de Acción",
+      "sectionAudit": "Información de auditoría"
     },
     "form": {
       "editTitle": "Editar Acción",

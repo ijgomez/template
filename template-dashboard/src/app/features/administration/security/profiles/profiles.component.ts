@@ -10,7 +10,6 @@ import { ProfileService } from '../../../../core/services/profile.service';
 import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
 import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../shared/components/data-table';
 import { Profile, ProfileCriteria } from './models/profile.model';
-import { ProfileDetailComponent } from './profile-detail/profile-detail.component';
 import { ProfileFormComponent } from './profile-form/profile-form.component';
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit';
@@ -23,7 +22,7 @@ type ViewMode = 'list' | 'detail' | 'create' | 'edit';
 @Component({
   selector: 'app-profiles',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective, ProfileDetailComponent, ProfileFormComponent],
+  imports: [CommonModule, FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective, ProfileFormComponent],
   templateUrl: './profiles.component.html',
   styleUrls: ['./profiles.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -64,10 +63,9 @@ export class ProfilesComponent implements OnInit {
   readonly selectedRow = signal<Profile | null>(null);
 
   // Detail / Form state
-  readonly selectedProfile = signal<Profile | null>(null);
   readonly formProfile = signal<Profile>({ id: null, name: '', description: '', actions: [] });
   readonly formActionIds = signal<number[]>([]);
-  readonly formMode = signal<'create' | 'edit'>('create');
+  readonly formMode = signal<'create' | 'edit' | 'view'>('create');
 
   // Delete confirmation
   readonly showDeleteConfirm = signal(false);
@@ -177,7 +175,10 @@ export class ProfilesComponent implements OnInit {
   // ─── Navigation ────────────────────────────────────────────
 
   showDetail(profile: Profile): void {
-    this.selectedProfile.set(profile);
+    this.formProfile.set({ ...profile });
+    const ids = profile.actionIds ?? profile.actions?.map((a) => a.id) ?? [];
+    this.formActionIds.set(ids);
+    this.formMode.set('view');
     this.viewMode.set('detail');
   }
 
@@ -198,7 +199,6 @@ export class ProfilesComponent implements OnInit {
 
   backToList(): void {
     this.viewMode.set('list');
-    this.selectedProfile.set(null);
     this.loadProfiles();
   }
 

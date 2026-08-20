@@ -89,14 +89,14 @@
      DETAIL VIEW
      ═══════════════════════════════════════════════════════════════════════════ -->
 @if (viewMode() === 'detail') {
-  @if (selectedProfile(); as profile) {
-    <app-profile-detail
-      [profile]="profile"
-      [canWrite]="canWrite()"
-      (back)="backToList()"
-      (edit)="showEditForm($event)"
-      (delete)="confirmDelete($event)" />
-  }
+  <app-profile-form
+    [mode]="formMode()"
+    [profile]="formProfile()"
+    [actionIds]="formActionIds()"
+    [canWrite]="canWrite()"
+    (cancel)="backToList()"
+    (edit)="showEditForm($event)"
+    (delete)="confirmDelete($event)" />
 }
 
 <!-- ═══════════════════════════════════════════════════════════════════════════

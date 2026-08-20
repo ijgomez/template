@@ -205,6 +205,7 @@
     },
     "detail": {
       "title": "Profile Detail",
+      "sectionAudit": "Audit information",
       "assignedActions": "Assigned Actions",
       "noActions": "No actions assigned",
       "actionCode": "Code",
@@ -252,7 +253,8 @@
       "allTypes": "All types"
     },
     "detail": {
-      "title": "Action Detail"
+      "title": "Action Detail",
+      "sectionAudit": "Audit information"
     },
     "form": {
       "editTitle": "Edit Action",
