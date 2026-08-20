@@ -237,9 +237,9 @@
         <ol class="breadcrumb mb-0">
           @for (segment of breadcrumbs(); track segment.path; let last = $last) {
             @if (last) {
-              <li class="breadcrumb-item active" aria-current="page">{{ segment.label | translate }}</li>
+              <li class="breadcrumb-item active" aria-current="page">{{ segment.translatable ? (segment.label | translate) : segment.label }}</li>
             } @else {
-              <li class="breadcrumb-item"><a [routerLink]="segment.path">{{ segment.label | translate }}</a></li>
+              <li class="breadcrumb-item"><a [routerLink]="segment.path">{{ segment.translatable ? (segment.label | translate) : segment.label }}</a></li>
             }
           }
         </ol>

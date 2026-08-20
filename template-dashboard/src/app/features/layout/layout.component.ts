@@ -32,6 +32,8 @@ export interface NavItem {
 export interface BreadcrumbSegment {
   label: string;
   path: string;
+  /** Whether the label is a translation key (true) or a literal string (false). */
+  translatable: boolean;
 }
 
 /**
@@ -285,10 +287,19 @@ export class LayoutComponent implements OnInit {
     const crumbs: BreadcrumbSegment[] = [];
     let path = '';
 
-    for (const segment of segments) {
+    for (let i = 0; i < segments.length; i++) {
+      const segment = segments[i];
       path += '/' + segment;
-      const label = this.segmentLabels[segment] ?? segment;
-      crumbs.push({ label, path });
+
+      const translationKey = this.segmentLabels[segment];
+      if (translationKey) {
+        crumbs.push({ label: translationKey, path, translatable: true });
+      } else if (segments[i - 1] === 'reports' && /^\d+$/.test(segment)) {
+        const report = this.userReports().find((r) => r.id === Number(segment));
+        crumbs.push({ label: report?.name ?? segment, path, translatable: false });
+      } else {
+        crumbs.push({ label: segment, path, translatable: true });
+      }
     }
 
     this.breadcrumbs.set(crumbs);
