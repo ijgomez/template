@@ -1,21 +1,26 @@
 import { Component, ChangeDetectionStrategy, inject, signal, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { ParameterService } from '../../../core/services/parameter.service';
-import { LocalDatePipe } from '../../../shared/pipes/local-date.pipe';
 import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../shared/components/data-table';
 import { Parameter, ParameterCriteria, ParameterType } from '../../../core/models/parameter.model';
+import { ParameterDetailComponent } from './parameter-detail/parameter-detail.component';
+import { ParameterFormComponent } from './parameter-form/parameter-form.component';
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit';
 
+/**
+ * Parameters orchestrator component.
+ * Manages the list view, navigation between views, and delegates
+ * detail display and form handling to child components.
+ */
 @Component({
   selector: 'app-parameters',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective],
+  imports: [FormsModule, TranslatePipe, TpDataTableComponent, TpColumnDirective, ParameterDetailComponent, ParameterFormComponent],
   templateUrl: './parameters.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -25,32 +30,45 @@ export class ParametersComponent {
   private readonly notificationService = inject(NotificationService);
   private readonly translateService = inject(TranslateService);
 
-  // View state
+  // ─── View State ──────────────────────────────────────────────
+
   readonly viewMode = signal<ViewMode>('list');
   readonly isLoading = signal(false);
 
-  // List state
+  // ─── List State ──────────────────────────────────────────────
+
   readonly parameters = signal<Parameter[]>([]);
   readonly totalElements = signal(0);
   readonly totalPages = signal(0);
   readonly currentPage = signal(0);
   readonly pageSize = signal(10);
-
-  // Sort state
   readonly sortParam = signal('');
 
-  // Filter state
+  // ─── Filter State ────────────────────────────────────────────
+
   readonly filterCode = signal('');
   readonly filterDescription = signal('');
   readonly filterType = signal<ParameterType | ''>('');
 
-  // Row selection
+  // ─── Row Selection ───────────────────────────────────────────
+
   readonly selectedRow = signal<Parameter | null>(null);
 
-  // Page size options
-  readonly pageSizes = [5, 10, 20, 50];
+  // ─── Detail / Form State ─────────────────────────────────────
 
-  // Column definitions for tp-data-table
+  readonly selectedParameter = signal<Parameter | null>(null);
+  readonly formData = signal<Parameter>(this.emptyParameter());
+
+  // ─── Delete Confirmation ─────────────────────────────────────
+
+  readonly showDeleteConfirm = signal(false);
+  readonly deleteTarget = signal<Parameter | null>(null);
+
+  // ─── Constants ───────────────────────────────────────────────
+
+  readonly pageSizes = [5, 10, 20, 50];
+  readonly parameterTypes: ParameterType[] = ['STRING', 'INTEGER', 'BOOLEAN', 'DATE'];
+
   readonly columns: ColumnDef[] = [
     { key: 'code', header: 'parameters.fields.code', sortable: true, resizable: true, reorderable: true },
     { key: 'description', header: 'parameters.fields.description', sortable: true, resizable: true, reorderable: true },
@@ -58,24 +76,9 @@ export class ParametersComponent {
     { key: 'value', header: 'parameters.fields.value' },
   ];
 
-  // Detail/Form state
-  readonly selectedParameter = signal<Parameter | null>(null);
-  readonly formData = signal<Parameter>(this.emptyParameter());
+  // ─── Computed ────────────────────────────────────────────────
 
-  // Validation
-  readonly typeValueError = signal('');
-
-  // Delete confirmation
-  readonly showDeleteConfirm = signal(false);
-  readonly deleteTarget = signal<Parameter | null>(null);
-
-  // Available types for dropdown
-  readonly parameterTypes: ParameterType[] = ['STRING', 'INTEGER', 'BOOLEAN', 'DATE'];
-
-  // Action-based button visibility
   readonly canWrite = computed(() => this.authService.hasAction('SYSTEM_PARAMETER_WRITE'));
-
-  // Pagination display
   readonly showingFrom = computed(() => this.currentPage() * this.pageSize() + 1);
   readonly showingTo = computed(() => Math.min((this.currentPage() + 1) * this.pageSize(), this.totalElements()));
 
@@ -131,6 +134,121 @@ export class ParametersComponent {
     }
   }
 
+  changePageSize(size: number): void {
+    this.pageSize.set(size);
+    this.currentPage.set(0);
+    this.loadParameters();
+  }
+
+  // ─── Row Selection ───────────────────────────────────────────
+
+  selectRow(parameter: Parameter): void {
+    this.selectedRow.update(current => current?.code === parameter.code ? null : parameter);
+  }
+
+  editSelectedParameter(): void {
+    const row = this.selectedRow();
+    if (row) {
+      this.openEdit(row);
+    }
+  }
+
+  deleteSelectedParameter(): void {
+    const row = this.selectedRow();
+    if (row) {
+      this.confirmDelete(row);
+    }
+  }
+
+  // ─── Navigation ──────────────────────────────────────────────
+
+  viewDetail(parameter: Parameter): void {
+    this.selectedParameter.set(parameter);
+    this.viewMode.set('detail');
+  }
+
+  openCreate(): void {
+    this.formData.set(this.emptyParameter());
+    this.viewMode.set('create');
+  }
+
+  openEdit(parameter: Parameter): void {
+    this.formData.set({ ...parameter });
+    this.viewMode.set('edit');
+  }
+
+  backToList(): void {
+    this.viewMode.set('list');
+    this.selectedParameter.set(null);
+    this.showDeleteConfirm.set(false);
+    this.deleteTarget.set(null);
+  }
+
+  // ─── Save (delegated from form child) ───────────────────────
+
+  saveParameter(parameter: Parameter): void {
+    if (this.viewMode() === 'create') {
+      const progressId = this.notificationService.showProgress('notification.create.progress');
+      this.parameterService.create(parameter).subscribe({
+        next: () => {
+          this.notificationService.updateToSuccess(progressId, 'notification.create.success');
+          this.backToList();
+          this.loadParameters();
+        },
+        error: () => {
+          this.notificationService.updateToError(progressId, 'notification.create.error');
+        },
+      });
+    } else {
+      const progressId = this.notificationService.showProgress('notification.update.progress');
+      this.parameterService.update(parameter.code, parameter).subscribe({
+        next: () => {
+          this.notificationService.updateToSuccess(progressId, 'notification.update.success');
+          this.backToList();
+          this.loadParameters();
+        },
+        error: () => {
+          this.notificationService.updateToError(progressId, 'notification.update.error');
+        },
+      });
+    }
+  }
+
+  // ─── Delete ──────────────────────────────────────────────────
+
+  confirmDelete(parameter: Parameter): void {
+    this.deleteTarget.set(parameter);
+    this.showDeleteConfirm.set(true);
+  }
+
+  cancelDelete(): void {
+    this.showDeleteConfirm.set(false);
+    this.deleteTarget.set(null);
+  }
+
+  executeDelete(): void {
+    const target = this.deleteTarget();
+    if (!target) return;
+
+    const progressId = this.notificationService.showProgress('notification.delete.progress');
+    this.parameterService.delete(target.code).subscribe({
+      next: () => {
+        this.notificationService.updateToSuccess(progressId, 'notification.delete.success');
+        this.showDeleteConfirm.set(false);
+        this.deleteTarget.set(null);
+        if (this.viewMode() === 'detail') {
+          this.backToList();
+        }
+        this.loadParameters();
+      },
+      error: () => {
+        this.notificationService.updateToError(progressId, 'notification.delete.error');
+        this.showDeleteConfirm.set(false);
+        this.deleteTarget.set(null);
+      },
+    });
+  }
+
   // ─── CSV Export ──────────────────────────────────────────────
 
   exportCsv(): void {
@@ -156,139 +274,7 @@ export class ParametersComponent {
     this.notificationService.showSuccess('notification.export.success');
   }
 
-  // ─── Navigation ──────────────────────────────────────────────
-
-  viewDetail(parameter: Parameter): void {
-    this.selectedParameter.set(parameter);
-    this.viewMode.set('detail');
-  }
-
-  openCreate(): void {
-    this.formData.set(this.emptyParameter());
-    this.typeValueError.set('');
-    this.viewMode.set('create');
-  }
-
-  openEdit(parameter: Parameter): void {
-    this.formData.set({ ...parameter });
-    this.typeValueError.set('');
-    this.viewMode.set('edit');
-  }
-
-  backToList(): void {
-    this.viewMode.set('list');
-    this.selectedParameter.set(null);
-    this.showDeleteConfirm.set(false);
-    this.deleteTarget.set(null);
-  }
-
-  // ─── Form Actions ───────────────────────────────────────────
-
-  onTypeChange(): void {
-    this.validateTypeValue();
-  }
-
-  onValueChange(): void {
-    this.validateTypeValue();
-  }
-
-  validateTypeValue(): boolean {
-    const data = this.formData();
-    const error = this.getTypeValueValidationError(data.type, data.value);
-    this.typeValueError.set(error);
-    return error === '';
-  }
-
-  saveParameter(): void {
-    if (!this.validateTypeValue()) return;
-
-    const data = this.formData();
-    if (this.viewMode() === 'create') {
-      const progressId = this.notificationService.showProgress('notification.create.progress');
-      this.parameterService.create(data).subscribe({
-        next: () => {
-          this.notificationService.updateToSuccess(progressId, 'notification.create.success');
-          this.backToList();
-          this.loadParameters();
-        },
-        error: () => {
-          this.notificationService.updateToError(progressId, 'notification.create.error');
-        },
-      });
-    } else {
-      const progressId = this.notificationService.showProgress('notification.update.progress');
-      this.parameterService.update(data.code, data).subscribe({
-        next: () => {
-          this.notificationService.updateToSuccess(progressId, 'notification.update.success');
-          this.backToList();
-          this.loadParameters();
-        },
-        error: () => {
-          this.notificationService.updateToError(progressId, 'notification.update.error');
-        },
-      });
-    }
-  }
-
-  // ─── Delete Actions ─────────────────────────────────────────
-
-  confirmDelete(parameter: Parameter): void {
-    this.deleteTarget.set(parameter);
-    this.showDeleteConfirm.set(true);
-  }
-
-  cancelDelete(): void {
-    this.showDeleteConfirm.set(false);
-    this.deleteTarget.set(null);
-  }
-
-  executeDelete(): void {
-    const target = this.deleteTarget();
-    if (!target) return;
-
-    const progressId = this.notificationService.showProgress('notification.delete.progress');
-    this.parameterService.delete(target.code).subscribe({
-      next: () => {
-        this.notificationService.updateToSuccess(progressId, 'notification.delete.success');
-        this.showDeleteConfirm.set(false);
-        this.deleteTarget.set(null);
-        this.loadParameters();
-      },
-      error: () => {
-        this.notificationService.updateToError(progressId, 'notification.delete.error');
-        this.showDeleteConfirm.set(false);
-        this.deleteTarget.set(null);
-      },
-    });
-  }
-
-  // ─── Row Selection ────────────────────────────────────────────
-
-  selectRow(parameter: Parameter): void {
-    this.selectedRow.update(current => current?.code === parameter.code ? null : parameter);
-  }
-
-  editSelectedParameter(): void {
-    const row = this.selectedRow();
-    if (row) {
-      this.openEdit(row);
-    }
-  }
-
-  deleteSelectedParameter(): void {
-    const row = this.selectedRow();
-    if (row) {
-      this.confirmDelete(row);
-    }
-  }
-
-  changePageSize(size: number): void {
-    this.pageSize.set(size);
-    this.currentPage.set(0);
-    this.loadParameters();
-  }
-
-  // ─── Helpers ────────────────────────────────────────────────
+  // ─── Helpers ─────────────────────────────────────────────────
 
   private emptyParameter(): Parameter {
     return {
@@ -300,36 +286,5 @@ export class ParametersComponent {
       createdAt: null,
       lastModifiedAt: null,
     };
-  }
-
-  private getTypeValueValidationError(type: ParameterType, value: string): string {
-    if (!value) return '';
-
-    switch (type) {
-      case 'INTEGER':
-        if (!/^-?\d+$/.test(value)) {
-          return this.translateService.instant('parameters.validation.integer');
-        }
-        break;
-      case 'BOOLEAN':
-        if (value !== 'true' && value !== 'false') {
-          return this.translateService.instant('parameters.validation.boolean');
-        }
-        break;
-      case 'DATE':
-        if (!this.isValidIso8601(value)) {
-          return this.translateService.instant('parameters.validation.date');
-        }
-        break;
-      case 'STRING':
-        // Any value is valid for STRING type
-        break;
-    }
-    return '';
-  }
-
-  private isValidIso8601(value: string): boolean {
-    const date = new Date(value);
-    return !isNaN(date.getTime()) && /^\d{4}-\d{2}-\d{2}/.test(value);
   }
 }

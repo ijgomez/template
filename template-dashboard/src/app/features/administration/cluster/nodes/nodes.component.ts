@@ -9,6 +9,9 @@ import { NotificationService } from '../../../../core/services/notification.serv
 import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
 import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../shared/components/data-table';
 import { ClusterNode } from '../../../../core/models/cluster.model';
+import { NodeDetailComponent } from './node-detail/node-detail.component';
+
+type ViewMode = 'list' | 'detail';
 
 /**
  * Cluster nodes component.
@@ -20,7 +23,7 @@ import { ClusterNode } from '../../../../core/models/cluster.model';
 @Component({
   selector: 'app-cluster-nodes',
   standalone: true,
-  imports: [FormsModule, DecimalPipe, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective],
+  imports: [FormsModule, DecimalPipe, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective, NodeDetailComponent],
   templateUrl: './nodes.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -36,6 +39,10 @@ export class NodesComponent implements OnInit {
 
   // Selection
   readonly selectedRow = signal<ClusterNode | null>(null);
+
+  // View mode
+  readonly viewMode = signal<ViewMode>('list');
+  readonly selectedNode = signal<ClusterNode | null>(null);
 
   // Sort state
   readonly sortColumn = signal('');
@@ -144,6 +151,22 @@ export class NodesComponent implements OnInit {
    */
   selectRow(node: ClusterNode): void {
     this.selectedRow.set(this.selectedRow()?.id === node.id ? null : node);
+  }
+
+  /**
+   * Navigates to the detail view for a given node.
+   */
+  viewDetail(node: ClusterNode): void {
+    this.selectedNode.set(node);
+    this.viewMode.set('detail');
+  }
+
+  /**
+   * Returns to the list view.
+   */
+  backToList(): void {
+    this.selectedNode.set(null);
+    this.viewMode.set('list');
   }
 
   /**

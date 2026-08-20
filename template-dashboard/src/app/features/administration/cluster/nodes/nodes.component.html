@@ -1,6 +1,7 @@
 <!-- ═══════════════════════════════════════════════════════════════════════════
      CLUSTER NODES LIST VIEW
      ═══════════════════════════════════════════════════════════════════════════ -->
+@if (viewMode() === 'list') {
 <!-- Title -->
 <div class="d-flex justify-content-between align-items-center mb-4">
   <h1 class="h3 mb-0">{{ 'cluster.nodes.title' | translate }}</h1>
@@ -71,6 +72,7 @@
     [selectable]="true"
     [selectedItem]="selectedRow()"
     (rowSelect)="selectRow($event)"
+    (rowDoubleClick)="viewDetail($event)"
     (pageChange)="goToPage($event)"
     (pageSizeChange)="changePageSize($event)"
     (sortChange)="onSort($event)"
@@ -113,6 +115,18 @@
       {{ (node.totalMemory > 0 ? ((node.totalMemory - node.usedMemory) / node.totalMemory * 100) : 0) | number:'1.1-1' }}%
     </ng-template>
   </tp-data-table>
+}
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     DETAIL VIEW
+     ═══════════════════════════════════════════════════════════════════════════ -->
+@if (viewMode() === 'detail') {
+  @if (selectedNode(); as node) {
+    <app-node-detail
+      [node]="node"
+      (back)="backToList()" />
+  }
+}
 
 <!-- Confirmation Dialog -->
 @if (showConfirmDialog()) {

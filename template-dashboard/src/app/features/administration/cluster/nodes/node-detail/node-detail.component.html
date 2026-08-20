@@ -1,0 +1,67 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 mb-0">{{ 'cluster.nodes.detail.title' | translate }}</h1>
+  <div class="d-flex gap-2">
+    <button class="btn btn-outline-secondary btn-sm"
+            (click)="onBack()"
+            data-testid="node-detail-btn-back">
+      <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>{{ 'button.back' | translate }}
+    </button>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <div class="tp-form-grid">
+      <div class="form-group">
+        <label class="form-label fw-bold">{{ 'cluster.nodes.fields.hostname' | translate }}</label>
+        <p class="form-control-plaintext">{{ node().hostname }}</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label fw-bold">{{ 'cluster.nodes.fields.ip' | translate }}</label>
+        <p class="form-control-plaintext">{{ node().ip ?? '-' }}</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label fw-bold">{{ 'cluster.nodes.fields.status' | translate }}</label>
+        <p class="form-control-plaintext">
+          <span class="badge"
+                [class.bg-success]="node().status === 'ACTIVE'"
+                [class.bg-danger]="node().status === 'INACTIVE'">
+            {{ 'cluster.nodes.status.' + node().status.toLowerCase() | translate }}
+          </span>
+        </p>
+      </div>
+      <div class="form-group">
+        <label class="form-label fw-bold">{{ 'cluster.nodes.fields.master' | translate }}</label>
+        <p class="form-control-plaintext">
+          @if (node().master) {
+            <span class="badge bg-primary">MASTER</span>
+          } @else {
+            <span class="text-muted">&mdash;</span>
+          }
+        </p>
+      </div>
+      <div class="form-group">
+        <label class="form-label fw-bold">{{ 'cluster.nodes.fields.startedAt' | translate }}</label>
+        <p class="form-control-plaintext">{{ node().startedAt | localDate }}</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label fw-bold">{{ 'cluster.nodes.fields.lastModifiedAt' | translate }}</label>
+        <p class="form-control-plaintext">{{ node().lastModifiedAt | localDate }}</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label fw-bold">{{ 'cluster.nodes.fields.usedMemoryGb' | translate }}</label>
+        <p class="form-control-plaintext">{{ node().usedMemory / 1073741824 | number:'1.2-2' }} GB</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label fw-bold">{{ 'cluster.nodes.fields.totalMemoryGb' | translate }}</label>
+        <p class="form-control-plaintext">{{ node().totalMemory / 1073741824 | number:'1.2-2' }} GB</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label fw-bold">{{ 'cluster.nodes.fields.freeMemoryPercent' | translate }}</label>
+        <p class="form-control-plaintext">
+          {{ (node().totalMemory > 0 ? ((node().totalMemory - node().usedMemory) / node().totalMemory * 100) : 0) | number:'1.1-1' }}%
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

@@ -67,6 +67,7 @@
     [selectable]="true"
     [selectedItem]="selectedRow()"
     (rowSelect)="selectRow($event)"
+    (rowDoubleClick)="viewDetail($event)"
     (pageChange)="goToPage($event)"
     (pageSizeChange)="changePageSize($event)"
     (sortChange)="onSort($event)"
@@ -97,56 +98,13 @@
      DETAIL VIEW
      ═══════════════════════════════════════════════════════════════════════════ -->
 @if (viewMode() === 'detail') {
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="h3 mb-0">{{ 'parameters.detail.title' | translate }}</h1>
-    <div class="d-flex gap-2">
-      @if (canWrite()) {
-        <button class="btn btn-primary btn-sm" (click)="openEdit(selectedParameter()!)" data-testid="btn-edit-detail">
-          <i class="bi bi-pencil me-1" aria-hidden="true"></i>{{ 'button.edit' | translate }}
-        </button>
-        <button class="btn btn-danger btn-sm" (click)="confirmDelete(selectedParameter()!)" data-testid="btn-delete-detail">
-          <i class="bi bi-trash me-1" aria-hidden="true"></i>{{ 'button.delete' | translate }}
-        </button>
-      }
-      <button class="btn btn-outline-secondary btn-sm" (click)="backToList()" data-testid="btn-back">
-        <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>{{ 'button.back' | translate }}
-      </button>
-    </div>
-  </div>
-
   @if (selectedParameter(); as param) {
-    <div class="card">
-      <div class="card-body">
-        <div class="tp-form-grid">
-          <div class="form-group">
-            <label class="form-label fw-bold">{{ 'parameters.fields.code' | translate }}</label>
-            <p class="form-control-plaintext"><code>{{ param.code }}</code></p>
-          </div>
-          <div class="form-group">
-            <label class="form-label fw-bold">{{ 'parameters.fields.type' | translate }}</label>
-            <p class="form-control-plaintext">
-              <span class="badge bg-secondary">{{ param.type }}</span>
-            </p>
-          </div>
-          <div class="form-group">
-            <label class="form-label fw-bold">{{ 'parameters.fields.value' | translate }}</label>
-            <p class="form-control-plaintext"><code>{{ param.value }}</code></p>
-          </div>
-          <div class="form-group form-field-full">
-            <label class="form-label fw-bold">{{ 'parameters.fields.description' | translate }}</label>
-            <p class="form-control-plaintext">{{ param.description || '-' }}</p>
-          </div>
-          <div class="form-group">
-            <label class="form-label fw-bold">{{ 'parameters.fields.createdAt' | translate }}</label>
-            <p class="form-control-plaintext">{{ param.createdAt | localDate }}</p>
-          </div>
-          <div class="form-group">
-            <label class="form-label fw-bold">{{ 'parameters.fields.lastModifiedAt' | translate }}</label>
-            <p class="form-control-plaintext">{{ param.lastModifiedAt | localDate }}</p>
-          </div>
-        </div>
-      </div>
-    </div>
+    <app-parameter-detail
+      [parameter]="param"
+      [canWrite]="canWrite()"
+      (back)="backToList()"
+      (edit)="openEdit($event)"
+      (delete)="confirmDelete($event)" />
   }
 }
 
@@ -154,90 +112,11 @@
      CREATE / EDIT FORM
      ═══════════════════════════════════════════════════════════════════════════ -->
 @if (viewMode() === 'create' || viewMode() === 'edit') {
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="h3 mb-0">
-      {{ (viewMode() === 'create' ? 'parameters.form.createTitle' : 'parameters.form.editTitle') | translate }}
-    </h1>
-    <button class="btn btn-outline-secondary btn-sm" (click)="backToList()" data-testid="btn-back-form">
-      <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>{{ 'button.back' | translate }}
-    </button>
-  </div>
-
-  <div class="tp-filter-bar">
-    <form (ngSubmit)="saveParameter()" #paramForm="ngForm">
-      <h6 class="text-muted text-uppercase fw-semibold mb-2" style="font-size: 0.75rem; letter-spacing: 0.05em;">
-        {{ 'parameters.form.sectionGeneral' | translate }}
-      </h6>
-      <div class="row g-2 mb-3">
-        <div class="col-md-4">
-          <label for="paramCode" class="form-label form-label-sm mb-1">
-            {{ 'parameters.fields.code' | translate }} <span class="text-danger">*</span>
-          </label>
-          <input id="paramCode"
-                 type="text"
-                 class="form-control form-control-sm"
-                 [ngModel]="formData().code"
-                 (ngModelChange)="formData.update(p => ({...p, code: $event}))"
-                 name="paramCode"
-                 required
-                 [readonly]="viewMode() === 'edit'"
-                 data-testid="input-code">
-        </div>
-        <div class="col-md-4">
-          <label for="paramType" class="form-label form-label-sm mb-1">
-            {{ 'parameters.fields.type' | translate }} <span class="text-danger">*</span>
-          </label>
-          <select id="paramType"
-                  class="form-select form-select-sm"
-                  [ngModel]="formData().type"
-                  (ngModelChange)="formData.update(p => ({...p, type: $event})); onTypeChange()"
-                  name="paramType"
-                  required
-                  data-testid="select-type">
-            @for (type of parameterTypes; track type) {
-              <option [value]="type">{{ type }}</option>
-            }
-          </select>
-        </div>
-        <div class="col-md-4">
-          <label for="paramValue" class="form-label form-label-sm mb-1">
-            {{ 'parameters.fields.value' | translate }} <span class="text-danger">*</span>
-          </label>
-          <input id="paramValue"
-                 type="text"
-                 class="form-control form-control-sm"
-                 [class.is-invalid]="typeValueError()"
-                 [ngModel]="formData().value"
-                 (ngModelChange)="formData.update(p => ({...p, value: $event})); onValueChange()"
-                 name="paramValue"
-                 required
-                 data-testid="input-value">
-          @if (typeValueError()) {
-            <div class="invalid-feedback">{{ typeValueError() }}</div>
-          }
-        </div>
-        <div class="col-12">
-          <label for="paramDescription" class="form-label form-label-sm mb-1">{{ 'parameters.fields.description' | translate }}</label>
-          <input id="paramDescription"
-                 type="text"
-                 class="form-control form-control-sm"
-                 [ngModel]="formData().description"
-                 (ngModelChange)="formData.update(p => ({...p, description: $event}))"
-                 name="paramDescription"
-                 data-testid="input-description">
-        </div>
-      </div>
-
-      <div class="d-flex justify-content-end gap-2 mt-2">
-        <button type="button" class="btn btn-outline-secondary btn-sm" (click)="backToList()">
-          {{ 'button.cancel' | translate }}
-        </button>
-        <button type="submit" class="btn btn-primary btn-sm" data-testid="btn-save">
-          {{ 'button.save' | translate }}
-        </button>
-      </div>
-    </form>
-  </div>
+  <app-parameter-form
+    [mode]="viewMode() === 'create' ? 'create' : 'edit'"
+    [parameter]="formData()"
+    (save)="saveParameter($event)"
+    (cancel)="backToList()" />
 }
 
 <!-- ═══════════════════════════════════════════════════════════════════════════
