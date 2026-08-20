@@ -99,7 +99,7 @@ public class AuthService {
      * <p>
      * Validates the refresh token against the database, checks it is not expired
      * or revoked, then performs token rotation: the old token is revoked and a
-     * new one is created.
+     * new one is created. Updates the user's lastAccess timestamp.
      *
      * @param refreshTokenValue the opaque refresh token string
      * @return a new TokenResponse containing a fresh access token and rotated refresh token
@@ -125,6 +125,11 @@ public class AuthService {
         // Generate new token pair — reload user with full profile/actions graph
         User user = userRepository.findByUsernameWithProfileActions(storedToken.getUser().getUsername())
                 .orElseThrow(() -> new BadCredentialsException("Invalid or expired refresh token"));
+
+        // Update lastAccess on each successful token refresh
+        user.setLastAccess(OffsetDateTime.now(ZoneOffset.UTC));
+        userRepository.save(user);
+
         String accessToken = generateAccessTokenForUser(user);
         String newRefreshToken = createRefreshToken(user);
 
