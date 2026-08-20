@@ -61,7 +61,7 @@
     [selectable]="true"
     [selectedItem]="selectedRow()"
     (rowSelect)="selectRow($event)"
-    (rowDoubleClick)="viewDetail($event)"
+    (rowDoubleClick)="showDetail($event)"
     (pageChange)="goToPage($event)"
     (pageSizeChange)="changePageSize($event)"
     (sortChange)="onSort($event)"
@@ -92,61 +92,12 @@
      DETAIL VIEW
      ═══════════════════════════════════════════════════════════════════════════ -->
 @if (viewMode() === 'detail') {
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="h3 mb-0">{{ 'actions.detail.title' | translate }}</h1>
-    <div class="d-flex gap-2">
-      @if (canEdit()) {
-        <button class="btn btn-primary btn-sm" (click)="editAction(selectedAction()!)">
-          <i class="bi bi-pencil me-1" aria-hidden="true"></i>{{ 'button.edit' | translate }}
-        </button>
-      }
-      <button class="btn btn-outline-secondary btn-sm" (click)="backToList()">
-        <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>{{ 'button.back' | translate }}
-      </button>
-    </div>
-  </div>
-
   @if (selectedAction(); as action) {
-    <div class="card">
-      <div class="card-body">
-        <div class="tp-form-grid">
-          <div class="form-group">
-            <label class="form-label fw-bold">{{ 'actions.fields.code' | translate }}</label>
-            <p class="form-control-plaintext">{{ action.code }}</p>
-          </div>
-          <div class="form-group">
-            <label class="form-label fw-bold">{{ 'actions.fields.name' | translate }}</label>
-            <p class="form-control-plaintext">{{ action.name }}</p>
-          </div>
-          <div class="form-group">
-            <label class="form-label fw-bold">{{ 'actions.fields.type' | translate }}</label>
-            <p class="form-control-plaintext">
-              <span class="badge"
-                    [class.bg-info-subtle]="action.type === 'READ'"
-                    [class.text-info]="action.type === 'READ'"
-                    [class.bg-warning-subtle]="action.type === 'WRITE'"
-                    [class.text-warning]="action.type === 'WRITE'"
-                    [class.bg-success-subtle]="action.type === 'EXECUTE'"
-                    [class.text-success]="action.type === 'EXECUTE'">
-                {{ action.type }}
-              </span>
-            </p>
-          </div>
-          <div class="form-group">
-            <label class="form-label fw-bold">{{ 'actions.fields.description' | translate }}</label>
-            <p class="form-control-plaintext">{{ action.description ?? '-' }}</p>
-          </div>
-          <div class="form-group">
-            <label class="form-label fw-bold">{{ 'actions.fields.createdAt' | translate }}</label>
-            <p class="form-control-plaintext">{{ action.createdAt | localDate }}</p>
-          </div>
-          <div class="form-group">
-            <label class="form-label fw-bold">{{ 'actions.fields.lastModifiedAt' | translate }}</label>
-            <p class="form-control-plaintext">{{ action.lastModifiedAt | localDate }}</p>
-          </div>
-        </div>
-      </div>
-    </div>
+    <app-action-detail
+      [action]="action"
+      [canEdit]="canEdit()"
+      (back)="backToList()"
+      (edit)="showEditForm($event)" />
   }
 }
 
@@ -154,88 +105,11 @@
      EDIT FORM (No Create - Req 25.11)
      ═══════════════════════════════════════════════════════════════════════════ -->
 @if (viewMode() === 'edit') {
-  <!-- Title -->
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="h3 mb-0">{{ 'actions.form.editTitle' | translate }}</h1>
-  </div>
-
   @if (selectedAction(); as action) {
-    <div class="tp-filter-bar">
-    <form id="actionForm" (ngSubmit)="saveAction()" #actionForm="ngForm" novalidate data-testid="action-form">
-      <h6 class="text-muted text-uppercase fw-semibold mb-2" style="font-size: 0.75rem; letter-spacing: 0.05em;">
-        {{ 'actions.form.sectionGeneral' | translate }}
-      </h6>
-      <div class="row g-2 mb-3">
-        <div class="col-md-4">
-          <label for="actionCode" class="form-label form-label-sm mb-1">{{ 'actions.fields.code' | translate }}</label>
-          <input id="actionCode"
-                 type="text"
-                 class="form-control form-control-sm"
-                 [value]="action.code"
-                 readonly
-                 disabled
-                 data-testid="input-code">
-        </div>
-        <div class="col-md-4">
-          <label for="actionName" class="form-label form-label-sm mb-1">
-            {{ 'actions.fields.name' | translate }} <span class="text-danger">*</span>
-          </label>
-          <input id="actionName"
-                 type="text"
-                 class="form-control form-control-sm"
-                 [ngModel]="editName()"
-                 (ngModelChange)="editName.set($event)"
-                 name="actionName"
-                 required
-                 data-testid="input-name">
-        </div>
-        <div class="col-md-4">
-          <label for="actionType" class="form-label form-label-sm mb-1">
-            {{ 'actions.fields.type' | translate }} <span class="text-danger">*</span>
-          </label>
-          <select id="actionType"
-                  class="form-select form-select-sm"
-                  [ngModel]="editType()"
-                  (ngModelChange)="editType.set($event)"
-                  name="actionType"
-                  required
-                  data-testid="select-type">
-            @for (type of actionTypes; track type) {
-              <option [value]="type">{{ type }}</option>
-            }
-          </select>
-        </div>
-        <div class="col-12">
-          <label for="actionDescription" class="form-label form-label-sm mb-1">{{ 'actions.fields.description' | translate }}</label>
-          <textarea id="actionDescription"
-                    class="form-control form-control-sm"
-                    [ngModel]="editDescription()"
-                    (ngModelChange)="editDescription.set($event)"
-                    name="actionDescription"
-                    rows="3"
-                    data-testid="input-description"></textarea>
-        </div>
-      </div>
-
-      <!-- Botones de acción -->
-      <div class="col-12 d-flex justify-content-end gap-2 mt-2">
-        <button type="button"
-                class="btn btn-outline-secondary btn-sm"
-                (click)="backToList()"
-                data-testid="btn-cancel">
-          {{ 'button.cancel' | translate }}
-        </button>
-        <button type="submit"
-                class="btn btn-primary btn-sm"
-                [disabled]="isSaving()"
-                data-testid="btn-save">
-          @if (isSaving()) {
-            <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
-          }
-          <i class="bi bi-check-lg me-1" aria-hidden="true"></i> {{ 'button.save' | translate }}
-        </button>
-      </div>
-    </form>
-    </div>
+    <app-action-form
+      [action]="action"
+      [saving]="isSaving()"
+      (save)="saveAction($event)"
+      (cancel)="backToList()" />
   }
 }

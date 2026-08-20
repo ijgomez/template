@@ -1,0 +1,58 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 mb-0">{{ 'actions.detail.title' | translate }}</h1>
+  <div class="d-flex gap-2">
+    @if (canEdit()) {
+      <button class="btn btn-primary btn-sm"
+              (click)="onEdit()"
+              data-testid="action-detail-btn-edit">
+        <i class="bi bi-pencil me-1" aria-hidden="true"></i>{{ 'button.edit' | translate }}
+      </button>
+    }
+    <button class="btn btn-outline-secondary btn-sm"
+            (click)="onBack()"
+            data-testid="action-detail-btn-back">
+      <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>{{ 'button.back' | translate }}
+    </button>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <div class="tp-form-grid">
+      <div class="form-group">
+        <label class="form-label fw-bold">{{ 'actions.fields.code' | translate }}</label>
+        <p class="form-control-plaintext">{{ action().code }}</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label fw-bold">{{ 'actions.fields.name' | translate }}</label>
+        <p class="form-control-plaintext">{{ action().name }}</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label fw-bold">{{ 'actions.fields.type' | translate }}</label>
+        <p class="form-control-plaintext">
+          <span class="badge"
+                [class.bg-info-subtle]="action().type === 'READ'"
+                [class.text-info]="action().type === 'READ'"
+                [class.bg-warning-subtle]="action().type === 'WRITE'"
+                [class.text-warning]="action().type === 'WRITE'"
+                [class.bg-success-subtle]="action().type === 'EXECUTE'"
+                [class.text-success]="action().type === 'EXECUTE'">
+            {{ action().type }}
+          </span>
+        </p>
+      </div>
+      <div class="form-group">
+        <label class="form-label fw-bold">{{ 'actions.fields.description' | translate }}</label>
+        <p class="form-control-plaintext">{{ action().description ?? '-' }}</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label fw-bold">{{ 'actions.fields.createdAt' | translate }}</label>
+        <p class="form-control-plaintext">{{ action().createdAt | localDate }}</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label fw-bold">{{ 'actions.fields.lastModifiedAt' | translate }}</label>
+        <p class="form-control-plaintext">{{ action().lastModifiedAt | localDate }}</p>
+      </div>
+    </div>
+  </div>
+</div>

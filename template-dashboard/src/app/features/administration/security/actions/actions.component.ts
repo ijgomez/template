@@ -6,19 +6,23 @@ import { ActionService } from '../../../../core/services/action.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { CsvExportService } from '../../../../core/services/csv-export.service';
-import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
 import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../shared/components/data-table';
 import { Action, ActionCriteria } from './models/action.model';
+import { ActionDetailComponent } from './action-detail/action-detail.component';
+import { ActionFormComponent } from './action-form/action-form.component';
+
+type ViewMode = 'list' | 'detail' | 'edit';
 
 /**
  * Actions list view component.
  * Displays a paginated table with filters (code, type) and CSV export.
+ * Orchestrates navigation to detail and edit sub-components.
  * Only supports Edit and View Detail options (no Create/Delete per Req 25.11).
  */
 @Component({
   selector: 'app-actions',
   standalone: true,
-  imports: [FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective],
+  imports: [FormsModule, TranslatePipe, TpDataTableComponent, TpColumnDirective, ActionDetailComponent, ActionFormComponent],
   templateUrl: './actions.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -30,7 +34,7 @@ export class ActionsComponent implements OnInit {
   private readonly translateService = inject(TranslateService);
 
   // View state
-  readonly viewMode = signal<'list' | 'detail' | 'edit'>('list');
+  readonly viewMode = signal<ViewMode>('list');
   readonly selectedAction = signal<Action | null>(null);
   readonly selectedRow = signal<Action | null>(null);
 
@@ -57,10 +61,7 @@ export class ActionsComponent implements OnInit {
   readonly filterCode = signal('');
   readonly filterType = signal('');
 
-  // Edit form state
-  readonly editName = signal('');
-  readonly editDescription = signal('');
-  readonly editType = signal('');
+  // Save state (shared with form sub-component)
   readonly isSaving = signal(false);
 
   // Action types for filter dropdown
@@ -72,6 +73,8 @@ export class ActionsComponent implements OnInit {
   ngOnInit(): void {
     this.loadActions();
   }
+
+  // ─── List Actions ──────────────────────────────────────────
 
   /**
    * Loads actions from the backend with current pagination and filters.
@@ -155,69 +158,8 @@ export class ActionsComponent implements OnInit {
   editSelectedAction(): void {
     const row = this.selectedRow();
     if (row) {
-      this.editAction(row);
+      this.showEditForm(row);
     }
-  }
-
-  /**
-   * Opens the detail view for an action.
-   */
-  viewDetail(action: Action): void {
-    this.selectedAction.set(action);
-    this.viewMode.set('detail');
-  }
-
-  /**
-   * Opens the edit form for an action.
-   */
-  editAction(action: Action): void {
-    this.selectedAction.set(action);
-    this.editName.set(action.name);
-    this.editDescription.set(action.description ?? '');
-    this.editType.set(action.type);
-    this.viewMode.set('edit');
-  }
-
-  /**
-   * Saves the edited action.
-   */
-  saveAction(): void {
-    const action = this.selectedAction();
-    if (!action) return;
-
-    this.isSaving.set(true);
-    const progressId = this.notificationService.showProgress('notification.update.progress');
-
-    const payload: Partial<Action> = {
-      id: action.id,
-      code: action.code,
-      name: this.editName(),
-      description: this.editDescription() || null,
-      type: this.editType(),
-    };
-
-    this.actionService.update(action.id, payload).subscribe({
-      next: (updated) => {
-        this.isSaving.set(false);
-        this.notificationService.updateToSuccess(progressId, 'notification.update.success');
-        this.selectedAction.set(updated);
-        this.backToList();
-        this.loadActions();
-      },
-      error: () => {
-        this.isSaving.set(false);
-        this.notificationService.updateToError(progressId, 'notification.update.error');
-      },
-    });
-  }
-
-  /**
-   * Returns to the list view.
-   */
-  backToList(): void {
-    this.viewMode.set('list');
-    this.selectedAction.set(null);
-    this.selectedRow.set(null);
   }
 
   /**
@@ -254,6 +196,60 @@ export class ActionsComponent implements OnInit {
       this.notificationService.updateToError(progressId, 'notification.export.error');
     }
   }
+
+  // ─── Navigation ────────────────────────────────────────────
+
+  /**
+   * Opens the detail view for an action.
+   */
+  showDetail(action: Action): void {
+    this.selectedAction.set(action);
+    this.viewMode.set('detail');
+  }
+
+  /**
+   * Opens the edit form for an action.
+   */
+  showEditForm(action: Action): void {
+    this.selectedAction.set(action);
+    this.viewMode.set('edit');
+  }
+
+  /**
+   * Returns to the list view.
+   */
+  backToList(): void {
+    this.viewMode.set('list');
+    this.selectedAction.set(null);
+    this.selectedRow.set(null);
+  }
+
+  // ─── CRUD Actions ──────────────────────────────────────────
+
+  /**
+   * Saves the edited action (called from the form sub-component).
+   */
+  saveAction(payload: Partial<Action>): void {
+    if (!payload.id) return;
+
+    this.isSaving.set(true);
+    const progressId = this.notificationService.showProgress('notification.update.progress');
+
+    this.actionService.update(payload.id, payload).subscribe({
+      next: () => {
+        this.isSaving.set(false);
+        this.notificationService.updateToSuccess(progressId, 'notification.update.success');
+        this.backToList();
+        this.loadActions();
+      },
+      error: () => {
+        this.isSaving.set(false);
+        this.notificationService.updateToError(progressId, 'notification.update.error');
+      },
+    });
+  }
+
+  // ─── Private ───────────────────────────────────────────────
 
   private buildCriteria(): ActionCriteria {
     const criteria: ActionCriteria = {};
