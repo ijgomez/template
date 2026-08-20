@@ -48,6 +48,17 @@ Patrón interfaz + implementación:
 - `@RestControllerAdvice` centralizado.
 - Formato consistente: `timestamp`, `status`, `error`, `message`, `path`.
 
+## Endpoints de Referencia (`/references`)
+
+- Cuando un listado necesita poblar un filtro (dropdown, selector) con datos de otra entidad, **no reutilizar el endpoint paginado de esa entidad** (requiere permisos propios). En su lugar, exponer un endpoint dedicado `GET /<recurso>/references` que devuelve pares ligeros (id + nombre).
+- El endpoint `/references`:
+  - Devuelve un `List<EntidadRefDTO>` (no paginado).
+  - Ordenado por un campo natural (normalmente `name`).
+  - Usa un DTO record mínimo: `record EntidadRefDTO(Long id, String name)`.
+  - Se autoriza con los permisos del listado consumidor, **no** con los de la entidad que expone. Ejemplo: `GET /profiles/references` se autoriza con `USER_READ` porque lo consume la vista de usuarios.
+- Ubicar la ruta `/references` **antes** de las rutas genéricas `/{id}` en el controlador para evitar conflictos de path matching en Spring MVC.
+- En `SecurityConfig`, la regla del endpoint `/references` debe declararse **antes** del patrón genérico de la entidad.
+
 ## Documentación
 
 - OpenAPI 3 / Springdoc (`springdoc-openapi`).

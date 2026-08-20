@@ -44,6 +44,14 @@ Directrices de seguridad para la aplicación (backend y frontend).
 - HTTP Interceptor para adjuntar token.
 - Guards (`CanActivate`) para proteger rutas.
 
+## Permisos de Endpoints Auxiliares para Filtros
+
+- **Principio**: si un usuario tiene acceso a un listado, debe poder utilizar todos los filtros de dicho listado sin obtener errores de autorización (403).
+- Los filtros de un listado frecuentemente necesitan cargar datos de referencia de otras entidades (por ejemplo, un dropdown de perfiles en la vista de usuarios). Los endpoints que alimentan esos filtros **deben ser accesibles con el mismo permiso de lectura del listado principal**, no con el permiso de la entidad referenciada.
+- **Patrón recomendado**: exponer un endpoint `/references` ligero (id + nombre) en el controlador de la entidad referenciada, con autorización alineada al listado consumidor. Ejemplo: `GET /profiles/references` accesible con `USER_READ` (porque lo consume la vista de usuarios), no solo con `PROFILE_READ`.
+- Al añadir un nuevo filtro a un listado existente que requiera datos de otra entidad, verificar siempre que el endpoint que alimenta el filtro sea accesible con los permisos del listado donde se muestra. Si no existe un endpoint adecuado, crear uno de tipo `/references`.
+- En `SecurityConfig`, las reglas de los endpoints `/references` deben situarse **antes** de las reglas genéricas de la entidad (por especificidad de URL en Spring Security).
+
 ## Auditoría
 
 - Registrar accesos fallidos en log.
