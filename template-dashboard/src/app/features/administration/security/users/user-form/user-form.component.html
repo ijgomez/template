@@ -1,8 +1,33 @@
 <!-- Title -->
 <div class="d-flex justify-content-between align-items-center mb-3">
   <h1 class="h3 mb-0">
-    {{ (mode() === 'create' ? 'users.form.createTitle' : 'users.form.editTitle') | translate }}
+    @switch (mode()) {
+      @case ('create') { {{ 'users.form.createTitle' | translate }} }
+      @case ('edit') { {{ 'users.form.editTitle' | translate }} }
+      @case ('view') { {{ 'users.detail.title' | translate }} }
+    }
   </h1>
+  @if (isReadonly()) {
+    <div class="d-flex gap-2">
+      @if (canWrite()) {
+        <button class="btn btn-primary btn-sm"
+                (click)="onEdit()"
+                data-testid="user-form-btn-edit">
+          <i class="bi bi-pencil me-1" aria-hidden="true"></i>{{ 'button.edit' | translate }}
+        </button>
+        <button class="btn btn-danger btn-sm"
+                (click)="onDelete()"
+                data-testid="user-form-btn-delete">
+          <i class="bi bi-trash me-1" aria-hidden="true"></i>{{ 'button.delete' | translate }}
+        </button>
+      }
+      <button class="btn btn-outline-secondary btn-sm"
+              (click)="onCancel()"
+              data-testid="user-form-btn-back">
+        <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>{{ 'button.back' | translate }}
+      </button>
+    </div>
+  }
 </div>
 
 <div class="tp-filter-bar">
@@ -14,7 +39,8 @@
     <div class="row g-2 mb-3">
       <div class="col-md-4">
         <label for="username" class="form-label form-label-sm mb-1">
-          {{ 'users.fields.username' | translate }} <span class="text-danger">*</span>
+          {{ 'users.fields.username' | translate }}
+          @if (!isReadonly()) { <span class="text-danger">*</span> }
         </label>
         <input id="username"
                type="text"
@@ -22,8 +48,10 @@
                [ngModel]="formUser().username"
                (ngModelChange)="updateField('username', $event)"
                name="username"
-               required
-               [readonly]="mode() === 'edit'"
+               [required]="!isReadonly()"
+               [readonly]="isReadonly() || mode() === 'edit'"
+               [disabled]="isReadonly()"
+               [attr.aria-label]="'users.fields.username' | translate"
                data-testid="input-username">
       </div>
       <div class="col-md-4">
@@ -32,12 +60,15 @@
           @if (mode() === 'create') { <span class="text-danger">*</span> }
         </label>
         <input id="password"
-               type="password"
+               [type]="isReadonly() ? 'text' : 'password'"
                class="form-control form-control-sm"
-               [ngModel]="formUser().password"
+               [ngModel]="isReadonly() ? '••••••••' : formUser().password"
                (ngModelChange)="updateField('password', $event)"
                name="password"
                [required]="mode() === 'create'"
+               [readonly]="isReadonly()"
+               [disabled]="isReadonly()"
+               [attr.aria-label]="'users.fields.password' | translate"
                data-testid="input-password">
       </div>
       <div class="col-md-4">
@@ -45,12 +76,15 @@
           {{ 'users.fields.email' | translate }}
         </label>
         <input id="email"
-               type="email"
+               [type]="isReadonly() ? 'text' : 'email'"
                class="form-control form-control-sm"
                [ngModel]="formUser().email ?? ''"
                (ngModelChange)="updateField('email', $event || null)"
                name="email"
-               placeholder="usuario@ejemplo.com"
+               [placeholder]="isReadonly() ? '' : 'usuario@ejemplo.com'"
+               [readonly]="isReadonly()"
+               [disabled]="isReadonly()"
+               [attr.aria-label]="'users.fields.email' | translate"
                data-testid="input-email">
       </div>
       <div class="col-md-4">
@@ -63,6 +97,9 @@
                [ngModel]="formUser().firstName ?? ''"
                (ngModelChange)="updateField('firstName', $event || null)"
                name="firstName"
+               [readonly]="isReadonly()"
+               [disabled]="isReadonly()"
+               [attr.aria-label]="'users.fields.firstName' | translate"
                data-testid="input-first-name">
       </div>
       <div class="col-md-4">
@@ -75,26 +112,89 @@
                [ngModel]="formUser().lastName ?? ''"
                (ngModelChange)="updateField('lastName', $event || null)"
                name="lastName"
+               [readonly]="isReadonly()"
+               [disabled]="isReadonly()"
+               [attr.aria-label]="'users.fields.lastName' | translate"
                data-testid="input-last-name">
       </div>
       <div class="col-md-4">
-        <label for="profileId" class="form-label form-label-sm mb-1">
-          {{ 'users.fields.profile' | translate }} <span class="text-danger">*</span>
-        </label>
-        <select id="profileId"
-                class="form-select form-select-sm"
-                [ngModel]="formUser().profileId"
-                (ngModelChange)="updateField('profileId', $event)"
-                name="profileId"
-                required
-                data-testid="select-profile">
-          <option [ngValue]="null" disabled>{{ 'users.form.selectProfile' | translate }}</option>
-          @for (profile of profiles(); track profile.id) {
-            <option [ngValue]="profile.id">{{ profile.name }}</option>
-          }
-        </select>
+        @if (isReadonly()) {
+          <label for="profileName" class="form-label form-label-sm mb-1">
+            {{ 'users.fields.profile' | translate }}
+          </label>
+          <input id="profileName"
+                 type="text"
+                 class="form-control form-control-sm"
+                 [value]="formUser().profileName ?? ''"
+                 readonly
+                 disabled
+                 [attr.aria-label]="'users.fields.profile' | translate"
+                 data-testid="input-profile-readonly">
+        } @else {
+          <label for="profileId" class="form-label form-label-sm mb-1">
+            {{ 'users.fields.profile' | translate }} <span class="text-danger">*</span>
+          </label>
+          <select id="profileId"
+                  class="form-select form-select-sm"
+                  [ngModel]="formUser().profileId"
+                  (ngModelChange)="updateField('profileId', $event)"
+                  name="profileId"
+                  required
+                  [attr.aria-label]="'users.fields.profile' | translate"
+                  data-testid="select-profile">
+            <option [ngValue]="null" disabled>{{ 'users.form.selectProfile' | translate }}</option>
+            @for (profile of profiles(); track profile.id) {
+              <option [ngValue]="profile.id">{{ profile.name }}</option>
+            }
+          </select>
+        }
       </div>
     </div>
+
+    <!-- Información de auditoría (solo en modo view) -->
+    @if (isReadonly()) {
+      <h6 class="text-muted text-uppercase fw-semibold mb-2" style="font-size: 0.75rem; letter-spacing: 0.05em;">
+        {{ 'users.detail.sectionAudit' | translate }}
+      </h6>
+      <div class="row g-2 mb-3">
+        <div class="col-md-4">
+          <label class="form-label form-label-sm mb-1">
+            {{ 'users.fields.lastAccess' | translate }}
+          </label>
+          <input type="text"
+                 class="form-control form-control-sm"
+                 [value]="(formUser().lastAccess | localDate) ?? ''"
+                 readonly
+                 disabled
+                 [attr.aria-label]="'users.fields.lastAccess' | translate"
+                 data-testid="input-last-access">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label form-label-sm mb-1">
+            {{ 'users.fields.createdAt' | translate }}
+          </label>
+          <input type="text"
+                 class="form-control form-control-sm"
+                 [value]="(formUser().createdAt | localDate) ?? ''"
+                 readonly
+                 disabled
+                 [attr.aria-label]="'users.fields.createdAt' | translate"
+                 data-testid="input-created-at">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label form-label-sm mb-1">
+            {{ 'users.fields.lastModifiedAt' | translate }}
+          </label>
+          <input type="text"
+                 class="form-control form-control-sm"
+                 [value]="(formUser().lastModifiedAt | localDate) ?? ''"
+                 readonly
+                 disabled
+                 [attr.aria-label]="'users.fields.lastModifiedAt' | translate"
+                 data-testid="input-last-modified-at">
+        </div>
+      </div>
+    }
 
     <!-- Informes asignados -->
     <tp-selected-reports
@@ -102,22 +202,27 @@
       (ngModelChange)="updateField('reportIds', $event)"
       name="reportIds"
       [title]="'users.form.sectionReports' | translate"
+      [disabled]="isReadonly()"
+      [showAdd]="!isReadonly()"
+      [showRemove]="!isReadonly()"
       testId="user-reports">
     </tp-selected-reports>
 
-    <!-- Botones de acción -->
-    <div class="col-12 d-flex justify-content-end gap-2 mt-2">
-      <button type="button"
-              class="btn btn-outline-secondary btn-sm"
-              (click)="onCancel()"
-              data-testid="btn-cancel">
-        {{ 'button.cancel' | translate }}
-      </button>
-      <button type="submit"
-              class="btn btn-primary btn-sm"
-              data-testid="btn-save">
-        <i class="bi bi-check-lg me-1" aria-hidden="true"></i> {{ 'button.save' | translate }}
-      </button>
-    </div>
+    <!-- Botones de acción (solo en modo edición/creación) -->
+    @if (!isReadonly()) {
+      <div class="col-12 d-flex justify-content-end gap-2 mt-2">
+        <button type="button"
+                class="btn btn-outline-secondary btn-sm"
+                (click)="onCancel()"
+                data-testid="btn-cancel">
+          {{ 'button.cancel' | translate }}
+        </button>
+        <button type="submit"
+                class="btn btn-primary btn-sm"
+                data-testid="btn-save">
+          <i class="bi bi-check-lg me-1" aria-hidden="true"></i> {{ 'button.save' | translate }}
+        </button>
+      </div>
+    }
   </form>
 </div>

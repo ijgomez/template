@@ -90,3 +90,88 @@ Las configuraciones de entorno de Angular **deben estar alineadas** con los perf
 - Nomenclatura: `<nombre>.spec.ts`.
 - Patrón arrange / act / assert.
 - Usar `data-testid` para seleccionar elementos.
+
+## Formularios con Modo View (Readonly)
+
+Las entidades que tienen formulario de creación/edición deben usar un **único componente de formulario** con tres modos: `'create'`, `'edit'` y `'view'`. No se deben crear componentes de detalle separados.
+
+### Tipo FormMode
+
+```typescript
+type FormMode = 'create' | 'edit' | 'view';
+```
+
+### Reglas del modo `view`
+
+| Aspecto | Comportamiento |
+|---------|---------------|
+| Inputs | `readonly` + `disabled` (replica el patrón de action-form, fondo gris Bootstrap) |
+| Select | Se sustituye por un `<input readonly disabled>` con el valor textual (ej: `profileName`) |
+| Password | Se muestra con valor enmascarado (`••••••••`), `readonly disabled` |
+| Campos de auditoría | Visibles solo en modo `view` (ej: `createdAt`, `lastModifiedAt`, `lastAccess`) |
+| Componentes CVA (ej: `tp-selected-reports`) | `[disabled]="true"`, `[showAdd]="false"`, `[showRemove]="false"` |
+| Botones de acción | No se muestran Save/Cancel; se muestran Edit, Delete (condicional a permisos) y Back |
+| Indicadores obligatorios (`*`) | No se muestran en modo view |
+| Validación | Deshabilitada (`[required]="false"` o condicional) |
+
+### Estructura del componente
+
+```typescript
+@Component({ ... })
+export class EntityFormComponent {
+  readonly mode = input.required<FormMode>();
+  readonly isReadonly = computed(() => this.mode() === 'view');
+  readonly canWrite = input<boolean>(false);
+
+  // Outputs para modo view
+  readonly edit = output<EntityDTO>();
+  readonly delete = output<EntityDTO>();
+
+  // Outputs para modo create/edit
+  readonly save = output<EntityDTO>();
+  readonly cancel = output<void>();
+}
+```
+
+### Patrón de estilo para campos no editables
+
+Usar `readonly` + `disabled` juntos en los inputs (mismo patrón que el campo `code` en action-form):
+
+```html
+<input type="text"
+       class="form-control form-control-sm"
+       [value]="..."
+       readonly
+       disabled
+       [attr.aria-label]="...">
+```
+
+Esto aplica el estilo visual de Bootstrap (fondo `var(--bs-secondary-bg)`) que señaliza claramente al usuario que el campo no es editable.
+
+### Integración con el componente padre
+
+El componente padre (ej: `UsersComponent`) gestiona los modos mediante un signal `formMode`:
+
+```typescript
+readonly formMode = signal<'create' | 'edit' | 'view'>('create');
+
+showDetail(entity: EntityDTO): void {
+  this.formEntity.set({ ...entity });
+  this.formMode.set('view');
+  this.viewMode.set('detail');
+}
+```
+
+Y en el template:
+
+```html
+@if (viewMode() === 'detail') {
+  <app-entity-form
+    [mode]="formMode()"
+    [entity]="formEntity()"
+    [canWrite]="canWrite()"
+    (cancel)="backToList()"
+    (edit)="showEditForm($event)"
+    (delete)="confirmDelete($event)" />
+}
+```

@@ -10,7 +10,6 @@ import { CsvExportService } from '../../../../core/services/csv-export.service';
 import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
 import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../shared/components/data-table';
 import { UserDTO, UserCriteria, ProfileRef } from '../../../../core/models/user.model';
-import { UserDetailComponent } from './user-detail/user-detail.component';
 import { UserFormComponent } from './user-form/user-form.component';
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit';
@@ -18,7 +17,7 @@ type ViewMode = 'list' | 'detail' | 'create' | 'edit';
 @Component({
   selector: 'app-users',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective, UserDetailComponent, UserFormComponent],
+  imports: [CommonModule, FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective, UserFormComponent],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -61,10 +60,9 @@ export class UsersComponent implements OnInit {
   filterProfileId: number | null = null;
 
   // Detail / Form state
-  readonly selectedUser = signal<UserDTO | null>(null);
   readonly selectedRow = signal<UserDTO | null>(null);
   readonly formUser = signal<UserDTO>(this.emptyUser());
-  readonly formMode = signal<'create' | 'edit'>('create');
+  readonly formMode = signal<'create' | 'edit' | 'view'>('create');
 
   // Reference data
   readonly profiles = signal<ProfileRef[]>([]);
@@ -209,7 +207,8 @@ export class UsersComponent implements OnInit {
   // ─── Navigation ────────────────────────────────────────────
 
   showDetail(user: UserDTO): void {
-    this.selectedUser.set(user);
+    this.formUser.set({ ...user });
+    this.formMode.set('view');
     this.viewMode.set('detail');
   }
 
@@ -227,7 +226,6 @@ export class UsersComponent implements OnInit {
 
   backToList(): void {
     this.viewMode.set('list');
-    this.selectedUser.set(null);
   }
 
   // ─── CRUD Actions ──────────────────────────────────────────

@@ -164,7 +164,8 @@
       "clear": "Clear"
     },
     "detail": {
-      "title": "User Detail"
+      "title": "User Detail",
+      "sectionAudit": "Audit information"
     },
     "form": {
       "createTitle": "Create User",

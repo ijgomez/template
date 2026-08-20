@@ -896,6 +896,63 @@ Para crear un componente similar (e.g. `tp-selected-profiles`):
 
 ---
 
+## Formulario Unificado (Create / Edit / View)
+
+Patron de componente de formulario que unifica las vistas de creacion, edicion y detalle (solo lectura) en un unico componente. Evita duplicacion de codigo entre componentes `*-form` y `*-detail`.
+
+**Selector:** `<app-entity-form>` (por entidad, e.g. `<app-user-form>`)
+
+**Ubicacion:** Dentro del directorio de cada feature (e.g. `features/administration/security/users/user-form/`)
+
+### Modos
+
+| Modo     | Descripcion                                    | Campos          | Botones                    |
+|----------|------------------------------------------------|-----------------|----------------------------|
+| `create` | Formulario vacio para crear una entidad        | Editables       | Save, Cancel               |
+| `edit`   | Formulario precargado para editar una entidad  | Editables (algunos readonly, e.g. username) | Save, Cancel |
+| `view`   | Vista de solo lectura con layout de formulario | Todos readonly + disabled | Edit, Delete, Back |
+
+### Estilo visual en modo `view`
+
+Los campos no editables usan `readonly` + `disabled` simultaneamente:
+
+```html
+<input type="text"
+       class="form-control form-control-sm"
+       [value]="..."
+       readonly
+       disabled
+       [attr.aria-label]="...">
+```
+
+Esto aplica el fondo gris de Bootstrap (`var(--bs-secondary-bg)`) que senaliza claramente que el campo no es editable. Es el mismo patron usado en el campo `code` de `action-form`.
+
+### Campos especiales en modo `view`
+
+| Campo         | Comportamiento                                                        |
+|---------------|-----------------------------------------------------------------------|
+| Password      | Se muestra como texto enmascarado (`••••••••`), `readonly disabled`  |
+| Select        | Se sustituye por `<input readonly disabled>` con el valor textual    |
+| Campos audit  | Solo visibles en modo view (createdAt, lastModifiedAt, lastAccess)   |
+| CVA (tp-selected-*) | `disabled=true`, `showAdd=false`, `showRemove=false`           |
+
+### Indicadores y validacion
+
+- Los indicadores de campo obligatorio (`*`) no se muestran en modo view.
+- Las validaciones (`required`, etc.) se desactivan condicionalmente.
+
+### Accesibilidad
+
+- Todos los campos readonly mantienen `[attr.aria-label]` con la traduccion del nombre del campo.
+- Los botones de accion (Edit, Delete) solo se muestran si el usuario tiene permisos (`canWrite`).
+- Los iconos decorativos incluyen `aria-hidden="true"`.
+
+### Ejemplo de implementacion
+
+Referencia: `UserFormComponent` en `features/administration/security/users/user-form/`.
+
+---
+
 # Reglas de Uso
 
 1. **No duplicar**: Antes de crear un componente nuevo, verificar si ya existe uno en `shared/components/` que cubra la necesidad.

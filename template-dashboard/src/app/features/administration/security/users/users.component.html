@@ -131,14 +131,14 @@
      DETAIL VIEW
      ═══════════════════════════════════════════════════════════════════════════ -->
 @if (viewMode() === 'detail') {
-  @if (selectedUser(); as user) {
-    <app-user-detail
-      [user]="user"
-      [canWrite]="canWrite()"
-      (back)="backToList()"
-      (edit)="showEditForm($event)"
-      (delete)="confirmDelete($event)" />
-  }
+  <app-user-form
+    [mode]="formMode()"
+    [user]="formUser()"
+    [profiles]="profiles()"
+    [canWrite]="canWrite()"
+    (cancel)="backToList()"
+    (edit)="showEditForm($event)"
+    (delete)="confirmDelete($event)" />
 }
 
 <!-- ═══════════════════════════════════════════════════════════════════════════
