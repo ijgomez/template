@@ -1,36 +1,49 @@
-import { Component, ChangeDetectionStrategy, input, output, signal, OnInit, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, computed, input, output, signal, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
+import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
 import { Parameter, ParameterType } from '../../../../core/models/parameter.model';
 
-type FormMode = 'create' | 'edit';
+type FormMode = 'create' | 'edit' | 'view';
 
 /**
  * Parameter form component.
- * Handles creation and edition of a parameter with type-value validation.
+ * Handles creation, edition, and read-only viewing of a parameter.
  */
 @Component({
   selector: 'app-parameter-form',
   standalone: true,
-  imports: [FormsModule, TranslatePipe],
+  imports: [FormsModule, TranslatePipe, LocalDatePipe],
   templateUrl: './parameter-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ParameterFormComponent implements OnInit {
   private readonly translateService = inject(TranslateService);
 
-  /** The mode of the form: 'create' or 'edit'. */
+  /** The mode of the form: 'create', 'edit', or 'view'. */
   readonly mode = input.required<FormMode>();
 
   /** The initial parameter data to populate the form. */
   readonly parameter = input.required<Parameter>();
 
+  /** Whether the current user has write permissions (used in view mode). */
+  readonly canWrite = input<boolean>(false);
+
   /** Emitted when the form is submitted with valid data. */
   readonly save = output<Parameter>();
 
-  /** Emitted when the user clicks cancel. */
+  /** Emitted when the user clicks cancel or back. */
   readonly cancel = output<void>();
+
+  /** Emitted when the user clicks the edit button (view mode). */
+  readonly edit = output<Parameter>();
+
+  /** Emitted when the user clicks the delete button (view mode). */
+  readonly delete = output<Parameter>();
+
+  /** Whether the form is in readonly mode. */
+  readonly isReadonly = computed(() => this.mode() === 'view');
 
   // Internal form state
   readonly formData = signal<Parameter>({
@@ -54,6 +67,7 @@ export class ParameterFormComponent implements OnInit {
   }
 
   updateField(field: keyof Parameter, value: unknown): void {
+    if (this.isReadonly()) return;
     this.formData.update(p => ({ ...p, [field]: value }));
     if (field === 'type' || field === 'value') {
       this.validateTypeValue();
@@ -61,12 +75,21 @@ export class ParameterFormComponent implements OnInit {
   }
 
   onSubmit(): void {
+    if (this.isReadonly()) return;
     if (!this.validateTypeValue()) return;
     this.save.emit(this.formData());
   }
 
   onCancel(): void {
     this.cancel.emit();
+  }
+
+  onEdit(): void {
+    this.edit.emit(this.parameter());
+  }
+
+  onDelete(): void {
+    this.delete.emit(this.parameter());
   }
 
   // ─── Validation ─────────────────────────────────────────────

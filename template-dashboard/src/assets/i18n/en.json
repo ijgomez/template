@@ -276,7 +276,8 @@
       "clear": "Clear"
     },
     "detail": {
-      "title": "Parameter Detail"
+      "title": "Parameter Detail",
+      "sectionAudit": "Audit information"
     },
     "form": {
       "createTitle": "Create Parameter",

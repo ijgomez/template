@@ -98,14 +98,13 @@
      DETAIL VIEW
      ═══════════════════════════════════════════════════════════════════════════ -->
 @if (viewMode() === 'detail') {
-  @if (selectedParameter(); as param) {
-    <app-parameter-detail
-      [parameter]="param"
-      [canWrite]="canWrite()"
-      (back)="backToList()"
-      (edit)="openEdit($event)"
-      (delete)="confirmDelete($event)" />
-  }
+  <app-parameter-form
+    [mode]="'view'"
+    [parameter]="formData()"
+    [canWrite]="canWrite()"
+    (cancel)="backToList()"
+    (edit)="openEdit($event)"
+    (delete)="confirmDelete($event)" />
 }
 
 <!-- ═══════════════════════════════════════════════════════════════════════════

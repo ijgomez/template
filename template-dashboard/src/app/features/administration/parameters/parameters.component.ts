@@ -7,7 +7,6 @@ import { NotificationService } from '../../../core/services/notification.service
 import { ParameterService } from '../../../core/services/parameter.service';
 import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../shared/components/data-table';
 import { Parameter, ParameterCriteria, ParameterType } from '../../../core/models/parameter.model';
-import { ParameterDetailComponent } from './parameter-detail/parameter-detail.component';
 import { ParameterFormComponent } from './parameter-form/parameter-form.component';
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit';
@@ -20,7 +19,7 @@ type ViewMode = 'list' | 'detail' | 'create' | 'edit';
 @Component({
   selector: 'app-parameters',
   standalone: true,
-  imports: [FormsModule, TranslatePipe, TpDataTableComponent, TpColumnDirective, ParameterDetailComponent, ParameterFormComponent],
+  imports: [FormsModule, TranslatePipe, TpDataTableComponent, TpColumnDirective, ParameterFormComponent],
   templateUrl: './parameters.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -56,7 +55,6 @@ export class ParametersComponent {
 
   // ─── Detail / Form State ─────────────────────────────────────
 
-  readonly selectedParameter = signal<Parameter | null>(null);
   readonly formData = signal<Parameter>(this.emptyParameter());
 
   // ─── Delete Confirmation ─────────────────────────────────────
@@ -163,7 +161,7 @@ export class ParametersComponent {
   // ─── Navigation ──────────────────────────────────────────────
 
   viewDetail(parameter: Parameter): void {
-    this.selectedParameter.set(parameter);
+    this.formData.set({ ...parameter });
     this.viewMode.set('detail');
   }
 
@@ -179,7 +177,6 @@ export class ParametersComponent {
 
   backToList(): void {
     this.viewMode.set('list');
-    this.selectedParameter.set(null);
     this.showDeleteConfirm.set(false);
     this.deleteTarget.set(null);
   }

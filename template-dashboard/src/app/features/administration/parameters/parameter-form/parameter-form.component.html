@@ -1,23 +1,45 @@
+<!-- Title -->
 <div class="d-flex justify-content-between align-items-center mb-3">
   <h1 class="h3 mb-0">
-    {{ (mode() === 'create' ? 'parameters.form.createTitle' : 'parameters.form.editTitle') | translate }}
+    @switch (mode()) {
+      @case ('create') { {{ 'parameters.form.createTitle' | translate }} }
+      @case ('edit') { {{ 'parameters.form.editTitle' | translate }} }
+      @case ('view') { {{ 'parameters.detail.title' | translate }} }
+    }
   </h1>
-  <button class="btn btn-outline-secondary btn-sm"
-          (click)="onCancel()"
-          data-testid="parameter-form-btn-back">
-    <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>{{ 'button.back' | translate }}
-  </button>
+  @if (isReadonly()) {
+    <div class="d-flex gap-2">
+      @if (canWrite()) {
+        <button class="btn btn-primary btn-sm"
+                (click)="onEdit()"
+                data-testid="parameter-form-btn-edit">
+          <i class="bi bi-pencil me-1" aria-hidden="true"></i>{{ 'button.edit' | translate }}
+        </button>
+        <button class="btn btn-danger btn-sm"
+                (click)="onDelete()"
+                data-testid="parameter-form-btn-delete">
+          <i class="bi bi-trash me-1" aria-hidden="true"></i>{{ 'button.delete' | translate }}
+        </button>
+      }
+      <button class="btn btn-outline-secondary btn-sm"
+              (click)="onCancel()"
+              data-testid="parameter-form-btn-back">
+        <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>{{ 'button.back' | translate }}
+      </button>
+    </div>
+  }
 </div>
 
 <div class="tp-filter-bar">
-  <form (ngSubmit)="onSubmit()" #paramForm="ngForm">
+  <form (ngSubmit)="onSubmit()" #paramForm="ngForm" novalidate data-testid="parameter-form">
     <h6 class="text-muted text-uppercase fw-semibold mb-2" style="font-size: 0.75rem; letter-spacing: 0.05em;">
       {{ 'parameters.form.sectionGeneral' | translate }}
     </h6>
     <div class="row g-2 mb-3">
       <div class="col-md-4">
         <label for="paramCode" class="form-label form-label-sm mb-1">
-          {{ 'parameters.fields.code' | translate }} <span class="text-danger">*</span>
+          {{ 'parameters.fields.code' | translate }}
+          @if (!isReadonly()) { <span class="text-danger">*</span> }
         </label>
         <input id="paramCode"
                type="text"
@@ -25,62 +47,127 @@
                [ngModel]="formData().code"
                (ngModelChange)="updateField('code', $event)"
                name="paramCode"
-               required
-               [readonly]="mode() === 'edit'"
+               [required]="!isReadonly()"
+               [readonly]="isReadonly() || mode() === 'edit'"
+               [disabled]="isReadonly()"
+               [attr.aria-label]="'parameters.fields.code' | translate"
                data-testid="input-code">
       </div>
       <div class="col-md-4">
         <label for="paramType" class="form-label form-label-sm mb-1">
-          {{ 'parameters.fields.type' | translate }} <span class="text-danger">*</span>
+          {{ 'parameters.fields.type' | translate }}
+          @if (!isReadonly()) { <span class="text-danger">*</span> }
         </label>
-        <select id="paramType"
-                class="form-select form-select-sm"
-                [ngModel]="formData().type"
-                (ngModelChange)="updateField('type', $event)"
-                name="paramType"
-                required
-                data-testid="select-type">
-          @for (type of parameterTypes; track type) {
-            <option [value]="type">{{ type }}</option>
-          }
-        </select>
+        @if (isReadonly()) {
+          <input id="paramType"
+                 type="text"
+                 class="form-control form-control-sm"
+                 [value]="formData().type"
+                 readonly
+                 disabled
+                 [attr.aria-label]="'parameters.fields.type' | translate"
+                 data-testid="input-type-readonly">
+        } @else {
+          <select id="paramType"
+                  class="form-select form-select-sm"
+                  [ngModel]="formData().type"
+                  (ngModelChange)="updateField('type', $event)"
+                  name="paramType"
+                  required
+                  [attr.aria-label]="'parameters.fields.type' | translate"
+                  data-testid="select-type">
+            @for (type of parameterTypes; track type) {
+              <option [value]="type">{{ type }}</option>
+            }
+          </select>
+        }
       </div>
       <div class="col-md-4">
         <label for="paramValue" class="form-label form-label-sm mb-1">
-          {{ 'parameters.fields.value' | translate }} <span class="text-danger">*</span>
+          {{ 'parameters.fields.value' | translate }}
+          @if (!isReadonly()) { <span class="text-danger">*</span> }
         </label>
         <input id="paramValue"
                type="text"
                class="form-control form-control-sm"
-               [class.is-invalid]="typeValueError()"
+               [class.is-invalid]="!isReadonly() && typeValueError()"
                [ngModel]="formData().value"
                (ngModelChange)="updateField('value', $event)"
                name="paramValue"
-               required
+               [required]="!isReadonly()"
+               [readonly]="isReadonly()"
+               [disabled]="isReadonly()"
+               [attr.aria-label]="'parameters.fields.value' | translate"
                data-testid="input-value">
-        @if (typeValueError()) {
+        @if (!isReadonly() && typeValueError()) {
           <div class="invalid-feedback">{{ typeValueError() }}</div>
         }
       </div>
       <div class="col-12">
-        <label for="paramDescription" class="form-label form-label-sm mb-1">{{ 'parameters.fields.description' | translate }}</label>
+        <label for="paramDescription" class="form-label form-label-sm mb-1">
+          {{ 'parameters.fields.description' | translate }}
+        </label>
         <input id="paramDescription"
                type="text"
                class="form-control form-control-sm"
                [ngModel]="formData().description"
                (ngModelChange)="updateField('description', $event)"
                name="paramDescription"
+               [readonly]="isReadonly()"
+               [disabled]="isReadonly()"
+               [attr.aria-label]="'parameters.fields.description' | translate"
                data-testid="input-description">
       </div>
     </div>
 
-    <div class="d-flex justify-content-end gap-2 mt-2">
-      <button type="button" class="btn btn-outline-secondary btn-sm" (click)="onCancel()" data-testid="parameter-form-btn-cancel">
-        {{ 'button.cancel' | translate }}
-      </button>
-      <button type="submit" class="btn btn-primary btn-sm" data-testid="parameter-form-btn-save">
-        {{ 'button.save' | translate }}
-      </button>
-    </div>
+    <!-- Información de auditoría (solo en modo view) -->
+    @if (isReadonly()) {
+      <h6 class="text-muted text-uppercase fw-semibold mb-2" style="font-size: 0.75rem; letter-spacing: 0.05em;">
+        {{ 'parameters.detail.sectionAudit' | translate }}
+      </h6>
+      <div class="row g-2 mb-3">
+        <div class="col-md-4">
+          <label class="form-label form-label-sm mb-1">
+            {{ 'parameters.fields.createdAt' | translate }}
+          </label>
+          <input type="text"
+                 class="form-control form-control-sm"
+                 [value]="(formData().createdAt | localDate) ?? ''"
+                 readonly
+                 disabled
+                 [attr.aria-label]="'parameters.fields.createdAt' | translate"
+                 data-testid="input-created-at">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label form-label-sm mb-1">
+            {{ 'parameters.fields.lastModifiedAt' | translate }}
+          </label>
+          <input type="text"
+                 class="form-control form-control-sm"
+                 [value]="(formData().lastModifiedAt | localDate) ?? ''"
+                 readonly
+                 disabled
+                 [attr.aria-label]="'parameters.fields.lastModifiedAt' | translate"
+                 data-testid="input-last-modified-at">
+        </div>
+      </div>
+    }
+
+    <!-- Botones de acción (solo en modo edición/creación) -->
+    @if (!isReadonly()) {
+      <div class="d-flex justify-content-end gap-2 mt-2">
+        <button type="button"
+                class="btn btn-outline-secondary btn-sm"
+                (click)="onCancel()"
+                data-testid="parameter-form-btn-cancel">
+          {{ 'button.cancel' | translate }}
+        </button>
+        <button type="submit"
+                class="btn btn-primary btn-sm"
+                data-testid="parameter-form-btn-save">
+          <i class="bi bi-check-lg me-1" aria-hidden="true"></i> {{ 'button.save' | translate }}
+        </button>
+      </div>
+    }
   </form>
 </div>
