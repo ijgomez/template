@@ -91,6 +91,12 @@ Las configuraciones de entorno de Angular **deben estar alineadas** con los perf
 - Patrón arrange / act / assert.
 - Usar `data-testid` para seleccionar elementos.
 
+### Obligatoriedad de tests
+
+- **Todo componente Angular debe tener su fichero de test** (`.spec.ts`) asociado. No se considera completo un componente sin sus tests.
+- **Al crear un componente nuevo**: se debe generar su `.spec.ts` correspondiente como parte de la misma tarea. El componente no está terminado hasta que sus tests existan y pasen.
+- **Al modificar un componente existente que no tenga tests**: se deben crear los tests del componente como parte de la modificación, cubriendo al menos el comportamiento existente y los cambios realizados. No se deben aplicar cambios a un componente sin tests sin antes crearlos.
+
 ## Formularios con Modo View (Readonly)
 
 Las entidades que tienen formulario de creación/edición deben usar un **único componente de formulario** con tres modos: `'create'`, `'edit'` y `'view'`. No se deben crear componentes de detalle separados.
