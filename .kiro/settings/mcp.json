@@ -24,6 +24,12 @@
       "env": {
         "OLLAMA_HOST": "http://localhost:11434"
       }
+    },
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "@playwright/mcp@latest"
+      ]
     }
   }
 }
