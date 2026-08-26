@@ -18,6 +18,7 @@
 | **JSONAssert** | Comparación y validación de respuestas JSON |
 | **Awaitility** | Espera activa para procesos asíncronos |
 | **ArchUnit** | Validación de reglas de arquitectura mediante tests |
+| **Playwright** | Tests end-to-end (E2E) de la interfaz de usuario |
 
 > **IMPORTANTE:** No se permite usar ningún framework de testing fuera de esta lista sin aprobación explícita. En particular, NO usar HSQLDB ni H2 como base de datos para tests de integración; usar siempre Testcontainers con PostgreSQL para reflejar el motor de producción.
 
@@ -243,3 +244,224 @@ User user2 = Instancio.create(model);
 - En tests de integración para poblar la base de datos con datos variados.
 - Combinar con `set(...)` solo para los campos que el test necesita verificar explícitamente; dejar el resto aleatorio.
 - **No** usar Instancio cuando los datos exactos son parte del escenario de prueba (p. ej. test de validación de formato de email).
+
+## Validación de Arquitectura con ArchUnit
+
+Usar **ArchUnit 1.5.0** para verificar mediante tests que la estructura del código cumple las reglas arquitectónicas del proyecto (dependencias entre capas, convenciones de nombres, restricciones de paquetes, etc.).
+
+### Dependencia Maven
+
+```xml
+<dependency>
+    <groupId>com.tngtech.archunit</groupId>
+    <artifactId>archunit-junit5</artifactId>
+    <version>1.5.0</version>
+    <scope>test</scope>
+</dependency>
+```
+
+### Nomenclatura y Ubicación
+
+- Nomenclatura: `<Módulo>ArchitectureTest.java` o `<Aspecto>ArchitectureTest.java` (p. ej. `LayerArchitectureTest.java`, `NamingConventionsArchitectureTest.java`).
+- Ubicación: `src/test/java` en el módulo que se quiere validar, dentro de un paquete `architecture` bajo el paquete raíz del módulo.
+- Ejemplo: `org.myorganization.template.core.architecture.LayerArchitectureTest`.
+
+### Uso Básico
+
+```java
+@AnalyzeClasses(packages = "org.myorganization.template", importOptions = ImportOption.DoNotIncludeTests.class)
+class LayerArchitectureTest {
+
+    @ArchTest
+    static final ArchRule layer_dependencies_are_respected = layeredArchitecture()
+            .consideringAllDependencies()
+            .layer("Web").definedBy("..web..")
+            .layer("Core").definedBy("..core..")
+            .layer("Domain").definedBy("..domain..")
+            .layer("Commons").definedBy("..commons..")
+            .whereLayer("Web").mayNotBeAccessedByAnyLayer()
+            .whereLayer("Core").mayOnlyBeAccessedByLayers("Web")
+            .whereLayer("Domain").mayOnlyBeAccessedByLayers("Core", "Web")
+            .whereLayer("Commons").mayOnlyBeAccessedByLayers("Core", "Domain", "Web");
+}
+```
+
+### Reglas Recomendadas
+
+```java
+@AnalyzeClasses(packages = "org.myorganization.template", importOptions = ImportOption.DoNotIncludeTests.class)
+class NamingConventionsArchitectureTest {
+
+    @ArchTest
+    static final ArchRule services_should_be_suffixed = classes()
+            .that().areAnnotatedWith(Service.class)
+            .should().haveSimpleNameEndingWith("Service");
+
+    @ArchTest
+    static final ArchRule repositories_should_be_suffixed = classes()
+            .that().areAnnotatedWith(Repository.class)
+            .should().haveSimpleNameEndingWith("Repository");
+
+    @ArchTest
+    static final ArchRule controllers_impl_should_be_suffixed = classes()
+            .that().areAnnotatedWith(RestController.class)
+            .should().haveSimpleNameEndingWith("ControllerImpl");
+
+    @ArchTest
+    static final ArchRule domain_should_not_depend_on_spring = noClasses()
+            .that().resideInAPackage("..domain..")
+            .should().dependOnClassesThat()
+            .resideInAnyPackage("org.springframework..");
+}
+```
+
+### Convenciones
+
+- Los tests de ArchUnit se ejecutan como tests unitarios normales (fase `test` de Maven).
+- Usar `@AnalyzeClasses` con `importOptions = ImportOption.DoNotIncludeTests.class` para excluir clases de test del análisis.
+- Declarar las reglas como campos `static final` con `@ArchTest` para aprovechar el caché de clases importadas.
+- Agrupar reglas relacionadas en la misma clase de test (capas, nomenclatura, dependencias, etc.).
+- Si una regla falla, corregir el código, no desactivar la regla. Solo se permite `@ArchIgnore` temporalmente con un comentario que justifique y un ticket asociado.
+- Mantener las reglas sincronizadas con las convenciones documentadas en este proyecto (sufijos de clases, dependencias entre módulos, restricciones de paquetes).
+
+## Tests End-to-End (E2E) con Playwright
+
+Usar **Playwright** para tests de interfaz de usuario que validan flujos completos del usuario contra la aplicación desplegada (frontend Angular + backend Spring Boot).
+
+### Instalación
+
+```bash
+npm init playwright@latest
+```
+
+Esto genera la estructura base con `playwright.config.ts` y el directorio `tests/`.
+
+### Estructura de Directorios
+
+```
+e2e/
+├── playwright.config.ts       # Configuración de Playwright
+├── tests/
+│   ├── auth/
+│   │   └── login.spec.ts      # Tests del flujo de login
+│   ├── users/
+│   │   └── user-crud.spec.ts  # Tests CRUD de usuarios
+│   └── ...
+├── pages/                     # Page Object Model
+│   ├── login.page.ts
+│   ├── users.page.ts
+│   └── ...
+└── fixtures/                  # Fixtures y datos de prueba
+    └── test-data.ts
+```
+
+### Nomenclatura
+
+- Ficheros de test: `<funcionalidad>.spec.ts` (p. ej. `login.spec.ts`, `user-crud.spec.ts`).
+- Page Objects: `<página>.page.ts` (p. ej. `login.page.ts`, `users.page.ts`).
+- Organizar tests por feature/módulo funcional dentro de `e2e/tests/`.
+
+### Page Object Model (POM)
+
+Usar el patrón Page Object para encapsular la interacción con las páginas y facilitar el mantenimiento:
+
+```typescript
+import { type Locator, type Page } from '@playwright/test';
+
+export class LoginPage {
+  private readonly page: Page;
+  private readonly usernameInput: Locator;
+  private readonly passwordInput: Locator;
+  private readonly submitButton: Locator;
+
+  constructor(page: Page) {
+    this.page = page;
+    this.usernameInput = page.getByTestId('username-input');
+    this.passwordInput = page.getByTestId('password-input');
+    this.submitButton = page.getByTestId('login-button');
+  }
+
+  async goto(): Promise<void> {
+    await this.page.goto('/login');
+  }
+
+  async login(username: string, password: string): Promise<void> {
+    await this.usernameInput.fill(username);
+    await this.passwordInput.fill(password);
+    await this.submitButton.click();
+  }
+}
+```
+
+### Uso Básico
+
+```typescript
+import { test, expect } from '@playwright/test';
+import { LoginPage } from '../pages/login.page';
+
+test.describe('Login', () => {
+  test('should login successfully with valid credentials', async ({ page }) => {
+    // Arrange
+    const loginPage = new LoginPage(page);
+    await loginPage.goto();
+
+    // Act
+    await loginPage.login('admin', 'admin123');
+
+    // Assert
+    await expect(page).toHaveURL('/dashboard');
+    await expect(page.getByTestId('user-menu')).toBeVisible();
+  });
+
+  test('should show error with invalid credentials', async ({ page }) => {
+    const loginPage = new LoginPage(page);
+    await loginPage.goto();
+
+    await loginPage.login('admin', 'wrong-password');
+
+    await expect(page.getByTestId('error-message')).toBeVisible();
+    await expect(page.getByTestId('error-message')).toContainText('Invalid credentials');
+  });
+});
+```
+
+### Configuración Recomendada (`playwright.config.ts`)
+
+```typescript
+import { defineConfig } from '@playwright/test';
+
+export default defineConfig({
+  testDir: './tests',
+  fullyParallel: true,
+  forbidOnly: !!process.env.CI,
+  retries: process.env.CI ? 2 : 0,
+  workers: process.env.CI ? 1 : undefined,
+  reporter: [['html'], ['junit', { outputFile: 'results.xml' }]],
+  use: {
+    baseURL: 'http://localhost:4200',
+    trace: 'on-first-retry',
+    screenshot: 'only-on-failure',
+  },
+  projects: [
+    { name: 'chromium', use: { browserName: 'chromium' } },
+    { name: 'firefox', use: { browserName: 'firefox' } },
+  ],
+  webServer: {
+    command: 'ng serve --configuration=test',
+    url: 'http://localhost:4200',
+    reuseExistingServer: !process.env.CI,
+  },
+});
+```
+
+### Convenciones
+
+- Seleccionar elementos siempre por `data-testid` (preferido) o por rol accesible (`getByRole`). Nunca por selectores CSS frágiles o clases de estilo.
+- Usar el patrón **Arrange / Act / Assert** en cada test.
+- Cada test debe ser independiente y no depender del estado dejado por otro test.
+- Usar `test.describe` para agrupar tests del mismo flujo funcional.
+- Configurar `webServer` en `playwright.config.ts` para que Playwright levante automáticamente el frontend antes de ejecutar los tests.
+- En CI, ejecutar contra la aplicación completa (frontend + backend + base de datos con Testcontainers o entorno de integración).
+- Generar reportes HTML y JUnit XML para integración con el pipeline de CI.
+- Los tests E2E se ejecutan como paso separado en el pipeline, después de los tests unitarios y de integración.
+- Mantener los tests E2E enfocados en flujos críticos de negocio; no duplicar la cobertura de tests unitarios o de componente.

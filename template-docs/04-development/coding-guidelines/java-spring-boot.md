@@ -140,7 +140,8 @@ Todo `@Repository` asociado a una entidad debe exponer `findByCriteria` y `count
 
 ## Testing
 
-- **JUnit 5**, **Mockito**, **Spring Boot Test**, **Testcontainers**, **MockMvc**, **Instancio**, **JaCoCo**, **SonarQube**.
+- **JUnit 5**, **Mockito**, **Spring Boot Test**, **Testcontainers**, **MockMvc**, **Instancio**, **ArchUnit 1.5.0**, **JaCoCo**, **SonarQube**.
 - Tests unitarios: `<Clase>Test.java` con patrón given/when/then.
 - Tests de integración: `<Clase>IT.java` con Testcontainers + PostgreSQL.
+- Tests de arquitectura: `<Aspecto>ArchitectureTest.java` con **ArchUnit 1.5.0** para validar dependencias entre capas y convenciones de nombres.
 - Usar AssertJ para aserciones.

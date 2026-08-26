@@ -84,18 +84,51 @@ Las configuraciones de entorno de Angular **deben estar alineadas** con los perf
 
 ## Testing
 
-- **Jest** como framework principal.
+- **Jest** como framework principal para tests unitarios y de componente.
 - **Angular Testing Library** para tests de componentes.
 - **HttpClientTestingModule** para mockear HTTP.
-- Nomenclatura: `<nombre>.spec.ts`.
+- **Playwright** para tests end-to-end (E2E) de la interfaz de usuario.
+- Nomenclatura unitarios/componente: `<nombre>.spec.ts`.
+- Nomenclatura E2E: `<funcionalidad>.spec.ts` dentro de `e2e/tests/`.
 - Patrón arrange / act / assert.
-- Usar `data-testid` para seleccionar elementos.
+- Usar `data-testid` para seleccionar elementos (tanto en tests de componente como E2E).
 
 ### Obligatoriedad de tests
 
 - **Todo componente Angular debe tener su fichero de test** (`.spec.ts`) asociado. No se considera completo un componente sin sus tests.
 - **Al crear un componente nuevo**: se debe generar su `.spec.ts` correspondiente como parte de la misma tarea. El componente no está terminado hasta que sus tests existan y pasen.
 - **Al modificar un componente existente que no tenga tests**: se deben crear los tests del componente como parte de la modificación, cubriendo al menos el comportamiento existente y los cambios realizados. No se deben aplicar cambios a un componente sin tests sin antes crearlos.
+
+### Tests E2E con Playwright
+
+Los tests end-to-end validan flujos completos del usuario contra la aplicación desplegada. Complementan los tests unitarios y de componente cubriendo la integración real entre frontend y backend.
+
+#### Cuándo escribir tests E2E
+
+- Flujos críticos de negocio: login, CRUD de entidades principales, navegación con permisos.
+- Flujos de usuario que implican múltiples pantallas o interacciones complejas.
+- **No** duplicar cobertura ya existente en tests de componente (p. ej. validación de un campo individual).
+
+#### Reglas específicas para Angular
+
+- Todos los elementos interactivos (botones, inputs, links, modales) deben tener `data-testid` en el template del componente Angular. Esto es requisito tanto para tests de componente como E2E.
+- Usar el patrón **Page Object Model** para encapsular la interacción con cada pantalla.
+- Seleccionar elementos por `data-testid` (preferido) o `getByRole` (accesibilidad). Nunca por clases CSS de Bootstrap o selectores de estilo.
+- Cubrir los estados visibles: carga (skeleton/spinner), error (toast/alerta), vacío (mensaje "sin resultados") y éxito.
+- Verificar comportamiento responsive ejecutando tests en viewport móvil y desktop cuando el flujo lo requiera.
+
+#### Ejecución
+
+```bash
+npx playwright test                    # Ejecutar todos los tests E2E
+npx playwright test --project=chromium # Solo Chromium
+npx playwright test --ui               # Modo interactivo (desarrollo local)
+npx playwright show-report             # Ver reporte HTML
+```
+
+#### Referencia completa
+
+La guía detallada de Playwright (instalación, estructura de directorios, Page Object Model, configuración y convenciones) se encuentra en la sección "Tests End-to-End (E2E) con Playwright" del documento `template-docs/04-development/coding-guidelines/testing.md`.
 
 ## Formularios con Modo View (Readonly)
 
