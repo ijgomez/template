@@ -4,7 +4,7 @@
 
 Template App es una aplicación empresarial full-stack diseñada como plataforma reutilizable para proyectos corporativos. La arquitectura sigue un modelo cliente-servidor con:
 
-- **Backend**: Java 21 + Spring Boot 4.1.0, organizado en un proyecto multi-módulo Maven (commons, cluster, domain, core, webapp).
+- **Backend**: Java 21 + Spring Boot 4.1.1, organizado en un proyecto multi-módulo Maven (commons, cluster, domain, core, webapp).
 - **Frontend**: Angular 22 SPA con Bootstrap 5.3.8, soporte PWA e i18n.
 - **Base de datos**: PostgreSQL 18 con migraciones Liquibase (formato XML).
 - **Seguridad**: JWT (access + refresh tokens), autorización basada en perfiles y acciones.
@@ -38,7 +38,7 @@ flowchart TB
         ReportsModule["Reports Module"]
     end
     
-    subgraph Backend["template (Spring Boot 4.1.0)"]
+    subgraph Backend["template (Spring Boot 4.1.1)"]
         subgraph Webapp["webapp (WAR)"]
             Controllers["REST Controllers"]
             Security["Spring Security + JWT"]

@@ -15,7 +15,7 @@
 | Tecnología     | Versión    |
 |----------------|------------|
 | Java           | 21         |
-| Spring Boot    | 4.1.0      |
+| Spring Boot    | 4.1.1      |
 | PostgreSQL     | 18         |
 | Angular        | 22         |
 | Bootstrap      | 5.3.8      |

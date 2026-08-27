@@ -5,7 +5,7 @@
 | Component        | Version / Detail                     |
 |------------------|--------------------------------------|
 | Java             | 21 (`maven.compiler.release=21`)     |
-| Spring Boot      | 4.1.0 (parent POM)                  |
+| Spring Boot      | 4.1.1 (parent POM)                  |
 | PostgreSQL       | driver 42.7.5; server target: 18    |
 | Liquibase        | 4.31.1                               |
 | JWT              | JJWT 0.12.6                         |

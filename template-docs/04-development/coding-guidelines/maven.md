@@ -35,7 +35,7 @@ Directrices para la gestión de builds del backend con Maven.
 
 ```
 template/
-├── pom.xml       (POM padre, packaging: pom, parent: Spring Boot 4.1.0)
+├── pom.xml       (POM padre, packaging: pom, parent: Spring Boot 4.1.1)
 ├── commons/
 ├── cluster/
 ├── domain/

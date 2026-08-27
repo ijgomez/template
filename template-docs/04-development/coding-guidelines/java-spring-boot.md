@@ -1,11 +1,11 @@
 # Reglas de Codificación — Java / Spring Boot
 
-Directrices de codificación para el backend Java 21 con Spring Boot 4.1.0.
+Directrices de codificación para el backend Java 21 con Spring Boot 4.1.1.
 
 ## General
 
 - Versión mínima: **Java 21**. Usar las características modernas del lenguaje: records, sealed classes, pattern matching, text blocks.
-- Framework: **Spring Boot 4.1.0**.
+- Framework: **Spring Boot 4.1.1**.
 - Todo el código debe estar en inglés (nombres de clases, métodos, variables y comentarios técnicos).
 - Usar **Lombok** para reducir código repetitivo (getters, setters, constructores, builders, etc.).
 

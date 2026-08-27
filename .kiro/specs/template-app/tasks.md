@@ -2,13 +2,13 @@
 
 ## Overview
 
-Full-stack enterprise application template implementing authentication/authorization with JWT, user/profile/action management, reports with multi-format export, AOP-based auditing, interface monitoring, and a high-availability cluster with task governance. Backend in Java 21 + Spring Boot 4.1.0 (multi-module Maven), frontend in Angular 22 + Bootstrap 5.3.8, database PostgreSQL 18 with Liquibase XML migrations.
+Full-stack enterprise application template implementing authentication/authorization with JWT, user/profile/action management, reports with multi-format export, AOP-based auditing, interface monitoring, and a high-availability cluster with task governance. Backend in Java 21 + Spring Boot 4.1.1 (multi-module Maven), frontend in Angular 22 + Bootstrap 5.3.8, database PostgreSQL 18 with Liquibase XML migrations.
 
 ## Tasks
 
 - [x] 0. Project structure scaffolding
   - [x] 0.1 Create the multi-module Maven project structure (backend)
-    - Create parent POM with module declarations and dependency management (Spring Boot 4.1.0, Java 21, PostgreSQL 18 driver, Liquibase, JUnit 5, Mockito, AssertJ, jqwik, Testcontainers, JaCoCo)
+    - Create parent POM with module declarations and dependency management (Spring Boot 4.1.1, Java 21, PostgreSQL 18 driver, Liquibase, JUnit 5, Mockito, AssertJ, jqwik, Testcontainers, JaCoCo)
     - Create module directories and POMs: template-commons, template-cluster, template-domain, template-core, template-webapp (WAR), template-liquibase
     - Configure module dependency chain: commons → cluster → domain → core → webapp
     - Configure Maven profiles: local, dist, test
@@ -662,7 +662,7 @@ Full-stack enterprise application template implementing authentication/authoriza
 - Checkpoints ensure incremental validation
 - Property tests validate universal correctness properties (jqwik for backend, fast-check for frontend)
 - Unit tests validate specific examples and edge cases
-- Backend uses Java 21 + Spring Boot 4.1.0, frontend uses Angular 22 + TypeScript
+- Backend uses Java 21 + Spring Boot 4.1.1, frontend uses Angular 22 + TypeScript
 - Liquibase migrations use XML format exclusively
 - Domain module (entities, DTOs, enums) has no Spring dependencies (except JPA)
 - All timestamps stored as TIMESTAMP WITH TIME ZONE in UTC
