@@ -6,7 +6,7 @@ REM Genera los artefactos de distribucion para el backend (WAR con perfil dist)
 REM y el frontend (build de produccion Angular).
 REM Los artefactos generados se encuentran en:
 REM   - Backend:  template\webapp\target\*.war
-REM   - Frontend: template-dashboard\dist\
+REM   - Frontend: template\dashboard\dist\
 REM =============================================================================
 
 setlocal enabledelayedexpansion
@@ -16,7 +16,7 @@ set "SCRIPT_DIR=%~dp0"
 set "WORKSPACE_DIR=%SCRIPT_DIR%..\.."
 
 set "BACKEND_DIR=%WORKSPACE_DIR%\template"
-set "FRONTEND_DIR=%WORKSPACE_DIR%\template-dashboard"
+set "FRONTEND_DIR=%WORKSPACE_DIR%\template\dashboard"
 
 echo =============================================
 echo  Template - Package

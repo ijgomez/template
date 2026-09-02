@@ -6,7 +6,7 @@
 # y el frontend (build de producción Angular).
 # Los artefactos generados se encuentran en:
 #   - Backend:  template/webapp/target/*.war
-#   - Frontend: template-dashboard/dist/
+#   - Frontend: template/dashboard/dist/
 # =============================================================================
 
 set -e
@@ -16,7 +16,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WORKSPACE_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 
 BACKEND_DIR="${WORKSPACE_DIR}/template"
-FRONTEND_DIR="${WORKSPACE_DIR}/template-dashboard"
+FRONTEND_DIR="${WORKSPACE_DIR}/template/dashboard"
 
 echo "============================================="
 echo " Template - Package"

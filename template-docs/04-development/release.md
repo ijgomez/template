@@ -23,7 +23,7 @@ MAJOR.MINOR.PATCH
 La versión se mantiene sincronizada entre:
 
 - `template/pom.xml` (backend — con sufijo `-SNAPSHOT` en desarrollo)
-- `template-dashboard/package.json` (frontend)
+- `template/dashboard/package.json` (frontend)
 
 ---
 
@@ -48,7 +48,7 @@ El proceso de release sigue el modelo GitFlow:
    mvn versions:commit
 
    # Frontend: actualizar package.json
-   cd ../template-dashboard
+   cd dashboard
    npm version X.Y.Z --no-git-tag-version
    ```
 
@@ -121,7 +121,7 @@ El script `package` realiza:
 | Artefacto          | Ubicación                                             | Descripción                     |
 |--------------------|-------------------------------------------------------|---------------------------------|
 | WAR del backend    | `template/webapp/target/template-webapp-X.Y.Z.war`    | Aplicación backend empaquetada  |
-| Frontend compilado | `template-dashboard/dist/template-dashboard/browser/` | Ficheros estáticos del frontend |
+| Frontend compilado | `template/dashboard/dist/dashboard/browser/`          | Ficheros estáticos del frontend |
 
 El WAR generado con el perfil `dist` incluye automáticamente el frontend compilado en `static/`, resultando en un artefacto único desplegable.
 
@@ -262,7 +262,7 @@ Para correcciones urgentes en producción:
 | Acción                      | Comando                                      | Directorio            |
 |-----------------------------|----------------------------------------------|-----------------------|
 | Actualizar versión backend  | `mvn versions:set -DnewVersion=X.Y.Z`       | `template/`           |
-| Actualizar versión frontend | `npm version X.Y.Z --no-git-tag-version`    | `template-dashboard/` |
+| Actualizar versión frontend | `npm version X.Y.Z --no-git-tag-version`    | `template/dashboard/` |
 | Empaquetar (Linux)          | `./template-dist/linux/package.sh`           | Raíz del workspace    |
 | Empaquetar (Windows)        | `template-dist\windows\package.bat`          | Raíz del workspace    |
 | Crear tag                   | `git tag -a vX.Y.Z -m "Release X.Y.Z"`      | Raíz del workspace    |

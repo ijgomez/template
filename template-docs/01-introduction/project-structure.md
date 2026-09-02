@@ -14,14 +14,13 @@ template/                          ← Raíz del workspace
 │   ├── pom.xml                    ← POM padre
 │   ├── commons/                   ← Utilidades y librerías comunes
 │   ├── cluster/                   ← Gestión del cluster y alta disponibilidad
-│   ├── domain/                    ← Modelo de dominio (Entidades, DTO, VO)
+│   ├── domain/                    ← Modelo de dominio (Entidades, DTO, VO) + migraciones Liquibase
 │   ├── core/                      ← Servicios y lógica de negocio
-│   └── webapp/                    ← API REST, seguridad y configuración
+│   ├── webapp/                    ← API REST, seguridad y configuración
+│   └── dashboard/                 ← Frontend Angular
 │
-├── template-dashboard/            ← Frontend Angular
 ├── template-dist/                 ← Scripts de compilación y despliegue
 ├── template-docker/               ← Contenedores Docker y Docker Compose
-├── template-liquibase/            ← Migraciones de base de datos
 ├── template-properties/           ← Configuración por entorno
 └── template-docs/                 ← Documentación funcional y técnica
 ```
@@ -48,9 +47,9 @@ Está organizado como un proyecto **Maven multi-módulo**, donde cada módulo im
 
 ---
 
-## Frontend (`template-dashboard`)
+## Frontend (`dashboard`)
 
-Contiene la aplicación cliente desarrollada con **Angular**.
+Contiene la aplicación cliente desarrollada con **Angular**. Reside como módulo `dashboard/` dentro del backend (`template/template/dashboard/`).
 
 Es responsable de:
 
@@ -65,9 +64,9 @@ El frontend puede evolucionar independientemente del backend siempre que se mant
 
 ---
 
-## Base de datos (`template-liquibase`)
+## Base de datos (`domain`)
 
-Este proyecto contiene la definición y evolución del modelo de datos.
+La definición y evolución del modelo de datos reside dentro del módulo `domain`, junto a las entidades JPA. Los changelogs se ubican en `template/template/domain/src/main/resources/db/changelog/`.
 
 Las modificaciones del esquema se gestionan mediante **Liquibase**, permitiendo:
 

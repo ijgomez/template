@@ -14,7 +14,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WORKSPACE_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 
 BACKEND_DIR="${WORKSPACE_DIR}/template"
-FRONTEND_DIR="${WORKSPACE_DIR}/template-dashboard"
+FRONTEND_DIR="${WORKSPACE_DIR}/template/dashboard"
 
 echo "============================================="
 echo " Template - Build"

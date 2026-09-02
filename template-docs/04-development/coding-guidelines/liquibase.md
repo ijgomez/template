@@ -6,7 +6,7 @@ Directrices para la gestión de migraciones de base de datos con Liquibase.
 
 - **Liquibase** gestiona todas las migraciones del esquema de base de datos. Ver tecnología de referencia en [technologies.md](../../01-introduction/technologies.md).
 - Nunca usar `spring.jpa.hibernate.ddl-auto: create`, `update` o `create-drop` en entornos que no sean de prueba local.
-- Los ficheros de migración se ubican en `template-liquibase/src/main/resources/db/changelog/`.
+- Los ficheros de migración se ubican en `template/template/domain/src/main/resources/db/changelog/`.
 
 ## Estructura de Ficheros
 

@@ -10,20 +10,21 @@ mvn clean test                           # unit tests must pass
 mvn verify -P test                       # integration tests + coverage (if IT tests exist)
 ```
 
-## Frontend changes (`template-dashboard/`)
+## Frontend changes (`template/dashboard/`)
 
 ```bash
-# From template-dashboard/ directory:
+# From template/dashboard/ directory:
 npx prettier --check src/               # formatting must pass
 npx vitest --run                         # all tests must pass
 ng build                                 # production build must succeed
 ```
 
-## Liquibase changes (`template-liquibase/`)
+## Liquibase changes (`domain/src/main/resources/db/changelog/**`)
 
 ```bash
 # From template/ directory:
-mvn clean install -pl ../template-liquibase   # changelog must compile
+mvn clean install -pl domain                  # changelogs packaged into domain artifact
+mvn liquibase:update -pl domain               # (optional) apply migrations manually via plugin
 mvn verify -P test -pl webapp                 # webapp IT applies migrations — validates schema
 ```
 
@@ -33,7 +34,7 @@ mvn verify -P test -pl webapp                 # webapp IT applies migrations —
 # Backend (from template/)
 mvn clean verify -P test
 
-# Frontend (from template-dashboard/)
+# Frontend (from template/dashboard/)
 npx prettier --check src/ && npx vitest --run && ng build
 ```
 

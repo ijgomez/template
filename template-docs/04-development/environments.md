@@ -53,7 +53,7 @@ Cada configuración tiene un fichero de entorno asociado:
 Las migraciones se ejecutan con el perfil correspondiente:
 
 ```bash
-cd template-liquibase
+cd template/domain
 mvn liquibase:update -Plocal
 ```
 

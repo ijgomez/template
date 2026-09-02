@@ -51,6 +51,10 @@ class AuditAndClusterIntegrationTest {
         registry.add("spring.datasource.url", postgres::getJdbcUrl);
         registry.add("spring.datasource.username", postgres::getUsername);
         registry.add("spring.datasource.password", postgres::getPassword);
+        // This test manages its own container and supplies a plain jdbc:postgresql:// URL,
+        // so override the Testcontainers JDBC-URL driver configured in application-test.yml
+        // with the standard PostgreSQL driver to match the URL.
+        registry.add("spring.datasource.driver-class-name", () -> "org.postgresql.Driver");
         registry.add("spring.liquibase.enabled", () -> "true");
         registry.add("spring.liquibase.change-log", () -> "classpath:db/changelog/db.changelog-test.xml");
         registry.add("spring.liquibase.contexts", () -> "test");

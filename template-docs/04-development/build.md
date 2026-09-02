@@ -109,7 +109,7 @@ http://localhost:8080/template/api/v1/...
 ### Instalar dependencias
 
 ```bash
-cd template-dashboard
+cd template/dashboard
 npm install
 ```
 
@@ -135,7 +135,7 @@ ng serve --configuration=dist
 ng build
 ```
 
-Por defecto usa la configuración `dist` (optimización, hashing, Service Worker). Los artefactos se generan en `template-dashboard/dist/template-dashboard/browser/`.
+Por defecto usa la configuración `dist` (optimización, hashing, Service Worker). Los artefactos se generan en `template/dashboard/dist/dashboard/browser/`.
 
 Para compilar con configuración local (sin optimizaciones, con sourcemaps):
 
@@ -165,7 +165,7 @@ mvn clean install
 Este proceso:
 
 1. Instala Node.js localmente (via frontend-maven-plugin).
-2. Ejecuta `npm install` en `template-dashboard/`.
+2. Ejecuta `npm install` en `template/dashboard/`.
 3. Ejecuta `ng build` con la configuración correspondiente al perfil Maven activo.
 4. Copia los artefactos compilados del frontend a `webapp/target/classes/static/`.
 5. Empaqueta todo en un WAR único.
@@ -242,10 +242,10 @@ docker compose up -d backend
 | Ejecutar tests unitarios           | `mvn test`                               | `template/`           |
 | Tests + cobertura                  | `mvn clean verify -Ptest`                | `template/`           |
 | Arrancar backend                   | `mvn spring-boot:run -pl webapp -Plocal` | `template/`           |
-| Instalar deps frontend             | `npm install`                            | `template-dashboard/` |
-| Arrancar frontend                  | `ng serve`                               | `template-dashboard/` |
-| Compilar frontend                  | `ng build`                               | `template-dashboard/` |
-| Tests frontend                     | `ng test`                                | `template-dashboard/` |
+| Instalar deps frontend             | `npm install`                            | `template/dashboard/` |
+| Arrancar frontend                  | `ng serve`                               | `template/dashboard/` |
+| Compilar frontend                  | `ng build`                               | `template/dashboard/` |
+| Tests frontend                     | `ng test`                                | `template/dashboard/` |
 | Build integrado (backend+frontend) | `mvn clean install`                      | `template/`           |
 | Build con Docker                   | `docker compose up -d --build`           | `template-docker/`    |
 

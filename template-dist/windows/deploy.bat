@@ -21,7 +21,7 @@ set "SCRIPT_DIR=%~dp0"
 set "WORKSPACE_DIR=%SCRIPT_DIR%..\.."
 
 set "BACKEND_DIR=%WORKSPACE_DIR%\template"
-set "FRONTEND_DIR=%WORKSPACE_DIR%\template-dashboard"
+set "FRONTEND_DIR=%WORKSPACE_DIR%\template\dashboard"
 
 REM Entorno de despliegue (por defecto: dev)
 set "ENVIRONMENT=%~1"
@@ -99,7 +99,7 @@ echo ---------------------------------------------
 
 REM TODO: Ejecutar migraciones Liquibase
 REM Ejemplo:
-REM   pushd "%WORKSPACE_DIR%\template-liquibase"
+REM   pushd "%WORKSPACE_DIR%\template\domain"
 REM   call mvn liquibase:update -P %ENVIRONMENT%
 REM   popd
 

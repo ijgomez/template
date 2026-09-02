@@ -21,7 +21,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WORKSPACE_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 
 BACKEND_DIR="${WORKSPACE_DIR}/template"
-FRONTEND_DIR="${WORKSPACE_DIR}/template-dashboard"
+FRONTEND_DIR="${WORKSPACE_DIR}/template/dashboard"
 
 # Entorno de despliegue (por defecto: dev)
 ENVIRONMENT="${1:-dev}"
@@ -99,7 +99,7 @@ echo "---------------------------------------------"
 
 # TODO: Ejecutar migraciones Liquibase
 # Ejemplo:
-#   cd "${WORKSPACE_DIR}/template-liquibase"
+#   cd "${WORKSPACE_DIR}/template/domain"
 #   mvn liquibase:update -P ${ENVIRONMENT}
 
 echo "[PENDIENTE] Ejecución de migraciones no implementada."

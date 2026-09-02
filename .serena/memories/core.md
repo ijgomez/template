@@ -9,11 +9,10 @@ template/                   # workspace root
 ├── template/               # Maven multi-module parent (groupId: org.myorganization.template)
 │   ├── commons/            # shared utilities, base classes
 │   ├── cluster/            # cluster-aware abstractions (depends on commons)
-│   ├── domain/             # JPA entities, pure Java (depends on cluster, commons)
+│   ├── domain/             # JPA entities, pure Java (depends on cluster, commons); hosts Liquibase changelogs (src/main/resources/db/changelog/**, XML)
 │   ├── core/               # business logic, Spring services (depends on domain)
-│   └── webapp/             # REST API, security, Spring Boot app — WAR (depends on core)
-├── template-dashboard/     # Angular 22 SPA (standalone project, npm)
-├── template-liquibase/     # DB migration changelogs (XML format)
+│   ├── webapp/             # REST API, security, Spring Boot app — WAR (depends on core)
+│   └── dashboard/          # Angular 22 SPA (standalone project, npm)
 ├── template-docker/        # Dockerfiles + docker-compose
 ├── template-dist/          # deployment scripts (linux/windows)
 └── template-docs/          # project documentation (markdown)
@@ -28,7 +27,7 @@ commons → cluster → domain → core → webapp
 - `domain` must stay Spring-free (only Jakarta Persistence allowed).
 - Business logic lives in `core`, never in `webapp`.
 - Frontend is built by `frontend-maven-plugin` inside `webapp/pom.xml`; output copied to WAR static resources.
-- Liquibase changelogs are XML only, packaged as a separate Maven artifact consumed by `webapp`.
+- Liquibase changelogs are XML only, living in `domain` (`src/main/resources/db/changelog/**`); applied at runtime from the classpath and runnable manually via `liquibase-maven-plugin` in `domain/pom.xml`.
 - WAR packaging (not JAR).
 
 ## Cross-references

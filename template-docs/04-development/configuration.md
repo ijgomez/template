@@ -53,11 +53,11 @@ psql -h localhost -U template -d template
 Las migraciones se ejecutan automáticamente al arrancar la aplicación Spring Boot. No es necesario ejecutarlas manualmente salvo que se quiera aplicar migraciones sin arrancar el backend:
 
 ```bash
-cd template-liquibase
+cd template/domain
 mvn liquibase:update -Plocal
 ```
 
-Los changelogs se encuentran en `template-liquibase/src/main/resources/db/changelog/` en formato XML.
+Los changelogs se encuentran en `template/domain/src/main/resources/db/changelog/` en formato XML.
 
 ---
 
@@ -102,7 +102,7 @@ Si se necesitan valores distintos (por ejemplo, otro puerto de base de datos), e
 
 ### Variables de entorno
 
-La configuración del frontend se gestiona mediante ficheros `environment.ts` ubicados en `template-dashboard/src/environments/`:
+La configuración del frontend se gestiona mediante ficheros `environment.ts` ubicados en `template/dashboard/src/environments/`:
 
 | Fichero                | Configuración Angular | Uso              |
 |------------------------|-----------------------|------------------|
@@ -120,7 +120,7 @@ Variables principales en `environment.ts`:
 ### Instalar dependencias
 
 ```bash
-cd template-dashboard
+cd template/dashboard
 npm install
 ```
 
@@ -186,7 +186,7 @@ Una vez configurado todo, verificar que el entorno está operativo:
 
 1. **Base de datos:** Conectar con `psql -h localhost -U template -d template` y comprobar que responde.
 2. **Backend:** Arrancar con `mvn spring-boot:run -pl webapp -Plocal` desde `template/` y verificar que `http://localhost:8080/template` responde.
-3. **Frontend:** Arrancar con `ng serve` desde `template-dashboard/` y verificar que `http://localhost:4200` carga la aplicación.
+3. **Frontend:** Arrancar con `ng serve` desde `template/dashboard/` y verificar que `http://localhost:4200` carga la aplicación.
 
 ---
 

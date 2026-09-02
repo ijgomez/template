@@ -1,0 +1,425 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "0.1 Confirmar estado limpio de Git y crear rama de trabajo": [
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788379607186
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788379615059
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788379668538
+      }
+    ],
+    "0.2 (Opcional) Línea base del build": [
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788379607247
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788379673934
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788379729602
+      }
+    ],
+    "1.1 Mover el directorio del frontend preservando historial": [
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788379607286
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788379738814
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788379944123
+      }
+    ],
+    "1.2 Eliminar residuos del origen": [
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788379607319
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788379950118
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788380018460
+      }
+    ],
+    "1.3 Renombrar el proyecto Angular a `dashboard` en `package.json`": [
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788379607358
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788380022596
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788380052288
+      }
+    ],
+    "1.4 Renombrar el proyecto Angular en `angular.json`": [
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788379607385
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788380056372
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788380127327
+      }
+    ],
+    "1.5 Revisar y ajustar referencias internas del frontend": [
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788379607416
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788380131171
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788380234714
+      }
+    ],
+    "1.6 Actualizar `webapp/pom.xml` — `frontend-maven-plugin`": [
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788379607443
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788380240202
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788380283088
+      }
+    ],
+    "1.7 Actualizar `webapp/pom.xml` — `maven-resources-plugin` (copy-frontend)": [
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788379607478
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788380287464
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788380328554
+      }
+    ],
+    "1.8 Verificar el build aislado del frontend": [
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788379607511
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788380333301
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788380385831
+      }
+    ],
+    "2.1 Mover los changelogs a `domain` preservando historial": [
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788379607540
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788380391101
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788380453137
+      }
+    ],
+    "2.2 Verificar rutas internas del changelog master": [
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788379607566
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788380456777
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788380510798
+      }
+    ],
+    "2.3 Eliminar la dependencia `template-liquibase` de `webapp/pom.xml`": [
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788379607591
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788380514769
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788380573477
+      }
+    ],
+    "2.4 Portar `liquibase.properties` a `domain`": [
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788379607618
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788380577469
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788380627098
+      }
+    ],
+    "2.5 Añadir el `liquibase-maven-plugin` a `domain/pom.xml`": [
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788379607642
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788380632084
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788380718960
+      }
+    ],
+    "2.6 Verificar que `domain` sigue siendo Java puro en compile": [
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788379607668
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788380723025
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788380762247
+      }
+    ],
+    "2.7 Eliminar el proyecto `template-liquibase`": [
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788379607693
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788380766100
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788380821528
+      }
+    ],
+    "3.1 Actualizar el hook de Kiro": [
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788379607723
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788380827787
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788380878760
+      }
+    ],
+    "3.2 Actualizar `.kiro/steering/structure.md`": [
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788379607748
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788380882477
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788380928047
+      }
+    ],
+    "3.3 Actualizar la documentación en `template-docs/**`": [
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788379607782
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788380931991
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788381377086
+      }
+    ],
+    "3.4 Actualizar memorias de Serena": [
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788379607809
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788381383896
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788381507963
+      }
+    ],
+    "4.1 Build integrado backend + frontend": [
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788379607839
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788381512836
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788381603128
+      }
+    ],
+    "4.2 Tests de integración (Liquibase con Testcontainers)": [
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788379607864
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788381607444
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788381996075
+      }
+    ],
+    "4.3 Comprobación de residuos y referencias rotas": [
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788379607890
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788382000485
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788382415779
+      }
+    ],
+    "5.1 Commit": [
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788379607916
+      },
+      {
+        "executionId": "cba13a6f-221c-467c-900f-94dcffc896aa",
+        "chatSessionId": "sess_cafd6a38-2a08-460e-be2d-66bc2d115442",
+        "timestamp": 1788382471730
+      }
+    ]
+  }
+}

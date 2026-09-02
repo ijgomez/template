@@ -1,5 +1,5 @@
 {
-  "name": "template-dashboard",
+  "name": "dashboard",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",

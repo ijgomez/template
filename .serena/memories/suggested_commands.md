@@ -46,7 +46,7 @@ npx prettier --write src/                # format all sources
 npx prettier --check src/                # check formatting
 ```
 
-Working directory for all frontend commands: `template-dashboard/`
+Working directory for all frontend commands: `template/dashboard/`
 
 ## Docker
 

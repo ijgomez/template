@@ -2,7 +2,7 @@
 
 ## Naming
 
-- Directory/module names: **kebab-case** (`template-dashboard`, `template-liquibase`).
+- Directory/module names: **kebab-case** (`template-docker`, `template-docs`).
 - Java packages: `org.myorganization.template.<module>` (e.g. `...template.commons`, `...template.domain`).
 - Maven artifacts: `template-<module>` (e.g. `template-commons`, `template-core`).
 
@@ -25,7 +25,7 @@
 ## Liquibase
 
 - Changelogs in **XML** format only.
-- Maintained in separate module `template-liquibase`.
+- Maintained inside the `domain` module (`domain/src/main/resources/db/changelog/**`); no longer a separate module.
 
 ## Version Control
 

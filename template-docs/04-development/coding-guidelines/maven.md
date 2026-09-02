@@ -30,6 +30,7 @@ Directrices para la gestión de builds del backend con Maven.
 - `jacoco-maven-plugin` para cobertura de tests.
 - `sonar-maven-plugin` para análisis de calidad.
 - `frontend-maven-plugin` (com.github.eirslett, v1.15.1) en webapp: instala Node.js, ejecuta `npm install` y compila el frontend Angular. Skippable con `-Dfrontend.skip=true`.
+- `liquibase-maven-plugin` (org.liquibase) en `domain`: ejecución manual de migraciones (`mvn liquibase:update`) usando `src/main/resources/liquibase.properties`. Sus dependencias (`liquibase-core`, `postgresql`) se declaran **dentro de `<plugin><dependencies>`**, no como dependencias del módulo, para que `domain` siga siendo Java puro en compile.
 
 ## Estructura Multi-módulo
 

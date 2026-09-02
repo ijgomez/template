@@ -4,7 +4,7 @@ Directrices para el diseño y convenciones de la API REST.
 
 ## General
 
-- La API REST es el contrato entre el backend (`webapp`) y el frontend (`template-dashboard`).
+- La API REST es el contrato entre el backend (`webapp`) y el frontend (`dashboard`).
 - Toda la API se expone bajo el prefijo `/api/v1/`.
 - Los controladores viven en el módulo `webapp`, paquete `org.myorganization.template.web.<feature>`.
 

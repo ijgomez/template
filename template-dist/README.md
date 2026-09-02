@@ -54,7 +54,7 @@ Operaciones realizadas:
 
 Artefactos generados:
 - Backend: `template/webapp/target/*.war`
-- Frontend: `template-dashboard/dist/`
+- Frontend: `template/dashboard/dist/`
 
 ### deploy
 
@@ -101,6 +101,6 @@ template-dist\windows\deploy.bat pro
 ## Notas
 
 - Todos los scripts se ejecutan desde la raíz del workspace.
-- Los scripts detectan automáticamente las rutas relativas al backend (`template/`) y al frontend (`template-dashboard/`).
+- Los scripts detectan automáticamente las rutas relativas al backend (`template/`) y al frontend (`template/dashboard/`).
 - En caso de error, los scripts abortan la ejecución mostrando un mensaje descriptivo.
 - El script `deploy` es un placeholder con secciones TODO que deben ser implementadas según la infraestructura de despliegue específica del proyecto.

@@ -30,18 +30,18 @@ La estrategia de migraciones persigue los siguientes objetivos:
 
 # Organización del proyecto
 
-Las migraciones se encuentran en el proyecto:
+Las migraciones se encuentran integradas en el módulo `domain` del backend:
 
 ```text
-template-liquibase/
+template/template/domain/
 ```
 
-Los ficheros de migración se ubican en `template-liquibase/src/main/resources/db/changelog/`.
+Los ficheros de migración se ubican en `template/template/domain/src/main/resources/db/changelog/` y se empaquetan como recursos del JAR de `domain`, que llega al classpath del `webapp` de forma transitiva.
 
 La organización es la siguiente:
 
 ```text
-src/main/resources/db/
+domain/src/main/resources/db/
 └── changelog/
     ├── db.changelog-master.xml
     ├── migrations/

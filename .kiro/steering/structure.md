@@ -9,7 +9,7 @@
 - No añadir lógica de negocio en `webapp`; delegar siempre a `core`.
 - No añadir dependencias de Spring en `domain`; debe ser un módulo Java puro (salvo JPA).
 - Los ficheros de propiedades sensibles (contraseñas, tokens) nunca se versionan; usar `template-properties` solo para plantillas o propiedades no sensibles.
-- Los changelogs de Liquibase se mantienen en formato **XML** dentro de `template-liquibase`.
+- Los changelogs de Liquibase se mantienen en formato **XML** dentro de `domain` (`template/template/domain/src/main/resources/db/changelog/**`).
 
 ## Entornos y Perfiles de Compilación
 

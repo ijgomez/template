@@ -14,7 +14,7 @@ set "SCRIPT_DIR=%~dp0"
 set "WORKSPACE_DIR=%SCRIPT_DIR%..\.."
 
 set "BACKEND_DIR=%WORKSPACE_DIR%\template"
-set "FRONTEND_DIR=%WORKSPACE_DIR%\template-dashboard"
+set "FRONTEND_DIR=%WORKSPACE_DIR%\template\dashboard"
 
 echo =============================================
 echo  Template - Build

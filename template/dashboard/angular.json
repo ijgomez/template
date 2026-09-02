@@ -6,7 +6,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "template-dashboard": {
+    "dashboard": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -86,13 +86,13 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "local": {
-              "buildTarget": "template-dashboard:build:local"
+              "buildTarget": "dashboard:build:local"
             },
             "dist": {
-              "buildTarget": "template-dashboard:build:dist"
+              "buildTarget": "dashboard:build:dist"
             },
             "test": {
-              "buildTarget": "template-dashboard:build:test"
+              "buildTarget": "dashboard:build:test"
             }
           },
           "defaultConfiguration": "local"
@@ -100,7 +100,7 @@
         "test": {
           "builder": "@angular/build:unit-test",
           "options": {
-            "buildTarget": "template-dashboard:build:local",
+            "buildTarget": "dashboard:build:local",
             "tsConfig": "tsconfig.spec.json",
             "include": ["src/**/*.spec.ts"]
           }
