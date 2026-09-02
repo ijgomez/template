@@ -147,7 +147,7 @@ Las tareas se ejecutan en orden por fases (0 a 5). Cada tarea referencia los req
 
 ### Fase 5 — Cierre
 
-- [-] 5.1 Commit
+- [x] 5.1 Commit
   - Un commit descriptivo (p. ej. `refactor: mover dashboard e integrar liquibase en domain`)
   - Solicitar confirmación del usuario antes de commitear
   - _Requisitos: —_
