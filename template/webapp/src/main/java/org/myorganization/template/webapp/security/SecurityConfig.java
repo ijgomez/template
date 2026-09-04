@@ -130,8 +130,13 @@ public class SecurityConfig {
                         // Reports
                         .requestMatchers("/api/v1/reports/**").hasAuthority("REPORT_EXECUTE")
 
-                        // Any other authenticated request
-                        .anyRequest().authenticated()
+                        // Any other API request must be authenticated
+                        .requestMatchers("/api/**").authenticated()
+
+                        // Everything else (Angular SPA routes + static resources) is public;
+                        // SpaWebMvcConfig forwards non-file navigation routes to index.html so the
+                        // Angular router can resolve them client-side.
+                        .anyRequest().permitAll()
                 );
 
         return http.build();

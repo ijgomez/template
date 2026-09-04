@@ -30,3 +30,6 @@ Thumbs.db
 # Frontend build artifacts (frontend-maven-plugin)
 template/dashboard/node/
 template/dashboard/node_modules/
+
+# Playwright MCP artifacts (browser snapshots, console logs)
+.playwright-mcp/
