@@ -2,9 +2,14 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+import { map } from 'rxjs/operators';
+
 import { environment } from '../../../environments/environment';
 import { UserDTO, UserCriteria, ProfileRef, ReportRef } from '../models/user.model';
 import { Page } from '../models/page.model';
+
+/** Page size used to fetch the full filtered list for exports (bypasses UI pagination). */
+const EXPORT_PAGE_SIZE = 100000;
 
 /**
  * Service for managing user CRUD operations via the backend API.
@@ -45,6 +50,14 @@ export class UserService {
     }
 
     return this.http.get<Page<UserDTO>>(this.baseUrl, { params });
+  }
+
+  /**
+   * Fetches the full list of users matching the given filters, ignoring UI pagination.
+   * Used for exports so the exported file reflects all filtered rows, not just the current page.
+   */
+  findAllByCriteria(criteria: UserCriteria, sort?: string): Observable<UserDTO[]> {
+    return this.findByCriteria(criteria, 0, EXPORT_PAGE_SIZE, sort).pipe(map((page) => page.content));
   }
 
   /**

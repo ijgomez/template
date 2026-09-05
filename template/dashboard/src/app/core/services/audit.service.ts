@@ -2,9 +2,14 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+import { map } from 'rxjs/operators';
+
 import { environment } from '../../../environments/environment';
 import { AuditLog, AuditCriteria } from '../models/audit.model';
 import { Page } from '../models/page.model';
+
+/** Page size used to fetch the full filtered list for exports (bypasses UI pagination). */
+const EXPORT_PAGE_SIZE = 100000;
 
 /**
  * Service for querying audit log entries via the backend API.
@@ -44,6 +49,14 @@ export class AuditService {
     }
 
     return this.http.get<Page<AuditLog>>(this.baseUrl, { params });
+  }
+
+  /**
+   * Retrieves the full list of audit log entries matching the given filters, ignoring UI pagination.
+   * Used for exports so the exported file reflects all filtered rows, not just the current page.
+   */
+  findAllByCriteria(criteria: AuditCriteria, sort?: string): Observable<AuditLog[]> {
+    return this.findByCriteria(criteria, 0, EXPORT_PAGE_SIZE, sort).pipe(map((page) => page.content));
   }
 
   /**

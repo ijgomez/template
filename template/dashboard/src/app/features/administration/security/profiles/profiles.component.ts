@@ -6,6 +6,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../../../core/services/auth.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { CsvExportService } from '../../../../core/services/csv-export.service';
+import { DateService } from '../../../../core/services/date.service';
 import { ProfileService } from '../../../../core/services/profile.service';
 import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
 import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../shared/components/data-table';
@@ -33,6 +34,7 @@ export class ProfilesComponent implements OnInit {
   private readonly notificationService = inject(NotificationService);
   private readonly csvExportService = inject(CsvExportService);
   private readonly translateService = inject(TranslateService);
+  private readonly dateService = inject(DateService);
 
   // View state
   readonly viewMode = signal<ViewMode>('list');
@@ -148,28 +150,44 @@ export class ProfilesComponent implements OnInit {
     }
   }
 
+  /**
+   * Exports the full filtered list to CSV, ignoring the current pagination.
+   * Fetches all rows matching the active filter from the backend.
+   */
   exportCsv(): void {
-    const data = this.profiles();
-    if (data.length === 0) return;
+    const criteria: ProfileCriteria = {};
+    if (this.filterName()) {
+      criteria.name = this.filterName();
+    }
 
-    const headers = [
-      this.translateService.instant('profiles.fields.name'),
-      this.translateService.instant('profiles.fields.description'),
-      this.translateService.instant('profiles.fields.actions'),
-      this.translateService.instant('profiles.fields.createdAt'),
-      this.translateService.instant('profiles.fields.lastModifiedAt'),
-    ];
+    this.profileService.findAllByCriteria(criteria, this.sortParam()).subscribe({
+      next: (data) => {
+        if (data.length === 0) {
+          this.notificationService.showError('notification.export.empty');
+          return;
+        }
 
-    const rows = data.map((p) => [
-      p.name,
-      p.description ?? '',
-      p.actions?.map((a) => a.code).join('; ') ?? '',
-      p.createdAt ?? '',
-      p.lastModifiedAt ?? '',
-    ]);
+        const headers = [
+          this.translateService.instant('profiles.fields.name'),
+          this.translateService.instant('profiles.fields.description'),
+          this.translateService.instant('profiles.fields.actions'),
+          this.translateService.instant('profiles.fields.createdAt'),
+        ];
 
-    this.csvExportService.export(headers, rows, 'profiles');
-    this.notificationService.showSuccess('notification.export.success');
+        const rows = data.map((p) => [
+          p.name,
+          p.description ?? '',
+          p.actions?.map((a) => a.code).join('; ') ?? '',
+          p.createdAt ? this.dateService.toLocalString(p.createdAt) : '',
+        ]);
+
+        this.csvExportService.export(headers, rows, 'profiles');
+        this.notificationService.showSuccess('notification.export.success');
+      },
+      error: () => {
+        this.notificationService.showError('notification.export.error');
+      },
+    });
   }
 
   // ─── Navigation ────────────────────────────────────────────

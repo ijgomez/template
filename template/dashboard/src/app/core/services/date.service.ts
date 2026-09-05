@@ -36,8 +36,12 @@ export class DateService {
         return date.toLocaleDateString(undefined, { timeZone: timezone });
       case 'time':
         return date.toLocaleTimeString(undefined, { timeZone: timezone });
-      default:
-        return date.toLocaleString(undefined, { timeZone: timezone });
+      default: {
+        // Combine date and time with a space instead of the locale-inserted comma.
+        const datePart = date.toLocaleDateString(undefined, { timeZone: timezone });
+        const timePart = date.toLocaleTimeString(undefined, { timeZone: timezone });
+        return `${datePart} ${timePart}`;
+      }
     }
   }
 
@@ -51,7 +55,7 @@ export class DateService {
 
   /**
    * Formats a UTC ISO string into a localized date-time string for display.
-   * Example output: '15/01/2024, 11:30:00' (depending on locale)
+   * Example output: '15/01/2024 11:30:00' (depending on locale)
    */
   formatDateTime(utcIsoString: string): string {
     return this.toLocalString(utcIsoString, 'full');

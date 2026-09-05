@@ -162,38 +162,40 @@ export class ActionsComponent implements OnInit {
   }
 
   /**
-   * Exports current page data to CSV.
+   * Exports the full filtered list to CSV, ignoring the current pagination.
+   * Fetches all rows matching the active criteria from the backend.
    */
   exportCsv(): void {
-    const data = this.actions();
-    if (data.length === 0) return;
-
     const progressId = this.notificationService.showProgress('notification.export.progress');
 
-    try {
-      const headers = [
-        this.translateService.instant('actions.table.code'),
-        this.translateService.instant('actions.table.name'),
-        this.translateService.instant('actions.table.type'),
-        this.translateService.instant('actions.table.description'),
-        this.translateService.instant('actions.table.createdAt'),
-        this.translateService.instant('actions.table.lastModifiedAt'),
-      ];
+    this.actionService.findAllByCriteria(this.buildCriteria(), this.sortParam()).subscribe({
+      next: (data) => {
+        if (data.length === 0) {
+          this.notificationService.updateToError(progressId, 'notification.export.empty');
+          return;
+        }
 
-      const rows = data.map((action) => [
-        action.code,
-        action.name,
-        action.type,
-        action.description ?? '',
-        action.createdAt,
-        action.lastModifiedAt,
-      ]);
+        const headers = [
+          this.translateService.instant('actions.table.code'),
+          this.translateService.instant('actions.table.name'),
+          this.translateService.instant('actions.table.type'),
+          this.translateService.instant('actions.table.description'),
+        ];
 
-      this.csvExportService.export(headers, rows, `actions_${new Date().toISOString().slice(0, 10)}`);
-      this.notificationService.updateToSuccess(progressId, 'notification.export.success');
-    } catch {
-      this.notificationService.updateToError(progressId, 'notification.export.error');
-    }
+        const rows = data.map((action) => [
+          action.code,
+          action.name,
+          action.type,
+          action.description ?? '',
+        ]);
+
+        this.csvExportService.export(headers, rows, `actions_${new Date().toISOString().slice(0, 10)}`);
+        this.notificationService.updateToSuccess(progressId, 'notification.export.success');
+      },
+      error: () => {
+        this.notificationService.updateToError(progressId, 'notification.export.error');
+      },
+    });
   }
 
   // ─── Navigation ────────────────────────────────────────────

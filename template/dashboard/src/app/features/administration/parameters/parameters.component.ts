@@ -248,27 +248,45 @@ export class ParametersComponent {
 
   // ─── CSV Export ──────────────────────────────────────────────
 
+  /**
+   * Exports the full filtered list to CSV, ignoring the current pagination.
+   * Fetches all rows matching the active filters from the backend.
+   */
   exportCsv(): void {
-    const data = this.parameters();
-    if (data.length === 0) return;
+    const criteria: ParameterCriteria = {};
+    if (this.filterCode()) criteria.code = this.filterCode();
+    if (this.filterDescription()) criteria.description = this.filterDescription();
+    if (this.filterType()) criteria.type = this.filterType() as ParameterType;
 
-    const headers = ['code', 'description', 'value', 'type', 'createdAt', 'lastModifiedAt'];
-    const csvRows = [
-      headers.join(','),
-      ...data.map(p =>
-        [p.code, `"${(p.description || '').replace(/"/g, '""')}"`, `"${(p.value || '').replace(/"/g, '""')}"`, p.type, p.createdAt || '', p.lastModifiedAt || ''].join(',')
-      ),
-    ];
+    this.parameterService.findAllByCriteria(criteria, this.sortParam()).subscribe({
+      next: (data) => {
+        if (data.length === 0) {
+          this.notificationService.showError('notification.export.empty');
+          return;
+        }
 
-    const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'parameters.csv';
-    link.click();
-    URL.revokeObjectURL(url);
+        const headers = ['code', 'description', 'value', 'type'];
+        const csvRows = [
+          headers.join(','),
+          ...data.map(p =>
+            [p.code, `"${(p.description || '').replace(/"/g, '""')}"`, `"${(p.value || '').replace(/"/g, '""')}"`, p.type].join(',')
+          ),
+        ];
 
-    this.notificationService.showSuccess('notification.export.success');
+        const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'parameters.csv';
+        link.click();
+        URL.revokeObjectURL(url);
+
+        this.notificationService.showSuccess('notification.export.success');
+      },
+      error: () => {
+        this.notificationService.showError('notification.export.error');
+      },
+    });
   }
 
   // ─── Helpers ─────────────────────────────────────────────────

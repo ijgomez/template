@@ -5,6 +5,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { InterfaceService } from '../../../core/services/interface.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
+import { DateService } from '../../../core/services/date.service';
 import { LocalDatePipe } from '../../../shared/pipes/local-date.pipe';
 import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../shared/components/data-table';
 import {
@@ -32,6 +33,7 @@ export class MonitorComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly notificationService = inject(NotificationService);
   private readonly translateService = inject(TranslateService);
+  private readonly dateService = inject(DateService);
 
   // View state
   readonly viewMode = signal<'list' | 'detail'>('list');
@@ -190,45 +192,52 @@ export class MonitorComponent implements OnInit {
   }
 
   /**
-   * Exports current page data to CSV.
+   * Exports the full filtered list to CSV, ignoring the current pagination.
+   * Fetches all rows matching the active criteria from the backend.
    */
   exportCsv(): void {
     const progressId = this.notificationService.showProgress('notification.export.progress');
 
-    try {
-      const headers = [
-        this.translateService.instant('interfaces.monitor.fields.timestamp'),
-        this.translateService.instant('interfaces.monitor.fields.operationType'),
-        this.translateService.instant('interfaces.monitor.fields.interfaceName'),
-        this.translateService.instant('interfaces.monitor.fields.status'),
-        this.translateService.instant('interfaces.monitor.fields.requestPayload'),
-        this.translateService.instant('interfaces.monitor.fields.responsePayload'),
-        this.translateService.instant('interfaces.monitor.fields.errorMessage'),
-      ];
+    this.interfaceService.findAllLogsByCriteria(this.buildCriteria(), this.sortParam()).subscribe({
+      next: (data) => {
+        if (data.length === 0) {
+          this.notificationService.updateToError(progressId, 'notification.export.empty');
+          return;
+        }
 
-      const rows = this.logs().map((log) => [
-        this.escapeCsvField(log.timestamp),
-        this.escapeCsvField(log.operationType),
-        this.escapeCsvField(log.interfaceName),
-        this.escapeCsvField(log.status),
-        this.escapeCsvField(log.requestPayload ?? ''),
-        this.escapeCsvField(log.responsePayload ?? ''),
-        this.escapeCsvField(log.errorMessage ?? ''),
-      ]);
+        try {
+          const headers = [
+            this.translateService.instant('interfaces.monitor.fields.timestamp'),
+            this.translateService.instant('interfaces.monitor.fields.operationType'),
+            this.translateService.instant('interfaces.monitor.fields.interfaceName'),
+            this.translateService.instant('interfaces.monitor.fields.status'),
+          ];
 
-      const csvContent = [headers.join(','), ...rows.map((row) => row.join(','))].join('\n');
-      const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `interfaces_monitor_${new Date().toISOString().slice(0, 10)}.csv`;
-      link.click();
-      URL.revokeObjectURL(url);
+          const rows = data.map((log) => [
+            this.escapeCsvField(log.timestamp ? this.dateService.toLocalString(log.timestamp) : ''),
+            this.escapeCsvField(log.operationType),
+            this.escapeCsvField(log.interfaceName),
+            this.escapeCsvField(log.status),
+          ]);
 
-      this.notificationService.updateToSuccess(progressId, 'notification.export.success');
-    } catch {
-      this.notificationService.updateToError(progressId, 'notification.export.error');
-    }
+          const csvContent = [headers.join(','), ...rows.map((row) => row.join(','))].join('\n');
+          const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `interfaces_monitor_${new Date().toISOString().slice(0, 10)}.csv`;
+          link.click();
+          URL.revokeObjectURL(url);
+
+          this.notificationService.updateToSuccess(progressId, 'notification.export.success');
+        } catch {
+          this.notificationService.updateToError(progressId, 'notification.export.error');
+        }
+      },
+      error: () => {
+        this.notificationService.updateToError(progressId, 'notification.export.error');
+      },
+    });
   }
 
   private buildCriteria(): InterfaceLogCriteria {

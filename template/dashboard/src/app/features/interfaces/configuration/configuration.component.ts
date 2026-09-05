@@ -5,6 +5,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { InterfaceService } from '../../../core/services/interface.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
+import { DateService } from '../../../core/services/date.service';
 import { LocalDatePipe } from '../../../shared/pipes/local-date.pipe';
 import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../shared/components/data-table';
 import { InterfaceConfig } from '../../../core/models/interface.model';
@@ -27,6 +28,7 @@ export class ConfigurationComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly notificationService = inject(NotificationService);
   private readonly translateService = inject(TranslateService);
+  private readonly dateService = inject(DateService);
 
   // View state
   readonly viewMode = signal<'list' | 'detail'>('list');
@@ -231,7 +233,7 @@ export class ConfigurationComponent implements OnInit {
       c.url,
       c.status,
       c.checkFrequency,
-      c.lastModifiedAt,
+      c.lastModifiedAt ? this.dateService.toLocalString(c.lastModifiedAt) : '',
     ]);
 
     const csvContent = [headers, ...rows].map((row) => row.join(';')).join('\n');

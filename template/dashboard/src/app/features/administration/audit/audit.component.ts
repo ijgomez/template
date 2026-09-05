@@ -5,6 +5,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AuditService } from '../../../core/services/audit.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
+import { DateService } from '../../../core/services/date.service';
 import { LocalDatePipe } from '../../../shared/pipes/local-date.pipe';
 import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../shared/components/data-table';
 import { AuditLog, AuditCriteria, OperationType, AuditSection } from '../../../core/models/audit.model';
@@ -26,6 +27,7 @@ export class AuditComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly notificationService = inject(NotificationService);
   private readonly translateService = inject(TranslateService);
+  private readonly dateService = inject(DateService);
 
   // View state
   readonly viewMode = signal<'list' | 'detail'>('list');
@@ -163,45 +165,58 @@ export class AuditComponent implements OnInit {
   }
 
   /**
-   * Exports current page data to CSV.
+   * Exports the full filtered list to CSV, ignoring the current pagination.
+   * Fetches all rows matching the active criteria from the backend.
    */
   exportCsv(): void {
     const progressId = this.notificationService.showProgress('notification.export.progress');
 
-    try {
-      const headers = [
-        this.translateService.instant('audit.fields.timestamp'),
-        this.translateService.instant('audit.fields.username'),
-        this.translateService.instant('audit.fields.operationType'),
-        this.translateService.instant('audit.fields.section'),
-        this.translateService.instant('audit.fields.entityId'),
-        this.translateService.instant('audit.fields.entityName'),
-        this.translateService.instant('audit.fields.detail'),
-      ];
+    this.auditService.findAllByCriteria(this.buildCriteria(), this.sortParam()).subscribe({
+      next: (data) => {
+        if (data.length === 0) {
+          this.notificationService.updateToError(progressId, 'notification.export.empty');
+          return;
+        }
 
-      const rows = this.auditLogs().map((log) => [
-        this.escapeCsvField(log.timestamp),
-        this.escapeCsvField(log.username),
-        this.escapeCsvField(log.operationType),
-        this.escapeCsvField(log.section),
-        this.escapeCsvField(log.entityId),
-        this.escapeCsvField(log.entityName),
-        this.escapeCsvField(log.detail),
-      ]);
+        try {
+          const headers = [
+            this.translateService.instant('audit.fields.timestamp'),
+            this.translateService.instant('audit.fields.username'),
+            this.translateService.instant('audit.fields.operationType'),
+            this.translateService.instant('audit.fields.section'),
+            this.translateService.instant('audit.fields.entityId'),
+            this.translateService.instant('audit.fields.entityName'),
+            this.translateService.instant('audit.fields.detail'),
+          ];
 
-      const csvContent = [headers.join(','), ...rows.map((row) => row.join(','))].join('\n');
-      const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `audit_${new Date().toISOString().slice(0, 10)}.csv`;
-      link.click();
-      URL.revokeObjectURL(url);
+          const rows = data.map((log) => [
+            this.escapeCsvField(log.timestamp ? this.dateService.toLocalString(log.timestamp) : ''),
+            this.escapeCsvField(log.username),
+            this.escapeCsvField(log.operationType),
+            this.escapeCsvField(log.section),
+            this.escapeCsvField(log.entityId),
+            this.escapeCsvField(log.entityName),
+            this.escapeCsvField(log.detail),
+          ]);
 
-      this.notificationService.updateToSuccess(progressId, 'notification.export.success');
-    } catch {
-      this.notificationService.updateToError(progressId, 'notification.export.error');
-    }
+          const csvContent = [headers.join(','), ...rows.map((row) => row.join(','))].join('\n');
+          const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `audit_${new Date().toISOString().slice(0, 10)}.csv`;
+          link.click();
+          URL.revokeObjectURL(url);
+
+          this.notificationService.updateToSuccess(progressId, 'notification.export.success');
+        } catch {
+          this.notificationService.updateToError(progressId, 'notification.export.error');
+        }
+      },
+      error: () => {
+        this.notificationService.updateToError(progressId, 'notification.export.error');
+      },
+    });
   }
 
   private buildCriteria(): AuditCriteria {

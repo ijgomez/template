@@ -95,6 +95,7 @@
     "export.progress": "Exportando datos...",
     "export.success": "Exportación completada correctamente",
     "export.error": "Error al exportar los datos",
+    "export.empty": "No hay datos que exportar",
     "pagination.progress": "Cargando datos...",
     "filter.progress": "Aplicando filtros..."
   },

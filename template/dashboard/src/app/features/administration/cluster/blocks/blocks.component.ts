@@ -5,6 +5,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ClusterService } from '../../../../core/services/cluster.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { NotificationService } from '../../../../core/services/notification.service';
+import { DateService } from '../../../../core/services/date.service';
 import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
 import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../shared/components/data-table';
 import { ClusterBlock, ClusterBlockCriteria } from '../../../../core/models/cluster.model';
@@ -27,6 +28,7 @@ export class BlocksComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly notificationService = inject(NotificationService);
   private readonly translateService = inject(TranslateService);
+  private readonly dateService = inject(DateService);
 
   // Column definitions for tp-data-table
   readonly columns: ColumnDef[] = [
@@ -149,43 +151,56 @@ export class BlocksComponent implements OnInit {
   }
 
   /**
-   * Exports current page data to CSV.
+   * Exports the full filtered list to CSV, ignoring the current pagination.
+   * Fetches all rows matching the active criteria from the backend.
    */
   exportCsv(): void {
     const progressId = this.notificationService.showProgress('notification.export.progress');
 
-    try {
-      const headers = [
-        this.translateService.instant('cluster.blocks.fields.name'),
-        this.translateService.instant('cluster.blocks.fields.startDate'),
-        this.translateService.instant('cluster.blocks.fields.avgTime'),
-        this.translateService.instant('cluster.blocks.fields.minTime'),
-        this.translateService.instant('cluster.blocks.fields.maxTime'),
-        this.translateService.instant('cluster.blocks.fields.total'),
-      ];
+    this.clusterService.findAllBlocksByCriteria(this.buildCriteria(), this.sortParam()).subscribe({
+      next: (data) => {
+        if (data.length === 0) {
+          this.notificationService.updateToError(progressId, 'notification.export.empty');
+          return;
+        }
 
-      const rows = this.blocks().map((block) => [
-        this.escapeCsvField(block.name),
-        this.escapeCsvField(block.startDate ?? ''),
-        this.escapeCsvField(String(block.avgTime)),
-        this.escapeCsvField(String(block.minTime)),
-        this.escapeCsvField(String(block.maxTime)),
-        this.escapeCsvField(String(block.total)),
-      ]);
+        try {
+          const headers = [
+            this.translateService.instant('cluster.blocks.fields.name'),
+            this.translateService.instant('cluster.blocks.fields.startDate'),
+            this.translateService.instant('cluster.blocks.fields.avgTime'),
+            this.translateService.instant('cluster.blocks.fields.minTime'),
+            this.translateService.instant('cluster.blocks.fields.maxTime'),
+            this.translateService.instant('cluster.blocks.fields.total'),
+          ];
 
-      const csvContent = [headers.join(','), ...rows.map((row) => row.join(','))].join('\n');
-      const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `cluster_blocks_${new Date().toISOString().slice(0, 10)}.csv`;
-      link.click();
-      URL.revokeObjectURL(url);
+          const rows = data.map((block) => [
+            this.escapeCsvField(block.name),
+            this.escapeCsvField(block.startDate ? this.dateService.toLocalString(block.startDate) : ''),
+            this.escapeCsvField(String(block.avgTime)),
+            this.escapeCsvField(String(block.minTime)),
+            this.escapeCsvField(String(block.maxTime)),
+            this.escapeCsvField(String(block.total)),
+          ]);
 
-      this.notificationService.updateToSuccess(progressId, 'notification.export.success');
-    } catch {
-      this.notificationService.updateToError(progressId, 'notification.export.error');
-    }
+          const csvContent = [headers.join(','), ...rows.map((row) => row.join(','))].join('\n');
+          const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `cluster_blocks_${new Date().toISOString().slice(0, 10)}.csv`;
+          link.click();
+          URL.revokeObjectURL(url);
+
+          this.notificationService.updateToSuccess(progressId, 'notification.export.success');
+        } catch {
+          this.notificationService.updateToError(progressId, 'notification.export.error');
+        }
+      },
+      error: () => {
+        this.notificationService.updateToError(progressId, 'notification.export.error');
+      },
+    });
   }
 
   private buildCriteria(): ClusterBlockCriteria {

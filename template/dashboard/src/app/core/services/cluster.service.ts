@@ -2,9 +2,14 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+import { map } from 'rxjs/operators';
+
 import { environment } from '../../../environments/environment';
 import { ClusterNode, ClusterBlock, ClusterBlockCriteria } from '../models/cluster.model';
 import { Page } from '../models/page.model';
+
+/** Page size used to fetch the full filtered list for exports (bypasses UI pagination). */
+const EXPORT_PAGE_SIZE = 100000;
 
 /**
  * Service for querying cluster nodes and blocks via the backend API.
@@ -58,6 +63,14 @@ export class ClusterService {
     }
 
     return this.http.get<Page<ClusterBlock>>(this.blocksUrl, { params });
+  }
+
+  /**
+   * Retrieves the full list of cluster blocks matching the given filters, ignoring UI pagination.
+   * Used for exports so the exported file reflects all filtered rows, not just the current page.
+   */
+  findAllBlocksByCriteria(criteria: ClusterBlockCriteria, sort?: string): Observable<ClusterBlock[]> {
+    return this.findBlocksByCriteria(criteria, 0, EXPORT_PAGE_SIZE, sort).pipe(map((page) => page.content));
   }
 
   /**

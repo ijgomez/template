@@ -7,6 +7,7 @@ import { UserService } from '../../../../core/services/user.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { CsvExportService } from '../../../../core/services/csv-export.service';
+import { DateService } from '../../../../core/services/date.service';
 import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
 import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../shared/components/data-table';
 import { UserDTO, UserCriteria, ProfileRef } from '../../../../core/models/user.model';
@@ -28,6 +29,7 @@ export class UsersComponent implements OnInit {
   private readonly notificationService = inject(NotificationService);
   private readonly csvExportService = inject(CsvExportService);
   private readonly translateService = inject(TranslateService);
+  private readonly dateService = inject(DateService);
 
   // View state
   readonly viewMode = signal<ViewMode>('list');
@@ -174,34 +176,45 @@ export class UsersComponent implements OnInit {
     }
   }
 
+  /**
+   * Exports the full filtered list to CSV, ignoring the current pagination.
+   * Fetches all rows matching the active criteria from the backend.
+   */
   exportCsv(): void {
-    const data = this.users();
-    if (data.length === 0) {
-      return;
-    }
-
     const notifId = this.notificationService.showProgress('notification.export.progress');
 
-    const headers = [
-      this.translateService.instant('users.fields.username'),
-      this.translateService.instant('users.fields.firstName'),
-      this.translateService.instant('users.fields.lastName'),
-      this.translateService.instant('users.fields.email'),
-      this.translateService.instant('users.fields.profile'),
-      this.translateService.instant('users.fields.lastAccess'),
-    ];
+    this.userService.findAllByCriteria(this.criteria(), this.sortParam()).subscribe({
+      next: (data) => {
+        if (data.length === 0) {
+          this.notificationService.updateToError(notifId, 'notification.export.empty');
+          return;
+        }
 
-    const rows = data.map(u => [
-      u.username,
-      u.firstName ?? '',
-      u.lastName ?? '',
-      u.email ?? '',
-      u.profileName ?? '',
-      u.lastAccess ?? '',
-    ]);
+        const headers = [
+          this.translateService.instant('users.fields.username'),
+          this.translateService.instant('users.fields.firstName'),
+          this.translateService.instant('users.fields.lastName'),
+          this.translateService.instant('users.fields.email'),
+          this.translateService.instant('users.fields.profile'),
+          this.translateService.instant('users.fields.lastAccess'),
+        ];
 
-    this.csvExportService.export(headers, rows, 'users');
-    this.notificationService.updateToSuccess(notifId, 'notification.export.success');
+        const rows = data.map(u => [
+          u.username,
+          u.firstName ?? '',
+          u.lastName ?? '',
+          u.email ?? '',
+          u.profileName ?? '',
+          u.lastAccess ? this.dateService.toLocalString(u.lastAccess) : '',
+        ]);
+
+        this.csvExportService.export(headers, rows, 'users');
+        this.notificationService.updateToSuccess(notifId, 'notification.export.success');
+      },
+      error: () => {
+        this.notificationService.updateToError(notifId, 'notification.export.error');
+      },
+    });
   }
 
   // ─── Navigation ────────────────────────────────────────────

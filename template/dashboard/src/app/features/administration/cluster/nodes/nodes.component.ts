@@ -6,6 +6,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ClusterService } from '../../../../core/services/cluster.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { NotificationService } from '../../../../core/services/notification.service';
+import { DateService } from '../../../../core/services/date.service';
 import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
 import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../shared/components/data-table';
 import { ClusterNode } from '../../../../core/models/cluster.model';
@@ -32,6 +33,7 @@ export class NodesComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly notificationService = inject(NotificationService);
   private readonly translateService = inject(TranslateService);
+  private readonly dateService = inject(DateService);
 
   // Data state
   readonly allNodes = signal<ClusterNode[]>([]);
@@ -300,8 +302,8 @@ export class NodesComponent implements OnInit {
       n.ip ?? '',
       n.status,
       n.master ? 'MASTER' : '',
-      n.startedAt,
-      n.lastModifiedAt,
+      n.startedAt ? this.dateService.toLocalString(n.startedAt) : '',
+      n.lastModifiedAt ? this.dateService.toLocalString(n.lastModifiedAt) : '',
       bytesToGb(n.usedMemory),
       bytesToGb(n.totalMemory),
       freePercent(n.usedMemory, n.totalMemory),
