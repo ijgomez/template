@@ -6,8 +6,6 @@ import org.myorganization.template.domain.dto.ActionDTO;
 import org.myorganization.template.domain.entity.Action;
 import org.myorganization.template.domain.exception.EntityNotFoundException;
 import org.myorganization.template.domain.exception.MethodNotAllowedException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,11 +17,12 @@ import org.springframework.transaction.annotation.Transactional;
  * Only updates to name, description, and type are permitted.
  */
 @Service
-public class ActionService {
+public class ActionService extends AbstractCriteriaService<Action, ActionDTO, ActionCriteria> {
 
     private final ActionRepository actionRepository;
 
     public ActionService(ActionRepository actionRepository) {
+        super(actionRepository);
         this.actionRepository = actionRepository;
     }
 
@@ -39,31 +38,6 @@ public class ActionService {
         Action action = actionRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Action", id));
         return toDTO(action);
-    }
-
-    /**
-     * Finds actions matching the given criteria with pagination.
-     *
-     * @param criteria the filter criteria (code, name, type)
-     * @param pageable the pagination information
-     * @return a page of action DTOs
-     */
-    @Transactional(readOnly = true)
-    public Page<ActionDTO> findByCriteria(ActionCriteria criteria, Pageable pageable) {
-        Specification<Action> spec = buildSpecification(criteria);
-        return actionRepository.findAll(spec, pageable).map(this::toDTO);
-    }
-
-    /**
-     * Counts actions matching the given criteria.
-     *
-     * @param criteria the filter criteria (code, name, type)
-     * @return the total count of matching actions
-     */
-    @Transactional(readOnly = true)
-    public long countByCriteria(ActionCriteria criteria) {
-        Specification<Action> spec = buildSpecification(criteria);
-        return actionRepository.count(spec);
     }
 
     /**
@@ -107,7 +81,8 @@ public class ActionService {
         throw new MethodNotAllowedException("Action deletion is not allowed. Actions are managed via seed data.");
     }
 
-    private Specification<Action> buildSpecification(ActionCriteria criteria) {
+    @Override
+    protected Specification<Action> buildSpecification(ActionCriteria criteria) {
         Specification<Action> spec = (root, query, cb) -> cb.conjunction();
 
         if (criteria.code() != null && !criteria.code().isBlank()) {
@@ -128,7 +103,8 @@ public class ActionService {
         return spec;
     }
 
-    private ActionDTO toDTO(Action action) {
+    @Override
+    protected ActionDTO toDTO(Action action) {
         return new ActionDTO(
                 action.getId(),
                 action.getCode(),

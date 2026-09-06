@@ -13,8 +13,6 @@ import org.myorganization.template.domain.enums.ParameterType;
 import org.myorganization.template.domain.exception.DuplicateEntityException;
 import org.myorganization.template.domain.exception.EntityNotFoundException;
 import org.myorganization.template.domain.exception.ValidationException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,11 +25,12 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional
-public class ParameterService {
+public class ParameterService extends AbstractCriteriaService<Parameter, ParameterDTO, ParameterCriteria> {
 
     private final ParameterRepository parameterRepository;
 
     public ParameterService(ParameterRepository parameterRepository) {
+        super(parameterRepository);
         this.parameterRepository = parameterRepository;
     }
 
@@ -75,31 +74,6 @@ public class ParameterService {
         Parameter entity = parameterRepository.findByCode(code)
                 .orElseThrow(() -> new EntityNotFoundException("Parameter", code));
         return toDTO(entity);
-    }
-
-    /**
-     * Finds parameters matching the given criteria with pagination.
-     *
-     * @param criteria filter criteria (code, description, type)
-     * @param pageable pagination information
-     * @return a page of matching parameters
-     */
-    @Transactional(readOnly = true)
-    public Page<ParameterDTO> findByCriteria(ParameterCriteria criteria, Pageable pageable) {
-        Specification<Parameter> spec = buildSpecification(criteria);
-        return parameterRepository.findAll(spec, pageable).map(this::toDTO);
-    }
-
-    /**
-     * Counts parameters matching the given criteria.
-     *
-     * @param criteria filter criteria (code, description, type)
-     * @return total count of matching parameters
-     */
-    @Transactional(readOnly = true)
-    public long countByCriteria(ParameterCriteria criteria) {
-        Specification<Parameter> spec = buildSpecification(criteria);
-        return parameterRepository.count(spec);
     }
 
     /**
@@ -211,7 +185,8 @@ public class ParameterService {
         }
     }
 
-    private Specification<Parameter> buildSpecification(ParameterCriteria criteria) {
+    @Override
+    protected Specification<Parameter> buildSpecification(ParameterCriteria criteria) {
         Specification<Parameter> spec = (root, query, cb) -> cb.conjunction();
 
         if (criteria.code() != null && !criteria.code().isBlank()) {
@@ -232,7 +207,8 @@ public class ParameterService {
         return spec;
     }
 
-    private ParameterDTO toDTO(Parameter entity) {
+    @Override
+    protected ParameterDTO toDTO(Parameter entity) {
         return new ParameterDTO(
                 entity.getId(),
                 entity.getCode(),

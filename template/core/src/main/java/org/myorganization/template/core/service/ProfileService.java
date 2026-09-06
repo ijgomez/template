@@ -17,8 +17,6 @@ import org.myorganization.template.domain.exception.DuplicateEntityException;
 import org.myorganization.template.domain.exception.EntityInUseException;
 import org.myorganization.template.domain.exception.EntityNotFoundException;
 import org.myorganization.template.domain.exception.ValidationException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -28,7 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
  * Service handling profile CRUD operations including action associations.
  */
 @Service
-public class ProfileService {
+public class ProfileService extends AbstractCriteriaService<Profile, ProfileDTO, ProfileCriteria> {
 
     private final ProfileRepository profileRepository;
     private final Profile2ActionRepository profile2ActionRepository;
@@ -37,6 +35,7 @@ public class ProfileService {
     public ProfileService(ProfileRepository profileRepository,
                           Profile2ActionRepository profile2ActionRepository,
                           ActionRepository actionRepository) {
+        super(profileRepository);
         this.profileRepository = profileRepository;
         this.profile2ActionRepository = profile2ActionRepository;
         this.actionRepository = actionRepository;
@@ -85,37 +84,6 @@ public class ProfileService {
                 .toList();
 
         return toDTO(profile, actionIds);
-    }
-
-    /**
-     * Searches profiles with pagination and filtering by criteria.
-     *
-     * @param criteria the filter criteria
-     * @param pageable pagination information
-     * @return a page of ProfileDTO
-     */
-    @Transactional(readOnly = true)
-    public Page<ProfileDTO> findByCriteria(ProfileCriteria criteria, Pageable pageable) {
-        Specification<Profile> spec = buildSpecification(criteria);
-        return profileRepository.findAll(spec, pageable)
-                .map(profile -> {
-                    List<Long> actionIds = profile2ActionRepository.findByIdProfileId(profile.getId()).stream()
-                            .map(p2a -> p2a.getId().getActionId())
-                            .toList();
-                    return toDTO(profile, actionIds);
-                });
-    }
-
-    /**
-     * Counts profiles matching the given criteria.
-     *
-     * @param criteria the filter criteria
-     * @return the total count of matching profiles
-     */
-    @Transactional(readOnly = true)
-    public long countByCriteria(ProfileCriteria criteria) {
-        Specification<Profile> spec = buildSpecification(criteria);
-        return profileRepository.count(spec);
     }
 
     /**
@@ -211,13 +179,29 @@ public class ProfileService {
         }
     }
 
-    private Specification<Profile> buildSpecification(ProfileCriteria criteria) {
+    @Override
+    protected Specification<Profile> buildSpecification(ProfileCriteria criteria) {
         Specification<Profile> spec = (root, query, cb) -> cb.conjunction();
         if (criteria != null && criteria.name() != null && !criteria.name().isBlank()) {
             spec = spec.and((root, query, cb) ->
                     cb.like(cb.lower(root.get("name")), "%" + criteria.name().toLowerCase() + "%"));
         }
         return spec;
+    }
+
+    /**
+     * Maps a profile to its DTO, loading its assigned action ids from the
+     * profile2action table. Used by the inherited criteria-based read operations.
+     *
+     * @param profile the profile entity
+     * @return the ProfileDTO including its action ids
+     */
+    @Override
+    protected ProfileDTO toDTO(Profile profile) {
+        List<Long> actionIds = profile2ActionRepository.findByIdProfileId(profile.getId()).stream()
+                .map(p2a -> p2a.getId().getActionId())
+                .toList();
+        return toDTO(profile, actionIds);
     }
 
     private ProfileDTO toDTO(Profile profile, List<Long> actionIds) {

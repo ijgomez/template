@@ -20,8 +20,6 @@ import org.myorganization.template.domain.enums.OperationType;
 import org.myorganization.template.domain.exception.DuplicateEntityException;
 import org.myorganization.template.domain.exception.EntityNotFoundException;
 import org.myorganization.template.domain.exception.ValidationException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -31,7 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
  * Service handling user management operations: CRUD, criteria-based search, and self-service profile update.
  */
 @Service
-public class UserService {
+public class UserService extends AbstractCriteriaService<User, UserDTO, UserCriteria> {
 
     private final UserRepository userRepository;
     private final ProfileRepository profileRepository;
@@ -44,6 +42,7 @@ public class UserService {
                        ReportRepository reportRepository,
                        User2ReportRepository user2ReportRepository,
                        PasswordEncoder passwordEncoder) {
+        super(userRepository);
         this.userRepository = userRepository;
         this.profileRepository = profileRepository;
         this.reportRepository = reportRepository;
@@ -103,31 +102,6 @@ public class UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User", id));
         return toDTO(user);
-    }
-
-    /**
-     * Searches users with pagination and filters.
-     *
-     * @param criteria filtering criteria
-     * @param pageable pagination parameters
-     * @return a page of matching users as DTOs
-     */
-    @Transactional(readOnly = true)
-    public Page<UserDTO> findByCriteria(UserCriteria criteria, Pageable pageable) {
-        Specification<User> spec = buildSpecification(criteria);
-        return userRepository.findAll(spec, pageable).map(this::toDTO);
-    }
-
-    /**
-     * Counts users matching the given criteria.
-     *
-     * @param criteria filtering criteria
-     * @return the total number of matching users
-     */
-    @Transactional(readOnly = true)
-    public long countByCriteria(UserCriteria criteria) {
-        Specification<User> spec = buildSpecification(criteria);
-        return userRepository.count(spec);
     }
 
     /**
@@ -247,7 +221,8 @@ public class UserService {
         }
     }
 
-    private Specification<User> buildSpecification(UserCriteria criteria) {
+    @Override
+    protected Specification<User> buildSpecification(UserCriteria criteria) {
         Specification<User> spec = (root, query, cb) -> cb.conjunction();
 
         if (criteria.username() != null && !criteria.username().isBlank()) {
@@ -278,7 +253,8 @@ public class UserService {
         return spec;
     }
 
-    private UserDTO toDTO(User user) {
+    @Override
+    protected UserDTO toDTO(User user) {
         List<Long> reportIds = user.getUserReports().stream()
                 .map(ur -> ur.getReport().getId())
                 .toList();
