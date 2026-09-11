@@ -12,6 +12,7 @@ import net.jqwik.api.Property;
 import net.jqwik.api.Provide;
 import org.mockito.Mockito;
 import org.myorganization.template.core.repository.ProfileRepository;
+import org.myorganization.template.core.repository.RefreshTokenRepository;
 import org.myorganization.template.core.repository.ReportRepository;
 import org.myorganization.template.core.repository.User2ReportRepository;
 import org.myorganization.template.core.repository.UserRepository;
@@ -46,11 +47,12 @@ class PaginationMetadataConsistencyPropertyTest {
     private final ProfileRepository profileRepository = Mockito.mock(ProfileRepository.class);
     private final ReportRepository reportRepository = Mockito.mock(ReportRepository.class);
     private final User2ReportRepository user2ReportRepository = Mockito.mock(User2ReportRepository.class);
+    private final RefreshTokenRepository refreshTokenRepository = Mockito.mock(RefreshTokenRepository.class);
     private final PasswordEncoder passwordEncoder = Mockito.mock(PasswordEncoder.class);
 
     private final UserService userService = new UserService(
             userRepository, profileRepository, reportRepository,
-            user2ReportRepository, passwordEncoder);
+            user2ReportRepository, refreshTokenRepository, passwordEncoder);
 
     /**
      * Property: totalPages == Math.ceil(totalElements / size) for any pagination scenario.

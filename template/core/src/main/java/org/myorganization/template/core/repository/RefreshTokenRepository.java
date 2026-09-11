@@ -43,4 +43,16 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long
     @Modifying
     @Query("DELETE FROM RefreshToken rt WHERE rt.revoked = true OR rt.expiresAt < CURRENT_TIMESTAMP")
     int deleteExpiredOrRevoked();
+
+    /**
+     * Deletes all refresh tokens belonging to the given user.
+     * Used when a user is deleted to remove the foreign key references
+     * from the refresh_token table.
+     *
+     * @param userId the identifier of the user whose tokens should be deleted
+     * @return the number of tokens deleted
+     */
+    @Modifying
+    @Query("DELETE FROM RefreshToken rt WHERE rt.user.id = :userId")
+    int deleteByUserId(@Param("userId") Long userId);
 }

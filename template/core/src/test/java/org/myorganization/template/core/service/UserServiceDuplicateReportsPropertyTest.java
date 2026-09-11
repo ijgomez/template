@@ -13,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.myorganization.template.core.repository.ProfileRepository;
+import org.myorganization.template.core.repository.RefreshTokenRepository;
 import org.myorganization.template.core.repository.ReportRepository;
 import org.myorganization.template.core.repository.User2ReportRepository;
 import org.myorganization.template.core.repository.UserRepository;
@@ -46,6 +47,9 @@ class UserServiceDuplicateReportsPropertyTest {
     private User2ReportRepository user2ReportRepository;
 
     @Mock
+    private RefreshTokenRepository refreshTokenRepository;
+
+    @Mock
     private PasswordEncoder passwordEncoder;
 
     /**
@@ -72,7 +76,7 @@ class UserServiceDuplicateReportsPropertyTest {
             @ForAll("reportIdsWithDuplicates") List<Long> duplicateReportIds) {
 
         UserService userService = new UserService(userRepository, profileRepository,
-                reportRepository, user2ReportRepository, passwordEncoder);
+                reportRepository, user2ReportRepository, refreshTokenRepository, passwordEncoder);
 
         UserDTO dto = new UserDTO(null, "testuser", "password", "First", "Last",
                 "test@example.com", null, null, null, duplicateReportIds, null, null);
@@ -87,7 +91,7 @@ class UserServiceDuplicateReportsPropertyTest {
             @ForAll("reportIdsWithDuplicates") List<Long> duplicateReportIds) {
 
         UserService userService = new UserService(userRepository, profileRepository,
-                reportRepository, user2ReportRepository, passwordEncoder);
+                reportRepository, user2ReportRepository, refreshTokenRepository, passwordEncoder);
 
         UserDTO dto = new UserDTO(1L, "testuser", null, "First", "Last",
                 "test@example.com", null, null, null, duplicateReportIds, null, null);

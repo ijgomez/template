@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.myorganization.template.core.audit.Auditable;
 import org.myorganization.template.core.repository.ProfileRepository;
+import org.myorganization.template.core.repository.RefreshTokenRepository;
 import org.myorganization.template.core.repository.ReportRepository;
 import org.myorganization.template.core.repository.User2ReportRepository;
 import org.myorganization.template.core.repository.UserRepository;
@@ -35,18 +36,21 @@ public class UserService extends AbstractCriteriaService<User, UserDTO, UserCrit
     private final ProfileRepository profileRepository;
     private final ReportRepository reportRepository;
     private final User2ReportRepository user2ReportRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
 
     public UserService(UserRepository userRepository,
                        ProfileRepository profileRepository,
                        ReportRepository reportRepository,
                        User2ReportRepository user2ReportRepository,
+                       RefreshTokenRepository refreshTokenRepository,
                        PasswordEncoder passwordEncoder) {
         super(userRepository);
         this.userRepository = userRepository;
         this.profileRepository = profileRepository;
         this.reportRepository = reportRepository;
         this.user2ReportRepository = user2ReportRepository;
+        this.refreshTokenRepository = refreshTokenRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -156,6 +160,7 @@ public class UserService extends AbstractCriteriaService<User, UserDTO, UserCrit
         if (!userRepository.existsById(id)) {
             throw new EntityNotFoundException("User", id);
         }
+        refreshTokenRepository.deleteByUserId(id);
         user2ReportRepository.deleteByIdUserId(id);
         userRepository.deleteById(id);
     }

@@ -9,6 +9,7 @@ import net.jqwik.api.Property;
 import net.jqwik.api.Provide;
 import org.mockito.Mockito;
 import org.myorganization.template.core.repository.ProfileRepository;
+import org.myorganization.template.core.repository.RefreshTokenRepository;
 import org.myorganization.template.core.repository.ReportRepository;
 import org.myorganization.template.core.repository.User2ReportRepository;
 import org.myorganization.template.core.repository.UserRepository;
@@ -40,11 +41,12 @@ class UserServiceUniquenessPropertyTest {
         ProfileRepository profileRepository = Mockito.mock(ProfileRepository.class);
         ReportRepository reportRepository = Mockito.mock(ReportRepository.class);
         User2ReportRepository user2ReportRepository = Mockito.mock(User2ReportRepository.class);
+        RefreshTokenRepository refreshTokenRepository = Mockito.mock(RefreshTokenRepository.class);
         PasswordEncoder passwordEncoder = Mockito.mock(PasswordEncoder.class);
 
         UserService userService = new UserService(
                 userRepository, profileRepository, reportRepository,
-                user2ReportRepository, passwordEncoder);
+                user2ReportRepository, refreshTokenRepository, passwordEncoder);
 
         // Simulate that a user with this username already exists
         when(userRepository.existsByUsername(username)).thenReturn(true);

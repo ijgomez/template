@@ -11,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.myorganization.template.core.repository.ProfileRepository;
+import org.myorganization.template.core.repository.RefreshTokenRepository;
 import org.myorganization.template.core.repository.ReportRepository;
 import org.myorganization.template.core.repository.User2ReportRepository;
 import org.myorganization.template.core.repository.UserRepository;
@@ -54,6 +55,9 @@ class UserServiceTest {
     private User2ReportRepository user2ReportRepository;
 
     @Mock
+    private RefreshTokenRepository refreshTokenRepository;
+
+    @Mock
     private PasswordEncoder passwordEncoder;
 
     private UserService userService;
@@ -61,7 +65,7 @@ class UserServiceTest {
     @BeforeEach
     void setUp() {
         userService = new UserService(userRepository, profileRepository, reportRepository,
-                user2ReportRepository, passwordEncoder);
+                user2ReportRepository, refreshTokenRepository, passwordEncoder);
     }
 
     // --- create ---
@@ -264,6 +268,7 @@ class UserServiceTest {
 
         userService.delete(1L);
 
+        verify(refreshTokenRepository).deleteByUserId(1L);
         verify(user2ReportRepository).deleteByIdUserId(1L);
         verify(userRepository).deleteById(1L);
     }
