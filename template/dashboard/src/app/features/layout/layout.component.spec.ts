@@ -142,9 +142,10 @@ describe('LayoutComponent', () => {
   it('should have data-testid on interactive elements', () => {
     const compiled = fixture.nativeElement as HTMLElement;
 
+    // El logo/brand es un elemento estático (no navegable), por lo que no lleva data-testid.
     expect(compiled.querySelector('[data-testid="btn-sidebar-toggle"]')).toBeTruthy();
-    expect(compiled.querySelector('[data-testid="link-brand"]')).toBeTruthy();
     expect(compiled.querySelector('[data-testid="btn-user-menu"]')).toBeTruthy();
+    expect(compiled.querySelector('[data-testid="btn-mobile-menu"]')).toBeTruthy();
   });
 
   it('should toggle sidebar-collapsed class on wrapper', () => {

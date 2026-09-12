@@ -74,14 +74,14 @@ describe('ProfilesComponent - Property 1: Bug Condition - Form Styling Matches R
 
     // Set to form mode
     if (isEditing) {
-      component.openEditForm({
+      component.showEditForm({
         id: 1,
         name: 'Test Profile',
         description: 'Test description',
         actions: [{ id: 1, code: 'TEST_READ', type: 'READ', name: 'Test Read' }],
       });
     } else {
-      component.openCreateForm();
+      component.showCreateForm();
     }
 
     fixture.detectChanges();

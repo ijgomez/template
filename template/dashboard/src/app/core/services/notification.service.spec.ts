@@ -75,15 +75,16 @@ describe('NotificationService', () => {
       expect(notifications[0].type).toBe('error');
     });
 
-    it('should auto-dismiss after 8 seconds', () => {
+    it('should NOT auto-dismiss (error must be acknowledged manually)', () => {
       service.showError('notification.error');
 
       let notifications: Notification[] = [];
       service.notifications$.subscribe(n => (notifications = n));
       expect(notifications).toHaveLength(1);
 
-      vi.advanceTimersByTime(8000);
-      expect(notifications).toHaveLength(0);
+      // Los errores se muestran como modal y no se descartan solos.
+      vi.advanceTimersByTime(60000);
+      expect(notifications).toHaveLength(1);
     });
   });
 
@@ -126,7 +127,7 @@ describe('NotificationService', () => {
       expect(notifications[0].messageKey).toBe('notification.error');
     });
 
-    it('should auto-dismiss the transitioned notification after 8 seconds', () => {
+    it('should NOT auto-dismiss the transitioned error (must be acknowledged manually)', () => {
       const id = service.showProgress('notification.progress');
 
       service.updateToError(id, 'notification.error');
@@ -134,8 +135,10 @@ describe('NotificationService', () => {
       let notifications: Notification[] = [];
       service.notifications$.subscribe(n => (notifications = n));
 
-      vi.advanceTimersByTime(8000);
-      expect(notifications).toHaveLength(0);
+      // Al pasar a error, la notificación se mantiene hasta que el usuario la cierra.
+      vi.advanceTimersByTime(60000);
+      expect(notifications).toHaveLength(1);
+      expect(notifications[0].type).toBe('error');
     });
   });
 

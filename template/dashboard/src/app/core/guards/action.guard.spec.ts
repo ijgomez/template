@@ -46,14 +46,14 @@ describe('actionGuard', () => {
     expect(routerMock.navigate).not.toHaveBeenCalled();
   });
 
-  it('should redirect to /dashboard when user lacks the required action', () => {
+  it('should redirect to /forbidden when user lacks the required action', () => {
     authServiceMock.hasAction.mockReturnValue(false);
     const route = createRouteWithActions(['USER_WRITE']);
 
     const result = TestBed.runInInjectionContext(() => actionGuard(route, mockState));
 
     expect(result).toBe(false);
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/dashboard']);
+    expect(routerMock.navigate).toHaveBeenCalledWith(['/forbidden']);
   });
 
   it('should allow navigation when user has at least one of multiple required actions (OR logic)', () => {
@@ -66,14 +66,14 @@ describe('actionGuard', () => {
     expect(routerMock.navigate).not.toHaveBeenCalled();
   });
 
-  it('should redirect to /dashboard when user lacks all of multiple required actions', () => {
+  it('should redirect to /forbidden when user lacks all of multiple required actions', () => {
     authServiceMock.hasAction.mockReturnValue(false);
     const route = createRouteWithActions(['USER_READ', 'PROFILE_READ', 'ACTION_READ']);
 
     const result = TestBed.runInInjectionContext(() => actionGuard(route, mockState));
 
     expect(result).toBe(false);
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/dashboard']);
+    expect(routerMock.navigate).toHaveBeenCalledWith(['/forbidden']);
   });
 
   it('should allow navigation when no actions are required (empty array)', () => {

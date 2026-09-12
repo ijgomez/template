@@ -78,7 +78,7 @@ describe('actionGuard - Property 8: Action guard redirects unauthorized users', 
     });
   });
 
-  it('should always redirect to /dashboard when user lacks ALL required actions', () => {
+  it('should always redirect to /forbidden when user lacks ALL required actions', () => {
     fc.assert(
       fc.property(
         requiredActionsArb.chain((requiredActions) =>
@@ -98,7 +98,7 @@ describe('actionGuard - Property 8: Action guard redirects unauthorized users', 
           const result = TestBed.runInInjectionContext(() => actionGuard(route, mockState));
 
           expect(result).toBe(false);
-          expect(routerMock.navigate).toHaveBeenCalledWith(['/dashboard']);
+          expect(routerMock.navigate).toHaveBeenCalledWith(['/forbidden']);
         },
       ),
       { numRuns: 100 },
@@ -118,7 +118,7 @@ describe('actionGuard - Property 8: Action guard redirects unauthorized users', 
         const result = TestBed.runInInjectionContext(() => actionGuard(route, mockState));
 
         expect(result).toBe(false);
-        expect(routerMock.navigate).toHaveBeenCalledWith(['/dashboard']);
+        expect(routerMock.navigate).toHaveBeenCalledWith(['/forbidden']);
       }),
       { numRuns: 100 },
     );
@@ -134,7 +134,7 @@ describe('actionGuard - Property 8: Action guard redirects unauthorized users', 
         const result = TestBed.runInInjectionContext(() => actionGuard(route, mockState));
 
         expect(result).toBe(false);
-        expect(routerMock.navigate).toHaveBeenCalledWith(['/dashboard']);
+        expect(routerMock.navigate).toHaveBeenCalledWith(['/forbidden']);
       }),
       { numRuns: 100 },
     );

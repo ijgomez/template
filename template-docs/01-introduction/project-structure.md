@@ -37,13 +37,15 @@ Contiene toda la lógica de negocio de la aplicación.
 
 Está organizado como un proyecto **Maven multi-módulo**, donde cada módulo implementa una responsabilidad concreta.
 
-| Módulo  | Descripción                                                         |
-|---------|---------------------------------------------------------------------|
-| commons | Clases, utilidades y componentes reutilizables                      |
-| cluster | Funcionalidades de alta disponibilidad y coordinación entre nodos   |
-| domain  | Modelo de dominio, entidades JPA, DTO y objetos de transferencia    |
-| core    | Servicios de negocio, repositorios, procesos y lógica de aplicación |
-| webapp  | API REST, configuración de Spring Boot y seguridad                  |
+| Módulo    | Descripción                                                                          |
+|-----------|--------------------------------------------------------------------------------------|
+| commons   | Clases, utilidades y componentes reutilizables                                       |
+| cluster   | Funcionalidades de alta disponibilidad y coordinación entre nodos                    |
+| domain    | Modelo de dominio, entidades JPA, DTO y objetos de transferencia                     |
+| core      | Servicios de negocio, repositorios, procesos y lógica de aplicación                  |
+| ws        | Lógica de servicios web                                                               |
+| dashboard | Frontend Angular (módulo Maven `pom`); compila y testea el frontend con Maven        |
+| webapp    | API REST, configuración de Spring Boot y seguridad; empaqueta el `dist/` del dashboard en el WAR |
 
 ---
 

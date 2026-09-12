@@ -6,7 +6,10 @@ import { authGuard } from './auth.guard';
 import { AuthService } from '../services/auth.service';
 
 describe('authGuard', () => {
-  let authServiceMock: { isAuthenticated: ReturnType<typeof vi.fn> };
+  let authServiceMock: {
+    isAuthenticated: ReturnType<typeof vi.fn>;
+    isSessionRestored: ReturnType<typeof vi.fn>;
+  };
   let routerMock: { navigate: ReturnType<typeof vi.fn> };
 
   const mockRoute = {} as ActivatedRouteSnapshot;
@@ -15,6 +18,8 @@ describe('authGuard', () => {
   beforeEach(() => {
     authServiceMock = {
       isAuthenticated: vi.fn(),
+      // La sesión ya está restaurada: el guard toma el camino síncrono.
+      isSessionRestored: vi.fn().mockReturnValue(true),
     };
 
     routerMock = {

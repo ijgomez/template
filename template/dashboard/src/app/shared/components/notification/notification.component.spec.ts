@@ -56,15 +56,16 @@ describe('NotificationComponent', () => {
     expect(icon).toBeTruthy();
   });
 
-  it('should render an error notification with error icon', () => {
+  it('should NOT render error notifications as toasts (errors are shown in a modal dialog)', () => {
     notificationService.showError('notification.error');
     fixture.detectChanges();
 
+    // Este componente sólo muestra progress/success; los errores los gestiona el diálogo modal.
     const toast = fixture.nativeElement.querySelector('[data-testid="notification-error"]');
-    expect(toast).toBeTruthy();
+    expect(toast).toBeNull();
 
-    const icon = toast.querySelector('.bi-x-circle-fill');
-    expect(icon).toBeTruthy();
+    const container = fixture.nativeElement.querySelector('[data-testid="notification-container"]');
+    expect(container).toBeNull();
   });
 
   it('should render a close button for each notification', () => {
@@ -87,14 +88,15 @@ describe('NotificationComponent', () => {
     expect(container).toBeNull();
   });
 
-  it('should render multiple notifications', () => {
+  it('should render multiple notifications (errors excluded, shown in modal)', () => {
     notificationService.showProgress('msg1');
     notificationService.showSuccess('msg2');
     notificationService.showError('msg3');
     fixture.detectChanges();
 
+    // Sólo progress y success se muestran como toast; el error se excluye.
     const toasts = fixture.nativeElement.querySelectorAll('.toast');
-    expect(toasts.length).toBe(3);
+    expect(toasts.length).toBe(2);
   });
 
   describe('getIconClass', () => {

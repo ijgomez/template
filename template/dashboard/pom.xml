@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.myorganization.template</groupId>
+        <artifactId>template</artifactId>
+        <version>0.1.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>template-dashboard</artifactId>
+    <packaging>pom</packaging>
+
+    <name>Template - Dashboard</name>
+    <description>Frontend Angular (build y tests con frontend-maven-plugin)</description>
+
+    <properties>
+        <!-- Salta todo el ciclo de frontend (Node, npm install, build, test) -->
+        <frontend.skip>false</frontend.skip>
+        <!-- Salta solo los tests de Angular (mvn ... -Dfrontend.test.skip=true) -->
+        <frontend.test.skip>false</frontend.test.skip>
+        <!-- Configuración de compilación Angular; el perfil Maven la sobreescribe -->
+        <angular.configuration>dist</angular.configuration>
+        <!-- Sin tests Java en este módulo: evita que Surefire falle por falta de tests -->
+        <maven.test.skip>true</maven.test.skip>
+    </properties>
+
+    <build>
+        <plugins>
+            <!--
+                Frontend: instala Node/npm, ejecuta 'npm install', compila Angular
+                y ejecuta los tests unitarios. Es el módulo "dueño" del frontend;
+                webapp solo copia el 'dist/' resultante al WAR.
+                Skippable con -Dfrontend.skip=true (todo) o -Dfrontend.test.skip=true (solo tests).
+            -->
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <configuration>
+                    <workingDirectory>${project.basedir}</workingDirectory>
+                    <skip>${frontend.skip}</skip>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>install-node-and-npm</id>
+                        <goals>
+                            <goal>install-node-and-npm</goal>
+                        </goals>
+                        <configuration>
+                            <nodeVersion>v22.22.3</nodeVersion>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>npm-install</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>install</arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>npm-build</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <arguments>run build -- --configuration=${angular.configuration}</arguments>
+                        </configuration>
+                    </execution>
+                    <!--
+                        Tests unitarios de Angular en la fase 'test' de Maven.
+                        Se ejecutan en modo single-run (sin watch) para no bloquear
+                        el build. Se salta con -Dfrontend.test.skip=true.
+                    -->
+                    <execution>
+                        <id>npm-test</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <phase>test</phase>
+                        <configuration>
+                            <arguments>test -- --no-watch</arguments>
+                            <skip>${frontend.test.skip}</skip>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

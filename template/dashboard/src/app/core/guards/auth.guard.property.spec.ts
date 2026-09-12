@@ -14,7 +14,10 @@ import { AuthService } from '../services/auth.service';
  * Property 7: For any protected route, an unauthenticated user is always redirected to /login.
  */
 describe('authGuard - Property 7: Auth guard redirects unauthenticated users', () => {
-  let authServiceMock: { isAuthenticated: ReturnType<typeof vi.fn> };
+  let authServiceMock: {
+    isAuthenticated: ReturnType<typeof vi.fn>;
+    isSessionRestored: ReturnType<typeof vi.fn>;
+  };
   let routerMock: { navigate: ReturnType<typeof vi.fn> };
 
   const mockState = {} as RouterStateSnapshot;
@@ -22,6 +25,8 @@ describe('authGuard - Property 7: Auth guard redirects unauthenticated users', (
   beforeEach(() => {
     authServiceMock = {
       isAuthenticated: vi.fn(),
+      // La sesión ya está restaurada: el guard toma el camino síncrono.
+      isSessionRestored: vi.fn().mockReturnValue(true),
     };
 
     routerMock = {

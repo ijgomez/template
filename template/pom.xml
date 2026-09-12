@@ -28,6 +28,7 @@
         <module>domain</module>
         <module>core</module>
         <module>ws</module>
+        <module>dashboard</module>
         <module>webapp</module>
     </modules>
 
@@ -59,6 +60,13 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
+
+    <!--
+        NOTA: las clases excluidas del cálculo de cobertura JaCoCo se configuran
+        en el plugin (ver <build><pluginManagement>). Se excluye el modelo de datos
+        sin lógica de negocio (DTOs, criteria y enums) y se mantiene la cobertura
+        de las clases con lógica del paquete entity (BaseEntity y las claves *PK).
+    -->
 
     <!-- Dependency Management -->
     <dependencyManagement>
@@ -180,6 +188,20 @@
 
     <!-- Build configuration -->
     <build>
+        <!--
+            Plugins activos en TODOS los módulos hijos (los módulos con packaging
+            'pom' no generan clases, por lo que JaCoCo simplemente no reporta nada
+            en ellos). Al declararlo aquí, la cobertura se mide por módulo en cada
+            build 'verify' sin necesidad de activar el perfil 'test'.
+        -->
+        <plugins>
+            <!-- JaCoCo: code coverage (por módulo) -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+
         <pluginManagement>
             <plugins>
                 <!-- Compiler -->
@@ -223,24 +245,127 @@
                     </executions>
                 </plugin>
 
-                <!-- JaCoCo: code coverage -->
+                <!-- JaCoCo: code coverage (por módulo) -->
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
                     <version>${jacoco.version}</version>
+                    <!--
+                        Exclusiones comunes a todos los goals 'report': modelo de datos
+                        sin lógica de negocio. Los patrones aplican sobre la ruta de la
+                        clase compilada (.class), no sobre el nombre del paquete Java.
+                    -->
+                    <configuration>
+                        <excludes>
+                            <!-- DTOs (records sin lógica) -->
+                            <exclude>**/dto/**</exclude>
+                            <!-- Criterios de búsqueda (records/POJOs sin lógica) -->
+                            <exclude>**/criteria/**</exclude>
+                            <!-- Enumerados (constantes) -->
+                            <exclude>**/enums/**</exclude>
+                            <!-- Excepciones (subclases de RuntimeException, sólo constructores) -->
+                            <exclude>**/exception/**</exclude>
+                            <!-- DTOs de request/response sueltos sin lógica (records).
+                                 Los records anidados en clases con lógica (p. ej. controllers,
+                                 AbstractClusterWorker) NO se excluyen para no perder la
+                                 cobertura de la clase contenedora. -->
+                            <exclude>**/webapp/controller/SetMasterRequest.class</exclude>
+                            <!-- Entities JPA que son sólo getters/setters. NO se excluye
+                                 el paquete entity completo para conservar la cobertura de
+                                 BaseEntity y de las claves compuestas *PK, que sí tienen
+                                 lógica (equals/hashCode, callbacks de ciclo de vida). -->
+                            <exclude>**/entity/Action.class</exclude>
+                            <exclude>**/entity/AuditLog.class</exclude>
+                            <exclude>**/entity/ClusterBlock.class</exclude>
+                            <exclude>**/entity/ClusterJob.class</exclude>
+                            <exclude>**/entity/ClusterNode.class</exclude>
+                            <exclude>**/entity/ClusterTask.class</exclude>
+                            <exclude>**/entity/Interface.class</exclude>
+                            <exclude>**/entity/InterfaceLog.class</exclude>
+                            <exclude>**/entity/Parameter.class</exclude>
+                            <exclude>**/entity/Profile.class</exclude>
+                            <exclude>**/entity/Profile2Action.class</exclude>
+                            <exclude>**/entity/RefreshToken.class</exclude>
+                            <exclude>**/entity/Report.class</exclude>
+                            <exclude>**/entity/User.class</exclude>
+                            <exclude>**/entity/User2Report.class</exclude>
+                        </excludes>
+                    </configuration>
                     <executions>
+                        <!-- Tests unitarios (Surefire) -->
                         <execution>
                             <id>prepare-agent</id>
                             <goals>
                                 <goal>prepare-agent</goal>
                             </goals>
+                            <configuration>
+                                <destFile>${project.build.directory}/jacoco.exec</destFile>
+                            </configuration>
                         </execution>
                         <execution>
                             <id>report</id>
+                            <phase>test</phase>
+                            <goals>
+                                <goal>report</goal>
+                            </goals>
+                            <configuration>
+                                <dataFile>${project.build.directory}/jacoco.exec</dataFile>
+                                <outputDirectory>${project.reporting.outputDirectory}/jacoco</outputDirectory>
+                            </configuration>
+                        </execution>
+
+                        <!-- Tests de integración (Failsafe) -->
+                        <execution>
+                            <id>prepare-agent-integration</id>
+                            <goals>
+                                <goal>prepare-agent-integration</goal>
+                            </goals>
+                            <configuration>
+                                <destFile>${project.build.directory}/jacoco-it.exec</destFile>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>report-integration</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>report-integration</goal>
+                            </goals>
+                            <configuration>
+                                <dataFile>${project.build.directory}/jacoco-it.exec</dataFile>
+                                <outputDirectory>${project.reporting.outputDirectory}/jacoco-it</outputDirectory>
+                            </configuration>
+                        </execution>
+
+                        <!-- Reporte combinado (unit + integración) por módulo -->
+                        <execution>
+                            <id>merge-results</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>merge</goal>
+                            </goals>
+                            <configuration>
+                                <fileSets>
+                                    <fileSet>
+                                        <directory>${project.build.directory}</directory>
+                                        <includes>
+                                            <include>jacoco.exec</include>
+                                            <include>jacoco-it.exec</include>
+                                        </includes>
+                                    </fileSet>
+                                </fileSets>
+                                <destFile>${project.build.directory}/jacoco-merged.exec</destFile>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>report-merged</id>
                             <phase>verify</phase>
                             <goals>
                                 <goal>report</goal>
                             </goals>
+                            <configuration>
+                                <dataFile>${project.build.directory}/jacoco-merged.exec</dataFile>
+                                <outputDirectory>${project.reporting.outputDirectory}/jacoco-merged</outputDirectory>
+                            </configuration>
                         </execution>
                     </executions>
                 </plugin>

@@ -18,8 +18,12 @@
     <description>REST API, Spring Boot configuration and security</description>
 
     <properties>
+        <!--
+            Cuando es true no se copia el 'dist/' de Angular al WAR (útil junto con
+            -Dfrontend.skip=true, que además evita que el módulo dashboard compile el
+            frontend). El build y los tests del frontend viven en el módulo dashboard.
+        -->
         <frontend.skip>false</frontend.skip>
-        <angular.configuration>dist</angular.configuration>
     </properties>
 
     <dependencies>
@@ -32,6 +36,39 @@
             <groupId>org.myorganization.template</groupId>
             <artifactId>template-ws</artifactId>
 			<version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <!--
+            Módulos declarados explícitamente para que el reporte JaCoCo agregado
+            ('report-aggregate') incluya su cobertura. Ya llegan en compile de forma
+            transitiva vía template-core, por lo que declararlos aquí (scope compile,
+            por defecto) no altera el classpath real ni el contenido del WAR; sólo
+            los hace visibles como parte del agregado de cobertura.
+        -->
+        <dependency>
+            <groupId>org.myorganization.template</groupId>
+            <artifactId>template-commons</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.myorganization.template</groupId>
+            <artifactId>template-cluster</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.myorganization.template</groupId>
+            <artifactId>template-domain</artifactId>
+        </dependency>
+
+        <!--
+            Dependencia al módulo frontend: no aporta clases (packaging pom), sólo
+            fuerza el orden del reactor para que 'template-dashboard' compile el
+            'dist/' de Angular ANTES de que webapp lo copie al WAR.
+        -->
+        <dependency>
+            <groupId>org.myorganization.template</groupId>
+            <artifactId>template-dashboard</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <type>pom</type>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Spring Web -->
@@ -148,46 +185,11 @@
         </resources>
 
         <plugins>
-            <!-- Frontend: Install Node, npm install, build Angular -->
-            <plugin>
-                <groupId>com.github.eirslett</groupId>
-                <artifactId>frontend-maven-plugin</artifactId>
-                <configuration>
-                    <workingDirectory>${project.basedir}/../dashboard</workingDirectory>
-                    <skip>${frontend.skip}</skip>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>install-node-and-npm</id>
-                        <goals>
-                            <goal>install-node-and-npm</goal>
-                        </goals>
-                        <configuration>
-                            <nodeVersion>v22.22.3</nodeVersion>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>npm-install</id>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>install</arguments>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>npm-build</id>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <phase>generate-resources</phase>
-                        <configuration>
-                            <arguments>run build -- --configuration=${angular.configuration}</arguments>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
+            <!--
+                Copy Angular build output to WAR static resources.
+                El frontend (Node, npm install, build y tests) lo gestiona el módulo
+                'template-dashboard'; aquí sólo se copia el 'dist/' que ya generó.
+            -->
             <!-- Copy Angular build output to WAR static resources -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -200,6 +202,7 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
+                            <skip>${frontend.skip}</skip>
                             <outputDirectory>${project.build.directory}/classes/static</outputDirectory>
                             <resources>
                                 <resource>
@@ -223,6 +226,32 @@
 						</exclude>
 					</excludes>
 				</configuration>
+            </plugin>
+
+            <!--
+                JaCoCo: reporte AGREGADO con la cobertura de todos los módulos.
+                'report-aggregate' combina los datos de ejecución de los módulos que
+                webapp declara como dependencia y que forman parte del reactor
+                (commons, cluster, domain, core, ws). Se genera en la fase 'verify'
+                (por eso debe ejecutarse el reactor completo, p. ej. 'mvn verify').
+                Hereda los <excludes> definidos en el POM padre.
+                Salida: webapp/target/site/jacoco-aggregate/index.html
+            -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>report-aggregate</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report-aggregate</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.reporting.outputDirectory}/jacoco-aggregate</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

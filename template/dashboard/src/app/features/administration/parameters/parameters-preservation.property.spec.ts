@@ -174,7 +174,9 @@ describe('ParametersComponent - Property 2: Preservation - List and Detail Views
   // ─── DETAIL VIEW PRESERVATION ───────────────────────────────────────────────
 
   describe('Detail view preservation', () => {
-    it('should render .card > .card-body > .tp-form-grid in detail view for any parameter', () => {
+    // El detalle se delega al componente hijo <app-parameter-form> en modo 'view',
+    // que renderiza el formulario de sólo lectura dentro de un contenedor .tp-filter-bar.
+    it('should render the parameter form (view mode) in detail view for any parameter', () => {
       fc.assert(
         fc.property(
           fc.record({
@@ -196,22 +198,19 @@ describe('ParametersComponent - Property 2: Preservation - List and Detail Views
 
             const el = fixture.nativeElement as HTMLElement;
 
-            // Verify card structure is preserved in detail view
-            const card = el.querySelector('.card');
-            expect(card).not.toBeNull();
+            // El formulario de detalle vive dentro de .tp-filter-bar
+            const container = el.querySelector('.tp-filter-bar');
+            expect(container).not.toBeNull();
 
-            const cardBody = card!.querySelector('.card-body');
-            expect(cardBody).not.toBeNull();
-
-            const formGrid = cardBody!.querySelector('.tp-form-grid');
-            expect(formGrid).not.toBeNull();
+            const form = el.querySelector('[data-testid="parameter-form"]');
+            expect(form).not.toBeNull();
           },
         ),
         { numRuns: 10 },
       );
     });
 
-    it('should have form-group elements inside tp-form-grid in detail view', () => {
+    it('should render read-only inputs inside the detail form', () => {
       const fixture = createFixture();
       const component = fixture.componentInstance;
 
@@ -227,12 +226,15 @@ describe('ParametersComponent - Property 2: Preservation - List and Detail Views
       fixture.detectChanges();
 
       const el = fixture.nativeElement as HTMLElement;
-      const formGrid = el.querySelector('.tp-form-grid');
-      const formGroups = formGrid!.querySelectorAll('.form-group');
-      expect(formGroups.length).toBeGreaterThan(0);
+      const form = el.querySelector('[data-testid="parameter-form"]');
+      expect(form).not.toBeNull();
+
+      // En modo detalle los campos se muestran de sólo lectura.
+      const readonlyInputs = form!.querySelectorAll('input.form-control-sm[readonly]');
+      expect(readonlyInputs.length).toBeGreaterThan(0);
     });
 
-    it('should have form-field-full class on description field in detail view', () => {
+    it('should render the description field in the detail form', () => {
       const fixture = createFixture();
       const component = fixture.componentInstance;
 
@@ -248,8 +250,8 @@ describe('ParametersComponent - Property 2: Preservation - List and Detail Views
       fixture.detectChanges();
 
       const el = fixture.nativeElement as HTMLElement;
-      const fullWidthField = el.querySelector('.form-group.form-field-full');
-      expect(fullWidthField).not.toBeNull();
+      const descriptionInput = el.querySelector('#paramDescription');
+      expect(descriptionInput).not.toBeNull();
     });
 
     it('should have header with back, edit and delete buttons in detail view', () => {
@@ -268,9 +270,9 @@ describe('ParametersComponent - Property 2: Preservation - List and Detail Views
       fixture.detectChanges();
 
       const el = fixture.nativeElement as HTMLElement;
-      const backBtn = el.querySelector('[data-testid="btn-back"]');
-      const editBtn = el.querySelector('[data-testid="btn-edit-detail"]');
-      const deleteBtn = el.querySelector('[data-testid="btn-delete-detail"]');
+      const backBtn = el.querySelector('[data-testid="parameter-form-btn-back"]');
+      const editBtn = el.querySelector('[data-testid="parameter-form-btn-edit"]');
+      const deleteBtn = el.querySelector('[data-testid="parameter-form-btn-delete"]');
 
       expect(backBtn).not.toBeNull();
       expect(editBtn).not.toBeNull();
