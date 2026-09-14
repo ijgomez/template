@@ -31,6 +31,19 @@
     <build>
         <plugins>
             <!--
+                JaCoCo: este módulo es 'pom' (frontend Angular), no genera clases
+                Java. Se desactiva el plugin heredado del POM padre para que sus
+                ejecuciones (prepare-agent, report, merge) no se enlacen aquí.
+                La cobertura del frontend la genera Vitest (ver frontend-maven-plugin).
+            -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <!--
                 Frontend: instala Node/npm, ejecuta 'npm install', compila Angular
                 y ejecuta los tests unitarios. Es el módulo "dueño" del frontend;
                 webapp solo copia el 'dist/' resultante al WAR.
@@ -84,7 +97,7 @@
                         </goals>
                         <phase>test</phase>
                         <configuration>
-                            <arguments>test -- --no-watch</arguments>
+                            <arguments>test -- --no-watch --coverage --coverage-reporters=html --coverage-reporters=text-summary --coverage-reporters=lcovonly</arguments>
                             <skip>${frontend.test.skip}</skip>
                         </configuration>
                     </execution>

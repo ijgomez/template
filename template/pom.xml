@@ -422,6 +422,13 @@
             <properties>
                 <spring.profiles.active>test</spring.profiles.active>
                 <angular.configuration>test</angular.configuration>
+                <!--
+                    Ruta del informe de cobertura de Angular (Vitest, reporter 'lcovonly')
+                    para que SonarQube incluya la cobertura del frontend cuando se
+                    configure. El módulo 'dashboard' lo genera en
+                    'dashboard/coverage/dashboard/lcov.info' durante la fase 'test'.
+                -->
+                <sonar.javascript.lcov.reportPaths>${project.basedir}/dashboard/coverage/dashboard/lcov.info</sonar.javascript.lcov.reportPaths>
             </properties>
             <build>
                 <plugins>
