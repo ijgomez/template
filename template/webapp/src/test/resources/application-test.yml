@@ -40,10 +40,6 @@ cluster:
   heartbeat-interval: 5000
   dead-node-timeout: 15000
 
-# Logging (minimal output - only errors)
-logging:
-  level:
-    root: ERROR
-    org.myorganization.template: ERROR
-    org.testcontainers: ERROR
-    com.github.dockerjava: ERROR
+# El logging en los tests lo controla exclusivamente logback-test.xml
+# (src/test/resources/logback-test.xml). No se definen aquí niveles de
+# logging para mantener una única fuente de verdad.
