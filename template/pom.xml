@@ -51,6 +51,21 @@
         <!-- Testing -->
         <jqwik.version>1.9.2</jqwik.version>
         <testcontainers.version>1.21.4</testcontainers.version>
+        <!-- Versión de Mockito (alineada con el BOM de Spring Boot); se usa para
+             localizar su jar y declararlo como agente Java en los tests. -->
+        <mockito.version>5.23.0</mockito.version>
+        <!--
+            argLine base para los tests (Surefire/Failsafe). JaCoCo antepone su
+            propio -javaagent a esta propiedad, por lo que ambos se combinan.
+            - -javaagent Mockito: declara Mockito como agente para evitar el aviso
+              'Mockito is currently self-attaching' (self-attach quedará deshabilitado
+              en futuras JDK). La ruta apunta al jar en el repositorio local Maven.
+            - -XX:+EnableDynamicAgentLoading: silencia el WARNING de carga dinámica
+              de agentes (ByteBuddy) en JDK recientes.
+            - -Xshare:off: evita el warning de CDS ('Sharing is only supported...')
+              al añadirse el agente al bootstrap classpath.
+        -->
+        <argLine>-javaagent:${settings.localRepository}/org/mockito/mockito-core/${mockito.version}/mockito-core-${mockito.version}.jar -XX:+EnableDynamicAgentLoading -Xshare:off</argLine>
 
         <!-- Plugins -->
         <jacoco.version>0.8.15</jacoco.version>
