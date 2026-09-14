@@ -251,46 +251,12 @@
                     <artifactId>jacoco-maven-plugin</artifactId>
                     <version>${jacoco.version}</version>
                     <!--
-                        Exclusiones comunes a todos los goals 'report': modelo de datos
-                        sin lógica de negocio. Los patrones aplican sobre la ruta de la
-                        clase compilada (.class), no sobre el nombre del paquete Java.
+                        Exclusiones de cobertura: NO se definen aquí. Cada módulo
+                        declara sus propias exclusiones (modelo de datos sin lógica)
+                        en su POM, ya que son específicas del código de ese módulo.
+                        Ver template-domain (dto/criteria/enums/exception/entities JPA)
+                        y template-webapp (SetMasterRequest).
                     -->
-                    <configuration>
-                        <excludes>
-                            <!-- DTOs (records sin lógica) -->
-                            <exclude>**/dto/**</exclude>
-                            <!-- Criterios de búsqueda (records/POJOs sin lógica) -->
-                            <exclude>**/criteria/**</exclude>
-                            <!-- Enumerados (constantes) -->
-                            <exclude>**/enums/**</exclude>
-                            <!-- Excepciones (subclases de RuntimeException, sólo constructores) -->
-                            <exclude>**/exception/**</exclude>
-                            <!-- DTOs de request/response sueltos sin lógica (records).
-                                 Los records anidados en clases con lógica (p. ej. controllers,
-                                 AbstractClusterWorker) NO se excluyen para no perder la
-                                 cobertura de la clase contenedora. -->
-                            <exclude>**/webapp/controller/SetMasterRequest.class</exclude>
-                            <!-- Entities JPA que son sólo getters/setters. NO se excluye
-                                 el paquete entity completo para conservar la cobertura de
-                                 BaseEntity y de las claves compuestas *PK, que sí tienen
-                                 lógica (equals/hashCode, callbacks de ciclo de vida). -->
-                            <exclude>**/entity/Action.class</exclude>
-                            <exclude>**/entity/AuditLog.class</exclude>
-                            <exclude>**/entity/ClusterBlock.class</exclude>
-                            <exclude>**/entity/ClusterJob.class</exclude>
-                            <exclude>**/entity/ClusterNode.class</exclude>
-                            <exclude>**/entity/ClusterTask.class</exclude>
-                            <exclude>**/entity/Interface.class</exclude>
-                            <exclude>**/entity/InterfaceLog.class</exclude>
-                            <exclude>**/entity/Parameter.class</exclude>
-                            <exclude>**/entity/Profile.class</exclude>
-                            <exclude>**/entity/Profile2Action.class</exclude>
-                            <exclude>**/entity/RefreshToken.class</exclude>
-                            <exclude>**/entity/Report.class</exclude>
-                            <exclude>**/entity/User.class</exclude>
-                            <exclude>**/entity/User2Report.class</exclude>
-                        </excludes>
-                    </configuration>
                     <executions>
                         <!-- Tests unitarios (Surefire) -->
                         <execution>

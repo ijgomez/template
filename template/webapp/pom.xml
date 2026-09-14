@@ -234,12 +234,43 @@
                 webapp declara como dependencia y que forman parte del reactor
                 (commons, cluster, domain, core, ws). Se genera en la fase 'verify'
                 (por eso debe ejecutarse el reactor completo, p. ej. 'mvn verify').
-                Hereda los <excludes> definidos en el POM padre.
+
+                Los <excludes> ya NO se heredan del POM padre (que no define ninguno);
+                'report-aggregate' aplica las exclusiones de ESTA configuración sobre
+                el conjunto agregado, por lo que aquí se declara la lista completa del
+                modelo de datos sin lógica (la de domain más SetMasterRequest de webapp).
                 Salida: webapp/target/site/jacoco-aggregate/index.html
             -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <!-- Modelo de datos de domain sin lógica -->
+                        <exclude>**/dto/**</exclude>
+                        <exclude>**/criteria/**</exclude>
+                        <exclude>**/enums/**</exclude>
+                        <exclude>**/exception/**</exclude>
+                        <!-- DTO de request sin lógica propio de webapp -->
+                        <exclude>**/webapp/controller/SetMasterRequest.class</exclude>
+                        <!-- Entities JPA planas (se conservan BaseEntity y las *PK) -->
+                        <exclude>**/entity/Action.class</exclude>
+                        <exclude>**/entity/AuditLog.class</exclude>
+                        <exclude>**/entity/ClusterBlock.class</exclude>
+                        <exclude>**/entity/ClusterJob.class</exclude>
+                        <exclude>**/entity/ClusterNode.class</exclude>
+                        <exclude>**/entity/ClusterTask.class</exclude>
+                        <exclude>**/entity/Interface.class</exclude>
+                        <exclude>**/entity/InterfaceLog.class</exclude>
+                        <exclude>**/entity/Parameter.class</exclude>
+                        <exclude>**/entity/Profile.class</exclude>
+                        <exclude>**/entity/Profile2Action.class</exclude>
+                        <exclude>**/entity/RefreshToken.class</exclude>
+                        <exclude>**/entity/Report.class</exclude>
+                        <exclude>**/entity/User.class</exclude>
+                        <exclude>**/entity/User2Report.class</exclude>
+                    </excludes>
+                </configuration>
                 <executions>
                     <execution>
                         <id>report-aggregate</id>

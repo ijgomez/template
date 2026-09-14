@@ -32,16 +32,41 @@
         <plugins>
             <!--
                 JaCoCo: este módulo es 'pom' (frontend Angular), no genera clases
-                Java. Se desactiva el plugin heredado del POM padre para que sus
-                ejecuciones (prepare-agent, report, merge) no se enlacen aquí.
+                Java. Se DESVINCULAN las ejecuciones heredadas del POM padre
+                (phase 'none') para que ni siquiera se enlacen al ciclo de vida.
+                A diferencia de <skip>true</skip>, esto evita las trazas
+                'Skipping JaCoCo execution...' en cada goal.
                 La cobertura del frontend la genera Vitest (ver frontend-maven-plugin).
             -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>prepare-agent-integration</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>report-integration</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>merge-results</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>report-merged</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
             </plugin>
             <!--
                 Frontend: instala Node/npm, ejecuta 'npm install', compila Angular
