@@ -9,7 +9,7 @@ import { CsvExportService } from '../../../../core/services/csv-export.service';
 import { DateService } from '../../../../core/services/date.service';
 import { ProfileService } from '../../../../core/services/profile.service';
 import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
-import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../shared/components/data-table';
+import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent, SortDirection } from '../../../../shared/components/data-table';
 import { Profile, ProfileCriteria } from './models/profile.model';
 import { ProfileFormComponent } from './profile-form/profile-form.component';
 
@@ -50,8 +50,8 @@ export class ProfilesComponent implements OnInit {
   // Table columns
   readonly columns: ColumnDef[] = [
     { key: 'name', header: 'profiles.fields.name', sortable: true, resizable: true, reorderable: true },
-    { key: 'description', header: 'profiles.fields.description', sortable: true, resizable: true, reorderable: true },
-    { key: 'actions', header: 'profiles.fields.actions', cssClass: 'text-center' },
+    { key: 'description', header: 'profiles.fields.description', sortable: true, resizable: true, reorderable: true, width: '40%' },
+    { key: 'actions', header: 'profiles.fields.actions', sortable: true, resizable: true, reorderable: true, cssClass: 'text-center' },
     { key: 'createdAt', header: 'profiles.fields.createdAt', sortable: true, resizable: true, reorderable: true },
   ];
 
@@ -114,9 +114,40 @@ export class ProfilesComponent implements OnInit {
   }
 
   onSort(event: SortEvent): void {
+    // The "actions" column shows the count of assigned actions, which is not a
+    // sortable JPA property on the Profile entity. Sort it client-side over the
+    // current page instead of sending an invalid sort param to the backend.
+    if (event.column === 'actions') {
+      this.sortActionsClientSide(event.direction);
+      return;
+    }
+
     this.sortParam.set(event.direction ? `${event.column},${event.direction}` : '');
     this.currentPage.set(0);
     this.loadProfiles();
+  }
+
+  /**
+   * Sorts the currently loaded profiles by their action count on the client.
+   * Used for the "actions" column, which is a computed count with no
+   * server-side ordering support. A null direction restores the server order.
+   */
+  private sortActionsClientSide(direction: SortDirection): void {
+    if (!direction) {
+      this.loadProfiles();
+      return;
+    }
+
+    const factor = direction === 'asc' ? 1 : -1;
+    const sorted = [...this.profiles()].sort(
+      (a, b) => factor * (this.actionCount(a) - this.actionCount(b))
+    );
+    this.profiles.set(sorted);
+  }
+
+  /** Returns the number of actions assigned to a profile. */
+  private actionCount(profile: Profile): number {
+    return (profile.actions ?? profile.actionIds ?? []).length;
   }
 
   goToPage(page: number): void {
