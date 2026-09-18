@@ -7,7 +7,9 @@
         "--project",
         "../template",
         "--context",
-        "ide-assistant"
+        "ide-assistant",
+        "--open-web-dashboard",
+        "false"
       ]
     },
     "postgres": {
@@ -31,5 +33,6 @@
         "@playwright/mcp@latest"
       ]
     }
+    
   }
 }
