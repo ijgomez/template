@@ -23,7 +23,7 @@
                 <constraints nullable="false" unique="true"/>
             </column>
             <column name="description" type="VARCHAR(500)"/>
-            <column name="value" type="VARCHAR(500)"/>
+            <column name="parameter_value" type="VARCHAR(500)"/>
             <column name="type" type="VARCHAR(20)">
                 <constraints nullable="false"/>
             </column>

@@ -75,4 +75,28 @@
 
     </changeSet>
 
+    <changeSet id="20250117-seed-local-admin-reports" author="template" labels="v1.0.0" context="local">
+
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="user2report"/>
+            <sqlCheck expectedResult="1">SELECT COUNT(*) FROM users WHERE id = 1</sqlCheck>
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM user2report WHERE user_id = 1</sqlCheck>
+        </preConditions>
+
+        <comment>Asigna todos los informes actuales al usuario admin (desarrollo local)</comment>
+
+        <!-- Assign all existing reports to the admin user (id = 1) -->
+        <sql>
+            INSERT INTO user2report (user_id, report_id)
+            SELECT 1, id FROM report;
+        </sql>
+
+        <rollback>
+            <delete tableName="user2report">
+                <where>user_id = 1</where>
+            </delete>
+        </rollback>
+
+    </changeSet>
+
 </databaseChangeLog>

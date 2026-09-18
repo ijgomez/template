@@ -21,7 +21,7 @@ public class Parameter extends BaseEntity {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "value")
+    @Column(name = "parameter_value")
     private String value;
 
     @Enumerated(EnumType.STRING)
