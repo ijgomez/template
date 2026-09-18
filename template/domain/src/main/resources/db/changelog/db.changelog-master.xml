@@ -7,6 +7,9 @@
 
     <!-- v1.0.0 - Schema migrations (ordered by FK dependencies) -->
 
+    <!-- H2 compatibility stubs (only applied on H2 / local profile) -->
+    <include file="migrations/v1.0.0/20250100-h2-pg-advisory-lock-stubs.xml" relativeToChangelogFile="true"/>
+
     <!-- Independent tables (no FK dependencies) -->
     <include file="migrations/v1.0.0/20250101-create-action-table.xml" relativeToChangelogFile="true"/>
     <include file="migrations/v1.0.0/20250102-create-profile-table.xml" relativeToChangelogFile="true"/>

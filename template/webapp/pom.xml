@@ -117,6 +117,18 @@
             <artifactId>spring-boot-starter-liquibase</artifactId>
         </dependency>
 
+        <!--
+            H2 (base de datos embebida en memoria). Se usa exclusivamente en el
+            perfil 'local' (ver application-local.yml, modo de compatibilidad
+            PostgreSQL). El resto de perfiles (dist, test) usan PostgreSQL /
+            Testcontainers. La versión la gestiona el BOM de Spring Boot.
+        -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
         <!-- Servlet API (provided by container for WAR) -->
         <dependency>
             <groupId>jakarta.servlet</groupId>

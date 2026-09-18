@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!--
+        Stubs de compatibilidad para H2 (perfil local con BD embebida en memoria).
+
+        El bloqueo entre instancias del clúster (ClusterBlockRepository) usa las
+        funciones pg_advisory_lock / pg_advisory_unlock de PostgreSQL. H2 no las
+        implementa, por lo que en local se registran como funciones ALIAS que no
+        hacen nada (no-op): en una única instancia embebida la exclusión ya la
+        garantiza el ReentrantLock intra-instancia de ClusterLockService, por lo
+        que el lock entre instancias es innecesario.
+
+        Solo se ejecuta en H2 (dbms="h2"). En PostgreSQL las funciones nativas se
+        usan tal cual y este changeSet no aplica.
+    -->
+    <changeSet id="20250100-h2-pg-advisory-lock-stubs" author="template" labels="v1.0.0" dbms="h2">
+
+        <comment>Funciones stub pg_advisory_lock/pg_advisory_unlock para H2 (no-op)</comment>
+
+        <sql splitStatements="false">
+            CREATE ALIAS IF NOT EXISTS pg_advisory_lock AS $$
+            void pgAdvisoryLock(int key) { /* no-op: exclusion garantizada por ReentrantLock en instancia unica */ }
+            $$;
+        </sql>
+        <sql splitStatements="false">
+            CREATE ALIAS IF NOT EXISTS pg_advisory_unlock AS $$
+            boolean pgAdvisoryUnlock(int key) { return true; }
+            $$;
+        </sql>
+
+        <rollback>
+            <sql>DROP ALIAS IF EXISTS pg_advisory_lock</sql>
+            <sql>DROP ALIAS IF EXISTS pg_advisory_unlock</sql>
+        </rollback>
+
+    </changeSet>
+
+</databaseChangeLog>

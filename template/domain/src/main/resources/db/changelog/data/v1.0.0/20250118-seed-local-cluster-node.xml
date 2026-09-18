@@ -87,7 +87,11 @@
 
         <comment>Ajusta la secuencia cluster_node_seq para evitar conflictos con los datos seed (ids 1-4)</comment>
 
-        <sql>SELECT setval('cluster_node_seq', (SELECT COALESCE(MAX(id), 0) + 1 FROM cluster_node), false)</sql>
+        <!-- PostgreSQL: setval calcula el siguiente valor a partir del MAX(id) actual -->
+        <sql dbms="postgresql">SELECT setval('cluster_node_seq', (SELECT COALESCE(MAX(id), 0) + 1 FROM cluster_node), false)</sql>
+        <!-- H2 (perfil local): setval no existe; se reinicia la secuencia al valor fijo
+             siguiente a los ids seed (1-4) -->
+        <sql dbms="h2">ALTER SEQUENCE cluster_node_seq RESTART WITH 5</sql>
 
         <rollback/>
 

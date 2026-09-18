@@ -2,21 +2,25 @@
 # Local Development Profile
 # =============================================================================
 # This profile is intended for local developer machines.
-# Uses a local PostgreSQL instance with default credentials.
+# Uses an in-memory H2 database (PostgreSQL compatibility mode) so no external
+# database is required. Schema and seed data are created at startup by Liquibase.
 # =============================================================================
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/template
-    username: template
-    password: template
-    driver-class-name: org.postgresql.Driver
+    # H2 en memoria con modo de compatibilidad PostgreSQL. DB_CLOSE_DELAY=-1
+    # mantiene la BD viva mientras la JVM esté activa; NON_KEYWORDS=USER evita
+    # conflictos con la tabla 'users'.
+    url: jdbc:h2:mem:template;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;NON_KEYWORDS=USER
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
 
   liquibase:
     contexts: local
 
   jpa:
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         format_sql: true
@@ -56,5 +60,5 @@ logging:
     org.myorganization.template: DEBUG
     org.springframework.security: DEBUG
     org.springframework.web: DEBUG
-    org.hibernate.SQL: DEBUG
+    org.hibernate.SQL: INFO
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
