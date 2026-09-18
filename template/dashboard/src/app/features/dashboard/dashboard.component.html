@@ -18,14 +18,40 @@
     </div>
   </div>
   <div class="col-sm-6 col-xl-3">
-    <div class="card tp-stat-card tp-stat-card-success h-100" data-testid="stat-cluster-nodes">
+    <div class="card tp-stat-card h-100"
+         [class.tp-stat-card-success]="!nodesLoading() && !nodesError() && allNodesOperational()"
+         [class.tp-stat-card-warning]="!nodesLoading() && !nodesError() && !allNodesOperational()"
+         data-testid="stat-cluster-nodes">
       <div class="card-body">
         <div class="stat-label">{{ 'dashboard.stats.clusterNodes' | translate }}</div>
-        <div class="stat-value">3 <small class="text-muted fs-6">/ 3</small></div>
-        <small class="text-success">
-          <i class="bi bi-check-circle" aria-hidden="true"></i>
-          {{ 'dashboard.stats.allOperational' | translate }}
-        </small>
+
+        @if (nodesLoading()) {
+          <div class="stat-value" aria-hidden="true">
+            <span class="spinner-border spinner-border-sm text-muted" role="status"></span>
+          </div>
+          <small class="text-muted" role="status">{{ 'common.loading' | translate }}</small>
+        } @else if (nodesError()) {
+          <div class="stat-value text-muted">—</div>
+          <small class="text-danger">
+            <i class="bi bi-exclamation-octagon" aria-hidden="true"></i>
+            {{ 'dashboard.stats.nodesLoadError' | translate }}
+          </small>
+        } @else {
+          <div class="stat-value" data-testid="stat-cluster-nodes-value">
+            {{ activeNodes() }} <small class="text-muted fs-6">/ {{ totalNodes() }}</small>
+          </div>
+          @if (allNodesOperational()) {
+            <small class="text-success">
+              <i class="bi bi-check-circle" aria-hidden="true"></i>
+              {{ 'dashboard.stats.allOperational' | translate }}
+            </small>
+          } @else {
+            <small class="text-warning">
+              <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
+              {{ 'dashboard.stats.nodesDegraded' | translate: { count: inactiveNodes() } }}
+            </small>
+          }
+        }
       </div>
     </div>
   </div>

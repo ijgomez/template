@@ -453,6 +453,8 @@
       "interfaces": "Interfaces",
       "reportsGenerated": "Informes generados",
       "allOperational": "Todos operativos",
+      "nodesDegraded": "{{count}} inactivo(s)",
+      "nodesLoadError": "Error al cargar nodos",
       "withError": "{{count}} con error",
       "thisMonth": "Este mes",
       "vsLastMonth": "{{percent}}% vs mes anterior"

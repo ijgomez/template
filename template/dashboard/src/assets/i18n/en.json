@@ -453,6 +453,8 @@
       "interfaces": "Interfaces",
       "reportsGenerated": "Reports generated",
       "allOperational": "All operational",
+      "nodesDegraded": "{{count}} inactive",
+      "nodesLoadError": "Failed to load nodes",
       "withError": "{{count}} with error",
       "thisMonth": "This month",
       "vsLastMonth": "{{percent}}% vs last month"
