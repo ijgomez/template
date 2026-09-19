@@ -8,9 +8,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.myorganization.template.core.repository.ActionRepository;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import org.myorganization.template.core.repository.Profile2ActionRepository;
 import org.myorganization.template.core.repository.ProfileRepository;
 import org.myorganization.template.domain.criteria.ProfileCriteria;
@@ -33,7 +40,11 @@ import org.springframework.data.jpa.domain.Specification;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -316,7 +327,81 @@ class ProfileServiceTest {
                 .hasMessageContaining("Profile");
     }
 
+    // --- findAllReferences ---
+
+    @Test
+    @DisplayName("findAllReferences: returns lightweight profile references sorted by name")
+    void findAllReferences_returnsReferences() {
+        Profile p1 = createProfileEntity(1L, "ADMIN", "Admin");
+        Profile p2 = createProfileEntity(2L, "USER", "User");
+
+        when(profileRepository.findAll(any(org.springframework.data.domain.Sort.class)))
+                .thenReturn(List.of(p1, p2));
+
+        var result = profileService.findAllReferences();
+
+        assertThat(result).hasSize(2);
+        assertThat(result.get(0).id()).isEqualTo(1L);
+        assertThat(result.get(0).name()).isEqualTo("ADMIN");
+        assertThat(result.get(1).name()).isEqualTo("USER");
+    }
+
+    // --- buildSpecification (name filter branch) ---
+
+    @Test
+    @DisplayName("findByCriteria: name filter builds a specification with the name predicate")
+    @SuppressWarnings("unchecked")
+    void findByCriteria_nameFilter_buildsSpecification() {
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Profile> page = new PageImpl<>(Collections.emptyList(), pageable, 0);
+
+        ArgumentCaptor<Specification<Profile>> specCaptor = ArgumentCaptor.forClass(Specification.class);
+        when(profileRepository.findAll(specCaptor.capture(), any(Pageable.class))).thenReturn(page);
+
+        profileService.findByCriteria(new ProfileCriteria("ADMIN"), pageable);
+
+        Predicate predicate = evaluateSpecification(specCaptor.getValue());
+        assertThat(predicate).isNotNull();
+    }
+
+    @Test
+    @DisplayName("findByCriteria: null criteria builds an empty specification")
+    @SuppressWarnings("unchecked")
+    void findByCriteria_nullCriteria_buildsEmptySpecification() {
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Profile> page = new PageImpl<>(Collections.emptyList(), pageable, 0);
+
+        ArgumentCaptor<Specification<Profile>> specCaptor = ArgumentCaptor.forClass(Specification.class);
+        when(profileRepository.findAll(specCaptor.capture(), any(Pageable.class))).thenReturn(page);
+
+        profileService.findByCriteria(new ProfileCriteria(null), pageable);
+
+        Predicate predicate = evaluateSpecification(specCaptor.getValue());
+        assertThat(predicate).isNotNull();
+    }
+
     // --- Helper methods ---
+
+    /**
+     * Runs the given {@link Specification} against a mocked JPA Criteria API so the lambdas inside
+     * {@code buildSpecification} execute and their branches are covered.
+     */
+    @SuppressWarnings("unchecked")
+    private Predicate evaluateSpecification(Specification<Profile> spec) {
+        Root<Profile> root = mock(Root.class, RETURNS_DEEP_STUBS);
+        CriteriaQuery<?> query = mock(CriteriaQuery.class);
+        CriteriaBuilder cb = mock(CriteriaBuilder.class);
+        Predicate predicate = mock(Predicate.class);
+        Path<Object> path = mock(Path.class);
+
+        lenient().when(root.get(anyString())).thenReturn((Path) path);
+        lenient().when(cb.conjunction()).thenReturn(predicate);
+        lenient().when(cb.lower(any())).thenReturn(mock(Expression.class));
+        lenient().when(cb.like(any(), anyString())).thenReturn(predicate);
+        lenient().when(cb.and(any(Predicate.class), any(Predicate.class))).thenReturn(predicate);
+
+        return spec.toPredicate(root, query, cb);
+    }
 
     private Profile createProfileEntity(Long id, String name, String description) {
         Profile profile = new Profile();

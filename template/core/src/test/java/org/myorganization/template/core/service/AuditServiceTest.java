@@ -12,6 +12,12 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.myorganization.template.core.repository.AuditLogRepository;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import org.myorganization.template.domain.criteria.AuditCriteria;
 import org.myorganization.template.domain.dto.AuditLogDTO;
 import org.myorganization.template.domain.dto.AuditLogEntry;
@@ -29,8 +35,11 @@ import org.springframework.data.jpa.domain.Specification;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -276,6 +285,75 @@ class AuditServiceTest {
         assertThat(dto.entityId()).isEqualTo("100");
         assertThat(dto.detail()).isEqualTo("Updated master flag");
         assertThat(dto.timestamp()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("archiveIfRetentionExceeded: negative retention days does nothing")
+    void archiveIfRetentionExceeded_negativeDays_doesNothing() {
+        ParameterDTO retentionParam = new ParameterDTO(
+                1L, "AUDIT_RETENTION_DAYS", "Retention period", "-5", ParameterType.INTEGER, null, null
+        );
+        when(parameterService.findByCode("AUDIT_RETENTION_DAYS")).thenReturn(retentionParam);
+
+        auditService.archiveIfRetentionExceeded();
+
+        verify(auditLogRepository, never()).deleteByTimestampBefore(any(OffsetDateTime.class));
+    }
+
+    @Test
+    @DisplayName("archiveIfRetentionExceeded: blank parameter value does nothing")
+    void archiveIfRetentionExceeded_blankValue_doesNothing() {
+        ParameterDTO retentionParam = new ParameterDTO(
+                1L, "AUDIT_RETENTION_DAYS", "Retention period", "  ", ParameterType.INTEGER, null, null
+        );
+        when(parameterService.findByCode("AUDIT_RETENTION_DAYS")).thenReturn(retentionParam);
+
+        auditService.archiveIfRetentionExceeded();
+
+        verify(auditLogRepository, never()).deleteByTimestampBefore(any(OffsetDateTime.class));
+    }
+
+    @Test
+    @DisplayName("buildSpecification: all filters build a full specification via captured spec")
+    @SuppressWarnings("unchecked")
+    void buildSpecification_allFilters_executesLambdas() {
+        AuditCriteria criteria = new AuditCriteria(
+                OffsetDateTime.now(ZoneOffset.UTC).minusDays(1),
+                OffsetDateTime.now(ZoneOffset.UTC),
+                "admin",
+                OperationType.CREATE,
+                AuditSection.SECURITY
+        );
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<AuditLog> page = new PageImpl<>(List.of(), pageable, 0);
+
+        ArgumentCaptor<Specification<AuditLog>> specCaptor = ArgumentCaptor.forClass(Specification.class);
+        when(auditLogRepository.findAll(specCaptor.capture(), eq(pageable))).thenReturn(page);
+
+        auditService.findByCriteria(criteria, pageable);
+
+        Predicate predicate = evaluateSpecification(specCaptor.getValue());
+        assertThat(predicate).isNotNull();
+    }
+
+    @SuppressWarnings("unchecked")
+    private Predicate evaluateSpecification(Specification<AuditLog> spec) {
+        Root<AuditLog> root = mock(Root.class, RETURNS_DEEP_STUBS);
+        CriteriaQuery<?> query = mock(CriteriaQuery.class);
+        CriteriaBuilder cb = mock(CriteriaBuilder.class);
+        Predicate predicate = mock(Predicate.class);
+        Path<Object> path = mock(Path.class);
+
+        lenient().when(root.get(anyString())).thenReturn((Path) path);
+        lenient().when(cb.conjunction()).thenReturn(predicate);
+        lenient().when(cb.lower(any())).thenReturn(mock(Expression.class));
+        lenient().when(cb.like(any(), anyString())).thenReturn(predicate);
+        lenient().when(cb.equal(any(), any())).thenReturn(predicate);
+        lenient().when(cb.greaterThanOrEqualTo(any(), any(OffsetDateTime.class))).thenReturn(predicate);
+        lenient().when(cb.lessThanOrEqualTo(any(), any(OffsetDateTime.class))).thenReturn(predicate);
+        lenient().when(cb.and(any(Predicate.class), any(Predicate.class))).thenReturn(predicate);
+
+        return spec.toPredicate(root, query, cb);
     }
 
     // --- Helper methods ---

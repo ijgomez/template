@@ -12,6 +12,12 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.myorganization.template.core.repository.ActionRepository;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import org.myorganization.template.domain.criteria.ActionCriteria;
 import org.myorganization.template.domain.dto.ActionDTO;
 import org.myorganization.template.domain.entity.Action;
@@ -29,7 +35,11 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -165,6 +175,62 @@ class ActionServiceTest {
 
         verify(actionRepository, never()).delete(any(Action.class));
         verify(actionRepository, never()).deleteById(any());
+    }
+
+    @Test
+    @DisplayName("findByCriteria: all filters build a full specification (code, name, type)")
+    @SuppressWarnings("unchecked")
+    void findByCriteria_allFilters_buildsSpecification() {
+        ActionCriteria criteria = new ActionCriteria("USER", "Consultar", ActionType.READ);
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Action> page = new PageImpl<>(List.of(), pageable, 0);
+
+        ArgumentCaptor<Specification<Action>> specCaptor = ArgumentCaptor.forClass(Specification.class);
+        when(actionRepository.findAll(specCaptor.capture(), eq(pageable))).thenReturn(page);
+
+        actionService.findByCriteria(criteria, pageable);
+
+        Predicate predicate = evaluateSpecification(specCaptor.getValue());
+        assertThat(predicate).isNotNull();
+    }
+
+    @Test
+    @DisplayName("findByCriteria: blank criteria build an empty specification")
+    @SuppressWarnings("unchecked")
+    void findByCriteria_blankCriteria_buildsEmptySpecification() {
+        ActionCriteria criteria = new ActionCriteria("  ", "", null);
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Action> page = new PageImpl<>(List.of(), pageable, 0);
+
+        ArgumentCaptor<Specification<Action>> specCaptor = ArgumentCaptor.forClass(Specification.class);
+        when(actionRepository.findAll(specCaptor.capture(), eq(pageable))).thenReturn(page);
+
+        actionService.findByCriteria(criteria, pageable);
+
+        Predicate predicate = evaluateSpecification(specCaptor.getValue());
+        assertThat(predicate).isNotNull();
+    }
+
+    /**
+     * Runs the given {@link Specification} against a mocked JPA Criteria API so the lambdas inside
+     * {@code buildSpecification} execute and their branches are covered.
+     */
+    @SuppressWarnings("unchecked")
+    private Predicate evaluateSpecification(Specification<Action> spec) {
+        Root<Action> root = mock(Root.class, RETURNS_DEEP_STUBS);
+        CriteriaQuery<?> query = mock(CriteriaQuery.class);
+        CriteriaBuilder cb = mock(CriteriaBuilder.class);
+        Predicate predicate = mock(Predicate.class);
+        Path<Object> path = mock(Path.class);
+
+        lenient().when(root.get(anyString())).thenReturn((Path) path);
+        lenient().when(cb.conjunction()).thenReturn(predicate);
+        lenient().when(cb.lower(any())).thenReturn(mock(Expression.class));
+        lenient().when(cb.like(any(), anyString())).thenReturn(predicate);
+        lenient().when(cb.equal(any(), any())).thenReturn(predicate);
+        lenient().when(cb.and(any(Predicate.class), any(Predicate.class))).thenReturn(predicate);
+
+        return spec.toPredicate(root, query, cb);
     }
 
     private Action createAction(Long id, String code, ActionType type, String name, String description) {

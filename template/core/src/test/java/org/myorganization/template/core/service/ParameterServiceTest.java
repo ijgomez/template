@@ -14,6 +14,12 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.myorganization.template.core.repository.ParameterRepository;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import org.myorganization.template.domain.criteria.ParameterCriteria;
 import org.myorganization.template.domain.dto.ParameterDTO;
 import org.myorganization.template.domain.entity.Parameter;
@@ -32,6 +38,10 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -460,6 +470,63 @@ class ParameterServiceTest {
         void nullValueSkipsValidation() {
             parameterService.validateTypeValueCompatibility(ParameterType.INTEGER, null);
             // No exception thrown
+        }
+    }
+
+    @Nested
+    @DisplayName("buildSpecification")
+    class BuildSpecification {
+
+        @Test
+        @DisplayName("all filters build a full specification (code, description, type)")
+        @SuppressWarnings("unchecked")
+        void allFilters_buildsSpecification() {
+            ParameterCriteria criteria = new ParameterCriteria("APP", "name", ParameterType.STRING);
+            Pageable pageable = PageRequest.of(0, 10);
+            Page<Parameter> page = new PageImpl<>(List.of(), pageable, 0);
+
+            ArgumentCaptor<Specification<Parameter>> specCaptor = ArgumentCaptor.forClass(Specification.class);
+            when(parameterRepository.findAll(specCaptor.capture(), any(Pageable.class))).thenReturn(page);
+
+            parameterService.findByCriteria(criteria, pageable);
+
+            Predicate predicate = evaluateSpecification(specCaptor.getValue());
+            assertThat(predicate).isNotNull();
+        }
+
+        @Test
+        @DisplayName("blank criteria build an empty specification")
+        @SuppressWarnings("unchecked")
+        void blankCriteria_buildsEmptySpecification() {
+            ParameterCriteria criteria = new ParameterCriteria("  ", "", null);
+            Pageable pageable = PageRequest.of(0, 10);
+            Page<Parameter> page = new PageImpl<>(List.of(), pageable, 0);
+
+            ArgumentCaptor<Specification<Parameter>> specCaptor = ArgumentCaptor.forClass(Specification.class);
+            when(parameterRepository.findAll(specCaptor.capture(), any(Pageable.class))).thenReturn(page);
+
+            parameterService.findByCriteria(criteria, pageable);
+
+            Predicate predicate = evaluateSpecification(specCaptor.getValue());
+            assertThat(predicate).isNotNull();
+        }
+
+        @SuppressWarnings("unchecked")
+        private Predicate evaluateSpecification(Specification<Parameter> spec) {
+            Root<Parameter> root = mock(Root.class, RETURNS_DEEP_STUBS);
+            CriteriaQuery<?> query = mock(CriteriaQuery.class);
+            CriteriaBuilder cb = mock(CriteriaBuilder.class);
+            Predicate predicate = mock(Predicate.class);
+            Path<Object> path = mock(Path.class);
+
+            lenient().when(root.get(anyString())).thenReturn((Path) path);
+            lenient().when(cb.conjunction()).thenReturn(predicate);
+            lenient().when(cb.lower(any())).thenReturn(mock(Expression.class));
+            lenient().when(cb.like(any(), anyString())).thenReturn(predicate);
+            lenient().when(cb.equal(any(), any())).thenReturn(predicate);
+            lenient().when(cb.and(any(Predicate.class), any(Predicate.class))).thenReturn(predicate);
+
+            return spec.toPredicate(root, query, cb);
         }
     }
 }

@@ -301,6 +301,103 @@ class ReportServiceTest {
                 .hasMessageContaining("10");
     }
 
+    @Test
+    @DisplayName("findAll: returns all reports as DTOs")
+    void findAll_returnsAllReports() {
+        Report report1 = createReport(10L, "Sales", "Monthly");
+        Report report2 = createReport(20L, "HR", "Employees");
+
+        when(reportRepository.findAll()).thenReturn(List.of(report1, report2));
+
+        List<ReportDTO> result = reportService.findAll();
+
+        assertThat(result).hasSize(2);
+        assertThat(result.get(0).name()).isEqualTo("Sales");
+        assertThat(result.get(1).name()).isEqualTo("HR");
+    }
+
+    @Test
+    @DisplayName("findAll(name, pageable): with name filter uses name-containing query")
+    void findAll_withNameFilter_usesFilteredQuery() {
+        Report report = createReport(10L, "Sales", "Monthly");
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Report> page = new org.springframework.data.domain.PageImpl<>(List.of(report), pageable, 1);
+
+        when(reportRepository.findByNameContainingIgnoreCase("sales", pageable)).thenReturn(page);
+
+        Page<ReportDTO> result = reportService.findAll("  sales  ", pageable);
+
+        assertThat(result.getContent()).hasSize(1);
+        assertThat(result.getContent().get(0).name()).isEqualTo("Sales");
+    }
+
+    @Test
+    @DisplayName("findAll(name, pageable): with blank name uses unfiltered query")
+    void findAll_withBlankName_usesUnfilteredQuery() {
+        Report report = createReport(10L, "Sales", "Monthly");
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Report> page = new org.springframework.data.domain.PageImpl<>(List.of(report), pageable, 1);
+
+        when(reportRepository.findAll(pageable)).thenReturn(page);
+
+        Page<ReportDTO> result = reportService.findAll("   ", pageable);
+
+        assertThat(result.getContent()).hasSize(1);
+    }
+
+    @Test
+    @DisplayName("findAll(name, pageable): with null name uses unfiltered query")
+    void findAll_withNullName_usesUnfilteredQuery() {
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Report> page = new org.springframework.data.domain.PageImpl<>(Collections.emptyList(), pageable, 0);
+
+        when(reportRepository.findAll(pageable)).thenReturn(page);
+
+        Page<ReportDTO> result = reportService.findAll(null, pageable);
+
+        assertThat(result.getContent()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("export CSV: values containing comma and quotes are escaped")
+    void export_csv_escapesSpecialCharacters() {
+        Long reportId = 10L;
+        Long userId = 1L;
+        Report report = createReport(reportId, "Sales, Q1 \"final\"", "Line1\nLine2");
+        User user = new User();
+        user.setId(userId);
+        User2Report ur = new User2Report(user, report);
+
+        when(reportRepository.findById(reportId)).thenReturn(Optional.of(report));
+        when(user2ReportRepository.findByIdUserId(userId)).thenReturn(List.of(ur));
+        when(reportRepository.existsById(reportId)).thenReturn(true);
+
+        byte[] result = reportService.export(reportId, userId, new HashMap<>(), ExportFormat.CSV);
+
+        String csv = new String(result);
+        // The name has a comma and quotes, so it must be wrapped in quotes with doubled quotes.
+        assertThat(csv).contains("\"Sales, Q1 \"\"final\"\"\"");
+    }
+
+    @Test
+    @DisplayName("export TXT: null description renders N/A")
+    void export_txt_nullDescription_rendersNA() {
+        Long reportId = 10L;
+        Long userId = 1L;
+        Report report = createReport(reportId, "Sales", null);
+        User user = new User();
+        user.setId(userId);
+        User2Report ur = new User2Report(user, report);
+
+        when(reportRepository.findById(reportId)).thenReturn(Optional.of(report));
+        when(user2ReportRepository.findByIdUserId(userId)).thenReturn(List.of(ur));
+        when(reportRepository.existsById(reportId)).thenReturn(true);
+
+        byte[] result = reportService.export(reportId, userId, new HashMap<>(), ExportFormat.TXT);
+
+        assertThat(new String(result)).contains("Description: N/A");
+    }
+
     private Report createReport(Long id, String name, String description) {
         Report report = new Report();
         report.setId(id);
