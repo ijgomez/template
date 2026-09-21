@@ -218,7 +218,7 @@
                             <outputDirectory>${project.build.directory}/classes/static</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>${project.basedir}/../dashboard/dist/dashboard/browser</directory>
+                                    <directory>${project.basedir}/../dashboard/target/dist/dashboard/browser</directory>
                                 </resource>
                             </resources>
                         </configuration>

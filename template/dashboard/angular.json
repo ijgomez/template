@@ -20,6 +20,7 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
+            "outputPath": "target/dist/dashboard",
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
@@ -103,6 +104,7 @@
           "options": {
             "buildTarget": "dashboard:build:local",
             "tsConfig": "tsconfig.spec.json",
+            "runnerConfig": "vitest.config.ts",
             "include": ["src/**/*.spec.ts"]
           }
         }
