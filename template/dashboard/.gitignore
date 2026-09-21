@@ -38,7 +38,5 @@ yarn-error.log
 testem.log
 /typings
 __screenshots__/
+/node
 
-# System files
-.DS_Store
-Thumbs.db
