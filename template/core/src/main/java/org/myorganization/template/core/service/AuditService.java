@@ -29,7 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional
-public class AuditService {
+public class AuditService extends AbstractCriteriaService<AuditLog, AuditLogDTO, AuditCriteria> {
 
     private static final Logger log = LoggerFactory.getLogger(AuditService.class);
 
@@ -37,36 +37,9 @@ public class AuditService {
     private final ParameterService parameterService;
 
     public AuditService(AuditLogRepository auditLogRepository, ParameterService parameterService) {
+        super(auditLogRepository);
         this.auditLogRepository = auditLogRepository;
         this.parameterService = parameterService;
-    }
-
-    /**
-     * Finds audit log entries matching the given criteria with pagination.
-     * <p>
-     * Supports filtering by date range (fromDate/toDate), username,
-     * operation type, and section.
-     *
-     * @param criteria filter criteria
-     * @param pageable pagination information
-     * @return a page of matching audit log entries
-     */
-    @Transactional(readOnly = true)
-    public Page<AuditLogDTO> findByCriteria(AuditCriteria criteria, Pageable pageable) {
-        Specification<AuditLog> spec = buildSpecification(criteria);
-        return auditLogRepository.findAll(spec, pageable).map(this::toDTO);
-    }
-
-    /**
-     * Counts audit log entries matching the given criteria.
-     *
-     * @param criteria filter criteria
-     * @return total count of matching entries
-     */
-    @Transactional(readOnly = true)
-    public long countByCriteria(AuditCriteria criteria) {
-        Specification<AuditLog> spec = buildSpecification(criteria);
-        return auditLogRepository.count(spec);
     }
 
     /**
@@ -122,7 +95,8 @@ public class AuditService {
         }
     }
 
-    private Specification<AuditLog> buildSpecification(AuditCriteria criteria) {
+    @Override
+    protected Specification<AuditLog> buildSpecification(AuditCriteria criteria) {
         Specification<AuditLog> spec = (root, query, cb) -> cb.conjunction();
 
         if (criteria.fromDate() != null) {
@@ -153,7 +127,8 @@ public class AuditService {
         return spec;
     }
 
-    private AuditLogDTO toDTO(AuditLog entity) {
+    @Override
+    protected AuditLogDTO toDTO(AuditLog entity) {
         return new AuditLogDTO(
                 entity.getId(),
                 entity.getTimestamp(),
