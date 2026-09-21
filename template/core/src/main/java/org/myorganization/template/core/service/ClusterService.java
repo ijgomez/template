@@ -46,6 +46,7 @@ public class ClusterService implements HeartbeatClusterService {
 
     private final ClusterNodeRepository clusterNodeRepository;
     private final ClusterBlockRepository clusterBlockRepository;
+    private final ClusterBlockService clusterBlockService;
     private final AuditService auditService;
 
     public ClusterService(ClusterNodeRepository clusterNodeRepository,
@@ -53,6 +54,7 @@ public class ClusterService implements HeartbeatClusterService {
                           AuditService auditService) {
         this.clusterNodeRepository = clusterNodeRepository;
         this.clusterBlockRepository = clusterBlockRepository;
+        this.clusterBlockService = new ClusterBlockService(clusterBlockRepository);
         this.auditService = auditService;
     }
 
@@ -259,8 +261,7 @@ public class ClusterService implements HeartbeatClusterService {
      */
     @Transactional(readOnly = true)
     public Page<ClusterBlockDTO> findBlocksByCriteria(ClusterBlockCriteria criteria, Pageable pageable) {
-        Specification<ClusterBlock> spec = buildBlockSpecification(criteria);
-        return clusterBlockRepository.findAll(spec, pageable).map(this::toBlockDTO);
+        return clusterBlockService.findByCriteria(criteria, pageable);
     }
 
     /**
@@ -271,8 +272,7 @@ public class ClusterService implements HeartbeatClusterService {
      */
     @Transactional(readOnly = true)
     public long countBlocksByCriteria(ClusterBlockCriteria criteria) {
-        Specification<ClusterBlock> spec = buildBlockSpecification(criteria);
-        return clusterBlockRepository.count(spec);
+        return clusterBlockService.countByCriteria(criteria);
     }
 
     /**
@@ -284,9 +284,7 @@ public class ClusterService implements HeartbeatClusterService {
      */
     @Transactional(readOnly = true)
     public ClusterBlockDTO findBlockById(Long id) {
-        ClusterBlock block = clusterBlockRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("ClusterBlock", id));
-        return toBlockDTO(block);
+        return clusterBlockService.findById(id);
     }
 
     /**
@@ -323,17 +321,6 @@ public class ClusterService implements HeartbeatClusterService {
     // =====================================================================
     // Private helpers
     // =====================================================================
-
-    private Specification<ClusterBlock> buildBlockSpecification(ClusterBlockCriteria criteria) {
-        Specification<ClusterBlock> spec = (root, query, cb) -> cb.conjunction();
-
-        if (criteria.name() != null && !criteria.name().isBlank()) {
-            spec = spec.and((root, query, cb) ->
-                    cb.like(cb.lower(root.get("name")), "%" + criteria.name().toLowerCase() + "%"));
-        }
-
-        return spec;
-    }
 
     private ClusterNodeDTO toNodeDTO(ClusterNode node) {
         return new ClusterNodeDTO(
