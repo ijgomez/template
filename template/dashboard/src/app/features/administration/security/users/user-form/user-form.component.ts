@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { LocalDatePipe } from '../../../../../shared/pipes/local-date.pipe';
-import { TpSelectedReportsComponent } from '../../../../../shared/components/selected-reports';
+import { TpSelectedReportsComponent } from '../../../../reports/selected-reports';
 import { UserDTO, ProfileRef } from '../../../../../core/models/user.model';
 
 type FormMode = 'create' | 'edit' | 'view';

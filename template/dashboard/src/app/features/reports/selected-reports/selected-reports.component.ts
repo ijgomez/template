@@ -12,10 +12,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 
-import { TpDataListComponent, TpListItemDirective } from '../data-list';
+import { TpDataListComponent, TpListItemDirective } from '../../../shared/components/data-list';
 
 import { Report } from '../../../core/models/report.model';
-import { Page } from '../../../core/models/page.model';
 import { ReportService } from '../../../core/services/report.service';
 
 /**
