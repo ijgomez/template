@@ -12,10 +12,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 
-import { TpDataListComponent, TpListItemDirective } from '../data-list';
+import { TpDataListComponent, TpListItemDirective } from '../../../../../shared/components/data-list';
 
-import { Action } from '../../../features/administration/security/profiles/models/profile.model';
-import { ProfileService } from '../../../core/services/profile.service';
+import { Action } from '../../profiles/models/profile.model';
+import { ProfileService } from '../../../../../core/services/profile.service';
 
 /**
  * Reusable ControlValueAccessor component that manages a list of selected actions.

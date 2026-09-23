@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { LocalDatePipe } from '../../../../../shared/pipes/local-date.pipe';
-import { TpSelectedActionsComponent } from '../../../../../shared/components/selected-actions';
+import { TpSelectedActionsComponent } from '../../actions/selected-actions';
 import { Profile } from '../models/profile.model';
 
 type FormMode = 'create' | 'edit' | 'view';

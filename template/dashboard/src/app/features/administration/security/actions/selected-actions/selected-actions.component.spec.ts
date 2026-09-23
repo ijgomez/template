@@ -3,9 +3,9 @@ import { provideTranslateService } from '@ngx-translate/core';
 import { of, throwError } from 'rxjs';
 
 import { TpSelectedActionsComponent } from './selected-actions.component';
-import { ProfileService } from '../../../core/services/profile.service';
-import { Action } from '../../../features/administration/security/profiles/models/profile.model';
-import { Page } from '../../../core/models/page.model';
+import { ProfileService } from '../../../../../core/services/profile.service';
+import { Action } from '../../profiles/models/profile.model';
+import { Page } from '../../../../../core/models/page.model';
 
 /** Builds an Action with sensible defaults. */
 function action(id: number, overrides: Partial<Action> = {}): Action {
