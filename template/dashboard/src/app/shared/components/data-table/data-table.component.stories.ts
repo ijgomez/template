@@ -28,12 +28,28 @@ const meta: Meta<TpDataTableComponent<DemoUser>> = {
   title: 'Shared/DataTable',
   component: TpDataTableComponent,
   tags: ['autodocs'],
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'Tabla de datos reutilizable con paginación, selección de filas, ordenación de ' +
+          'columnas, redimensionado y reordenación de columnas (drag & drop), estados de ' +
+          'carga/vacío y plantillas de celda personalizadas. Sigue el patrón `tp-table` del ' +
+          'sistema de diseño.',
+      },
+    },
+  },
   argTypes: {
-    loading: { control: 'boolean' },
-    selectable: { control: 'boolean' },
-    pageSize: { control: 'number' },
-    currentPage: { control: 'number' },
-    totalElements: { control: 'number' },
+    columns: { description: 'Definición de columnas.' },
+    data: { description: 'Filas de datos de la página actual.' },
+    loading: { control: 'boolean', description: 'Indica si los datos se están cargando.' },
+    totalElements: { control: 'number', description: 'Número total de elementos (para paginación).' },
+    currentPage: { control: 'number', description: 'Índice de la página actual (base 0).' },
+    pageSize: { control: 'number', description: 'Número de elementos por página.' },
+    selectable: { control: 'boolean', description: 'Indica si las filas son seleccionables.' },
+    selectedItem: { description: 'Elemento seleccionado actualmente (comparado por id).' },
+    ariaLabel: { control: 'text', description: 'Etiqueta de accesibilidad para la tabla.' },
+    testId: { control: 'text', description: 'Atributo data-testid para el elemento de la tabla.' },
   },
 };
 
