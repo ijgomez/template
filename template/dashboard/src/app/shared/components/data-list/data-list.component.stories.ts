@@ -90,7 +90,7 @@ export const Default: Story = {
   args: {
     data,
     loading: false,
-    totalElements: data.length,
+    totalElements: 3,
     currentPage: 0,
     pageSize: 5,
     title: 'Acciones asignadas',

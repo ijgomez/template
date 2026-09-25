@@ -67,7 +67,7 @@ export const Default: Story = {
     selectable: true,
     currentPage: 0,
     pageSize: 10,
-    totalElements: data.length,
+    totalElements: 3,
     ariaLabel: 'Users table',
     testId: 'users-table',
   },
@@ -101,6 +101,6 @@ export const Empty: Story = {
 export const WithSelection: Story = {
   args: {
     ...Default.args,
-    selectedItem: data[1],
+    selectedItem: { id: 2, name: 'Alan Turing', email: 'alan@example.com', role: 'User' },
   },
 };
