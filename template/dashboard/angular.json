@@ -104,7 +104,7 @@
           "options": {
             "buildTarget": "dashboard:build:local",
             "tsConfig": "tsconfig.spec.json",
-            "runnerConfig": "vitest.config.ts",
+            "runnerConfig": "vitest.config.mts",
             "include": ["src/**/*.spec.ts"]
           }
         }
