@@ -2,22 +2,22 @@ import { TestBed } from '@angular/core/testing';
 import { provideTranslateService } from '@ngx-translate/core';
 import { of, throwError } from 'rxjs';
 
-import { UsersComponent } from './users.component';
-import { UserService } from '../../../../core/services/user.service';
-import { AuthService } from '../../../../core/services/auth.service';
-import { NotificationService } from '../../../../core/services/notification.service';
-import { CsvExportService } from '../../../../core/services/csv-export.service';
-import { DateService } from '../../../../core/services/date.service';
-import { UserDTO } from '../../../../core/models/user.model';
-import { Page } from '../../../../core/models/page.model';
+import { UserListComponent } from './user-list.component';
+import { UserService } from '../../../../../core/services/user.service';
+import { AuthService } from '../../../../../core/services/auth.service';
+import { NotificationService } from '../../../../../core/services/notification.service';
+import { CsvExportService } from '../../../../../core/services/csv-export.service';
+import { DateService } from '../../../../../core/services/date.service';
+import { UserDTO } from '../../../../../core/models/user.model';
+import { Page } from '../../../../../core/models/page.model';
 
 /**
- * Unit tests for UsersComponent focused on component logic (state, CRUD flow,
+ * Unit tests for UserListComponent focused on component logic (state, CRUD flow,
  * filters, pagination, sorting, export) with all services stubbed. The template
  * is replaced by an empty one to avoid rendering the full view and child forms.
  */
-describe('UsersComponent', () => {
-  let component: UsersComponent;
+describe('UserListComponent', () => {
+  let component: UserListComponent;
 
   const user: UserDTO = {
     id: 1,
@@ -60,7 +60,7 @@ describe('UsersComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [UsersComponent],
+      imports: [UserListComponent],
       providers: [
         provideTranslateService({ lang: 'en', fallbackLang: 'en' }),
         { provide: UserService, useValue: userService },
@@ -70,10 +70,10 @@ describe('UsersComponent', () => {
         { provide: DateService, useValue: dateService },
       ],
     })
-      .overrideComponent(UsersComponent, { set: { template: '' } })
+      .overrideComponent(UserListComponent, { set: { template: '' } })
       .compileComponents();
 
-    const fixture = TestBed.createComponent(UsersComponent);
+    const fixture = TestBed.createComponent(UserListComponent);
     component = fixture.componentInstance;
   });
 

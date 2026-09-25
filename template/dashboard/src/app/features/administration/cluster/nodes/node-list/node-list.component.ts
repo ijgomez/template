@@ -3,14 +3,14 @@ import { DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
-import { ClusterService } from '../../../../core/services/cluster.service';
-import { AuthService } from '../../../../core/services/auth.service';
-import { NotificationService } from '../../../../core/services/notification.service';
-import { DateService } from '../../../../core/services/date.service';
-import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
-import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../shared/components/data-table';
-import { ClusterNode } from '../../../../core/models/cluster.model';
-import { NodeDetailComponent } from './node-detail/node-detail.component';
+import { ClusterService } from '../../../../../core/services/cluster.service';
+import { AuthService } from '../../../../../core/services/auth.service';
+import { NotificationService } from '../../../../../core/services/notification.service';
+import { DateService } from '../../../../../core/services/date.service';
+import { LocalDatePipe } from '../../../../../shared/pipes/local-date.pipe';
+import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../../shared/components/data-table';
+import { ClusterNode } from '../../../../../core/models/cluster.model';
+import { NodeDetailComponent } from '../node-detail/node-detail.component';
 
 type ViewMode = 'list' | 'detail';
 
@@ -22,13 +22,13 @@ type ViewMode = 'list' | 'detail';
  * No create/delete operations per Req 25.11.
  */
 @Component({
-  selector: 'app-cluster-nodes',
+  selector: 'app-cluster-node-list',
   standalone: true,
   imports: [FormsModule, DecimalPipe, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective, NodeDetailComponent],
-  templateUrl: './nodes.component.html',
+  templateUrl: './node-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NodesComponent implements OnInit {
+export class NodeListComponent implements OnInit {
   private readonly clusterService = inject(ClusterService);
   private readonly authService = inject(AuthService);
   private readonly notificationService = inject(NotificationService);

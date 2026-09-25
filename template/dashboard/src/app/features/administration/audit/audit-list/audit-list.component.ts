@@ -2,54 +2,42 @@ import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit } 
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
-import { ClusterService } from '../../../../core/services/cluster.service';
+import { AuditService } from '../../../../core/services/audit.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { DateService } from '../../../../core/services/date.service';
 import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
 import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../shared/components/data-table';
-import { ClusterBlock, ClusterBlockCriteria } from '../../../../core/models/cluster.model';
-import { BlockDetailComponent } from './block-detail/block-detail.component';
+import { AuditLog, AuditCriteria, OperationType, AuditSection } from '../../../../core/models/audit.model';
 
 /**
- * Cluster blocks component.
- * Displays a paginated, filterable table of cluster blocks (read-only per Req 25.12).
- * Delegates detail rendering to BlockDetailComponent (SRP).
+ * Audit log component.
+ * Displays a paginated, filterable table of audit log entries (read-only per Req 25.12).
+ * Supports detail view and CSV export.
  */
 @Component({
-  selector: 'app-cluster-blocks',
+  selector: 'app-audit-list',
   standalone: true,
-  imports: [FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective, BlockDetailComponent],
-  templateUrl: './blocks.component.html',
+  imports: [FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective],
+  templateUrl: './audit-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BlocksComponent implements OnInit {
-  private readonly clusterService = inject(ClusterService);
+export class AuditListComponent implements OnInit {
+  private readonly auditService = inject(AuditService);
   private readonly authService = inject(AuthService);
   private readonly notificationService = inject(NotificationService);
   private readonly translateService = inject(TranslateService);
   private readonly dateService = inject(DateService);
 
-  // Column definitions for tp-data-table
-  readonly columns: ColumnDef[] = [
-    { key: 'name', header: 'cluster.blocks.fields.name', sortable: true, resizable: true, reorderable: true },
-    { key: 'startDate', header: 'cluster.blocks.fields.startDate', sortable: true, resizable: true, reorderable: true },
-    { key: 'avgTime', header: 'cluster.blocks.fields.avgTime', sortable: true, resizable: true, reorderable: true },
-    { key: 'minTime', header: 'cluster.blocks.fields.minTime', sortable: true, resizable: true, reorderable: true },
-    { key: 'maxTime', header: 'cluster.blocks.fields.maxTime', sortable: true, resizable: true, reorderable: true },
-    { key: 'total', header: 'cluster.blocks.fields.total', sortable: true, resizable: true, reorderable: true },
-  ];
-
   // View state
   readonly viewMode = signal<'list' | 'detail'>('list');
-  readonly selectedBlock = signal<ClusterBlock | null>(null);
+  readonly selectedAuditLog = signal<AuditLog | null>(null);
 
   // Pagination state
-  readonly blocks = signal<ClusterBlock[]>([]);
+  readonly auditLogs = signal<AuditLog[]>([]);
   readonly totalElements = signal(0);
   readonly currentPage = signal(0);
   readonly pageSize = signal(10);
-  readonly pageSizes = [5, 10, 20, 50];
   readonly totalPages = computed(() => Math.ceil(this.totalElements() / this.pageSize()));
   readonly isLoading = signal(false);
 
@@ -57,27 +45,49 @@ export class BlocksComponent implements OnInit {
   readonly sortParam = signal('');
 
   // Filter state
-  readonly filterName = signal('');
+  readonly filterDateFrom = signal('');
+  readonly filterDateTo = signal('');
+  readonly filterUsername = signal('');
+  readonly filterOperationType = signal('');
+  readonly filterSection = signal('');
 
   // Pagination display helpers
   readonly showingFrom = computed(() => this.totalElements() === 0 ? 0 : this.currentPage() * this.pageSize() + 1);
   readonly showingTo = computed(() => Math.min((this.currentPage() + 1) * this.pageSize(), this.totalElements()));
 
+  // Page size options
+  readonly pageSizes = [5, 10, 20, 50];
+
+  // Filter dropdown options
+  readonly operationTypes: OperationType[] = ['CREATE', 'UPDATE', 'DELETE', 'EXECUTE'];
+  readonly auditSections: AuditSection[] = ['SECURITY', 'REPORTS', 'INTERFACES', 'CLUSTER', 'SYSTEM'];
+
+  // Column definitions for tp-data-table
+  readonly columns: ColumnDef[] = [
+    { key: 'timestamp', header: 'audit.fields.timestamp', sortable: true, resizable: true, reorderable: true },
+    { key: 'username', header: 'audit.fields.username', sortable: true, resizable: true, reorderable: true },
+    { key: 'operationType', header: 'audit.fields.operationType', sortable: true, resizable: true, reorderable: true },
+    { key: 'section', header: 'audit.fields.section', sortable: true, resizable: true, reorderable: true },
+    { key: 'entityName', header: 'audit.fields.entityName', sortable: true, resizable: true, reorderable: true },
+    { key: 'entityId', header: 'audit.fields.entityId' },
+    { key: 'detail', header: 'audit.fields.detail' },
+  ];
+
   ngOnInit(): void {
-    this.loadBlocks();
+    this.loadAuditLogs();
   }
 
   /**
-   * Loads cluster blocks from the backend with current pagination and filters.
+   * Loads audit log entries from the backend with current pagination and filters.
    */
-  loadBlocks(): void {
+  loadAuditLogs(): void {
     this.isLoading.set(true);
     const criteria = this.buildCriteria();
     const progressId = this.notificationService.showProgress('notification.pagination.progress');
 
-    this.clusterService.findBlocksByCriteria(criteria, this.currentPage(), this.pageSize(), this.sortParam()).subscribe({
+    this.auditService.findByCriteria(criteria, this.currentPage(), this.pageSize(), this.sortParam()).subscribe({
       next: (page) => {
-        this.blocks.set(page.content);
+        this.auditLogs.set(page.content);
         this.totalElements.set(page.page.totalElements);
         this.isLoading.set(false);
         this.notificationService.dismiss(progressId);
@@ -94,16 +104,20 @@ export class BlocksComponent implements OnInit {
    */
   applyFilters(): void {
     this.currentPage.set(0);
-    this.loadBlocks();
+    this.loadAuditLogs();
   }
 
   /**
    * Clears all filters and reloads.
    */
   clearFilters(): void {
-    this.filterName.set('');
+    this.filterDateFrom.set('');
+    this.filterDateTo.set('');
+    this.filterUsername.set('');
+    this.filterOperationType.set('');
+    this.filterSection.set('');
     this.currentPage.set(0);
-    this.loadBlocks();
+    this.loadAuditLogs();
   }
 
   /**
@@ -112,7 +126,7 @@ export class BlocksComponent implements OnInit {
   onSort(event: SortEvent): void {
     this.sortParam.set(event.direction ? `${event.column},${event.direction}` : '');
     this.currentPage.set(0);
-    this.loadBlocks();
+    this.loadAuditLogs();
   }
 
   /**
@@ -121,24 +135,24 @@ export class BlocksComponent implements OnInit {
   goToPage(page: number): void {
     if (page >= 0 && page < this.totalPages()) {
       this.currentPage.set(page);
-      this.loadBlocks();
+      this.loadAuditLogs();
     }
   }
 
   /**
-   * Changes the page size, resets to page 0 and reloads.
+   * Changes the page size, resets to page 0, and reloads.
    */
   changePageSize(size: number): void {
     this.pageSize.set(size);
     this.currentPage.set(0);
-    this.loadBlocks();
+    this.loadAuditLogs();
   }
 
   /**
-   * Opens the detail view for a cluster block.
+   * Opens the detail view for an audit log entry.
    */
-  viewDetail(block: ClusterBlock): void {
-    this.selectedBlock.set(block);
+  viewDetail(auditLog: AuditLog): void {
+    this.selectedAuditLog.set(auditLog);
     this.viewMode.set('detail');
   }
 
@@ -147,7 +161,7 @@ export class BlocksComponent implements OnInit {
    */
   backToList(): void {
     this.viewMode.set('list');
-    this.selectedBlock.set(null);
+    this.selectedAuditLog.set(null);
   }
 
   /**
@@ -157,7 +171,7 @@ export class BlocksComponent implements OnInit {
   exportCsv(): void {
     const progressId = this.notificationService.showProgress('notification.export.progress');
 
-    this.clusterService.findAllBlocksByCriteria(this.buildCriteria(), this.sortParam()).subscribe({
+    this.auditService.findAllByCriteria(this.buildCriteria(), this.sortParam()).subscribe({
       next: (data) => {
         if (data.length === 0) {
           this.notificationService.updateToError(progressId, 'notification.export.empty');
@@ -166,21 +180,23 @@ export class BlocksComponent implements OnInit {
 
         try {
           const headers = [
-            this.translateService.instant('cluster.blocks.fields.name'),
-            this.translateService.instant('cluster.blocks.fields.startDate'),
-            this.translateService.instant('cluster.blocks.fields.avgTime'),
-            this.translateService.instant('cluster.blocks.fields.minTime'),
-            this.translateService.instant('cluster.blocks.fields.maxTime'),
-            this.translateService.instant('cluster.blocks.fields.total'),
+            this.translateService.instant('audit.fields.timestamp'),
+            this.translateService.instant('audit.fields.username'),
+            this.translateService.instant('audit.fields.operationType'),
+            this.translateService.instant('audit.fields.section'),
+            this.translateService.instant('audit.fields.entityId'),
+            this.translateService.instant('audit.fields.entityName'),
+            this.translateService.instant('audit.fields.detail'),
           ];
 
-          const rows = data.map((block) => [
-            this.escapeCsvField(block.name),
-            this.escapeCsvField(block.startDate ? this.dateService.toLocalString(block.startDate) : ''),
-            this.escapeCsvField(String(block.avgTime)),
-            this.escapeCsvField(String(block.minTime)),
-            this.escapeCsvField(String(block.maxTime)),
-            this.escapeCsvField(String(block.total)),
+          const rows = data.map((log) => [
+            this.escapeCsvField(log.timestamp ? this.dateService.toLocalString(log.timestamp) : ''),
+            this.escapeCsvField(log.username),
+            this.escapeCsvField(log.operationType),
+            this.escapeCsvField(log.section),
+            this.escapeCsvField(log.entityId),
+            this.escapeCsvField(log.entityName),
+            this.escapeCsvField(log.detail),
           ]);
 
           const csvContent = [headers.join(','), ...rows.map((row) => row.join(','))].join('\n');
@@ -188,7 +204,7 @@ export class BlocksComponent implements OnInit {
           const url = URL.createObjectURL(blob);
           const link = document.createElement('a');
           link.href = url;
-          link.download = `cluster_blocks_${new Date().toISOString().slice(0, 10)}.csv`;
+          link.download = `audit_${new Date().toISOString().slice(0, 10)}.csv`;
           link.click();
           URL.revokeObjectURL(url);
 
@@ -203,9 +219,13 @@ export class BlocksComponent implements OnInit {
     });
   }
 
-  private buildCriteria(): ClusterBlockCriteria {
-    const criteria: ClusterBlockCriteria = {};
-    if (this.filterName()) criteria.name = this.filterName();
+  private buildCriteria(): AuditCriteria {
+    const criteria: AuditCriteria = {};
+    if (this.filterDateFrom()) criteria.dateFrom = this.filterDateFrom();
+    if (this.filterDateTo()) criteria.dateTo = this.filterDateTo();
+    if (this.filterUsername()) criteria.username = this.filterUsername();
+    if (this.filterOperationType()) criteria.operationType = this.filterOperationType() as OperationType;
+    if (this.filterSection()) criteria.section = this.filterSection() as AuditSection;
     return criteria;
   }
 

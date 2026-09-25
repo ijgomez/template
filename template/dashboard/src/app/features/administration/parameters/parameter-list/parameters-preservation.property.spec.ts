@@ -3,10 +3,10 @@ import { provideTranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import * as fc from 'fast-check';
 
-import { ParametersComponent } from './parameters.component';
-import { ParameterService } from '../../../core/services/parameter.service';
-import { AuthService } from '../../../core/services/auth.service';
-import { NotificationService } from '../../../core/services/notification.service';
+import { ParameterListComponent } from './parameter-list.component';
+import { ParameterService } from '../../../../core/services/parameter.service';
+import { AuthService } from '../../../../core/services/auth.service';
+import { NotificationService } from '../../../../core/services/notification.service';
 
 /**
  * Property-based preservation tests:
@@ -22,7 +22,7 @@ import { NotificationService } from '../../../core/services/notification.service
  *
  * IMPORTANT: These tests MUST PASS on unfixed code — they confirm the baseline to preserve.
  */
-describe('ParametersComponent - Property 2: Preservation - List and Detail Views Unchanged', () => {
+describe('ParameterListComponent - Property 2: Preservation - List and Detail Views Unchanged', () => {
   let parameterServiceMock: Partial<ParameterService>;
   let authServiceMock: Partial<AuthService>;
   let notificationServiceMock: Partial<NotificationService>;
@@ -58,10 +58,10 @@ describe('ParametersComponent - Property 2: Preservation - List and Detail Views
     };
   });
 
-  function createFixture(): ComponentFixture<ParametersComponent> {
+  function createFixture(): ComponentFixture<ParameterListComponent> {
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
-      imports: [ParametersComponent],
+      imports: [ParameterListComponent],
       providers: [
         provideTranslateService({ lang: 'en', fallbackLang: 'en' }),
         { provide: ParameterService, useValue: parameterServiceMock },
@@ -70,7 +70,7 @@ describe('ParametersComponent - Property 2: Preservation - List and Detail Views
       ],
     });
 
-    const fixture = TestBed.createComponent(ParametersComponent);
+    const fixture = TestBed.createComponent(ParameterListComponent);
     fixture.detectChanges();
     return fixture;
   }

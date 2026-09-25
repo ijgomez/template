@@ -3,15 +3,15 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
-import { AuthService } from '../../../../core/services/auth.service';
-import { NotificationService } from '../../../../core/services/notification.service';
-import { CsvExportService } from '../../../../core/services/csv-export.service';
-import { DateService } from '../../../../core/services/date.service';
-import { ProfileService } from '../../../../core/services/profile.service';
-import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
-import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent, SortDirection } from '../../../../shared/components/data-table';
-import { Profile, ProfileCriteria } from './models/profile.model';
-import { ProfileFormComponent } from './profile-form/profile-form.component';
+import { AuthService } from '../../../../../core/services/auth.service';
+import { NotificationService } from '../../../../../core/services/notification.service';
+import { CsvExportService } from '../../../../../core/services/csv-export.service';
+import { DateService } from '../../../../../core/services/date.service';
+import { ProfileService } from '../../../../../core/services/profile.service';
+import { LocalDatePipe } from '../../../../../shared/pipes/local-date.pipe';
+import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent, SortDirection } from '../../../../../shared/components/data-table';
+import { Profile, ProfileCriteria } from '../models/profile.model';
+import { ProfileFormComponent } from '../profile-form/profile-form.component';
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit';
 
@@ -21,14 +21,14 @@ type ViewMode = 'list' | 'detail' | 'create' | 'edit';
  * for security profiles. Detail and form views are delegated to child components.
  */
 @Component({
-  selector: 'app-profiles',
+  selector: 'app-profile-list',
   standalone: true,
   imports: [CommonModule, FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective, ProfileFormComponent],
-  templateUrl: './profiles.component.html',
-  styleUrls: ['./profiles.component.scss'],
+  templateUrl: './profile-list.component.html',
+  styleUrls: ['./profile-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProfilesComponent implements OnInit {
+export class ProfileListComponent implements OnInit {
   private readonly profileService = inject(ProfileService);
   private readonly authService = inject(AuthService);
   private readonly notificationService = inject(NotificationService);

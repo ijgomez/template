@@ -3,27 +3,27 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
-import { UserService } from '../../../../core/services/user.service';
-import { AuthService } from '../../../../core/services/auth.service';
-import { NotificationService } from '../../../../core/services/notification.service';
-import { CsvExportService } from '../../../../core/services/csv-export.service';
-import { DateService } from '../../../../core/services/date.service';
-import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
-import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../shared/components/data-table';
-import { UserDTO, UserCriteria, ProfileRef } from '../../../../core/models/user.model';
-import { UserFormComponent } from './user-form/user-form.component';
+import { UserService } from '../../../../../core/services/user.service';
+import { AuthService } from '../../../../../core/services/auth.service';
+import { NotificationService } from '../../../../../core/services/notification.service';
+import { CsvExportService } from '../../../../../core/services/csv-export.service';
+import { DateService } from '../../../../../core/services/date.service';
+import { LocalDatePipe } from '../../../../../shared/pipes/local-date.pipe';
+import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../../shared/components/data-table';
+import { UserDTO, UserCriteria, ProfileRef } from '../../../../../core/models/user.model';
+import { UserFormComponent } from '../user-form/user-form.component';
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit';
 
 @Component({
-  selector: 'app-users',
+  selector: 'app-user-list',
   standalone: true,
   imports: [CommonModule, FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective, UserFormComponent],
-  templateUrl: './users.component.html',
-  styleUrl: './users.component.scss',
+  templateUrl: './user-list.component.html',
+  styleUrl: './user-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UsersComponent implements OnInit {
+export class UserListComponent implements OnInit {
   private readonly userService = inject(UserService);
   private readonly authService = inject(AuthService);
   private readonly notificationService = inject(NotificationService);

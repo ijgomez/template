@@ -4,9 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 
-import { ReportService } from '../../core/services/report.service';
-import { NotificationService } from '../../core/services/notification.service';
-import { Report, ReportFilter, ReportResult, ExportFormat } from '../../core/models/report.model';
+import { ReportService } from '../../../core/services/report.service';
+import { NotificationService } from '../../../core/services/notification.service';
+import { Report, ReportFilter, ReportResult, ExportFormat } from '../../../core/models/report.model';
 
 /**
  * Report execution component.
@@ -17,13 +17,13 @@ import { Report, ReportFilter, ReportResult, ExportFormat } from '../../core/mod
  * Requirements: 18.1, 18.4, 18.5, 18.6, 18.7, 19.1
  */
 @Component({
-  selector: 'app-reports',
+  selector: 'app-report-list',
   standalone: true,
   imports: [FormsModule, TranslatePipe],
-  templateUrl: './reports.component.html',
+  templateUrl: './report-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ReportsComponent implements OnInit, OnDestroy {
+export class ReportListComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly reportService = inject(ReportService);
   private readonly notificationService = inject(NotificationService);

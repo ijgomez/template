@@ -1,11 +1,11 @@
 import { Routes } from '@angular/router';
 
-import { ReportsComponent } from './reports.component';
+import { ReportListComponent } from './report-list/report-list.component';
 
 export const REPORTS_ROUTES: Routes = [
   {
     path: ':id',
-    component: ReportsComponent,
+    component: ReportListComponent,
   },
   {
     path: '',

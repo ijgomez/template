@@ -3,11 +3,11 @@ import { provideTranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import * as fc from 'fast-check';
 
-import { ProfilesComponent } from './profiles.component';
-import { ProfileService } from '../../../../core/services/profile.service';
-import { AuthService } from '../../../../core/services/auth.service';
-import { NotificationService } from '../../../../core/services/notification.service';
-import { CsvExportService } from '../../../../core/services/csv-export.service';
+import { ProfileListComponent } from './profile-list.component';
+import { ProfileService } from '../../../../../core/services/profile.service';
+import { AuthService } from '../../../../../core/services/auth.service';
+import { NotificationService } from '../../../../../core/services/notification.service';
+import { CsvExportService } from '../../../../../core/services/csv-export.service';
 
 /**
  * Property-based test for bug condition exploration:
@@ -21,14 +21,14 @@ import { CsvExportService } from '../../../../core/services/csv-export.service';
  *
  * IMPORTANT: This test is expected to FAIL on unfixed code — failure confirms the bug exists.
  */
-describe('ProfilesComponent - Property 1: Bug Condition - Form Styling Matches Reference Pattern', () => {
+describe('ProfileListComponent - Property 1: Bug Condition - Form Styling Matches Reference Pattern', () => {
   /**
    * Arbitrary for form scenarios — profiles form mode is always 'form',
    * but the form can be in create or edit state.
    */
   const formEditingStateArb = fc.boolean();
 
-  function createFixture(isEditing: boolean): ComponentFixture<ProfilesComponent> {
+  function createFixture(isEditing: boolean): ComponentFixture<ProfileListComponent> {
     const profileServiceMock: Partial<ProfileService> = {
       findByCriteria: () => of({ content: [], page: { totalElements: 0, totalPages: 0, size: 10, number: 0 } } as any),
       findAllActions: () => of({ content: [], page: { totalElements: 0, totalPages: 0, size: 1000, number: 0 } } as any),
@@ -59,7 +59,7 @@ describe('ProfilesComponent - Property 1: Bug Condition - Form Styling Matches R
 
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
-      imports: [ProfilesComponent],
+      imports: [ProfileListComponent],
       providers: [
         provideTranslateService({ lang: 'en', fallbackLang: 'en' }),
         { provide: ProfileService, useValue: profileServiceMock },
@@ -69,7 +69,7 @@ describe('ProfilesComponent - Property 1: Bug Condition - Form Styling Matches R
       ],
     });
 
-    const fixture = TestBed.createComponent(ProfilesComponent);
+    const fixture = TestBed.createComponent(ProfileListComponent);
     const component = fixture.componentInstance;
 
     // Set to form mode

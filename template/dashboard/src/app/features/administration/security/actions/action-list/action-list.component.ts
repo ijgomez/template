@@ -2,13 +2,13 @@ import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit } 
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
-import { ActionService } from '../../../../core/services/action.service';
-import { AuthService } from '../../../../core/services/auth.service';
-import { NotificationService } from '../../../../core/services/notification.service';
-import { CsvExportService } from '../../../../core/services/csv-export.service';
-import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../shared/components/data-table';
-import { Action, ActionCriteria } from './models/action.model';
-import { ActionFormComponent } from './action-form/action-form.component';
+import { ActionService } from '../../../../../core/services/action.service';
+import { AuthService } from '../../../../../core/services/auth.service';
+import { NotificationService } from '../../../../../core/services/notification.service';
+import { CsvExportService } from '../../../../../core/services/csv-export.service';
+import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../../shared/components/data-table';
+import { Action, ActionCriteria } from '../models/action.model';
+import { ActionFormComponent } from '../action-form/action-form.component';
 
 type ViewMode = 'list' | 'detail' | 'edit';
 
@@ -19,13 +19,13 @@ type ViewMode = 'list' | 'detail' | 'edit';
  * Only supports Edit and View Detail options (no Create/Delete per Req 25.11).
  */
 @Component({
-  selector: 'app-actions',
+  selector: 'app-action-list',
   standalone: true,
   imports: [FormsModule, TranslatePipe, TpDataTableComponent, TpColumnDirective, ActionFormComponent],
-  templateUrl: './actions.component.html',
+  templateUrl: './action-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ActionsComponent implements OnInit {
+export class ActionListComponent implements OnInit {
   private readonly actionService = inject(ActionService);
   private readonly authService = inject(AuthService);
   private readonly notificationService = inject(NotificationService);

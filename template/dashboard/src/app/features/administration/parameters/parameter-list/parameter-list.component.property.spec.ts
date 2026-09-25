@@ -3,10 +3,10 @@ import { provideTranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import * as fc from 'fast-check';
 
-import { ParametersComponent } from './parameters.component';
-import { ParameterService } from '../../../core/services/parameter.service';
-import { AuthService } from '../../../core/services/auth.service';
-import { NotificationService } from '../../../core/services/notification.service';
+import { ParameterListComponent } from './parameter-list.component';
+import { ParameterService } from '../../../../core/services/parameter.service';
+import { AuthService } from '../../../../core/services/auth.service';
+import { NotificationService } from '../../../../core/services/notification.service';
 
 /**
  * Property-based test for bug condition exploration:
@@ -20,13 +20,13 @@ import { NotificationService } from '../../../core/services/notification.service
  *
  * IMPORTANT: This test is expected to FAIL on unfixed code — failure confirms the bug exists.
  */
-describe('ParametersComponent - Property 1: Bug Condition - Form Styling Matches Reference Pattern', () => {
+describe('ParameterListComponent - Property 1: Bug Condition - Form Styling Matches Reference Pattern', () => {
   /**
    * Arbitrary for form view modes in Parameters component.
    */
   const formViewModeArb = fc.constantFrom('create' as const, 'edit' as const);
 
-  function createFixture(viewMode: 'create' | 'edit'): ComponentFixture<ParametersComponent> {
+  function createFixture(viewMode: 'create' | 'edit'): ComponentFixture<ParameterListComponent> {
     const parameterServiceMock: Partial<ParameterService> = {
       findByCriteria: () => of({ content: [], page: { totalElements: 0, totalPages: 0, size: 10, number: 0 } } as any),
     };
@@ -52,7 +52,7 @@ describe('ParametersComponent - Property 1: Bug Condition - Form Styling Matches
 
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
-      imports: [ParametersComponent],
+      imports: [ParameterListComponent],
       providers: [
         provideTranslateService({ lang: 'en', fallbackLang: 'en' }),
         { provide: ParameterService, useValue: parameterServiceMock },
@@ -61,7 +61,7 @@ describe('ParametersComponent - Property 1: Bug Condition - Form Styling Matches
       ],
     });
 
-    const fixture = TestBed.createComponent(ParametersComponent);
+    const fixture = TestBed.createComponent(ParameterListComponent);
     const component = fixture.componentInstance;
 
     // Set the form mode

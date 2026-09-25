@@ -2,14 +2,14 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideTranslateService } from '@ngx-translate/core';
 import { of, throwError } from 'rxjs';
 
-import { ProfilesComponent } from './profiles.component';
-import { ProfileService } from '../../../../core/services/profile.service';
-import { AuthService } from '../../../../core/services/auth.service';
-import { NotificationService } from '../../../../core/services/notification.service';
-import { CsvExportService } from '../../../../core/services/csv-export.service';
-import { DateService } from '../../../../core/services/date.service';
-import { Profile } from './models/profile.model';
-import { Page } from '../../../../core/models/page.model';
+import { ProfileListComponent } from './profile-list.component';
+import { ProfileService } from '../../../../../core/services/profile.service';
+import { AuthService } from '../../../../../core/services/auth.service';
+import { NotificationService } from '../../../../../core/services/notification.service';
+import { CsvExportService } from '../../../../../core/services/csv-export.service';
+import { DateService } from '../../../../../core/services/date.service';
+import { Profile } from '../models/profile.model';
+import { Page } from '../../../../../core/models/page.model';
 
 function profile(id: number, overrides: Partial<Profile> = {}): Profile {
   return {
@@ -28,9 +28,9 @@ function pageOf(profiles: Profile[], totalElements = profiles.length): Page<Prof
   };
 }
 
-describe('ProfilesComponent', () => {
-  let component: ProfilesComponent;
-  let fixture: ComponentFixture<ProfilesComponent>;
+describe('ProfileListComponent', () => {
+  let component: ProfileListComponent;
+  let fixture: ComponentFixture<ProfileListComponent>;
   let profileService: {
     findByCriteria: ReturnType<typeof vi.fn>;
     findAllByCriteria: ReturnType<typeof vi.fn>;
@@ -71,7 +71,7 @@ describe('ProfilesComponent', () => {
     authHasAction = vi.fn().mockReturnValue(true);
 
     await TestBed.configureTestingModule({
-      imports: [ProfilesComponent],
+      imports: [ProfileListComponent],
       providers: [
         provideTranslateService({ lang: 'en', fallbackLang: 'en' }),
         { provide: ProfileService, useValue: profileService },
@@ -82,7 +82,7 @@ describe('ProfilesComponent', () => {
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ProfilesComponent);
+    fixture = TestBed.createComponent(ProfileListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges(); // ngOnInit -> loadProfiles
   });

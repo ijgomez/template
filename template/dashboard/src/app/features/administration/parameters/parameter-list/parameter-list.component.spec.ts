@@ -2,12 +2,12 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideTranslateService } from '@ngx-translate/core';
 import { of, throwError } from 'rxjs';
 
-import { ParametersComponent } from './parameters.component';
-import { ParameterService } from '../../../core/services/parameter.service';
-import { AuthService } from '../../../core/services/auth.service';
-import { NotificationService } from '../../../core/services/notification.service';
-import { Parameter } from '../../../core/models/parameter.model';
-import { Page } from '../../../core/models/page.model';
+import { ParameterListComponent } from './parameter-list.component';
+import { ParameterService } from '../../../../core/services/parameter.service';
+import { AuthService } from '../../../../core/services/auth.service';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { Parameter } from '../../../../core/models/parameter.model';
+import { Page } from '../../../../core/models/page.model';
 
 function parameter(code: string, overrides: Partial<Parameter> = {}): Parameter {
   return {
@@ -29,9 +29,9 @@ function pageOf(items: Parameter[], totalElements = items.length): Page<Paramete
   };
 }
 
-describe('ParametersComponent', () => {
-  let component: ParametersComponent;
-  let fixture: ComponentFixture<ParametersComponent>;
+describe('ParameterListComponent', () => {
+  let component: ParameterListComponent;
+  let fixture: ComponentFixture<ParameterListComponent>;
   let parameterService: {
     findByCriteria: ReturnType<typeof vi.fn>;
     findAllByCriteria: ReturnType<typeof vi.fn>;
@@ -68,7 +68,7 @@ describe('ParametersComponent', () => {
     authHasAction = vi.fn().mockReturnValue(true);
 
     await TestBed.configureTestingModule({
-      imports: [ParametersComponent],
+      imports: [ParameterListComponent],
       providers: [
         provideTranslateService({ lang: 'en', fallbackLang: 'en' }),
         { provide: ParameterService, useValue: parameterService },
@@ -77,7 +77,7 @@ describe('ParametersComponent', () => {
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ParametersComponent);
+    fixture = TestBed.createComponent(ParameterListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges(); // constructor already called loadParameters
   });

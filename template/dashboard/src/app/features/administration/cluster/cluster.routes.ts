@@ -5,13 +5,13 @@ import { actionGuard } from '../../../core/guards/action.guard';
 export const CLUSTER_ROUTES: Routes = [
   {
     path: 'nodes',
-    loadComponent: () => import('./nodes/nodes.component').then((m) => m.NodesComponent),
+    loadComponent: () => import('./nodes/node-list/node-list.component').then((m) => m.NodeListComponent),
     canActivate: [actionGuard],
     data: { actions: ['CLUSTER_NODE_READ', 'CLUSTER_NODE_WRITE'] },
   },
   {
     path: 'blocks',
-    loadComponent: () => import('./blocks/blocks.component').then((m) => m.BlocksComponent),
+    loadComponent: () => import('./blocks/block-list/block-list.component').then((m) => m.BlockListComponent),
     canActivate: [actionGuard],
     data: { actions: ['CLUSTER_LOCK_READ'] },
   },

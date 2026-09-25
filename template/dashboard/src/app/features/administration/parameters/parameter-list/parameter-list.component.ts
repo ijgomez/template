@@ -2,12 +2,12 @@ import { Component, ChangeDetectionStrategy, inject, signal, computed } from '@a
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
-import { AuthService } from '../../../core/services/auth.service';
-import { NotificationService } from '../../../core/services/notification.service';
-import { ParameterService } from '../../../core/services/parameter.service';
-import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../shared/components/data-table';
-import { Parameter, ParameterCriteria, ParameterType } from '../../../core/models/parameter.model';
-import { ParameterFormComponent } from './parameter-form/parameter-form.component';
+import { AuthService } from '../../../../core/services/auth.service';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { ParameterService } from '../../../../core/services/parameter.service';
+import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../shared/components/data-table';
+import { Parameter, ParameterCriteria, ParameterType } from '../../../../core/models/parameter.model';
+import { ParameterFormComponent } from '../parameter-form/parameter-form.component';
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit';
 
@@ -17,13 +17,13 @@ type ViewMode = 'list' | 'detail' | 'create' | 'edit';
  * detail display and form handling to child components.
  */
 @Component({
-  selector: 'app-parameters',
+  selector: 'app-parameter-list',
   standalone: true,
   imports: [FormsModule, TranslatePipe, TpDataTableComponent, TpColumnDirective, ParameterFormComponent],
-  templateUrl: './parameters.component.html',
+  templateUrl: './parameter-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ParametersComponent {
+export class ParameterListComponent {
   private readonly parameterService = inject(ParameterService);
   private readonly authService = inject(AuthService);
   private readonly notificationService = inject(NotificationService);
