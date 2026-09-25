@@ -9,8 +9,8 @@
     "test": "ng test",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "test-storybook": "vitest --config vitest.storybook.config.ts",
-    "test-storybook:run": "vitest run --config vitest.storybook.config.ts"
+    "test-storybook": "vitest --project=storybook",
+    "test-storybook:run": "vitest run --project=storybook"
   },
   "private": true,
   "packageManager": "npm@12.0.1",
