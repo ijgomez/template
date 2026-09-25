@@ -28,6 +28,15 @@ const preview: Preview = {
     docs: {
       toc: true,
     },
+    a11y: {
+      // Comportamiento de los tests de accesibilidad al ejecutarse junto al
+      // addon de Vitest:
+      //   'off'   -> no se ejecutan (solo verificación manual en el panel)
+      //   'todo'  -> se ejecutan; las violaciones se muestran como advertencia
+      //   'error' -> se ejecutan; las violaciones hacen fallar el test (UI y CI)
+      // Empezamos en 'todo' para hacer visibles las violaciones sin bloquear.
+      test: 'todo',
+    },
   },
   tags: ['autodocs'],
 };
