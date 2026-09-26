@@ -44,3 +44,10 @@ __screenshots__/
 /storybook-static
 storybook.log
 *.storybook.log
+
+# Playwright (E2E)
+/target/playwright
+/target/playwright-report
+/playwright/.cache
+/test-results
+/playwright-report
