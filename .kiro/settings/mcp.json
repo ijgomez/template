@@ -20,7 +20,7 @@
         "postgresql://template:template@localhost:5432/template"
       ]
     },
-    "ollama-mcp": {
+    "ollama": {
       "command": "npx",
       "args": ["-y", "ollama-mcp"],
       "env": {
