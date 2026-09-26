@@ -57,5 +57,5 @@ Al seleccionar una interfaz se muestra su información completa:
 
 ## Documentación relacionada
 
-- [Módulo Interfaces](../README.md)
-- [Monitor de Interfaces](../monitor/README.md)
+- [Módulo Interfaces](../interfaces.md)
+- [Monitor de Interfaces](../monitor/monitor.md)

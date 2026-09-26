@@ -19,13 +19,13 @@ Describe la arquitectura general, las tecnologías utilizadas y la estructura de
 
 Describe los distintos módulos funcionales de la aplicación.
 
-- [Informes](02-functional/reports/README.md)
-- [Administración](02-functional/administration/README.md)
-  - [Seguridad](02-functional/administration/security/README.md)
-  - [Parámetros](02-functional/administration/parameters/README.md)
-  - [Auditoría](02-functional/administration/audit/README.md)
-  - [Interfaces](02-functional/administration/interfaces/README.md)
-  - [Cluster](02-functional/administration/cluster/README.md)
+- [Informes](02-functional/reports/reports.md)
+- [Administración](02-functional/administration/administration.md)
+  - [Seguridad](02-functional/administration/security/security.md)
+  - [Parámetros](02-functional/administration/parameters/parameters.md)
+  - [Auditoría](02-functional/administration/audit/audit.md)
+  - [Interfaces](02-functional/administration/interfaces/interfaces.md)
+  - [Cluster](02-functional/administration/cluster/cluster.md)
 
 ### Documentación técnica
 

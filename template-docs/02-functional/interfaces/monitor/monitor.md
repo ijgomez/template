@@ -58,5 +58,5 @@ Al seleccionar una operación del listado se muestra su detalle completo:
 
 ## Documentación relacionada
 
-- [Módulo Interfaces](../README.md)
-- [Configuración de Interfaces](../configuration/README.md)
+- [Módulo Interfaces](../interfaces.md)
+- [Configuración de Interfaces](../configuration/configuration.md)

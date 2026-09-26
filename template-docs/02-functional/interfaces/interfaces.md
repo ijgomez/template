@@ -42,7 +42,7 @@ Proporciona un panel de supervisión de la actividad de las interfaces. Permite 
 - Consultar el detalle de una operación concreta (timestamp, tipo, interfaz, payload de petición, payload de respuesta, estado).
 - Paginación del lado del servidor.
 
-Más detalle en [monitor/README.md](monitor/README.md).
+Más detalle en [monitor/monitor.md](monitor/monitor.md).
 
 ### Configuración
 
@@ -52,7 +52,7 @@ Proporciona la vista de las interfaces registradas en el sistema. Permite al adm
 - Consultar el detalle de una interfaz (nombre, descripción, URL, protocolo, frecuencia de verificación).
 - Solo lectura: no se permite crear, editar ni eliminar interfaces desde la interfaz de usuario.
 
-Más detalle en [configuration/README.md](configuration/README.md).
+Más detalle en [configuration/configuration.md](configuration/configuration.md).
 
 ---
 
@@ -64,7 +64,7 @@ El acceso al módulo Interfaces está controlado por el sistema de acciones del 
 
 ## Documentación relacionada
 
-- [Monitor](monitor/README.md)
-- [Configuración](configuration/README.md)
+- [Monitor](monitor/monitor.md)
+- [Configuración](configuration/configuration.md)
 - [Navegación](../../03-technical/frontend/navigation.md)
 - [API de Interfaces](../../03-technical/backend/api.md)
