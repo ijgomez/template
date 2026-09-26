@@ -103,9 +103,11 @@ Basado en una escala de 4px.
 
 # Componentes
 
-## Catálogo de componentes
+La IA debe generar código utilizando exclusivamente los componentes del catálogo reutilizable de `shared/`. No se deben inventar componentes nuevos sin autorización explícita.
 
-La IA debe generar código utilizando exclusivamente los componentes listados a continuación. No se deben inventar componentes nuevos sin autorización explícita.
+La **especificación completa** (propiedades, eventos, accesibilidad, variantes y tamaños) de cada componente está documentada en [components.md](components.md), que es la fuente única de verdad.
+
+A continuación, el índice de componentes disponibles:
 
 | Componente       | Selector                   | Descripción                                   |
 |------------------|----------------------------|-----------------------------------------------|
@@ -114,7 +116,7 @@ La IA debe generar código utilizando exclusivamente los componentes listados a 
 | Select           | `<tp-select>`              | Selección de opciones                         |
 | Checkbox         | `<tp-checkbox>`            | Selección múltiple                            |
 | Radio            | `<tp-radio>`               | Selección única                               |
-| Tabla            | `<tp-table>`               | Listados con paginación, orden y filtrado     |
+| Tabla            | `<tp-data-table>`          | Listados con paginación, orden y filtrado     |
 | Lista de datos   | `<tp-data-list>`           | Listas verticales con filtro y paginación     |
 | Modal            | `<tp-modal>`               | Diálogos y confirmaciones                     |
 | Card             | `<tp-card>`                | Contenedor con cabecera y cuerpo              |
@@ -130,25 +132,6 @@ La IA debe generar código utilizando exclusivamente los componentes listados a 
 | Autocomplete     | `<tp-autocomplete>`        | Búsqueda con sugerencias                      |
 | Entity Filter    | `<tp-entity-filter>`       | Filtro por entidad con lista de selección     |
 | Date Range       | `<tp-date-range>`          | Selector de rango de fechas (desde - hasta)   |
-
-## Variantes de botones
-
-| Variante     | Clase / Input             | Uso                              |
-|--------------|---------------------------|----------------------------------|
-| Primary      | `variant="primary"`       | Acción principal de la pantalla  |
-| Secondary    | `variant="secondary"`     | Acciones secundarias             |
-| Danger       | `variant="danger"`        | Eliminación, acciones críticas   |
-| Outline      | `variant="outline"`       | Acciones terciarias              |
-| Link         | `variant="link"`          | Navegación sin apariencia botón  |
-| Icon         | `variant="icon"`          | Solo icono, sin texto            |
-
-## Tamaños
-
-| Tamaño | Input         | Uso                                  |
-|--------|---------------|--------------------------------------|
-| `sm`   | `size="sm"`   | Tablas densas, toolbars              |
-| `md`   | `size="md"`   | Uso general (por defecto)            |
-| `lg`   | `size="lg"`   | Formularios prominentes, CTAs        |
 
 ---
 
@@ -296,41 +279,7 @@ Al cambiar el tamaño de página se recarga la primera página con el nuevo tama
 
 ## Panel de notificaciones
 
-Al pulsar el icono de la campana en la barra superior se despliega un dropdown con las notificaciones pendientes.
-
-```text
-┌──────────────────────────────────────┐
-│ Notificaciones    [Marcar como leídas]│
-├──────────────────────────────────────┤
-│ [Error]                   22/07 09:30│
-│ Título de la notificación            │
-│ Detalle breve...          [Ir a detalle]│
-├──────────────────────────────────────┤
-│ [Aviso]                   22/07 08:15│
-│ Título de la notificación            │
-│ Detalle breve...          [Ir a detalle]│
-├──────────────────────────────────────┤
-│        Ver todas las notificaciones  │
-└──────────────────────────────────────┘
-```
-
-### Estructura de cada notificación
-
-| Elemento     | Descripción                                                        |
-|--------------|--------------------------------------------------------------------|
-| Badge        | Severidad: `Error` (danger), `Aviso` (warning), `Info` (info)      |
-| Timestamp    | Fecha y hora, alineado a la derecha                                |
-| Título       | Texto corto descriptivo (`fw-medium`)                              |
-| Detalle      | Texto secundario (`text-muted`, max 2 líneas)                      |
-| Botón        | "Ir a detalle" (`btn-outline-primary`, tamaño mini) — opcional     |
-
-### Reglas
-
-- Ancho del dropdown: `360px`.
-- Máximo alto con scroll: `420px` (`max-height` + `overflow-y: auto`).
-- Header con fondo `bg-light` y enlace "Marcar todas como leídas".
-- Footer con enlace "Ver todas las notificaciones" centrado.
-- Las notificaciones no leídas pueden tener fondo ligeramente destacado.
+El panel desplegable de notificaciones (icono de campana en la barra superior) y el resto de canales de notificación se documentan en [notifications.md](notifications.md#centro-de-notificaciones), fuente única del framework de notificaciones.
 
 ---
 
@@ -515,7 +464,7 @@ Reglas de disposición:
 4. Incluir `data-testid` en todos los elementos interactivos.
 5. Respetar la estructura de carpetas definida en las coding guidelines de Angular.
 6. No añadir dependencias externas sin autorización explícita.
-7. Todo texto visible al usuario debe pasar por el sistema de internacionalización (`i18n`).
+7. Todo texto visible al usuario debe pasar por el sistema de internacionalización (`i18n`); ver reglas y uso en [internacionalizacion.md](internacionalizacion.md).
 8. Validación de formularios en el cliente con mensajes traducidos.
 9. Usar `OnPush` como estrategia de detección de cambios.
 10. Separar plantilla, estilos y lógica en ficheros independientes.
@@ -682,9 +631,3 @@ Tras generar código, la IA debe verificar los siguientes puntos:
 - [internacionalizacion.md](internacionalizacion.md)
 - [notifications.md](notifications.md)
 - [angular.md](../../04-development/coding-guidelines/angular.md)
-
----
-
-# Resumen
-
-El Design System para IA define los tokens, componentes, patrones y restricciones que cualquier agente de inteligencia artificial debe seguir para generar interfaces coherentes con Template. Su adopción elimina ambigüedades en la generación automática de código y reduce la necesidad de ajustes manuales posteriores.

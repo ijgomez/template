@@ -224,70 +224,7 @@ Esto proporciona una experiencia de usuario consistente durante toda la sesión.
 
 # Integración con módulos
 
-Cada módulo funcional incorpora sus propias rutas.
-
-Ejemplo:
-
-```text
-Principal
-├── Dashboard
-└── Informes ▾
-    ├── Actividad mensual
-    ├── Resumen de accesos
-    ├── Estadísticas de uso
-    └── Informe de errores
-
-Interfaces ▾
-├── Monitor
-└── Configuración
-
-Administración ▾
-├── Seguridad ▾
-│   ├── Usuarios
-│   ├── Perfiles
-│   └── Acciones
-├── Parámetros
-├── Auditoría
-└── Cluster ▾
-    ├── Nodos
-    └── Bloqueos
-```
-
-"Informes", "Interfaces" y "Administración" son menús desplegables de primer nivel con icono y chevron. Al expandirse muestran sus opciones hijas. "Seguridad" y "Cluster" son submenús de segundo nivel dentro de "Administración".
-
-El módulo **Interfaces** agrupa la funcionalidad de supervisión e integración con sistemas externos:
-- **Monitor**: panel de actividad de las interfaces, mostrando la trazabilidad de operaciones (logs de entrada/salida, estados, payloads).
-- **Configuración**: listado de interfaces registradas con su estado actual (activa, inactiva, error) y detalle de cada interfaz.
-
-Los informes disponibles para el usuario se muestran como submenú desplegable de "Informes" en el menú lateral. La lista se genera dinámicamente según los informes asignados al usuario (relación `user2report`).
-
-La sección "Auditoría" ya no es un submenú desplegable; al tratarse de un único destino (registros de auditoría del sistema), se comporta como un enlace directo dentro de Administración.
-
-Cada módulo es responsable de registrar sus rutas dentro de la aplicación.
-
----
-
-# Acciones y permisos
-
-## Concepto
-
-Cada pantalla o funcionalidad tiene una o varias **acciones** asociadas. Las acciones permiten configurar el acceso a cada pantalla y controlar si el usuario puede ver datos, editar datos o ejecutar funcionalidades.
-
-Todas las acciones deben registrarse en la tabla `ACCION`.
-
-## Nomenclatura
-
-El código de cada acción sigue uno de los siguientes formatos:
-
-| Sufijo       | Significado                                      |
-|--------------|--------------------------------------------------|
-| `_READ`      | Leer, consultar o visualizar datos               |
-| `_WRITE`     | Editar o modificar datos                         |
-| `_EXECUTE`   | Ejecutar una operación                           |
-
-El formato completo es: `<IDENTIFICADOR>_<SUFIJO>`.
-
-## Mapeo de acciones por opción de menú
+Cada módulo funcional incorpora sus propias rutas. La siguiente estructura muestra el menú completo anotado con la acción de seguridad que gobierna cada opción (ver el catálogo de acciones y las reglas de visibilidad en [security.md](../backend/security.md)):
 
 ```text
 Principal
@@ -314,38 +251,32 @@ Administración ▾
     └── Bloqueos             => CLUSTER_LOCK_READ
 ```
 
-## Catálogo de acciones
+"Informes", "Interfaces" y "Administración" son menús desplegables de primer nivel con icono y chevron. Al expandirse muestran sus opciones hijas. "Seguridad" y "Cluster" son submenús de segundo nivel dentro de "Administración".
 
-| Código                     | Descripción                                        |
-|----------------------------|----------------------------------------------------|
-| `DASHBOARD_READ`           | Visualizar el panel principal (Dashboard)          |
-| `REPORT_EXECUTE`           | Ejecutar informes                                  |
-| `INTERFACES_READ`          | Acceder al módulo de Interfaces (Monitor y Config) |
-| `USER_READ`                | Consultar usuarios                                 |
-| `USER_WRITE`               | Crear, editar o eliminar usuarios                  |
-| `PROFILE_READ`             | Consultar perfiles                                 |
-| `PROFILE_WRITE`            | Crear, editar o eliminar perfiles                  |
-| `ACTION_READ`              | Consultar acciones del sistema                     |
-| `SYSTEM_PARAMETER_READ`    | Consultar parámetros del sistema                   |
-| `SYSTEM_PARAMETER_WRITE`   | Modificar parámetros del sistema                   |
-| `SYSTEM_LOG_READ`          | Consultar registros de auditoría                   |
-| `CLUSTER_NODE_READ`        | Consultar nodos del clúster                        |
-| `CLUSTER_NODE_WRITE`       | Modificar la configuración de nodos                |
-| `CLUSTER_LOCK_READ`        | Consultar bloqueos del clúster                     |
+El módulo **Interfaces** agrupa la funcionalidad de supervisión e integración con sistemas externos:
+- **Monitor**: panel de actividad de las interfaces, mostrando la trazabilidad de operaciones (logs de entrada/salida, estados, payloads).
+- **Configuración**: listado de interfaces registradas con su estado actual (activa, inactiva, error) y detalle de cada interfaz.
 
-## Reglas de visibilidad
+Los informes disponibles para el usuario se muestran como submenú desplegable de "Informes" en el menú lateral. La lista se genera dinámicamente según los informes asignados al usuario (relación `user2report`).
 
-1. **Informes**: todos los informes comparten la misma acción (`REPORT_EXECUTE`). La visibilidad de cada informe individual depende de la relación `user2report` del usuario, pero el acceso a la sección requiere esta acción.
+La sección "Auditoría" ya no es un submenú desplegable; al tratarse de un único destino (registros de auditoría del sistema), se comporta como un enlace directo dentro de Administración.
 
-2. **Interfaces**: toda la sección (Monitor y Configuración) se gobierna con una única acción (`INTERFACES_READ`).
+Cada módulo es responsable de registrar sus rutas dentro de la aplicación.
 
-3. **Herencia en secciones padre**: si una sección del menú contiene varias opciones hijas, la sección padre hereda la visibilidad de sus hijos. Una sección se muestra únicamente si el usuario dispone de al menos una acción asociada a alguno de sus hijos.
+---
 
-   Ejemplo: la sección **Seguridad** se muestra solo si el usuario tiene alguna de las acciones `USER_READ`, `USER_WRITE`, `PROFILE_READ`, `PROFILE_WRITE` o `ACTION_READ`. Si no dispone de ninguna, la sección no aparece en el menú.
+# Acciones y permisos
 
-   Del mismo modo, la sección **Cluster** se muestra solo si el usuario tiene `CLUSTER_NODE_READ`, `CLUSTER_NODE_WRITE` o `CLUSTER_LOCK_READ`.
+Cada pantalla o funcionalidad tiene una o varias **acciones** de seguridad asociadas que controlan si el usuario puede ver datos, editarlos o ejecutar funcionalidades. El menú se filtra dinámicamente según las acciones del usuario autenticado (ver el árbol menú → acción en la sección [Integración con módulos](#integración-con-módulos)).
 
-   La sección **Administración** se muestra si el usuario tiene acceso a al menos una de sus subsecciones (Seguridad, Parámetros, Auditoría o Cluster).
+La **nomenclatura de acciones** (`_READ` / `_WRITE` / `_EXECUTE`), el **catálogo completo de códigos** y las **reglas de visibilidad** del menú se documentan como parte del modelo de seguridad en [security.md](../backend/security.md#acciones), que es la fuente única de verdad.
+
+> **Seguridad en el frontend**: aunque el catálogo de acciones se mantiene en la documentación de seguridad backend, estas acciones **deben tenerse en cuenta al implementar la seguridad del frontend**. En concreto:
+>
+> - Los **Route Guards** (`CanActivate`) protegen cada ruta comprobando que el usuario dispone de la acción requerida antes de activar el componente.
+> - El **menú** oculta las opciones para las que el usuario no tiene acción (según las reglas de visibilidad).
+> - Los **elementos de UI** condicionados a permisos (botones Nuevo/Editar/Eliminar de la toolbar) se muestran u ocultan según las acciones `_WRITE` / `_EXECUTE` correspondientes.
+> - La comprobación en el frontend es solo de experiencia de usuario; **la autorización real siempre se valida en el backend** (nunca confiar únicamente en el control de acceso del cliente).
 
 ---
 
@@ -366,14 +297,7 @@ Cada módulo funcional puede desarrollarse y desplegarse de forma independiente 
 
 # Navegación en dispositivos móviles
 
-En dispositivos móviles el comportamiento se adapta automáticamente.
-
-Características:
-
-- Menú lateral oculto.
-- Navegación mediante hamburguesa.
-- Optimización del espacio disponible.
-- Componentes adaptados al tamaño de pantalla.
+El comportamiento del menú lateral en tablet y móvil (oculto por defecto, overlay con hamburguesa, adaptación del espacio) se documenta en [layout.md](layout.md#comportamiento-colapsable), fuente única del comportamiento visual y responsive del sidebar.
 
 ---
 
@@ -412,11 +336,3 @@ Durante el desarrollo se recomienda:
 - [notifications.md](notifications.md)
 - [security.md](../backend/security.md)
 - [api.md](../backend/api.md)
-
----
-
-# Resumen
-
-El sistema de navegación de Template proporciona un mecanismo uniforme para acceder a todas las funcionalidades de la plataforma.
-
-La integración con Angular Router, el sistema de permisos y los menús dinámicos garantiza una navegación consistente, segura y escalable, facilitando tanto el desarrollo de nuevos módulos como la experiencia de usuario en aplicaciones empresariales.

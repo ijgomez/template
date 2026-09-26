@@ -34,20 +34,12 @@ Directrices para la gestión de builds del backend con Maven.
 
 ## Estructura Multi-módulo
 
-```
-template/
-├── pom.xml       (POM padre, packaging: pom, parent: Spring Boot 4.1.1)
-├── commons/
-├── cluster/
-├── domain/
-├── core/
-├── ws/
-├── dashboard/    (frontend Angular, packaging: pom; build y tests vía frontend-maven-plugin)
-└── webapp/       (WAR; empaqueta el dist/ del dashboard)
-```
+Estructura de módulos y responsabilidades: ver [project-structure.md](../../01-introduction/project-structure.md).
 
 Orden de reactor: `commons → cluster → domain → core → ws → dashboard → webapp`
 (el `dashboard` se construye antes que `webapp` para que el `dist/` exista al empaquetar el WAR).
+
+Packaging relevante para el build: el POM padre y `dashboard` son `packaging: pom`; `webapp` genera el WAR y empaqueta el `dist/` del dashboard.
 
 ## Comandos Habituales
 

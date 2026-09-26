@@ -10,6 +10,22 @@ Este documento describe la especificacion funcional y tecnica de cada componente
 
 ---
 
+# Storybook
+
+El frontend dispone de un **Storybook** que documenta de forma interactiva todos los componentes reutilizables de `shared/`. Cada componente tiene sus *stories* asociadas, donde se pueden explorar sus variantes, estados e Inputs/Outputs de forma visual y aislada.
+
+Storybook es la referencia viva y ejecutable del catalogo: complementa esta documentacion textual mostrando el comportamiento real de cada componente.
+
+| Aspecto           | Detalle                                                        |
+|-------------------|----------------------------------------------------------------|
+| Ubicacion stories | Junto a cada componente en `shared/components/` (`*.stories.ts`)|
+| Arranque local    | `npm run storybook`                                            |
+| Build estatico    | `npm run build-storybook`                                     |
+
+Al crear o modificar un componente reutilizable, se deben actualizar tambien sus *stories* para mantener Storybook sincronizado con la implementacion.
+
+---
+
 # Objetivos
 
 - Centralizar los componentes de interfaz que se utilizan en mas de una pantalla.
@@ -280,7 +296,11 @@ Para personalizar el renderizado de una celda, se usa la directiva `tpColumn`:
 
 Si no se define un template para una columna, se muestra el valor plano de `item[column.key]`.
 
-### Estados
+### Comportamiento comun de componentes de datos
+
+Las secciones de **Estados**, **Paginacion** y **Accesibilidad** de `tp-data-table` son la definicion canonica que reutilizan el resto de componentes de datos (`tp-data-list`, `tp-selected-*`). Dichos componentes solo documentan sus diferencias respecto a esta referencia.
+
+#### Estados
 
 | Estado  | Comportamiento                                                   |
 |---------|------------------------------------------------------------------|
@@ -291,9 +311,9 @@ Si no se define un template para una columna, se muestra el valor plano de `item
 ### Paginacion integrada
 
 El componente incluye un `card-footer` con:
-- Contador de registros: "Mostrando X-Y de Z"
-- Navegacion de paginas (maximo 5 visibles)
-- Selector de elementos por pagina
+- Contador de registros: "Mostrando X-Y de Z" (clave i18n `common.pagination.showing`)
+- Navegacion de paginas (maximo 5 visibles, ventana deslizante, chevrons `bi-chevron-left`/`bi-chevron-right`)
+- Selector de elementos por pagina (opciones 5, 10, 20, 50)
 
 ### Accesibilidad
 
@@ -424,29 +444,15 @@ Si no se define un template, se muestra `{{ item }}` como texto plano.
 
 ### Estados
 
-| Estado  | Comportamiento                                                   |
-|---------|------------------------------------------------------------------|
-| Carga   | Muestra `spinner-border` centrado con texto "Cargando..."        |
-| Vacio   | Mensaje diferenciado: "sin datos" o "sin resultados del filtro"  |
-| Datos   | Renderiza items con `list-group list-group-flush`                |
+Sigue el [comportamiento estándar de componentes de datos](#comportamiento-comun-de-componentes-de-datos), con la particularidad de que renderiza los items con `list-group list-group-flush` y diferencia el estado vacío entre "sin datos" y "sin resultados del filtro".
 
 ### Paginacion integrada
 
-El componente incluye un footer con:
-- Contador de registros: "Mostrando X-Y de Z"
-- Navegacion de paginas (maximo 5 visibles, ventana deslizante)
-- Selector de elementos por pagina
-
-Se puede ocultar con `[showPagination]="false"` cuando la paginacion se gestiona externamente (ej: dentro de `tp-selected-*`).
+Paginación idéntica a [`tp-data-table`](#paginacion-integrada). Se puede ocultar con `[showPagination]="false"` cuando la paginacion se gestiona externamente (ej: dentro de `tp-selected-*`).
 
 ### Accesibilidad
 
-- `role="list"` en el contenedor de items.
-- `role="listitem"` en cada item.
-- `aria-label` configurable en la lista.
-- `aria-label` en el filtro, botones "+" y "x".
-- `aria-hidden="true"` en iconos decorativos (chevrons, plus).
-- `aria-current="page"` en la pagina activa.
+Además de las reglas comunes, usa `role="list"` en el contenedor y `role="listitem"` en cada item, con `aria-label` en el filtro y en los botones "+" y "x".
 
 ### Estilos
 
@@ -768,15 +774,13 @@ El modal sigue el patron estandar de Bootstrap:
 | Counter           | `"Mostrando X a Y de Z"` usando `common.pagination.showing`    |
 | Footer            | Counter de seleccionados + Cancelar + Aceptar                   |
 
-### Paginacion (identica a tp-data-table)
+### Paginacion
 
-- **Navegacion**: Chevrons `bi-chevron-left` / `bi-chevron-right`.
-- **Paginas visibles**: Maximo 5, centradas en la pagina actual.
-- **Selector page-size**: `form-select form-select-sm` con opciones 5, 10, 20.
-- **Counter**: Reutiliza la clave i18n `common.pagination.showing`.
-- **Accesibilidad**: `aria-current="page"`, `aria-label` en prev/next.
+Paginación (lista y modal) idéntica a [`tp-data-table`](#paginacion-integrada), con selector de page-size de opciones 5, 10, 20.
 
 ### Estados
+
+Sigue el [comportamiento estándar de componentes de datos](#comportamiento-comun-de-componentes-de-datos), con estos textos y estados específicos:
 
 | Estado    | Comportamiento                                                     |
 |-----------|--------------------------------------------------------------------|
@@ -787,13 +791,7 @@ El modal sigue el patron estandar de Bootstrap:
 
 ### Accesibilidad
 
-- `aria-label` en filtro, boton add, boton remove (incluye nombre del item).
-- `aria-modal="true"`, `aria-labelledby` en el modal.
-- `role="dialog"` en el modal.
-- `aria-hidden="true"` en iconos decorativos (`bi-plus`, `bi-search`, `bi-chevron-*`, `bi-check-lg`).
-- `aria-current="page"` en la pagina activa de la paginacion.
-- Checkboxes con `aria-label` individual.
-- Keyboard: Tab navega entre controles, Enter/Space activan.
+Además de las reglas comunes, el modal usa `role="dialog"`, `aria-modal="true"` y `aria-labelledby`; el filtro y los botones add/remove llevan `aria-label` (el de remove incluye el nombre del item) y los checkboxes un `aria-label` individual.
 
 ### Claves de traduccion (i18n)
 

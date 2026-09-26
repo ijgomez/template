@@ -209,6 +209,44 @@ Permite:
 
 El acceso se realiza desde la barra superior de la aplicación.
 
+## Panel desplegable
+
+Al pulsar el icono de la campana en la barra superior se despliega un dropdown con las notificaciones pendientes.
+
+```text
+┌──────────────────────────────────────┐
+│ Notificaciones    [Marcar como leídas]│
+├──────────────────────────────────────┤
+│ [Error]                   22/07 09:30│
+│ Título de la notificación            │
+│ Detalle breve...          [Ir a detalle]│
+├──────────────────────────────────────┤
+│ [Aviso]                   22/07 08:15│
+│ Título de la notificación            │
+│ Detalle breve...          [Ir a detalle]│
+├──────────────────────────────────────┤
+│        Ver todas las notificaciones  │
+└──────────────────────────────────────┘
+```
+
+### Estructura de cada notificación
+
+| Elemento     | Descripción                                                        |
+|--------------|--------------------------------------------------------------------|
+| Badge        | Severidad: `Error` (danger), `Aviso` (warning), `Info` (info)      |
+| Timestamp    | Fecha y hora, alineado a la derecha                                |
+| Título       | Texto corto descriptivo (`fw-medium`)                              |
+| Detalle      | Texto secundario (`text-muted`, max 2 líneas)                      |
+| Botón        | "Ir a detalle" (`btn-outline-primary`, tamaño mini) — opcional     |
+
+### Reglas de presentación
+
+- Ancho del dropdown: `360px`.
+- Máximo alto con scroll: `420px` (`max-height` + `overflow-y: auto`).
+- Header con fondo `bg-light` y enlace "Marcar todas como leídas".
+- Footer con enlace "Ver todas las notificaciones" centrado.
+- Las notificaciones no leídas pueden tener fondo ligeramente destacado.
+
 ---
 
 # Notificaciones Push
@@ -359,13 +397,3 @@ Se recomienda:
 - [security.md](../backend/security.md)
 - [api.md](../backend/api.md)
 - [monitoring.md](../backend/monitoring.md)
-
----
-
-# Resumen
-
-El sistema de notificaciones de Template implementa un **Notification Framework** basado en eventos, donde la lógica de negocio únicamente publica eventos y es la plataforma quien decide cómo representarlos.
-
-Esta arquitectura desacopla completamente la generación de notificaciones de su presentación, facilita la reutilización del sistema por todos los módulos y permite incorporar nuevos canales de comunicación sin modificar el código funcional.
-
-El resultado es un mecanismo flexible, extensible y homogéneo que puede utilizarse desde cualquier componente de la plataforma, convirtiéndose en uno de los servicios transversales fundamentales de Template.

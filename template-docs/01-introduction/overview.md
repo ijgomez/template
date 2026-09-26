@@ -134,18 +134,9 @@ Template está orientado al desarrollo de aplicaciones empresariales que requier
 
 ## Tecnologías principales
 
-| Tecnología      | Descripción                          |
-|-----------------|--------------------------------------|
-| Java            | Lenguaje de programación del backend |
-| Spring Boot     | Framework de desarrollo backend      |
-| Spring Security | Seguridad de la aplicación           |
-| Angular         | Framework frontend                   |
-| Bootstrap       | Componentes visuales                 |
-| JWT             | Autenticación                        |
-| JPA / Hibernate | Persistencia                         |
-| Liquibase       | Versionado de base de datos          |
-| Maven           | Gestión de dependencias              |
-| PostgreSQL      | Base de datos de referencia          |
+Template se apoya en Java y Spring Boot (backend), Angular y Bootstrap (frontend), PostgreSQL con JPA/Hibernate y Liquibase (persistencia), Spring Security con JWT (seguridad) y Maven (construcción).
+
+El detalle completo del stack, por capas y con las versiones de referencia, está en [technologies.md](technologies.md).
 
 ---
 

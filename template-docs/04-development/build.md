@@ -13,8 +13,10 @@ Esta guía describe cómo compilar, ejecutar tests y arrancar la plataforma Temp
 El backend es un proyecto Maven multi-módulo. La compilación sigue el orden de dependencias:
 
 ```
-commons → cluster → domain → core → webapp
+commons → cluster → domain → core → ws → dashboard → webapp
 ```
+
+El significado de cada perfil (`local`, `dist`, `test`) y su relación con los entornos de ejecución se detalla en [entornos y perfiles](environments.md).
 
 ### Compilar el proyecto completo
 

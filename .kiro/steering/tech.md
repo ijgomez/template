@@ -12,13 +12,7 @@
 
 ## Versiones Específicas
 
-| Tecnología     | Versión    |
-|----------------|------------|
-| Java           | 21         |
-| Spring Boot    | 4.1.1      |
-| PostgreSQL     | 18         |
-| Angular        | 22         |
-| Bootstrap      | 5.3.8      |
+Ver la tabla de versiones de referencia (Java, Spring Boot, PostgreSQL, Angular, Bootstrap) en `template-docs/01-introduction/technologies.md`, incluido arriba. Es la fuente única de verdad.
 
 ## Comandos Habituales
 

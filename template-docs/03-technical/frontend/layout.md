@@ -382,63 +382,24 @@ Cada panel debe representar una unidad funcional claramente identificable.
 
 ---
 
-# Formularios
+# Elementos de pantalla
 
-Los formularios mantienen una apariencia homogénea.
+Los elementos que componen las pantallas (formularios, tablas, diálogos, filtros) mantienen una apariencia homogénea en toda la aplicación. Su especificación detallada (patrones de pantalla, reglas de diseño y componentes) reside en las siguientes fuentes únicas:
 
-Se recomienda:
+| Elemento    | Fuente única                                                        |
+|-------------|---------------------------------------------------------------------|
+| Formularios | [design-system.md](design-system.md) (patrón de formulario) + [components.md](components.md) (`app-entity-form`) |
+| Tablas      | [design-system.md](design-system.md) (patrón de listado y toolbar) + [components.md](components.md) (`tp-data-table`) |
+| Diálogos    | [components.md](components.md) (`tp-modal`)                          |
+| Filtros     | [design-system.md](design-system.md) (patrón de filtros)            |
 
-- Etiquetas alineadas.
-- Validación inmediata.
-- Agrupación lógica de campos.
-- Mensajes de ayuda.
-- Diseño responsive.
-
----
-
-# Tablas
-
-Las tablas constituyen uno de los elementos principales del layout.
-
-Se recomienda incorporar:
-
-- Ordenación.
-- Filtrado.
-- Paginación.
-- Selección múltiple.
-- Exportación.
-- Acciones por fila.
-
-Todas las tablas deben compartir el mismo comportamiento y aspecto visual.
-
----
-
-# Diálogos
-
-Las operaciones secundarias deben realizarse mediante ventanas modales.
-
-Ejemplos:
-
-- Confirmaciones.
-- Edición rápida.
-- Selección de elementos.
-- Ayuda contextual.
-
-Los diálogos deben mantener el mismo diseño en toda la aplicación.
+> **Acciones sobre registros**: las acciones (Nuevo, Modificar, Eliminar, Exportar) se agrupan en una **barra de herramientas única** situada entre los filtros y la tabla. No se muestran botones de acción por fila; el usuario selecciona la fila y actúa desde la toolbar (ver el patrón de listado en design-system.md).
 
 ---
 
 # Temas
 
-El layout ha sido diseñado para soportar distintos temas visuales.
-
-Por ejemplo:
-
-- Claro.
-- Oscuro.
-- Personalizado.
-
-El cambio de tema no modifica la organización funcional de la aplicación.
+El layout soporta distintos temas visuales (claro, oscuro y personalizado). El cambio de tema no modifica la organización funcional de la aplicación. Los tokens del tema oscuro se documentan en [design-system.md](design-system.md#tema-oscuro).
 
 ---
 
@@ -476,11 +437,3 @@ Durante el desarrollo de nuevas pantallas se recomienda:
 - [notifications.md](notifications.md)
 - [internacionalizacion.md](internacionalizacion.md)
 - [pwa.md](pwa.md)
-
----
-
-# Resumen
-
-El Layout define la estructura visual común de todas las aplicaciones desarrolladas sobre Template.
-
-La utilización de una organización homogénea, componentes reutilizables y un diseño responsive garantiza una experiencia de usuario consistente, facilita el desarrollo de nuevos módulos y simplifica el mantenimiento de la interfaz de usuario.

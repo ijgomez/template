@@ -114,14 +114,52 @@ Las acciones representan el nivel mínimo de autorización.
 
 Cada funcionalidad protegida de la plataforma requiere una acción determinada.
 
-Ejemplos:
-
-- USER_READ
-- USER_CREATE
-- USER_UPDATE
-- USER_DELETE
-
 Este enfoque permite desacoplar las funcionalidades de los perfiles concretos.
+
+Todas las acciones deben registrarse en la tabla `ACCION`.
+
+## Nomenclatura
+
+El código de cada acción sigue el formato `<IDENTIFICADOR>_<SUFIJO>`, donde el sufijo indica el tipo de operación:
+
+| Sufijo       | Significado                                      |
+|--------------|--------------------------------------------------|
+| `_READ`      | Leer, consultar o visualizar datos               |
+| `_WRITE`     | Editar o modificar datos                         |
+| `_EXECUTE`   | Ejecutar una operación                           |
+
+## Catálogo de acciones
+
+| Código                     | Descripción                                        |
+|----------------------------|----------------------------------------------------|
+| `DASHBOARD_READ`           | Visualizar el panel principal (Dashboard)          |
+| `REPORT_EXECUTE`           | Ejecutar informes                                  |
+| `INTERFACES_READ`          | Acceder al módulo de Interfaces (Monitor y Config) |
+| `USER_READ`                | Consultar usuarios                                 |
+| `USER_WRITE`               | Crear, editar o eliminar usuarios                  |
+| `PROFILE_READ`             | Consultar perfiles                                 |
+| `PROFILE_WRITE`            | Crear, editar o eliminar perfiles                  |
+| `ACTION_READ`              | Consultar acciones del sistema                     |
+| `SYSTEM_PARAMETER_READ`    | Consultar parámetros del sistema                   |
+| `SYSTEM_PARAMETER_WRITE`   | Modificar parámetros del sistema                   |
+| `SYSTEM_LOG_READ`          | Consultar registros de auditoría                   |
+| `CLUSTER_NODE_READ`        | Consultar nodos del clúster                        |
+| `CLUSTER_NODE_WRITE`       | Modificar la configuración de nodos                |
+| `CLUSTER_LOCK_READ`        | Consultar bloqueos del clúster                     |
+
+## Reglas de visibilidad
+
+Las acciones gobiernan qué opciones de menú ve cada usuario en el frontend (ver el mapeo menú → acción en [navigation.md](../frontend/navigation.md)):
+
+1. **Informes**: todos los informes comparten la misma acción (`REPORT_EXECUTE`). La visibilidad de cada informe individual depende de la relación `user2report` del usuario, pero el acceso a la sección requiere esta acción.
+
+2. **Interfaces**: toda la sección (Monitor y Configuración) se gobierna con una única acción (`INTERFACES_READ`).
+
+3. **Herencia en secciones padre**: una sección del menú con varias opciones hijas se muestra únicamente si el usuario dispone de al menos una acción asociada a alguno de sus hijos.
+
+   - **Seguridad** se muestra si el usuario tiene `USER_READ`, `USER_WRITE`, `PROFILE_READ`, `PROFILE_WRITE` o `ACTION_READ`.
+   - **Cluster** se muestra si el usuario tiene `CLUSTER_NODE_READ`, `CLUSTER_NODE_WRITE` o `CLUSTER_LOCK_READ`.
+   - **Administración** se muestra si el usuario tiene acceso a al menos una de sus subsecciones (Seguridad, Parámetros, Auditoría o Cluster).
 
 ---
 

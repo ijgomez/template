@@ -8,6 +8,20 @@ La selección tecnológica busca proporcionar una plataforma moderna y robusta, 
 
 ---
 
+# Versiones de referencia
+
+Versiones principales sobre las que se construye la plataforma. Esta tabla es la fuente única de verdad para las versiones del stack.
+
+| Tecnología  | Versión |
+|-------------|---------|
+| Java        | 21      |
+| Spring Boot | 4.1.1   |
+| PostgreSQL  | 18      |
+| Angular     | 22      |
+| Bootstrap   | 5.3.8   |
+
+---
+
 # Arquitectura tecnológica
 
 La plataforma está compuesta por las siguientes capas tecnológicas:

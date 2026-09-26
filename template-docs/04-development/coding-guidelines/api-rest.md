@@ -57,7 +57,7 @@ Patrón interfaz + implementación:
   - Usa un DTO record mínimo: `record EntidadRefDTO(Long id, String name)`.
   - Se autoriza con los permisos del listado consumidor, **no** con los de la entidad que expone. Ejemplo: `GET /profiles/references` se autoriza con `USER_READ` porque lo consume la vista de usuarios.
 - Ubicar la ruta `/references` **antes** de las rutas genéricas `/{id}` en el controlador para evitar conflictos de path matching en Spring MVC.
-- En `SecurityConfig`, la regla del endpoint `/references` debe declararse **antes** del patrón genérico de la entidad.
+- Las reglas de autorización de estos endpoints en `SecurityConfig` se detallan en [security.md](security.md), sección "Autorización de Endpoints Auxiliares para Filtros".
 
 ## Documentación
 

@@ -47,6 +47,17 @@ Está organizado como un proyecto **Maven multi-módulo**, donde cada módulo im
 | dashboard | Frontend Angular (módulo Maven `pom`); compila y testea el frontend con Maven        |
 | webapp    | API REST, configuración de Spring Boot y seguridad; empaqueta el `dist/` del dashboard en el WAR |
 
+Las dependencias entre módulos y el orden del reactor Maven son:
+
+```text
+commons → cluster → domain → core → ws → dashboard → webapp
+```
+
+- `cluster` depende de `commons`.
+- `domain` depende de `cluster` y `commons`.
+- `core` depende de `domain` (y transitivos).
+- `webapp` depende de `core` (salida WAR); el `dashboard` se construye antes que `webapp` para que su `dist/` exista al empaquetar el WAR.
+
 ---
 
 ## Frontend (`dashboard`)
@@ -149,3 +160,14 @@ La separación del proyecto en varios componentes proporciona numerosas ventajas
 - Mantenimiento simplificado.
 
 Esta organización constituye la estructura de referencia para todos los proyectos desarrollados a partir de Template.
+
+---
+
+# Convenciones de estructura
+
+- Usar kebab-case para todos los nombres de directorios y módulos.
+- Mantener el modelo de ramas: `master` para código estable, `release/*` para candidatos a release.
+- No añadir lógica de negocio en `webapp`; delegar siempre a `core`.
+- No añadir dependencias de Spring en `domain`; debe ser un módulo Java puro (salvo JPA).
+- Los ficheros de propiedades sensibles (contraseñas, tokens) nunca se versionan; usar `template-properties` solo para plantillas o propiedades no sensibles.
+- Los changelogs de Liquibase se mantienen en formato **XML** dentro de `domain` (`template/template/domain/src/main/resources/db/changelog/**`).

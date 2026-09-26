@@ -54,9 +54,9 @@ Describe los distintos módulos funcionales de la aplicación.
 - [Buenas prácticas](04-development/coding-guidelines.md)
 - [Test](04-development/testing.md)
 - [Release](04-development/release.md)
-- [Figma](04-development/figma.md)
-- [Serena](04-development/serena.md)
-- [Documentación](04-development/documents.md)
+- [Figma](04-development/ia/figma.md)
+- [Serena](04-development/ia/serena.md)
+- [Reglas de documentación](04-development/coding-guidelines/documentation.md)
 
 ### Especificación funcional
 
