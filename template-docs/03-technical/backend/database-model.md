@@ -28,27 +28,9 @@ El modelo de datos se basa en los siguientes principios:
 
 ---
 
-# Arquitectura del modelo
+# Encuadre en la arquitectura
 
-```mermaid
-classDiagram
-
-class Entity
-
-class Repository
-
-class Service
-
-class DTO
-
-DTO --> Service
-Service --> Entity
-Repository --> Entity
-```
-
-Las entidades representan el modelo persistente de la aplicación.
-
-Los DTO constituyen el modelo utilizado por las API.
+Las entidades representan el modelo **persistente** de la aplicación y son la base de la capa de dominio (`domain`). Su relación con el resto de capas (servicios, mappers, repositorios y DTO) forma parte de la arquitectura por capas del backend, descrita en [backend.md](backend.md#arquitectura-por-capas). Este documento se centra exclusivamente en el modelo de datos.
 
 ---
 
@@ -78,35 +60,53 @@ Cada módulo contiene únicamente las entidades relacionadas con su ámbito func
 
 # Entidades comunes
 
-Existen una serie de entidades compartidas por toda la plataforma.
+Estas son las entidades persistentes del núcleo de Template, agrupadas por dominio funcional. Todas ellas residen en el módulo `domain` (`org.myorganization.template.domain.entity`).
 
-Entre ellas:
+| Dominio        | Entidad JPA    | Tabla            | Descripción                                                    |
+|----------------|----------------|------------------|----------------------------------------------------------------|
+| Seguridad      | `User`         | `users`          | Usuario del sistema con datos de autenticación y perfil        |
+| Seguridad      | `Profile`      | `profile`        | Perfil de seguridad que agrupa acciones                        |
+| Seguridad      | `Action`       | `action`         | Acción (permiso) asignable a perfiles                          |
+| Seguridad      | `RefreshToken` | `refresh_token`  | Token de refresco opaco asociado a un usuario                  |
+| Administración | `Parameter`    | `parameter`      | Parámetro de configuración del sistema, tipado                 |
+| Administración | `AuditLog`     | `audit_log`      | Entrada inmutable de auditoría (append-only)                   |
+| Informes       | `Report`       | `report`         | Informe asignable a usuarios para ejecución/exportación        |
+| Interfaces     | `Interface`    | `interface`      | Interfaz externa monitorizada por el sistema                   |
+| Interfaces     | `InterfaceLog` | `interface_log`  | Entrada inmutable de operación de interfaz (append-only)       |
+| Cluster        | `ClusterNode`  | `cluster_node`   | Nodo del cluster con estado y métricas de memoria              |
+| Cluster        | `ClusterTask`  | `cluster_task`   | Definición de una tarea del cluster                            |
+| Cluster        | `ClusterJob`   | `cluster_job`    | Asignación de una tarea a un nodo (clave compuesta)            |
+| Cluster        | `ClusterBlock` | `cluster_block`  | Registro de bloqueo (lock) de una tarea con métricas           |
 
-- Usuario
-- Perfil
-- Acción
-- Parámetro
-- Auditoría
-- Idioma
-- Notificación
+### Tablas de unión
 
-Estas entidades forman parte del núcleo de Template y pueden ser utilizadas por cualquier módulo.
+Las relaciones N:M se materializan mediante entidades intermedias:
+
+| Entidad JPA      | Tabla            | Relación que resuelve   |
+|------------------|------------------|-------------------------|
+| `User2Report`    | `user2report`    | Usuario ↔ Informe       |
+| `Profile2Action` | `profile2action` | Perfil ↔ Acción         |
+
+> **Nota**: la mayoría de entidades de negocio extienden `BaseEntity` (id + `created_at` + `last_modified_at`). Las entidades de tipo log (`AuditLog`, `InterfaceLog`) y las del cluster (`ClusterNode`, `ClusterTask`, `ClusterJob`, `ClusterBlock`) no extienden `BaseEntity` y gestionan sus propios campos de tiempo. Ver detalle en la sección [Auditoría](#auditoría).
+
+La representación funcional de estas entidades (atributos de dominio y relaciones) se encuentra en [data-model.md](../../specification/data-model.md).
+
+> **Idioma y Notificación**: aunque son funcionalidades transversales de la plataforma, **no** disponen de entidad persistente propia en el modelo actual. Los idiomas se gestionan mediante ficheros de recursos i18n en el frontend y las notificaciones mediante un framework basado en eventos. Ver [data-model.md](../../specification/data-model.md) para más detalle.
 
 ---
 
 # Identificadores
 
-Todas las entidades disponen de un identificador único.
-
-Ejemplo:
+Todas las entidades disponen de un identificador único generado por secuencia. `BaseEntity` centraliza el identificador para las entidades que la extienden:
 
 ```java
 @Id
-@GeneratedValue(strategy = GenerationType.IDENTITY)
+@GeneratedValue(strategy = GenerationType.SEQUENCE)
+@Column(name = "id")
 private Long id;
 ```
 
-La estrategia concreta de generación podrá variar según la base de datos utilizada.
+Las entidades que no extienden `BaseEntity` declaran su propio `@Id` con la misma estrategia de secuencia (algunas con un `@SequenceGenerator` explícito). La entidad `ClusterJob` usa una **clave primaria compuesta** (`@EmbeddedId`) al ser una tabla de asignación nodo–tarea.
 
 ---
 
@@ -183,34 +183,9 @@ Esto mejora la legibilidad del código y evita valores literales.
 
 ---
 
-# DTO
+# Acceso y exposición de las entidades
 
-Las entidades JPA nunca se exponen directamente mediante las API.
-
-Todas las comunicaciones utilizan DTO específicos.
-
-```mermaid
-flowchart LR
-
-Database --> Entity --> Mapper --> DTO --> API
-```
-
-Esta separación proporciona:
-
-- Independencia entre persistencia y API.
-- Mayor seguridad.
-- Evolución independiente del modelo.
-- Optimización de las respuestas.
-
----
-
-# Repositorios
-
-Cada entidad persistente dispone de un repositorio encargado del acceso a la base de datos.
-
-Los repositorios implementan únicamente operaciones de persistencia.
-
-La lógica de negocio pertenece exclusivamente a la capa de servicios.
+Las entidades JPA nunca se exponen directamente mediante las API: cada entidad se accede a través de su repositorio y se expone mediante DTO específicos. Este flujo (`Repository → Service → Mapper → DTO → API`) y las responsabilidades de repositorios, mappers y DTO se detallan en [backend.md](backend.md#responsabilidad-de-las-capas).
 
 ---
 
@@ -259,6 +234,7 @@ Durante el desarrollo deben respetarse las siguientes recomendaciones:
 
 Para ampliar la información sobre el modelo de datos consultar:
 
+- [data-model.md](../../specification/data-model.md) — modelo de datos desde el punto de vista funcional (entidades de dominio y relaciones).
 - [backend.md](backend.md)
 - [liquibase.md](liquibase.md)
 - [api.md](api.md)
