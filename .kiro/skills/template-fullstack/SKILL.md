@@ -5,7 +5,7 @@ description: Coordinates backend, frontend, architecture guardrails, and verific
 
 # Skill: template-fullstack
 
-Aplica en cambios end-to-end que tocan backend y frontend a la vez (un caso de uso, un bug transversal). Los principios generales están en [AGENTS.md](../../../AGENTS.md); este skill coordina el reparto entre capas y la validación conjunta.
+Aplica en cambios end-to-end que tocan backend y frontend a la vez (un caso de uso, un bug transversal). Los principios generales están en `AGENTS.md`; este skill coordina el reparto entre capas y la validación conjunta.
 
 ## Reparto por capa
 
@@ -24,4 +24,4 @@ Aplica en cambios end-to-end que tocan backend y frontend a la vez (un caso de u
 
 ## Referencia
 
-Para el detalle por área usa los skills `template-backend`, `template-ui` y `template-testing`, y [coding-guidelines.md](../../../template-docs/04-development/coding-guidelines.md).
+Para el detalle por área usa los skills `template-backend`, `template-ui` y `template-testing`, y `template-docs/04-development/coding-guidelines.md`.

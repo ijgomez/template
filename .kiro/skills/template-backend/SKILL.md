@@ -6,7 +6,7 @@ description: Applies Java and Spring Boot conventions for the backend modules wh
 # Skill: template-backend
 
 Específico de los módulos backend: `commons`, `cluster`, `domain`, `core`, `webapp`, `ws`.
-Las reglas transversales (separación por capas, no dependencias cruzadas, no tocar `target/`, alcance mínimo, tests si cambia negocio) están en [AGENTS.md](../../../AGENTS.md) y no se repiten aquí.
+Las reglas transversales (separación por capas, no dependencias cruzadas, no tocar `target/`, alcance mínimo, tests si cambia negocio) están en `AGENTS.md` y no se repiten aquí.
 
 ## Ubicación por capa
 
@@ -26,4 +26,4 @@ Resuelve el problema en la capa responsable. No metas lógica de negocio en el c
 
 ## Referencia
 
-Convenciones completas y build: [java-spring-boot.md](../../../template-docs/04-development/coding-guidelines/java-spring-boot.md) y [build.md](../../../template-docs/04-development/build.md).
+Convenciones completas y build: `template-docs/04-development/coding-guidelines/java-spring-boot.md` (se carga vía steering `coding-java` al editar `.java`) y `template-docs/04-development/build.md`.

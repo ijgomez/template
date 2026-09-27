@@ -5,7 +5,7 @@ description: Applies Angular frontend conventions for the dashboard module, keep
 
 # Skill: template-ui
 
-Específico del frontend Angular (módulo `dashboard`). Las reglas transversales están en [AGENTS.md](../../../AGENTS.md) y no se repiten aquí.
+Específico del frontend Angular (módulo `dashboard`). Las reglas transversales están en `AGENTS.md` y no se repiten aquí.
 
 ## Ubicación
 
@@ -22,4 +22,4 @@ Específico del frontend Angular (módulo `dashboard`). Las reglas transversales
 
 ## Referencia
 
-Convenciones Angular completas: [angular.md](../../../template-docs/04-development/coding-guidelines/angular.md). Catálogo de componentes reutilizables: [components.md](../../../template-docs/03-technical/frontend/components.md) (léelo bajo demanda antes de crear tabla/paginación/formulario). Módulo: [dashboard/README.md](../../../template/dashboard/README.md).
+Convenciones Angular completas: `template-docs/04-development/coding-guidelines/angular.md` (se carga vía steering `coding-angular` al editar el `dashboard`). Catálogo de componentes reutilizables: `template-docs/03-technical/frontend/components.md` (léelo bajo demanda antes de crear tabla/paginación/formulario). Módulo: `template/dashboard/README.md`.

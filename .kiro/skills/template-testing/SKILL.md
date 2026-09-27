@@ -5,7 +5,7 @@ description: Encourages the smallest real verification for business and code cha
 
 # Skill: template-testing
 
-Aplica al cambiar comportamiento funcional, resolver un bug o ajustar un contrato. Las reglas transversales están en [AGENTS.md](../../../AGENTS.md).
+Aplica al cambiar comportamiento funcional, resolver un bug o ajustar un contrato. Las reglas transversales están en `AGENTS.md`.
 
 ## Principio
 
@@ -20,4 +20,4 @@ Valida el cambio con la prueba más cercana que capture el comportamiento real a
 
 ## Referencia
 
-Estrategia y herramientas de test: [testing.md](../../../template-docs/04-development/coding-guidelines/testing.md) y [build.md](../../../template-docs/04-development/build.md).
+Estrategia y herramientas de test: `template-docs/04-development/coding-guidelines/testing.md` (se carga vía steering `coding-testing`) y `template-docs/04-development/build.md`.

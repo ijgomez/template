@@ -5,7 +5,7 @@ description: Enforces the project architecture, module boundaries, business vali
 
 # Skill: template-guardrails
 
-Refuerza la arquitectura modular al tocar cualquier módulo. Los principios generales (separación por capas, no dependencias cruzadas, no tocar `target/`, alcance mínimo, tests si cambia negocio, checklist final) ya están en [AGENTS.md](../../../AGENTS.md); este skill solo concreta la ubicación de responsabilidades y el flujo.
+Refuerza la arquitectura modular al tocar cualquier módulo. Los principios generales (separación por capas, no dependencias cruzadas, no tocar `target/`, alcance mínimo, tests si cambia negocio, checklist final) ya están en `AGENTS.md`; este skill solo concreta la ubicación de responsabilidades y el flujo.
 
 ## Qué responsabilidad va en qué módulo
 
@@ -28,4 +28,4 @@ Antes de editar, identifica en qué capa está la responsabilidad real. Si encaj
 
 ## Referencia
 
-[AGENTS.md](../../../AGENTS.md), [coding-guidelines.md](../../../template-docs/04-development/coding-guidelines.md) y [build.md](../../../template-docs/04-development/build.md).
+`AGENTS.md`, `template-docs/04-development/coding-guidelines.md` y `template-docs/04-development/build.md`.
