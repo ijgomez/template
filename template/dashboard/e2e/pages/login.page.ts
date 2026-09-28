@@ -36,4 +36,12 @@ export class LoginPage {
     await this.passwordInput.fill(password);
     await this.submitButton.click();
   }
+
+  /**
+   * Realiza el login y espera a que se complete la navegación al dashboard.
+   */
+  async loginAndWaitForDashboard(username: string, password: string): Promise<void> {
+    await this.login(username, password);
+    await this.page.waitForURL(/\/dashboard$/);
+  }
 }

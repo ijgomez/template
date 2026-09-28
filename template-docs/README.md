@@ -19,9 +19,11 @@ Describe la arquitectura general, las tecnologías utilizadas y la estructura de
 
 Describe los distintos módulos funcionales de la aplicación.
 
+- [Login](02-functional/login/login.md)
 - [Informes](02-functional/reports/reports.md)
 - [Administración](02-functional/administration/administration.md)
   - [Seguridad](02-functional/administration/security/security.md)
+    - [Usuarios](02-functional/administration/security/users.md)
   - [Parámetros](02-functional/administration/parameters/parameters.md)
   - [Auditoría](02-functional/administration/audit/audit.md)
   - [Interfaces](02-functional/administration/interfaces/interfaces.md)

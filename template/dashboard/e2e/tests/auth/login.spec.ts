@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 
+import { testUsers } from '../../fixtures/test-data';
 import { LoginPage } from '../../pages/login.page';
 
 test.describe('Login', () => {
@@ -43,5 +44,31 @@ test.describe('Login', () => {
 
     // Assert: ahora el campo muestra el texto
     await expect(loginPage.passwordInput).toHaveAttribute('type', 'text');
+  });
+
+  test('should log in with valid credentials and load the dashboard', async ({ page }) => {
+    // Arrange
+    const loginPage = new LoginPage(page);
+    await loginPage.goto();
+
+    // Act
+    await loginPage.loginAndWaitForDashboard(testUsers.valid.username, testUsers.valid.password);
+
+    // Assert: navegamos al dashboard y se renderiza su contenido
+    await expect(page).toHaveURL(/\/dashboard$/);
+    await expect(page.getByTestId('dashboard-title')).toBeVisible();
+  });
+
+  test('should show an error with invalid credentials', async ({ page }) => {
+    // Arrange
+    const loginPage = new LoginPage(page);
+    await loginPage.goto();
+
+    // Act
+    await loginPage.login(testUsers.invalid.username, testUsers.invalid.password);
+
+    // Assert: seguimos en login y se muestra la alerta de error
+    await expect(loginPage.errorAlert).toBeVisible();
+    await expect(page).toHaveURL(/\/login$/);
   });
 });
