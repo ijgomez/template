@@ -9,13 +9,80 @@ Documentación funcional y técnica de la pantalla de inicio de sesión de la ap
 
 ---
 
-## 1. Parte funcional
+## 1. Requisitos
 
-### 1.1. Objetivo
+Identificadores locales de este documento: `RF-LOG-*` (requisitos funcionales) y `RNF-LOG-*` (requisitos no funcionales). El detalle del modelo de autenticación y autorización global de la plataforma se especifica en [requirements.md](../../../specification/requirements.md) (Requirements 1-6).
+
+### 1.1. Requisitos funcionales
+
+#### RF-LOG-1: Autenticación con usuario y contraseña
+
+**Descripción:** el sistema debe permitir autenticarse mediante usuario y contraseña válidos.
+
+**Criterios de aceptación:**
+- AC1.1: Al enviar credenciales válidas, se invoca `POST /api/v1/auth/login`.
+- AC1.2: Con respuesta correcta (200), se guarda el `accessToken` en memoria y se establece la sesión.
+- AC1.3: Tras autenticación correcta, el usuario es redirigido a `/dashboard`.
+
+#### RF-LOG-2: Validaciones de formulario
+
+**Descripción:** el sistema debe validar que los campos obligatorios están informados antes de enviar.
+
+**Criterios de aceptación:**
+- AC2.1: Usuario y contraseña son obligatorios.
+- AC2.2: Si el formulario es inválido, no se realiza llamada al backend.
+- AC2.3: Los errores de validación se muestran cuando los campos han sido tocados.
+
+#### RF-LOG-3: Gestión de errores de autenticación
+
+**Descripción:** el sistema debe informar de forma clara cuando las credenciales no son válidas.
+
+**Criterios de aceptación:**
+- AC3.1: Ante credenciales incorrectas, se muestra la alerta `login-error-alert`.
+- AC3.2: El usuario permanece en `/login`.
+- AC3.3: El mensaje de error usa la clave traducible `login.error`.
+
+#### RF-LOG-4: Control de interacción durante el envío
+
+**Descripción:** el sistema debe evitar envíos duplicados durante una autenticación en curso.
+
+**Criterios de aceptación:**
+- AC4.1: Al iniciar el envío, el botón de inicio de sesión se deshabilita.
+- AC4.2: Mientras dura la petición, se muestra estado de carga en el botón.
+
+#### RF-LOG-5: Mostrar/ocultar contraseña
+
+**Descripción:** el sistema debe permitir alternar la visibilidad de la contraseña sin perder su valor.
+
+**Criterios de aceptación:**
+- AC5.1: Al pulsar `btn-toggle-password`, el input alterna entre tipo `password` y `text`.
+- AC5.2: El valor introducido en la contraseña se conserva al alternar visibilidad.
+
+#### RF-LOG-6: Selección de idioma
+
+**Descripción:** el sistema debe permitir cambiar el idioma de la interfaz desde la pantalla de login.
+
+**Criterios de aceptación:**
+- AC6.1: El usuario puede alternar entre ES y EN desde `btn-lang-<lang>`.
+- AC6.2: Los textos visibles del login se actualizan al idioma seleccionado sin recargar la página.
+
+### 1.2. Requisitos no funcionales
+
+- **RNF-LOG-1 (Seguridad de sesión):** el `accessToken` se conserva solo en memoria; no se persiste en `localStorage` ni `sessionStorage`.
+- **RNF-LOG-2 (Protección de credenciales):** la contraseña no se muestra en claro salvo cuando el usuario activa explícitamente el toggle de visibilidad.
+- **RNF-LOG-3 (Internacionalización):** todos los textos de la pantalla son traducibles mediante claves `login.*` y `validation.*`.
+- **RNF-LOG-4 (Usabilidad):** el envío inválido proporciona feedback inmediato en los campos requeridos.
+- **RNF-LOG-5 (Resiliencia):** los errores de autenticación no rompen la navegación ni abandonan la vista de login.
+
+---
+
+## 2. Parte funcional
+
+### 2.1. Objetivo
 
 Permitir que un usuario se autentique con usuario y contraseña para acceder a la aplicación. Tras una autenticación correcta, el usuario es redirigido al dashboard. Ante credenciales incorrectas se muestra un mensaje de error sin abandonar la pantalla.
 
-### 1.2. Elementos de la pantalla
+### 2.2. Elementos de la pantalla
 
 | Elemento | Descripción | `data-testid` |
 |----------|-------------|---------------|
@@ -29,7 +96,7 @@ Permitir que un usuario se autentique con usuario y contraseña para acceder a l
 | Alerta de error | Aviso visible solo cuando fallan las credenciales | `login-error-alert` |
 | Selector de idioma | Cambia el idioma de la interfaz (ES / EN) | `btn-lang-<lang>` |
 
-### 1.3. Validaciones funcionales
+### 2.3. Validaciones funcionales
 
 | Campo | Regla | Mensaje |
 |-------|-------|---------|
@@ -40,7 +107,7 @@ Permitir que un usuario se autentique con usuario y contraseña para acceder a l
 - Mientras el formulario es inválido, el envío no dispara ninguna llamada al backend: se marcan los campos como tocados para mostrar los errores.
 - Durante el envío, el botón de inicio de sesión se deshabilita y muestra un indicador de carga para evitar envíos duplicados.
 
-### 1.4. Flujo de inicio de sesión
+### 2.4. Flujo de inicio de sesión
 
 ```mermaid
 flowchart TD
@@ -57,7 +124,7 @@ flowchart TD
   J --> B
 ```
 
-### 1.5. Mensajes al usuario
+### 2.5. Mensajes al usuario
 
 | Situación | Texto (clave i18n) | Valor en español |
 |-----------|--------------------|------------------|
@@ -67,7 +134,7 @@ flowchart TD
 | Placeholder contraseña | `login.password.placeholder` | `Introduce tu contraseña` |
 | Subtítulo | `login.subtitle` | `Introduce tus credenciales para acceder` |
 
-### 1.6. Internacionalización
+### 2.6. Internacionalización
 
 - La pantalla es multi-idioma (ES / EN) mediante `@ngx-translate`.
 - El selector de idioma al pie permite cambiar el idioma sin recargar la página.
@@ -75,9 +142,9 @@ flowchart TD
 
 ---
 
-## 2. Parte técnica
+## 3. Parte técnica
 
-### 2.1. Componentes afectados
+### 3.1. Componentes afectados
 
 | Capa | Elemento | Responsabilidad |
 |------|----------|-----------------|
@@ -88,7 +155,7 @@ flowchart TD
 | Backend | `AuthController` | Endpoints `/login`, `/refresh`, `/logout` |
 | Backend | `AuthService` (core) | Autenticación y emisión de tokens |
 
-### 2.2. Modelo de datos (frontend)
+### 3.2. Modelo de datos (frontend)
 
 ```typescript
 interface LoginRequest {
@@ -103,28 +170,42 @@ interface AccessTokenResponse {
 
 El campo `remember` del formulario no se envía al backend; forma parte únicamente del estado del formulario.
 
-### 2.3. Contrato del endpoint de login
+### 3.3. Endpoints del backend
+
+Ruta base de autenticación: `/api/v1/auth`.
+
+| Método y ruta | Descripción | Respuesta |
+|---------------|-------------|-----------|
+| `POST /login` | Autenticación con usuario y contraseña | 200 OK con `accessToken` y cookie de refresh |
+| `POST /refresh` | Renovación de sesión usando cookie HttpOnly | 200 OK con nuevo `accessToken` |
+| `POST /logout` | Cierre de sesión | 200 OK |
+
+### 3.4. Contrato del endpoint de login
 
 - **Método y ruta:** `POST /api/v1/auth/login` (ruta pública).
 - **Cuerpo de la petición:** `{ "username": "...", "password": "..." }`.
 - **Respuesta correcta (200):** `{ "accessToken": "<JWT>" }` y cabecera `Set-Cookie` con el refresh token.
 - **Respuesta con error:** las credenciales inválidas se traducen en un error que el frontend interpreta para mostrar la alerta.
 
-### 2.4. Modelo de seguridad
+### 3.5. Modelo de seguridad
 
 - El **access token** (JWT) se guarda **solo en memoria** dentro de `AuthService`; nunca en `localStorage` ni `sessionStorage`.
 - El **refresh token** se entrega como **cookie HttpOnly** gestionada por el navegador; no es accesible desde JavaScript.
 - El JWT se decodifica en cliente para extraer `username`, `profile`, `actions`, `exp` e `iat` (sin verificar la firma; la validación real es del backend).
 - Atributos de la cookie de refresh (configurables): `HttpOnly`, `Secure`, `SameSite=Strict`, `Path=/template/api/v1/auth`, `Max-Age=604800` (7 días).
 
-### 2.5. Navegación tras autenticar
+### 3.6. Reglas de comportamiento relevantes
 
-- Login correcto: `LoginComponent` invoca `router.navigate(['/dashboard'])`.
+- Si el formulario es inválido, no se invoca el backend y se marcan los controles para mostrar validaciones.
+- Con login correcto, `LoginComponent` redirige a `/dashboard`.
+- Con login inválido, se mantiene la vista y se muestra la alerta de error.
+- Durante el envío, se bloquea temporalmente la acción de login para evitar duplicidad.
+
+### 3.7. Navegación y restauración de sesión
+
 - El acceso a `/dashboard` está protegido por `authGuard` (sesión válida) y `actionGuard` (acción `DASHBOARD_READ`).
-
-### 2.6. Restauración de sesión
-
-Al arrancar la aplicación, `AuthService.tryRestoreSession()` llama a `POST /api/v1/auth/refresh`. Si la cookie HttpOnly es válida, se obtiene un nuevo access token sin intervención del usuario y se evita el paso por `/login`.
+- Al arrancar la aplicación, `AuthService.tryRestoreSession()` llama a `POST /api/v1/auth/refresh`.
+- Si la cookie HttpOnly es válida, se obtiene un nuevo access token sin intervención del usuario y se evita el paso por `/login`.
 
 ```mermaid
 sequenceDiagram
@@ -141,7 +222,7 @@ sequenceDiagram
   L->>U: Redirige a /dashboard
 ```
 
-### 2.7. Consideraciones de despliegue
+### 3.8. Consideraciones de despliegue
 
 - El frontend consume el backend a través de `environment.apiUrl` según el perfil de compilación (`local`, `test`, `dist`).
 - Las llamadas de autenticación usan `withCredentials: true` para enviar y recibir la cookie de refresh; el backend debe permitir credenciales en CORS.
@@ -149,9 +230,9 @@ sequenceDiagram
 
 ---
 
-## 3. Pruebas
+## 4. Pruebas
 
-### 3.1. Cobertura E2E (Playwright)
+### 4.1. Cobertura E2E (Playwright)
 
 Ubicación: `dashboard/e2e/tests/auth/login.spec.ts` (Page Object en `dashboard/e2e/pages/login.page.ts`).
 
@@ -163,11 +244,18 @@ Ubicación: `dashboard/e2e/tests/auth/login.spec.ts` (Page Object en `dashboard/
 | Login válido | Usuario y contraseña correctos | Navega a `/dashboard` y muestra `dashboard-title` |
 | Login inválido | Contraseña incorrecta | Muestra alerta de error y permanece en `/login` |
 
-### 3.2. Datos de prueba
+### 4.2. Cobertura unitaria (frontend)
+
+| Ubicación | Alcance |
+|-----------|---------|
+| `login.component.spec.ts` | Validación del formulario, envío y manejo de estado de carga/error |
+| `auth.service.spec.ts` | Login, refresh, logout y gestión de token en memoria |
+
+### 4.3. Datos de prueba
 
 Definidos en `dashboard/e2e/fixtures/test-data.ts`. Deben ajustarse a las credenciales del entorno de integración (perfil `test`).
 
-### 3.3. Dependencias de ejecución
+### 4.4. Dependencias de ejecución
 
 - Los casos de login válido e inválido requieren el backend de integración levantado (por defecto en `http://localhost:8080`).
 - Los casos de render, validación y toggle no dependen del backend.

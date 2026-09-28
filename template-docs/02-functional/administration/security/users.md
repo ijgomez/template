@@ -9,9 +9,90 @@ Documentación funcional y técnica de la pantalla de gestión de usuarios, dent
 
 ---
 
-## 1. Parte funcional
+## 1. Requisitos
 
-### 1.1. Objetivo
+Identificadores locales de este documento: `RF-USR-*` (requisitos funcionales) y `RNF-USR-*` (requisitos no funcionales). La autenticación y la gestión de sesión que dan acceso a esta pantalla se especifican en [requirements.md](../../../specification/requirements.md) (Requirements 1–6).
+
+### 1.1. Requisitos funcionales
+
+#### RF-USR-1: Consulta paginada de usuarios
+
+**Descripción:** el sistema debe permitir consultar los usuarios en un listado paginado y ordenable.
+
+**Criterios de aceptación:**
+- AC1.1: El listado muestra las columnas usuario, nombre, apellidos, email, perfil y último acceso.
+- AC1.2: Todas las columnas son ordenables (ascendente/descendente).
+- AC1.3: La paginación permite navegar entre páginas y cambiar el tamaño de página.
+
+#### RF-USR-2: Búsqueda y filtrado
+
+**Descripción:** el sistema debe permitir filtrar el listado por usuario, nombre y perfil.
+
+**Criterios de aceptación:**
+- AC2.1: Los filtros de usuario y nombre aplican coincidencia parcial.
+- AC2.2: El filtro de perfil permite seleccionar un perfil concreto o todos.
+- AC2.3: Al aplicar un filtro, el listado vuelve a la primera página.
+- AC2.4: La acción de limpiar restablece todos los filtros y recarga el listado completo.
+
+#### RF-USR-3: Alta de usuario
+
+**Descripción:** un usuario con permiso de escritura debe poder crear nuevos usuarios.
+
+**Criterios de aceptación:**
+- AC3.1: El formulario exige usuario, contraseña y perfil.
+- AC3.2: Un alta válida devuelve 201 y el nuevo usuario aparece en el listado.
+- AC3.3: El email, cuando se informa, debe tener formato válido.
+- AC3.4: Tras el alta correcta se vuelve al listado y se recarga.
+
+#### RF-USR-4: Edición de usuario
+
+**Descripción:** un usuario con permiso de escritura debe poder modificar los datos de un usuario existente.
+
+**Criterios de aceptación:**
+- AC4.1: El campo usuario es de solo lectura en edición (identidad inmutable).
+- AC4.2: La contraseña no es obligatoria en edición.
+- AC4.3: Una edición válida devuelve 200 y el cambio se refleja en el listado.
+
+#### RF-USR-5: Eliminación de usuario
+
+**Descripción:** un usuario con permiso de escritura debe poder eliminar un usuario, con confirmación previa.
+
+**Criterios de aceptación:**
+- AC5.1: La eliminación solicita confirmación explícita mediante un modal.
+- AC5.2: Una eliminación confirmada devuelve 204 y el usuario desaparece del listado.
+- AC5.3: Cancelar la confirmación no elimina el usuario.
+
+#### RF-USR-6: Detalle de usuario
+
+**Descripción:** el sistema debe permitir consultar el detalle de un usuario en modo solo lectura.
+
+**Criterios de aceptación:**
+- AC6.1: El doble clic sobre una fila abre el detalle.
+- AC6.2: El detalle muestra la información de auditoría (último acceso, creación, última modificación).
+- AC6.3: La contraseña se muestra enmascarada.
+
+#### RF-USR-7: Exportación a CSV
+
+**Descripción:** el sistema debe permitir exportar el listado filtrado a un fichero CSV.
+
+**Criterios de aceptación:**
+- AC7.1: La exportación incluye todos los registros que cumplen los filtros activos, no solo la página visible.
+- AC7.2: El fichero descargado se llama `users.csv`.
+- AC7.3: Si no hay filas que cumplan los filtros, se notifica que no hay datos que exportar.
+
+### 1.2. Requisitos no funcionales
+
+- **RNF-USR-1 (Autorización):** el acceso requiere sesión y la acción `USER_READ`; las operaciones de escritura requieren `USER_WRITE`.
+- **RNF-USR-2 (Visibilidad de acciones):** los botones de crear, editar y eliminar solo se muestran a usuarios con `USER_WRITE`.
+- **RNF-USR-3 (Seguridad de credenciales):** la contraseña nunca se muestra en claro ni se devuelve en las respuestas del backend.
+- **RNF-USR-4 (Idioma):** todos los textos de la pantalla son traducibles (ES / EN) mediante el grupo i18n `users.*`.
+- **RNF-USR-5 (Feedback):** toda operación (crear, editar, eliminar, exportar, paginar) informa al usuario mediante notificaciones de progreso, éxito o error.
+
+---
+
+## 2. Parte funcional
+
+### 2.1. Objetivo
 
 Ofrecer a los administradores una pantalla completa para administrar los usuarios del sistema:
 
@@ -21,7 +102,7 @@ Ofrecer a los administradores una pantalla completa para administrar los usuario
 - Asignar un perfil y una lista de informes a cada usuario.
 - Exportar el listado filtrado a CSV.
 
-### 1.2. Vistas de la pantalla
+### 2.2. Vistas de la pantalla
 
 La pantalla gestiona cuatro modos de vista (`viewMode`) dentro del mismo componente:
 
@@ -32,7 +113,7 @@ La pantalla gestiona cuatro modos de vista (`viewMode`) dentro del mismo compone
 | `create` | Formulario de alta de usuario |
 | `edit` | Formulario de edición de usuario |
 
-### 1.3. Listado
+### 2.3. Listado
 
 **Columnas de la tabla** (todas ordenables y reordenables):
 
@@ -66,7 +147,7 @@ La pantalla gestiona cuatro modos de vista (`viewMode`) dentro del mismo compone
 - El doble clic sobre una fila abre la vista de detalle.
 - La exportación a CSV incluye **todos los registros que cumplen los filtros activos**, no solo la página actual.
 
-### 1.4. Formulario de usuario
+### 2.4. Formulario de usuario
 
 **Campos:**
 
@@ -82,7 +163,7 @@ La pantalla gestiona cuatro modos de vista (`viewMode`) dentro del mismo compone
 
 **Información de auditoría** (solo en modo detalle, solo lectura): último acceso, fecha de creación y última modificación.
 
-### 1.5. Validaciones funcionales
+### 2.5. Validaciones funcionales
 
 | Campo | Regla |
 |-------|-------|
@@ -91,7 +172,7 @@ La pantalla gestiona cuatro modos de vista (`viewMode`) dentro del mismo compone
 | Perfil | Obligatorio |
 | Email | Formato de email cuando se informa |
 
-### 1.6. Flujo de operaciones CRUD
+### 2.6. Flujo de operaciones CRUD
 
 ```mermaid
 flowchart TD
@@ -110,16 +191,16 @@ flowchart TD
   K -->|No| A
 ```
 
-### 1.7. Mensajes y notificaciones
+### 2.7. Mensajes y notificaciones
 
 - Las operaciones de crear, editar, eliminar, exportar y paginar muestran notificaciones de progreso, éxito o error mediante el `NotificationService` (claves `notification.*`).
 - La eliminación solicita confirmación mediante un modal con el mensaje `users.delete.confirmMessage`, que incluye el nombre del usuario y advierte de que la acción no se puede deshacer.
 
 ---
 
-## 2. Parte técnica
+## 3. Parte técnica
 
-### 2.1. Componentes afectados
+### 3.1. Componentes afectados
 
 | Capa | Elemento | Responsabilidad |
 |------|----------|-----------------|
@@ -131,7 +212,7 @@ flowchart TD
 | Backend | `UserController` | Endpoints CRUD y `/me` (autoservicio) |
 | Backend | `UserService` (core) | Lógica de negocio y persistencia |
 
-### 2.2. Modelo de datos (frontend)
+### 3.2. Modelo de datos (frontend)
 
 ```typescript
 interface UserDTO {
@@ -158,7 +239,7 @@ interface UserCriteria {
 }
 ```
 
-### 2.3. Endpoints del backend
+### 3.3. Endpoints del backend
 
 Ruta base: `/api/v1/administration/security/users`.
 
@@ -178,20 +259,20 @@ Datos de referencia consumidos por el formulario y los filtros:
 - Perfiles: `GET /api/v1/administration/security/profiles/references`.
 - Informes: `GET /api/v1/reports/all`.
 
-### 2.4. Paginación, orden y filtros
+### 3.4. Paginación, orden y filtros
 
 - La paginación y el orden se envían como parámetros `page`, `size` y `sort` (formato `campo,dirección`).
 - Los filtros vacíos no se envían al backend (`undefined`).
 - La exportación reutiliza la consulta filtrada con un tamaño de página muy grande (`EXPORT_PAGE_SIZE = 100000`) para recuperar todas las filas y generar el CSV en cliente vía `CsvExportService`.
 
-### 2.5. Seguridad y permisos
+### 3.5. Seguridad y permisos
 
 - El acceso a la ruta está protegido por `actionGuard` con las acciones `USER_READ`, `USER_WRITE`, `PROFILE_READ`, `PROFILE_WRITE`, `ACTION_READ` (basta una para acceder, lógica OR).
 - Las acciones de crear, editar y eliminar solo se muestran si el usuario posee la acción `USER_WRITE` (`canWrite`).
 - El campo `usuario` es inmutable una vez creado (solo editable en alta).
 - La contraseña nunca se muestra: en modo detalle aparece enmascarada.
 
-### 2.6. Reglas de comportamiento relevantes
+### 3.6. Reglas de comportamiento relevantes
 
 - En **edición**, el campo usuario queda deshabilitado para preservar la identidad de la cuenta.
 - En **alta**, la contraseña es obligatoria; en edición no se exige (se conserva si no se cambia según la lógica del backend).
@@ -200,9 +281,9 @@ Datos de referencia consumidos por el formulario y los filtros:
 
 ---
 
-## 3. Pruebas
+## 4. Pruebas
 
-### 3.1. Cobertura E2E (Playwright)
+### 4.1. Cobertura E2E (Playwright)
 
 Ubicación: `dashboard/e2e/tests/administration/users.spec.ts` (Page Object en `dashboard/e2e/pages/users.page.ts`).
 
@@ -219,7 +300,7 @@ Ubicación: `dashboard/e2e/tests/administration/users.spec.ts` (Page Object en `
 - La suite se ejecuta en modo `serial` para evitar contención en el backend al compartir el usuario administrador entre casos.
 - Los casos de crear, editar y eliminar generan un `username` único por ejecución para poder reejecutarse sin colisiones; los de editar y eliminar crean previamente su propio usuario para trabajar de forma aislada.
 
-### 3.2. Cobertura unitaria (frontend)
+### 4.2. Cobertura unitaria (frontend)
 
 | Ubicación | Alcance |
 |-----------|---------|
@@ -227,11 +308,11 @@ Ubicación: `dashboard/e2e/tests/administration/users.spec.ts` (Page Object en `
 | `user-form.component.spec.ts` | Modos del formulario y emisión de eventos |
 | `user.service.spec.ts` | Construcción de peticiones CRUD y parámetros |
 
-### 3.3. Datos de prueba
+### 4.3. Datos de prueba
 
 Definidos en `dashboard/e2e/fixtures/test-data.ts`: `testUsers.valid` (credenciales del administrador) y `buildNewUser()` (genera los datos de un usuario nuevo con `username` único). Deben ajustarse al entorno de integración (perfil `test`).
 
-### 3.4. Dependencias de ejecución
+### 4.4. Dependencias de ejecución
 
 - Los casos E2E de listar, buscar, crear, editar, eliminar y exportar requieren el backend de integración levantado (por defecto en `http://localhost:8080`) con al menos un perfil de referencia disponible.
 - Los casos de creación y edición insertan un registro en el backend por ejecución; el caso de eliminación borra el usuario que él mismo crea.
