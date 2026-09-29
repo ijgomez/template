@@ -143,7 +143,6 @@ En concreto, los patrones reutilizables son:
 
 - List Screen
 - Form Screen
-- Detail Screen
 - Confirmation Modal
 
 La guía de diseño debe centrarse en tokens, componentes, accesibilidad y reglas visuales, y dejar la estructura de la pantalla en [layout.md](layout.md). El design system no debe duplicar ese contenido ni redefinir los mismos templates con distinta sintaxis.

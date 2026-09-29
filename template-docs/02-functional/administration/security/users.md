@@ -115,13 +115,12 @@ La pantalla gestiona cuatro modos de vista (`viewMode`) dentro del mismo compone
 
 ### 2.3. Patrón visual reutilizable y wireframes
 
-La estructura visual base de esta pantalla se define en [../../../03-technical/frontend/layout.md](../../../03-technical/frontend/layout.md). Ese documento es la fuente única de verdad para los templates `List Screen`, `Form Screen`, `Detail Screen` y `Confirmation Modal`; la documentación funcional de usuarios solo describe cómo se aplica ese patrón a la entidad concreta.
+La estructura visual base de esta pantalla se define en [../../../03-technical/frontend/layout.md](../../../03-technical/frontend/layout.md). Ese documento es la fuente única de verdad para los templates `List Screen`, `Form Screen` y `Confirmation Modal`; la documentación funcional de usuarios solo describe cómo se aplica ese patrón a la entidad concreta.
 
 | Tipo de pantalla | Uso en usuarios | Estructura base |
 |------------------|-----------------|-----------------|
 | `List screen` | Listado principal | Cabecera, filtros, tabla, acciones y paginación |
-| `Form screen` | Alta y edición | Encabezado, campos, validación y pie de acciones |
-| `Detail screen` | Consulta en modo lectura | Resumen, auditoría y datos relacionados |
+| `Form screen` | Alta, edición y consulta en modo lectura | Encabezado, campos, validación, auditoría y pie de acciones |
 | `Confirmation modal` | Eliminación | Mensaje de confirmación con aceptar/cancelar |
 
 #### 2.3.1. Wireframe del `List screen`
@@ -157,28 +156,23 @@ La estructura visual base de esta pantalla se define en [../../../03-technical/f
 +------------------------------------------------------------------+
 ```
 
-#### 2.3.3. Wireframe del `Detail screen`
+#### 2.3.3. Wireframe del `Form screen` en modo lectura
 
 ```text
 +------------------------------------------------------------------+
-| Detalle de usuario                                                |
-| [Volver]                                                         |
+| Consultar usuario                                                 |
+| [Volver] [Editar]                                                |
 +------------------------------------------------------------------+
-| Información principal                                            |
-| Usuario: admin                                                   |
-| Nombre: Admin                                                    |
-| Email: admin@domain.com                                          |
-| Perfil: ADMIN                                                    |
-| Informes: 3                                                      |
-+------------------------------------------------------------------+
-| Auditoría                                                        |
-| Creado: 2026-09-01                                               |
-| Última modificación: 2026-09-15                                  |
-| Último acceso: 2026-09-29                                        |
+| Usuario | [admin]                                                 |
+| Nombre  | [Admin]                                                 |
+| Email   | [admin@domain.com]                                      |
+| Perfil  | [ADMIN]                                                 |
+| Informes asignados | [3]                                          |
+| Auditoría: Creado 2026-09-01 | Última modificación 2026-09-15   |
 +------------------------------------------------------------------+
 ```
 
-La pantalla de usuarios usa `List screen` para la consulta, `Form screen` para alta y edición, y `Detail screen` para el modo consulta. El patrón visual es el mismo que el de perfiles y acciones, con variaciones en columnas, filtros y campos según la entidad.
+La pantalla de usuarios usa `List screen` para la consulta, `Form screen` para alta y edición, y el mismo `Form screen` en modo solo lectura para la vista de detalle. El patrón visual es el mismo que el de perfiles y acciones, con variaciones en columnas, filtros y campos según la entidad.
 
 ### 2.4. Listado
 

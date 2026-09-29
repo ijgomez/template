@@ -115,13 +115,12 @@ La pantalla gestiona cuatro modos de vista (`viewMode`) dentro del mismo compone
 
 ### 2.3. Patrón visual reutilizable y wireframes
 
-La estructura visual base de esta pantalla se define en [../../../03-technical/frontend/layout.md](../../../03-technical/frontend/layout.md). Ese documento es la referencia canónica para los templates `List Screen`, `Form Screen`, `Detail Screen` y `Confirmation Modal`; la documentación funcional del perfil solo describe cómo se aplican a la entidad concreta.
+La estructura visual base de esta pantalla se define en [../../../03-technical/frontend/layout.md](../../../03-technical/frontend/layout.md). Ese documento es la referencia canónica para los templates `List Screen`, `Form Screen` y `Confirmation Modal`; la documentación funcional del perfil solo describe cómo se aplican a la entidad concreta.
 
 | Tipo de pantalla | Uso en perfiles | Estructura base |
 |------------------|-----------------|-----------------|
 | `List screen` | Listado principal | Cabecera, filtros, tabla, acciones y paginación |
-| `Form screen` | Alta y edición | Encabezado, campos, validación y pie de acciones |
-| `Detail screen` | Consulta en modo lectura | Resumen, datos y auditoría |
+| `Form screen` | Alta, edición y consulta en modo lectura | Encabezado, campos, validación, auditoría y pie de acciones |
 | `Confirmation modal` | Eliminación | Mensaje de confirmación con aceptar/cancelar |
 
 #### 2.3.1. Wireframe del `List screen`
@@ -156,25 +155,21 @@ La estructura visual base de esta pantalla se define en [../../../03-technical/f
 +------------------------------------------------------------------+
 ```
 
-#### 2.3.3. Wireframe del `Detail screen`
+#### 2.3.3. Wireframe del `Form screen` en modo lectura
 
 ```text
 +------------------------------------------------------------------+
-| Detalle del perfil                                               |
-| [Volver]                                                         |
+| Consultar perfil                                                  |
+| [Volver] [Editar]                                                |
 +------------------------------------------------------------------+
-| Información principal                                            |
-| Nombre: ADMIN                                                    |
-| Descripción: Perfil de administración                            |
-| Acciones: 12                                                     |
-+------------------------------------------------------------------+
-| Auditoría                                                        |
-| Creado: 2026-09-01                                               |
-| Última modificación: 2026-09-15                                  |
+| Nombre | [ADMIN]                                                 |
+| Descripción | [Perfil de administración]                         |
+| Acciones asignadas | [12]                                         |
+| Auditoría: Creado 2026-09-01 | Última modificación 2026-09-15    |
 +------------------------------------------------------------------+
 ```
 
-En perfiles, el `List screen` soporta filtrado por nombre, el `Form screen` integra la selección de acciones y el `Detail screen` muestra la auditoría y la relación con permisos. El patrón visual es equivalente al de usuarios y acciones, con campos y columnas específicos de cada entidad.
+En perfiles, el `List screen` soporta filtrado por nombre, el `Form screen` integra la selección de acciones y el mismo `Form screen` en modo lectura muestra la auditoría y la relación con permisos. El patrón visual es equivalente al de usuarios y acciones, con campos y columnas específicos de cada entidad.
 
 ### 2.4. Listado
 

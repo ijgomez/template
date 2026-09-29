@@ -109,13 +109,12 @@ La pantalla gestiona tres modos de vista (`viewMode`) dentro del mismo component
 
 ### 2.3. Patrón visual reutilizable y wireframes
 
-La estructura visual base de esta pantalla se define en [../../../03-technical/frontend/layout.md](../../../03-technical/frontend/layout.md). Ese documento es la referencia canónica para los templates `List Screen`, `Form Screen`, `Detail Screen` y `Confirmation Modal`; la documentación funcional de acciones solo describe cómo se aplica el patrón al catálogo semilla.
+La estructura visual base de esta pantalla se define en [../../../03-technical/frontend/layout.md](../../../03-technical/frontend/layout.md). Ese documento es la referencia canónica para los templates `List Screen`, `Form Screen` y `Confirmation Modal`; la documentación funcional de acciones solo describe cómo se aplica el patrón al catálogo semilla.
 
 | Tipo de pantalla | Uso en acciones | Estructura base |
 |------------------|-----------------|-----------------|
 | `List screen` | Listado principal | Cabecera, filtros, tabla, exportación y edición |
-| `Form screen` | Edición | Encabezado, campos editables y pie de acciones |
-| `Detail screen` | Lectura | Resumen, metadatos y detalles del catálogo |
+| `Form screen` | Edición y consulta en modo lectura | Encabezado, campos y pie de acciones con estado readonly |
 | `Confirmation modal` | No aplica | La eliminación está prohibida por negocio |
 
 #### 2.3.1. Wireframe del `List screen`
@@ -151,25 +150,22 @@ La estructura visual base de esta pantalla se define en [../../../03-technical/f
 +------------------------------------------------------------------+
 ```
 
-#### 2.3.3. Wireframe del `Detail screen`
+#### 2.3.3. Wireframe del `Form screen` en modo lectura
 
 ```text
 +------------------------------------------------------------------+
-| Detalle de acción                                                |
-| [Volver]                                                         |
+| Consultar acción                                                 |
+| [Volver] [Editar]                                                |
 +------------------------------------------------------------------+
-| Código: USER_READ                                                |
-| Nombre: Leer usuarios                                            |
-| Tipo: READ                                                       |
-| Descripción: Permiso de consulta                                 |
-+------------------------------------------------------------------+
-| Auditoría                                                        |
-| Creado: 2026-09-01                                               |
-| Última modificación: 2026-09-15                                  |
+| Código | [USER_READ]                                             |
+| Nombre | [Leer usuarios]                                         |
+| Tipo   | [READ]                                                  |
+| Descripción | [Permiso de consulta ...]                          |
+| Auditoría: Creado 2026-09-01 | Última modificación 2026-09-15   |
 +------------------------------------------------------------------+
 ```
 
-La diferencia frente a usuarios y perfiles es que acciones no tiene alta ni borrado. Su `List screen` se centra en filtro, ordenación y edición; el `Form screen` se usa exclusivamente para actualizar metadatos del catálogo y el `Detail screen` sirve como vista de lectura.
+La diferencia frente a usuarios y perfiles es que acciones no tiene alta ni borrado. Su `List screen` se centra en filtro, ordenación y edición, y la consulta reutiliza el mismo `Form screen` pero en modo solo lectura.
 
 ### 2.4. Listado
 

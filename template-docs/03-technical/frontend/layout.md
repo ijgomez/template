@@ -100,18 +100,19 @@ Se usa para pantallas de consulta, listado y gestión de registros.
 
 ## 2. Form Screen
 
-Se usa para pantallas de alta, edición y validación de un registro.
+Se usa para pantallas de alta, edición y validación de un registro; también se reutiliza en modo lectura cuando la pantalla es solo consulta.
 
 ### Objetivo
 - Recoger la información de un elemento de negocio.
 - Validar campos antes del envío.
+- Mostrar el mismo contenido en modo de lectura, con los campos deshabilitados.
 - Guardar datos y volver al listado o a la vista previa.
 
 ### Estructura base
 
 ```text
 +------------------------------------------------------------------+
-| Crear / Editar [Entidad]                                          |
+| Crear / Editar / Consultar [Entidad]                             |
 +------------------------------------------------------------------+
 | Campo 1 * | Campo 2 | Campo 3                                   |
 | Campo 4   | Campo 5 | Campo 6                                   |
@@ -128,59 +129,23 @@ Se usa para pantallas de alta, edición y validación de un registro.
 - Las validaciones se muestran cerca del campo afectado y con mensajes claros.
 - El título del formulario va fuera del contenedor principal para mantener consistencia.
 - El patrón de botonería debe respetar: Cancelar y Guardar, con el guardado como acción principal.
+- En modo solo lectura, se reutiliza la misma composición visual, pero los campos aparecen deshabilitados y el flujo de acción se limita a volver o abrir edición.
 
 ### Aplicación esperada
 - Alta de usuario
 - Edición de usuario
+- Consulta de usuario en solo lectura
 - Alta de perfil
 - Edición de perfil
+- Consulta de perfil en solo lectura
 - Edición de acción
+- Consulta de acción en solo lectura
+
+> La vista de consulta no define un patrón visual distinto: reutiliza el `Form Screen` con el mismo layout y la misma información, pero en estado de solo lectura.
 
 ---
 
-## 3. Detail Screen
-
-Se usa para pantallas de solo lectura de un registro, normalmente antes de editar o después de seleccionar una fila.
-
-### Objetivo
-- Mostrar la información principal del registro.
-- Exponer datos de auditoría o relaciones con otra entidad.
-- Permitir volver al flujo principal o abrir edición.
-
-### Estructura base
-
-```text
-+------------------------------------------------------------------+
-| Detalle de [Entidad]                                             |
-| [Volver] [Editar]                                               |
-+------------------------------------------------------------------+
-| Información principal                                            |
-| Campo 1: Valor                                                   |
-| Campo 2: Valor                                                   |
-| Campo 3: Valor                                                   |
-+------------------------------------------------------------------+
-| Auditoría                                                        |
-| Creado: ...                                                      |
-| Última modificación: ...                                         |
-| Último acceso: ...                                               |
-+------------------------------------------------------------------+
-```
-
-### Reglas de diseño
-- La vista prioriza claridad sobre densidad.
-- Las secciones se separan en bloques legibles: resumen y auditoría.
-- Los campos se muestran en modo lectura, nunca editables.
-- Las relaciones con otras entidades se exponen de forma compacta.
-- Debe incluir la opción de volver y, si aplica, de entrar en edición.
-
-### Aplicación esperada
-- Detalle de usuario
-- Detalle de perfil
-- Detalle de acción
-
----
-
-## 4. Confirmation Modal
+## 3. Confirmation Modal
 
 Se usa para operaciones destructivas o decisiones con impacto importante.
 
@@ -215,7 +180,7 @@ Se usa para operaciones destructivas o decisiones con impacto importante.
 
 ## 5. Regla de consistencia para nuevas pantallas
 
-Cuando se cree una nueva pantalla del tipo List Screen, Form Screen, Detail Screen o Confirmation Modal, debe cumplir las siguientes reglas:
+Cuando se cree una nueva pantalla del tipo List Screen, Form Screen o Confirmation Modal, debe cumplir las siguientes reglas:
 
 - Reutilizar el patrón base de la categoría correspondiente.
 - No introducir variaciones visuales sin justificación funcional.

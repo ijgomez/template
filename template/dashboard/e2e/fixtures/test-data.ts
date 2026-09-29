@@ -50,3 +50,22 @@ export function buildNewProfile(): {
     description: `Perfil de prueba ${suffix}`,
   };
 }
+
+/**
+ * Genera los datos de un parámetro nuevo con clave única para evitar
+ * colisiones al ejecutar la suite E2E repetidamente.
+ */
+export function buildNewParameter(): {
+  code: string;
+  description: string;
+  value: string;
+  type: 'STRING' | 'INTEGER' | 'BOOLEAN' | 'DATE';
+} {
+  const suffix = Date.now().toString().slice(-8);
+  return {
+    code: `E2E_PARAM_${suffix}`,
+    description: `Parámetro de prueba ${suffix}`,
+    value: `value-${suffix}`,
+    type: 'STRING',
+  };
+}
