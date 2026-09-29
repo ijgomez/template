@@ -115,7 +115,7 @@ La pantalla gestiona cuatro modos de vista (`viewMode`) dentro del mismo compone
 
 ### 2.3. Patrón visual reutilizable y wireframes
 
-La estructura visual base de esta pantalla se define en [../../../03-technical/frontend/layout.md](../../../03-technical/frontend/layout.md). Ese documento es la referencia canónica para los templates `List Screen`, `Form Screen` y `Confirmation Modal`; la documentación funcional del perfil solo describe cómo se aplican a la entidad concreta.
+La estructura visual base de esta pantalla se define en [layout.md](../../../03-technical/frontend/layout.md). Ese documento es la referencia canónica para los templates `List Screen`, `Form Screen` y `Confirmation Modal`; la documentación funcional del perfil solo describe cómo se aplican a la entidad concreta.
 
 | Tipo de pantalla | Uso en perfiles | Estructura base |
 |------------------|-----------------|-----------------|

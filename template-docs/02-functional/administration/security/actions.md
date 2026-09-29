@@ -109,7 +109,7 @@ La pantalla gestiona tres modos de vista (`viewMode`) dentro del mismo component
 
 ### 2.3. Patrón visual reutilizable y wireframes
 
-La estructura visual base de esta pantalla se define en [../../../03-technical/frontend/layout.md](../../../03-technical/frontend/layout.md). Ese documento es la referencia canónica para los templates `List Screen`, `Form Screen` y `Confirmation Modal`; la documentación funcional de acciones solo describe cómo se aplica el patrón al catálogo semilla.
+La estructura visual base de esta pantalla se define en [layout.md](../../../03-technical/frontend/layout.md). Ese documento es la referencia canónica para los templates `List Screen`, `Form Screen` y `Confirmation Modal`; la documentación funcional de acciones solo describe cómo se aplica el patrón al catálogo semilla.
 
 | Tipo de pantalla | Uso en acciones | Estructura base |
 |------------------|-----------------|-----------------|
@@ -311,18 +311,43 @@ Ruta base: `/api/v1/administration/security/actions`.
 
 ## 4. Pruebas
 
-### 4.1. Cobertura funcional esperada
+### 4.1. Cobertura E2E (Playwright)
 
-- Pruebas de listado paginado y ordenación de acciones.
-- Pruebas de filtros por `code` y `type`.
-- Pruebas de edición de nombre, descripción y tipo.
-- Validación de que la exportación devuelve los registros filtrados completos.
-- Validación de que la creación y eliminación están bloqueadas.
-- Verificación de que la pantalla se oculta o deshabilita cuando el usuario no tiene `ACTION_READ`.
+Ubicación: `template/dashboard/e2e/tests/administration/actions.spec.ts` con Page Object en `template/dashboard/e2e/pages/actions.page.ts`.
 
-### 4.2. Evidencias en el código
+| Caso | Descripción | Resultado esperado |
+|------|-------------|--------------------|
+| Listar acciones | Acceder a la pantalla tras iniciar sesión | La tabla es visible, hay más de una fila y se muestran los filtros |
+| Filtrar por código y tipo | Aplicar filtro por código y luego por tipo `READ` | El listado se reduce y muestra solo los registros coincidentes |
+| Abrir detalle y editar | Seleccionar una fila y guardar un cambio de nombre/descripcion/tipo | El registro aparece actualizado en la tabla |
+| Exportar CSV | Pulsar la acción de exportación | Se descarga un fichero con nombre `actions_YYYY-MM-DD.csv` |
+
+- Cada test inicia sesión con un usuario válido y navega directamente a `/administration/security/actions`.
+- La suite se ejecuta en modo `serial` para evitar contención con datos del catálogo semilla.
+- La edición modifica un registro real del catálogo semilla y verifica el cambio visible en la tabla.
+- La exportación valida el nombre del archivo descargado y confirma que la acción de exportación funciona con los filtros activos.
+
+### 4.2. Cobertura unitaria (frontend)
+
+| Ubicación | Alcance |
+|-----------|---------|
+| `action-list.component.spec.ts` | Estado del listado, filtros, paginación, orden y exportación |
+| `action-form.component.spec.ts` | Modo edición y modo lectura, validación y emisión de eventos |
+| `action.service.spec.ts` | Construcción de peticiones de consulta y actualización, y criterios de filtrado |
+
+### 4.3. Evidencias en el código
 
 - `ActionControllerImpl` valida la ruta base y el uso del paginador/criterios.
 - `ActionService` confirma que create y delete están prohibidos y que update solo modifica los campos permitidos.
 - `ActionListComponent` implementa filtros, paginación, orden, detalle y exportación.
 - `ActionFormComponent` limita la edición a nombre, descripción y tipo, manteniendo `code` en modo solo lectura.
+
+### 4.4. Verificación ejecutada
+
+La suite real de Playwright ya está implementada y validada con la ejecución del navegador Chromium:
+
+- `template/dashboard/e2e/tests/administration/actions.spec.ts`
+- resultado verificado en `template/dashboard/target/playwright/results.xml`
+- 4 tests ejecutados, 4 OK, 0 fallos
+
+La evidencia del último run muestra que la suite `Actions management` pasó íntegramente en Chromium con 4 casos correctos.
