@@ -35,3 +35,18 @@ export function buildNewUser(): {
     lastName: 'Test',
   };
 }
+
+/**
+ * Genera los datos de un perfil nuevo con un nombre único para evitar
+ * colisiones entre ejecuciones del suite de E2E.
+ */
+export function buildNewProfile(): {
+  name: string;
+  description: string;
+} {
+  const suffix = Date.now().toString().slice(-8);
+  return {
+    name: `e2e_profile_${suffix}`,
+    description: `Perfil de prueba ${suffix}`,
+  };
+}

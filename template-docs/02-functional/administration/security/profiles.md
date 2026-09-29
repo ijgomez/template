@@ -1,0 +1,312 @@
+# Perfiles (Gestión de perfiles)
+
+Documentación funcional y técnica de la pantalla de gestión de perfiles, dentro del módulo de Administración > Seguridad. Permite consultar, filtrar, crear, editar y eliminar los perfiles de la aplicación, así como asociarles las acciones a las que tienen acceso.
+
+- **Ruta frontend:** `/administration/security/profiles`
+- **Componentes:** `ProfileListComponent` (listado) y `ProfileFormComponent` (detalle / alta / edición)
+- **Endpoint backend base:** `/api/v1/administration/security/profiles` (`ProfileController`)
+- **Acceso:** requiere sesión y la acción `PROFILE_READ`; las operaciones de escritura requieren `PROFILE_WRITE`
+
+---
+
+## 1. Requisitos
+
+Identificadores locales de este documento: `RF-PRO-*` (requisitos funcionales) y `RNF-PRO-*` (requisitos no funcionales). La autenticación y la gestión de sesión que dan acceso a esta pantalla se especifican en [requirements.md](../../../specification/requirements.md) (Requirements 1–6).
+
+### 1.1. Requisitos funcionales
+
+#### RF-PRO-1: Consulta paginada de perfiles
+
+**Descripción:** el sistema debe permitir consultar los perfiles en un listado paginado y ordenable.
+
+**Criterios de aceptación:**
+- AC1.1: El listado muestra las columnas nombre, descripción, acciones y fecha de creación.
+- AC1.2: Todas las columnas son ordenables (ascendente/descendente).
+- AC1.3: La paginación permite navegar entre páginas y cambiar el tamaño de página.
+
+#### RF-PRO-2: Búsqueda y filtrado
+
+**Descripción:** el sistema debe permitir filtrar el listado por nombre.
+
+**Criterios de aceptación:**
+- AC2.1: El filtro de nombre aplica coincidencia parcial.
+- AC2.2: Al aplicar el filtro, el listado vuelve a la primera página.
+- AC2.3: La acción de limpiar restablece el filtro y recarga el listado completo.
+
+#### RF-PRO-3: Alta de perfil
+
+**Descripción:** un usuario con permiso de escritura debe poder crear nuevos perfiles.
+
+**Criterios de aceptación:**
+- AC3.1: El formulario exige nombre y permite definir una descripción y una colección de acciones.
+- AC3.2: Un alta válida devuelve 201 y el nuevo perfil aparece en el listado.
+- AC3.3: No se permiten acciones duplicadas dentro del mismo perfil.
+- AC3.4: Tras el alta correcta se vuelve al listado y se recarga.
+
+#### RF-PRO-4: Edición de perfil
+
+**Descripción:** un usuario con permiso de escritura debe poder modificar los datos de un perfil existente.
+
+**Criterios de aceptación:**
+- AC4.1: Se puede cambiar el nombre y la descripción.
+- AC4.2: Se puede reemplazar la lista de acciones asignadas.
+- AC4.3: Una edición válida devuelve 200 y el cambio se refleja en el listado.
+
+#### RF-PRO-5: Eliminación de perfil
+
+**Descripción:** un usuario con permiso de escritura debe poder eliminar un perfil, con confirmación previa.
+
+**Criterios de aceptación:**
+- AC5.1: La eliminación solicita confirmación explícita mediante un modal.
+- AC5.2: Una eliminación confirmada devuelve 204 y el perfil desaparece del listado.
+- AC5.3: Cancelar la confirmación no elimina el perfil.
+- AC5.4: Un perfil asignado a usuarios no puede eliminarse y devuelve error de uso.
+
+#### RF-PRO-6: Detalle de perfil
+
+**Descripción:** el sistema debe permitir consultar el detalle de un perfil en modo solo lectura.
+
+**Criterios de aceptación:**
+- AC6.1: El doble clic sobre una fila abre el detalle.
+- AC6.2: El detalle muestra los datos generales y la lista de acciones asignadas.
+- AC6.3: Se muestran también las fechas de creación y última modificación.
+
+#### RF-PRO-7: Exportación a CSV
+
+**Descripción:** el sistema debe permitir exportar el listado filtrado a un fichero CSV.
+
+**Criterios de aceptación:**
+- AC7.1: La exportación incluye todos los registros que cumplen los filtros activos, no solo la página visible.
+- AC7.2: El fichero descargado se llama `profiles.csv`.
+- AC7.3: Si no hay filas que cumplan los filtros, se notifica que no hay datos que exportar.
+
+### 1.2. Requisitos no funcionales
+
+- **RNF-PRO-1 (Autorización):** el acceso requiere sesión y la acción `PROFILE_READ`; las operaciones de escritura requieren `PROFILE_WRITE`.
+- **RNF-PRO-2 (Visibilidad de acciones):** los botones de crear, editar y eliminar solo se muestran a usuarios con `PROFILE_WRITE`.
+- **RNF-PRO-3 (Integridad de permisos):** un perfil no puede contener acciones duplicadas y cada acción debe existir en el catálogo.
+- **RNF-PRO-4 (Idioma):** todos los textos de la pantalla son traducibles (ES / EN) mediante el grupo i18n `profiles.*`.
+- **RNF-PRO-5 (Feedback):** toda operación (crear, editar, eliminar, exportar, paginar) informa al usuario mediante notificaciones de progreso, éxito o error.
+
+---
+
+## 2. Parte funcional
+
+### 2.1. Objetivo
+
+Ofrecer a los administradores una pantalla para gestionar los perfiles de permisos del sistema:
+
+- Consultar el listado paginado y filtrado de perfiles.
+- Ver el detalle de un perfil con sus acciones asignadas.
+- Crear, editar y eliminar perfiles.
+- Asociar una lista de acciones a cada perfil.
+- Exportar el listado filtrado a CSV.
+
+### 2.2. Vistas de la pantalla
+
+La pantalla gestiona cuatro modos de vista (`viewMode`) dentro del mismo componente:
+
+| Modo | Descripción |
+|------|-------------|
+| `list` | Listado paginado con barra de filtros y barra de acciones |
+| `detail` | Vista de solo lectura del perfil (incluye auditoría) |
+| `create` | Formulario de alta de perfil |
+| `edit` | Formulario de edición de perfil |
+
+### 2.3. Listado
+
+**Columnas de la tabla** (todas ordenables y reordenables):
+
+| Columna | Clave i18n | Notas |
+|---------|-----------|-------|
+| Nombre | `profiles.fields.name` | Se muestra en negrita |
+| Descripción | `profiles.fields.description` | Muestra `-` si está vacía |
+| Acciones | `profiles.fields.actions` | Cuenta el número de acciones asignadas |
+| Fecha de creación | `profiles.fields.createdAt` | Formateado con `localDate` |
+
+**Filtros disponibles:**
+
+| Filtro | Tipo | `data-testid` |
+|--------|------|---------------|
+| Nombre | Texto (coincidencia parcial) | `filter-name` |
+
+**Barra de acciones:**
+
+| Acción | Condición de disponibilidad | `data-testid` |
+|--------|-----------------------------|---------------|
+| Crear | Requiere `PROFILE_WRITE` | `btn-create` |
+| Editar | Requiere `PROFILE_WRITE` y una fila seleccionada | `btn-edit` |
+| Eliminar | Requiere `PROFILE_WRITE` y una fila seleccionada | `btn-delete` |
+| Exportar CSV | Siempre disponible | `btn-export` |
+
+- La selección de una fila alterna (seleccionar / deseleccionar).
+- El doble clic sobre una fila abre la vista de detalle.
+- La exportación a CSV incluye **todos los registros que cumplen los filtros activos**, no solo la página actual.
+
+### 2.4. Formulario de perfil
+
+**Campos:**
+
+| Campo | Obligatorio | Notas |
+|-------|-------------|-------|
+| Nombre | Sí | Requerido en alta y edición |
+| Descripción | No | Texto libre opcional |
+| Acciones asignadas | No | Multi-selección de acciones a través de `TpSelectedActionsComponent` |
+
+**Información de auditoría** (solo en modo detalle, solo lectura): fecha de creación y última modificación.
+
+### 2.5. Validaciones funcionales
+
+| Campo | Regla |
+|-------|-------|
+| Nombre | Obligatorio |
+| Descripción | Opcional |
+| Acciones | Deben ser únicas y existir en el catálogo |
+
+### 2.6. Flujo de operaciones CRUD
+
+```mermaid
+flowchart TD
+  A["Listado de perfiles"] --> B{"Accion"}
+  B -->|Crear| C["Formulario en modo create"]
+  B -->|Editar| D["Formulario en modo edit"]
+  B -->|Eliminar| E["Modal de confirmación"]
+  B -->|Doble clic| F["Detalle en modo view"]
+  C --> G["Guardar"]
+  D --> G
+  G --> H{"Operación correcta"}
+  H -->|Sí| I["Notificación de éxito y refresco del listado"]
+  H -->|No| J["Notificación de error"]
+  E --> K{"Confirmar"}
+  K -->|Sí| L["Elimina y refresca el listado"]
+  K -->|No| A
+```
+
+### 2.7. Mensajes y notificaciones
+
+- Las operaciones de crear, editar, eliminar, exportar y paginar muestran notificaciones de progreso, éxito o error mediante el `NotificationService` (claves `notification.*`).
+- La eliminación solicita confirmación mediante un modal con el mensaje `profiles.delete.confirmMessage`, que incluye el nombre del perfil y advierte de que la acción no se puede deshacer.
+
+---
+
+## 3. Parte técnica
+
+### 3.1. Componentes afectados
+
+| Capa | Elemento | Responsabilidad |
+|------|----------|-----------------|
+| Frontend | `ProfileListComponent` | Listado, filtros, paginación, orden, exportación y orquestación de vistas |
+| Frontend | `ProfileFormComponent` | Alta, edición y detalle de un perfil |
+| Frontend | `ProfileService` | Llamadas CRUD y datos de referencia (acciones) |
+| Frontend | `TpDataTableComponent` | Tabla reutilizable (orden, paginación, selección) |
+| Frontend | `TpSelectedActionsComponent` | Selección multi-acción del perfil |
+| Frontend | `AuthService` | Comprobación de permisos (`hasAction`) |
+| Backend | `ProfileController` | Endpoints CRUD y referencias |
+| Backend | `ProfileService` (core) | Lógica de negocio y persistencia |
+
+### 3.2. Modelo de datos (frontend)
+
+```typescript
+interface Profile {
+  id: number | null;
+  name: string;
+  description: string | null;
+  actions?: Action[];
+  actionIds?: number[];
+  createdAt?: string | null;
+  lastModifiedAt?: string | null;
+}
+
+interface ProfileCriteria {
+  name?: string;
+}
+```
+
+### 3.3. Endpoints del backend
+
+Ruta base: `/api/v1/administration/security/profiles`.
+
+| Método y ruta | Descripción | Respuesta |
+|---------------|-------------|-----------|
+| `GET /references` | Lista ligera de perfiles para selectores (`id`, `name`) | 200 OK con lista de referencias |
+| `GET /` | Listado paginado con filtros (`name`) y `Pageable` | 200 OK con página de perfiles |
+| `GET /count` | Número de perfiles que cumplen los filtros | 200 OK con el total |
+| `GET /{id}` | Perfil por identificador | 200 OK con el perfil |
+| `POST /` | Alta de perfil (`id` nulo) | 201 Created con el perfil creado |
+| `PUT /{id}` | Actualización de perfil | 200 OK con el perfil actualizado |
+| `DELETE /{id}` | Eliminación de perfil | 204 No Content |
+
+Datos de referencia consumidos por el formulario:
+
+- Acciones: `GET /api/v1/administration/security/actions` (o la referencia equivalente de acciones del sistema)
+
+### 3.4. Paginación, orden y filtros
+
+- La paginación y el orden se envían como parámetros `page`, `size` y `sort` (formato `campo,dirección`).
+- El filtro de nombre se envía solo si existe valor no vacío.
+- La ordenación de la columna `actions` se resuelve en cliente, porque es un contador derivado de la relación y no existe como propiedad JPA ordenable del backend.
+- La exportación reutiliza la consulta filtrada con un tamaño no paginado para recuperar todos los perfiles y generar el CSV en cliente vía `CsvExportService`.
+
+### 3.5. Seguridad y permisos
+
+- El acceso a la ruta está protegido por `actionGuard` con acciones `PROFILE_READ` y `PROFILE_WRITE`.
+- Las acciones de crear, editar y eliminar solo se muestran si el usuario posee la acción `PROFILE_WRITE` (`canWrite`).
+- Cuando se intenta borrar un perfil con usuarios asociados, el backend lanza una excepción de tipo `EntityInUseException` y la operación se rechaza.
+- La duplicación de acciones dentro de un perfil se valida en backend para evitar inconsistencias de permisos.
+
+### 3.6. Reglas de comportamiento relevantes
+
+- En creación y edición, el formulario admite nombre, descripción y selección de acciones.
+- En detalle, el formulario pasa a modo de solo lectura y muestra la auditoría.
+- Al guardar, el payload se envía como `{ id, name, description, actionIds }`.
+- En edición, la lista de acciones se reemplaza completa, no se fusiona.
+- Tras crear o actualizar con éxito, la aplicación vuelve al listado y lo recarga.
+- La eliminación es irreversible y siempre requiere confirmación explícita del usuario.
+
+---
+
+## 4. Pruebas
+
+### 4.1. Cobertura E2E (Playwright)
+
+Ubicación: `dashboard/e2e/tests/administration/profiles.spec.ts` (Page Object en `dashboard/e2e/pages/profiles.page.ts`).
+
+| Caso | Descripción | Resultado esperado |
+|------|-------------|--------------------|
+| Listar perfiles | Acceder a la pantalla tras iniciar sesión | La tabla es visible, hay al menos una fila y se muestran filtros y el botón de crear |
+| Buscar por nombre | Filtrar por un nombre existente y por uno inexistente | El listado muestra la fila coincidente; con un término sin coincidencias queda vacío |
+| Crear perfil | Alta desde el formulario con datos válidos | El backend responde 201, se vuelve al listado y el nuevo perfil aparece al buscarlo |
+| Editar perfil | Seleccionar un perfil y modificar sus datos | El backend responde 200 y el cambio se refleja en el listado |
+| Eliminar perfil | Seleccionar un perfil y confirmar el borrado | El backend responde 204 y el perfil deja de aparecer al buscarlo |
+| Exportar CSV | Pulsar el botón de exportar | El navegador descarga el fichero `profiles.csv` |
+
+- Cada test inicia sesión con un usuario administrador (acciones `PROFILE_READ` y `PROFILE_WRITE`) y navega directamente a `/administration/security/profiles`.
+- Los casos de creación y edición insertan un registro en el backend por ejecución; el caso de eliminación borra el perfil que él mismo crea.
+- La exportación a CSV depende de que existan filas que cumplan los filtros activos; en caso contrario se notifica que no hay datos que exportar.
+
+### 4.2. Cobertura unitaria (frontend)
+
+| Ubicación | Alcance |
+|-----------|---------|
+| `profile-list.component.spec.ts` | Estado de listado, filtros, paginación y acciones |
+| `profile-form.component.spec.ts` | Modos del formulario y emisión de eventos |
+| `profile.service.spec.ts` | Construcción de peticiones CRUD y parámetros |
+
+### 4.3. Datos de prueba
+
+Definidos en `dashboard/e2e/fixtures/test-data.ts`: `testProfiles.valid` y helpers para crear perfiles con nombre único por ejecución.
+
+### 4.4. Dependencias de ejecución
+
+- Los casos E2E de listar, buscar, crear, editar, eliminar y exportar requieren el backend de integración levantado (por defecto en `http://localhost:8080`).
+- Los casos de creación y edición insertan un registro en el backend por ejecución; el caso de eliminación borra el perfil que él mismo crea.
+- La exportación a CSV depende de que existan filas que cumplan los filtros activos; en caso contrario se notifica que no hay datos que exportar.
+
+---
+
+## Referencias
+
+- [Usuarios](./users.md)
+- [Seguridad backend](../../../03-technical/backend/security.md)
+- [Componentes frontend](../../../03-technical/frontend/components.md)
+- [API backend](../../../03-technical/backend/api.md)
