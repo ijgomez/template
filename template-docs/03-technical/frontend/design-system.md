@@ -137,149 +137,24 @@ A continuación, el índice de componentes disponibles:
 
 # Patrones de pantalla
 
-La IA debe respetar los siguientes patrones cuando genere pantallas completas.
+La IA debe respetar el patrón base definido en [layout.md](layout.md). Ese documento es la fuente única de verdad para los templates de cada tipo de pantalla.
 
-## Listado (CRUD - Read)
+En concreto, los patrones reutilizables son:
 
-```text
-┌─────────────────────────────────────────────┐
-│ Título de la entidad                         │
-├─────────────────────────────────────────────┤
-│ Filtros: campo1 | campo2                         │
-│                          [Buscar] [Limpiar]      │
-├─────────────────────────────────────────────┤
-│ [+ Nuevo] [Modificar] [Eliminar]   [Exportar CSV]│
-├─────────────────────────────────────────────┤
-│ Tabla con columnas relevantes               │
-│   - Ordenable por cabeceras                 │
-│   - Fila seleccionable (click para marcar)  │
-│   - Sin columna de acciones por fila        │
-├─────────────────────────────────────────────┤
-│ 1-10 de 150  [< 1 2 3 4 5 >]  Elem/pág: [10]│
-└─────────────────────────────────────────────┘
-```
+- List Screen
+- Form Screen
+- Detail Screen
+- Confirmation Modal
 
-### Barra de herramientas (toolbar)
+La guía de diseño debe centrarse en tokens, componentes, accesibilidad y reglas visuales, y dejar la estructura de la pantalla en [layout.md](layout.md). El design system no debe duplicar ese contenido ni redefinir los mismos templates con distinta sintaxis.
 
-Las acciones sobre entidades se agrupan en una **barra de herramientas única** situada entre los filtros y la tabla. No se repiten botones de acción en cada fila.
+En la práctica, este documento se usa para:
+- definir colores, tipografía, espaciado y densidad
+- definir los componentes reutilizables
+- establecer reglas visuales y de accesibilidad
+- guiar la generación de UI sin redefinir la estructura base de cada pantalla
 
-| Botón        | Variante            | Condición                                          |
-|--------------|---------------------|----------------------------------------------------|
-| Nuevo        | `primary`           | Siempre visible (si la entidad permite creación)   |
-| Modificar    | `warning`           | Activo cuando hay una fila seleccionada            |
-| Eliminar     | `danger`            | Activo cuando hay una fila seleccionada            |
-| Exportar CSV | `outline-secondary` | Siempre visible, alineado a la derecha (`ms-auto`) |
-
-Para actuar sobre un registro, el usuario primero selecciona la fila (clic en la fila, que se resalta con `table-active`) y luego pulsa el botón correspondiente en la toolbar.
-
-Las entidades que no permiten creación o eliminación (ej. Acciones) solo muestran los botones aplicables.
-
-La columna de identificador interno (ID / PK) no se muestra en las tablas. El sistema gestiona la selección internamente sin exponer claves primarias al usuario.
-
-### Paginación
-
-La zona de paginación se sitúa en el pie de la tabla (`card-footer`) y contiene tres elementos alineados horizontalmente:
-
-| Posición  | Elemento                         | Ejemplo                        |
-|-----------|----------------------------------|--------------------------------|
-| Izquierda | Contador de registros            | "Mostrando 1-10 de 150"        |
-| Centro    | Navegación de páginas            | `< 1 2 3 ... 15 >`             |
-| Derecha   | Selector de elementos por página | `Elementos por página: [10 ▾]` |
-
-Opciones disponibles en el selector: 5, 10, 20, 50.
-
-Al cambiar el tamaño de página se recarga la primera página con el nuevo tamaño.
-
-## Formulario (CRUD - Create / Update)
-
-```text
-┌─────────────────────────────────────────────┐
-│ Título: Nuevo/Editar [Entidad]              │
-├─────────────────────────────────────────────┤
-│ ┌─ tp-filter-bar ─────────────────────────┐ │
-│ │ SECCION 1                               │ │
-│ │   campo1     campo2     campo3          │ │
-│ │   campo4     campo5     campo6          │ │
-│ ├─────────────────────────────────────────┤ │
-│ │ SECCION 2 (tabla asociada)              │ │
-│ │   [Añadir]                 N elementos  │ │
-│ │   Tabla compacta con botón eliminar     │ │
-│ ├─────────────────────────────────────────┤ │
-│ │                    [Cancelar] [Guardar]  │ │
-│ └─────────────────────────────────────────┘ │
-└─────────────────────────────────────────────┘
-```
-
-### Reglas de diseño de formularios
-
-- **Contenedor del formulario**: Todo el formulario (campos + botones) se envuelve en un `div.tp-filter-bar`. Esto le da el mismo estilo visual que la barra de filtros de los listados: fondo `var(--tp-color-surface)`, borde `1px solid var(--tp-color-border)`, `border-radius: 0.5rem` y padding `1rem 1.25rem`.
-- **Botones de acción (Cancelar/Guardar)**: Se sitúan al final del formulario, alineados a la derecha, dentro de un `div.col-12.d-flex.justify-content-end.gap-2.mt-2` — exactamente el mismo patrón que los botones [Buscar] [Limpiar] de la barra de filtros. Tamaño `btn-sm`.
-- **Título**: Se muestra fuera del contenedor `tp-filter-bar`, en un `div.d-flex.justify-content-between.align-items-center.mb-3` solo con el título (`h1.h3.mb-0`). No lleva botones de acción.
-- **Campos**: Usar `form-control-sm` y `form-label-sm` para densidad compacta.
-- **Grid**: Preferir 3 columnas (`col-md-4`) para campos cortos. Usar `col-md-8` o `col-12` solo para campos largos (descripción, textarea).
-- **Secciones**: Separar con un título ligero (`h6`, uppercase, muted, letter-spacing) sin cards pesadas. Los campos van directamente debajo sin card wrapper.
-- **Tablas asociadas** (informes del usuario, acciones del perfil): Se muestran como un `list-group` compacto dentro de un contenedor con borde (`border rounded`). Estructura:
-  - **Cabecera** (inline, fuera del contenedor): Título con badge contador + input de filtro + botón Añadir (solo icono `+`).
-  - **Items**: `list-group-item` con padding mínimo (`py-1 px-3`), texto + badge de tipo (si aplica) + botón cerrar (`btn-close` mini) para eliminar.
-  - **Footer**: Barra compacta con fondo `bg-light`, contador de paginación y mini-pagination.
-  - El filtro es búsqueda local (client-side) sobre los elementos ya asignados.
-  - Al pulsar el botón Añadir se abre un modal de selección (ver patrón Modal de Selección).
-- **Campos obligatorios**: Los campos requeridos deben indicarse con un asterisco (`*`) de color rojo (`text-danger`) junto al label. El marcado es `<span class="text-danger">*</span>` inmediatamente después del texto del label. Ejemplo: `{{ 'entity.fields.name' | translate }} <span class="text-danger">*</span>`. Esto proporciona una señal visual clara y consistente en todos los formularios.
-- **Spacing**: Usar `g-2` en los rows (8px gap) en lugar de `g-3` (16px).
-
-### Ejemplo de estructura HTML
-
-```html
-<!-- Título fuera del contenedor -->
-<div class="d-flex justify-content-between align-items-center mb-3">
-  <h1 class="h3 mb-0">{{ título }}</h1>
-</div>
-
-<!-- Formulario con estilo tp-filter-bar -->
-<div class="tp-filter-bar">
-  <form id="entityForm" (ngSubmit)="save()" #form="ngForm" novalidate>
-    <!-- Sección de campos -->
-    <h6 class="text-muted text-uppercase fw-semibold mb-2"
-        style="font-size: 0.75rem; letter-spacing: 0.05em;">
-      {{ sección }}
-    </h6>
-    <div class="row g-2 mb-3">
-      <div class="col-md-4">...</div>
-      <div class="col-md-4">...</div>
-      <div class="col-md-4">...</div>
-    </div>
-
-    <!-- Botones al final, alineados a la derecha -->
-    <div class="col-12 d-flex justify-content-end gap-2 mt-2">
-      <button type="button" class="btn btn-outline-secondary btn-sm">
-        {{ 'button.cancel' | translate }}
-      </button>
-      <button type="submit" class="btn btn-primary btn-sm">
-        <i class="bi bi-check-lg me-1" aria-hidden="true"></i>
-        {{ 'button.save' | translate }}
-      </button>
-    </div>
-  </form>
-</div>
-```
-
-## Detalle (CRUD - Read one)
-
-```text
-┌─────────────────────────────────────────────┐
-│ Título: [Entidad] - Detalle                 │
-├─────────────────────────────────────────────┤
-│ Tabs: General | Historial | Auditoría       │
-├─────────────────────────────────────────────┤
-│ Contenido del tab activo                    │
-├─────────────────────────────────────────────┤
-│ [Volver]              [Editar] [Eliminar]   │
-└─────────────────────────────────────────────┘
-```
-
-## Panel de notificaciones
-
-El panel desplegable de notificaciones (icono de campana en la barra superior) y el resto de canales de notificación se documentan en [notifications.md](notifications.md#centro-de-notificaciones), fuente única del framework de notificaciones.
+Para la composición de cada pantalla, consultar siempre [layout.md](layout.md).
 
 ---
 

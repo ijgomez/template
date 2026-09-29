@@ -113,7 +113,70 @@ La pantalla gestiona cuatro modos de vista (`viewMode`) dentro del mismo compone
 | `create` | Formulario de alta de perfil |
 | `edit` | Formulario de edición de perfil |
 
-### 2.3. Listado
+### 2.3. Patrón visual reutilizable y wireframes
+
+La estructura visual base de esta pantalla se define en [../../../03-technical/frontend/layout.md](../../../03-technical/frontend/layout.md). Ese documento es la referencia canónica para los templates `List Screen`, `Form Screen`, `Detail Screen` y `Confirmation Modal`; la documentación funcional del perfil solo describe cómo se aplican a la entidad concreta.
+
+| Tipo de pantalla | Uso en perfiles | Estructura base |
+|------------------|-----------------|-----------------|
+| `List screen` | Listado principal | Cabecera, filtros, tabla, acciones y paginación |
+| `Form screen` | Alta y edición | Encabezado, campos, validación y pie de acciones |
+| `Detail screen` | Consulta en modo lectura | Resumen, datos y auditoría |
+| `Confirmation modal` | Eliminación | Mensaje de confirmación con aceptar/cancelar |
+
+#### 2.3.1. Wireframe del `List screen`
+
+```text
++------------------------------------------------------------------+
+| Perfiles                                                         |
+| [Crear] [Exportar]                                               |
++------------------------------------------------------------------+
+| Filtro nombre | [Buscar] [Limpiar]                               |
++------------------------------------------------------------------+
+| Nombre | Descripción | Acciones | Fecha creación                 |
+|--------|-------------|----------|-------------------------------|
+| ADMIN  | ...         | 12       | 2026-09-29                    |
+| USER   | ...         | 8        | 2026-09-28                    |
++------------------------------------------------------------------+
+| < 1 2 3 > | Registros por página: 10                           |
++------------------------------------------------------------------+
+```
+
+#### 2.3.2. Wireframe del `Form screen`
+
+```text
++------------------------------------------------------------------+
+| Crear perfil / Editar perfil                                      |
++------------------------------------------------------------------+
+| Nombre * | [texto]                                               |
+| Descripción | [textarea]                                         |
+| Acciones asignadas | [multiselect]                               |
++------------------------------------------------------------------+
+| [Guardar] [Cancelar]                                             |
++------------------------------------------------------------------+
+```
+
+#### 2.3.3. Wireframe del `Detail screen`
+
+```text
++------------------------------------------------------------------+
+| Detalle del perfil                                               |
+| [Volver]                                                         |
++------------------------------------------------------------------+
+| Información principal                                            |
+| Nombre: ADMIN                                                    |
+| Descripción: Perfil de administración                            |
+| Acciones: 12                                                     |
++------------------------------------------------------------------+
+| Auditoría                                                        |
+| Creado: 2026-09-01                                               |
+| Última modificación: 2026-09-15                                  |
++------------------------------------------------------------------+
+```
+
+En perfiles, el `List screen` soporta filtrado por nombre, el `Form screen` integra la selección de acciones y el `Detail screen` muestra la auditoría y la relación con permisos. El patrón visual es equivalente al de usuarios y acciones, con campos y columnas específicos de cada entidad.
+
+### 2.4. Listado
 
 **Columnas de la tabla** (todas ordenables y reordenables):
 
@@ -143,7 +206,7 @@ La pantalla gestiona cuatro modos de vista (`viewMode`) dentro del mismo compone
 - El doble clic sobre una fila abre la vista de detalle.
 - La exportación a CSV incluye **todos los registros que cumplen los filtros activos**, no solo la página actual.
 
-### 2.4. Formulario de perfil
+### 2.5. Formulario de perfil
 
 **Campos:**
 
@@ -155,7 +218,7 @@ La pantalla gestiona cuatro modos de vista (`viewMode`) dentro del mismo compone
 
 **Información de auditoría** (solo en modo detalle, solo lectura): fecha de creación y última modificación.
 
-### 2.5. Validaciones funcionales
+### 2.6. Validaciones funcionales
 
 | Campo | Regla |
 |-------|-------|
@@ -163,7 +226,7 @@ La pantalla gestiona cuatro modos de vista (`viewMode`) dentro del mismo compone
 | Descripción | Opcional |
 | Acciones | Deben ser únicas y existir en el catálogo |
 
-### 2.6. Flujo de operaciones CRUD
+### 2.7. Flujo de operaciones CRUD
 
 ```mermaid
 flowchart TD
@@ -182,7 +245,7 @@ flowchart TD
   K -->|No| A
 ```
 
-### 2.7. Mensajes y notificaciones
+### 2.8. Mensajes y notificaciones
 
 - Las operaciones de crear, editar, eliminar, exportar y paginar muestran notificaciones de progreso, éxito o error mediante el `NotificationService` (claves `notification.*`).
 - La eliminación solicita confirmación mediante un modal con el mensaje `profiles.delete.confirmMessage`, que incluye el nombre del perfil y advierte de que la acción no se puede deshacer.

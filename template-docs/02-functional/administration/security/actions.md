@@ -107,7 +107,71 @@ La pantalla gestiona tres modos de vista (`viewMode`) dentro del mismo component
 
 > No existe un modo `create` ni una operación de borrado; la entidad acción es de tipo catálogo y se mantiene por datos semilla.
 
-### 2.3. Listado
+### 2.3. Patrón visual reutilizable y wireframes
+
+La estructura visual base de esta pantalla se define en [../../../03-technical/frontend/layout.md](../../../03-technical/frontend/layout.md). Ese documento es la referencia canónica para los templates `List Screen`, `Form Screen`, `Detail Screen` y `Confirmation Modal`; la documentación funcional de acciones solo describe cómo se aplica el patrón al catálogo semilla.
+
+| Tipo de pantalla | Uso en acciones | Estructura base |
+|------------------|-----------------|-----------------|
+| `List screen` | Listado principal | Cabecera, filtros, tabla, exportación y edición |
+| `Form screen` | Edición | Encabezado, campos editables y pie de acciones |
+| `Detail screen` | Lectura | Resumen, metadatos y detalles del catálogo |
+| `Confirmation modal` | No aplica | La eliminación está prohibida por negocio |
+
+#### 2.3.1. Wireframe del `List screen`
+
+```text
++------------------------------------------------------------------+
+| Acciones                                                         |
+| [Exportar]                                                       |
++------------------------------------------------------------------+
+| Filtro código | Filtro tipo | [Buscar] [Limpiar]                 |
++------------------------------------------------------------------+
+| Código | Nombre | Tipo | Descripción                             |
+|--------|--------|------|------------------------------------------|
+| USER_READ | Leer usuarios | READ | Permiso de consulta ...       |
+| USER_WRITE | Modificar usuarios | WRITE | Permiso de edición ... |
++------------------------------------------------------------------+
+| < 1 2 3 > | Registros por página: 10                           |
++------------------------------------------------------------------+
+```
+
+#### 2.3.2. Wireframe del `Form screen`
+
+```text
++------------------------------------------------------------------+
+| Editar acción                                                    |
++------------------------------------------------------------------+
+| Código | [USER_READ]                                             |
+| Nombre * | [Leer usuarios]                                       |
+| Tipo * | [READ]                                                 |
+| Descripción | [Permiso de consulta ...]                          |
++------------------------------------------------------------------+
+| [Guardar] [Cancelar]                                             |
++------------------------------------------------------------------+
+```
+
+#### 2.3.3. Wireframe del `Detail screen`
+
+```text
++------------------------------------------------------------------+
+| Detalle de acción                                                |
+| [Volver]                                                         |
++------------------------------------------------------------------+
+| Código: USER_READ                                                |
+| Nombre: Leer usuarios                                            |
+| Tipo: READ                                                       |
+| Descripción: Permiso de consulta                                 |
++------------------------------------------------------------------+
+| Auditoría                                                        |
+| Creado: 2026-09-01                                               |
+| Última modificación: 2026-09-15                                  |
++------------------------------------------------------------------+
+```
+
+La diferencia frente a usuarios y perfiles es que acciones no tiene alta ni borrado. Su `List screen` se centra en filtro, ordenación y edición; el `Form screen` se usa exclusivamente para actualizar metadatos del catálogo y el `Detail screen` sirve como vista de lectura.
+
+### 2.4. Listado
 
 **Columnas de la tabla** (todas ordenables):
 
@@ -136,7 +200,7 @@ La pantalla gestiona tres modos de vista (`viewMode`) dentro del mismo component
 - El doble clic sobre una fila abre la vista de detalle.
 - La exportación a CSV incluye **todos los registros que cumplen los filtros activos**, no solo la página actual.
 
-### 2.4. Formulario de acción
+### 2.5. Formulario de acción
 
 **Campos:**
 
@@ -149,7 +213,7 @@ La pantalla gestiona tres modos de vista (`viewMode`) dentro del mismo component
 
 **Información de auditoría** (solo en modo detalle, solo lectura): fechas de creación y última modificación.
 
-### 2.5. Validaciones funcionales
+### 2.6. Validaciones funcionales
 
 | Campo | Regla |
 |-------|-------|
@@ -158,7 +222,7 @@ La pantalla gestiona tres modos de vista (`viewMode`) dentro del mismo component
 | Tipo | Obligatorio y limitado a los valores del catálogo |
 | Descripción | Opcional |
 
-### 2.6. Flujo de operaciones
+### 2.7. Flujo de operaciones
 
 ```mermaid
 flowchart TD
@@ -173,7 +237,7 @@ flowchart TD
   I --> C
 ```
 
-### 2.7. Mensajes y notificaciones
+### 2.8. Mensajes y notificaciones
 
 - Las operaciones de filtrar, exportar, ordenar y guardar muestran notificaciones de progreso, éxito o error mediante el `NotificationService` (claves `notification.*`).
 - El formulario de edición usa la misma experiencia de guardado que el resto de módulos y no incluye confirmación de borrado, porque la eliminación está prohibida por negocio.

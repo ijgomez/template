@@ -51,6 +51,182 @@ Cada una de estas áreas tiene una responsabilidad claramente definida.
 
 ---
 
+# Patrones de pantalla reutilizables
+
+Todas las pantallas del frontend deben seguir uno de estos patrones base. La intención es garantizar que, al crear una nueva funcionalidad, la estructura visual sea homogénea con el resto de la aplicación y que cada entidad reutilice la misma base de diseño con variaciones de contenido y validación.
+
+## 1. List Screen
+
+Se usa para pantallas de consulta, listado y gestión de registros.
+
+### Objetivo
+- Mostrar una colección de elementos en formato tabular o de lista.
+- Permitir filtros, búsqueda, ordenación y paginación.
+- Proporcionar acciones sobre el conjunto o sobre la fila seleccionada.
+
+### Estructura base
+
+```text
++------------------------------------------------------------------+
+| Título de la entidad                                             |
+| [Crear] [Exportar]                                               |
++------------------------------------------------------------------+
+| Filtro 1 | Filtro 2 | Filtro 3 | [Buscar] [Limpiar]             |
++------------------------------------------------------------------+
+| Columna 1 | Columna 2 | Columna 3 | Columna 4 | Columna 5        |
+|---------- |-----------|-----------|-----------|------------------|
+| valor     | valor     | valor     | valor     | valor            |
+| valor     | valor     | valor     | valor     | valor            |
++------------------------------------------------------------------+
+| < 1 2 3 > | Registros por página: 10                            |
++------------------------------------------------------------------+
+```
+
+### Reglas de diseño
+- La cabecera incluye el título y las acciones principales del listado.
+- Los filtros y la búsqueda van en una sola línea o bloque superior.
+- La tabla usa el componente `tp-data-table` y se apoya en ordenación, selección y paginación.
+- Las acciones sobre registros se agrupan en una toolbar, no se repiten por fila.
+- Si la entidad no permite crear o borrar, solo se muestran los botones aplicables.
+- La columna de identificador interno no debe mostrarse al usuario.
+
+### Aplicación esperada
+- Usuarios
+- Perfiles
+- Acciones
+- Cualquier entidad con listado paginado y filtros
+
+---
+
+## 2. Form Screen
+
+Se usa para pantallas de alta, edición y validación de un registro.
+
+### Objetivo
+- Recoger la información de un elemento de negocio.
+- Validar campos antes del envío.
+- Guardar datos y volver al listado o a la vista previa.
+
+### Estructura base
+
+```text
++------------------------------------------------------------------+
+| Crear / Editar [Entidad]                                          |
++------------------------------------------------------------------+
+| Campo 1 * | Campo 2 | Campo 3                                   |
+| Campo 4   | Campo 5 | Campo 6                                   |
+| Descripción | [textarea]                                         |
++------------------------------------------------------------------+
+| [Cancelar] [Guardar]                                             |
++------------------------------------------------------------------+
+```
+
+### Reglas de diseño
+- El formulario usa un contenedor visual uniforme con fondo de superficie, borde y padding.
+- Los botones de acción se sitúan al final del formulario y se alinean a la derecha.
+- Los campos se agrupan por bloques lógicos y no se mezcla el diseño con componentes de la tabla.
+- Las validaciones se muestran cerca del campo afectado y con mensajes claros.
+- El título del formulario va fuera del contenedor principal para mantener consistencia.
+- El patrón de botonería debe respetar: Cancelar y Guardar, con el guardado como acción principal.
+
+### Aplicación esperada
+- Alta de usuario
+- Edición de usuario
+- Alta de perfil
+- Edición de perfil
+- Edición de acción
+
+---
+
+## 3. Detail Screen
+
+Se usa para pantallas de solo lectura de un registro, normalmente antes de editar o después de seleccionar una fila.
+
+### Objetivo
+- Mostrar la información principal del registro.
+- Exponer datos de auditoría o relaciones con otra entidad.
+- Permitir volver al flujo principal o abrir edición.
+
+### Estructura base
+
+```text
++------------------------------------------------------------------+
+| Detalle de [Entidad]                                             |
+| [Volver] [Editar]                                               |
++------------------------------------------------------------------+
+| Información principal                                            |
+| Campo 1: Valor                                                   |
+| Campo 2: Valor                                                   |
+| Campo 3: Valor                                                   |
++------------------------------------------------------------------+
+| Auditoría                                                        |
+| Creado: ...                                                      |
+| Última modificación: ...                                         |
+| Último acceso: ...                                               |
++------------------------------------------------------------------+
+```
+
+### Reglas de diseño
+- La vista prioriza claridad sobre densidad.
+- Las secciones se separan en bloques legibles: resumen y auditoría.
+- Los campos se muestran en modo lectura, nunca editables.
+- Las relaciones con otras entidades se exponen de forma compacta.
+- Debe incluir la opción de volver y, si aplica, de entrar en edición.
+
+### Aplicación esperada
+- Detalle de usuario
+- Detalle de perfil
+- Detalle de acción
+
+---
+
+## 4. Confirmation Modal
+
+Se usa para operaciones destructivas o decisiones con impacto importante.
+
+### Objetivo
+- Confirmar una acción que no puede deshacerse o que requiere decisión explícita.
+- Evitar errores por acción accidental.
+
+### Estructura base
+
+```text
++----------------------------------------------+
+| Confirmación                                 |
+| ¿Desea eliminar este registro?               |
+| Se eliminará de forma permanente.            |
++----------------------------------------------+
+| [Cancelar] [Confirmar]                       |
++----------------------------------------------+
+```
+
+### Reglas de diseño
+- Debe incluir texto claro del impacto de la acción.
+- La acción principal debe ser visualmente más fuerte que la cancelación.
+- El botón de confirmación debe ser de riesgo y claramente identificado.
+- La cancelación debe estar siempre disponible.
+
+### Aplicación esperada
+- Eliminación de usuarios
+- Eliminación de perfiles
+- Cualquier acción con confirmación previa
+
+---
+
+## 5. Regla de consistencia para nuevas pantallas
+
+Cuando se cree una nueva pantalla del tipo List Screen, Form Screen, Detail Screen o Confirmation Modal, debe cumplir las siguientes reglas:
+
+- Reutilizar el patrón base de la categoría correspondiente.
+- No introducir variaciones visuales sin justificación funcional.
+- Mantener la misma estructura de cabecera, contenido y pie de acciones.
+- Utilizar los componentes reutilizables del sistema antes que crear una composición ad hoc.
+- Mantener el mismo comportamiento de filtros, selección y validación de forma consistente.
+
+Con esta regla, cualquier nueva pantalla se genera con el mismo sentido visual que el resto del producto y resulta más fácil de mantener, revisar y extender.
+
+---
+
 # Componentes principales
 
 ## Barra superior

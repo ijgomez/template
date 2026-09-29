@@ -113,7 +113,74 @@ La pantalla gestiona cuatro modos de vista (`viewMode`) dentro del mismo compone
 | `create` | Formulario de alta de usuario |
 | `edit` | Formulario de edición de usuario |
 
-### 2.3. Listado
+### 2.3. Patrón visual reutilizable y wireframes
+
+La estructura visual base de esta pantalla se define en [../../../03-technical/frontend/layout.md](../../../03-technical/frontend/layout.md). Ese documento es la fuente única de verdad para los templates `List Screen`, `Form Screen`, `Detail Screen` y `Confirmation Modal`; la documentación funcional de usuarios solo describe cómo se aplica ese patrón a la entidad concreta.
+
+| Tipo de pantalla | Uso en usuarios | Estructura base |
+|------------------|-----------------|-----------------|
+| `List screen` | Listado principal | Cabecera, filtros, tabla, acciones y paginación |
+| `Form screen` | Alta y edición | Encabezado, campos, validación y pie de acciones |
+| `Detail screen` | Consulta en modo lectura | Resumen, auditoría y datos relacionados |
+| `Confirmation modal` | Eliminación | Mensaje de confirmación con aceptar/cancelar |
+
+#### 2.3.1. Wireframe del `List screen`
+
+```text
++------------------------------------------------------------------+
+| Usuarios                                                          |
+| [Crear] [Exportar]                                                |
++------------------------------------------------------------------+
+| Filtro usuario | Filtro nombre | Filtro perfil | [Buscar] [Limpiar] |
++------------------------------------------------------------------+
+| Usuario | Nombre | Apellidos | Email | Perfil | Último acceso     |
+|-------- |--------|-----------|-------|--------|------------------|
+| admin   | Admin  | User      | ...   | ADMIN  | 2026-09-29       |
+| tester  | Test   | User      | ...   | USER   | 2026-09-28       |
++------------------------------------------------------------------+
+| < 1 2 3 > | Registros por página: 10                            |
++------------------------------------------------------------------+
+```
+
+#### 2.3.2. Wireframe del `Form screen`
+
+```text
++------------------------------------------------------------------+
+| Crear usuario / Editar usuario                                     |
++------------------------------------------------------------------+
+| Usuario * | [texto]          | Perfil * | [select]                |
+| Contraseña | [texto]        | Email    | [texto]                  |
+| Nombre    | [texto]         | Apellidos| [texto]                  |
+| Informes asignados | [multiselect]                               |
++------------------------------------------------------------------+
+| [Guardar] [Cancelar]                                             |
++------------------------------------------------------------------+
+```
+
+#### 2.3.3. Wireframe del `Detail screen`
+
+```text
++------------------------------------------------------------------+
+| Detalle de usuario                                                |
+| [Volver]                                                         |
++------------------------------------------------------------------+
+| Información principal                                            |
+| Usuario: admin                                                   |
+| Nombre: Admin                                                    |
+| Email: admin@domain.com                                          |
+| Perfil: ADMIN                                                    |
+| Informes: 3                                                      |
++------------------------------------------------------------------+
+| Auditoría                                                        |
+| Creado: 2026-09-01                                               |
+| Última modificación: 2026-09-15                                  |
+| Último acceso: 2026-09-29                                        |
++------------------------------------------------------------------+
+```
+
+La pantalla de usuarios usa `List screen` para la consulta, `Form screen` para alta y edición, y `Detail screen` para el modo consulta. El patrón visual es el mismo que el de perfiles y acciones, con variaciones en columnas, filtros y campos según la entidad.
+
+### 2.4. Listado
 
 **Columnas de la tabla** (todas ordenables y reordenables):
 
@@ -147,7 +214,7 @@ La pantalla gestiona cuatro modos de vista (`viewMode`) dentro del mismo compone
 - El doble clic sobre una fila abre la vista de detalle.
 - La exportación a CSV incluye **todos los registros que cumplen los filtros activos**, no solo la página actual.
 
-### 2.4. Formulario de usuario
+### 2.5. Formulario de usuario
 
 **Campos:**
 
@@ -163,7 +230,7 @@ La pantalla gestiona cuatro modos de vista (`viewMode`) dentro del mismo compone
 
 **Información de auditoría** (solo en modo detalle, solo lectura): último acceso, fecha de creación y última modificación.
 
-### 2.5. Validaciones funcionales
+### 2.6. Validaciones funcionales
 
 | Campo | Regla |
 |-------|-------|
@@ -172,7 +239,7 @@ La pantalla gestiona cuatro modos de vista (`viewMode`) dentro del mismo compone
 | Perfil | Obligatorio |
 | Email | Formato de email cuando se informa |
 
-### 2.6. Flujo de operaciones CRUD
+### 2.7. Flujo de operaciones CRUD
 
 ```mermaid
 flowchart TD
@@ -191,7 +258,7 @@ flowchart TD
   K -->|No| A
 ```
 
-### 2.7. Mensajes y notificaciones
+### 2.8. Mensajes y notificaciones
 
 - Las operaciones de crear, editar, eliminar, exportar y paginar muestran notificaciones de progreso, éxito o error mediante el `NotificationService` (claves `notification.*`).
 - La eliminación solicita confirmación mediante un modal con el mensaje `users.delete.confirmMessage`, que incluye el nombre del usuario y advierte de que la acción no se puede deshacer.
