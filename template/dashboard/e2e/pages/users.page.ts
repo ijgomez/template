@@ -38,6 +38,9 @@ export class UsersPage {
   readonly inputFirstName: Locator;
   readonly inputLastName: Locator;
   readonly selectProfile: Locator;
+  readonly selectedReports: Locator;
+  readonly selectedReportsAddButton: Locator;
+  readonly selectedReportsModal: Locator;
   readonly saveButton: Locator;
   readonly cancelButton: Locator;
 
@@ -70,6 +73,9 @@ export class UsersPage {
     this.inputFirstName = page.getByTestId('input-first-name');
     this.inputLastName = page.getByTestId('input-last-name');
     this.selectProfile = page.getByTestId('select-profile');
+    this.selectedReports = page.getByTestId('user-reports');
+    this.selectedReportsAddButton = page.getByTestId('user-reports-btn-add');
+    this.selectedReportsModal = page.getByTestId('user-reports-modal');
     this.saveButton = page.getByTestId('btn-save');
     this.cancelButton = page.getByTestId('btn-cancel');
 
@@ -134,6 +140,7 @@ export class UsersPage {
     firstName?: string;
     lastName?: string;
     profileIndex?: number;
+    reportIndexes?: number[];
   }): Promise<void> {
     await this.inputUsername.fill(data.username);
     await this.inputPassword.fill(data.password);
@@ -148,6 +155,10 @@ export class UsersPage {
     }
     await this.selectProfile.selectOption({ index: data.profileIndex ?? 1 });
 
+    if (data.reportIndexes && data.reportIndexes.length > 0) {
+      await this.assignReports(data.reportIndexes);
+    }
+
     // Guarda y espera a que el backend confirme la creación (201) antes de continuar.
     const createResponse = this.page.waitForResponse(
       (res) =>
@@ -157,6 +168,27 @@ export class UsersPage {
     );
     await this.saveButton.click();
     await createResponse;
+  }
+
+  /**
+   * Abre el modal de selección de informes y marca los índices proporcionados.
+   */
+  async assignReports(reportIndexes: number[]): Promise<void> {
+    await this.selectedReportsAddButton.click();
+    await this.selectedReportsModal.waitFor({ state: 'visible' });
+
+    const rows = this.page.locator('[data-testid^="user-reports-modal-row-"]');
+    const uniqueIndexes = [...new Set(reportIndexes)];
+
+    for (const reportIndex of uniqueIndexes) {
+      const row = rows.nth(reportIndex);
+      await row.waitFor({ state: 'visible' });
+      await row.click();
+    }
+
+    const acceptButton = this.page.getByTestId('user-reports-modal-accept');
+    await acceptButton.click();
+    await this.selectedReportsModal.waitFor({ state: 'hidden' });
   }
 
   /**

@@ -79,6 +79,30 @@ test.describe.serial('Users management', () => {
     await expect(usersPage.rows.first()).toContainText(newUser.username);
   });
 
+  test('should assign one or more reports to a user', async ({ page }) => {
+    const usersPage = new UsersPage(page);
+    await usersPage.goto();
+
+    const newUser = buildNewUser();
+    await usersPage.openCreateForm();
+    await usersPage.createUser({
+      username: newUser.username,
+      password: newUser.password,
+      email: newUser.email,
+      firstName: newUser.firstName,
+      lastName: newUser.lastName,
+      reportIndexes: [0, 1],
+    });
+
+    await usersPage.searchByUsername(newUser.username);
+    await usersPage.openEditForm(newUser.username);
+
+    const reportItems = page.locator('[data-testid^="user-reports-item-"]');
+    await expect(reportItems).toHaveCount(2);
+    await expect(reportItems.first()).toBeVisible();
+    await expect(reportItems.nth(1)).toBeVisible();
+  });
+
   test('should edit an existing user', async ({ page }) => {
     // Arrange: crear un usuario propio para editarlo de forma aislada
     const usersPage = new UsersPage(page);
