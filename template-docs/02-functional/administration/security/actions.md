@@ -335,19 +335,21 @@ Ubicación: `template/dashboard/e2e/tests/administration/actions.spec.ts` con Pa
 | `action-form.component.spec.ts` | Modo edición y modo lectura, validación y emisión de eventos |
 | `action.service.spec.ts` | Construcción de peticiones de consulta y actualización, y criterios de filtrado |
 
-### 4.3. Evidencias en el código
+### 4.3. Datos de prueba
 
-- `ActionControllerImpl` valida la ruta base y el uso del paginador/criterios.
-- `ActionService` confirma que create y delete están prohibidos y que update solo modifica los campos permitidos.
-- `ActionListComponent` implementa filtros, paginación, orden, detalle y exportación.
-- `ActionFormComponent` limita la edición a nombre, descripción y tipo, manteniendo `code` en modo solo lectura.
+Definidos en `template/dashboard/e2e/fixtures/test-data.ts`: `testUsers.valid` (credenciales del usuario con acceso al módulo) y los datos semilla del catálogo de acciones utilizados por los casos de buscar, editar y exportar. En este módulo no se crean acciones nuevas ni se eliminan, porque el catálogo es semilla y la edición solo modifica metadatos existentes.
 
-### 4.4. Verificación ejecutada
+### 4.4. Dependencias de ejecución
 
-La suite real de Playwright ya está implementada y validada con la ejecución del navegador Chromium:
+- Los casos E2E de listado, filtrado, edición y exportación requieren el backend de integración levantado y la base de datos con el catálogo de permisos inicializado.
+- La edición usa un registro real del catálogo semilla y valida que el cambio se refleja en la tabla del listado.
+- La exportación a CSV depende de que existan filas que cumplan los filtros activos; en caso contrario se notifica que no hay datos que exportar.
 
-- `template/dashboard/e2e/tests/administration/actions.spec.ts`
-- resultado verificado en `template/dashboard/target/playwright/results.xml`
-- 4 tests ejecutados, 4 OK, 0 fallos
+---
 
-La evidencia del último run muestra que la suite `Actions management` pasó íntegramente en Chromium con 4 casos correctos.
+## Referencias
+
+- [Login](../../login/login.md)
+- [Seguridad backend](../../../03-technical/backend/security.md)
+- [Componentes frontend](../../../03-technical/frontend/components.md)
+- [API backend](../../../03-technical/backend/api.md)
