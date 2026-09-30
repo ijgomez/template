@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { Report, ReportFilter, ReportResult, ExportFormat } from '../models/report.model';
@@ -58,7 +58,23 @@ export class ReportService {
       .set('page', page.toString())
       .set('size', size.toString());
 
-    return this.http.post<ReportResult>(`${this.baseUrl}/${reportId}/execute`, filters, { params });
+    return this.http.post<any>(`${this.baseUrl}/${reportId}/execute`, filters, { params }).pipe(
+      map((res) => {
+        if (res && res.content && !res.rows) {
+          const rows = res.content as Record<string, any>[];
+          const columns = rows.length > 0 ? Object.keys(rows[0]) : [];
+          return {
+            columns,
+            rows,
+            totalElements: res.totalElements ?? (res.page?.totalElements ?? rows.length),
+            totalPages: res.totalPages ?? (res.page?.totalPages ?? 1),
+            size: res.size ?? (res.page?.size ?? size),
+            number: res.number ?? (res.page?.number ?? page),
+          };
+        }
+        return res as ReportResult;
+      })
+    );
   }
 
   /**

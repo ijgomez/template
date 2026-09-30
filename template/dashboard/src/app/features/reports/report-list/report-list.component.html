@@ -13,7 +13,7 @@
       <span class="visually-hidden">{{ 'common.loading' | translate }}</span>
     </div>
   </div>
-} @else if (filters().length > 0) {
+} @else {
   <div class="tp-filter-bar">
     <form class="row g-3 align-items-end"
           [attr.aria-label]="'reports.execution.filters' | translate"

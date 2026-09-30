@@ -320,16 +320,38 @@ public class User2Report {
 
 ## 4. Pruebas
 
-### 4.1. Cobertura existente
+### 4.1. Cobertura unitaria frontend
 
-- **Frontend unitaria:** `selected-reports.component.spec.ts` (ciclo CVA, modal, paginación, búsqueda, selección multiple, `onChange`/`onTouched`).
-- **Backend:**
-  - `ReportServiceTest.java`: `findByUser`, `findAll`, `findAll(name, pageable)`, `getFilters`, `execute` (incluye `AccessDeniedException`, `ValidationException`), `export` (CSV/TXT OK, PDF/XLSX `ReportExportException`).
-  - `ReportControllerTest.java`: 6 endpoints `/all`, `/search`, `/filters`, `/execute`, `/export/*` con estados 200/403/404.
-  - `AuthorizationEnforcementProperties`: `Property 5` → sin `REPORT_EXECUTE`, `/api/v1/reports` 403.
-  - `JwtTokenProvider*Test`: `REPORT_EXECUTE` incluido en listado de acciones de ejemplo.
+| Ubicación | Alcance |
+|-----------|---------|
+| `dashboard/src/app/core/services/report.service.spec.ts` | Endpoints `findUserReports`, `findAll`, `search`, `getFilters`, `execute` y `export` |
+| `dashboard/src/app/features/reports/selected-reports/selected-reports.component.spec.ts` | Ciclo CVA, modal de selección, paginación, búsqueda, selección multiple y emisión de `onChange`/`onTouched` |
 
-### 4.2. Casos clave (matriz)
+### 4.2. Cobertura backend
+
+| Ubicación | Alcance |
+|-----------|---------|
+| `core/src/test/java/org/myorganization/template/core/service/ReportServiceTest.java` | `findByUser`, `findAll`, `findAll(name, pageable)`, `getFilters`, `execute` (control de acceso y filtros obligatorios), `export` (CSV/TXT OK, PDF/XLSX no implementados) |
+| `webapp/src/test/java/org/myorganization/template/webapp/controller/ReportControllerTest.java` | Endpoints `/all`, `/search`, `/filters`, `/execute`, `/export/*` con validación de estados 200, 403 y 404 |
+| `ws/src/test/java/org/myorganization/template/ws/security/AuthorizationEnforcementProperties.java` | `Property 5`: verificación de 403 Forbidden en `/api/v1/reports/**` sin `REPORT_EXECUTE` |
+| `ws/src/test/java/org/myorganization/template/ws/security/JwtTokenProvider*Test.java` | Verificación de claims y autorización con acción `REPORT_EXECUTE` |
+
+### 4.3. Cobertura E2E y datos de prueba
+
+Ubicación: `dashboard/e2e/tests/reports/reports.spec.ts` (Page Object en `dashboard/e2e/pages/report.page.ts`).
+
+| Caso | Descripción | Resultado esperado |
+|------|-------------|--------------------|
+| Estado inicial | Navegar a `/reports/1` tras iniciar sesión | Título y descripción visibles; formulario y botones presentes; tabla y botones de exportación ocultos antes de ejecutar |
+| Ejecución y resultados | Pulsar botón *Ejecutar* | Carga datos vía `POST /execute`, muestra tabla de resultados con filas y activa la barra de exportación (PDF, XLSX, CSV, TXT) |
+| Limpieza de filtros | Pulsar botón *Limpiar* tras ejecutar | Restablece valores de filtros y oculta la tabla de resultados y barra de exportación |
+| Cambio de tamaño de página | Cambiar selector de tamaño de página (p. ej. a 5) | Dispara nueva petición paginada al servidor y actualiza la tabla |
+| Exportación CSV y TXT | Exportar a CSV y TXT | El navegador descarga los ficheros con el formato `Informe de actividad mensual_YYYY-MM-DD.csv` y `.txt` |
+| Navegación lateral | Desplegar menú lateral "Informes" y pulsar "Informe de actividad mensual" | Navega a `/reports/1` y carga el informe correspondiente |
+
+Los datos semilla para informes y asignaciones al usuario administrador se encuentran en `domain/src/main/resources/db/changelog/data/v1.0.0/20250117-seed-local-reports.xml`.
+
+### 4.4. Casos clave (matriz)
 
 | Caso | Resultado esperado |
 | --- | --- |
@@ -345,12 +367,11 @@ public class User2Report {
 | Modal: "seleccionar página" | Marca/desmarca todos los IDs de `modalReports` en `modalSelectedIds` |
 | Confirmar modal | `selectedIds` actualizado, `onChange` emitido, modal cerrado |
 
-### 4.3. Dependencias de ejecución
+### 4.5. Dependencias de ejecución
 
-- Base de datos con tabla `report` y `user2report` pobladas.
-- JWT con autoridad `REPORT_EXECUTE`.
-- Seed `20250117-seed-local-reports.xml` en entornos locales.
-- Spring Security configurado según `SecurityConfig`.
+- Base de datos con tabla `report` y `user2report` pobladas (seed `20250117-seed-local-reports.xml`).
+- JWT con autoridad `REPORT_EXECUTE` para acceder a la ruta y endpoints.
+- Backend de integración levantado (perfil `test`) para las llamadas a `/api/v1/reports/**`.
 
 ---
 
