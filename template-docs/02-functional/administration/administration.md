@@ -7,4 +7,4 @@ _Pendiente de documentar._
 - [Seguridad](security/security.md)
 - [Parámetros](parameters/parameters.md)
 - [Auditoría](audit/audit.md)
-- [Cluster](cluster/cluster.md)
+- [Nodos del Cluster](cluster/cluster-nodes.md)

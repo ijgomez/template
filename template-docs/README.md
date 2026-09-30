@@ -27,7 +27,7 @@ Describe los distintos módulos funcionales de la aplicación.
   - [Parámetros](02-functional/administration/parameters/parameters.md)
   - [Auditoría](02-functional/administration/audit/audit.md)
   - [Interfaces](02-functional/administration/interfaces/interfaces.md)
-  - [Cluster](02-functional/administration/cluster/cluster.md)
+  - [Nodos del Cluster](02-functional/administration/cluster/cluster-nodes.md)
 
 ### Documentación técnica
 
