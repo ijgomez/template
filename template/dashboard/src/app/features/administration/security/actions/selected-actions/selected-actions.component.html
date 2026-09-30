@@ -56,6 +56,7 @@
                      [placeholder]="'selected-actions.modal.search' | translate"
                      [attr.aria-label]="'selected-actions.modal.search' | translate"
                      [ngModel]="modalSearch()"
+                [ngModelOptions]="{ standalone: true }"
                      (ngModelChange)="onModalSearchChange($event)"
                      name="modalActionSearch"
                      [attr.data-testid]="testId + '-modal-search'">
@@ -156,6 +157,7 @@
                 </label>
                 <select class="form-select form-select-sm" style="width: auto;"
                         [ngModel]="modalPageSize()"
+                  [ngModelOptions]="{ standalone: true }"
                         (ngModelChange)="onModalPageSizeChange($event)"
                         name="modalPageSize"
                         [attr.aria-label]="'common.pagination.pageSize' | translate"

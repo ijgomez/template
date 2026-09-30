@@ -22,6 +22,7 @@
           class="form-control form-control-sm tp-data-list__filter"
           [placeholder]="filterPlaceholder || ('data-list.filter.placeholder' | translate)"
           [ngModel]="filterText"
+          [ngModelOptions]="{ standalone: true }"
           (ngModelChange)="onFilterChange($event)"
           [disabled]="disabled"
           [attr.aria-label]="'data-list.filter.aria' | translate"
@@ -148,6 +149,7 @@
         <select class="form-select form-select-sm tp-data-list__page-size-select"
                 [id]="testId + '-page-size'"
                 [ngModel]="pageSize"
+          [ngModelOptions]="{ standalone: true }"
                 (ngModelChange)="onPageSizeChange($event)"
                 [attr.aria-label]="'common.pagination.pageSize' | translate"
                 [attr.data-testid]="testId + '-page-size'">

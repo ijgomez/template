@@ -150,6 +150,7 @@
                 id="tp-table-page-size"
                 style="width: auto;"
                 [ngModel]="pageSize"
+          [ngModelOptions]="{ standalone: true }"
                 (ngModelChange)="onPageSizeChange($event)"
                 [attr.aria-label]="'common.pagination.pageSize' | translate"
                 data-testid="pagination-page-size">
