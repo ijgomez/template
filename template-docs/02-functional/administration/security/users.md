@@ -11,7 +11,7 @@ Documentación funcional y técnica de la pantalla de gestión de usuarios, dent
 
 ## 1. Requisitos
 
-Identificadores locales de este documento: `RF-USR-*` (requisitos funcionales) y `RNF-USR-*` (requisitos no funcionales). La autenticación y la gestión de sesión que dan acceso a esta pantalla se especifican en [requirements.md](../../../specification/requirements.md) (Requirements 1–6).
+Identificadores locales de este documento: `RF-USR-*` (requisitos funcionales) y `RNF-USR-*` (requisitos no funcionales). La autenticación y la gestión de sesión que dan acceso a esta pantalla se especifican en [requirements.md](../../../specification/requirements.md).
 
 ### 1.1. Requisitos funcionales
 
