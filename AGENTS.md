@@ -50,3 +50,4 @@ Este repositorio usa una arquitectura modular con Java 21, Spring Boot 4.1.1 y A
 ## Herramientas específicas
 - [.github/copilot-instructions.md](.github/copilot-instructions.md): reglas específicas de Copilot.
 - [.kiro/steering](.kiro/steering): guía de arquitectura y estilo para Kiro.
+- [.agents](.agents): reglas y skills para Antigravity.
