@@ -349,7 +349,6 @@ Definidos en `template/dashboard/e2e/fixtures/test-data.ts`: `testUsers.valid` (
 
 ## Referencias
 
-- [Login](../../login/login.md)
 - [Seguridad backend](../../../03-technical/backend/security.md)
 - [Componentes frontend](../../../03-technical/frontend/components.md)
 - [API backend](../../../03-technical/backend/api.md)
