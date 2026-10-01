@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Seed data for local development: interface_log (H2 + PostgreSQL compatible) -->
+    <!-- Context: local (only applied in local development environment) -->
+    <!--
+         El seed original 20250120-seed-local-interface-log usa <sql dbms="postgresql">
+         con generate_series/ARRAY/setval, que H2 no soporta y por tanto ignora en local.
+         Este changeSet reescribe los datos con <insert> agnósticos de motor para que
+         también se apliquen en H2. La preCondition COUNT(*)=0 evita duplicar filas en
+         PostgreSQL (donde el seed original ya habrá insertado sus registros).
+    -->
+
+    <changeSet id="20250124-seed-local-interface-log-h2" author="template" labels="v1.0.0" context="local">
+
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="interface_log"/>
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM interface_log</sqlCheck>
+        </preConditions>
+
+        <comment>Registros de log de interfaces para desarrollo local, compatibles con H2 y PostgreSQL (30 registros simulados)</comment>
+
+        <insert tableName="interface_log">
+            <column name="id" valueNumeric="1"/>
+            <column name="timestamp" valueDate="2025-01-10 08:00:00"/>
+            <column name="operation_type" value="GET"/>
+            <column name="interface_name" value="Interfaz REST clientes"/>
+            <column name="request_payload" value='{"params":{"page":0,"size":20}}'/>
+            <column name="response_payload" value='{"data":{"records":18,"success":true}}'/>
+            <column name="status" value="SUCCESS"/>
+        </insert>
+
+        <insert tableName="interface_log">
+            <column name="id" valueNumeric="2"/>
+            <column name="timestamp" valueDate="2025-01-10 08:35:00"/>
+            <column name="operation_type" value="POST"/>
+            <column name="interface_name" value="Interfaz SOAP pagos"/>
+            <column name="request_payload" value='{"body":{"amount":1250.50,"currency":"EUR"}}'/>
+            <column name="response_payload" value='{"error":"Internal Server Error","code":500,"message":"Timeout de conexión con servicio externo"}'/>
+            <column name="status" value="ERROR"/>
+        </insert>
+
+        <insert tableName="interface_log">
+            <column name="id" valueNumeric="3"/>
+            <column name="timestamp" valueDate="2025-01-10 09:10:00"/>
+            <column name="operation_type" value="GET"/>
+            <column name="interface_name" value="Interfaz REST inventario"/>
+            <column name="request_payload" value='{"params":{"sku":"ABC-123"}}'/>
+            <column name="response_payload" value='{"data":{"stock":42,"success":true}}'/>
+            <column name="status" value="SUCCESS"/>
+        </insert>
+
+        <insert tableName="interface_log">
+            <column name="id" valueNumeric="4"/>
+            <column name="timestamp" valueDate="2025-01-10 09:45:00"/>
+            <column name="operation_type" value="PUT"/>
+            <column name="interface_name" value="Interfaz REST clientes"/>
+            <column name="request_payload" value='{"body":{"id":12,"description":"Actualización de cliente"}}'/>
+            <column name="response_payload" value='{"data":{"id":12,"success":true}}'/>
+            <column name="status" value="SUCCESS"/>
+        </insert>
+
+        <insert tableName="interface_log">
+            <column name="id" valueNumeric="5"/>
+            <column name="timestamp" valueDate="2025-01-10 10:20:00"/>
+            <column name="operation_type" value="DELETE"/>
+            <column name="interface_name" value="Interfaz FTP ficheros"/>
+            <column name="request_payload" value='{"params":{"id":34}}'/>
+            <column name="response_payload" value='{"error":"Not Found","code":404,"message":"Recurso no encontrado: id=34"}'/>
+            <column name="status" value="NOT_FOUND"/>
+        </insert>
+
+        <insert tableName="interface_log">
+            <column name="id" valueNumeric="6"/>
+            <column name="timestamp" valueDate="2025-01-10 10:55:00"/>
+            <column name="operation_type" value="PATCH"/>
+            <column name="interface_name" value="Interfaz SFTP backup"/>
+            <column name="request_payload" value='{"body":{"field":"schedule","value":"daily"}}'/>
+            <column name="response_payload" value='{"error":"Bad Request","code":400,"message":"Validación fallida: campo obligatorio"}'/>
+            <column name="status" value="BAD_REQUEST"/>
+        </insert>
+
+        <insert tableName="interface_log">
+            <column name="id" valueNumeric="7"/>
+            <column name="timestamp" valueDate="2025-01-10 11:30:00"/>
+            <column name="operation_type" value="GET"/>
+            <column name="interface_name" value="Interfaz REST notificaciones"/>
+            <column name="request_payload" value='{"params":{"page":1,"size":20}}'/>
+            <column name="response_payload" value='{"data":{"records":5,"success":true}}'/>
+            <column name="status" value="SUCCESS"/>
+        </insert>
+
+        <insert tableName="interface_log">
+            <column name="id" valueNumeric="8"/>
+            <column name="timestamp" valueDate="2025-01-10 12:05:00"/>
+            <column name="operation_type" value="POST"/>
+            <column name="interface_name" value="Interfaz REST clientes"/>
+            <column name="request_payload" value='{"body":{"name":"Cliente nuevo","active":true}}'/>
+            <column name="response_payload" value='{"data":{"id":101,"success":true}}'/>
+            <column name="status" value="SUCCESS"/>
+        </insert>
+
+        <insert tableName="interface_log">
+            <column name="id" valueNumeric="9"/>
+            <column name="timestamp" valueDate="2025-01-10 12:40:00"/>
+            <column name="operation_type" value="GET"/>
+            <column name="interface_name" value="Interfaz SOAP pagos"/>
+            <column name="request_payload" value='{"params":{"transactionId":"TX-9001"}}'/>
+            <column name="response_payload" value='{"error":"Not Found","code":404,"message":"Recurso no encontrado: id=9001"}'/>
+            <column name="status" value="NOT_FOUND"/>
+        </insert>
+
+        <insert tableName="interface_log">
+            <column name="id" valueNumeric="10"/>
+            <column name="timestamp" valueDate="2025-01-10 13:15:00"/>
+            <column name="operation_type" value="POST"/>
+            <column name="interface_name" value="Interfaz REST inventario"/>
+            <column name="request_payload" value='{"body":{"sku":"XYZ-999","qty":-5}}'/>
+            <column name="response_payload" value='{"error":"Bad Request","code":400,"message":"Validación fallida: cantidad no válida"}'/>
+            <column name="status" value="BAD_REQUEST"/>
+        </insert>
+
+        <insert tableName="interface_log">
+            <column name="id" valueNumeric="11"/>
+            <column name="timestamp" valueDate="2025-01-10 13:50:00"/>
+            <column name="operation_type" value="GET"/>
+            <column name="interface_name" value="Interfaz SFTP backup"/>
+            <column name="request_payload" value='{"params":{"date":"2025-01-10"}}'/>
+            <column name="response_payload" value='{"data":{"files":3,"success":true}}'/>
+            <column name="status" value="SUCCESS"/>
+        </insert>
+
+        <insert tableName="interface_log">
+            <column name="id" valueNumeric="12"/>
+            <column name="timestamp" valueDate="2025-01-10 14:25:00"/>
+            <column name="operation_type" value="PUT"/>
+            <column name="interface_name" value="Interfaz REST notificaciones"/>
+            <column name="request_payload" value='{"body":{"id":7,"status":"enabled"}}'/>
+            <column name="response_payload" value='{"error":"Internal Server Error","code":500,"message":"Servicio no disponible"}'/>
+            <column name="status" value="ERROR"/>
+        </insert>
+
+        <insert tableName="interface_log">
+            <column name="id" valueNumeric="13"/>
+            <column name="timestamp" valueDate="2025-01-10 15:00:00"/>
+            <column name="operation_type" value="GET"/>
+            <column name="interface_name" value="Interfaz REST clientes"/>
+            <column name="request_payload" value='{"params":{"page":2,"size":20}}'/>
+            <column name="response_payload" value='{"data":{"records":20,"success":true}}'/>
+            <column name="status" value="SUCCESS"/>
+        </insert>
+
+        <insert tableName="interface_log">
+            <column name="id" valueNumeric="14"/>
+            <column name="timestamp" valueDate="2025-01-10 15:35:00"/>
+            <column name="operation_type" value="DELETE"/>
+            <column name="interface_name" value="Interfaz REST inventario"/>
+            <column name="request_payload" value='{"params":{"id":58}}'/>
+            <column name="response_payload" value='{"data":{"id":58,"deleted":true,"success":true}}'/>
+            <column name="status" value="SUCCESS"/>
+        </insert>
+
+        <insert tableName="interface_log">
+            <column name="id" valueNumeric="15"/>
+            <column name="timestamp" valueDate="2025-01-10 16:10:00"/>
+            <column name="operation_type" value="PATCH"/>
+            <column name="interface_name" value="Interfaz SOAP pagos"/>
+            <column name="request_payload" value='{"body":{"field":"retries","value":3}}'/>
+            <column name="response_payload" value='{"data":{"updated":true,"success":true}}'/>
+            <column name="status" value="SUCCESS"/>
+        </insert>
+
+        <insert tableName="interface_log">
+            <column name="id" valueNumeric="16"/>
+            <column name="timestamp" valueDate="2025-01-10 16:45:00"/>
+            <column name="operation_type" value="GET"/>
+            <column name="interface_name" value="Interfaz FTP ficheros"/>
+            <column name="request_payload" value='{"params":{"folder":"entrada"}}'/>
+            <column name="response_payload" value='{"data":{"files":12,"success":true}}'/>
+            <column name="status" value="SUCCESS"/>
+        </insert>
+
+        <insert tableName="interface_log">
+            <column name="id" valueNumeric="17"/>
+            <column name="timestamp" valueDate="2025-01-10 17:20:00"/>
+            <column name="operation_type" value="POST"/>
+            <column name="interface_name" value="Interfaz SFTP backup"/>
+            <column name="request_payload" value='{"body":{"job":"full-backup"}}'/>
+            <column name="response_payload" value='{"data":{"jobId":"BK-2025-010","success":true}}'/>
+            <column name="status" value="SUCCESS"/>
+        </insert>
+
+        <insert tableName="interface_log">
+            <column name="id" valueNumeric="18"/>
+            <column name="timestamp" valueDate="2025-01-10 17:55:00"/>
+            <column name="operation_type" value="GET"/>
+            <column name="interface_name" value="Interfaz REST notificaciones"/>
+            <column name="request_payload" value='{"params":{"unread":true}}'/>
+            <column name="response_payload" value='{"error":"Internal Server Error","code":500,"message":"Error al consultar notificaciones"}'/>
+            <column name="status" value="ERROR"/>
+        </insert>
+
+        <insert tableName="interface_log">
+            <column name="id" valueNumeric="19"/>
+            <column name="timestamp" valueDate="2025-01-10 18:30:00"/>
+            <column name="operation_type" value="PUT"/>
+            <column name="interface_name" value="Interfaz REST clientes"/>
+            <column name="request_payload" value='{"body":{"id":5,"email":"cliente@local.test"}}'/>
+            <column name="response_payload" value='{"data":{"id":5,"success":true}}'/>
+            <column name="status" value="SUCCESS"/>
+        </insert>
+
+        <insert tableName="interface_log">
+            <column name="id" valueNumeric="20"/>
+            <column name="timestamp" valueDate="2025-01-10 19:05:00"/>
+            <column name="operation_type" value="DELETE"/>
+            <column name="interface_name" value="Interfaz SOAP pagos"/>
+            <column name="request_payload" value='{"params":{"id":77}}'/>
+            <column name="response_payload" value='{"error":"Not Found","code":404,"message":"Recurso no encontrado: id=77"}'/>
+            <column name="status" value="NOT_FOUND"/>
+        </insert>
+
+        <insert tableName="interface_log">
+            <column name="id" valueNumeric="21"/>
+            <column name="timestamp" valueDate="2025-01-10 19:40:00"/>
+            <column name="operation_type" value="GET"/>
+            <column name="interface_name" value="Interfaz REST inventario"/>
+            <column name="request_payload" value='{"params":{"warehouse":"A1"}}'/>
+            <column name="response_payload" value='{"data":{"items":230,"success":true}}'/>
+            <column name="status" value="SUCCESS"/>
+        </insert>
+
+        <insert tableName="interface_log">
+            <column name="id" valueNumeric="22"/>
+            <column name="timestamp" valueDate="2025-01-10 20:15:00"/>
+            <column name="operation_type" value="PATCH"/>
+            <column name="interface_name" value="Interfaz REST clientes"/>
+            <column name="request_payload" value='{"body":{"field":"active","value":false}}'/>
+            <column name="response_payload" value='{"error":"Bad Request","code":400,"message":"Validación fallida: estado no permitido"}'/>
+            <column name="status" value="BAD_REQUEST"/>
+        </insert>
+
+        <insert tableName="interface_log">
+            <column name="id" valueNumeric="23"/>
+            <column name="timestamp" valueDate="2025-01-10 20:50:00"/>
+            <column name="operation_type" value="POST"/>
+            <column name="interface_name" value="Interfaz FTP ficheros"/>
+            <column name="request_payload" value='{"body":{"file":"pedidos_20250110.csv"}}'/>
+            <column name="response_payload" value='{"data":{"uploaded":true,"success":true}}'/>
+            <column name="status" value="SUCCESS"/>
+        </insert>
+
+        <insert tableName="interface_log">
+            <column name="id" valueNumeric="24"/>
+            <column name="timestamp" valueDate="2025-01-10 21:25:00"/>
+            <column name="operation_type" value="GET"/>
+            <column name="interface_name" value="Interfaz SFTP backup"/>
+            <column name="request_payload" value='{"params":{"status":"last"}}'/>
+            <column name="response_payload" value='{"data":{"lastBackup":"2025-01-10","success":true}}'/>
+            <column name="status" value="SUCCESS"/>
+        </insert>
+
+        <insert tableName="interface_log">
+            <column name="id" valueNumeric="25"/>
+            <column name="timestamp" valueDate="2025-01-10 22:00:00"/>
+            <column name="operation_type" value="PUT"/>
+            <column name="interface_name" value="Interfaz SOAP pagos"/>
+            <column name="request_payload" value='{"body":{"id":90,"amount":500}}'/>
+            <column name="response_payload" value='{"data":{"id":90,"success":true}}'/>
+            <column name="status" value="SUCCESS"/>
+        </insert>
+
+        <insert tableName="interface_log">
+            <column name="id" valueNumeric="26"/>
+            <column name="timestamp" valueDate="2025-01-10 22:35:00"/>
+            <column name="operation_type" value="DELETE"/>
+            <column name="interface_name" value="Interfaz REST notificaciones"/>
+            <column name="request_payload" value='{"params":{"id":11}}'/>
+            <column name="response_payload" value='{"data":{"id":11,"deleted":true,"success":true}}'/>
+            <column name="status" value="SUCCESS"/>
+        </insert>
+
+        <insert tableName="interface_log">
+            <column name="id" valueNumeric="27"/>
+            <column name="timestamp" valueDate="2025-01-10 23:10:00"/>
+            <column name="operation_type" value="GET"/>
+            <column name="interface_name" value="Interfaz REST clientes"/>
+            <column name="request_payload" value='{"params":{"page":3,"size":20}}'/>
+            <column name="response_payload" value='{"data":{"records":15,"success":true}}'/>
+            <column name="status" value="SUCCESS"/>
+        </insert>
+
+        <insert tableName="interface_log">
+            <column name="id" valueNumeric="28"/>
+            <column name="timestamp" valueDate="2025-01-10 23:45:00"/>
+            <column name="operation_type" value="POST"/>
+            <column name="interface_name" value="Interfaz REST notificaciones"/>
+            <column name="request_payload" value='{"body":{"message":"Alerta de stock","channel":"push"}}'/>
+            <column name="response_payload" value='{"error":"Internal Server Error","code":500,"message":"Fallo al enviar notificación"}'/>
+            <column name="status" value="ERROR"/>
+        </insert>
+
+        <insert tableName="interface_log">
+            <column name="id" valueNumeric="29"/>
+            <column name="timestamp" valueDate="2025-01-11 00:20:00"/>
+            <column name="operation_type" value="PATCH"/>
+            <column name="interface_name" value="Interfaz REST inventario"/>
+            <column name="request_payload" value='{"body":{"field":"reorderLevel","value":10}}'/>
+            <column name="response_payload" value='{"data":{"updated":true,"success":true}}'/>
+            <column name="status" value="SUCCESS"/>
+        </insert>
+
+        <insert tableName="interface_log">
+            <column name="id" valueNumeric="30"/>
+            <column name="timestamp" valueDate="2025-01-11 00:55:00"/>
+            <column name="operation_type" value="GET"/>
+            <column name="interface_name" value="Interfaz FTP ficheros"/>
+            <column name="request_payload" value='{"params":{"folder":"salida"}}'/>
+            <column name="response_payload" value='{"data":{"files":8,"success":true}}'/>
+            <column name="status" value="SUCCESS"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="interface_log">
+                <where>id BETWEEN 1 AND 30</where>
+            </delete>
+        </rollback>
+
+    </changeSet>
+
+    <!-- Reset sequence to avoid conflicts with seed data -->
+    <changeSet id="20250124-seed-local-interface-log-seq-reset" author="template" labels="v1.0.0" context="local">
+
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="interface_log"/>
+            <sequenceExists sequenceName="interface_log_seq"/>
+        </preConditions>
+
+        <comment>Ajusta la secuencia interface_log_seq para evitar conflictos con los datos seed</comment>
+
+        <!-- PostgreSQL: setval calcula el siguiente valor a partir del MAX(id) actual -->
+        <sql dbms="postgresql">SELECT setval('interface_log_seq', (SELECT COALESCE(MAX(id), 0) + 1 FROM interface_log), false)</sql>
+        <!-- H2 (perfil local): setval no existe; se reinicia la secuencia al valor fijo
+             siguiente a los ids seed (1-30) -->
+        <sql dbms="h2">ALTER SEQUENCE interface_log_seq RESTART WITH 100</sql>
+
+        <rollback/>
+
+    </changeSet>
+
+</databaseChangeLog>

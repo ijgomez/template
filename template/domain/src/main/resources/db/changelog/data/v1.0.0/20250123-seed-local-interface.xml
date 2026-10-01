@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Seed data for local development: interface (configuration) -->
+    <!-- Context: local (only applied in local development environment) -->
+
+    <changeSet id="20250123-seed-local-interface" author="template" labels="v1.0.0" context="local">
+
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="interface"/>
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM interface</sqlCheck>
+        </preConditions>
+
+        <comment>Configuración de interfaces para desarrollo local (6 registros simulados)</comment>
+
+        <insert tableName="interface">
+            <column name="id" valueNumeric="1"/>
+            <column name="name" value="Interfaz REST clientes"/>
+            <column name="description" value="Sincronización de datos de clientes vía REST"/>
+            <column name="url" value="https://api.local.test/clientes"/>
+            <column name="protocol" value="REST"/>
+            <column name="status" value="ACTIVE"/>
+            <column name="check_frequency" valueNumeric="60"/>
+        </insert>
+
+        <insert tableName="interface">
+            <column name="id" valueNumeric="2"/>
+            <column name="name" value="Interfaz SOAP pagos"/>
+            <column name="description" value="Procesamiento de pagos mediante servicio SOAP"/>
+            <column name="url" value="https://api.local.test/pagos?wsdl"/>
+            <column name="protocol" value="SOAP"/>
+            <column name="status" value="ACTIVE"/>
+            <column name="check_frequency" valueNumeric="300"/>
+        </insert>
+
+        <insert tableName="interface">
+            <column name="id" valueNumeric="3"/>
+            <column name="name" value="Interfaz FTP ficheros"/>
+            <column name="description" value="Transferencia de ficheros batch por FTP"/>
+            <column name="url" value="ftp://ftp.local.test/entrada"/>
+            <column name="protocol" value="FTP"/>
+            <column name="status" value="INACTIVE"/>
+            <column name="check_frequency" valueNumeric="900"/>
+        </insert>
+
+        <insert tableName="interface">
+            <column name="id" valueNumeric="4"/>
+            <column name="name" value="Interfaz SFTP backup"/>
+            <column name="description" value="Envío de copias de seguridad mediante SFTP"/>
+            <column name="url" value="sftp://backup.local.test/respaldos"/>
+            <column name="protocol" value="SFTP"/>
+            <column name="status" value="ACTIVE"/>
+            <column name="check_frequency" valueNumeric="3600"/>
+        </insert>
+
+        <insert tableName="interface">
+            <column name="id" valueNumeric="5"/>
+            <column name="name" value="Interfaz REST notificaciones"/>
+            <column name="description" value="Envío de notificaciones push vía REST"/>
+            <column name="url" value="https://api.local.test/notificaciones"/>
+            <column name="protocol" value="REST"/>
+            <column name="status" value="ERROR"/>
+            <column name="check_frequency" valueNumeric="120"/>
+        </insert>
+
+        <insert tableName="interface">
+            <column name="id" valueNumeric="6"/>
+            <column name="name" value="Interfaz REST inventario"/>
+            <column name="description" value="Consulta de inventario en tiempo real vía REST"/>
+            <column name="url" value="https://api.local.test/inventario"/>
+            <column name="protocol" value="REST"/>
+            <column name="status" value="ACTIVE"/>
+            <column name="check_frequency" valueNumeric="180"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="interface">
+                <where>id BETWEEN 1 AND 6</where>
+            </delete>
+        </rollback>
+
+    </changeSet>
+
+    <!-- Reset sequence to avoid conflicts with seed data -->
+    <changeSet id="20250123-seed-local-interface-seq-reset" author="template" labels="v1.0.0" context="local">
+
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="interface"/>
+            <sequenceExists sequenceName="interface_seq"/>
+        </preConditions>
+
+        <comment>Ajusta la secuencia interface_seq para evitar conflictos con los datos seed (ids 1-6)</comment>
+
+        <!-- PostgreSQL: setval calcula el siguiente valor a partir del MAX(id) actual -->
+        <sql dbms="postgresql">SELECT setval('interface_seq', (SELECT COALESCE(MAX(id), 0) + 1 FROM interface), false)</sql>
+        <!-- H2 (perfil local): setval no existe; se reinicia la secuencia al valor fijo
+             siguiente a los ids seed (1-6) -->
+        <sql dbms="h2">ALTER SEQUENCE interface_seq RESTART WITH 100</sql>
+
+        <rollback/>
+
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Seed data for local development: parameter -->
+    <!-- Context: local (only applied in local development environment) -->
+
+    <changeSet id="20250122-seed-local-parameter" author="template" labels="v1.0.0" context="local">
+
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="parameter"/>
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM parameter</sqlCheck>
+        </preConditions>
+
+        <comment>Parámetros del sistema para desarrollo local (10 registros simulados)</comment>
+
+        <insert tableName="parameter">
+            <column name="id" valueNumeric="1"/>
+            <column name="code" value="SESSION_TIMEOUT"/>
+            <column name="description" value="Tiempo de expiración de la sesión en minutos"/>
+            <column name="parameter_value" value="30"/>
+            <column name="type" value="INTEGER"/>
+        </insert>
+
+        <insert tableName="parameter">
+            <column name="id" valueNumeric="2"/>
+            <column name="code" value="MAX_LOGIN_ATTEMPTS"/>
+            <column name="description" value="Número máximo de intentos de inicio de sesión"/>
+            <column name="parameter_value" value="5"/>
+            <column name="type" value="INTEGER"/>
+        </insert>
+
+        <insert tableName="parameter">
+            <column name="id" valueNumeric="3"/>
+            <column name="code" value="MAINTENANCE_MODE"/>
+            <column name="description" value="Indica si el sistema está en modo mantenimiento"/>
+            <column name="parameter_value" value="false"/>
+            <column name="type" value="BOOLEAN"/>
+        </insert>
+
+        <insert tableName="parameter">
+            <column name="id" valueNumeric="4"/>
+            <column name="code" value="DEFAULT_PAGE_SIZE"/>
+            <column name="description" value="Tamaño de página por defecto en los listados"/>
+            <column name="parameter_value" value="20"/>
+            <column name="type" value="INTEGER"/>
+        </insert>
+
+        <insert tableName="parameter">
+            <column name="id" valueNumeric="5"/>
+            <column name="code" value="REPORT_RETENTION_DAYS"/>
+            <column name="description" value="Días de retención de los informes generados"/>
+            <column name="parameter_value" value="90"/>
+            <column name="type" value="INTEGER"/>
+        </insert>
+
+        <insert tableName="parameter">
+            <column name="id" valueNumeric="6"/>
+            <column name="code" value="SMTP_HOST"/>
+            <column name="description" value="Servidor SMTP para el envío de correos"/>
+            <column name="parameter_value" value="smtp.local.test"/>
+            <column name="type" value="STRING"/>
+        </insert>
+
+        <insert tableName="parameter">
+            <column name="id" valueNumeric="7"/>
+            <column name="code" value="AUDIT_ENABLED"/>
+            <column name="description" value="Activa el registro de auditoría del sistema"/>
+            <column name="parameter_value" value="true"/>
+            <column name="type" value="BOOLEAN"/>
+        </insert>
+
+        <insert tableName="parameter">
+            <column name="id" valueNumeric="8"/>
+            <column name="code" value="BATCH_SIZE"/>
+            <column name="description" value="Tamaño de lote para procesos por lotes"/>
+            <column name="parameter_value" value="500"/>
+            <column name="type" value="INTEGER"/>
+        </insert>
+
+        <insert tableName="parameter">
+            <column name="id" valueNumeric="9"/>
+            <column name="code" value="EXPORT_FORMAT"/>
+            <column name="description" value="Formato por defecto para las exportaciones"/>
+            <column name="parameter_value" value="CSV"/>
+            <column name="type" value="STRING"/>
+        </insert>
+
+        <insert tableName="parameter">
+            <column name="id" valueNumeric="10"/>
+            <column name="code" value="LAST_MAINTENANCE_DATE"/>
+            <column name="description" value="Fecha de la última ventana de mantenimiento"/>
+            <column name="parameter_value" value="2025-01-15"/>
+            <column name="type" value="DATE"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="parameter">
+                <where>id BETWEEN 1 AND 10</where>
+            </delete>
+        </rollback>
+
+    </changeSet>
+
+    <!-- Reset sequence to avoid conflicts with seed data -->
+    <changeSet id="20250122-seed-local-parameter-seq-reset" author="template" labels="v1.0.0" context="local">
+
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="parameter"/>
+            <sequenceExists sequenceName="parameter_seq"/>
+        </preConditions>
+
+        <comment>Ajusta la secuencia parameter_seq para evitar conflictos con los datos seed (ids 1-10)</comment>
+
+        <!-- PostgreSQL: setval calcula el siguiente valor a partir del MAX(id) actual -->
+        <sql dbms="postgresql">SELECT setval('parameter_seq', (SELECT COALESCE(MAX(id), 0) + 1 FROM parameter), false)</sql>
+        <!-- H2 (perfil local): setval no existe; se reinicia la secuencia al valor fijo
+             siguiente a los ids seed (1-10) -->
+        <sql dbms="h2">ALTER SEQUENCE parameter_seq RESTART WITH 100</sql>
+
+        <rollback/>
+
+    </changeSet>
+
+</databaseChangeLog>

@@ -50,5 +50,8 @@
     <include file="data/v1.0.0/20250118-seed-local-cluster-node.xml" relativeToChangelogFile="true"/>
     <include file="data/v1.0.0/20250119-seed-local-audit-log.xml" relativeToChangelogFile="true"/>
     <include file="data/v1.0.0/20250120-seed-local-interface-log.xml" relativeToChangelogFile="true"/>
+    <include file="data/v1.0.0/20250122-seed-local-parameter.xml" relativeToChangelogFile="true"/>
+    <include file="data/v1.0.0/20250123-seed-local-interface.xml" relativeToChangelogFile="true"/>
+    <include file="data/v1.0.0/20250124-seed-local-interface-log-h2.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>
