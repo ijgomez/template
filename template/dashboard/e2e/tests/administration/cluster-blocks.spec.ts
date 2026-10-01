@@ -66,7 +66,7 @@ test.describe('Cluster blocks', () => {
     await blocksPage.openDetail(selectedRow);
 
     await expect(blocksPage.backToListButton).toBeVisible();
-    await expect(page.locator('h1')).toContainText(/bloqueo/i);
+    await expect(page.locator('h1')).toContainText(/detail/i);
 
     const detail = page.locator('.card .card-body');
     const expectedValues = cells.map((c) => c.trim()).filter((v) => v.length > 0);

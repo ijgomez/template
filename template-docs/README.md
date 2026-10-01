@@ -21,13 +21,19 @@ Describe los distintos módulos funcionales de la aplicación.
 
 - [Login](02-functional/login/login.md)
 - [Informes](02-functional/reports/reports.md)
+- [Interfaces](02-functional/interfaces/interfaces.md)
+  - [Monitor](02-functional/interfaces/monitor/monitor.md)
+  - [Configuración](02-functional/interfaces/configuration/configuration.md)
 - [Administración](02-functional/administration/administration.md)
   - [Seguridad](02-functional/administration/security/security.md)
     - [Usuarios](02-functional/administration/security/users.md)
+    - [Perfiles](02-functional/administration/security/profiles.md)
+    - [Acciones](02-functional/administration/security/actions.md)
   - [Parámetros](02-functional/administration/parameters/parameters.md)
   - [Auditoría](02-functional/administration/audit/audit.md)
-  - [Interfaces](02-functional/administration/interfaces/interfaces.md)
-  - [Nodos del Cluster](02-functional/administration/cluster/cluster-nodes.md)
+  - [Cluster](02-functional/administration/cluster/cluster.md)
+    - [Nodos del Cluster](02-functional/administration/cluster/cluster-nodes.md)
+    - [Bloqueos del Cluster](02-functional/administration/cluster/cluster-blocks.md)
 
 ### Documentación técnica
 
