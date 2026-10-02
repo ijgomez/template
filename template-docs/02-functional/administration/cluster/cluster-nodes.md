@@ -11,7 +11,7 @@ Documentación funcional y técnica de la pantalla de administración de nodos d
 
 ## 1. Requisitos
 
-Identificadores locales de este documento: `RF-CLN-*` (requisitos funcionales) y `RNF-CLN-*` (requisitos no funcionales). La autenticación y la gestión de sesión que dan acceso a esta pantalla se especifican en [requirements.md](../../../specification/requirements.md).
+Identificadores locales de este documento: `RF-CLN-*` (requisitos funcionales) y `RNF-CLN-*` (requisitos no funcionales).
 
 ### 1.1. Requisitos funcionales
 
@@ -279,15 +279,7 @@ La exportación usa la colección filtrada en cliente, no la página visible. Ge
 
 ## 4. Pruebas
 
-### 4.1. Cobertura unitaria frontend
-
-| Ubicación | Alcance |
-|-----------|---------|
-| `dashboard/src/app/core/services/cluster.service.spec.ts` | Consultas de nodos, consulta por identificador y `PATCH` para designar maestro |
-
-No hay actualmente pruebas unitarias específicas de `NodeListComponent` o `NodeDetailComponent` en el repositorio.
-
-### 4.2. Cobertura backend
+### 4.1. Cobertura unitaria (backend)
 
 | Ubicación | Alcance |
 |-----------|---------|
@@ -296,7 +288,15 @@ No hay actualmente pruebas unitarias específicas de `NodeListComponent` o `Node
 | `webapp/src/test/java/org/myorganization/template/webapp/controller/ClusterControllerTest.java` | Contrato de los endpoints de nodos |
 | `webapp/src/test/java/org/myorganization/template/webapp/integration/AuditAndClusterIntegrationTest.java` | Invariante de maestro único en integración |
 
-### 4.3. Cobertura E2E y datos de prueba
+### 4.2. Cobertura unitaria (frontend)
+
+| Ubicación | Alcance |
+|-----------|---------|
+| `dashboard/src/app/core/services/cluster.service.spec.ts` | Consultas de nodos, consulta por identificador y `PATCH` para designar maestro |
+
+No hay actualmente pruebas unitarias específicas de `NodeListComponent` o `NodeDetailComponent` en el repositorio.
+
+### 4.3. Cobertura E2E (Playwright)
 
 Ubicación: `dashboard/e2e/tests/administration/cluster-nodes.spec.ts` (Page Object en `dashboard/e2e/pages/cluster-nodes.page.ts`).
 
@@ -309,7 +309,11 @@ Ubicación: `dashboard/e2e/tests/administration/cluster-nodes.spec.ts` (Page Obj
 
 La suite no ejecuta el cambio de maestro: es una operación que modifica estado compartido y requiere al menos dos nodos activos para validarse de forma aislada o con restauración posterior.
 
-### 4.4. Dependencias de ejecución
+### 4.4. Datos de prueba
+
+Los nodos del cluster se registran automáticamente al arrancar la aplicación; no existe un fichero de datos semilla específico. Los tests E2E utilizan el usuario `testUsers.valid` definido en `dashboard/e2e/fixtures/test-data.ts` y operan sobre las instancias registradas en el entorno de integración.
+
+### 4.5. Dependencias de ejecución
 
 - La consulta requiere backend de integración levantado y al menos una instancia registrada mediante el arranque de la aplicación.
 - La designación de maestro requiere al menos un nodo activo que no sea ya maestro.
@@ -319,6 +323,7 @@ La suite no ejecuta el cambio de maestro: es una operación que modifica estado 
 
 ## Referencias
 
+- [Autenticación y Gestión de Sesión](../../login/authentication.md)
 - [Requisitos de la aplicación](../../../specification/requirements.md)
 - [Modelo de datos funcional](../../../specification/data-model.md)
 - [Glosario](../../../specification/glossary.md)

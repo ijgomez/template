@@ -320,14 +320,7 @@ public class User2Report {
 
 ## 4. Pruebas
 
-### 4.1. Cobertura unitaria frontend
-
-| Ubicación | Alcance |
-|-----------|---------|
-| `dashboard/src/app/core/services/report.service.spec.ts` | Endpoints `findUserReports`, `findAll`, `search`, `getFilters`, `execute` y `export` |
-| `dashboard/src/app/features/reports/selected-reports/selected-reports.component.spec.ts` | Ciclo CVA, modal de selección, paginación, búsqueda, selección multiple y emisión de `onChange`/`onTouched` |
-
-### 4.2. Cobertura backend
+### 4.1. Cobertura unitaria (backend)
 
 | Ubicación | Alcance |
 |-----------|---------|
@@ -336,7 +329,14 @@ public class User2Report {
 | `ws/src/test/java/org/myorganization/template/ws/security/AuthorizationEnforcementProperties.java` | `Property 5`: verificación de 403 Forbidden en `/api/v1/reports/**` sin `REPORT_EXECUTE` |
 | `ws/src/test/java/org/myorganization/template/ws/security/JwtTokenProvider*Test.java` | Verificación de claims y autorización con acción `REPORT_EXECUTE` |
 
-### 4.3. Cobertura E2E y datos de prueba
+### 4.2. Cobertura unitaria (frontend)
+
+| Ubicación | Alcance |
+|-----------|---------|
+| `dashboard/src/app/core/services/report.service.spec.ts` | Endpoints `findUserReports`, `findAll`, `search`, `getFilters`, `execute` y `export` |
+| `dashboard/src/app/features/reports/selected-reports/selected-reports.component.spec.ts` | Ciclo CVA, modal de selección, paginación, búsqueda, selección multiple y emisión de `onChange`/`onTouched` |
+
+### 4.3. Cobertura E2E (Playwright)
 
 Ubicación: `dashboard/e2e/tests/reports/reports.spec.ts` (Page Object en `dashboard/e2e/pages/report.page.ts`).
 
@@ -349,9 +349,17 @@ Ubicación: `dashboard/e2e/tests/reports/reports.spec.ts` (Page Object en `dashb
 | Exportación CSV y TXT | Exportar a CSV y TXT | El navegador descarga los ficheros con el formato `Informe de actividad mensual_YYYY-MM-DD.csv` y `.txt` |
 | Navegación lateral | Desplegar menú lateral "Informes" y pulsar "Informe de actividad mensual" | Navega a `/reports/1` y carga el informe correspondiente |
 
+### 4.4. Datos de prueba
+
 Los datos semilla para informes y asignaciones al usuario administrador se encuentran en `domain/src/main/resources/db/changelog/data/v1.0.0/20250117-seed-local-reports.xml`.
 
-### 4.4. Casos clave (matriz)
+### 4.5. Dependencias de ejecución
+
+- Base de datos con tabla `report` y `user2report` pobladas (seed `20250117-seed-local-reports.xml`).
+- JWT con autoridad `REPORT_EXECUTE` para acceder a la ruta y endpoints.
+- Backend de integración levantado (perfil `test`) para las llamadas a `/api/v1/reports/**`.
+
+### 4.6. Casos clave (matriz)
 
 | Caso | Resultado esperado |
 | --- | --- |
@@ -366,12 +374,6 @@ Los datos semilla para informes y asignaciones al usuario administrador se encue
 | Modal: buscar nombre | `/search?name=` + `page=0` y actualiza `modalReports` y `modalTotalElements` |
 | Modal: "seleccionar página" | Marca/desmarca todos los IDs de `modalReports` en `modalSelectedIds` |
 | Confirmar modal | `selectedIds` actualizado, `onChange` emitido, modal cerrado |
-
-### 4.5. Dependencias de ejecución
-
-- Base de datos con tabla `report` y `user2report` pobladas (seed `20250117-seed-local-reports.xml`).
-- JWT con autoridad `REPORT_EXECUTE` para acceder a la ruta y endpoints.
-- Backend de integración levantado (perfil `test`) para las llamadas a `/api/v1/reports/**`.
 
 ---
 

@@ -12,7 +12,7 @@ Documentación funcional y técnica de la pantalla de gestión de permisos, dent
 
 ## 1. Requisitos
 
-Identificadores locales de este documento: `RF-ACC-*` (requisitos funcionales) y `RNF-ACC-*` (requisitos no funcionales). La autenticación y la gestión de sesión que dan acceso a esta pantalla se especifican en [requirements.md](../../../specification/requirements.md).
+Identificadores locales de este documento: `RF-ACC-*` (requisitos funcionales) y `RNF-ACC-*` (requisitos no funcionales).
 
 ### 1.1. Requisitos funcionales
 
@@ -311,7 +311,19 @@ Ruta base: `/api/v1/administration/security/actions`.
 
 ## 4. Pruebas
 
-### 4.1. Cobertura E2E (Playwright)
+### 4.1. Cobertura unitaria (backend)
+
+No hay actualmente pruebas unitarias de backend específicas de esta pantalla documentadas en este documento.
+
+### 4.2. Cobertura unitaria (frontend)
+
+| Ubicación | Alcance |
+|-----------|---------|
+| `action-list.component.spec.ts` | Estado del listado, filtros, paginación, orden y exportación |
+| `action-form.component.spec.ts` | Modo edición y modo lectura, validación y emisión de eventos |
+| `action.service.spec.ts` | Construcción de peticiones de consulta y actualización, y criterios de filtrado |
+
+### 4.3. Cobertura E2E (Playwright)
 
 Ubicación: `template/dashboard/e2e/tests/administration/actions.spec.ts` con Page Object en `template/dashboard/e2e/pages/actions.page.ts`.
 
@@ -327,19 +339,11 @@ Ubicación: `template/dashboard/e2e/tests/administration/actions.spec.ts` con Pa
 - La edición modifica un registro real del catálogo semilla y verifica el cambio visible en la tabla.
 - La exportación valida el nombre del archivo descargado y confirma que la acción de exportación funciona con los filtros activos.
 
-### 4.2. Cobertura unitaria (frontend)
-
-| Ubicación | Alcance |
-|-----------|---------|
-| `action-list.component.spec.ts` | Estado del listado, filtros, paginación, orden y exportación |
-| `action-form.component.spec.ts` | Modo edición y modo lectura, validación y emisión de eventos |
-| `action.service.spec.ts` | Construcción de peticiones de consulta y actualización, y criterios de filtrado |
-
-### 4.3. Datos de prueba
+### 4.4. Datos de prueba
 
 Definidos en `template/dashboard/e2e/fixtures/test-data.ts`: `testUsers.valid` (credenciales del usuario con acceso al módulo) y los datos semilla del catálogo de acciones utilizados por los casos de buscar, editar y exportar. En este módulo no se crean acciones nuevas ni se eliminan, porque el catálogo es semilla y la edición solo modifica metadatos existentes.
 
-### 4.4. Dependencias de ejecución
+### 4.5. Dependencias de ejecución
 
 - Los casos E2E de listado, filtrado, edición y exportación requieren el backend de integración levantado y la base de datos con el catálogo de permisos inicializado.
 - La edición usa un registro real del catálogo semilla y valida que el cambio se refleja en la tabla del listado.
@@ -349,6 +353,7 @@ Definidos en `template/dashboard/e2e/fixtures/test-data.ts`: `testUsers.valid` (
 
 ## Referencias
 
+- [Autenticación y Gestión de Sesión](../../login/authentication.md)
 - [Seguridad backend](../../../03-technical/backend/security.md)
 - [Componentes frontend](../../../03-technical/frontend/components.md)
 - [API backend](../../../03-technical/backend/api.md)

@@ -11,7 +11,7 @@ Documentación funcional y técnica de la pantalla de administración de bloqueo
 
 ## 1. Requisitos
 
-Identificadores locales de este documento: `RF-CLB-*` (requisitos funcionales) y `RNF-CLB-*` (requisitos no funcionales). La autenticación y la gestión de sesión que dan acceso a esta pantalla se especifican en [requirements.md](../../../specification/requirements.md).
+Identificadores locales de este documento: `RF-CLB-*` (requisitos funcionales) y `RNF-CLB-*` (requisitos no funcionales).
 
 ### 1.1. Requisitos funcionales
 
@@ -286,15 +286,7 @@ La exportación pide al backend el conjunto completo (página 0, tamaño 100000)
 
 ## 4. Pruebas
 
-### 4.1. Cobertura unitaria frontend
-
-| Ubicación | Alcance |
-|-----------|---------|
-| `dashboard/src/app/core/services/cluster.service.spec.ts` | Métodos `findBlocksByCriteria`, `findAllBlocksByCriteria`, `countBlocksByCriteria`, `findBlockById` |
-
-No hay actualmente pruebas unitarias específicas de `BlockListComponent` ni de `BlockDetailComponent` en el repositorio.
-
-### 4.2. Cobertura backend
+### 4.1. Cobertura unitaria (backend)
 
 | Ubicación | Alcance |
 |-----------|---------|
@@ -303,7 +295,15 @@ No hay actualmente pruebas unitarias específicas de `BlockListComponent` ni de 
 | `webapp/src/test/java/org/myorganization/template/webapp/controller/ClusterControllerTest.java` | Contrato de los endpoints de bloqueos (paginado, count, por id, 405 en escritura) |
 | `webapp/src/test/java/org/myorganization/template/webapp/integration/AuditAndClusterIntegrationTest.java` | Integración de locks y bloqueos en escenarios multi-componente |
 
-### 4.3. Cobertura E2E y datos de prueba
+### 4.2. Cobertura unitaria (frontend)
+
+| Ubicación | Alcance |
+|-----------|---------|
+| `dashboard/src/app/core/services/cluster.service.spec.ts` | Métodos `findBlocksByCriteria`, `findAllBlocksByCriteria`, `countBlocksByCriteria`, `findBlockById` |
+
+No hay actualmente pruebas unitarias específicas de `BlockListComponent` ni de `BlockDetailComponent` en el repositorio.
+
+### 4.3. Cobertura E2E (Playwright)
 
 Ubicación: `dashboard/e2e/tests/administration/cluster-blocks.spec.ts` (Page Object en `dashboard/e2e/pages/cluster-blocks.page.ts`).
 
@@ -316,7 +316,11 @@ Ubicación: `dashboard/e2e/tests/administration/cluster-blocks.spec.ts` (Page Ob
 
 La suite es de solo lectura y no modifica `cluster_block`. Para que existan filas visibles, el backend debe haber adquirido y liberado al menos un lock durante su ciclo de vida (habitualmente el bloqueo `NODOS` del `HeartbeatWorker`).
 
-### 4.4. Dependencias de ejecución
+### 4.4. Datos de prueba
+
+Los registros de `cluster_block` no se cargan mediante datos semilla: se generan automáticamente cuando `ClusterLockService` adquiere y libera locks durante la ejecución de tareas clusterizadas. Los tests E2E utilizan el usuario `admin` (`testUsers.valid` en `dashboard/e2e/fixtures/test-data.ts`), que debe poseer la acción `CLUSTER_LOCK_READ`.
+
+### 4.5. Dependencias de ejecución
 
 - La consulta requiere backend de integración levantado y base de datos PostgreSQL (los advisory locks no operan sobre H2).
 - Los registros de `cluster_block` se generan automáticamente cuando `ClusterLockService` adquiere locks durante la ejecución de tareas clusterizadas; sin actividad no habrá filas visibles.
@@ -327,6 +331,7 @@ La suite es de solo lectura y no modifica `cluster_block`. Para que existan fila
 
 ## Referencias
 
+- [Autenticación y Gestión de Sesión](../../login/authentication.md)
 - [Requisitos de la aplicación](../../../specification/requirements.md)
 - [Modelo de datos funcional](../../../specification/data-model.md)
 - [Glosario](../../../specification/glossary.md)
