@@ -103,7 +103,7 @@ Identificadores locales: `RF-RPT-*` (funcionales) y `RNF-RPT-*` (no funcionales)
 
 Pantalla paramétrica común para ejecutar cualquier informe y exportarlo en varios formatos, más un componente reutilizable CVA para asignar informes en mantenimientos.
 
-### 2.2. Vistas
+### 2.2. Vistas de la pantalla
 
 #### Vista de ejecución (`ReportListComponent`)
 
@@ -121,7 +121,7 @@ Integrable en formularios. Cuenta con:
 1. Listado de informes asignados, filtrado cliente y opción de quitar.
 2. Botón *Añadir* → modal paginado servidor con búsqueda y selección multiple.
 
-### 2.3. Wireframes
+### 2.3. Patrón visual reutilizable y wireframes
 
 #### Pantalla de ejecución de informe
 
@@ -163,7 +163,7 @@ Integrable en formularios. Cuenta con:
 └──────────────────────────────────────────────────────────────────────────┘
 ```
 
-### 2.4. data-testid relevantes
+### 2.4. Identificadores para pruebas (`data-testid`)
 
 | Elemento | data-testid |
 | --- | --- |
@@ -177,7 +177,9 @@ Integrable en formularios. Cuenta con:
 | Modal `tp-selected-reports` | `${testId}-modal` |
 | Buscar modal / fila id / paginación / tamaño / cancelar / aceptar | `${testId}-modal-search` / `-modal-row-${id}` / `-modal-pagination` / `-modal-page-size` / `-modal-cancel` / `-modal-accept` |
 
-### 2.5. Flujo ejecución y exportación
+### 2.5. Diagramas
+
+#### 2.5.1. Flujo de ejecución y exportación
 
 ```mermaid
 sequenceDiagram

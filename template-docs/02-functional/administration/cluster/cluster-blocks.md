@@ -171,13 +171,27 @@ La estructura visual base se define en [layout.md](../../../03-technical/fronten
 - El filtrado, la ordenación y la paginación se resuelven en servidor (Spring Data `Pageable`).
 - `data-testid` de la tabla: `cluster-blocks-table`.
 
+### 2.4. Identificadores para pruebas (`data-testid`)
+
+| Elemento | `data-testid` |
+| --- | --- |
+| Formulario de filtros | `cluster-blocks-filter-form` |
+| Filtro de nombre de tarea | `cluster-blocks-filter-name` |
+| Tabla de bloqueos | `cluster-blocks-table` |
+| Botón Filtrar | `cluster-blocks-apply-filters` |
+| Botón Limpiar | `cluster-blocks-clear-filters` |
+| Botón Exportar CSV | `cluster-blocks-export-csv` |
+| Botón Volver | `cluster-blocks-back-to-list` |
+
 ### 2.5. Detalle
 
 El detalle es exclusivamente informativo. Muestra nombre de tarea, fecha de inicio y las cuatro métricas de tiempo (promedio, mínimo, máximo, total de ejecuciones) sin controles de edición. El botón Volver retorna al listado paginado sin alterar filtros ni página.
 
 `data-testid` del botón Volver: `cluster-blocks-back-to-list`.
 
-### 2.6. Flujo de adquisición y liberación de lock
+### 2.6. Diagramas
+
+#### 2.6.1. Flujo de adquisición y liberación de lock
 
 ```mermaid
 flowchart TD

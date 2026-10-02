@@ -85,34 +85,26 @@ Identificadores locales de este documento: `RF-IFM-*` (funcionales) y `RNF-IFM-*
 
 Ofrecer a los administradores e ingenieros de integración un panel centralizado para supervisar el tráfico de integraciones, verificar el cumplimiento de contratos de comunicación y diagnosticar fallos en tiempo real mediante la inspección de payloads y códigos de estado.
 
-### 2.2. Vistas
+### 2.2. Vistas de la pantalla
 
-#### 1. Vista de listado (`viewMode = 'list'`)
+La pantalla gestiona dos modos de vista principales dentro del mismo componente:
 
-1. **Cabecera:** Título de la pantalla (`interfaces.monitor.title`).
-2. **Barra de filtros (`tp-filter-bar`):**
-   - Fecha desde y Fecha hasta (`date`).
-   - Selector de Tipo de Operación (`GET`, `POST`, `PUT`, `PATCH`, `DELETE`).
-   - Selector de Interfaz (alimentado con las interfaces configuradas en el sistema).
-   - Selector de Estado (`SUCCESS`, `ERROR`, `BAD_REQUEST`, `NOT_FOUND`).
-   - Botones *Buscar* (`btn-primary`) y *Limpiar* (`btn-outline-secondary`).
-3. **Barra de herramientas (`tp-toolbar`):**
-   - Botón *Ver detalle* (activo solo al seleccionar una fila).
-   - Botón *Exportar CSV* (alineado a la derecha).
-4. **Tabla de datos (`tp-data-table`):**
-   - Columnas ordenables: Fecha/hora, Tipo de operación, Interfaz, Estado (badges coloreados según resultado).
-   - Pie de tabla con información de registros visibles, paginador y selector de elementos por página.
+| Modo | Descripción |
+|------|-------------|
+| `list` | Listado paginado con filtros, ordenación, selección y exportación CSV |
+| `detail` | Vista de detalle de una operación seleccionada con payloads y errores |
 
-#### 2. Vista de detalle (`viewMode = 'detail'`)
+### 2.3. Patrón visual reutilizable y wireframes
 
-1. **Cabecera:** Título de detalle y botón *Volver* (`monitor-back-to-list`).
-2. **Tarjeta de información:**
-   - Metadatos: Timestamp, Tipo de operación, Interfaz y Estado.
-   - Bloque de petición: Payload preformateado (`requestPayload`).
-   - Bloque de respuesta: Payload preformateado (`responsePayload`).
-   - Mensaje de error (si `errorMessage` está presente, resaltado en rojo).
+La estructura visual base de esta pantalla se define en [layout.md](../../../03-technical/frontend/layout.md). Ese documento es la fuente única de verdad para los templates `List Screen`, `Form Screen` y `Confirmation Modal`; la documentación funcional del monitor describe cómo se aplica ese patrón a la entidad auditiva de operaciones de integración.
 
-### 2.3. Wireframes
+| Tipo de pantalla | Uso en monitor | Estructura base |
+|------------------|----------------|-----------------|
+| `List screen` | Listado principal de logs | Cabecera, filtros, tabla, acciones y paginación |
+| `Detail screen` | Consulta de una operación | Encabezado, metadatos, payloads y botón de retorno |
+| `Empty state` | Sin resultados | Mensaje de no-data con filtros aplicados |
+
+#### 2.3.1. Vista principal de listado y filtros
 
 #### Vista principal de listado y filtros
 
@@ -173,7 +165,9 @@ Ofrecer a los administradores e ingenieros de integración un panel centralizado
 | Tabla de datos | `monitor-table` |
 | Botón Volver (desde detalle) | `monitor-back-to-list` |
 
-### 2.5. Flujo de navegación y secuencia
+### 2.5. Diagramas
+
+#### 2.5.1. Flujo de navegación y secuencia
 
 ```mermaid
 sequenceDiagram

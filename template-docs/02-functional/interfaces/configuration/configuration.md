@@ -184,6 +184,18 @@ La diferencia frente a usuarios y acciones es que interfaces no tiene alta, edic
 - El doble clic sobre una fila abre la vista de detalle.
 - La exportación a CSV incluye **todos los registros que cumplen los filtros activos**, no solo la página actual.
 
+### 2.4. Identificadores para pruebas (`data-testid`)
+
+| Elemento | `data-testid` |
+| --- | --- |
+| Formulario de filtros | `interfaces-filter-form` |
+| Filtro de nombre | `filter-name` |
+| Filtro de protocolo | `filter-protocol` |
+| Filtro de estado | `filter-status` |
+| Tabla de interfaces | `interfaces-table` |
+| Botón Ver detalle | `btn-view-detail` |
+| Botón Exportar CSV | `btn-export` |
+
 ### 2.5. Detalle de interfaz
 
 **Campos (todos de solo lectura):**
@@ -203,7 +215,9 @@ La diferencia frente a usuarios y acciones es que interfaces no tiene alta, edic
 
 No aplican validaciones de entrada: la pantalla es de solo lectura y no dispone de formularios de alta ni edición. Los filtros no tienen reglas de obligatoriedad; cualquier combinación (incluida la vacía) es válida y recarga el listado correspondiente.
 
-### 2.7. Flujo de operaciones
+### 2.7. Diagramas
+
+#### 2.7.1. Flujo de operaciones
 
 ```mermaid
 flowchart TD

@@ -196,6 +196,17 @@ La diferencia frente a usuarios y perfiles es que acciones no tiene alta ni borr
 - El doble clic sobre una fila abre la vista de detalle.
 - La exportación a CSV incluye **todos los registros que cumplen los filtros activos**, no solo la página actual.
 
+### 2.4. Identificadores para pruebas (`data-testid`)
+
+| Elemento | `data-testid` |
+| --- | --- |
+| Formulario de filtros | `actions-filter-form` |
+| Filtro de código | `filter-code` |
+| Filtro de tipo | `filter-type` |
+| Tabla de acciones | `actions-table` |
+| Botón Editar | `btn-edit` |
+| Botón Exportar CSV | `btn-export` |
+
 ### 2.5. Formulario de acción
 
 **Campos:**
@@ -218,7 +229,9 @@ La diferencia frente a usuarios y perfiles es que acciones no tiene alta ni borr
 | Tipo | Obligatorio y limitado a los valores del catálogo |
 | Descripción | Opcional |
 
-### 2.7. Flujo de operaciones
+### 2.7. Diagramas
+
+#### 2.7.1. Flujo de operaciones
 
 ```mermaid
 flowchart TD

@@ -201,6 +201,18 @@ En perfiles, el `List screen` soporta filtrado por nombre, el `Form screen` inte
 - El doble clic sobre una fila abre la vista de detalle.
 - La exportación a CSV incluye **todos los registros que cumplen los filtros activos**, no solo la página actual.
 
+### 2.4. Identificadores para pruebas (`data-testid`)
+
+| Elemento | `data-testid` |
+| --- | --- |
+| Formulario de filtros | `profiles-filter-form` |
+| Filtro de nombre | `filter-name` |
+| Tabla de perfiles | `profiles-table` |
+| Botón Crear | `btn-create` |
+| Botón Editar | `btn-edit` |
+| Botón Eliminar | `btn-delete` |
+| Botón Exportar CSV | `btn-export` |
+
 ### 2.5. Formulario de perfil
 
 **Campos:**
@@ -221,7 +233,9 @@ En perfiles, el `List screen` soporta filtrado por nombre, el `Form screen` inte
 | Descripción | Opcional |
 | Acciones | Deben ser únicas y existir en el catálogo |
 
-### 2.7. Flujo de operaciones CRUD
+### 2.7. Diagramas
+
+#### 2.7.1. Flujo de operaciones CRUD
 
 ```mermaid
 flowchart TD

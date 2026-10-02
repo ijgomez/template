@@ -208,6 +208,20 @@ La pantalla de usuarios usa `List screen` para la consulta, `Form screen` para a
 - El doble clic sobre una fila abre la vista de detalle.
 - La exportación a CSV incluye **todos los registros que cumplen los filtros activos**, no solo la página actual.
 
+### 2.4. Identificadores para pruebas (`data-testid`)
+
+| Elemento | `data-testid` |
+| --- | --- |
+| Formulario de filtros | `users-filter-form` |
+| Filtro de usuario | `filter-username` |
+| Filtro de nombre | `filter-firstName` |
+| Filtro de perfil | `filter-profile` |
+| Tabla de usuarios | `users-table` |
+| Botón Crear | `btn-create` |
+| Botón Editar | `btn-edit` |
+| Botón Eliminar | `btn-delete` |
+| Botón Exportar CSV | `btn-export` |
+
 ### 2.5. Formulario de usuario
 
 **Campos:**
@@ -233,7 +247,9 @@ La pantalla de usuarios usa `List screen` para la consulta, `Form screen` para a
 | Perfil | Obligatorio |
 | Email | Formato de email cuando se informa |
 
-### 2.7. Flujo de operaciones CRUD
+### 2.7. Diagramas
+
+#### 2.7.1. Flujo de operaciones CRUD
 
 ```mermaid
 flowchart TD

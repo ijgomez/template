@@ -189,13 +189,29 @@ La estructura visual base se define en [layout.md](../../../03-technical/fronten
 - Un doble clic abre el detalle.
 - El filtrado, la ordenación y la paginación se resuelven en cliente sobre la colección de nodos recuperada del backend.
 
+### 2.4. Identificadores para pruebas (`data-testid`)
+
+| Elemento | `data-testid` |
+| --- | --- |
+| Formulario de filtros | `cluster-nodes-filter-form` |
+| Filtro de hostname | `filter-hostname` |
+| Filtro de estado | `filter-status` |
+| Filtro de maestro | `filter-master` |
+| Tabla de nodos | `cluster-nodes-table` |
+| Botón Filtrar | `btn-filter-search` |
+| Botón Limpiar | `btn-filter-clear` |
+| Botón Designar maestro | `btn-set-master` |
+| Botón Exportar CSV | `btn-export` |
+
 ### 2.5. Detalle y designación de maestro
 
 El detalle es exclusivamente informativo. Muestra hostname, IP, estado, condición de maestro, fechas y métricas de memoria sin controles de edición.
 
 Para designar maestro, el usuario selecciona un nodo activo que no sea ya maestro y pulsa **Designar maestro**. El modal solicita confirmación; al aceptar, se realiza la actualización, se limpia la selección y se recarga la lista. Cancelar o cerrar el modal no modifica ningún nodo.
 
-### 2.6. Flujo de cambio de maestro
+### 2.6. Diagramas
+
+#### 2.6.1. Flujo de cambio de maestro
 
 ```mermaid
 flowchart TD

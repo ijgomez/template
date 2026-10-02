@@ -176,13 +176,30 @@ La estructura visual base se define en [layout.md](../../../03-technical/fronten
 - Al no haber resultados, el listado queda vacío y la exportación informa de que no hay datos.
 - Los tamaños de página disponibles son 5, 10, 20 y 50; el valor inicial es 10.
 
+### 2.4. Identificadores para pruebas (`data-testid`)
+
+| Elemento | `data-testid` |
+| --- | --- |
+| Formulario de filtros | `audit-filter-form` |
+| Filtro de usuario | `audit-filter-username` |
+| Filtro de operación | `audit-filter-operation-type` |
+| Filtro de sección | `audit-filter-section` |
+| Filtro desde | `audit-filter-date-from` |
+| Filtro hasta | `audit-filter-date-to` |
+| Tabla de auditoría | `audit-table` |
+| Botón Filtrar | `audit-apply-filters` |
+| Botón Limpiar | `audit-clear-filters` |
+| Botón Exportar CSV | `audit-export-csv` |
+
 ### 2.5. Detalle de una entrada
 
 El detalle muestra los mismos valores recibidos en el listado: fecha/hora, usuario, operación, sección, identificador de entidad, entidad y detalle. Todos los campos se presentan como texto no editable.
 
 La operación se identifica visualmente por tipo: `CREATE`, `UPDATE`, `DELETE` o `EXECUTE`. La sección se presenta como una etiqueta independiente para facilitar la lectura de la trazabilidad.
 
-### 2.6. Flujo de consulta y exportación
+### 2.6. Diagramas
+
+#### 2.6.1. Flujo de consulta y exportación
 
 ```mermaid
 flowchart TD

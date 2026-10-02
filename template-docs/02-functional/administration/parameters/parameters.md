@@ -207,6 +207,20 @@ La pantalla de parámetros usa `List screen` para la consulta, `Form screen` par
 - El doble clic sobre una fila abre la vista de detalle.
 - La exportación a CSV incluye todos los registros que cumplen los filtros activos, no solo la página visible.
 
+### 2.4. Identificadores para pruebas (`data-testid`)
+
+| Elemento | `data-testid` |
+| --- | --- |
+| Formulario de filtros | `parameters-filter-form` |
+| Filtro de código | `filter-code` |
+| Filtro de descripción | `filter-description` |
+| Filtro de tipo | `filter-type` |
+| Tabla de parámetros | `parameters-table` |
+| Botón Crear | `btn-create` |
+| Botón Editar | `btn-edit` |
+| Botón Eliminar | `btn-delete` |
+| Botón Exportar CSV | `btn-export` |
+
 ### 2.5. Formulario de parámetro
 
 **Campos:**
@@ -238,7 +252,9 @@ Los parámetros se validan no solo en el formulario, sino también en la capa de
 
 La regla se implementa en `ParameterService.validateTypeValueCompatibility(...)` y se ejecuta tanto en alta como en edición.
 
-### 2.7. Flujo de operaciones CRUD
+### 2.7. Diagramas
+
+#### 2.7.1. Flujo de operaciones CRUD
 
 ```mermaid
 flowchart TD
