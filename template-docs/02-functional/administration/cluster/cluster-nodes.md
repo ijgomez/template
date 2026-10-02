@@ -312,7 +312,7 @@ public class ClusterNode extends BaseEntity {
 
 Las métricas de memoria se almacenan en bytes. La pantalla calcula la memoria libre como `(totalMemory - usedMemory) / totalMemory * 100`; cuando el total es cero muestra `0%`.
 
-### 3.3. Endpoints del backend
+### 3.3. Endpoints
 
 Ruta base: `/api/v1/administration/cluster/nodes`.
 
@@ -326,17 +326,42 @@ Ruta base: `/api/v1/administration/cluster/nodes`.
 
 El controlador delega la designación en `ClusterService.setMaster(id)`: el valor del cuerpo de petición no habilita otros cambios y la operación establece el indicador de maestro a verdadero.
 
-### 3.4. Gestión de estado y maestro
+### 3.4. Validaciones
+
+- El hostname, el estado y la condición de maestro deben ser consistentes con el ciclo de vida del nodo; si un nodo está inactivo durante más de cinco minutos, se marca como `INACTIVE` y ya no puede seguir siendo seleccionado como maestro.
+- La operación de designación de maestro exige `CLUSTER_NODE_WRITE` y solo se habilita cuando el nodo está activo y no es el maestro actual.
+- El sistema garantiza la unicidad del maestro: si se elige un nuevo nodo, el anterior pierde el indicador de maestro de forma transaccional.
+- La exportación se ejecuta con los filtros activos y no con una página parcial, para que el CSV refleje el subconjunto visible en la UI.
+
+### 3.5. Exportación
+
+La exportación usa la colección filtrada en cliente, no la página visible. Genera `cluster-nodes.csv` con separador `;`, incluyendo fechas convertidas a hora local, memoria usada y total en GB y el porcentaje de memoria libre.
+
+### 3.6. Paginación, orden y filtros
+
+- La consulta de nodos envía `page`, `size` y `sort` cuando el usuario aplica ordenación o paginación.
+- Los filtros de estado y maestro se resuelven por igualdad exacta, mientras que el filtro de hostname aplica coincidencia parcial.
+- Si el usuario limpia los filtros, la pantalla vuelve a mostrar el conjunto completo de nodos activos e inactivos registrados en ese momento.
+
+### 3.7. Seguridad y permisos
+
+- El acceso a la pantalla y la operación de designación de maestro requiere la acción `CLUSTER_NODE_READ` para consulta y `CLUSTER_NODE_WRITE` para la activación del maestro.
+- El backend no permite la creación ni eliminación manual de nodos; estos se registran automáticamente con el ciclo de vida de la instancia.
+- Cualquier intento de alterar la entidad fuera del flujo autorizado queda bloqueado por la política de seguridad del módulo.
+
+### 3.8. Reglas de comportamiento relevantes
+
+- Un nodo no puede ser maestro si está marcado como `INACTIVE` o si no ha emitido `heartbeat` dentro del umbral de vigencia aceptado.
+- El cambio de maestro es una operación de negocio crítica y debe realizarse de forma transaccional para evitar múltiples nodos maestros activos.
+- La vista se actualiza tras la operación y la tabla refleja de inmediato el nuevo estado del nodo designado.
+
+### 3.9. Gestión de estado y maestro
 
 - `registerNode()` se ejecuta al arrancar una instancia; crea el nodo si su hostname no existe o actualiza sus datos si ya estaba registrado.
 - `heartbeat()` actualiza estado, métricas de memoria y `lastModifiedAt` del nodo propio.
 - `detectDeadNodes()` marca `INACTIVE` los nodos `ACTIVE` sin actualización durante más de cinco minutos.
 - `electMaster()` elige el primer nodo `ACTIVE` por identificador cuando no existe maestro activo.
 - `setMaster(id)` desactiva todos los maestros y guarda el nodo elegido como maestro, garantizando un único maestro.
-
-### 3.5. Exportación
-
-La exportación usa la colección filtrada en cliente, no la página visible. Genera `cluster-nodes.csv` con separador `;`, incluyendo fechas convertidas a hora local, memoria usada y total en GB y el porcentaje de memoria libre.
 
 ---
 

@@ -337,7 +337,7 @@ public class Profile extends BaseEntity {
 }
 ```
 
-### 3.3. Endpoints del backend
+### 3.3. Endpoints
 
 Ruta base: `/api/v1/administration/security/profiles`.
 
@@ -355,21 +355,33 @@ Datos de referencia consumidos por el formulario:
 
 - Acciones: `GET /api/v1/administration/security/actions` (o la referencia equivalente de acciones del sistema)
 
-### 3.4. Paginación, orden y filtros
+### 3.4. Validaciones
+
+- El nombre del perfil es obligatorio y debe cumplir la regla de unicidad en el catálogo de perfiles.
+- La descripción es opcional, pero si se informa debe cumplir la longitud y el formato requerido por el backend.
+- La relación con acciones debe referenciar IDs válidos que existan en el catálogo de permisos.
+- La operación de borrado se rechaza si el perfil está asociado a usuarios activos o si el backend detecta un uso en curso (`EntityInUseException`).
+
+### 3.5. Exportación
+
+- La exportación reutiliza la consulta filtrada con un tamaño no paginado para recuperar todos los perfiles y generar el CSV en cliente vía `CsvExportService`.
+- El fichero incluye los perfiles que cumplen los criterios activos sin limitarse a la página visible.
+- Si el filtro no devuelve filas, la pantalla muestra un aviso y evita generar un CSV vacío.
+
+### 3.6. Paginación, orden y filtros
 
 - La paginación y el orden se envían como parámetros `page`, `size` y `sort` (formato `campo,dirección`).
 - El filtro de nombre se envía solo si existe valor no vacío.
 - La ordenación de la columna `actions` se resuelve en cliente, porque es un contador derivado de la relación y no existe como propiedad JPA ordenable del backend.
-- La exportación reutiliza la consulta filtrada con un tamaño no paginado para recuperar todos los perfiles y generar el CSV en cliente vía `CsvExportService`.
 
-### 3.5. Seguridad y permisos
+### 3.7. Seguridad y permisos
 
 - El acceso a la ruta está protegido por `actionGuard` con acciones `PROFILE_READ` y `PROFILE_WRITE`.
 - Las acciones de crear, editar y eliminar solo se muestran si el usuario posee la acción `PROFILE_WRITE` (`canWrite`).
 - Cuando se intenta borrar un perfil con usuarios asociados, el backend lanza una excepción de tipo `EntityInUseException` y la operación se rechaza.
 - La duplicación de acciones dentro de un perfil se valida en backend para evitar inconsistencias de permisos.
 
-### 3.6. Reglas de comportamiento relevantes
+### 3.8. Reglas de comportamiento relevantes
 
 - En creación y edición, el formulario admite nombre, descripción y selección de acciones.
 - En detalle, el formulario pasa a modo de solo lectura y muestra la auditoría.

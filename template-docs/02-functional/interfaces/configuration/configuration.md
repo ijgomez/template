@@ -315,7 +315,7 @@ public class Interface extends BaseEntity {
 }
 ```
 
-### 3.3. Endpoints del backend
+### 3.3. Endpoints
 
 Ruta base: `/api/v1/interfaces/configuration`.
 
@@ -327,19 +327,31 @@ Ruta base: `/api/v1/interfaces/configuration`.
 | `PUT /configuration/{id}` | No disponible | No expuesto por la API (solo lectura) |
 | `DELETE /configuration/{id}` | No disponible | No expuesto por la API (solo lectura) |
 
-### 3.4. Paginación, orden y filtros
+### 3.4. Validaciones
+
+- El nombre de interfaz se filtra por coincidencia parcial, sin distinguir entre mayúsculas y minúsculas.
+- Los filtros de protocolo y estado requieren que el valor exista en el catálogo del backend; si no se selecciona ningún valor, la consulta se ejecuta con el conjunto completo.
+- La pantalla no permite crear, editar ni borrar interfaces: la validación se centra en la consistencia de la lectura y los filtros aplicados.
+- La API de consulta exige la autoridad `INTERFACES_READ` antes de devolver la configuración o el estado de las interfaces.
+
+### 3.5. Exportación
+
+- La exportación reutiliza el conjunto filtrado en cliente para generar el CSV sin realizar una llamada adicional al backend.
+- El fichero conserva el estado actual de las interfaces y los criterios activos en la vista, sin limitarse a la página visible.
+- Cuando no hay filas con los filtros activos, la UI no genera la descarga y muestra el estado vacío correspondiente.
+
+### 3.6. Paginación, orden y filtros
 
 - El listado completo se recupera en una sola llamada (`findAllConfigurations`); la **paginación, el orden y el filtrado se realizan en el cliente**.
 - El filtro de nombre aplica coincidencia parcial no sensible a mayúsculas; los filtros de protocolo y estado aplican igualdad exacta.
-- La exportación reutiliza el conjunto filtrado en cliente para generar el CSV sin realizar una llamada adicional al backend.
 
-### 3.5. Seguridad y permisos
+### 3.7. Seguridad y permisos
 
 - El acceso al módulo de interfaces está protegido por `actionGuard` con la acción `INTERFACES_READ` (configurado en `app.routes.ts`).
 - La ruta `/interfaces/configuration` se carga de forma perezosa dentro de las rutas del módulo de interfaces.
 - La API no expone operaciones de creación, edición ni borrado de interfaces: solo métodos `GET`.
 
-### 3.6. Reglas de comportamiento relevantes
+### 3.8. Reglas de comportamiento relevantes
 
 - La pantalla es de **solo lectura**: no permite crear, editar ni eliminar interfaces.
 - Las interfaces se gestionan externamente por el sistema; la pantalla solo consulta su definición y estado.

@@ -369,7 +369,7 @@ public class User extends BaseEntity {
 }
 ```
 
-### 3.3. Endpoints del backend
+### 3.3. Endpoints
 
 Ruta base: `/api/v1/administration/security/users`.
 
@@ -389,20 +389,32 @@ Datos de referencia consumidos por el formulario y los filtros:
 - Perfiles: `GET /api/v1/administration/security/profiles/references`.
 - Informes: `GET /api/v1/reports/all`.
 
-### 3.4. Paginación, orden y filtros
+### 3.4. Validaciones
+
+- El formulario valida que el campo `username` sea obligatorio en alta y que el valor no cambie en edición.
+- La contraseña es obligatoria solo en creación; si el usuario no la modifica en edición, el backend conserva la existente.
+- El `email` se valida con formato de correo cuando se informa, y el `perfil` debe apuntar a una entidad existente en el catálogo.
+- Los informes asociados deben pertenecer a registros válidos del sistema; cualquier identificador inexistente se rechaza en backend.
+
+### 3.5. Exportación
+
+- La exportación reutiliza la consulta filtrada con un tamaño de página muy grande (`EXPORT_PAGE_SIZE = 100000`) para recuperar todas las filas y generar el CSV en cliente vía `CsvExportService`.
+- El fichero generado mantiene el orden y los filtros activos, sin limitarse a la página visible en pantalla.
+- Si no hay filas que cumplan los criterios, la UI informa al usuario y evita la descarga del archivo vacío.
+
+### 3.6. Paginación, orden y filtros
 
 - La paginación y el orden se envían como parámetros `page`, `size` y `sort` (formato `campo,dirección`).
 - Los filtros vacíos no se envían al backend (`undefined`).
-- La exportación reutiliza la consulta filtrada con un tamaño de página muy grande (`EXPORT_PAGE_SIZE = 100000`) para recuperar todas las filas y generar el CSV en cliente vía `CsvExportService`.
 
-### 3.5. Seguridad y permisos
+### 3.7. Seguridad y permisos
 
 - El acceso a la ruta está protegido por `actionGuard` con las acciones `USER_READ`, `USER_WRITE`, `PROFILE_READ`, `PROFILE_WRITE`, `ACTION_READ` (basta una para acceder, lógica OR).
 - Las acciones de crear, editar y eliminar solo se muestran si el usuario posee la acción `USER_WRITE` (`canWrite`).
 - El campo `usuario` es inmutable una vez creado (solo editable en alta).
 - La contraseña nunca se muestra: en modo detalle aparece enmascarada.
 
-### 3.6. Reglas de comportamiento relevantes
+### 3.8. Reglas de comportamiento relevantes
 
 - En **edición**, el campo usuario queda deshabilitado para preservar la identidad de la cuenta.
 - En **alta**, la contraseña es obligatoria; en edición no se exige (se conserva si no se cambia según la lógica del backend).

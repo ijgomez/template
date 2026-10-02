@@ -359,7 +359,7 @@ public class Parameter extends BaseEntity {
 }
 ```
 
-### 3.3. Endpoints del backend
+### 3.3. Endpoints
 
 Ruta base: `/api/v1/administration/parameters`.
 
@@ -372,20 +372,32 @@ Ruta base: `/api/v1/administration/parameters`.
 | `PUT /{code}` | Actualización del parámetro | 200 OK con el parámetro actualizado |
 | `DELETE /{code}` | Eliminación del parámetro | 204 No Content |
 
-### 3.4. Paginación, orden y filtros
+### 3.4. Validaciones
+
+- El código del parámetro es obligatorio y único; no puede cambiarse en edición.
+- El tipo debe pertenecer al enum `STRING`, `INTEGER`, `BOOLEAN` o `DATE` y el valor debe ser compatible con ese tipo antes de persistir.
+- La descripción es opcional, pero si se informa debe incorporar texto descriptivo válido y compatible con la longitud y formato del backend.
+- La validación de compatibilidad se repite tanto en frontend como en servicio para evitar inconsistencias.
+
+### 3.5. Exportación
+
+- La exportación reusa la consulta filtrada con un tamaño grande para recuperar todas las filas y generar el CSV en cliente.
+- El CSV conserva los filtros y orden activos, y no está limitado a la página visible en pantalla.
+- Si no existen filas coincidentes, la UI informa del caso y evita generar un archivo vacío.
+
+### 3.6. Paginación, orden y filtros
 
 - La paginación y el orden se envían como parámetros `page`, `size` y `sort` (formato `campo,dirección`).
 - Los filtros vacíos no se envían al backend (`undefined`).
-- La exportación reusa la consulta filtrada con un tamaño grande para recuperar todas las filas y generar el CSV en cliente.
 
-### 3.5. Seguridad y permisos
+### 3.7. Seguridad y permisos
 
 - El acceso a la ruta está protegido por `actionGuard` con las acciones `SYSTEM_PARAMETER_READ` y `SYSTEM_PARAMETER_WRITE`.
 - Las acciones de crear, editar y eliminar solo se muestran si el usuario posee la acción `SYSTEM_PARAMETER_WRITE` (`canWrite`).
 - El código del parámetro es inmutable una vez creado.
 - El valor se valida siempre antes de persistir la entidad.
 
-### 3.6. Reglas de comportamiento relevantes
+### 3.8. Reglas de comportamiento relevantes
 
 - En **edición**, el campo código queda deshabilitado para preservar la identidad del parámetro.
 - En **alta**, el valor es obligatorio y debe ser compatible con el tipo escogido.

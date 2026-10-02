@@ -205,7 +205,7 @@ public class User extends BaseEntity {
 }
 ```
 
-### 3.3. Endpoints del backend
+### 3.3. Endpoints
 
 Ruta base de autenticación: `/api/v1/auth`.
 

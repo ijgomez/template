@@ -291,7 +291,7 @@ public class User2Report {
 }
 ```
 
-### 3.3. Endpoints REST
+### 3.3. Endpoints
 
 | Método HTTP | Ruta | Descripción |
 | --- | --- | --- |

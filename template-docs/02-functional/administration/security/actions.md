@@ -331,7 +331,7 @@ public class Action extends BaseEntity {
 }
 ```
 
-### 3.3. Endpoints del backend
+### 3.3. Endpoints
 
 Ruta base: `/api/v1/administration/security/actions`.
 
@@ -344,19 +344,31 @@ Ruta base: `/api/v1/administration/security/actions`.
 | `POST /` | No permitido por negocio | 405 Method Not Allowed |
 | `DELETE /{id}` | No permitido por negocio | 405 Method Not Allowed |
 
-### 3.4. Paginación, orden y filtros
+### 3.4. Validaciones
+
+- El código de la acción es fijo y no se puede editar; solo se acepta como valor de catálogo ya existente.
+- El nombre es obligatorio y el tipo debe pertenecer al enum `READ`, `WRITE` o `EXECUTE`.
+- La descripción es opcional y no debe romper la validación de longitud ni contenido del backend.
+- La edición se bloquea si el usuario no tiene permiso de escritura para la acción `ACTION_WRITE`.
+
+### 3.5. Exportación
+
+- La exportación reutiliza la consulta filtrada con un tamaño no paginado para recuperar todas las coincidencias y generar el CSV en cliente.
+- El CSV conserva los filtros activos y el orden de la tabla, sin limitarse a la página visible.
+- Si no hay filas coincidentes, la UI muestra una notificación y evita la descarga del archivo vacío.
+
+### 3.6. Paginación, orden y filtros
 
 - La paginación y el orden se envían como parámetros `page`, `size` y `sort` (formato `campo,dirección`).
 - El filtro `code` se aplica por coincidencia parcial y el filtro `type` por igualdad exacta.
-- La exportación reutiliza la consulta filtrada con un tamaño no paginado para recuperar todas las coincidencias y generar el CSV en cliente.
 
-### 3.5. Seguridad y permisos
+### 3.7. Seguridad y permisos
 
 - La ruta está protegida por `SecurityConfig` con `hasAuthority("ACTION_READ")` para `GET` y `PUT` sobre `/api/v1/administration/security/actions/**`.
 - La pantalla se muestra dentro del módulo de administración con la acción `ACTION_READ`, y la edición se habilita bajo ese mismo permiso.
 - La operación de creación y borrado está bloqueada tanto a nivel de configuración como de servicio para evitar inconsistencias en el catálogo.
 
-### 3.6. Reglas de comportamiento relevantes
+### 3.8. Reglas de comportamiento relevantes
 
 - El catálogo está semillado vía Liquibase y se usa como fuente autoritativa del sistema.
 - Solo pueden modificarse `name`, `description` y `type`.

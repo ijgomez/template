@@ -289,7 +289,7 @@ public class ClusterBlock extends BaseEntity {
 - El máximo aplica `Math.max` sobre el valor previo y la duración actual.
 - `startDate` se actualiza con `CURRENT_TIMESTAMP` de la BD en cada adquisición exitosa.
 
-### 3.3. Endpoints del backend
+### 3.3. Endpoints
 
 Ruta base: `/api/v1/administration/cluster/blocks`.
 
@@ -305,7 +305,42 @@ Ruta base: `/api/v1/administration/cluster/blocks`.
 
 El controlador delega lectura en `ClusterService` (que a su vez usa `ClusterBlockService`). Las operaciones CUD se interceptan en `SecurityConfig.denyAll()` y adicionalmente `ClusterBlockService` lanza `MethodNotAllowedException` por si la invocación llegase al servicio.
 
-### 3.4. Doble nivel de locking y actualización de métricas
+### 3.4. Validaciones
+
+- El nombre de tarea y los criterios de filtrado se validan antes de consultar los bloqueos, y solo se aceptan valores válidos para la colección del backend.
+- La pantalla de lectura no expone acciones de creación, edición ni borrado; cualquier intento de escritura se bloquea explícitamente por seguridad.
+- El sistema exige que el backend compruebe la existencia del lock y el estado de la tarea antes de registrar o actualizar la métrica de bloqueo.
+- Los datos de bloqueo se consideran de solo lectura para la UI, y cualquier operación no permitida debe devolver `405 Method Not Allowed`.
+
+### 3.5. Exportación
+
+La exportación pide al backend el conjunto completo (página 0, tamaño 100000) con los mismos criterios y ordenación activos. Construye el CSV con:
+
+- Cabeceras traducidas vía `TranslateService.instant` sobre las claves de campos.
+- Fecha de inicio pasada a local mediante `DateService.toLocalString`.
+- Separador `,` y escapado de campos que contienen `,`, `"` o `\n`.
+- BOM UTF-8 (`\uFEFF`) para compatibilidad con Excel.
+- Descarga `cluster_blocks_YYYY-MM-DD.csv` mediante `Blob` + `URL.createObjectURL`.
+
+### 3.6. Paginación, orden y filtros
+
+- La paginación usa `page`, `size` y `sort` para enviar la ordenación y el tamaño de lote de la consulta.
+- El filtro de nombre se aplica por coincidencia parcial y se envía solo si tiene valor no vacío.
+- La ordenación se mantiene consistente con la representación de la tabla de métricas y la exportación usa exactamente los mismos criterios activos.
+
+### 3.7. Seguridad y permisos
+
+- El acceso a los bloqueos se restringe por permisos del módulo de cluster; la visualización requiere lectura y cualquier operación de escritura queda bloqueada.
+- Los métodos CUD están protegidos por `SecurityConfig.denyAll()` y los servicios lanzan `MethodNotAllowedException` para evitar ejecuciones accidentales.
+- La UI de bloqueos es exclusivamente de lectura para proteger la integridad de los locks del sistema.
+
+### 3.8. Reglas de comportamiento relevantes
+
+- La obtención del bloqueo es transaccional y debe garantizar que el recurso no se ejecute simultáneamente por dos instancias distintas.
+- Las métricas de tiempo y duración deben recalcularse siempre que se libera un lock para mantener la información actualizada.
+- Si el recurso no existe, el sistema crea el registro del bloqueo y lo marca como activo durante la ejecución del proceso.
+
+### 3.9. Doble nivel de locking y actualización de métricas
 
 - `acquireLock(resourceName)`:
   1. Crea o recupera `ReentrantLock` en `ConcurrentHashMap<String, ReentrantLock>` por nombre (intra-instancia).
@@ -317,16 +352,6 @@ El controlador delega lectura en `ClusterService` (que a su vez usa `ClusterBloc
   3. Libera `pg_advisory_unlock(lockKey)`.
   4. Libera el `ReentrantLock` en bloque `finally`.
 - `isLocked(resourceName)`: consulta el estado intra-instancia del `ReentrantLock`.
-
-### 3.5. Exportación
-
-La exportación pide al backend el conjunto completo (página 0, tamaño 100000) con los mismos criterios y ordenación activos. Construye el CSV con:
-
-- Cabeceras traducidas vía `TranslateService.instant` sobre las claves de campos.
-- Fecha de inicio pasada a local mediante `DateService.toLocalString`.
-- Separador `,` y escapado de campos que contienen `,`, `"` o `\n`.
-- BOM UTF-8 (`\uFEFF`) para compatibilidad con Excel.
-- Descarga `cluster_blocks_YYYY-MM-DD.csv` mediante `Blob` + `URL.createObjectURL`.
 
 ---
 

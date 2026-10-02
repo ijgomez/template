@@ -316,7 +316,7 @@ public class AuditLog extends BaseEntity {
 
 En backend, `AuditCriteria` representa los mismos criterios con fechas `OffsetDateTime` llamadas `fromDate` y `toDate`. `AuditLog` es una entidad append-only: sus campos se mapean con `updatable = false`.
 
-### 3.3. Endpoints del backend
+### 3.3. Endpoints
 
 Ruta base: `/api/v1/administration/audit`.
 
@@ -327,9 +327,15 @@ Ruta base: `/api/v1/administration/audit`.
 
 No hay endpoints `POST`, `PUT`, `PATCH` ni `DELETE` para registros de auditoría.
 
-### 3.4. Paginación, orden, filtros y exportación
+### 3.4. Validaciones
 
-- La tabla envía `page`, `size` y, cuando existe, `sort` con formato `campo,dirección`.
+- El usuario, la operación y la sección deben respetar los valores admitidos por el backend; los filtros no válidos se descartan antes de ejecutar la consulta.
+- Los rangos de fecha deben ser coherentes: `fromDate` no puede ser posterior a `toDate`, y la consulta debe devolver un conjunto vacío si la selección no produce coincidencias.
+- La pantalla es de solo lectura; no se exponen endpoints ni acciones para crear, modificar ni borrar registros de auditoría.
+- La autorización de acceso se verifica antes de consultar los registros y puede fallar si el usuario no tiene la acción correcta para la sección.
+
+### 3.5. Exportación
+
 - La exportación consulta la primera página con tamaño `100000` y usa los filtros y la ordenación activos; después genera el CSV en el navegador.
 - Los campos CSV se escapan cuando contienen comas, comillas o saltos de línea y el fichero se genera con BOM UTF-8 para su apertura compatible en hojas de cálculo.
 - Las fechas se muestran y exportan usando los servicios de fecha del frontend.
@@ -338,7 +344,11 @@ No hay endpoints `POST`, `PUT`, `PATCH` ni `DELETE` para registros de auditoría
 
 El contrato de `AuditController` recibe los parámetros `fromDate` y `toDate` como `OffsetDateTime`, mientras que `AuditService` del frontend envía `dateFrom` y `dateTo` procedentes de controles HTML de tipo `date`. Por tanto, los filtros de usuario, operación y sección se alinean con la API, pero los de fecha no están actualmente alineados con el contrato backend y deben corregirse antes de considerarlos operativos de extremo a extremo.
 
-### 3.5. Registro automático e inmutabilidad
+### 3.6. Paginación, orden, filtros y exportación
+
+- La tabla envía `page`, `size` y, cuando existe, `sort` con formato `campo,dirección`.
+
+### 3.7. Registro automático e inmutabilidad
 
 1. Un método de negocio anotado con `@Auditable` completa su ejecución correctamente.
 2. `AuditAspect` lo intercepta mediante `@AfterReturning` y obtiene el usuario autenticado; si no existe, utiliza `SYSTEM`.

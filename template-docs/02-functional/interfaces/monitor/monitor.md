@@ -306,7 +306,7 @@ public class InterfaceLog extends BaseEntity {
 }
 ```
 
-### 3.3. Endpoints REST
+### 3.3. Endpoints
 
 | Método | Ruta | Descripción | Parámetros principales | Respuesta |
 | --- | --- | --- | --- | --- |
@@ -315,7 +315,20 @@ public class InterfaceLog extends BaseEntity {
 | `GET` | `/api/v1/interfaces/monitor/{id}` | Detalle de un log por ID | `id` (path variable) | `200 OK` + `InterfaceLogDTO` (o `404 Not Found`) |
 | `GET` | `/api/v1/interfaces/configuration` | Listado de interfaces disponibles | Ninguno | `200 OK` + `List<InterfaceDTO>` |
 
-### 3.4. Inmutabilidad y registro programático
+### 3.4. Validaciones
+
+- Los filtros de fecha, tipo de operación, interfaz y estado se validan antes de ejecutar la consulta; valores no permitidos se descartan o se convierten al tipo del enum.
+- El nombre de interfaz y el estado debe existir en el catálogo de configuración para que la consulta devuelva resultados coherentes.
+- La API exige que el usuario tenga la autoridad `INTERFACES_READ`; en caso contrario el acceso se deniega antes de procesar la consulta.
+- El backend no permite crear, editar ni borrar registros de `interface_log`; la operación de registro es programática y se ejecuta solo desde `InterfaceService.logOperation()`.
+
+### 3.5. Exportación
+
+- La exportación del monitor reutiliza la colección filtrada en backend con un tamaño de lote elevado (`EXPORT_PAGE_SIZE = 100000`) para garantizar que el CSV incluya todos los resultados que cumplen los criterios activos.
+- El fichero generado usa BOM UTF-8, columnas traducidas, separador `,` y escapado de valores con comas, comillas o saltos de línea.
+- Si no hay registros coincidentes, el frontend muestra una notificación de aviso y evita la descarga para no generar ficheros vacíos.
+
+### 3.6. Inmutabilidad y registro programático
 
 Los registros de operaciones de interfaces son generados internamente por la capa de integración de la aplicación cuando interactúa con servicios externos. El método `InterfaceService.logOperation()` encapsula la persistencia:
 
