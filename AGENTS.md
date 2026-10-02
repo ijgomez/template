@@ -51,3 +51,11 @@ Este repositorio usa una arquitectura modular con Java 21, Spring Boot 4.1.1 y A
 - [.github/copilot-instructions.md](.github/copilot-instructions.md): reglas específicas de Copilot.
 - [.kiro/steering](.kiro/steering): guía de arquitectura y estilo para Kiro.
 - [.agents](.agents): reglas y skills para Antigravity.
+
+## Sincronización de skills
+Los mismos skills (`backend-java-spring`, `frontend-angular`, `testing-verification`, `fullstack-coordination`, `architecture-guardrails`) existen replicados por herramienta:
+- `.kiro/skills/` (Kiro)
+- `.github/skills/` (Copilot)
+- `.agents/skills/` (Antigravity)
+
+Al crear o modificar un skill, replica el **mismo contenido sustantivo** en las tres carpetas. El formato puede adaptarse a cada herramienta (p. ej. Copilot usa enlaces markdown relativos), pero las reglas, comandos y rutas deben coincidir para evitar deriva entre asistentes.

@@ -1,9 +1,9 @@
 ---
-name: template-testing
+name: testing-verification
 description: Guides unit, integration, and E2E testing strategies with emphasis on test quality, regression prevention, and minimal scope verification.
 ---
 
-# Skill: template-testing
+# Skill: testing-verification
 
 Aplica al cambiar comportamiento funcional, resolver un bug o ajustar un contrato. Las reglas transversales están en `AGENTS.md`.
 
@@ -17,6 +17,20 @@ Valida el cambio con la prueba más cercana que capture el comportamiento real a
 - Alcance mínimo: valida el módulo afectado, no lances suites completas si un nivel más local basta.
 - Pruebas que describen comportamiento, no implementación, con datos realistas.
 - Si el cambio afecta API o contratos, verifica el comportamiento esperado de esos contratos.
+
+## Comandos
+
+Desde `template/`, limita los tests al módulo afectado con `-pl <modulo> -am` (p. ej. `core`, `domain`, `ws`):
+
+```bash
+mvn test -pl core -am
+```
+
+Para el frontend, desde `template/dashboard/`:
+
+```bash
+ng test
+```
 
 ## Referencias
 

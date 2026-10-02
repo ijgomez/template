@@ -1,12 +1,12 @@
 ---
-name: template-backend
+name: backend-java-spring
 description: Applies Java and Spring Boot conventions for the backend modules while preserving the repo’s layered architecture and business rules.
 ---
 
-# Skill: template-backend
+# Skill: backend-java-spring
 
 Específico de los módulos backend: `commons`, `cluster`, `domain`, `core`, `webapp`, `ws`.
-Las reglas transversales (separación por capas, no dependencias cruzadas, no tocar `target/`, alcance mínimo, tests si cambia negocio) están en `AGENTS.md` y no se repiten aquí.
+Las reglas transversales (separación por capas, no dependencias cruzadas, no tocar `target/`, alcance mínimo, tests si cambia negocio) están en [AGENTS.md](../../../AGENTS.md) y no se repiten aquí.
 
 ## Ubicación por capa
 
@@ -24,6 +24,14 @@ Resuelve el problema en la capa responsable. No metas lógica de negocio en el c
 - Reutiliza validaciones y utilidades existentes antes de crear nuevas abstracciones.
 - Si el cambio afecta contratos o modelos, revisa serialización, validación, endpoints, persistencia y consumidores.
 
+## Verificación
+
+Desde `template/`, limita los tests al módulo afectado con `-pl <modulo> -am` (`commons`, `cluster`, `domain`, `core`, `webapp`, `ws`):
+
+```bash
+mvn test -pl core -am
+```
+
 ## Referencia
 
-Convenciones completas y build: `template-docs/04-development/coding-guidelines/java-spring-boot.md` (se carga vía steering `coding-java` al editar `.java`) y `template-docs/04-development/build.md`.
+Convenciones completas y build: [java-spring-boot.md](../../../template-docs/04-development/coding-guidelines/java-spring-boot.md) y [build.md](../../../template-docs/04-development/build.md).
