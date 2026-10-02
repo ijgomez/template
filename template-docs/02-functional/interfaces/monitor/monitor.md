@@ -346,14 +346,7 @@ No existen endpoints ni métodos que permitan alterar o borrar registros existen
 
 ## 4. Pruebas
 
-### 4.1. Cobertura unitaria frontend
-
-| Ubicación | Alcance |
-| --- | --- |
-| `dashboard/src/app/core/services/interface.service.spec.ts` | Pruebas de cliente HTTP: `findAllConfigurations`, `findConfigurationById`, `findLogsByCriteria`, `findAllLogsByCriteria`, `countLogsByCriteria`, `findLogById`. |
-| `dashboard/src/app/features/interfaces/monitor/monitor.component.stories.ts` | Historias de Storybook para validación visual de estados del monitor de interfaces. |
-
-### 4.2. Cobertura backend
+### 4.1. Cobertura unitaria (backend)
 
 | Ubicación | Alcance |
 | --- | --- |
@@ -361,7 +354,14 @@ No existen endpoints ni métodos que permitan alterar o borrar registros existen
 | `webapp/src/test/java/org/myorganization/template/webapp/controller/InterfaceControllerTest.java` | Pruebas de endpoints REST `/monitor`, `/monitor/count`, `/monitor/{id}` y `/configuration`. |
 | `webapp/src/test/java/org/myorganization/template/webapp/security/SecurityConfigTest.java` | Verificación de protección con `INTERFACES_READ` y denegación de verbos POST/PUT/DELETE sobre `/api/v1/interfaces/**`. |
 
-### 4.3. Cobertura E2E y datos de prueba
+### 4.2. Cobertura unitaria (frontend)
+
+| Ubicación | Alcance |
+| --- | --- |
+| `dashboard/src/app/core/services/interface.service.spec.ts` | Pruebas de cliente HTTP: `findAllConfigurations`, `findConfigurationById`, `findLogsByCriteria`, `findAllLogsByCriteria`, `countLogsByCriteria`, `findLogById`. |
+| `dashboard/src/app/features/interfaces/monitor/monitor.component.stories.ts` | Historias de Storybook para validación visual de estados del monitor de interfaces. |
+
+### 4.3. Cobertura E2E (Playwright)
 
 Ubicación: `dashboard/e2e/tests/interfaces/interfaces-monitor.spec.ts` (Page Object en `dashboard/e2e/pages/interfaces-monitor.page.ts`).
 
@@ -375,9 +375,17 @@ Ubicación: `dashboard/e2e/tests/interfaces/interfaces-monitor.spec.ts` (Page Ob
 | Exportación CSV | Exportar registros filtrados | El navegador descarga un fichero `interfaces_monitor_YYYY-MM-DD.csv` |
 | Navegación lateral | Desplegar menú *Interfaces* y seleccionar *Monitor* | Navega a `/interfaces/monitor` y carga el listado de logs |
 
+### 4.4. Datos de prueba
+
 Los datos semilla de backend para registros de interfaces se encuentran en `domain/src/main/resources/db/changelog/data/v1.0.0/20250120-seed-local-interface-log.xml`.
 
-### 4.4. Casos clave (matriz)
+### 4.5. Dependencias de ejecución
+
+- Base de datos con tabla `interface_log` y datos semilla (`20250120-seed-local-interface-log.xml`, 755 registros simulados).
+- Usuario con rol/perfil que contenga la acción `INTERFACES_READ`.
+- Backend Spring Boot en ejecución en el puerto 8080 (o perfil `test`).
+
+### 4.6. Casos clave (matriz)
 
 | Caso | Entrada / Acción | Resultado esperado |
 | --- | --- | --- |
@@ -390,12 +398,6 @@ Los datos semilla de backend para registros de interfaces se encuentran en `doma
 | **Retorno al listado** | Pulsar botón *Volver* desde la vista de detalle | Se regresa a la vista de listado manteniendo la página actual |
 | **Exportación CSV** | Pulsar *Exportar CSV* con filtros aplicados | Descarga fichero `interfaces_monitor_YYYY-MM-DD.csv` con todos los registros filtrados |
 | **Exportación vacía** | Exportar cuando ningún registro coincide con los filtros | Notificación de aviso `notification.export.empty` sin descarga |
-
-### 4.5. Dependencias de ejecución
-
-- Base de datos con tabla `interface_log` y datos semilla (`20250120-seed-local-interface-log.xml`, 755 registros simulados).
-- Usuario con rol/perfil que contenga la acción `INTERFACES_READ`.
-- Backend Spring Boot en ejecución en el puerto 8080 (o perfil `test`).
 
 ---
 

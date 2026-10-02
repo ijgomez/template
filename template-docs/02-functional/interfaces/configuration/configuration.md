@@ -290,7 +290,18 @@ Ruta base: `/api/v1/interfaces/configuration`.
 
 ## 4. Pruebas
 
-### 4.1. Cobertura E2E (Playwright)
+### 4.1. Cobertura unitaria (backend)
+
+No hay actualmente pruebas unitarias de backend específicas de esta pantalla documentadas en este documento. La protección de los endpoints de interfaces y el rechazo de operaciones de escritura se cubren en las pruebas de backend documentadas en [Monitor de Interfaces](../monitor/monitor.md) (sección 4.1).
+
+### 4.2. Cobertura unitaria (frontend)
+
+| Ubicación | Alcance |
+|-----------|---------|
+| `configuration.component.spec.ts` | Estado del listado, filtros en cliente, paginación, orden, detalle y exportación |
+| `interface.service.spec.ts` | Construcción de las peticiones de consulta de configuraciones |
+
+### 4.3. Cobertura E2E (Playwright)
 
 Ubicación: `template/dashboard/e2e/tests/interfaces/interfaces-configuration.spec.ts` con Page Object en `template/dashboard/e2e/pages/interfaces-configuration.page.ts`.
 
@@ -307,18 +318,11 @@ Ubicación: `template/dashboard/e2e/tests/interfaces/interfaces-configuration.sp
 - Los casos de detalle y exportación se ejecutan solo si existen filas en el listado.
 - La suite verifica explícitamente la ausencia de acciones de creación, edición y borrado para garantizar el comportamiento de solo lectura.
 
-### 4.2. Cobertura unitaria (frontend)
-
-| Ubicación | Alcance |
-|-----------|---------|
-| `configuration.component.spec.ts` | Estado del listado, filtros en cliente, paginación, orden, detalle y exportación |
-| `interface.service.spec.ts` | Construcción de las peticiones de consulta de configuraciones |
-
-### 4.3. Datos de prueba
+### 4.4. Datos de prueba
 
 Definidos en `template/dashboard/e2e/fixtures/test-data.ts`: `testUsers.valid` (credenciales del usuario con acceso al módulo). La pantalla no crea ni modifica interfaces; los casos consultan las interfaces existentes cargadas en el entorno de integración.
 
-### 4.4. Dependencias de ejecución
+### 4.5. Dependencias de ejecución
 
 - Los casos E2E de listado, filtrado, detalle y exportación requieren el backend de integración levantado (por defecto en `http://localhost:8080`) con al menos una interfaz registrada.
 - La exportación a CSV depende de que existan filas que cumplan los filtros activos; en caso contrario no se genera descarga.

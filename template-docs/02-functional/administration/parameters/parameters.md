@@ -335,7 +335,19 @@ Ruta base: `/api/v1/administration/parameters`.
 
 ## 4. Pruebas
 
-### 4.1. Cobertura E2E (Playwright)
+### 4.1. Cobertura unitaria (backend)
+
+No hay actualmente pruebas unitarias de backend específicas de esta pantalla documentadas en este documento.
+
+### 4.2. Cobertura unitaria (frontend)
+
+| Ubicación | Alcance |
+|-----------|---------|
+| `parameter-list.component.spec.ts` | Estado del listado, filtros, paginación y acciones |
+| `parameter-form.component.spec.ts` | Modos del formulario y emisión de eventos |
+| `parameter.service.spec.ts` | Construcción de peticiones CRUD y criterios de filtrado |
+
+### 4.3. Cobertura E2E (Playwright)
 
 Ubicación: `dashboard/e2e/tests/administration/parameters.spec.ts` (Page Object en `dashboard/e2e/pages/parameters.page.ts`).
 
@@ -352,19 +364,11 @@ Ubicación: `dashboard/e2e/tests/administration/parameters.spec.ts` (Page Object
 - La suite se ejecuta en modo `serial` para evitar contención al trabajar con datos creados por cada caso.
 - Los casos de crear, editar y eliminar generan una clave única por ejecución para poder reejecutarse sin colisiones.
 
-### 4.2. Cobertura unitaria (frontend)
-
-| Ubicación | Alcance |
-|-----------|---------|
-| `parameter-list.component.spec.ts` | Estado del listado, filtros, paginación y acciones |
-| `parameter-form.component.spec.ts` | Modos del formulario y emisión de eventos |
-| `parameter.service.spec.ts` | Construcción de peticiones CRUD y criterios de filtrado |
-
-### 4.3. Datos de prueba
+### 4.4. Datos de prueba
 
 Definidos en `dashboard/e2e/fixtures/test-data.ts`: `testUsers.valid` (credenciales del administrador) y `buildNewParameter()` (genera datos de un parámetro nuevo con clave única).
 
-### 4.4. Dependencias de ejecución
+### 4.5. Dependencias de ejecución
 
 - Los casos E2E requieren el backend de integración levantado con la configuración de perfil `test`.
 - Los casos de creación y edición insertan un registro en el backend por ejecución; el caso de eliminación borra el parámetro que él mismo crea.

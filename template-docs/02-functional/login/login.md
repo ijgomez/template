@@ -232,7 +232,18 @@ sequenceDiagram
 
 ## 4. Pruebas
 
-### 4.1. Cobertura E2E (Playwright)
+### 4.1. Cobertura unitaria (backend)
+
+No hay actualmente pruebas unitarias de backend específicas de esta pantalla documentadas en este documento.
+
+### 4.2. Cobertura unitaria (frontend)
+
+| Ubicación | Alcance |
+|-----------|---------|
+| `login.component.spec.ts` | Validación del formulario, envío y manejo de estado de carga/error |
+| `auth.service.spec.ts` | Login, refresh, logout y gestión de token en memoria |
+
+### 4.3. Cobertura E2E (Playwright)
 
 Ubicación: `dashboard/e2e/tests/auth/login.spec.ts` (Page Object en `dashboard/e2e/pages/login.page.ts`).
 
@@ -244,18 +255,11 @@ Ubicación: `dashboard/e2e/tests/auth/login.spec.ts` (Page Object en `dashboard/
 | Login válido | Usuario y contraseña correctos | Navega a `/dashboard` y muestra `dashboard-title` |
 | Login inválido | Contraseña incorrecta | Muestra alerta de error y permanece en `/login` |
 
-### 4.2. Cobertura unitaria (frontend)
-
-| Ubicación | Alcance |
-|-----------|---------|
-| `login.component.spec.ts` | Validación del formulario, envío y manejo de estado de carga/error |
-| `auth.service.spec.ts` | Login, refresh, logout y gestión de token en memoria |
-
-### 4.3. Datos de prueba
+### 4.4. Datos de prueba
 
 Definidos en `dashboard/e2e/fixtures/test-data.ts`. Deben ajustarse a las credenciales del entorno de integración (perfil `test`).
 
-### 4.4. Dependencias de ejecución
+### 4.5. Dependencias de ejecución
 
 - Los casos de login válido e inválido requieren el backend de integración levantado (por defecto en `http://localhost:8080`).
 - Los casos de render, validación y toggle no dependen del backend.

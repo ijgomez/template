@@ -344,7 +344,19 @@ Datos de referencia consumidos por el formulario y los filtros:
 
 ## 4. Pruebas
 
-### 4.1. Cobertura E2E (Playwright)
+### 4.1. Cobertura unitaria (backend)
+
+No hay actualmente pruebas unitarias de backend específicas de esta pantalla documentadas en este documento.
+
+### 4.2. Cobertura unitaria (frontend)
+
+| Ubicación | Alcance |
+|-----------|---------|
+| `user-list.component.spec.ts` | Estado de listado, filtros, paginación y acciones |
+| `user-form.component.spec.ts` | Modos del formulario y emisión de eventos |
+| `user.service.spec.ts` | Construcción de peticiones CRUD y parámetros |
+
+### 4.3. Cobertura E2E (Playwright)
 
 Ubicación: `dashboard/e2e/tests/administration/users.spec.ts` (Page Object en `dashboard/e2e/pages/users.page.ts`).
 
@@ -361,19 +373,11 @@ Ubicación: `dashboard/e2e/tests/administration/users.spec.ts` (Page Object en `
 - La suite se ejecuta en modo `serial` para evitar contención en el backend al compartir el usuario administrador entre casos.
 - Los casos de crear, editar y eliminar generan un `username` único por ejecución para poder reejecutarse sin colisiones; los de editar y eliminar crean previamente su propio usuario para trabajar de forma aislada.
 
-### 4.2. Cobertura unitaria (frontend)
-
-| Ubicación | Alcance |
-|-----------|---------|
-| `user-list.component.spec.ts` | Estado de listado, filtros, paginación y acciones |
-| `user-form.component.spec.ts` | Modos del formulario y emisión de eventos |
-| `user.service.spec.ts` | Construcción de peticiones CRUD y parámetros |
-
-### 4.3. Datos de prueba
+### 4.4. Datos de prueba
 
 Definidos en `dashboard/e2e/fixtures/test-data.ts`: `testUsers.valid` (credenciales del administrador) y `buildNewUser()` (genera los datos de un usuario nuevo con `username` único). Deben ajustarse al entorno de integración (perfil `test`).
 
-### 4.4. Dependencias de ejecución
+### 4.5. Dependencias de ejecución
 
 - Los casos E2E de listar, buscar, crear, editar, eliminar y exportar requieren el backend de integración levantado (por defecto en `http://localhost:8080`) con al menos un perfil de referencia disponible.
 - Los casos de creación y edición insertan un registro en el backend por ejecución; el caso de eliminación borra el usuario que él mismo crea.

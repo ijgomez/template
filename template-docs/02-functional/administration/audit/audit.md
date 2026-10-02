@@ -283,15 +283,7 @@ La consulta de la pantalla utiliza el mismo servicio de dominio para filtrar y p
 
 ## 4. Pruebas
 
-### 4.1. Cobertura unitaria frontend
-
-| Ubicación | Alcance |
-|-----------|---------|
-| `dashboard/src/app/core/services/audit.service.spec.ts` | Construcción de peticiones paginadas, envío de filtros, consulta para exportación y endpoint de recuento |
-
-No hay actualmente pruebas unitarias específicas de `AuditListComponent` en el repositorio.
-
-### 4.2. Cobertura backend
+### 4.1. Cobertura unitaria (backend)
 
 | Ubicación | Alcance |
 |-----------|---------|
@@ -299,7 +291,15 @@ No hay actualmente pruebas unitarias específicas de `AuditListComponent` en el 
 | `core/src/test/java/org/myorganization/template/core/service/AuditServiceImmutabilityPropertyTest.java` | Propiedades de inmutabilidad: ausencia de API pública de modificación y campos JPA no actualizables |
 | `core/src/test/java/org/myorganization/template/core/audit/AuditAspectTest.java` | Creación de entradas por el aspecto tras operaciones auditables |
 
-### 4.3. Cobertura E2E y datos de prueba
+### 4.2. Cobertura unitaria (frontend)
+
+| Ubicación | Alcance |
+|-----------|---------|
+| `dashboard/src/app/core/services/audit.service.spec.ts` | Construcción de peticiones paginadas, envío de filtros, consulta para exportación y endpoint de recuento |
+
+No hay actualmente pruebas unitarias específicas de `AuditListComponent` en el repositorio.
+
+### 4.3. Cobertura E2E (Playwright)
 
 Ubicación: `dashboard/e2e/tests/administration/audit.spec.ts` (Page Object en `dashboard/e2e/pages/audit.page.ts`).
 
@@ -312,9 +312,11 @@ Ubicación: `dashboard/e2e/tests/administration/audit.spec.ts` (Page Object en `
 
 Cada caso inicia sesión con el usuario administrador. Ese inicio de sesión genera la operación auditable `EXECUTE` en la sección `SECURITY`, que proporciona un registro conocido para las comprobaciones sin modificar el registro desde la pantalla de auditoría.
 
+### 4.4. Datos de prueba
+
 Los datos semilla de backend para registros de auditoría se encuentran en `domain/src/main/resources/db/changelog/data/v1.0.0/20250119-seed-local-audit-log.xml`.
 
-### 4.4. Dependencias de ejecución
+### 4.5. Dependencias de ejecución
 
 - Las consultas reales y la exportación requieren el backend de integración levantado y datos en la tabla `audit_log`.
 - El usuario de prueba debe contar con `SYSTEM_LOG_READ`; de lo contrario, el guard de ruta impide el acceso a `/administration/audit`.
