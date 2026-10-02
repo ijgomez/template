@@ -27,6 +27,36 @@ Esta documentación forma parte del entregable de cada evolutivo y debe mantener
 
 Si un evolutivo modifica alcance, comportamiento o implementación, los tres documentos deben actualizarse antes de su aprobación.
 
+## Documentación obligatoria por incidencia
+
+Toda incidencia, bugfix o corrección no planificada debe documentarse como parte del cierre del trabajo y debe mantener la misma estructura y nivel de detalle que una pantalla o funcionalidad del proyecto.
+
+### Requisitos mínimos
+
+1. **Resumen de la incidencia**: descripción del problema, impacto funcional, usuarios afectados, alcance y severidad.
+2. **Causa raíz y diagnóstico**: condiciones de reproducción, síntomas observados, evidencia técnica y situación que provoca el fallo.
+3. **Solución aplicada**: cambios funcionales y técnicos realizados, módulos implicados, endpoints o componentes afectados y decisiones de diseño.
+4. **Validación**: pruebas ejecutadas, datos utilizados, resultados obtenidos y evidencia de verificación.
+5. **Riesgos y seguimiento**: impactos residuales, cambios de comportamiento esperados y tareas pendientes, si existen.
+
+## Regla de formato
+
+El formato de `template-docs/02-functional/` es el patrón común para toda documentación funcional del proyecto, tanto para incidencias como para evolutivos o correcciones puntuales. Como referencia de estilo, se usa el esquema de [users.md](../../02-functional/administration/security/users.md):
+
+- `## 1. Requisitos`
+- `## 2. Parte funcional`
+- `## 3. Parte técnica`
+- `## 4. Pruebas`
+- `## Referencias` (si aplica)
+
+Los apartados deben conservar la misma numeración y jerarquía (`1.1`, `1.2`, `2.1`, `2.2`, etc.) y los subapartados deben alinearse con el patrón del documento de usuarios para que la documentación sea uniforme y legible por IA y por desarrolladores.
+
+No existen excepciones por tipo de cambio: si el trabajo afecta a una funcionalidad del producto, la documentación debe ajustarse al mismo formato y a la misma jerarquía de secciones, independientemente de que se trate de una incidencia o de un evolutivo.
+
+No se admiten variaciones de formato en `template-docs/02-functional/` que rompan este patrón; si un documento no sigue el esquema base, debe actualizarse al mismo tiempo que el cambio funcional relacionado.
+
+Si la incidencia afecta a una pantalla o flujo ya documentado, la documentación debe actualizarse en el mismo documento para reflejar el cambio real y no dejar un tratamiento aislado o incompleto.
+
 ## Flujo de Trabajo con Documentación
 
 Directrices para revisar y mantener la documentación al trabajar en bugfixes, incidencias o evolutivos.

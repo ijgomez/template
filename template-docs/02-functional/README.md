@@ -7,7 +7,8 @@ Para la documentación técnica transversal (layout, navegación, seguridad back
 ## Convenciones
 
 - Cada pantalla documenta sus requisitos con identificadores locales `RF-XXX-*` (funcionales) y `RNF-XXX-*` (no funcionales), donde `XXX` es un prefijo propio del documento.
-- La estructura estándar de cada documento de pantalla es: encabezado con metadatos (ruta, componentes, endpoint, acceso), `1. Requisitos`, `2. Parte funcional`, `3. Parte técnica` y `4. Pruebas`.
+- La estructura estándar de cada documento funcional debe seguir el formato definido en [Reglas de Documentación](../04-development/coding-guidelines/documentation.md).
+- Este formato es común a cualquier modificación funcional, ya sea una incidencia, un bugfix, una corrección puntual o un evolutivo; no existe un formato alternativo para casos distintos.
 - Los documentos de nivel superior de cada módulo (`administration.md`, `interfaces.md`, `security.md`, `cluster.md`) son índices que agrupan sus pantallas.
 
 ## Estructura
