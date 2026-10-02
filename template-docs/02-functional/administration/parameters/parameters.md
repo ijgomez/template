@@ -270,15 +270,20 @@ flowchart TD
 
 | Capa | Elemento | Responsabilidad |
 |------|----------|-----------------|
-| Frontend | `ParameterListComponent` | Listado, filtros, paginación, orden, exportación y orquestación de vistas |
-| Frontend | `ParameterFormComponent` | Alta, edición y detalle del parámetro |
-| Frontend | `ParameterService` | Llamadas CRUD y validación de criterios |
-| Frontend | `TpDataTableComponent` | Tabla reutilizable (orden, paginación, selección) |
-| Frontend | `AuthService` | Comprobación de permisos (`hasAction`) |
-| Backend | `ParameterController` | Endpoints CRUD |
-| Backend | `ParameterService` (core) | Lógica de negocio y persistencia |
+| Frontend | `ParameterListComponent` | Listado, filtros, paginación, orden, exportación y orquestación de vistas. |
+| Frontend | `ParameterFormComponent` | Alta, edición y detalle del parámetro. |
+| Frontend | `ParameterService` | Llamadas CRUD y validación de criterios del formulario. |
+| Frontend | `TpDataTableComponent` | Tabla reutilizable para ordenación, paginación y selección. |
+| Frontend | `AuthService` | Comprobación de permisos según la acción del usuario. |
+| Backend | `ParameterController` | Exposición de endpoints CRUD para administración de parámetros. |
+| Backend | `ParameterService` | Lógica de negocio, validación y persistencia del parámetro. |
+| Domain | `Parameter` | Entidad principal del sistema para configuración dinámica. |
+| Domain | `ParameterType` | Enumerado que tipifica el valor del parámetro. |
+| Security | `SecurityConfig` | Reglas de autorización y protección del módulo de parámetros. |
 
-### 3.2. Modelo de datos (frontend)
+### 3.2. Modelos de datos
+
+#### Frontend (TypeScript)
 
 ```typescript
 interface ParameterDTO {
@@ -295,6 +300,46 @@ interface ParameterCriteria {
   code?: string;
   description?: string;
   type?: 'STRING' | 'INTEGER' | 'BOOLEAN' | 'DATE';
+}
+```
+
+#### Backend DTOs (Java)
+
+```java
+public record ParameterDTO(
+    Long id,
+    String code,
+    String description,
+    String value,
+    ParameterType type,
+    OffsetDateTime createdAt,
+    OffsetDateTime lastModifiedAt
+) {}
+
+public record ParameterCriteria(
+    String code,
+    String description,
+    ParameterType type
+) {}
+```
+
+#### Entidades JPA
+
+```java
+@Entity
+@Table(name = "parameter")
+public class Parameter extends BaseEntity {
+    @Column(nullable = false, unique = true)
+    private String code;
+
+    private String description;
+
+    @Column(nullable = false)
+    private String value;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ParameterType type;
 }
 ```
 
@@ -337,7 +382,14 @@ Ruta base: `/api/v1/administration/parameters`.
 
 ### 4.1. Cobertura unitaria (backend)
 
-No hay actualmente pruebas unitarias de backend específicas de esta pantalla documentadas en este documento.
+La suite actual incluye pruebas del servicio y del controlador que cubren la validación, el CRUD y la compatibilidad entre tipo y valor:
+
+| Ubicación | Alcance |
+|-----------|---------|
+| `template/core/src/test/java/org/myorganization/template/core/service/ParameterServiceTest.java` | Creación, consulta por código y criterios, validación de compatibilidad tipo/valor, actualización, borrado y conteo |
+| `template/webapp/src/test/java/org/myorganization/template/webapp/controller/ParameterControllerTest.java` | Respuestas HTTP de los endpoints, parámetros de consulta y propagación de excepciones del servicio |
+
+Estas pruebas cubren la lógica principal del módulo y complementan la validación funcional del frontend.
 
 ### 4.2. Cobertura unitaria (frontend)
 

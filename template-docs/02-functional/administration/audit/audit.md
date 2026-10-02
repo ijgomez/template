@@ -209,17 +209,21 @@ flowchart TD
 
 | Capa | Elemento | Responsabilidad |
 |------|----------|-----------------|
-| Frontend | `AuditListComponent` | Estado de filtros, paginación, ordenación, detalle y exportación |
-| Frontend | `AuditService` | Consultas paginadas, recuento y recuperación completa para exportación |
-| Frontend | `TpDataTableComponent` | Tabla reutilizable, ordenación, selección y paginación |
-| Frontend | `LocalDatePipe` y `DateService` | Presentación local de fechas y serialización para CSV |
-| Frontend | `NotificationService` | Feedback de carga y exportación |
-| Backend | `AuditController` | Endpoints REST de consulta de registros |
-| Backend | `AuditService` | Consulta por criterios y persistencia interna de entradas |
-| Backend | `AuditAspect` y `@Auditable` | Creación automática de entradas tras operaciones auditables correctas |
-| Dominio | `AuditLog`, `AuditLogDTO`, `AuditCriteria` | Persistencia, transferencia y criterios de consulta |
+| Frontend | `AuditListComponent` | Estado de filtros, paginación, ordenación, detalle y exportación. |
+| Frontend | `AuditService` | Consultas paginadas, recuento y recuperación completa para exportación. |
+| Frontend | `TpDataTableComponent` | Tabla reutilizable para ordenación, selección y paginación. |
+| Frontend | `LocalDatePipe` y `DateService` | Presentación local de fechas y serialización para CSV. |
+| Frontend | `NotificationService` | Feedback de carga, error y progreso en la exportación. |
+| Backend | `AuditController` | Exposición de endpoints REST de consulta de registros. |
+| Backend | `AuditService` | Consulta por criterios y persistencia interna de entradas. |
+| Backend | `AuditAspect` y `@Auditable` | Creación automática de registros al completar operaciones auditables. |
+| Domain | `AuditLog` | Entidad append-only para guardar los eventos de auditoría. |
+| Domain | `AuditLogDTO` y `AuditCriteria` | Transporte de datos y criterios de consulta para la pantalla. |
+| Security | `SecurityConfig` | Protección de rutas de consulta y control de permisos del módulo de auditoría. |
 
-### 3.2. Modelo de datos
+### 3.2. Modelos de datos
+
+#### Frontend (TypeScript)
 
 ```typescript
 type OperationType = 'CREATE' | 'UPDATE' | 'DELETE' | 'EXECUTE';
@@ -242,6 +246,54 @@ interface AuditCriteria {
   username?: string;
   operationType?: OperationType;
   section?: AuditSection;
+}
+```
+
+#### Backend DTOs (Java)
+
+```java
+public record AuditLogDTO(
+    Long id,
+    OffsetDateTime timestamp,
+    String username,
+    OperationType operationType,
+    AuditSection section,
+    String entityId,
+    String entityName,
+    String detail
+) {}
+
+public record AuditCriteria(
+    OffsetDateTime fromDate,
+    OffsetDateTime toDate,
+    String username,
+    OperationType operationType,
+    AuditSection section
+) {}
+```
+
+#### Entidades JPA
+
+```java
+@Entity
+@Table(name = "audit_log")
+public class AuditLog extends BaseEntity {
+    @Column(nullable = false)
+    private OffsetDateTime timestamp;
+
+    @Column(nullable = false)
+    private String username;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private OperationType operationType;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private AuditSection section;
+
+    @Column(nullable = false)
+    private String entityName;
 }
 ```
 

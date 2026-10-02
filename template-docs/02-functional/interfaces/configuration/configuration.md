@@ -230,14 +230,18 @@ flowchart TD
 
 | Capa | Elemento | Responsabilidad |
 |------|----------|-----------------|
-| Frontend | `ConfigurationComponent` | Listado, filtros, paginación, orden, exportación y vista de detalle |
-| Frontend | `InterfaceService` | Consulta de configuraciones de interfaz |
-| Frontend | `TpDataTableComponent` | Tabla reutilizable (orden, paginación, selección) |
-| Frontend | `NotificationService` | Notificaciones de progreso y error |
-| Backend | `InterfaceControllerImpl` | Endpoints de consulta de interfaces (solo lectura) |
-| Backend | `InterfaceService` (core) | Consulta y persistencia |
+| Frontend | `ConfigurationComponent` | Listado, filtros, paginación, orden, exportación y vista de detalle. |
+| Frontend | `InterfaceService` | Consulta de configuraciones de interfaz y transformación de la respuesta. |
+| Frontend | `TpDataTableComponent` | Tabla reutilizable para ordenación, paginación y selección de filas. |
+| Frontend | `NotificationService` | Notificaciones de progreso, avisos y errores. |
+| Backend | `InterfaceControllerImpl` | Exposición de los endpoints de consulta de interfaces en modo solo lectura. |
+| Backend | `InterfaceService` | Recuperación de definiciones y estado actual de cada interfaz. |
+| Domain | `Interface` | Entidad JPA que representa la configuración de una interfaz del sistema. |
+| Security | `SecurityConfig` | Protección de la API y validación de permisos `INTERFACES_READ`. |
 
-### 3.2. Modelo de datos (frontend)
+### 3.2. Modelos de datos
+
+#### Frontend (TypeScript)
 
 ```typescript
 type InterfaceStatus = 'ACTIVE' | 'INACTIVE' | 'ERROR';
@@ -252,6 +256,48 @@ interface InterfaceConfig {
   status: InterfaceStatus;
   createdAt: string;
   lastModifiedAt: string;
+}
+```
+
+#### Backend DTOs (Java)
+
+```java
+public record InterfaceDTO(
+    Long id,
+    String name,
+    String description,
+    String url,
+    String protocol,
+    Integer checkFrequency,
+    InterfaceStatus status,
+    OffsetDateTime createdAt,
+    OffsetDateTime lastModifiedAt
+) {}
+```
+
+#### Entidades JPA
+
+```java
+@Entity
+@Table(name = "interface_config")
+public class Interface extends BaseEntity {
+    @Column(nullable = false)
+    private String name;
+
+    private String description;
+
+    @Column(nullable = false)
+    private String url;
+
+    @Column(nullable = false)
+    private String protocol;
+
+    @Column(nullable = false)
+    private Integer checkFrequency;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private InterfaceStatus status;
 }
 ```
 
@@ -292,7 +338,14 @@ Ruta base: `/api/v1/interfaces/configuration`.
 
 ### 4.1. Cobertura unitaria (backend)
 
-No hay actualmente pruebas unitarias de backend específicas de esta pantalla documentadas en este documento. La protección de los endpoints de interfaces y el rechazo de operaciones de escritura se cubren en las pruebas de backend documentadas en [Monitor de Interfaces](../monitor/monitor.md) (sección 4.1).
+La suite actual cubre tanto la lógica de servicio como el comportamiento HTTP de los endpoints de consulta y restricción de operaciones no permitidas:
+
+| Ubicación | Alcance |
+|-----------|---------|
+| `template/core/src/test/java/org/myorganization/template/core/service/InterfaceServiceTest.java` | Consulta, detalle, estado y reglas del servicio de interfaces, además de la validación de la naturaleza de solo lectura del módulo |
+| `template/webapp/src/test/java/org/myorganization/template/webapp/controller/InterfaceControllerTest.java` | Respuestas HTTP de listado y detalle, y validación del acceso/negación de operaciones de escritura |
+
+Estas pruebas cubren la lógica principal del módulo y complementan la validación E2E del frontend para la pantalla de configuración.
 
 ### 4.2. Cobertura unitaria (frontend)
 

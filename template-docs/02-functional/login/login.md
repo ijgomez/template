@@ -148,14 +148,18 @@ flowchart TD
 
 | Capa | Elemento | Responsabilidad |
 |------|----------|-----------------|
-| Frontend | `LoginComponent` | Formulario reactivo, validación y orquestación del login |
-| Frontend | `AuthService` | Llamada al endpoint, almacenamiento del access token y gestión de sesión |
-| Frontend | `authGuard` | Protege rutas privadas; redirige a `/login` si no hay sesión |
-| Frontend | `actionGuard` | Autoriza rutas según las acciones del usuario |
-| Backend | `AuthController` | Endpoints `/login`, `/refresh`, `/logout` |
-| Backend | `AuthService` (core) | Autenticación y emisión de tokens |
+| Frontend | `LoginComponent` | Formulario reactivo, validación y orquestación del flujo de autenticación. |
+| Frontend | `AuthService` | Invocación del endpoint, almacenamiento del access token y gestión de la sesión. |
+| Frontend | `authGuard` | Protección de rutas privadas y redirección a `/login` cuando la sesión no existe. |
+| Frontend | `actionGuard` | Verificación de permisos por acción antes de permitir el acceso a la vista. |
+| Backend | `AuthController` | Exposición de los endpoints `/login`, `/refresh` y `/logout`. |
+| Backend | `AuthService` | Autenticación con credenciales, emisión y renovación de tokens. |
+| Domain | `User` | Entidad principal para la autenticación y asociación con perfil y permisos. |
+| Security | `SecurityConfig` | Reglas de autorización y protección de rutas del módulo de autenticación. |
 
-### 3.2. Modelo de datos (frontend)
+### 3.2. Modelos de datos
+
+#### Frontend (TypeScript)
 
 ```typescript
 interface LoginRequest {
@@ -169,6 +173,37 @@ interface AccessTokenResponse {
 ```
 
 El campo `remember` del formulario no se envía al backend; forma parte únicamente del estado del formulario.
+
+#### Backend DTOs (Java)
+
+```java
+public record LoginRequestDTO(
+    String username,
+    String password
+) {}
+
+public record AccessTokenResponseDTO(
+    String accessToken
+) {}
+```
+
+#### Entidades JPA
+
+```java
+@Entity
+@Table(name = "users")
+public class User extends BaseEntity {
+    @Column(nullable = false, unique = true)
+    private String username;
+
+    @Column(nullable = false)
+    private String password;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "profile_id")
+    private Profile profile;
+}
+```
 
 ### 3.3. Endpoints del backend
 
@@ -234,7 +269,13 @@ sequenceDiagram
 
 ### 4.1. Cobertura unitaria (backend)
 
-No hay actualmente pruebas unitarias de backend específicas de esta pantalla documentadas en este documento.
+Hay cobertura unitaria de backend para la autenticación, centrada en la capa de controlador de la API y en la validación de las rutas de sesión:
+
+| Ubicación | Alcance |
+|-----------|---------|
+| `template/webapp/src/test/java/org/myorganization/template/webapp/controller/AuthControllerTest.java` | Respuestas HTTP de login, refresh y logout, así como la propagación de errores de autenticación y la gestión del flujo principal del endpoint |
+
+No se documenta una clase de servicio específica para login con una suite dedicada en el repositorio actual; la comprobación de la autenticación se mantiene validada mediante el controlador y la batería de pruebas funcionales del frontend.
 
 ### 4.2. Cobertura unitaria (frontend)
 

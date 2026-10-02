@@ -222,18 +222,16 @@ sequenceDiagram
 
 | Capa | Componente | Responsabilidad |
 | --- | --- | --- |
-| **Frontend Routing** | `interfaces.routes.ts` | Enrutamiento de `/interfaces/monitor` hacia `MonitorComponent`. |
-| **Frontend UI** | `MonitorComponent` | Gestión de estados de filtros, paginación, cambio a vista de detalle y exportación CSV. |
-| **Frontend UI** | `TpDataTableComponent` | Tabla reutilizable con ordenación, paginación y personalización de celdas mediante plantillas. |
-| **Frontend Pipes / Utils** | `LocalDatePipe`, `DateService` | Formateo de fechas a la zona horaria del usuario. |
-| **Frontend Service** | `InterfaceService` (TS) | Cliente HTTP para los endpoints de monitor y configuración de interfaces. |
-| **Frontend Model** | `interface.model.ts` | Definición de interfaces TypeScript (`InterfaceLog`, `InterfaceLogCriteria`, etc.). |
-| **Backend Controller** | `InterfaceControllerImpl.java` | Endpoints REST bajo `/api/v1/interfaces`. |
-| **Backend Service** | `InterfaceService.java` | Lógica de consulta paginada con `Specification`, conteo y registro programático `logOperation`. |
-| **Backend Repository** | `InterfaceLogRepository.java` | Repositorio Spring Data JPA con soporte de `JpaSpecificationExecutor`. |
-| **Backend Entity** | `InterfaceLog.java` | Entidad JPA mapeada a la tabla `interface_log`. |
-| **Backend DTO / Criteria** | `InterfaceLogDTO.java`, `InterfaceLogCriteria.java` | Objetos inmutables (records) para transferencia y filtrado. |
-| **Backend Security** | `SecurityConfig.java` | Reglas de autorización (`INTERFACES_READ`) y bloqueo de métodos CUD. |
+| Frontend | `MonitorComponent` | Gestión de filtros, paginación, cambio a vista de detalle y exportación CSV. |
+| Frontend | `InterfaceService` | Cliente HTTP para monitor y configuración de interfaces. |
+| Frontend | `TpDataTableComponent` | Tabla reutilizable con ordenación, paginación y plantillas de visualización. |
+| Frontend | `LocalDatePipe` y `DateService` | Formateo de fechas a la zona horaria del usuario. |
+| Backend | `InterfaceControllerImpl` | Endpoints REST bajo `/api/v1/interfaces` para consultas de logs y configuración. |
+| Backend | `InterfaceService` | Lógica de consulta paginada con `Specification`, conteo y registro programático `logOperation`. |
+| Backend | `InterfaceLogRepository` | Repositorio Spring Data JPA con soporte de `JpaSpecificationExecutor`. |
+| Domain | `InterfaceLog` | Entidad JPA mapeada a la tabla `interface_log`. |
+| Domain | `InterfaceLogDTO` | Record para transferencia de datos del monitor. |
+| Security | `SecurityConfig` | Reglas de autorización (`INTERFACES_READ`) y bloqueo de métodos CUD. |
 
 ### 3.2. Modelos de datos
 
@@ -264,7 +262,7 @@ export interface InterfaceLogCriteria {
 }
 ```
 
-#### Backend (Java Records y Entidades JPA)
+#### Backend DTOs (Java)
 
 ```java
 public record InterfaceLogDTO(
@@ -284,7 +282,11 @@ public record InterfaceLogCriteria(
     String interfaceName,
     InterfaceLogStatus status
 ) {}
+```
 
+#### Entidades JPA
+
+```java
 @Entity
 @Table(name = "interface_log")
 public class InterfaceLog extends BaseEntity {

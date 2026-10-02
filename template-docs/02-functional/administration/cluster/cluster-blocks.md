@@ -200,17 +200,21 @@ flowchart TD
 
 | Capa | Elemento | Responsabilidad |
 |------|----------|-----------------|
-| Frontend | `BlockListComponent` | Consulta paginada, filtros servidor, ordenación, selección, exportación CSV y cambio de vista list/detalle |
-| Frontend | `BlockDetailComponent` | Presentación de solo lectura de un bloqueo |
-| Frontend | `ClusterService` | Llamadas REST de bloqueos (paginado, count, por id, y export sin paginar) |
-| Frontend | `TpDataTableComponent` | Tabla reutilizable, ordenación, selección y paginación |
-| Backend | `ClusterController` | Endpoints REST de lectura de bloqueos |
-| Backend | `ClusterBlockService` | Consultas por criterios y por id; CUD prohibido |
-| Backend | `ClusterLockService` | Adquisición/liberación de locks y actualización automática de métricas |
-| Backend | `ClusterBlockRepository` | JPA + Specifications + queries nativos de advisory lock y hora BD |
-| Dominio | `ClusterBlock`, `ClusterBlockDTO`, `ClusterBlockCriteria` | Persistencia, transferencia y filtrado de bloqueos |
+| Frontend | `BlockListComponent` | Consulta paginada, filtros del servidor, ordenación, selección, exportación CSV y cambio de vista list/detalle. |
+| Frontend | `BlockDetailComponent` | Presentación de solo lectura de un bloqueo. |
+| Frontend | `ClusterService` | Llamadas REST de bloqueos para paginado, conteo, detalle y exportación. |
+| Frontend | `TpDataTableComponent` | Tabla reutilizable para ordenación, selección y paginación. |
+| Backend | `ClusterController` | Endpoints REST de lectura de bloqueos. |
+| Backend | `ClusterBlockService` | Consultas por criterios y por id; las operaciones CUD quedan prohibidas. |
+| Backend | `ClusterLockService` | Adquisición/liberación de locks y actualización automática de métricas. |
+| Backend | `ClusterBlockRepository` | JPA + Specifications + consultas nativas para advisory locks y hora de base de datos. |
+| Domain | `ClusterBlock` | Entidad JPA que persiste la estadística de bloqueo por recurso. |
+| Domain | `ClusterBlockDTO` y `ClusterBlockCriteria` | Transporte y filtros de consulta del módulo. |
+| Security | `SecurityConfig` | Reglas de autorización y protección del acceso al módulo. |
 
-### 3.2. Modelo de datos
+### 3.2. Modelos de datos
+
+#### Frontend (TypeScript)
 
 ```typescript
 interface ClusterBlock {
@@ -224,6 +228,8 @@ interface ClusterBlock {
 }
 ```
 
+#### Backend DTOs (Java)
+
 ```java
 public record ClusterBlockDTO(
     Long id,
@@ -234,6 +240,32 @@ public record ClusterBlockDTO(
     Long maxTime,
     Long total
 ) {}
+```
+
+#### Entidades JPA
+
+```java
+@Entity
+@Table(name = "cluster_block")
+public class ClusterBlock extends BaseEntity {
+    @Column(nullable = false, unique = true)
+    private String name;
+
+    @Column(nullable = false)
+    private OffsetDateTime startDate;
+
+    @Column(nullable = false)
+    private Long avgTime;
+
+    @Column(nullable = false)
+    private Long minTime;
+
+    @Column(nullable = false)
+    private Long maxTime;
+
+    @Column(nullable = false)
+    private Long total;
+}
 ```
 
 - Las métricas de tiempo (`avgTime`, `minTime`, `maxTime`) se almacenan en milisegundos.

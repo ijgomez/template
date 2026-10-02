@@ -246,15 +246,19 @@ flowchart TD
 
 | Capa | Elemento | Responsabilidad |
 |------|----------|-----------------|
-| Frontend | `ActionListComponent` | Listado, filtros, paginación, orden, exportación y orquestación de vistas |
-| Frontend | `ActionFormComponent` | Detalle y edición de una acción |
-| Frontend | `ActionService` | Llamadas de consulta y actualización |
-| Frontend | `TpDataTableComponent` | Tabla reutilizable (orden, paginación, selección) |
-| Frontend | `AuthService` | Comprobación de permisos (`hasAction`) |
-| Backend | `ActionControllerImpl` | Endpoints de consulta y actualización |
-| Backend | `ActionService` (core) | Validación, persistencia y bloqueo de operaciones no permitidas |
+| Frontend | `ActionListComponent` | Listado, filtros, paginación, orden y orquestación de la vista. |
+| Frontend | `ActionFormComponent` | Detalle y edición de una acción. |
+| Frontend | `ActionService` | Consulta y actualización de permisos de acción. |
+| Frontend | `TpDataTableComponent` | Tabla reutilizable para ordenación, paginación y selección. |
+| Frontend | `AuthService` | Comprobación de permisos del usuario según la acción seleccionada. |
+| Backend | `ActionControllerImpl` | Exposición de endpoints de consulta y actualización de acciones. |
+| Backend | `ActionService` | Validación, persistencia y bloqueo de operaciones no permitidas. |
+| Domain | `Action` | Entidad de autoridad de negocio que representa un permiso del sistema. |
+| Security | `SecurityConfig` | Reglas de autorización y protección del módulo de acciones y permisos. |
 
-### 3.2. Modelo de datos (frontend)
+### 3.2. Modelos de datos
+
+#### Frontend (TypeScript)
 
 ```typescript
 interface Action {
@@ -271,6 +275,46 @@ interface ActionCriteria {
   code?: string;
   name?: string;
   type?: 'READ' | 'WRITE' | 'EXECUTE';
+}
+```
+
+#### Backend DTOs (Java)
+
+```java
+public record ActionDTO(
+    Long id,
+    String code,
+    String name,
+    String description,
+    ActionType type,
+    OffsetDateTime createdAt,
+    OffsetDateTime lastModifiedAt
+) {}
+
+public record ActionCriteria(
+    String code,
+    String name,
+    ActionType type
+) {}
+```
+
+#### Entidades JPA
+
+```java
+@Entity
+@Table(name = "action")
+public class Action extends BaseEntity {
+    @Column(nullable = false, unique = true)
+    private String code;
+
+    @Column(nullable = false)
+    private String name;
+
+    private String description;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ActionType type;
 }
 ```
 
@@ -313,7 +357,14 @@ Ruta base: `/api/v1/administration/security/actions`.
 
 ### 4.1. Cobertura unitaria (backend)
 
-No hay actualmente pruebas unitarias de backend específicas de esta pantalla documentadas en este documento.
+La suite actual incluye pruebas del servicio y del controlador que cubren la lógica principal del catálogo semilla, la edición y las restricciones de negocio:
+
+| Ubicación | Alcance |
+|-----------|---------|
+| `template/core/src/test/java/org/myorganization/template/core/service/ActionServiceTest.java` | Validaciones de negocio, listado, filtro, detalle, actualización del nombre/descripcion/tipo y bloqueo de operaciones no permitidas |
+| `template/webapp/src/test/java/org/myorganization/template/webapp/controller/ActionControllerTest.java` | Respuestas HTTP de los endpoints, parámetros de consulta y gestión de errores del controlador |
+
+Estas pruebas cubren el comportamiento principal del módulo y complementan la validación E2E del flujo de usuario.
 
 ### 4.2. Cobertura unitaria (frontend)
 

@@ -213,18 +213,15 @@ sequenceDiagram
 
 | Capa | Componente | Propósito |
 | --- | --- | --- |
-| Frontend routing | `reports.routes.ts` | `/reports/:id` → `ReportListComponent`; vacío → `/dashboard` |
-| Frontend UI | `ReportListComponent` | Pantalla de ejecución paramétrica |
-| Frontend UI | `TpSelectedReportsComponent` | CVA reutilizable de selección multiple |
-| Frontend service | `ReportService` (TS) | Cliente HTTP para `/reports` |
-| Frontend model | `report.model.ts` | `Report`, `ReportFilter`, `ReportResult`, `ExportFormat` |
-| Backend controller | `ReportController.java` | `/api/v1/reports` (6 endpoints) |
-| Backend service | `ReportService.java` | Listado, asignación, ejecución y exportación |
-| Backend entities | `Report`, `User2Report` | Entidad informe y relación N:M usuario–informe |
-| Backend DTOs | `ReportDTO`, `ReportFilterDTO`, `ExportFormat` | Transporte y enumerado |
-| Backend exception | `ReportExportException` | Error de exportación (p. ej. formatos no implementados) |
-| Backend repos | `ReportRepository`, `User2ReportRepository` | Acceso a datos |
-| Backend auth | `SecurityConfig.java` | Regla `/api/v1/reports/**` requiere `REPORT_EXECUTE` |
+| Frontend | `ReportListComponent` | Pantalla de ejecución paramétrica y consulta de resultados. |
+| Frontend | `TpSelectedReportsComponent` | CVA reutilizable de selección múltiple para informes asignados. |
+| Frontend | `ReportService` (TS) | Cliente HTTP para `/reports`, filtros y exportación. |
+| Backend | `ReportController` | Exposición de endpoints `/api/v1/reports` para listado, ejecución y exportación. |
+| Backend | `ReportService` | Listado, asignación, ejecución y exportación de informes. |
+| Backend | `ReportRepository` y `User2ReportRepository` | Acceso a datos para informes y relaciones usuario–informe. |
+| Domain | `Report` | Entidad principal con metadatos del informe. |
+| Domain | `User2Report` | Relación N:M entre usuarios e informes. |
+| Security | `SecurityConfig` | Regla `/api/v1/reports/**` requiere `REPORT_EXECUTE`. |
 
 ### 3.2. Modelos de datos
 

@@ -186,13 +186,18 @@ flowchart TD
 
 | Capa | Elemento | Responsabilidad |
 |------|----------|-----------------|
-| Frontend | `AuthService` | Login, refresh, logout, almacenamiento del access token en memoria y recuperación de sesión |
-| Frontend | Interceptor HTTP | Detección de expiración, renovación proactiva y encolado de peticiones concurrentes |
-| Frontend | `authGuard` | Protege rutas privadas; espera a la recuperación de sesión antes de rechazar |
-| Backend | `AuthController` | Endpoints `/login`, `/refresh`, `/logout` |
-| Backend | `AuthService` (core) | Autenticación, emisión y rotación de tokens, revocación |
+| Frontend | `AuthService` | Gestión del flujo de login, refresh, logout y almacenamiento del access token. |
+| Frontend | Interceptor HTTP | Detección de sesiones expiradas, renovación proactiva y encolado de peticiones concurrentes. |
+| Frontend | `authGuard` | Protección de rutas privadas y espera a la recuperación de sesión antes de rechazar. |
+| Backend | `AuthController` | Exposición de los endpoints `/login`, `/refresh` y `/logout`. |
+| Backend | `AuthService` | Autenticación, emisión, renovación y revocación de tokens. |
+| Domain | `User` | Entidad principal del proceso de autenticación y sesión. |
+| Domain | `RefreshToken` | Persistencia del refresh token para la renovación de sesiones. |
+| Security | `SecurityConfig` | Reglas de seguridad y control de acceso a endpoints de autenticación. |
 
-### 3.2. Modelo de datos (frontend)
+### 3.2. Modelos de datos
+
+#### Frontend (TypeScript)
 
 ```typescript
 interface LoginRequest {
@@ -202,6 +207,37 @@ interface LoginRequest {
 
 interface AccessTokenResponse {
   accessToken: string;
+}
+```
+
+#### Backend DTOs (Java)
+
+```java
+public record LoginRequestDTO(
+    String username,
+    String password
+) {}
+
+public record TokenRefreshResponseDTO(
+    String accessToken
+) {}
+```
+
+#### Entidades JPA
+
+```java
+@Entity
+@Table(name = "refresh_token")
+public class RefreshToken extends BaseEntity {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @Column(nullable = false, unique = true)
+    private String token;
+
+    @Column(nullable = false)
+    private OffsetDateTime expiresAt;
 }
 ```
 

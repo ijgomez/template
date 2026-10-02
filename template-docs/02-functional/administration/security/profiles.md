@@ -253,16 +253,21 @@ flowchart TD
 
 | Capa | Elemento | Responsabilidad |
 |------|----------|-----------------|
-| Frontend | `ProfileListComponent` | Listado, filtros, paginación, orden, exportación y orquestación de vistas |
-| Frontend | `ProfileFormComponent` | Alta, edición y detalle de un perfil |
-| Frontend | `ProfileService` | Llamadas CRUD y datos de referencia (acciones) |
-| Frontend | `TpDataTableComponent` | Tabla reutilizable (orden, paginación, selección) |
-| Frontend | `TpSelectedActionsComponent` | Selección multi-acción del perfil |
-| Frontend | `AuthService` | Comprobación de permisos (`hasAction`) |
-| Backend | `ProfileController` | Endpoints CRUD y referencias |
-| Backend | `ProfileService` (core) | Lógica de negocio y persistencia |
+| Frontend | `ProfileListComponent` | Listado, filtros, paginación, orden, exportación y orquestación de vistas. |
+| Frontend | `ProfileFormComponent` | Alta, edición y detalle de un perfil. |
+| Frontend | `ProfileService` | Llamadas CRUD y carga de referencias de acciones asociadas. |
+| Frontend | `TpDataTableComponent` | Tabla reutilizable para ordenación, paginación y selección. |
+| Frontend | `TpSelectedActionsComponent` | Selección multi-acción del perfil en el formulario. |
+| Frontend | `AuthService` | Comprobación de permisos del usuario antes de acceder al módulo. |
+| Backend | `ProfileController` | Exposición de endpoints CRUD y de referencias de perfiles. |
+| Backend | `ProfileService` | Lógica de negocio, validaciones y persistencia del perfil. |
+| Domain | `Profile` | Entidad principal del rol de usuario y asociación con acciones. |
+| Domain | `Action` | Entidad de permisos que se vincula al perfil mediante relación muchos a muchos. |
+| Security | `SecurityConfig` | Reglas de autorización y protección de rutas del módulo de perfiles. |
 
-### 3.2. Modelo de datos (frontend)
+### 3.2. Modelos de datos
+
+#### Frontend (TypeScript)
 
 ```typescript
 interface Profile {
@@ -277,6 +282,44 @@ interface Profile {
 
 interface ProfileCriteria {
   name?: string;
+}
+```
+
+#### Backend DTOs (Java)
+
+```java
+public record ProfileDTO(
+    Long id,
+    String name,
+    String description,
+    List<Long> actionIds,
+    OffsetDateTime createdAt,
+    OffsetDateTime lastModifiedAt
+) {}
+
+public record ProfileCriteria(
+    String name
+) {}
+```
+
+#### Entidades JPA
+
+```java
+@Entity
+@Table(name = "profile")
+public class Profile extends BaseEntity {
+    @Column(nullable = false, unique = true)
+    private String name;
+
+    private String description;
+
+    @ManyToMany
+    @JoinTable(
+        name = "profile_action",
+        joinColumns = @JoinColumn(name = "profile_id"),
+        inverseJoinColumns = @JoinColumn(name = "action_id")
+    )
+    private List<Action> actions = new ArrayList<>();
 }
 ```
 
@@ -327,7 +370,14 @@ Datos de referencia consumidos por el formulario:
 
 ### 4.1. Cobertura unitaria (backend)
 
-No hay actualmente pruebas unitarias de backend específicas de esta pantalla documentadas en este documento.
+La suite actual incluye pruebas del servicio y del controlador que cubren el CRUD, validaciones de negocio y la relación con las acciones asignadas:
+
+| Ubicación | Alcance |
+|-----------|---------|
+| `template/core/src/test/java/org/myorganization/template/core/service/ProfileServiceTest.java` | Alta, consulta, búsqueda por criterios, actualización, borrado, validación de acciones duplicadas y gestión de perfiles en uso |
+| `template/webapp/src/test/java/org/myorganization/template/webapp/controller/ProfileControllerTest.java` | Respuestas HTTP de los endpoints, filtros y propagación de excepciones del servicio |
+
+Estas pruebas cubren la lógica principal del módulo y complementan la validación E2E del frontend.
 
 ### 4.2. Cobertura unitaria (frontend)
 

@@ -265,15 +265,20 @@ flowchart TD
 
 | Capa | Elemento | Responsabilidad |
 |------|----------|-----------------|
-| Frontend | `UserListComponent` | Listado, filtros, paginación, orden, exportación y orquestación de vistas |
-| Frontend | `UserFormComponent` | Alta, edición y detalle de un usuario |
-| Frontend | `UserService` | Llamadas CRUD y datos de referencia (perfiles, informes) |
-| Frontend | `TpDataTableComponent` | Tabla reutilizable (orden, paginación, selección) |
-| Frontend | `AuthService` | Comprobación de permisos (`hasAction`) |
-| Backend | `UserController` | Endpoints CRUD y `/me` (autoservicio) |
-| Backend | `UserService` (core) | Lógica de negocio y persistencia |
+| Frontend | `UserListComponent` | Listado, filtros, paginación, orden, exportación y orquestación de vistas. |
+| Frontend | `UserFormComponent` | Alta, edición y detalle de un usuario. |
+| Frontend | `UserService` | Llamadas CRUD y carga de datos de referencia como perfiles e informes. |
+| Frontend | `TpDataTableComponent` | Tabla reutilizable para ordenación, paginación y selección. |
+| Frontend | `AuthService` | Comprobación de permisos por acción y acceso según el perfil activo. |
+| Backend | `UserController` | Exposición de endpoints CRUD y `/me` para autoservicio del usuario. |
+| Backend | `UserService` | Lógica de negocio, validación y persistencia del usuario. |
+| Domain | `User` | Entidad principal del sistema con perfil, credenciales y relaciones asociadas. |
+| Domain | `User2Report` | Relación entre usuarios e informes visibles para cada perfil. |
+| Security | `SecurityConfig` | Reglas de autorización y protección de rutas del módulo de usuarios. |
 
-### 3.2. Modelo de datos (frontend)
+### 3.2. Modelos de datos
+
+#### Frontend (TypeScript)
 
 ```typescript
 interface UserDTO {
@@ -297,6 +302,54 @@ interface UserCriteria {
   lastName?: string;
   email?: string;
   profileId?: number;
+}
+```
+
+#### Backend DTOs (Java)
+
+```java
+public record UserDTO(
+    Long id,
+    String username,
+    String password,
+    String firstName,
+    String lastName,
+    String email,
+    OffsetDateTime lastAccess,
+    Long profileId,
+    String profileName,
+    List<Long> reportIds,
+    OffsetDateTime createdAt,
+    OffsetDateTime lastModifiedAt
+) {}
+
+public record UserCriteria(
+    String username,
+    String firstName,
+    String lastName,
+    String email,
+    Long profileId
+) {}
+```
+
+#### Entidades JPA
+
+```java
+@Entity
+@Table(name = "user")
+public class User extends BaseEntity {
+    @Column(nullable = false, unique = true)
+    private String username;
+
+    @Column(nullable = false)
+    private String password;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "profile_id")
+    private Profile profile;
+
+    @OneToMany(mappedBy = "user")
+    private List<User2Report> userReports = new ArrayList<>();
 }
 ```
 
@@ -346,7 +399,14 @@ Datos de referencia consumidos por el formulario y los filtros:
 
 ### 4.1. Cobertura unitaria (backend)
 
-No hay actualmente pruebas unitarias de backend específicas de esta pantalla documentadas en este documento.
+La suite actual incluye pruebas específicas del servicio y del controlador que cubren la lógica principal de la pantalla:
+
+| Ubicación | Alcance |
+|-----------|---------|
+| `template/core/src/test/java/org/myorganization/template/core/service/UserServiceTest.java` | Validaciones de negocio, creación, consulta por ID y username, filtrado por criterios, actualización, borrado y asociaciones con perfiles e informes |
+| `template/webapp/src/test/java/org/myorganization/template/webapp/controller/UserControllerTest.java` | Respuestas HTTP del endpoint, parámetros de consulta, autenticación del usuario actual y propagación de excepciones del servicio |
+
+Estas pruebas cubren el flujo principal de usuarios y complementan la cobertura E2E del frontend, sin reemplazar la validación funcional end-to-end del comportamiento completo de la pantalla.
 
 ### 4.2. Cobertura unitaria (frontend)
 

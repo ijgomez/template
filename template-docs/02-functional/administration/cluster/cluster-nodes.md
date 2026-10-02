@@ -220,15 +220,19 @@ flowchart TD
 
 | Capa | Elemento | Responsabilidad |
 |------|----------|-----------------|
-| Frontend | `NodeListComponent` | Consulta, filtros cliente, ordenación, paginación, selección, exportación y cambio de maestro |
-| Frontend | `NodeDetailComponent` | Presentación de solo lectura del nodo |
-| Frontend | `ClusterService` | Llamadas REST de nodos y actualización de maestro |
-| Frontend | `TpDataTableComponent` | Tabla reutilizable, ordenación, selección y paginación |
-| Backend | `ClusterController` | Endpoints REST de lectura de nodos y `PATCH` de maestro |
-| Backend | `ClusterService` | Consulta, registro automático, heartbeat, detección de inactivos y elección de maestro |
-| Dominio | `ClusterNode`, `ClusterNodeDTO`, `NodeStatus` | Persistencia, transferencia y estado del nodo |
+| Frontend | `NodeListComponent` | Consulta, filtros cliente, ordenación, paginación, selección y cambio de maestro. |
+| Frontend | `NodeDetailComponent` | Presentación de solo lectura del nodo. |
+| Frontend | `ClusterService` | Llamadas REST de nodos y actualización del liderazgo. |
+| Frontend | `TpDataTableComponent` | Tabla reutilizable para ordenación, selección y paginación. |
+| Backend | `ClusterController` | Endpoints REST de lectura de nodos y actualización del maestro. |
+| Backend | `ClusterService` | Consulta, heartbeat, detección de inactivos y elección de maestro. |
+| Domain | `ClusterNode` | Entidad JPA que representa el estado live de cada nodo del clúster. |
+| Domain | `ClusterNodeDTO` y `NodeStatus` | Transporte y estado del nodo en el frontend y backend. |
+| Security | `SecurityConfig` | Reglas de autorización y protección del módulo de clúster. |
 
-### 3.2. Modelo de datos
+### 3.2. Modelos de datos
+
+#### Frontend (TypeScript)
 
 ```typescript
 type NodeStatus = 'ACTIVE' | 'INACTIVE';
@@ -244,6 +248,49 @@ interface ClusterNode {
   usedMemory: number;
   startedAt: string;
   lastModifiedAt: string;
+}
+```
+
+#### Backend DTOs (Java)
+
+```java
+public record ClusterNodeDTO(
+    Long id,
+    String hostname,
+    String ip,
+    NodeStatus status,
+    boolean master,
+    Long totalMemory,
+    Long usedMemory,
+    OffsetDateTime startedAt,
+    OffsetDateTime lastModifiedAt
+) {}
+```
+
+#### Entidades JPA
+
+```java
+@Entity
+@Table(name = "cluster_node")
+public class ClusterNode extends BaseEntity {
+    @Column(nullable = false)
+    private String hostname;
+
+    @Column(nullable = false)
+    private String ip;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private NodeStatus status;
+
+    @Column(nullable = false)
+    private boolean master;
+
+    @Column(nullable = false)
+    private Long totalMemory;
+
+    @Column(nullable = false)
+    private Long usedMemory;
 }
 ```
 
