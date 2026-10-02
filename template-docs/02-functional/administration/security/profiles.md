@@ -11,7 +11,7 @@ Documentación funcional y técnica de la pantalla de gestión de perfiles, dent
 
 ## 1. Requisitos
 
-Identificadores locales de este documento: `RF-PRO-*` (requisitos funcionales) y `RNF-PRO-*` (requisitos no funcionales). La autenticación y la gestión de sesión que dan acceso a esta pantalla se especifican en [requirements.md](../../../specification/requirements.md).
+Identificadores locales de este documento: `RF-PRO-*` (requisitos funcionales) y `RNF-PRO-*` (requisitos no funcionales).
 
 ### 1.1. Requisitos funcionales
 
@@ -364,6 +364,7 @@ Definidos en `dashboard/e2e/fixtures/test-data.ts`: `testProfiles.valid` y helpe
 
 ## Referencias
 
+- [Autenticación y Gestión de Sesión](../../login/authentication.md)
 - [Usuarios](./users.md)
 - [Seguridad backend](../../../03-technical/backend/security.md)
 - [Componentes frontend](../../../03-technical/frontend/components.md)

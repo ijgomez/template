@@ -11,7 +11,7 @@ Documentación funcional y técnica de la pantalla de **Monitor de Interfaces**,
 
 ## 1. Requisitos
 
-Identificadores locales de este documento: `RF-IFM-*` (funcionales) y `RNF-IFM-*` (no funcionales). La autenticación y gestión de sesiones se especifican en [requirements.md](../../../specification/requirements.md).
+Identificadores locales de este documento: `RF-IFM-*` (funcionales) y `RNF-IFM-*` (no funcionales).
 
 ### 1.1. Requisitos funcionales
 
@@ -403,6 +403,7 @@ Los datos semilla de backend para registros de interfaces se encuentran en `doma
 
 - [Módulo Interfaces (Visión General)](../interfaces.md)
 - [Configuración de Interfaces](../configuration/configuration.md)
+- [Autenticación y Gestión de Sesión](../../login/authentication.md)
 - [Navegación del Sistema](../../03-technical/frontend/navigation.md)
 - [API REST Backend](../../03-technical/backend/api.md)
 - [Seguridad y Permisos](../../03-technical/backend/security.md)

@@ -11,7 +11,7 @@ Documentación funcional y técnica de la pantalla de administración de nodos d
 
 ## 1. Requisitos
 
-Identificadores locales de este documento: `RF-CLN-*` (requisitos funcionales) y `RNF-CLN-*` (requisitos no funcionales). La autenticación y la gestión de sesión que dan acceso a esta pantalla se especifican en [requirements.md](../../../specification/requirements.md).
+Identificadores locales de este documento: `RF-CLN-*` (requisitos funcionales) y `RNF-CLN-*` (requisitos no funcionales).
 
 ### 1.1. Requisitos funcionales
 
@@ -319,6 +319,7 @@ La suite no ejecuta el cambio de maestro: es una operación que modifica estado 
 
 ## Referencias
 
+- [Autenticación y Gestión de Sesión](../../login/authentication.md)
 - [Requisitos de la aplicación](../../../specification/requirements.md)
 - [Modelo de datos funcional](../../../specification/data-model.md)
 - [Glosario](../../../specification/glossary.md)

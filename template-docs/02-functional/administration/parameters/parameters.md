@@ -11,7 +11,7 @@ Documentación funcional y técnica de la pantalla de gestión de parámetros, d
 
 ## 1. Requisitos
 
-Identificadores locales de este documento: `RF-PAR-*` (requisitos funcionales) y `RNF-PAR-*` (requisitos no funcionales). La autenticación y la gestión de sesión que dan acceso a esta pantalla se especifican en [requirements.md](../../../specification/requirements.md).
+Identificadores locales de este documento: `RF-PAR-*` (requisitos funcionales) y `RNF-PAR-*` (requisitos no funcionales).
 
 ### 1.1. Requisitos funcionales
 
@@ -374,6 +374,7 @@ Definidos en `dashboard/e2e/fixtures/test-data.ts`: `testUsers.valid` (credencia
 
 ## Referencias
 
+- [Autenticación y Gestión de Sesión](../../login/authentication.md)
 - [Login](../../login/login.md)
 - [Seguridad backend](../../../03-technical/backend/security.md)
 - [Componentes frontend](../../../03-technical/frontend/components.md)

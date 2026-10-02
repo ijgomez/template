@@ -12,7 +12,7 @@ Documentación funcional y técnica de la pantalla de gestión de permisos, dent
 
 ## 1. Requisitos
 
-Identificadores locales de este documento: `RF-ACC-*` (requisitos funcionales) y `RNF-ACC-*` (requisitos no funcionales). La autenticación y la gestión de sesión que dan acceso a esta pantalla se especifican en [requirements.md](../../../specification/requirements.md).
+Identificadores locales de este documento: `RF-ACC-*` (requisitos funcionales) y `RNF-ACC-*` (requisitos no funcionales).
 
 ### 1.1. Requisitos funcionales
 
@@ -349,6 +349,7 @@ Definidos en `template/dashboard/e2e/fixtures/test-data.ts`: `testUsers.valid` (
 
 ## Referencias
 
+- [Autenticación y Gestión de Sesión](../../login/authentication.md)
 - [Seguridad backend](../../../03-technical/backend/security.md)
 - [Componentes frontend](../../../03-technical/frontend/components.md)
 - [API backend](../../../03-technical/backend/api.md)

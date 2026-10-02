@@ -11,7 +11,7 @@ Documentación funcional y técnica de la pantalla de inicio de sesión de la ap
 
 ## 1. Requisitos
 
-Identificadores locales de este documento: `RF-LOG-*` (requisitos funcionales) y `RNF-LOG-*` (requisitos no funcionales). El detalle del modelo de autenticación y autorización global de la plataforma se especifica en [requirements.md](../../../specification/requirements.md) (Requirements 1-6).
+Identificadores locales de este documento: `RF-LOG-*` (requisitos funcionales) y `RNF-LOG-*` (requisitos no funcionales). El detalle del modelo de autenticación y autorización global de la plataforma se especifica en [authentication.md](authentication.md) (`RF-AUT-*` / `RNF-AUT-*`).
 
 ### 1.1. Requisitos funcionales
 
@@ -264,6 +264,7 @@ Definidos en `dashboard/e2e/fixtures/test-data.ts`. Deben ajustarse a las creden
 
 ## Referencias
 
+- [Autenticación y Gestión de Sesión](authentication.md)
 - [Seguridad backend](../../03-technical/backend/security.md)
 - [Navegación frontend](../../03-technical/frontend/navigation.md)
 - [Internacionalización](../../03-technical/frontend/internacionalizacion.md)

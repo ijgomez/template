@@ -11,7 +11,7 @@ Documentación funcional y técnica de la pantalla de consulta del registro de a
 
 ## 1. Requisitos
 
-Identificadores locales de este documento: `RF-AUD-*` (requisitos funcionales) y `RNF-AUD-*` (requisitos no funcionales). La autenticación y la gestión de sesión que dan acceso a esta pantalla se especifican en [requirements.md](../../../specification/requirements.md).
+Identificadores locales de este documento: `RF-AUD-*` (requisitos funcionales) y `RNF-AUD-*` (requisitos no funcionales).
 
 ### 1.1. Requisitos funcionales
 
@@ -324,6 +324,7 @@ Los datos semilla de backend para registros de auditoría se encuentran en `doma
 
 ## Referencias
 
+- [Autenticación y Gestión de Sesión](../../login/authentication.md)
 - [Requisitos de la aplicación](../../../specification/requirements.md)
 - [Modelo de datos funcional](../../../specification/data-model.md)
 - [Seguridad backend](../../../03-technical/backend/security.md)

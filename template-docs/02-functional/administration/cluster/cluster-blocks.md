@@ -11,7 +11,7 @@ Documentación funcional y técnica de la pantalla de administración de bloqueo
 
 ## 1. Requisitos
 
-Identificadores locales de este documento: `RF-CLB-*` (requisitos funcionales) y `RNF-CLB-*` (requisitos no funcionales). La autenticación y la gestión de sesión que dan acceso a esta pantalla se especifican en [requirements.md](../../../specification/requirements.md).
+Identificadores locales de este documento: `RF-CLB-*` (requisitos funcionales) y `RNF-CLB-*` (requisitos no funcionales).
 
 ### 1.1. Requisitos funcionales
 
@@ -327,6 +327,7 @@ La suite es de solo lectura y no modifica `cluster_block`. Para que existan fila
 
 ## Referencias
 
+- [Autenticación y Gestión de Sesión](../../login/authentication.md)
 - [Requisitos de la aplicación](../../../specification/requirements.md)
 - [Modelo de datos funcional](../../../specification/data-model.md)
 - [Glosario](../../../specification/glossary.md)
