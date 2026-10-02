@@ -103,57 +103,31 @@ Basado en una escala de 4px.
 
 # Componentes
 
-La IA debe generar código utilizando exclusivamente los componentes del catálogo reutilizable de `shared/`. No se deben inventar componentes nuevos sin autorización explícita.
+La IA debe generar código con un criterio claro de prioridad:
 
-La **especificación completa** (propiedades, eventos, accesibilidad, variantes y tamaños) de cada componente está documentada en [components.md](components.md), que es la fuente única de verdad.
+1. Este documento define la identidad visual, la consistencia y los patrones de uso.
+2. [layout.md](layout.md) define la estructura base de cada tipo de pantalla.
+3. [components.md](components.md) define la API técnica completa de cada componente reutilizable.
 
-A continuación, el índice de componentes disponibles:
+El catálogo de componentes debe usarse exclusivamente para componer la interfaz. No se deben inventar componentes nuevos ni crear variantes visuales paralelas sin autorización explícita.
 
-| Componente       | Selector                   | Descripción                                   |
-|------------------|----------------------------|-----------------------------------------------|
-| Botón            | `<tp-button>`              | Acciones del usuario                          |
-| Input            | `<tp-input>`               | Entrada de texto                              |
-| Select           | `<tp-select>`              | Selección de opciones                         |
-| Checkbox         | `<tp-checkbox>`            | Selección múltiple                            |
-| Radio            | `<tp-radio>`               | Selección única                               |
-| Tabla            | `<tp-data-table>`          | Listados con paginación, orden y filtrado     |
-| Lista de datos   | `<tp-data-list>`           | Listas verticales con filtro y paginación     |
-| Modal            | `<tp-modal>`               | Diálogos y confirmaciones                     |
-| Card             | `<tp-card>`                | Contenedor con cabecera y cuerpo              |
-| Alert            | `<tp-alert>`               | Mensajes informativos                         |
-| Badge            | `<tp-badge>`               | Etiquetas de estado                           |
-| Breadcrumb       | `<tp-breadcrumb>`          | Navegación jerárquica                         |
-| Tabs             | `<tp-tabs>`                | Navegación por pestañas dentro de una vista   |
-| Spinner          | `<tp-spinner>`             | Indicador de carga                            |
-| Toast            | `<tp-toast>`               | Notificaciones temporales                     |
-| Pagination       | `<tp-pagination>`          | Navegación entre páginas de datos             |
-| Form Group       | `<tp-form-group>`          | Agrupación de campo + label + validación      |
-| Date Picker      | `<tp-date-picker>`         | Selección de fecha                            |
-| Autocomplete     | `<tp-autocomplete>`        | Búsqueda con sugerencias                      |
-| Entity Filter    | `<tp-entity-filter>`       | Filtro por entidad con lista de selección     |
-| Date Range       | `<tp-date-range>`          | Selector de rango de fechas (desde - hasta)   |
+La especificación técnica completa de cada componente (propiedades, eventos, variantes, validaciones, accesibilidad y ejemplos de uso) vive en [components.md](components.md). Ese documento es la fuente autorizada del catálogo reutilizable; este design system guía su uso visual y de composición en la pantalla.
 
 ---
 
 # Patrones de pantalla
 
-La IA debe respetar el patrón base definido en [layout.md](layout.md). Ese documento es la fuente única de verdad para los templates de cada tipo de pantalla.
+La estructura y composición de cada tipo de pantalla se definen en [layout.md](layout.md). Ese documento es la referencia única para los patrones de composición de interfaces: list screen, form screen y confirmation modal.
 
-En concreto, los patrones reutilizables son:
-
-- List Screen
-- Form Screen
-- Confirmation Modal
-
-La guía de diseño debe centrarse en tokens, componentes, accesibilidad y reglas visuales, y dejar la estructura de la pantalla en [layout.md](layout.md). El design system no debe duplicar ese contenido ni redefinir los mismos templates con distinta sintaxis.
+Este design system no redefine la estructura de pantallas ni duplica esos templates. Su rol es describir cómo deben verse, comportarse y cohesionarse los elementos dentro de esa estructura.
 
 En la práctica, este documento se usa para:
 - definir colores, tipografía, espaciado y densidad
-- definir los componentes reutilizables
-- establecer reglas visuales y de accesibilidad
-- guiar la generación de UI sin redefinir la estructura base de cada pantalla
+- definir la identidad visual de cada estado y componente
+- establecer reglas de accesibilidad y consistencia
+- guiar la generación de UI sin redefinir la estructura base de la pantalla
 
-Para la composición de cada pantalla, consultar siempre [layout.md](layout.md).
+Para la composición concreta de cada pantalla, consultar siempre [layout.md](layout.md).
 
 ---
 
