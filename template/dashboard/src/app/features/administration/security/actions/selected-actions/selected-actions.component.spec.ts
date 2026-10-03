@@ -297,4 +297,47 @@ describe('TpSelectedActionsComponent', () => {
       expect(component.getTypeBadgeClasses('')).toContain('text-secondary');
     });
   });
+
+  describe('template interactions', () => {
+    it('should render the modal, select rows via the DOM and confirm the values', () => {
+      component.writeValue([2]);
+      component.openModal();
+      fixture.detectChanges();
+
+      const modal = fixture.nativeElement.querySelector('[data-testid="selected-actions-modal"]');
+      expect(modal).toBeTruthy();
+
+      const searchInput = fixture.nativeElement.querySelector('[data-testid="selected-actions-modal-search"]');
+      expect(searchInput).toBeTruthy();
+      searchInput.value = 'alpha';
+      searchInput.dispatchEvent(new Event('input'));
+      fixture.detectChanges();
+      expect(component.modalFilteredActions().map(a => a.id)).toEqual([1]);
+
+      const row = fixture.nativeElement.querySelector('[data-testid="selected-actions-modal-row-1"]');
+      row.click();
+      fixture.detectChanges();
+
+      const acceptButton = fixture.nativeElement.querySelector('[data-testid="selected-actions-modal-accept"]');
+      acceptButton.click();
+      fixture.detectChanges();
+
+      expect(component.selectedIds()).toEqual([2, 1]);
+      expect(component.modalOpen()).toBe(false);
+    });
+
+    it('should support add/remove actions from the visible list and keep the list filtered', () => {
+      component.writeValue([2, 3]);
+      component.onFilterChange('beta');
+      fixture.detectChanges();
+
+      const rendered = fixture.nativeElement.querySelectorAll('tp-data-list')?.length;
+      expect(rendered).toBeGreaterThan(0);
+      expect(component.filteredSelectedActions().map(a => a.id)).toEqual([2]);
+
+      component.removeAction(action(2));
+      expect(component.selectedIds()).toEqual([3]);
+      expect(component.filteredSelectedActions().map(a => a.id)).toEqual([]);
+    });
+  });
 });

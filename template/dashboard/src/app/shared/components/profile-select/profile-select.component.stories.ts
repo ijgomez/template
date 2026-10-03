@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/angular-vite';
 import { applicationConfig } from '@storybook/angular-vite';
 import { of } from 'rxjs';
+import { expect, userEvent, within } from 'storybook/test';
 
 import { TpProfileSelectComponent } from './profile-select.component';
 import { UserService } from '../../../core/services/user.service';
@@ -67,6 +68,13 @@ export const FormRequired: Story = {
     ariaLabelKey: 'users.fields.profile',
     testId: 'select-profile',
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const select = canvas.getByTestId('select-profile');
+    await userEvent.selectOptions(select, '2');
+    await expect(select).toHaveValue('2');
+    await userEvent.tab();
+  },
 };
 
 /**
@@ -80,6 +88,12 @@ export const Filter: Story = {
     name: 'filterProfile',
     ariaLabelKey: 'users.fields.profile',
     testId: 'filter-profile',
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const select = canvas.getByTestId('filter-profile');
+    await userEvent.selectOptions(select, '');
+    await expect(select).toHaveValue('');
   },
 };
 

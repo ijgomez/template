@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideTranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import * as fc from 'fast-check';
 
 import { ProfileComponent } from './profile.component';
@@ -180,5 +180,114 @@ describe('ProfileComponent - Property 1: Bug Condition - Form Styling Matches Re
       }),
       { numRuns: 5 },
     );
+  });
+});
+
+describe('ProfileComponent behavior', () => {
+  let profileServiceMock: {
+    getProfile: ReturnType<typeof vi.fn>;
+    updateProfile: ReturnType<typeof vi.fn>;
+  };
+  let notificationServiceMock: {
+    showProgress: ReturnType<typeof vi.fn>;
+    showError: ReturnType<typeof vi.fn>;
+    updateToSuccess: ReturnType<typeof vi.fn>;
+    updateToError: ReturnType<typeof vi.fn>;
+  };
+
+  beforeEach(async () => {
+    profileServiceMock = {
+      getProfile: vi.fn().mockReturnValue(of({
+        username: 'user001',
+        nombre: 'Ada',
+        apellidos: 'Lovelace',
+        email: 'ada@example.com',
+        lastAccess: '2024-01-15T10:30:00',
+      })),
+      updateProfile: vi.fn().mockReturnValue(of({
+        username: 'user001',
+        nombre: 'Grace',
+        apellidos: 'Hopper',
+        email: 'grace@example.com',
+        lastAccess: '2024-01-15T10:30:00',
+      })),
+    };
+
+    notificationServiceMock = {
+      showProgress: vi.fn().mockReturnValue('progress-id'),
+      showError: vi.fn(),
+      updateToSuccess: vi.fn(),
+      updateToError: vi.fn(),
+    };
+
+    await TestBed.configureTestingModule({
+      imports: [ProfileComponent],
+      providers: [
+        provideTranslateService({ lang: 'en', fallbackLang: 'en' }),
+        { provide: ProfileService, useValue: profileServiceMock },
+        { provide: NotificationService, useValue: notificationServiceMock },
+      ],
+    }).compileComponents();
+  });
+
+  it('should validate the form and avoid saving when invalid', () => {
+    const fixture = TestBed.createComponent(ProfileComponent);
+    const component = fixture.componentInstance;
+
+    component.ngOnInit();
+    component.profileForm.reset();
+    component.save();
+
+    expect(notificationServiceMock.showProgress).not.toHaveBeenCalled();
+    expect(component.profileForm.touched).toBe(true);
+    expect(component.saving()).toBe(false);
+  });
+
+  it('should save a valid profile and notify success', () => {
+    const fixture = TestBed.createComponent(ProfileComponent);
+    const component = fixture.componentInstance;
+
+    component.ngOnInit();
+    component.profileForm.patchValue({
+      nombre: 'Grace',
+      apellidos: 'Hopper',
+      email: 'grace@example.com',
+    });
+
+    component.save();
+
+    expect(profileServiceMock.updateProfile).toHaveBeenCalledWith({
+      nombre: 'Grace',
+      apellidos: 'Hopper',
+      email: 'grace@example.com',
+    });
+    expect(notificationServiceMock.showProgress).toHaveBeenCalledWith('notification.update.progress');
+    expect(notificationServiceMock.updateToSuccess).toHaveBeenCalledWith('progress-id', 'notification.update.success');
+    expect(component.username()).toBe('user001');
+    expect(component.saving()).toBe(false);
+  });
+
+  it('should show an error notification when profile loading fails', () => {
+    profileServiceMock.getProfile.mockReturnValueOnce(throwError(() => new Error('boom')));
+    const fixture = TestBed.createComponent(ProfileComponent);
+    const component = fixture.componentInstance;
+
+    component.ngOnInit();
+
+    expect(notificationServiceMock.showError).toHaveBeenCalledWith('profile.load.error');
+  });
+
+  it('should expose validation errors only after the control has been touched', () => {
+    const fixture = TestBed.createComponent(ProfileComponent);
+    const component = fixture.componentInstance;
+
+    component.ngOnInit();
+    const control = component.profileForm.get('email');
+
+    control?.setValue('bad-email');
+    control?.markAsTouched();
+
+    expect(component.hasError('email', 'email')).toBe(true);
+    expect(component.hasError('nombre', 'required')).toBe(false);
   });
 });

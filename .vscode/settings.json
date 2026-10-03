@@ -1,6 +1,8 @@
 {
     "java.compile.nullAnalysis.mode": "automatic",
     "java.configuration.updateBuildConfiguration": "automatic",
+    "typescript.tsdk": "template/dashboard/node_modules/typescript/lib",
+    "typescript.enablePromptUseWorkspaceTsdk": true,
     "maven.terminal.favorites": [
         {
             "command": "clean install",

@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { QueryList } from '@angular/core';
 import { provideTranslateService } from '@ngx-translate/core';
 
 import { TpDataTableComponent } from './data-table.component';
@@ -239,6 +240,68 @@ describe('TpDataTableComponent', () => {
       component.onDrop(dropEvent(), component.columns[0]);
       expect(called).toBe(false);
       expect(component.columns.map((c) => c.key)).toEqual(['id', 'name', 'actions']);
+    });
+
+    it('onDragStart should set drag metadata and prevent default when reorderable', () => {
+      const event = { preventDefault: vi.fn(), dataTransfer: { effectAllowed: '', setData: vi.fn() } } as unknown as DragEvent;
+      component.onDragStart(event, component.columns[0]);
+
+      expect(component.dragColumnKey).toBe('id');
+      expect((event.dataTransfer as DataTransfer).setData).toHaveBeenCalledWith('text/plain', 'id');
+      expect(component.dragOverColumnKey).toBeNull();
+    });
+
+    it('onDragStart should ignore non-reorderable columns and prevent default', () => {
+      const event = { preventDefault: vi.fn() } as unknown as DragEvent;
+      component.onDragStart(event, component.columns[2]);
+      expect(event.preventDefault).toHaveBeenCalled();
+      expect(component.dragColumnKey).toBeNull();
+    });
+
+    it('onDragOver should allow dropping and mark the hovered column', () => {
+      const event = { preventDefault: vi.fn(), dataTransfer: { dropEffect: '' } } as unknown as DragEvent;
+      component.dragColumnKey = 'id';
+      component.onDragOver(event, component.columns[1]);
+
+      expect(event.preventDefault).toHaveBeenCalled();
+      expect(component.dragOverColumnKey).toBe('name');
+      expect((event.dataTransfer as DataTransfer).dropEffect).toBe('move');
+    });
+
+    it('onDragLeave should clear the hover target state', () => {
+      component.dragOverColumnKey = 'name';
+      component.onDragLeave(component.columns[1]);
+      expect(component.dragOverColumnKey).toBeNull();
+    });
+
+    it('onResizeStart should update runtime widths and emit when mouseup fires', () => {
+      const col = component.columns[0];
+      col.resizable = true;
+      const th = document.createElement('th');
+      Object.defineProperty(th, 'offsetWidth', { value: 140, configurable: true });
+      const event = { clientX: 100, preventDefault: vi.fn(), stopPropagation: vi.fn() } as unknown as MouseEvent;
+      let emitted: { column: string; width: number } | undefined;
+      component.columnResize.subscribe((value) => (emitted = value));
+
+      component.onResizeStart(event, col, th);
+      expect(event.preventDefault).toHaveBeenCalled();
+      expect(document.body.classList.contains('tp-table-resizing')).toBe(true);
+
+      document.dispatchEvent(new MouseEvent('mousemove', { clientX: 160 }));
+      expect(component.columnWidths['id']).toBe(200);
+
+      document.dispatchEvent(new MouseEvent('mouseup'));
+      expect(emitted).toEqual({ column: 'id', width: 200 });
+      expect(document.body.classList.contains('tp-table-resizing')).toBe(false);
+    });
+
+    it('getColumnTemplate should return the matching template directive', () => {
+      const directive = { tpColumn: 'name' } as any;
+      const templateList = new QueryList<any>();
+      templateList.reset([directive]);
+      component.columnTemplates = templateList;
+      expect(component.getColumnTemplate('name')).toBe(directive);
+      expect(component.getColumnTemplate('id')).toBeUndefined();
     });
 
     it('onDragEnd should reset drag state', () => {

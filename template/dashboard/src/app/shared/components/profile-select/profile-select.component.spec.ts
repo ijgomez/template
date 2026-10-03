@@ -122,4 +122,41 @@ describe('TpProfileSelectComponent', () => {
       expect(component.disabled()).toBe(false);
     });
   });
+
+  describe('validation and blur', () => {
+    it('should mark as invalid when required and untouched selection is missing', async () => {
+      await setup();
+      component.required = true;
+      component.selectedId.set(null);
+      component.touched.set(true);
+      expect(component.isInvalid()).toBe(true);
+    });
+
+    it('should parse empty and invalid values as null', async () => {
+      await setup();
+      expect(component.parseSelection('')).toBeNull();
+      expect(component.parseSelection('not-a-number')).toBeNull();
+      expect(component.parseSelection('42')).toBe(42);
+    });
+
+    it('should trigger touched and onTouched on blur', async () => {
+      await setup();
+      const onTouched = vi.fn();
+      component.registerOnTouched(onTouched);
+
+      component.onBlur();
+
+      expect(component.touched()).toBe(true);
+      expect(onTouched).toHaveBeenCalledTimes(1);
+    });
+
+    it('should reset selection when value is empty or undefined', async () => {
+      await setup();
+      component.writeValue(10);
+      component.writeValue('');
+      expect(component.selectedId()).toBeNull();
+      component.writeValue(undefined);
+      expect(component.selectedId()).toBeNull();
+    });
+  });
 });

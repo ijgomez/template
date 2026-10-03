@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { provideTranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 
@@ -306,7 +306,46 @@ describe('LayoutComponent', () => {
     expect(cluster.children?.length).toBe(2); // Nodes, Blocks
   });
 
+  it('should hide menu items when the user lacks the required actions', () => {
+    expect(component.isItemVisible({ labelKey: 'menu.dashboard', icon: 'speedometer2', actions: ['DASHBOARD_READ'] })).toBe(true);
+    expect(component.isItemVisible({ labelKey: 'menu.reports', icon: 'file-earmark-bar-graph', actions: ['REPORT_EXECUTE'] })).toBe(true);
+    expect(component.isItemVisible({ labelKey: 'menu.hidden', icon: 'lock', actions: ['UNKNOWN_ACTION'] })).toBe(false);
+  });
+
+  it('should build breadcrumbs for report detail URLs and custom titles', () => {
+    const originalRouter = (component as any).router;
+    (component as any).router = { url: '/reports/42' };
+    component.userReports.set([{ id: 42, name: 'Monthly report' } as any]);
+    (component as any).updateBreadcrumbs();
+
+    expect(component.breadcrumbs().map((crumb) => crumb.path)).toContain('/reports');
+    expect(component.breadcrumbs().some((crumb) => crumb.label === 'Monthly report')).toBe(true);
+
+    (component as any).router = originalRouter;
+  });
+
+  it('should sign out and redirect to login', () => {
+    const logoutSpy = vi.fn().mockReturnValue(of(undefined));
+    const navigateSpy = vi.fn();
+    authServiceMock.logout = logoutSpy as any;
+    (component as any).router = { navigate: navigateSpy };
+
+    component.logout();
+
+    expect(logoutSpy).toHaveBeenCalledTimes(1);
+    expect(navigateSpy).toHaveBeenCalledWith(['/login']);
+  });
+
+  it('should reset the sidebar width to the default value', () => {
+    component.sidebarWidth.set(340);
+    component.onSidebarResizeReset();
+
+    expect(component.sidebarWidth()).toBe(260);
+    expect(localStorage.getItem('tp-sidebar-width')).toBe('260');
+  });
+
   afterEach(() => {
     localStorage.removeItem('tp-sidebar-collapsed');
+    localStorage.removeItem('tp-sidebar-width');
   });
 });

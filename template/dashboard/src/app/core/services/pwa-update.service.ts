@@ -17,6 +17,12 @@ export class PwaUpdateService {
   /** Emits true when a new version is available for activation */
   readonly hasUpdate$: Observable<boolean> = this.updateAvailable$.asObservable();
 
+  private readonly reloadPage = (): void => {
+    if (typeof window !== 'undefined' && window.location) {
+      window.location.reload();
+    }
+  };
+
   constructor() {
     if (this.swUpdate.isEnabled) {
       this.listenForUpdates();
@@ -27,9 +33,9 @@ export class PwaUpdateService {
   /**
    * Activates the new version and reloads the application.
    */
-  activateUpdate(): void {
-    this.swUpdate.activateUpdate().then(() => {
-      document.location.reload();
+  activateUpdate(): Promise<void> {
+    return this.swUpdate.activateUpdate().then(() => {
+      this.reloadPage();
     });
   }
 

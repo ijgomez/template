@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/angular-vite';
+import { expect, userEvent, within } from 'storybook/test';
 import { TpDataTableComponent } from './data-table.component';
 import { ColumnDef } from './models/column-def.model';
 
@@ -70,6 +71,14 @@ export const Default: Story = {
     totalElements: 3,
     ariaLabel: 'Users table',
     testId: 'users-table',
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByTestId('users-table')).toBeInTheDocument();
+    await userEvent.click(canvas.getByTestId('users-table-th-name'));
+    await expect(canvas.getByTestId('users-table-th-name')).toHaveAttribute('aria-sort', 'ascending');
+    await userEvent.selectOptions(canvas.getByTestId('pagination-page-size'), '20');
+    await expect(canvas.getByTestId('pagination-page-size')).toBeVisible();
   },
 };
 

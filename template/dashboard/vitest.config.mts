@@ -23,6 +23,15 @@ const dirname = fileURLToPath(new URL('.', import.meta.url));
 // historias se ejecutan de forma aislada mediante el proyecto `storybook`.
 export default defineConfig({
   test: {
+    // Configuración compartida para el runner de Angular (`ng test`) y el
+    // proyecto de Storybook. El builder de Angular usa la raíz `test` y
+    // ignora `projects`; por eso también debe definirse aquí el navegador.
+    browser: {
+      enabled: true,
+      headless: true,
+      provider: playwright(),
+      instances: [{ browser: 'chromium' }],
+    },
     // Usada por el builder de Angular para los *.spec.ts.
     coverage: {
       reportsDirectory: 'target/coverage/dashboard',
@@ -49,7 +58,6 @@ export default defineConfig({
           browser: {
             enabled: true,
             headless: true,
-            // Vitest 4 requiere un factory de provider (antes era un string).
             provider: playwright(),
             instances: [{ browser: 'chromium' }],
           },

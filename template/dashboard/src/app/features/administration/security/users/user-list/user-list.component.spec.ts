@@ -293,6 +293,22 @@ describe('UserListComponent', () => {
       expect(called).toBe(false);
       userService.delete = () => of(void 0);
     });
+
+    it('executeDelete should surface an error notification and clear the target', () => {
+      let errorMessage = '';
+      userService.delete = () => throwError(() => new Error('boom'));
+      notificationService.updateToError = (..._a: unknown[]) => {
+        errorMessage = String(_a[1]);
+      };
+      component.confirmDelete(user);
+
+      component.executeDelete();
+
+      expect(errorMessage).toBe('notification.delete.error');
+      expect(component.userToDelete()).toBeNull();
+      userService.delete = () => of(void 0);
+      notificationService.updateToError = () => undefined;
+    });
   });
 
   describe('exportCsv', () => {
@@ -321,6 +337,20 @@ describe('UserListComponent', () => {
       component.exportCsv();
 
       expect(errored).toBe(true);
+      userService.findAllByCriteria = () => of([user]);
+      notificationService.updateToError = () => undefined;
+    });
+
+    it('should notify an export error when the backend call fails', () => {
+      let key = '';
+      userService.findAllByCriteria = () => throwError(() => new Error('boom'));
+      notificationService.updateToError = (..._a: unknown[]) => {
+        key = String(_a[1]);
+      };
+
+      component.exportCsv();
+
+      expect(key).toBe('notification.export.error');
       userService.findAllByCriteria = () => of([user]);
       notificationService.updateToError = () => undefined;
     });

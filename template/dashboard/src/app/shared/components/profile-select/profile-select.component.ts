@@ -72,7 +72,15 @@ export class TpProfileSelectComponent implements ControlValueAccessor, OnInit {
   @Input() placeholderSelectable = false;
 
   /** Whether the select is required (adds the `required` attribute). */
-  @Input() required = false;
+  private readonly requiredState = signal(false);
+
+  @Input()
+  get required(): boolean {
+    return this.requiredState();
+  }
+  set required(value: boolean) {
+    this.requiredState.set(value);
+  }
 
   /** `name` attribute for the inner select (needed inside template-driven forms). */
   @Input() name = 'profileId';
@@ -113,7 +121,7 @@ export class TpProfileSelectComponent implements ControlValueAccessor, OnInit {
 
   // ─── ControlValueAccessor ──────────────────────────────────
 
-  writeValue(value: number | null | string): void {
+  writeValue(value: number | null | string | undefined): void {
     const normalizedValue = value === null || value === undefined || value === '' ? null : Number(value);
     this.selectedId.set(Number.isFinite(normalizedValue) ? normalizedValue : null);
   }

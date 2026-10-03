@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/angular-vite';
 import { moduleMetadata } from '@storybook/angular-vite';
+import { expect, userEvent, within } from 'storybook/test';
 import { TpDataListComponent } from './data-list.component';
 import { TpListItemDirective } from './directives/tp-list-item.directive';
 
@@ -102,6 +103,14 @@ export const Default: Story = {
     disabled: false,
     ariaLabel: 'Lista de acciones asignadas',
     testId: 'assigned-actions',
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const filterInput = canvas.getByTestId('assigned-actions-filter');
+    await userEvent.type(filterInput, 'USER');
+    await expect(filterInput).toHaveValue('USER');
+    await userEvent.click(canvas.getByTestId('assigned-actions-btn-add'));
+    await userEvent.click(canvas.getByTestId('assigned-actions-btn-remove-0'));
   },
 };
 
