@@ -10,7 +10,10 @@ Documentación funcional de los módulos de administración y seguridad. Estos d
 
 | Concepto | Descripción |
 |-----------|---------|
-|  |  |
+| Usuario | Identidad autenticada del sistema, asociada a un o varios perfiles. |
+| Perfil | Agrupación funcional de permisos que define qué puede hacer un usuario. |
+| Acción | Permiso granular del sistema con código técnico y tipo de operación. |
+| Autorización | Validación de accesos en frontend y backend basada en acciones y perfiles. |
 
 
 ## Modelo de entidades
@@ -58,6 +61,14 @@ classDiagram
 ## Seguridad
 
 Permisos principales del módulo:
+
+- `USER_READ`: consulta de usuarios y su estado.
+- `USER_WRITE`: creación, edición y baja de usuarios, así como gestión de perfiles asociados.
+- `PROFILE_READ`: consulta de perfiles y su composición.
+- `PROFILE_WRITE`: creación, edición y eliminación de perfiles y su relación con acciones.
+- `ACTION_READ`: consulta del catálogo de acciones del sistema.
+
+Estos permisos se usan para ocultar o mostrar rutas, menús y acciones en la capa frontend y para validar el acceso en la API con Spring Security. El acceso a perfiles y usuarios se realiza siempre sobre la identidad autenticada del usuario actual y el conjunto de acciones derivadas de sus perfiles.
 
 ## Navegación
 

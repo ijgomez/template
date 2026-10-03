@@ -13,7 +13,10 @@ Todos los módulos comparten la protección por `actionGuard` a nivel de ruta fr
 
 | Concepto | Descripción |
 |-----------|---------|
-|  |  |
+| Seguridad | Gestión de usuarios, perfiles y permisos funcionales del sistema. |
+| Parámetros | Catálogo global de configuración con tipado fuerte y validación de compatibilidad. |
+| Auditoría | Registro inmutable de operaciones realizadas por usuarios y procesos del sistema. |
+| Cluster | Orquestación de alta disponibilidad, salud de nodos y exclusión mutua distribuida. |
 
 ## Modelo de entidades
 
