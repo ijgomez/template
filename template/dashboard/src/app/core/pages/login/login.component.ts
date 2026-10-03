@@ -4,8 +4,8 @@ import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { UpperCasePipe } from '@angular/common';
 
-import { AuthService } from '../../core/services/auth.service';
-import { I18nService } from '../../core/services/i18n.service';
+import { AuthService } from '../../services/auth.service';
+import { I18nService } from '../../services/i18n.service';
 
 /**
  * Login component.

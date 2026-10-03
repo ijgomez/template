@@ -10,7 +10,7 @@ import { ForbiddenComponent } from './forbidden.component';
  * volver al dashboard.
  */
 const meta: Meta<ForbiddenComponent> = {
-  title: 'Features/Forbidden',
+  title: 'Pages/Forbidden',
   component: ForbiddenComponent,
   tags: ['autodocs'],
   decorators: [

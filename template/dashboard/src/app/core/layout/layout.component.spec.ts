@@ -4,7 +4,7 @@ import { provideTranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 
 import { LayoutComponent } from './layout.component';
-import { AuthService } from '../../core/services/auth.service';
+import { AuthService } from '../services/auth.service';
 
 describe('LayoutComponent', () => {
   let component: LayoutComponent;

@@ -5,7 +5,7 @@ import { of } from 'rxjs';
 import * as fc from 'fast-check';
 
 import { LayoutComponent, NavItem } from './layout.component';
-import { AuthService } from '../../core/services/auth.service';
+import { AuthService } from '../services/auth.service';
 
 /**
  * Property-based test for navigation visibility matching user actions.

@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 
 import { actionGuard } from './core/guards/action.guard';
 import { authGuard } from './core/guards/auth.guard';
-import { LayoutComponent } from './features/layout/layout.component';
+import { LayoutComponent } from './core/layout/layout.component';
 
 export const routes: Routes = [
   {
@@ -50,7 +50,7 @@ export const routes: Routes = [
       },
       {
         path: 'forbidden',
-        loadComponent: () => import('./features/forbidden/forbidden.component').then((m) => m.ForbiddenComponent),
+        loadComponent: () => import('./core/pages/forbidden/forbidden.component').then((m) => m.ForbiddenComponent),
       },
       {
         path: '',
@@ -61,10 +61,10 @@ export const routes: Routes = [
   },
   {
     path: 'login',
-    loadChildren: () => import('./features/login/login.routes').then((m) => m.LOGIN_ROUTES),
+    loadChildren: () => import('./core/pages/login/login.routes').then((m) => m.LOGIN_ROUTES),
   },
   {
     path: '**',
-    loadComponent: () => import('./features/not-found/not-found.component').then((m) => m.NotFoundComponent),
+    loadComponent: () => import('./core/pages/not-found/not-found.component').then((m) => m.NotFoundComponent),
   },
 ];

@@ -4,9 +4,9 @@ import { Router, RouterOutlet, RouterLink, RouterLinkActive, NavigationEnd, Acti
 import { TranslatePipe } from '@ngx-translate/core';
 import { filter, fromEvent, Subject, takeUntil } from 'rxjs';
 
-import { AuthService } from '../../core/services/auth.service';
-import { ReportService } from '../../core/services/report.service';
-import { Report } from '../../core/models/report.model';
+import { AuthService } from '../services/auth.service';
+import { ReportService } from '../services/report.service';
+import { Report } from '../models/report.model';
 
 /**
  * Represents a navigation menu item in the sidebar.

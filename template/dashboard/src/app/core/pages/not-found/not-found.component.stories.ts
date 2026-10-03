@@ -10,7 +10,7 @@ import { NotFoundComponent } from './not-found.component';
  * volver al dashboard.
  */
 const meta: Meta<NotFoundComponent> = {
-  title: 'Features/NotFound',
+  title: 'Pages/NotFound',
   component: NotFoundComponent,
   tags: ['autodocs'],
   decorators: [
