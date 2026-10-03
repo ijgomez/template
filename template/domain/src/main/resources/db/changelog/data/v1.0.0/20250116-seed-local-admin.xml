@@ -67,4 +67,44 @@
 
     </changeSet>
 
+    <!-- Reset sequence to avoid conflicts with seed data -->
+    <changeSet id="20250116-seed-local-admin-profile-seq-reset" author="template" labels="v1.0.0" context="local">
+
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="profile"/>
+            <sequenceExists sequenceName="profile_seq"/>
+        </preConditions>
+
+        <comment>Ajusta la secuencia profile_seq para evitar conflictos con los datos seed (id 1)</comment>
+
+        <!-- PostgreSQL: setval calcula el siguiente valor a partir del MAX(id) actual -->
+        <sql dbms="postgresql">SELECT setval('profile_seq', (SELECT COALESCE(MAX(id), 0) + 1 FROM profile), false)</sql>
+        <!-- H2 (perfil local): setval no existe; se reinicia la secuencia al valor fijo
+             siguiente a los ids seed (id 1) -->
+        <sql dbms="h2">ALTER SEQUENCE profile_seq RESTART WITH 100</sql>
+
+        <rollback/>
+
+    </changeSet>
+
+    <!-- Reset sequence to avoid conflicts with seed data -->
+    <changeSet id="20250116-seed-local-admin-user-seq-reset" author="template" labels="v1.0.0" context="local">
+
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="users"/>
+            <sequenceExists sequenceName="users_seq"/>
+        </preConditions>
+
+        <comment>Ajusta la secuencia users_seq para evitar conflictos con los datos seed (id 1)</comment>
+
+        <!-- PostgreSQL: setval calcula el siguiente valor a partir del MAX(id) actual -->
+        <sql dbms="postgresql">SELECT setval('users_seq', (SELECT COALESCE(MAX(id), 0) + 1 FROM users), false)</sql>
+        <!-- H2 (perfil local): setval no existe; se reinicia la secuencia al valor fijo
+             siguiente a los ids seed (id 1) -->
+        <sql dbms="h2">ALTER SEQUENCE users_seq RESTART WITH 100</sql>
+
+        <rollback/>
+
+    </changeSet>
+
 </databaseChangeLog>
