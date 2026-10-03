@@ -84,6 +84,23 @@ Sus principales responsabilidades son:
 
 El frontend no contiene lógica de negocio, limitándose a presentar la información y coordinar la interacción del usuario.
 
+### Organización por feature
+
+La estructura del frontend se organiza por módulos funcionales para evitar mezclar responsabilidades entre pantallas y componentes reutilizables. Un ejemplo actual de la feature de informes es:
+
+```text
+src/app/features/reports/
+├── components/
+│   └── selected-reports/
+├── pages/
+│   └── report-list/
+├── services/
+├── reports.routes.ts
+└── ...
+```
+
+Esta disposición permite que `report-list` represente la pantalla principal de la ruta y que `selected-reports` sea un componente reutilizable usado desde otras vistas, como formularios de administración.
+
 ---
 
 ## Backend

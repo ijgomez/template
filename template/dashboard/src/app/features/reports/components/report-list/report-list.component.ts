@@ -4,9 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 
-import { ReportService } from '../../../core/services/report.service';
-import { NotificationService } from '../../../core/services/notification.service';
-import { Report, ReportFilter, ReportResult, ExportFormat } from '../../../core/models/report.model';
+import { ReportService } from '../../../../core/services/report.service';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { Report, ReportFilter, ReportResult, ExportFormat } from '../../../../core/models/report.model';
 
 /**
  * Report execution component.

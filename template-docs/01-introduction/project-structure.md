@@ -75,6 +75,40 @@ Es responsable de:
 
 El frontend puede evolucionar independientemente del backend siempre que se mantengan los contratos de la API.
 
+### Estructura modular del frontend
+
+La aplicación Angular sigue una organización por feature y separa claramente componentes de pantalla y componentes reutilizables:
+
+```text
+template/dashboard/src/app/
+├── app.routes.ts
+├── core/
+│   ├── models/
+│   ├── services/
+│   └── guards/
+├── features/
+│   ├── reports/
+│   │   ├── components/
+│   │   │   └── selected-reports/
+│   │   ├── pages/
+│   │   │   └── report-list/
+│   │   ├── services/
+│   │   └── reports.routes.ts
+│   └── ...
+└── shared/
+    ├── components/
+    ├── directives/
+    └── pipes/
+```
+
+En esta convención:
+
+- `pages/` agrupa pantallas o rutas principales de la feature.
+- `components/` contiene componentes reutilizables dentro de la misma feature.
+- `services/` centraliza llamadas a la API y lógica de acceso a datos.
+
+Esto mantiene la estructura Angular más clara y facilita la reutilización de componentes sin mezclar responsabilidades.
+
 ---
 
 ## Base de datos (`domain`)

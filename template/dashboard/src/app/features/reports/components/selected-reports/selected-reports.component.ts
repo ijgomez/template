@@ -12,10 +12,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 
-import { TpDataListComponent, TpListItemDirective } from '../../../shared/components/data-list';
+import { TpDataListComponent, TpListItemDirective } from '../../../../shared/components/data-list';
 
-import { Report } from '../../../core/models/report.model';
-import { ReportService } from '../../../core/services/report.service';
+import { Report } from '../../../../core/models/report.model';
+import { ReportService } from '../../../../core/services/report.service';
 
 /**
  * Reusable ControlValueAccessor component that manages a list of selected reports.
