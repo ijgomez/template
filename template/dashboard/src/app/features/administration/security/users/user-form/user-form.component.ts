@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { LocalDatePipe } from '../../../../../shared/pipes/local-date.pipe';
-import { TpSelectedReportsComponent } from '../../../../reports/components/selected-reports';
+import { TpReportSelectedListComponent } from '../../../../reports/components/report-selected-list';
 import { TpProfileSelectComponent } from '../../../../../shared/components/profile-select';
 import { UserDTO } from '../../../../../core/models/user.model';
 
@@ -16,7 +16,7 @@ type FormMode = 'create' | 'edit' | 'view';
 @Component({
   selector: 'app-user-form',
   standalone: true,
-  imports: [FormsModule, TranslatePipe, LocalDatePipe, TpSelectedReportsComponent, TpProfileSelectComponent],
+  imports: [FormsModule, TranslatePipe, LocalDatePipe, TpReportSelectedListComponent, TpProfileSelectComponent],
   templateUrl: './user-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

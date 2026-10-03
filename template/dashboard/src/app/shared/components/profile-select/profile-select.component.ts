@@ -8,7 +8,7 @@ import {
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
+import { ControlContainer, FormsModule, NG_VALUE_ACCESSOR, NgForm, ControlValueAccessor } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { UserService } from '../../../core/services/user.service';
@@ -54,6 +54,7 @@ import { ProfileRef } from '../../../core/models/user.model';
       multi: true,
     },
   ],
+  viewProviders: [{ provide: ControlContainer, useExisting: NgForm }],
 })
 export class TpProfileSelectComponent implements ControlValueAccessor, OnInit {
   private readonly userService = inject(UserService);

@@ -2,10 +2,10 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideTranslateService } from '@ngx-translate/core';
 import { of, throwError } from 'rxjs';
 
-import { TpSelectedReportsComponent } from './selected-reports.component';
-import { ReportService } from '../../../core/services/report.service';
-import { Report } from '../../../core/models/report.model';
-import { Page } from '../../../core/models/page.model';
+import { TpReportSelectedListComponent } from './report-selected-list.component';
+import { ReportService } from '../../../../core/services/report.service';
+import { Report } from '../../../../core/models/report.model';
+import { Page } from '../../../../core/models/page.model';
 
 /** Builds a Report with sensible defaults. */
 function report(id: number, overrides: Partial<Report> = {}): Report {
@@ -25,9 +25,9 @@ function pageOf(reports: Report[], totalElements = reports.length): Page<Report>
   };
 }
 
-describe('TpSelectedReportsComponent', () => {
-  let component: TpSelectedReportsComponent;
-  let fixture: ComponentFixture<TpSelectedReportsComponent>;
+describe('TpReportSelectedListComponent', () => {
+  let component: TpReportSelectedListComponent;
+  let fixture: ComponentFixture<TpReportSelectedListComponent>;
   let reportService: {
     findAll: ReturnType<typeof vi.fn>;
     search: ReturnType<typeof vi.fn>;
@@ -46,14 +46,14 @@ describe('TpSelectedReportsComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-      imports: [TpSelectedReportsComponent],
+      imports: [TpReportSelectedListComponent],
       providers: [
         provideTranslateService({ lang: 'en', fallbackLang: 'en' }),
         { provide: ReportService, useValue: reportService },
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(TpSelectedReportsComponent);
+    fixture = TestBed.createComponent(TpReportSelectedListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges(); // ngOnInit -> loadSelectedReports (no-op with empty selection)
   });

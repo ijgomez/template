@@ -9,7 +9,7 @@ import {
   computed,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
+import { ControlContainer, FormsModule, NG_VALUE_ACCESSOR, NgForm, ControlValueAccessor } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { TpDataListComponent, TpListItemDirective } from '../../../../shared/components/data-list';
@@ -26,28 +26,29 @@ import { ReportService } from '../../../../core/services/report.service';
  *
  * Usage:
  * ```html
- * <tp-selected-reports
+ * <tp-report-selected-list
  *   formControlName="reports"
  *   [title]="'INFORMES ASIGNADOS'">
- * </tp-selected-reports>
+ * </tp-report-selected-list>
  * ```
  */
 @Component({
-  selector: 'tp-selected-reports',
+  selector: 'tp-report-selected-list',
   standalone: true,
   imports: [CommonModule, FormsModule, TranslatePipe, TpDataListComponent, TpListItemDirective],
-  templateUrl: './selected-reports.component.html',
-  styleUrls: ['./selected-reports.component.scss'],
+  templateUrl: './report-selected-list.component.html',
+  styleUrls: ['./report-selected-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => TpSelectedReportsComponent),
+      useExisting: forwardRef(() => TpReportSelectedListComponent),
       multi: true,
     },
   ],
+  viewProviders: [{ provide: ControlContainer, useExisting: NgForm }],
 })
-export class TpSelectedReportsComponent implements ControlValueAccessor, OnInit {
+export class TpReportSelectedListComponent implements ControlValueAccessor, OnInit {
   private readonly reportService = inject(ReportService);
 
   // ─── Inputs ────────────────────────────────────────────────
@@ -68,7 +69,7 @@ export class TpSelectedReportsComponent implements ControlValueAccessor, OnInit 
   @Input() ariaLabel = '';
 
   /** data-testid prefix for testing. */
-  @Input() testId = 'selected-reports';
+  @Input() testId = 'report-selected-list';
 
   // ─── Internal State ────────────────────────────────────────
 

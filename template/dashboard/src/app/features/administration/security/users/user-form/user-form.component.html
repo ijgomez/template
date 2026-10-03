@@ -193,7 +193,7 @@
     }
 
     <!-- Informes asignados -->
-    <tp-selected-reports
+    <tp-report-selected-list
       [ngModel]="formUser().reportIds"
       (ngModelChange)="updateField('reportIds', $event)"
       name="reportIds"
@@ -202,7 +202,7 @@
       [showAdd]="!isReadonly()"
       [showRemove]="!isReadonly()"
       testId="user-reports">
-    </tp-selected-reports>
+    </tp-report-selected-list>
 
     <!-- Botones de acción (solo en modo edición/creación) -->
     @if (!isReadonly()) {
