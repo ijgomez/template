@@ -8,11 +8,58 @@ Su objetivo es proporcionar al administrador una visión unificada del estado de
 
 | Concepto | Descripción |
 |-----------|---------|
-|  |  |
+| Interfaz | Integración externa configurada en el sistema y supervisada desde la consola de administración. |
+| Registro de operación | Evento inmutable generado por una interfaz: petición, respuesta, estado y errores asociados. |
+| Monitor | Vista de supervisión centralizada para consultar actividad, diagnósticos y trazabilidad. |
+| Configuración | Catálogo y estado actual de las interfaces registradas, únicamente de consulta. |
 
 ## Modelo de entidades
 
+Las entidades principales del módulo Interfaces son:
+
+- `Interface`: definición funcional de la integración, con nombre, protocolo, URL, estado y frecuencia de chequeo.
+- `InterfaceLog`: registro histórico de una operación ejecutada por la interfaz, con trazabilidad de entrada/salida y resultado.
+- `InterfaceJob` o equivalente de ejecución: tarea programada que dispara la comprobación periódica de salud de una interfaz.
+
+```mermaid
+classDiagram
+    class Interface {
+        +Long id
+        +String code
+        +String name
+        +String protocol
+        +String url
+        +String status
+        +Integer checkInterval
+    }
+
+    class InterfaceLog {
+        +Long id
+        +Long interfaceId
+        +String operation
+        +String request
+        +String response
+        +String result
+        +OffsetDateTime timestamp
+    }
+
+    class InterfaceJob {
+        +Long id
+        +String jobName
+        +String status
+        +OffsetDateTime nextRun
+    }
+
+    Interface "1" --> "N" InterfaceLog : genera
+    Interface "1" --> "N" InterfaceJob : supervisa
+```
+
 ### Relación de negocio
+
+- Una interfaz se configura de forma centralizada y se supervisa desde la pantalla de configuración.
+- Cada ejecución o chequeo de una interfaz genera uno o varios `InterfaceLog`, que quedan inmutables y sirven como registro de actividad.
+- El monitor de interfaces permite filtrar, consultar y exportar esos registros para diagnóstico y auditoría.
+- La configuración es de solo lectura en UI; las interfaces se gestionan externamente y no se crean, editan ni eliminan desde la aplicación.
 
 ## Seguridad
 
