@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Input,
   OnInit,
+  computed,
   forwardRef,
   inject,
   signal,
@@ -93,6 +94,12 @@ export class TpProfileSelectComponent implements ControlValueAccessor, OnInit {
   /** Whether the component is disabled. */
   readonly disabled = signal(false);
 
+  /** Whether the user has interacted with the select. */
+  readonly touched = signal(false);
+
+  /** Whether the required selection is invalid. */
+  readonly isInvalid = computed(() => this.required && this.selectedId() == null && this.touched());
+
   // ─── CVA Callbacks ─────────────────────────────────────────
 
   private onChange: (value: number | null) => void = () => {};
@@ -106,8 +113,9 @@ export class TpProfileSelectComponent implements ControlValueAccessor, OnInit {
 
   // ─── ControlValueAccessor ──────────────────────────────────
 
-  writeValue(value: number | null): void {
-    this.selectedId.set(value ?? null);
+  writeValue(value: number | null | string): void {
+    const normalizedValue = value === null || value === undefined || value === '' ? null : Number(value);
+    this.selectedId.set(Number.isFinite(normalizedValue) ? normalizedValue : null);
   }
 
   registerOnChange(fn: (value: number | null) => void): void {
@@ -128,8 +136,23 @@ export class TpProfileSelectComponent implements ControlValueAccessor, OnInit {
    * Propagates a selection change to the form model.
    */
   onSelectionChange(value: number | null): void {
+    this.touched.set(true);
     this.selectedId.set(value);
     this.onChange(value);
+    this.onTouched();
+  }
+
+  parseSelection(value: string): number | null {
+    if (value === '') {
+      return null;
+    }
+
+    const parsedValue = Number(value);
+    return Number.isFinite(parsedValue) ? parsedValue : null;
+  }
+
+  onBlur(): void {
+    this.touched.set(true);
     this.onTouched();
   }
 

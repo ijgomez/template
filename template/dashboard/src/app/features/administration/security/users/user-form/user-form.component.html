@@ -45,9 +45,11 @@
         <input id="username"
                type="text"
                class="form-control form-control-sm"
+               [ngClass]="{ 'is-invalid': username.invalid && (username.dirty || username.touched) }"
                [ngModel]="formUser().username"
                (ngModelChange)="updateField('username', $event)"
                name="username"
+               #username="ngModel"
                [required]="!isReadonly()"
                [readonly]="isReadonly() || mode() === 'edit'"
                [disabled]="isReadonly()"
@@ -62,9 +64,11 @@
         <input id="password"
                [type]="isReadonly() ? 'text' : 'password'"
                class="form-control form-control-sm"
+               [ngClass]="{ 'is-invalid': password.invalid && (password.dirty || password.touched) }"
                [ngModel]="isReadonly() ? '••••••••' : formUser().password"
                (ngModelChange)="updateField('password', $event)"
                name="password"
+               #password="ngModel"
                [required]="mode() === 'create'"
                [readonly]="isReadonly()"
                [disabled]="isReadonly()"
@@ -78,9 +82,12 @@
         <input id="email"
                [type]="isReadonly() ? 'text' : 'email'"
                class="form-control form-control-sm"
+               [ngClass]="{ 'is-invalid': (email.invalid && (email.dirty || email.touched)) || emailIsInvalid() }"
                [ngModel]="formUser().email ?? ''"
                (ngModelChange)="updateField('email', $event || null)"
                name="email"
+               #email="ngModel"
+               email
                [placeholder]="isReadonly() ? '' : 'usuario@ejemplo.com'"
                [readonly]="isReadonly()"
                [disabled]="isReadonly()"
@@ -135,9 +142,11 @@
             {{ 'users.fields.profile' | translate }} <span class="text-danger">*</span>
           </label>
           <tp-profile-select
+            [ngClass]="{ 'is-invalid': profileId.invalid && (profileId.dirty || profileId.touched) }"
             [ngModel]="formUser().profileId"
             (ngModelChange)="updateField('profileId', $event)"
             name="profileId"
+            #profileId="ngModel"
             [required]="true"
             placeholderKey="users.form.selectProfile"
             ariaLabelKey="users.fields.profile"
@@ -215,6 +224,7 @@
         </button>
         <button type="submit"
                 class="btn btn-primary btn-sm"
+                [disabled]="isSaveDisabled()"
                 data-testid="btn-save">
           <i class="bi bi-check-lg me-1" aria-hidden="true"></i> {{ 'button.save' | translate }}
         </button>

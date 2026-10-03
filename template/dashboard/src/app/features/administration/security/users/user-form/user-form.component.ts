@@ -1,4 +1,5 @@
-import { Component, ChangeDetectionStrategy, computed, input, output, signal, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, ChangeDetectionStrategy, computed, effect, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -16,11 +17,11 @@ type FormMode = 'create' | 'edit' | 'view';
 @Component({
   selector: 'app-user-form',
   standalone: true,
-  imports: [FormsModule, TranslatePipe, LocalDatePipe, TpReportSelectedListComponent, TpProfileSelectComponent],
+  imports: [CommonModule, FormsModule, TranslatePipe, LocalDatePipe, TpReportSelectedListComponent, TpProfileSelectComponent],
   templateUrl: './user-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UserFormComponent implements OnInit {
+export class UserFormComponent {
   /** The mode of the form: 'create', 'edit', or 'view'. */
   readonly mode = input.required<FormMode>();
 
@@ -45,6 +46,26 @@ export class UserFormComponent implements OnInit {
   /** Whether the form is in readonly mode. */
   readonly isReadonly = computed(() => this.mode() === 'view');
 
+  /** Whether the email value is present but malformed. */
+  readonly emailIsInvalid = computed(() => {
+    const email = this.formUser().email?.trim() ?? '';
+    return email.length > 0 && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  });
+
+  /** Whether the form is invalid for save in create/edit modes. */
+  readonly isSaveDisabled = computed(() => {
+    if (this.isReadonly()) {
+      return true;
+    }
+
+    const user = this.formUser();
+    const username = user.username?.trim() ?? '';
+    const password = user.password?.trim() ?? '';
+    const profileId = user.profileId;
+
+    return !username || (this.mode() === 'create' && !password) || !profileId || this.emailIsInvalid();
+  });
+
   // Internal form state
   readonly formUser = signal<UserDTO>({
     id: null,
@@ -60,8 +81,10 @@ export class UserFormComponent implements OnInit {
     lastModifiedAt: null,
   });
 
-  ngOnInit(): void {
-    this.formUser.set({ ...this.user() });
+  constructor() {
+    effect(() => {
+      this.formUser.set({ ...this.user() });
+    });
   }
 
   updateField(field: keyof UserDTO, value: unknown): void {
@@ -70,7 +93,7 @@ export class UserFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.isReadonly()) return;
+    if (this.isReadonly() || this.isSaveDisabled()) return;
     this.save.emit(this.formUser());
   }
 

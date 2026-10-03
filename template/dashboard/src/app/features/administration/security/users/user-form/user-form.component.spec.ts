@@ -67,13 +67,21 @@ describe('UserFormComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('ngOnInit should copy the input user into the internal form state', () => {
+  it('should copy the input user into the internal form state', () => {
     const user = buildUser({ username: 'alice', email: 'alice@example.com' });
     setup('edit', user);
     expect(component.formUser().username).toBe('alice');
     expect(component.formUser().email).toBe('alice@example.com');
     // Must be a copy, not the same reference
     expect(component.formUser()).not.toBe(user);
+  });
+
+  it('should sync the selected profile when the input user changes', () => {
+    setup('edit', buildUser({ profileId: 10 }));
+    fixture.componentRef.setInput('user', buildUser({ profileId: 20 }));
+    fixture.detectChanges();
+
+    expect(component.formUser().profileId).toBe(20);
   });
 
   describe('isReadonly', () => {
@@ -123,6 +131,17 @@ describe('UserFormComponent', () => {
       component.onSubmit();
       expect(spy).toHaveBeenCalledTimes(1);
       expect(spy.mock.calls[0][0].firstName).toBe('Updated');
+    });
+
+    it('should disable save when required fields are empty in create mode', () => {
+      setup('create', buildUser({ username: '', password: '', profileId: null }));
+      const button = fixture.nativeElement.querySelector('[data-testid="btn-save"]') as HTMLButtonElement;
+      expect(button.disabled).toBe(true);
+    });
+
+    it('should mark the email field invalid when the value is malformed', () => {
+      setup('create', buildUser({ email: 'invalid-email' }));
+      expect(component.emailIsInvalid()).toBe(true);
     });
 
     it('should NOT emit save in view mode', () => {

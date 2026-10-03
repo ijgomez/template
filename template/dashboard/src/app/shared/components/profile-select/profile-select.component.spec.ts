@@ -69,6 +69,15 @@ describe('TpProfileSelectComponent', () => {
       expect(component.selectedId()).toBe(20);
     });
 
+    it('should keep the selected profile when the list loads after the model value', async () => {
+      await setup();
+      component.writeValue(20);
+      fixture.detectChanges();
+
+      expect(component.selectedId()).toBe(20);
+      expect(fixture.nativeElement.querySelector('select').value).toBe('20');
+    });
+
     it('should reset the selection to null when written null', async () => {
       await setup();
       component.writeValue(10);
