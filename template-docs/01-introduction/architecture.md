@@ -91,7 +91,7 @@ La estructura del frontend se organiza por módulos funcionales para evitar mezc
 ```text
 src/app/features/reports/
 ├── components/
-│   └── selected-reports/
+│   └── report-selected-list/
 ├── pages/
 │   └── report-list/
 ├── services/
@@ -99,7 +99,7 @@ src/app/features/reports/
 └── ...
 ```
 
-Esta disposición permite que `report-list` represente la pantalla principal de la ruta y que `selected-reports` sea un componente reutilizable usado desde otras vistas, como formularios de administración.
+Esta disposición permite que `report-list` represente la pantalla principal de la ruta y que `report-selected-list` sea un componente reutilizable usado desde otras vistas, como formularios de administración.
 
 ---
 

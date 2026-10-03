@@ -89,7 +89,7 @@ template/dashboard/src/app/
 ├── features/
 │   ├── reports/
 │   │   ├── components/
-│   │   │   └── selected-reports/
+│   │   │   └── report-selected-list/
 │   │   ├── pages/
 │   │   │   └── report-list/
 │   │   ├── services/
@@ -103,8 +103,8 @@ template/dashboard/src/app/
 
 En esta convención:
 
-- `pages/` agrupa pantallas o rutas principales de la feature.
-- `components/` contiene componentes reutilizables dentro de la misma feature.
+- `pages/` agrupa pantallas o rutas principales de la feature, como `report-list`.
+- `components/` contiene componentes reutilizables dentro de la misma feature, como `report-selected-list`.
 - `services/` centraliza llamadas a la API y lógica de acceso a datos.
 
 Esto mantiene la estructura Angular más clara y facilita la reutilización de componentes sin mezclar responsabilidades.
