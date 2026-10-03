@@ -82,12 +82,11 @@ describe('UserListComponent', () => {
   });
 
   describe('ngOnInit', () => {
-    it('should load users and profiles', () => {
+    it('should load users', () => {
       component.ngOnInit();
       expect(component.users()).toEqual([user]);
       expect(component.totalElements()).toBe(1);
       expect(component.totalPages()).toBe(1);
-      expect(component.profiles()).toEqual([{ id: 2, name: 'Admin' }]);
       expect(component.isLoading()).toBe(false);
     });
 

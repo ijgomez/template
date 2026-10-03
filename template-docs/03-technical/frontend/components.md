@@ -90,6 +90,11 @@ src/
             │   ├── selected-actions.component.html
             │   ├── selected-actions.component.scss
             │   └── index.ts
+            ├── profile-select/
+            │   ├── profile-select.component.ts
+            │   ├── profile-select.component.html
+            │   ├── profile-select.component.spec.ts
+            │   └── index.ts
             ├── modal/
             ├── card/
             ├── alert/
@@ -872,6 +877,90 @@ Para crear un componente similar (e.g. `tp-selected-profiles`):
 7. El valor del formulario siempre es `number[]` (array de IDs).
 8. Mantener la misma estetica (header, boton `btn-outline-primary`, lista `list-group-flush`, modal `modal-lg` con tabla paginada).
 9. Decidir si la paginacion es server-side (como reports) o client-side (como actions, cuando el dataset es pequeno).
+
+---
+
+## Selector de Perfil (`tp-profile-select`)
+
+Selector desplegable de un unico perfil de seguridad, implementado como `ControlValueAccessor` para integrarse directamente con formularios (template-driven y reactive). Encapsula el `<select>` de perfiles que antes se duplicaba en el filtro del listado de usuarios y en el formulario de usuario.
+
+**Selector:** `<tp-profile-select>`
+
+**Ubicacion:** `shared/components/profile-select/`
+
+### Concepto
+
+El componente:
+
+1. **Carga internamente la lista de perfiles** desde `UserService.getProfiles()` en `ngOnInit` (no depende del padre para obtener los datos).
+2. Renderiza un `<select class="form-select form-select-sm">` con una opcion de placeholder configurable y una opcion por cada perfil.
+3. Como `ControlValueAccessor`, escribe el **ID del perfil seleccionado** (`number | null`) como valor del formulario.
+
+Soporta dos estilos de opcion vacia mediante inputs, para cubrir sus dos usos:
+
+- **Formulario** (perfil obligatorio): placeholder deshabilitado y no seleccionable (`placeholderSelectable=false`, `required=true`).
+- **Filtro** (opcion "todos"): opcion vacia seleccionable que representa "sin filtro" (`placeholderSelectable=true`).
+
+### Inputs
+
+| Propiedad               | Tipo      | Defecto           | Descripcion                                                      |
+|-------------------------|-----------|-------------------|------------------------------------------------------------------|
+| `placeholderKey`        | `string`  | `''`              | Clave i18n de la opcion vacia/placeholder                        |
+| `placeholderSelectable` | `boolean` | `false`           | Si la opcion vacia es seleccionable (`true` en filtros, `false` en formularios) |
+| `required`              | `boolean` | `false`           | Anade el atributo `required` al `<select>`                       |
+| `name`                  | `string`  | `'profileId'`     | Atributo `name` del `<select>` (necesario dentro de forms template-driven) |
+| `ariaLabelKey`          | `string`  | `''`              | Clave i18n para el `aria-label` del `<select>`                   |
+| `testId`                | `string`  | `'profile-select'`| Valor de `data-testid` del `<select>`                            |
+
+### ControlValueAccessor
+
+- **Valor**: `number | null` — ID del perfil seleccionado (`null` cuando no hay seleccion o se elige la opcion vacia).
+- Compatible con `ngModel`, `formControlName` y `formControl`.
+- Soporta `setDisabledState` (deshabilita el `<select>`).
+
+### Accesibilidad
+
+- `aria-label` configurable via `ariaLabelKey` (traducido).
+- Atributo `required` reflejado en el `<select>` cuando `required=true`.
+
+### Nota sobre el modo solo lectura (view)
+
+El componente cubre los modos editables (crear/filtrar/editar). En el [formulario unificado](#formulario-unificado-create--edit--view) en modo `view`, el perfil se muestra como `<input readonly disabled>` con el nombre textual del perfil, siguiendo el patron general de "select → input readonly" descrito mas abajo; en ese caso no se usa `tp-profile-select`.
+
+### Ejemplo de uso (formulario, perfil obligatorio)
+
+```html
+<tp-profile-select
+  [ngModel]="formUser().profileId"
+  (ngModelChange)="updateField('profileId', $event)"
+  name="profileId"
+  [required]="true"
+  placeholderKey="users.form.selectProfile"
+  ariaLabelKey="users.fields.profile"
+  testId="select-profile">
+</tp-profile-select>
+```
+
+### Ejemplo de uso (filtro, opcion "todos")
+
+```html
+<tp-profile-select
+  [(ngModel)]="filterProfileId"
+  name="filterProfile"
+  placeholderKey="users.filters.allProfiles"
+  [placeholderSelectable]="true"
+  ariaLabelKey="users.fields.profile"
+  testId="filter-profile">
+</tp-profile-select>
+```
+
+### Claves de traduccion (i18n)
+
+Reutiliza claves existentes del namespace `users`, no define namespace propio:
+
+- `users.form.selectProfile` — placeholder del formulario ("Seleccione un perfil...").
+- `users.filters.allProfiles` — opcion "todos" del filtro ("Todos los perfiles").
+- `users.fields.profile` — texto del `aria-label`.
 
 ---
 

@@ -4,7 +4,8 @@ import { TranslatePipe } from '@ngx-translate/core';
 
 import { LocalDatePipe } from '../../../../../shared/pipes/local-date.pipe';
 import { TpSelectedReportsComponent } from '../../../../reports/selected-reports';
-import { UserDTO, ProfileRef } from '../../../../../core/models/user.model';
+import { TpProfileSelectComponent } from '../../../../../shared/components/profile-select';
+import { UserDTO } from '../../../../../core/models/user.model';
 
 type FormMode = 'create' | 'edit' | 'view';
 
@@ -15,7 +16,7 @@ type FormMode = 'create' | 'edit' | 'view';
 @Component({
   selector: 'app-user-form',
   standalone: true,
-  imports: [FormsModule, TranslatePipe, LocalDatePipe, TpSelectedReportsComponent],
+  imports: [FormsModule, TranslatePipe, LocalDatePipe, TpSelectedReportsComponent, TpProfileSelectComponent],
   templateUrl: './user-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -25,9 +26,6 @@ export class UserFormComponent implements OnInit {
 
   /** The initial user data to populate the form. */
   readonly user = input.required<UserDTO>();
-
-  /** Available profiles for the select dropdown. */
-  readonly profiles = input.required<ProfileRef[]>();
 
   /** Whether the current user has write permissions (used in view mode). */
   readonly canWrite = input<boolean>(false);

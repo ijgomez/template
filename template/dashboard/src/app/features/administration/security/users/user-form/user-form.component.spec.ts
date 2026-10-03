@@ -3,8 +3,9 @@ import { provideTranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 
 import { UserFormComponent } from './user-form.component';
-import { UserDTO, ProfileRef } from '../../../../../core/models/user.model';
+import { UserDTO } from '../../../../../core/models/user.model';
 import { ReportService } from '../../../../../core/services/report.service';
+import { UserService } from '../../../../../core/services/user.service';
 
 /** Builds a UserDTO with sensible defaults. */
 function buildUser(overrides: Partial<UserDTO> = {}): UserDTO {
@@ -24,11 +25,6 @@ function buildUser(overrides: Partial<UserDTO> = {}): UserDTO {
   };
 }
 
-const profiles: ProfileRef[] = [
-  { id: 10, name: 'Admin' },
-  { id: 20, name: 'User' },
-];
-
 describe('UserFormComponent', () => {
   let component: UserFormComponent;
   let fixture: ComponentFixture<UserFormComponent>;
@@ -39,7 +35,6 @@ describe('UserFormComponent', () => {
     component = fixture.componentInstance;
     fixture.componentRef.setInput('mode', mode);
     fixture.componentRef.setInput('user', user);
-    fixture.componentRef.setInput('profiles', profiles);
     fixture.componentRef.setInput('canWrite', canWrite);
     fixture.detectChanges(); // ngOnInit -> copies user into formUser
   }
@@ -50,11 +45,19 @@ describe('UserFormComponent', () => {
       search: vi.fn().mockReturnValue(of({ content: [], page: { size: 5, number: 0, totalElements: 0, totalPages: 1 } })),
     };
 
+    const userService = {
+      getProfiles: vi.fn().mockReturnValue(of([
+        { id: 10, name: 'Admin' },
+        { id: 20, name: 'User' },
+      ])),
+    };
+
     await TestBed.configureTestingModule({
       imports: [UserFormComponent],
       providers: [
         provideTranslateService({ lang: 'en', fallbackLang: 'en' }),
         { provide: ReportService, useValue: reportService },
+        { provide: UserService, useValue: userService },
       ],
     }).compileComponents();
   });

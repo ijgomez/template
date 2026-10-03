@@ -1,0 +1,17 @@
+<select class="form-select form-select-sm"
+        [ngModel]="selectedId()"
+        (ngModelChange)="onSelectionChange($event)"
+        [name]="name"
+        [required]="required"
+        [disabled]="disabled()"
+        [attr.aria-label]="ariaLabelKey ? (ariaLabelKey | translate) : null"
+        [attr.data-testid]="testId">
+  @if (placeholderSelectable) {
+    <option [ngValue]="null">{{ placeholderKey | translate }}</option>
+  } @else {
+    <option [ngValue]="null" disabled>{{ placeholderKey | translate }}</option>
+  }
+  @for (profile of profiles(); track profile.id) {
+    <option [ngValue]="profile.id">{{ profile.name }}</option>
+  }
+</select>

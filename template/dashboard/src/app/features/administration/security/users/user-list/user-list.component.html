@@ -35,17 +35,14 @@
       </div>
       <div class="col-md-3">
         <label for="filterProfile" class="form-label">{{ 'users.fields.profile' | translate }}</label>
-        <select id="filterProfile"
-                class="form-select form-select-sm"
-                [(ngModel)]="filterProfileId"
-                name="filterProfile"
-                [attr.aria-label]="'users.fields.profile' | translate"
-                data-testid="filter-profile">
-          <option [ngValue]="null">{{ 'users.filters.allProfiles' | translate }}</option>
-          @for (profile of profiles(); track profile.id) {
-            <option [ngValue]="profile.id">{{ profile.name }}</option>
-          }
-        </select>
+        <tp-profile-select
+          [(ngModel)]="filterProfileId"
+          name="filterProfile"
+          placeholderKey="users.filters.allProfiles"
+          [placeholderSelectable]="true"
+          ariaLabelKey="users.fields.profile"
+          testId="filter-profile">
+        </tp-profile-select>
       </div>
       <div class="col-12 d-flex justify-content-end gap-2 mt-2">
         <button type="submit"
@@ -134,7 +131,6 @@
   <app-user-form
     [mode]="formMode()"
     [user]="formUser()"
-    [profiles]="profiles()"
     [canWrite]="canWrite()"
     (cancel)="backToList()"
     (edit)="showEditForm($event)"
@@ -148,7 +144,6 @@
   <app-user-form
     [mode]="formMode()"
     [user]="formUser()"
-    [profiles]="profiles()"
     (save)="saveUser($event)"
     (cancel)="backToList()" />
 }

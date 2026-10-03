@@ -134,19 +134,15 @@
           <label for="profileId" class="form-label form-label-sm mb-1">
             {{ 'users.fields.profile' | translate }} <span class="text-danger">*</span>
           </label>
-          <select id="profileId"
-                  class="form-select form-select-sm"
-                  [ngModel]="formUser().profileId"
-                  (ngModelChange)="updateField('profileId', $event)"
-                  name="profileId"
-                  required
-                  [attr.aria-label]="'users.fields.profile' | translate"
-                  data-testid="select-profile">
-            <option [ngValue]="null" disabled>{{ 'users.form.selectProfile' | translate }}</option>
-            @for (profile of profiles(); track profile.id) {
-              <option [ngValue]="profile.id">{{ profile.name }}</option>
-            }
-          </select>
+          <tp-profile-select
+            [ngModel]="formUser().profileId"
+            (ngModelChange)="updateField('profileId', $event)"
+            name="profileId"
+            [required]="true"
+            placeholderKey="users.form.selectProfile"
+            ariaLabelKey="users.fields.profile"
+            testId="select-profile">
+          </tp-profile-select>
         }
       </div>
     </div>
