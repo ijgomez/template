@@ -1,4 +1,5 @@
-import { Component, ChangeDetectionStrategy, computed, input, output, signal, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, ChangeDetectionStrategy, computed, effect, input, output, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -15,7 +16,7 @@ type FormMode = 'create' | 'edit' | 'view';
 @Component({
   selector: 'app-profile-form',
   standalone: true,
-  imports: [FormsModule, TranslatePipe, LocalDatePipe, TpSelectedActionsComponent],
+  imports: [CommonModule, FormsModule, TranslatePipe, LocalDatePipe, TpSelectedActionsComponent],
   templateUrl: './profile-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -47,9 +48,30 @@ export class ProfileFormComponent implements OnInit {
   /** Whether the form is in readonly mode. */
   readonly isReadonly = computed(() => this.mode() === 'view');
 
+  /** Whether the form is invalid for save in create/edit modes. */
+  readonly isSaveDisabled = computed(() => {
+    if (this.isReadonly()) {
+      return true;
+    }
+
+    const name = this.formProfile().name?.trim() ?? '';
+    return !name;
+  });
+
   // Internal form state
   readonly formProfile = signal<Profile>({ id: null, name: '', description: '', actions: [] });
   readonly selectedActionIds = signal<number[]>([]);
+
+  constructor() {
+    effect(() => {
+      const profile = this.profile();
+      this.formProfile.set({ ...profile });
+    });
+
+    effect(() => {
+      this.selectedActionIds.set([...this.actionIds()]);
+    });
+  }
 
   ngOnInit(): void {
     this.formProfile.set({ ...this.profile() });
@@ -62,7 +84,7 @@ export class ProfileFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.isReadonly()) return;
+    if (this.isReadonly() || this.isSaveDisabled()) return;
     this.save.emit({
       profile: this.formProfile(),
       actionIds: this.selectedActionIds(),

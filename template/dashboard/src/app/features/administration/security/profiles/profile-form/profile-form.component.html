@@ -45,9 +45,11 @@
         <input id="profileName"
                type="text"
                class="form-control form-control-sm"
+               [ngClass]="{ 'is-invalid': profileName.invalid && (profileName.dirty || profileName.touched) }"
                [ngModel]="formProfile().name"
                (ngModelChange)="updateField('name', $event)"
                name="profileName"
+               #profileName="ngModel"
                [required]="!isReadonly()"
                [readonly]="isReadonly()"
                [disabled]="isReadonly()"
@@ -127,6 +129,7 @@
         </button>
         <button type="submit"
                 class="btn btn-primary btn-sm"
+                [disabled]="isSaveDisabled()"
                 data-testid="btn-save">
           <i class="bi bi-check-lg me-1" aria-hidden="true"></i> {{ 'button.save' | translate }}
         </button>
