@@ -44,14 +44,19 @@
         <input id="paramCode"
                type="text"
                class="form-control form-control-sm"
+               [ngClass]="{ 'is-invalid': (code.invalid && (code.dirty || code.touched)) || codeExistsError() }"
                [ngModel]="formData().code"
                (ngModelChange)="updateField('code', $event)"
                name="paramCode"
+               #code="ngModel"
                [required]="!isReadonly()"
                [readonly]="isReadonly() || mode() === 'edit'"
                [disabled]="isReadonly()"
                [attr.aria-label]="'parameters.fields.code' | translate"
                data-testid="input-code">
+        @if (!isReadonly() && codeExistsError()) {
+          <div class="invalid-feedback d-block">{{ codeExistsError() }}</div>
+        }
       </div>
       <div class="col-md-4">
         <label for="paramType" class="form-label form-label-sm mb-1">
@@ -90,10 +95,11 @@
         <input id="paramValue"
                type="text"
                class="form-control form-control-sm"
-               [class.is-invalid]="!isReadonly() && typeValueError()"
+               [class.is-invalid]="(!isReadonly() && (paramValue.invalid && (paramValue.dirty || paramValue.touched))) || (!isReadonly() && typeValueError())"
                [ngModel]="formData().value"
                (ngModelChange)="updateField('value', $event)"
                name="paramValue"
+               #paramValue="ngModel"
                [required]="!isReadonly()"
                [readonly]="isReadonly()"
                [disabled]="isReadonly()"
@@ -164,6 +170,7 @@
         </button>
         <button type="submit"
                 class="btn btn-primary btn-sm"
+                [disabled]="isSaveDisabled()"
                 data-testid="parameter-form-btn-save">
           <i class="bi bi-check-lg me-1" aria-hidden="true"></i> {{ 'button.save' | translate }}
         </button>

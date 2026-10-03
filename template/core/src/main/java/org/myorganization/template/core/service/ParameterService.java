@@ -46,14 +46,15 @@ public class ParameterService extends AbstractCriteriaService<Parameter, Paramet
      * @throws ValidationException      if the value is incompatible with the type
      */
     public ParameterDTO create(ParameterDTO dto) {
-        if (parameterRepository.existsByCode(dto.code())) {
-            throw new DuplicateEntityException("Parameter", "code", dto.code());
+        String normalizedCode = normalizeCode(dto.code());
+        if (parameterRepository.existsByCode(normalizedCode)) {
+            throw new DuplicateEntityException("Parameter", "code", normalizedCode);
         }
 
         validateTypeValueCompatibility(dto.type(), dto.value());
 
         Parameter entity = new Parameter();
-        entity.setCode(dto.code());
+        entity.setCode(normalizedCode);
         entity.setDescription(dto.description());
         entity.setValue(dto.value());
         entity.setType(dto.type());
@@ -92,8 +93,14 @@ public class ParameterService extends AbstractCriteriaService<Parameter, Paramet
         Parameter entity = parameterRepository.findByCode(code)
                 .orElseThrow(() -> new EntityNotFoundException("Parameter", code));
 
+        String normalizedCode = normalizeCode(dto.code());
+        if (!entity.getCode().equals(normalizedCode) && parameterRepository.existsByCode(normalizedCode)) {
+            throw new DuplicateEntityException("Parameter", "code", normalizedCode);
+        }
+
         validateTypeValueCompatibility(dto.type(), dto.value());
 
+        entity.setCode(normalizedCode);
         entity.setDescription(dto.description());
         entity.setValue(dto.value());
         entity.setType(dto.type());
@@ -157,6 +164,10 @@ public class ParameterService extends AbstractCriteriaService<Parameter, Paramet
                 // Any value is valid for STRING type
             }
         }
+    }
+
+    private String normalizeCode(String code) {
+        return code == null ? null : code.trim();
     }
 
     private boolean isValidIso8601Date(String value) {

@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideTranslateService } from '@ngx-translate/core';
+import { of } from 'rxjs';
 
+import { ParameterService } from '../../../../core/services/parameter.service';
 import { ParameterFormComponent } from './parameter-form.component';
 import { Parameter, ParameterType } from '../../../../core/models/parameter.model';
 
@@ -48,6 +50,40 @@ describe('ParameterFormComponent', () => {
     expect(component.formData().code).toBe('ABC');
     expect(component.formData().value).toBe('42');
     expect(component.formData()).not.toBe(parameter);
+  });
+
+  it('should sync updated input parameter values after the component is initialized', () => {
+    const first = buildParameter({ code: 'FIRST', value: '1', type: 'INTEGER' });
+    const second = buildParameter({ code: 'SECOND', value: '2', type: 'INTEGER' });
+
+    setup('edit', first);
+    fixture.componentRef.setInput('parameter', second);
+    fixture.detectChanges();
+
+    expect(component.formData().code).toBe('SECOND');
+    expect(component.formData().value).toBe('2');
+  });
+
+  it('should disable save when required code is empty or the typed value is invalid', () => {
+    setup('create', buildParameter({ code: '', value: 'abc', type: 'INTEGER' }));
+    expect(component.isSaveDisabled()).toBe(true);
+
+    component.updateField('code', 'TOKEN');
+    expect(component.isSaveDisabled()).toBe(true);
+
+    component.updateField('value', '123');
+    expect(component.isSaveDisabled()).toBe(false);
+  });
+
+  it('should block save when the code already exists in the database', () => {
+    const parameterService = TestBed.inject(ParameterService);
+    vi.spyOn(parameterService, 'countByCriteria').mockReturnValue(of(1));
+
+    setup('create', buildParameter({ code: '' }));
+    component.updateField('code', 'EXISTING');
+
+    expect(component.codeExistsError()).toBe('Code already exists in the database');
+    expect(component.isSaveDisabled()).toBe(true);
   });
 
   describe('isReadonly', () => {

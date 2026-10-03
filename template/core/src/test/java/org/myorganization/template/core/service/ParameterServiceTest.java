@@ -111,6 +111,21 @@ class ParameterServiceTest {
         }
 
         @Test
+        @DisplayName("updating to an existing code throws DuplicateEntityException")
+        void update_conflictingCode_throwsDuplicateEntityException() {
+            Parameter current = createParameterEntity("CURRENT", "Current", "value", ParameterType.STRING);
+            ParameterDTO dto = new ParameterDTO(1L, "APP_NAME", "Updated", "value", ParameterType.STRING, null, null);
+
+            when(parameterRepository.findByCode("CURRENT")).thenReturn(Optional.of(current));
+            when(parameterRepository.existsByCode("APP_NAME")).thenReturn(true);
+
+            assertThatThrownBy(() -> parameterService.update("CURRENT", dto))
+                    .isInstanceOf(DuplicateEntityException.class);
+
+            verify(parameterRepository, never()).save(any());
+        }
+
+        @Test
         @DisplayName("invalid INTEGER value throws ValidationException")
         void create_invalidIntegerValue_throwsValidationException() {
             ParameterDTO dto = new ParameterDTO(null, "MAX_RETRIES", "Max retries", "abc", ParameterType.INTEGER, null, null);

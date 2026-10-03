@@ -292,7 +292,8 @@
     "validation": {
       "integer": "Value must be a valid integer",
       "boolean": "Value must be \"true\" or \"false\"",
-      "date": "Value must be a valid ISO 8601 date"
+      "date": "Value must be a valid ISO 8601 date",
+      "codeExists": "Code already exists in the database"
     },
     "pagination": {
       "label": "Parameters pagination"

@@ -40,10 +40,11 @@ Identificadores locales de este documento: `RF-PAR-*` (requisitos funcionales) y
 **Descripción:** un usuario con permiso de escritura debe poder crear parámetros con clave única, tipo y valor válidos.
 
 **Criterios de aceptación:**
-- AC3.1: El formulario exige código y tipo.
+- AC3.1: El formulario exige código y tipo, y deshabilita el guardado mientras falten campos obligatorios o el valor no sea válido para el tipo seleccionado.
 - AC3.2: El valor es obligatorio en el alta y debe ser compatible con el tipo seleccionado.
-- AC3.3: El código debe ser único dentro del sistema.
-- AC3.4: Una creación válida devuelve 201 y el nuevo parámetro aparece en el listado.
+- AC3.3: El código debe ser único dentro del sistema, tanto en alta como en edición.
+- AC3.4: Si el usuario limpia un campo obligatorio, el formulario lo marca como inválido y no permite guardar.
+- AC3.5: Una creación válida devuelve 201 y el nuevo parámetro aparece en el listado.
 
 #### RF-PAR-4: Edición de parámetro
 
@@ -52,7 +53,8 @@ Identificadores locales de este documento: `RF-PAR-*` (requisitos funcionales) y
 **Criterios de aceptación:**
 - AC4.1: El código es de solo lectura en edición porque identifica la entidad de forma inmutable.
 - AC4.2: El valor se valida de nuevo según el tipo seleccionado.
-- AC4.3: Una edición válida devuelve 200 y el cambio se refleja en el listado.
+- AC4.3: Si el código se intenta cambiar a uno ya existente en otra entidad, el backend devuelve un error de conflicto y la operación queda bloqueada.
+- AC4.4: Una edición válida devuelve 200 y el cambio se refleja en el listado.
 
 #### RF-PAR-5: Eliminación de parámetro
 
@@ -236,10 +238,11 @@ La pantalla de parámetros usa `List screen` para la consulta, `Form screen` par
 
 | Campo | Regla |
 |-------|-------|
-| Código | Obligatorio, único y no modificable en edición |
+| Código | Obligatorio, único y no modificable en edición; si se borra, el campo se marca como inválido y el botón Guardar queda deshabilitado |
 | Tipo | Obligatorio; permitido únicamente por el enum `ParameterType` |
 | Valor | Requerido y validado con el tipo; por ejemplo, `true`/`false` para booleanos |
 | Descripción | Opcional, permite explicar la finalidad del parámetro |
+| Unicidad | El backend rechaza duplicados con `409 Conflict` tanto en alta como en edición |
 
 ### 2.6. Validaciones de negocio en backend
 
@@ -249,8 +252,9 @@ Los parámetros se validan no solo en el formulario, sino también en la capa de
 - `INTEGER`: el valor debe poder convertirse con `Integer.parseInt`.
 - `BOOLEAN`: solo admite `true` o `false` en minúsculas.
 - `DATE`: requiere un valor ISO 8601 válido (fecha, fecha-hora o fecha con offset).
+- `code`: debe ser único en base de datos; la comprobación se ejecuta en creación y actualización y compara con otra entidad distinta para evitar falsos positivos cuando se edita el mismo registro.
 
-La regla se implementa en `ParameterService.validateTypeValueCompatibility(...)` y se ejecuta tanto en alta como en edición.
+La regla se implementa en `ParameterService.validateTypeValueCompatibility(...)` y en la comprobación de unicidad del servicio, que se ejecuta tanto en alta como en edición.
 
 ### 2.7. Diagramas
 
@@ -378,6 +382,8 @@ Ruta base: `/api/v1/administration/parameters`.
 - El tipo debe pertenecer al enum `STRING`, `INTEGER`, `BOOLEAN` o `DATE` y el valor debe ser compatible con ese tipo antes de persistir.
 - La descripción es opcional, pero si se informa debe incorporar texto descriptivo válido y compatible con la longitud y formato del backend.
 - La validación de compatibilidad se repite tanto en frontend como en servicio para evitar inconsistencias.
+- El formulario marca visualmente los campos obligatorios como inválidos al vaciarlos y bloquea el envío con `save` deshabilitado hasta que el formulario es válido.
+- La comprobación de unicidad del `code` se realiza también en backend para rechazar conflictos de código duplicado con `409 Conflict` en creación y edición.
 
 ### 3.5. Exportación
 
