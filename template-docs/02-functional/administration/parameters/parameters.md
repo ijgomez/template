@@ -458,12 +458,11 @@ Definidos en `dashboard/e2e/fixtures/test-data.ts`: `testUsers.valid` (credencia
 
 ## Referencias
 
+- [Requisitos](../../../specification/requirements.md)
+- [Glosario](../../../specification/glossary.md)
+- [Modelo de datos](../../../specification/data-model.md)
+- [Módulo Administración](../administration.md)
 - [Autenticación y Gestión de Sesión](../../login/authentication.md)
-- [Login](../../login/login.md)
-- [Requisitos de la aplicación](../../../specification/requirements.md)
-- [Modelo de datos funcional](../../../specification/data-model.md)
-- [Seguridad backend](../../../03-technical/backend/security.md)
-- [Componentes frontend](../../../03-technical/frontend/components.md)
-- [API backend](../../../03-technical/backend/api.md)
-- [layout.md](../../../03-technical/frontend/layout.md)
-- [design-system.md](../../../03-technical/frontend/design-system.md)
+- [Seguridad (backend)](../../../03-technical/backend/security.md)
+- [API (backend)](../../../03-technical/backend/api.md)
+- [Diseño (frontend)](../../../03-technical/frontend/design-system.md)

@@ -405,10 +405,11 @@ Los datos semilla de backend para registros de auditoría se encuentran en `doma
 
 ## Referencias
 
+- [Requisitos](../../../specification/requirements.md)
+- [Glosario](../../../specification/glossary.md)
+- [Modelo de datos](../../../specification/data-model.md)
+- [Módulo Administración](../administration.md)
 - [Autenticación y Gestión de Sesión](../../login/authentication.md)
-- [Requisitos de la aplicación](../../../specification/requirements.md)
-- [Modelo de datos funcional](../../../specification/data-model.md)
-- [Seguridad backend](../../../03-technical/backend/security.md)
-- [API backend](../../../03-technical/backend/api.md)
-- [Navegación frontend](../../../03-technical/frontend/navigation.md)
-- [Componentes frontend](../../../03-technical/frontend/components.md)
+- [Seguridad (backend)](../../../03-technical/backend/security.md)
+- [API (backend)](../../../03-technical/backend/api.md)
+- [Diseño (frontend)](../../../03-technical/frontend/design-system.md)

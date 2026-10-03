@@ -2,19 +2,20 @@
 
 Documentación funcional del módulo de Cluster dentro de Administración. Gestiona la alta disponibilidad de la aplicación: instancias registradas, salud operativa, designación de nodo maestro y trazabilidad de bloqueos distribuidos.
 
-## Módulos
-
-- [Nodos del Cluster](./cluster-nodes.md)
-- [Bloqueos del Cluster](./cluster-blocks.md)
-
-## Descripción
-
 Estos documentos describen el comportamiento funcional y técnico de las pantallas del área de Cluster dentro de Administración:
 
 - consulta y designación controlada de nodos del cluster,
 - consulta de bloqueos (locks) distribuidos y sus métricas históricas de ejecución.
 
 El módulo de Cluster se apoya en tareas clusterizadas y un servicio de locks a doble nivel (intra-instancia e inter-instancia) para garantizar exclusión mutua entre hilos y entre nodos conectados a la misma base de datos.
+
+## Conceptos clave
+
+| Concepto | Descripción |
+|-----------|---------|
+|  |  |
+
+
 
 ## Modelo de entidades
 
@@ -75,13 +76,31 @@ classDiagram
 - Un `ClusterBlock` se crea automáticamente la primera vez que se adquiere un lock sobre un nombre de tarea; en cada liberación se actualizan sus métricas acumuladas.
 - Los bloqueos se componen de `ReentrantLock` intra-instancia y `pg_advisory_lock` inter-instancia, usando la hora de la base de datos para evitar desviaciones de reloj entre nodos.
 
-### Permisos del módulo
+## Seguridad
 
 - `CLUSTER_NODE_READ` / `CLUSTER_NODE_WRITE`: lectura y designación de nodo maestro.
 - `CLUSTER_LOCK_READ`: consulta de bloqueos y exportación CSV.
 - Las escrituras públicas sobre bloqueos no existen: su gestión es exclusiva del servicio de cluster.
 
-### Documentación asociada
+## Navegación
 
-- [Nodos del Cluster](./cluster-nodes.md)
-- [Bloqueos del Cluster](./cluster-blocks.md)
+```
+Administración > Cluster > Nodos del Cluster
+Administración > Cluster > Bloqueos del Cluster
+```
+
+## Pantallas
+
+| Pantalla | Tipo | Descripción |
+|---------------|-------------|-----------|
+| [Nodos del Cluster](./cluster-nodes.md) | Pagina |  |
+| [Bloqueos del Cluster](./cluster-blocks.md) | Pagina |  |
+
+## Referencias
+
+- [Requisitos](../../../specification/requirements.md)
+- [Glosario](../../../specification/glossary.md)
+- [Modelo de datos](../../../specification/data-model.md)
+- [Autenticación y Gestión de Sesión](../../login/authentication.md)
+- [Seguridad (backend)](../../../03-technical/backend/security.md)
+- [Módulo Administración](../administration.md)

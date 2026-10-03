@@ -1,20 +1,17 @@
 # Seguridad
 
-Documentación funcional de los módulos de administración y seguridad.
-
-## Módulos
-
-- [Usuarios](./users.md)
-- [Perfiles](./profiles.md)
-- [Acciones](./actions.md)
-
-## Descripción
-
-Estos documentos describen el comportamiento funcional y técnico de las pantallas del área de Seguridad dentro de Administración:
+Documentación funcional de los módulos de administración y seguridad. Estos documentos describen el comportamiento funcional y técnico de las pantallas del área de Seguridad dentro de Administración:
 
 - gestión de usuarios,
 - gestión de perfiles,
 - catálogo de acciones y permisos del sistema.
+
+## Conceptos clave
+
+| Concepto | Descripción |
+|-----------|---------|
+|  |  |
+
 
 ## Modelo de entidades
 
@@ -58,8 +55,31 @@ classDiagram
 - Una acción se reutiliza como permiso a nivel funcional en la autorización del sistema.
 - El catálogo de acciones se gestiona como conjunto semilla, no como CRUD abierto para creación o borrado.
 
-### Documentación asociada
+## Seguridad
 
-- [Usuarios](./users.md)
-- [Perfiles](./profiles.md)
-- [Acciones](./actions.md)
+Permisos principales del módulo:
+
+## Navegación
+
+```
+Administración > Seguridad > Acciones
+Administración > Seguridad > Perfiles
+Administración > Seguridad > Usuarios
+```
+
+## Pantallas
+
+| Pantalla | Tipo | Descripción |
+|---------------|-------------|-----------|
+| [Usuarios](./users.md) | Pagina |  |
+| [Perfiles](./profiles.md) | Pagina |  |
+| [Acciones](./actions.md) | Pagina |  |
+
+## Referencias
+
+- [Requisitos](../../../specification/requirements.md)
+- [Glosario](../../../specification/glossary.md)
+- [Modelo de datos](../../../specification/data-model.md)
+- [Autenticación y Gestión de Sesión](../../login/authentication.md)
+- [Seguridad (backend)](../../../03-technical/backend/security.md)
+- [Módulo Administración](../administration.md)

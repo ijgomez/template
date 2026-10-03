@@ -412,10 +412,11 @@ Los datos semilla de backend para registros de interfaces se encuentran en `doma
 
 ## Documentación relacionada
 
-- [Módulo Interfaces (Visión General)](../interfaces.md)
-- [Configuración de Interfaces](../configuration/configuration.md)
+- [Requisitos](../../../specification/requirements.md)
+- [Glosario](../../../specification/glossary.md)
+- [Modelo de datos](../../../specification/data-model.md)
+- [Módulo Interfaces](../interfaces.md)
 - [Autenticación y Gestión de Sesión](../../login/authentication.md)
-- [Navegación del Sistema](../../03-technical/frontend/navigation.md)
-- [API REST Backend](../../03-technical/backend/api.md)
-- [Seguridad y Permisos](../../03-technical/backend/security.md)
-- [Requisitos de la Aplicación](../../specification/requirements.md)
+- [Seguridad (backend)](../../../03-technical/backend/security.md)
+- [API (backend)](../../../03-technical/backend/api.md)
+- [Diseño (frontend)](../../../03-technical/frontend/design-system.md)

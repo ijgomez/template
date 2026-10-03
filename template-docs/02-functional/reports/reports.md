@@ -378,9 +378,10 @@ Los datos semilla para informes y asignaciones al usuario administrador se encue
 
 ## Documentación relacionada
 
-- [Glosario (ReportService)](../../specification/glossary.md)
-- [Modelo de datos (Informe)](../../specification/data-model.md)
-- [Acciones de seguridad (REPORT_EXECUTE)](../administration/security/actions.md)
-- [Usuarios (asignación de informes)](../administration/security/users.md)
-- [Navegación (menú "Informes")](../../03-technical/frontend/navigation.md)
-- [API REST de informes](../../03-technical/backend/api.md)
+- [Requisitos](../../specification/requirements.md)
+- [Glosario](../../specification/glossary.md)
+- [Modelo de datos](../../specification/data-model.md)
+- [Autenticación y Gestión de Sesión](../login/authentication.md)
+- [Seguridad (backend)](../../03-technical/backend/security.md)
+- [API (backend)](../../03-technical/backend/api.md)
+- [Diseño (frontend)](../../03-technical/frontend/design-system.md)

@@ -269,7 +269,9 @@ Ruta base de autenticación: `/api/v1/auth`.
 
 ## Referencias
 
-- [Login (pantalla de inicio de sesión)](login.md)
+- [Requisitos](../../specification/requirements.md)
+- [Glosario](../../specification/glossary.md)
+- [Modelo de datos](../../specification/data-model.md)
 - [Seguridad backend](../../03-technical/backend/security.md)
 - [Entornos](../../04-development/environments.md)
-- [Descripción del producto y especificación](../../specification/requirements.md)
+- [Login (pantalla de inicio de sesión)](login.md)

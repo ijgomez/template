@@ -1,70 +1,42 @@
 # Interfaces
 
-## Introducción
-
 El módulo **Interfaces** es un módulo funcional de primer nivel que agrupa toda la funcionalidad relacionada con la supervisión e integración de la aplicación con sistemas externos.
 
 Su objetivo es proporcionar al administrador una visión unificada del estado de las interfaces, su actividad y su configuración, facilitando la detección de problemas de conectividad y garantizando la disponibilidad de las integraciones.
 
----
+## Conceptos clave
 
-## Estructura del módulo
+| Concepto | Descripción |
+|-----------|---------|
+|  |  |
 
-El módulo se organiza en dos secciones:
+## Modelo de entidades
 
-| Sección        | Descripción                                                                                      |
-|----------------|--------------------------------------------------------------------------------------------------|
-| Monitor        | Panel de actividad de las interfaces: trazabilidad de operaciones de entrada/salida, estados y payloads. |
-| Configuración  | Listado de interfaces registradas con su estado actual y detalle de cada interfaz.                |
+### Relación de negocio
 
----
-
-## Navegación
-
-El módulo Interfaces aparece como menú desplegable de primer nivel en el sidebar, al mismo nivel que Informes y Administración.
-
-```text
-Interfaces ▾
-├── Monitor
-└── Configuración
-```
-
----
-
-## Secciones
-
-### Monitor
-
-Proporciona un panel de supervisión de la actividad de las interfaces. Permite al administrador:
-
-- Consultar el registro de todas las operaciones realizadas (entrada y salida).
-- Filtrar por rango de fechas, tipo de operación (IN, OUT), interfaz y estado (SUCCESS, ERROR).
-- Consultar el detalle de una operación concreta (timestamp, tipo, interfaz, payload de petición, payload de respuesta, estado).
-- Paginación del lado del servidor.
-
-Más detalle en [monitor/monitor.md](monitor/monitor.md).
-
-### Configuración
-
-Proporciona la vista de las interfaces registradas en el sistema. Permite al administrador:
-
-- Visualizar el estado consolidado de todas las interfaces con indicadores visuales (verde=activa, rojo=error, gris=inactiva).
-- Consultar el detalle de una interfaz (nombre, descripción, URL, protocolo, frecuencia de verificación).
-- Solo lectura: no se permite crear, editar ni eliminar interfaces desde la interfaz de usuario.
-
-Más detalle en [configuration/configuration.md](configuration/configuration.md).
-
----
-
-## Permisos
+## Seguridad
 
 El acceso al módulo Interfaces está controlado por el sistema de acciones del perfil del usuario. Solo los usuarios con las acciones correspondientes pueden visualizar las opciones del menú y acceder a las pantallas.
 
----
+## Navegación
 
-## Documentación relacionada
+```
+Interfaces > Monitor
+Interfaces > Configuración
+```
 
-- [Monitor](monitor/monitor.md)
-- [Configuración](configuration/configuration.md)
-- [Navegación](../../03-technical/frontend/navigation.md)
-- [API de Interfaces](../../03-technical/backend/api.md)
+## Pantallas
+
+| Pantalla | Tipo | Descripción |
+|---------------|-------------|-----------|
+| [Monitor](./monitor/monitor.md) | Pagina | Panel de actividad de las interfaces: trazabilidad de operaciones de entrada/salida, estados y payloads. |
+| [Configuración](./configuration/configuration.md) | Pagina | Listado de interfaces registradas con su estado actual y detalle de cada interfaz. |
+
+## Referencias
+
+- [Requisitos](../../specification/requirements.md)
+- [Glosario](../../specification/glossary.md)
+- [Modelo de datos](../../specification/data-model.md)
+- [Autenticación y Gestión de Sesión](../login/authentication.md)
+- [Seguridad (backend)](../../03-technical/backend/security.md)
+

@@ -402,12 +402,11 @@ Los registros de `cluster_block` no se cargan mediante datos semilla: se generan
 
 ## Referencias
 
-- [Autenticación y Gestión de Sesión](../../login/authentication.md)
-- [Requisitos de la aplicación](../../../specification/requirements.md)
-- [Modelo de datos funcional](../../../specification/data-model.md)
+- [Requisitos](../../../specification/requirements.md)
 - [Glosario](../../../specification/glossary.md)
-- [Seguridad backend](../../../03-technical/backend/security.md)
-- [API backend](../../../03-technical/backend/api.md)
-- [Navegación frontend](../../../03-technical/frontend/navigation.md)
-- [Componentes frontend](../../../03-technical/frontend/components.md)
-- [Nodos del Cluster](cluster-nodes.md)
+- [Modelo de datos](../../../specification/data-model.md)
+- [Módulo Cluster](./cluster.md)
+- [Autenticación y Gestión de Sesión](../../login/authentication.md)
+- [Seguridad (backend)](../../../03-technical/backend/security.md)
+- [API (backend)](../../../03-technical/backend/api.md)
+- [Diseño (frontend)](../../../03-technical/frontend/design-system.md)

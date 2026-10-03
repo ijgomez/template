@@ -411,11 +411,11 @@ Los nodos del cluster se registran automáticamente al arrancar la aplicación; 
 
 ## Referencias
 
-- [Autenticación y Gestión de Sesión](../../login/authentication.md)
-- [Requisitos de la aplicación](../../../specification/requirements.md)
-- [Modelo de datos funcional](../../../specification/data-model.md)
+- [Requisitos](../../../specification/requirements.md)
 - [Glosario](../../../specification/glossary.md)
-- [Seguridad backend](../../../03-technical/backend/security.md)
-- [API backend](../../../03-technical/backend/api.md)
-- [Navegación frontend](../../../03-technical/frontend/navigation.md)
-- [Componentes frontend](../../../03-technical/frontend/components.md)
+- [Modelo de datos](../../../specification/data-model.md)
+- [Módulo Cluster](./cluster.md)
+- [Autenticación y Gestión de Sesión](../../login/authentication.md)
+- [Seguridad (backend)](../../../03-technical/backend/security.md)
+- [API (backend)](../../../03-technical/backend/api.md)
+- [Diseño (frontend)](../../../03-technical/frontend/design-system.md)
