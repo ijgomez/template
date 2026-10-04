@@ -78,17 +78,23 @@ export class NodeJobsComponent implements OnInit {
   /** Whether a new task can be assigned. */
   readonly canAssign = computed(() => this.assignableTasks().length > 0 && this.canWrite);
 
+  /** Whether the priority field is invalid (required and must be >= 0). */
+  readonly isPriorityInvalid = computed(() => {
+    const trimmed = this.formData().priority.trim();
+    if (trimmed === '') {
+      return true;
+    }
+    const value = Number(trimmed);
+    return Number.isNaN(value) || value < 0;
+  });
+
   /** Whether the save action in the modal must be disabled. */
   readonly isSaveDisabled = computed(() => {
     const form = this.formData();
     if (this.modalMode() === 'assign' && form.clusterTaskId === null) {
       return true;
     }
-    const trimmed = form.priority.trim();
-    if (trimmed !== '' && Number(trimmed) < 0) {
-      return true;
-    }
-    return false;
+    return this.isPriorityInvalid();
   });
 
   // Column definitions for tp-data-table
@@ -194,7 +200,7 @@ export class NodeJobsComponent implements OnInit {
       return;
     }
 
-    const priority = form.priority.trim() === '' ? null : Number(form.priority);
+    const priority = Number(form.priority.trim());
     const nodeId = this.nodeId();
     const job: ClusterJob = {
       clusterNodeId: nodeId,

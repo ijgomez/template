@@ -69,14 +69,14 @@ public class ClusterJobService {
      * <p>
      * The {@code clusterNodeId} of the body is ignored; the node is always taken from
      * the path. The {@code clusterTaskId} is required and the task must exist. If the
-     * job already exists a {@link DuplicateEntityException} is raised. Priority, if
-     * provided, must be {@code >= 0}; {@code enabled} defaults to {@code true}.
+     * job already exists a {@link DuplicateEntityException} is raised. {@code priority}
+     * is required and must be {@code >= 0}; {@code enabled} is required.
      *
      * @param nodeId the node identifier (from path)
      * @param dto    the job data
      * @return the created job as a DTO
      * @throws EntityNotFoundException  if the node or task does not exist
-     * @throws ValidationException      if clusterTaskId is null or priority is negative
+     * @throws ValidationException      if clusterTaskId is null, priority is null or negative, or enabled is null
      * @throws DuplicateEntityException if the job already exists
      */
     @Transactional
@@ -88,6 +88,7 @@ public class ClusterJobService {
             throw new ValidationException("clusterTaskId is required");
         }
         validatePriority(dto.priority());
+        validateEnabled(dto.enabled());
 
         ClusterTask task = clusterTaskRepository.findById(taskId)
                 .orElseThrow(() -> new EntityNotFoundException("ClusterTask", taskId));
@@ -101,7 +102,7 @@ public class ClusterJobService {
         job.setClusterNode(node);
         job.setClusterTask(task);
         job.setPriority(dto.priority());
-        job.setEnabled(dto.enabled() == null ? Boolean.TRUE : dto.enabled());
+        job.setEnabled(dto.enabled());
 
         ClusterJob saved = clusterJobRepository.save(job);
 
@@ -116,15 +117,15 @@ public class ClusterJobService {
      * Updates an existing job (priority and/or enabled flag) for a node.
      * <p>
      * The {@code clusterNodeId} of the body is ignored. The {@code clusterTaskId}, if
-     * present, must match the path {@code taskId}. Priority, if provided, must be
-     * {@code >= 0}; {@code enabled} is required.
+     * present, must match the path {@code taskId}. {@code priority} is required and must
+     * be {@code >= 0}; {@code enabled} is required.
      *
      * @param nodeId the node identifier (from path)
      * @param taskId the task identifier (from path)
      * @param dto    the job data
      * @return the updated job as a DTO
      * @throws EntityNotFoundException if the node or job does not exist
-     * @throws ValidationException     if clusterTaskId mismatches, priority is negative or enabled is null
+     * @throws ValidationException     if clusterTaskId mismatches, priority is null or negative, or enabled is null
      */
     @Transactional
     public ClusterJobDTO updateJob(Long nodeId, Long taskId, ClusterJobDTO dto) {
@@ -134,9 +135,7 @@ public class ClusterJobService {
             throw new ValidationException("clusterTaskId does not match path task id");
         }
         validatePriority(dto.priority());
-        if (dto.enabled() == null) {
-            throw new ValidationException("enabled is required");
-        }
+        validateEnabled(dto.enabled());
 
         ClusterJob job = clusterJobRepository.findById(new ClusterJobPK(nodeId, taskId))
                 .orElseThrow(() -> new EntityNotFoundException("ClusterJob", nodeId + ":" + taskId));
@@ -193,8 +192,17 @@ public class ClusterJobService {
     }
 
     private void validatePriority(Integer priority) {
-        if (priority != null && priority < 0) {
+        if (priority == null) {
+            throw new ValidationException("priority is required");
+        }
+        if (priority < 0) {
             throw new ValidationException("priority must be greater than or equal to 0");
+        }
+    }
+
+    private void validateEnabled(Boolean enabled) {
+        if (enabled == null) {
+            throw new ValidationException("enabled is required");
         }
     }
 

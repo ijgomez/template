@@ -415,6 +415,7 @@
         },
         "validation": {
           "taskRequired": "La tarea es obligatoria",
+          "priorityRequired": "La prioridad es obligatoria",
           "priorityInvalid": "La prioridad debe ser mayor o igual a 0",
           "duplicate": "La tarea ya está asignada a este nodo"
         },

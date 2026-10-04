@@ -101,7 +101,7 @@ class ClusterJobServiceTest {
     class AssignJob {
 
         @Test
-        @DisplayName("creates the job, ignores body nodeId, defaults enabled and audits with nodeId:taskId")
+        @DisplayName("creates the job, ignores body nodeId and audits with nodeId:taskId")
         void assignsOk() {
             when(clusterNodeRepository.findById(1L)).thenReturn(Optional.of(node(1L)));
             when(clusterTaskRepository.findById(10L)).thenReturn(Optional.of(task(10L)));
@@ -110,7 +110,7 @@ class ClusterJobServiceTest {
                     .thenAnswer(invocation -> invocation.getArgument(0));
 
             // Body nodeId (999L) must be ignored in favour of the path nodeId (1L)
-            ClusterJobDTO result = clusterJobService.assignJob(1L, new ClusterJobDTO(999L, 10L, 3, null));
+            ClusterJobDTO result = clusterJobService.assignJob(1L, new ClusterJobDTO(999L, 10L, 3, true));
 
             assertThat(result.clusterNodeId()).isEqualTo(1L);
             assertThat(result.clusterTaskId()).isEqualTo(10L);
@@ -123,6 +123,30 @@ class ClusterJobServiceTest {
             assertThat(jobCaptor.getValue().getEnabled()).isTrue();
 
             assertAudit(OperationType.CREATE, "1:10");
+        }
+
+        @Test
+        @DisplayName("throws ValidationException when priority is null")
+        void priorityNull() {
+            when(clusterNodeRepository.findById(1L)).thenReturn(Optional.of(node(1L)));
+
+            assertThatThrownBy(() -> clusterJobService.assignJob(1L, new ClusterJobDTO(1L, 10L, null, true)))
+                    .isInstanceOf(ValidationException.class);
+
+            verify(clusterJobRepository, never()).save(any());
+            verify(auditService, never()).log(any());
+        }
+
+        @Test
+        @DisplayName("throws ValidationException when enabled is null")
+        void enabledNull() {
+            when(clusterNodeRepository.findById(1L)).thenReturn(Optional.of(node(1L)));
+
+            assertThatThrownBy(() -> clusterJobService.assignJob(1L, new ClusterJobDTO(1L, 10L, 1, null)))
+                    .isInstanceOf(ValidationException.class);
+
+            verify(clusterJobRepository, never()).save(any());
+            verify(auditService, never()).log(any());
         }
 
         @Test
@@ -246,6 +270,17 @@ class ClusterJobServiceTest {
             when(clusterNodeRepository.findById(1L)).thenReturn(Optional.of(node(1L)));
 
             assertThatThrownBy(() -> clusterJobService.updateJob(1L, 10L, new ClusterJobDTO(null, 10L, -5, true)))
+                    .isInstanceOf(ValidationException.class);
+
+            verify(clusterJobRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("throws ValidationException when priority is null")
+        void priorityNull() {
+            when(clusterNodeRepository.findById(1L)).thenReturn(Optional.of(node(1L)));
+
+            assertThatThrownBy(() -> clusterJobService.updateJob(1L, 10L, new ClusterJobDTO(null, 10L, null, true)))
                     .isInstanceOf(ValidationException.class);
 
             verify(clusterJobRepository, never()).save(any());

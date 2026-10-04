@@ -113,6 +113,7 @@ describe('NodeJobsComponent', () => {
   it('save is disabled in assign mode when no task is selected', () => {
     setup();
     component.openAssign();
+    component.updateField('priority', '1');
     expect(component.isSaveDisabled()).toBe(true);
     component.updateField('clusterTaskId', 2);
     expect(component.isSaveDisabled()).toBe(false);
@@ -127,17 +128,41 @@ describe('NodeJobsComponent', () => {
     expect(component.isSaveDisabled()).toBe(false);
   });
 
-  it('save sends an empty priority as null when assigning', () => {
+  it('priority is required: empty priority marks the form invalid and disables save', () => {
+    setup();
+    component.openAssign();
+    component.updateField('clusterTaskId', 2);
+    component.updateField('priority', '');
+    expect(component.isPriorityInvalid()).toBe(true);
+    expect(component.isSaveDisabled()).toBe(true);
+    component.updateField('priority', '1');
+    expect(component.isPriorityInvalid()).toBe(false);
+    expect(component.isSaveDisabled()).toBe(false);
+  });
+
+  it('save does not submit when priority is empty', () => {
     setup();
     component.openAssign();
     component.updateField('clusterTaskId', 2);
     component.updateField('priority', '');
     component.save();
 
+    expect(clusterService.assignJob).not.toHaveBeenCalled();
+    expect(component.showModal()).toBe(true);
+  });
+
+  it('save sends priority as a number when assigning', () => {
+    setup();
+    component.openAssign();
+    component.updateField('clusterTaskId', 2);
+    component.updateField('priority', '4');
+    component.save();
+
     expect(clusterService.assignJob).toHaveBeenCalledTimes(1);
     const sent = clusterService.assignJob.mock.calls[0][1] as ClusterJob;
-    expect(sent.priority).toBeNull();
+    expect(sent.priority).toBe(4);
     expect(sent.clusterTaskId).toBe(2);
+    expect(sent.enabled).toBe(true);
     expect(component.showModal()).toBe(false);
   });
 
@@ -170,6 +195,7 @@ describe('NodeJobsComponent', () => {
     expect(clusterService.findJobsByNode).toHaveBeenCalledTimes(1);
     component.openAssign();
     component.updateField('clusterTaskId', 2);
+    component.updateField('priority', '1');
     component.save();
     expect(clusterService.findJobsByNode).toHaveBeenCalledTimes(2);
   });

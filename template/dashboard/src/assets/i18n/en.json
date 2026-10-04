@@ -415,6 +415,7 @@
         },
         "validation": {
           "taskRequired": "Task is required",
+          "priorityRequired": "Priority is required",
           "priorityInvalid": "Priority must be greater than or equal to 0",
           "duplicate": "The task is already assigned to this node"
         },
