@@ -10,6 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.myorganization.template.core.service.ActionService;
+import org.myorganization.template.core.service.ClusterJobService;
 import org.myorganization.template.core.service.ClusterService;
 import org.myorganization.template.core.service.ParameterService;
 import org.myorganization.template.core.service.ProfileService;
@@ -376,7 +377,7 @@ class PaginationMetadataConsistencyTest {
         @BeforeEach
         void setUp() {
             clusterService = mock(ClusterService.class);
-            clusterController = new ClusterController(clusterService);
+            clusterController = new ClusterController(clusterService, mock(ClusterJobService.class));
         }
 
         @Test

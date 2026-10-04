@@ -6,10 +6,13 @@ import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.myorganization.template.core.service.ClusterJobService;
 import org.myorganization.template.core.service.ClusterService;
 import org.myorganization.template.domain.criteria.ClusterBlockCriteria;
 import org.myorganization.template.domain.dto.ClusterBlockDTO;
+import org.myorganization.template.domain.dto.ClusterJobDTO;
 import org.myorganization.template.domain.dto.ClusterNodeDTO;
+import org.myorganization.template.domain.dto.ClusterTaskDTO;
 import org.myorganization.template.domain.enums.NodeStatus;
 import org.myorganization.template.domain.exception.EntityNotFoundException;
 import org.myorganization.template.domain.exception.MethodNotAllowedException;
@@ -34,12 +37,14 @@ import static org.mockito.Mockito.when;
 class ClusterControllerTest {
 
     private ClusterService clusterService;
+    private ClusterJobService clusterJobService;
     private ClusterController clusterController;
 
     @BeforeEach
     void setUp() {
         clusterService = mock(ClusterService.class);
-        clusterController = new ClusterController(clusterService);
+        clusterJobService = mock(ClusterJobService.class);
+        clusterController = new ClusterController(clusterService, clusterJobService);
     }
 
     // =====================================================================
@@ -133,6 +138,76 @@ class ClusterControllerTest {
         assertThatThrownBy(() -> clusterController.deleteNode(1L))
                 .isInstanceOf(MethodNotAllowedException.class)
                 .hasMessageContaining("not allowed");
+    }
+
+    // =====================================================================
+    // Node job endpoint tests
+    // =====================================================================
+
+    @Test
+    void findJobsByNode_shouldReturnListOfJobs() {
+        ClusterJobDTO job = new ClusterJobDTO(1L, 10L, 1, true);
+        when(clusterJobService.findJobsByNode(1L)).thenReturn(List.of(job));
+
+        ResponseEntity<List<ClusterJobDTO>> response = clusterController.findJobsByNode(1L);
+
+        assertThat(response.getStatusCode().value()).isEqualTo(200);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody()).hasSize(1);
+        assertThat(response.getBody().getFirst().clusterTaskId()).isEqualTo(10L);
+        verify(clusterJobService).findJobsByNode(1L);
+    }
+
+    @Test
+    void assignJob_shouldReturnCreated() {
+        ClusterJobDTO request = new ClusterJobDTO(null, 10L, 2, true);
+        ClusterJobDTO created = new ClusterJobDTO(1L, 10L, 2, true);
+        when(clusterJobService.assignJob(1L, request)).thenReturn(created);
+
+        ResponseEntity<ClusterJobDTO> response = clusterController.assignJob(1L, request);
+
+        assertThat(response.getStatusCode().value()).isEqualTo(201);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().clusterNodeId()).isEqualTo(1L);
+        assertThat(response.getBody().clusterTaskId()).isEqualTo(10L);
+        verify(clusterJobService).assignJob(1L, request);
+    }
+
+    @Test
+    void updateJob_shouldReturnUpdated() {
+        ClusterJobDTO request = new ClusterJobDTO(null, 10L, 5, false);
+        ClusterJobDTO updated = new ClusterJobDTO(1L, 10L, 5, false);
+        when(clusterJobService.updateJob(1L, 10L, request)).thenReturn(updated);
+
+        ResponseEntity<ClusterJobDTO> response = clusterController.updateJob(1L, 10L, request);
+
+        assertThat(response.getStatusCode().value()).isEqualTo(200);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().priority()).isEqualTo(5);
+        assertThat(response.getBody().enabled()).isFalse();
+        verify(clusterJobService).updateJob(1L, 10L, request);
+    }
+
+    @Test
+    void deleteJob_shouldReturnNoContent() {
+        ResponseEntity<Void> response = clusterController.deleteJob(1L, 10L);
+
+        assertThat(response.getStatusCode().value()).isEqualTo(204);
+        verify(clusterJobService).deleteJob(1L, 10L);
+    }
+
+    @Test
+    void findAllTasks_shouldReturnListOfTasks() {
+        ClusterTaskDTO task = new ClusterTaskDTO(10L, "NODOS", "desc", 1, 1);
+        when(clusterJobService.findAllTasks()).thenReturn(List.of(task));
+
+        ResponseEntity<List<ClusterTaskDTO>> response = clusterController.findAllTasks();
+
+        assertThat(response.getStatusCode().value()).isEqualTo(200);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody()).hasSize(1);
+        assertThat(response.getBody().getFirst().name()).isEqualTo("NODOS");
+        verify(clusterJobService).findAllTasks();
     }
 
     // =====================================================================

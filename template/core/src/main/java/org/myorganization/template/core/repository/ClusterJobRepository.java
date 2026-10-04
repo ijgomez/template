@@ -14,4 +14,6 @@ import org.springframework.stereotype.Repository;
 public interface ClusterJobRepository extends JpaRepository<ClusterJob, ClusterJobPK> {
 
     List<ClusterJob> findByClusterTaskIdOrderByPriorityAsc(Long clusterTaskId);
+
+    List<ClusterJob> findByClusterNodeIdOrderByPriorityAsc(Long clusterNodeId);
 }

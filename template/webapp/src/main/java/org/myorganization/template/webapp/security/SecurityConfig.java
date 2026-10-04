@@ -63,6 +63,11 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/administration/security/actions").denyAll()
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/administration/security/actions/**").denyAll()
 
+                        // Cluster node jobs: write operations (must precede the node denyAll rules below)
+                        .requestMatchers(HttpMethod.POST, "/api/v1/administration/cluster/nodes/*/jobs").hasAuthority("CLUSTER_NODE_WRITE")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/administration/cluster/nodes/*/jobs/**").hasAuthority("CLUSTER_NODE_WRITE")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/administration/cluster/nodes/*/jobs/**").hasAuthority("CLUSTER_NODE_WRITE")
+
                         // 405 Method Not Allowed: Cluster nodes create/delete
                         .requestMatchers(HttpMethod.POST, "/api/v1/administration/cluster/nodes").denyAll()
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/administration/cluster/nodes/**").denyAll()
@@ -123,6 +128,9 @@ public class SecurityConfig {
                         // Cluster nodes: read + write (PATCH for master toggle)
                         .requestMatchers(HttpMethod.GET, "/api/v1/administration/cluster/nodes/**").hasAnyAuthority("CLUSTER_NODE_READ", "CLUSTER_NODE_WRITE")
                         .requestMatchers(HttpMethod.PATCH, "/api/v1/administration/cluster/nodes/**").hasAuthority("CLUSTER_NODE_WRITE")
+
+                        // Cluster tasks: read (catalog consumed by the node form)
+                        .requestMatchers(HttpMethod.GET, "/api/v1/administration/cluster/tasks").hasAnyAuthority("CLUSTER_NODE_READ", "CLUSTER_NODE_WRITE")
 
                         // Cluster blocks: read only (CUD already denied above)
                         .requestMatchers(HttpMethod.GET, "/api/v1/administration/cluster/blocks/**").hasAuthority("CLUSTER_LOCK_READ")
@@ -194,12 +202,12 @@ public class SecurityConfig {
             }
         }
 
-        // Cluster nodes: POST create or DELETE
+        // Cluster nodes: POST create or DELETE (but not job DELETE, which is allowed)
         if (path.startsWith("/api/v1/administration/cluster/nodes")) {
             if ("POST".equals(method) && path.equals("/api/v1/administration/cluster/nodes")) {
                 return true;
             }
-            if ("DELETE".equals(method)) {
+            if ("DELETE".equals(method) && !path.contains("/jobs")) {
                 return true;
             }
         }

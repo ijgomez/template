@@ -2,18 +2,23 @@ package org.myorganization.template.webapp.controller;
 
 import java.util.List;
 
+import org.myorganization.template.core.service.ClusterJobService;
 import org.myorganization.template.core.service.ClusterService;
 import org.myorganization.template.domain.criteria.ClusterBlockCriteria;
 import org.myorganization.template.domain.dto.ClusterBlockDTO;
+import org.myorganization.template.domain.dto.ClusterJobDTO;
 import org.myorganization.template.domain.dto.ClusterNodeDTO;
+import org.myorganization.template.domain.dto.ClusterTaskDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -31,9 +36,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class ClusterController {
 
     private final ClusterService clusterService;
+    private final ClusterJobService clusterJobService;
 
-    public ClusterController(ClusterService clusterService) {
+    public ClusterController(ClusterService clusterService, ClusterJobService clusterJobService) {
         this.clusterService = clusterService;
+        this.clusterJobService = clusterJobService;
     }
 
     // =====================================================================
@@ -104,6 +111,80 @@ public class ClusterController {
     public ResponseEntity<Void> deleteNode(@PathVariable Long id) {
         clusterService.deleteNode(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // =====================================================================
+    // Node job endpoints
+    // =====================================================================
+
+    /**
+     * Lists the jobs (task assignments) of a node, ordered by priority.
+     *
+     * @param nodeId the node identifier
+     * @return 200 OK with the list of jobs
+     */
+    @GetMapping("/nodes/{nodeId}/jobs")
+    public ResponseEntity<List<ClusterJobDTO>> findJobsByNode(@PathVariable Long nodeId) {
+        List<ClusterJobDTO> jobs = clusterJobService.findJobsByNode(nodeId);
+        return ResponseEntity.ok(jobs);
+    }
+
+    /**
+     * Assigns a task to a node, creating a new job.
+     *
+     * @param nodeId the node identifier
+     * @param dto    the job data
+     * @return 201 Created with the created job
+     */
+    @PostMapping("/nodes/{nodeId}/jobs")
+    public ResponseEntity<ClusterJobDTO> assignJob(@PathVariable Long nodeId,
+                                                   @RequestBody ClusterJobDTO dto) {
+        ClusterJobDTO created = clusterJobService.assignJob(nodeId, dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
+
+    /**
+     * Updates a job (priority and/or enabled flag) of a node.
+     *
+     * @param nodeId the node identifier
+     * @param taskId the task identifier
+     * @param dto    the job data
+     * @return 200 OK with the updated job
+     */
+    @PutMapping("/nodes/{nodeId}/jobs/{taskId}")
+    public ResponseEntity<ClusterJobDTO> updateJob(@PathVariable Long nodeId,
+                                                   @PathVariable Long taskId,
+                                                   @RequestBody ClusterJobDTO dto) {
+        ClusterJobDTO updated = clusterJobService.updateJob(nodeId, taskId, dto);
+        return ResponseEntity.ok(updated);
+    }
+
+    /**
+     * Removes a job (task assignment) from a node.
+     *
+     * @param nodeId the node identifier
+     * @param taskId the task identifier
+     * @return 204 No Content
+     */
+    @DeleteMapping("/nodes/{nodeId}/jobs/{taskId}")
+    public ResponseEntity<Void> deleteJob(@PathVariable Long nodeId, @PathVariable Long taskId) {
+        clusterJobService.deleteJob(nodeId, taskId);
+        return ResponseEntity.noContent().build();
+    }
+
+    // =====================================================================
+    // Task endpoints
+    // =====================================================================
+
+    /**
+     * Lists all cluster task definitions (catalog).
+     *
+     * @return 200 OK with the list of tasks
+     */
+    @GetMapping("/tasks")
+    public ResponseEntity<List<ClusterTaskDTO>> findAllTasks() {
+        List<ClusterTaskDTO> tasks = clusterJobService.findAllTasks();
+        return ResponseEntity.ok(tasks);
     }
 
     // =====================================================================
