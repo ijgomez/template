@@ -5,7 +5,7 @@ Documentación funcional y técnica de la pantalla de gestión de perfiles, dent
 - **Ruta frontend:** `/administration/security/profiles`
 - **Componentes:** `ProfileListComponent` (listado) y `ProfileFormComponent` (detalle / alta / edición)
 - **Endpoint backend base:** `/api/v1/administration/security/profiles` (`ProfileController`)
-- **Acceso:** requiere sesión y la acción `PROFILE_READ`; las operaciones de escritura requieren `PROFILE_WRITE`
+- **Acceso:** el módulo exige `PROFILE_READ` y la escritura requiere `PROFILE_WRITE`; además `GET /references` se permite a usuarios con cualquiera de `USER_READ`, `USER_WRITE`, `PROFILE_READ` o `PROFILE_WRITE`
 
 ---
 
@@ -364,9 +364,10 @@ Datos de referencia consumidos por el formulario:
 
 ### 3.5. Exportación
 
-- La exportación reutiliza la consulta filtrada con un tamaño no paginado para recuperar todos los perfiles y generar el CSV en cliente vía `CsvExportService`.
-- El fichero incluye los perfiles que cumplen los criterios activos sin limitarse a la página visible.
-- Si el filtro no devuelve filas, la pantalla muestra un aviso y evita generar un CSV vacío.
+- El botón de exportación funciona igual que en el resto de pantallas del módulo: está siempre disponible y exporta la totalidad de registros que cumplen los filtros activos.
+- Para construir el CSV se reutiliza la misma consulta del listado contra los mismos métodos backend (`GET /` y `GET /count`) con los filtros activos.
+- La exportación incluye **todos los registros que cumplen los filtros activos**, no solo la página visible en pantalla.
+- Si no existen filas coincidentes, la UI informa del caso y evita generar un archivo vacío.
 
 ### 3.6. Paginación, orden y filtros
 
@@ -376,7 +377,8 @@ Datos de referencia consumidos por el formulario:
 
 ### 3.7. Seguridad y permisos
 
-- El acceso a la ruta está protegido por `actionGuard` con acciones `PROFILE_READ` y `PROFILE_WRITE`.
+- El acceso a la administración de perfiles se protege en `SecurityConfig` con `GET /api/v1/administration/security/profiles/**` usando `hasAnyAuthority("PROFILE_READ", "PROFILE_WRITE")`, y `POST/PUT/DELETE` con `hasAuthority("PROFILE_WRITE")`.
+- El endpoint `GET /references` se habilita con cualquiera de `USER_READ`, `USER_WRITE`, `PROFILE_READ` o `PROFILE_WRITE`, porque se usa como catálogo de selección para formularios y filtros.
 - Las acciones de crear, editar y eliminar solo se muestran si el usuario posee la acción `PROFILE_WRITE` (`canWrite`).
 - Cuando se intenta borrar un perfil con usuarios asociados, el backend lanza una excepción de tipo `EntityInUseException` y la operación se rechaza.
 - La duplicación de acciones dentro de un perfil se valida en backend para evitar inconsistencias de permisos.

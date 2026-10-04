@@ -335,7 +335,10 @@ El controlador delega la designación en `ClusterService.setMaster(id)`: el valo
 
 ### 3.5. Exportación
 
-La exportación usa la colección filtrada en cliente, no la página visible. Genera `cluster-nodes.csv` con separador `;`, incluyendo fechas convertidas a hora local, memoria usada y total en GB y el porcentaje de memoria libre.
+- El botón de exportación funciona igual que en el resto de pantallas del módulo: está siempre disponible y exporta la totalidad de registros que cumplen los filtros activos.
+- Para construir el CSV se reutiliza la misma consulta del listado contra el mismo método backend (`GET /api/v1/administration/cluster/nodes`) con los filtros activos.
+- La exportación incluye **todos los registros que cumplen los filtros activos**, no solo la página visible en pantalla.
+- Si no existen filas coincidentes, la UI informa del caso y evita generar un archivo vacío.
 
 ### 3.6. Paginación, orden y filtros
 

@@ -5,7 +5,7 @@ Documentación funcional y técnica de la pantalla de gestión de parámetros, d
 - **Ruta frontend:** `/administration/parameters`
 - **Componentes:** `ParameterListComponent` (listado) y `ParameterFormComponent` (detalle / alta / edición)
 - **Endpoint backend base:** `/api/v1/administration/parameters` (`ParameterController`)
-- **Acceso:** requiere sesión y la acción `SYSTEM_PARAMETER_READ`; las operaciones de escritura requieren `SYSTEM_PARAMETER_WRITE`
+- **Acceso:** requiere sesión autenticada; la lectura de parámetros acepta `SYSTEM_PARAMETER_READ` o `SYSTEM_PARAMETER_WRITE`, y las operaciones de escritura requieren `SYSTEM_PARAMETER_WRITE`
 
 ---
 
@@ -387,8 +387,9 @@ Ruta base: `/api/v1/administration/parameters`.
 
 ### 3.5. Exportación
 
-- La exportación reusa la consulta filtrada con un tamaño grande para recuperar todas las filas y generar el CSV en cliente.
-- El CSV conserva los filtros y orden activos, y no está limitado a la página visible en pantalla.
+- El botón de exportación funciona igual que en el resto de pantallas del módulo: está siempre disponible y exporta la totalidad de registros que cumplen los filtros activos.
+- Para construir el CSV se reutiliza la misma consulta del listado contra los mismos métodos backend (`GET /` y `GET /count`) con los filtros activos.
+- La exportación incluye **todos los registros que cumplen los filtros activos**, no solo la página visible en pantalla.
 - Si no existen filas coincidentes, la UI informa del caso y evita generar un archivo vacío.
 
 ### 3.6. Paginación, orden y filtros
@@ -398,7 +399,7 @@ Ruta base: `/api/v1/administration/parameters`.
 
 ### 3.7. Seguridad y permisos
 
-- El acceso a la ruta está protegido por `actionGuard` con las acciones `SYSTEM_PARAMETER_READ` y `SYSTEM_PARAMETER_WRITE`.
+- El acceso a la ruta se protege en `SecurityConfig`, donde `GET /api/v1/administration/parameters/**` acepta `hasAnyAuthority("SYSTEM_PARAMETER_READ", "SYSTEM_PARAMETER_WRITE")` y `POST/PUT/DELETE` requieren `hasAuthority("SYSTEM_PARAMETER_WRITE")`.
 - Las acciones de crear, editar y eliminar solo se muestran si el usuario posee la acción `SYSTEM_PARAMETER_WRITE` (`canWrite`).
 - El código del parámetro es inmutable una vez creado.
 - El valor se valida siempre antes de persistir la entidad.

@@ -336,9 +336,10 @@ No hay endpoints `POST`, `PUT`, `PATCH` ni `DELETE` para registros de auditoría
 
 ### 3.5. Exportación
 
-- La exportación consulta la primera página con tamaño `100000` y usa los filtros y la ordenación activos; después genera el CSV en el navegador.
-- Los campos CSV se escapan cuando contienen comas, comillas o saltos de línea y el fichero se genera con BOM UTF-8 para su apertura compatible en hojas de cálculo.
-- Las fechas se muestran y exportan usando los servicios de fecha del frontend.
+- El botón de exportación funciona igual que en el resto de pantallas del módulo: está siempre disponible y exporta la totalidad de registros que cumplen los filtros activos.
+- Para construir el CSV se reutiliza la misma consulta del listado contra los mismos métodos backend (`GET /api/v1/administration/audit` y `GET /api/v1/administration/audit/count`) con los filtros activos.
+- La exportación incluye **todos los registros que cumplen los filtros activos**, no solo la página visible en pantalla.
+- Si no existen filas coincidentes, la UI informa del caso y evita generar un archivo vacío.
 
 #### Discrepancia actual en filtros de fecha
 

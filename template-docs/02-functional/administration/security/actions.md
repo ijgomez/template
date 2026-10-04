@@ -353,9 +353,10 @@ Ruta base: `/api/v1/administration/security/actions`.
 
 ### 3.5. Exportación
 
-- La exportación reutiliza la consulta filtrada con un tamaño no paginado para recuperar todas las coincidencias y generar el CSV en cliente.
-- El CSV conserva los filtros activos y el orden de la tabla, sin limitarse a la página visible.
-- Si no hay filas coincidentes, la UI muestra una notificación y evita la descarga del archivo vacío.
+- El botón de exportación funciona igual que en el resto de pantallas del módulo: está siempre disponible y exporta la totalidad de registros que cumplen los filtros activos.
+- Para construir el CSV se reutiliza la misma consulta del listado contra los mismos métodos backend (`GET /` y `GET /count`) con los filtros activos.
+- La exportación incluye **todos los registros que cumplen los filtros activos**, no solo la página visible en pantalla.
+- Si no existen filas coincidentes, la UI informa del caso y evita generar un archivo vacío.
 
 ### 3.6. Paginación, orden y filtros
 
@@ -365,8 +366,8 @@ Ruta base: `/api/v1/administration/security/actions`.
 ### 3.7. Seguridad y permisos
 
 - La ruta está protegida por `SecurityConfig` con `hasAuthority("ACTION_READ")` para `GET` y `PUT` sobre `/api/v1/administration/security/actions/**`.
-- La pantalla se muestra dentro del módulo de administración con la acción `ACTION_READ`, y la edición se habilita bajo ese mismo permiso.
-- La operación de creación y borrado está bloqueada tanto a nivel de configuración como de servicio para evitar inconsistencias en el catálogo.
+- La pantalla se muestra dentro del módulo de administración con la acción `ACTION_READ`, y la edición se habilita bajo ese mismo permiso; no existe `ACTION_WRITE` para este módulo.
+- La operación de creación y borrado está bloqueada tanto a nivel de configuración (`denyAll()` en POST y DELETE) como de servicio (`MethodNotAllowedException`) para evitar inconsistencias en el catálogo.
 
 ### 3.8. Reglas de comportamiento relevantes
 

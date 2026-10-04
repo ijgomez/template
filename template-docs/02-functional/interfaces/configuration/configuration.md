@@ -336,9 +336,10 @@ Ruta base: `/api/v1/interfaces/configuration`.
 
 ### 3.5. Exportación
 
-- La exportación reutiliza el conjunto filtrado en cliente para generar el CSV sin realizar una llamada adicional al backend.
-- El fichero conserva el estado actual de las interfaces y los criterios activos en la vista, sin limitarse a la página visible.
-- Cuando no hay filas con los filtros activos, la UI no genera la descarga y muestra el estado vacío correspondiente.
+- El botón de exportación funciona igual que en el resto de pantallas del módulo: está siempre disponible y exporta la totalidad de registros que cumplen los filtros activos.
+- Para construir el CSV se reutiliza la misma consulta del listado contra el mismo método backend (`GET /api/v1/interfaces/configuration`) con los filtros activos.
+- La exportación incluye **todos los registros que cumplen los filtros activos**, no solo la página visible en pantalla.
+- Si no existen filas coincidentes, la UI informa del caso y evita generar un archivo vacío.
 
 ### 3.6. Paginación, orden y filtros
 

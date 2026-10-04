@@ -324,9 +324,10 @@ public class InterfaceLog extends BaseEntity {
 
 ### 3.5. Exportación
 
-- La exportación del monitor reutiliza la colección filtrada en backend con un tamaño de lote elevado (`EXPORT_PAGE_SIZE = 100000`) para garantizar que el CSV incluya todos los resultados que cumplen los criterios activos.
-- El fichero generado usa BOM UTF-8, columnas traducidas, separador `,` y escapado de valores con comas, comillas o saltos de línea.
-- Si no hay registros coincidentes, el frontend muestra una notificación de aviso y evita la descarga para no generar ficheros vacíos.
+- El botón de exportación funciona igual que en el resto de pantallas del módulo: está siempre disponible y exporta la totalidad de registros que cumplen los filtros activos.
+- Para construir el CSV se reutiliza la misma consulta del listado contra los mismos métodos backend (`GET /api/v1/interfaces/monitor` y `GET /api/v1/interfaces/monitor/count`) con los filtros activos.
+- La exportación incluye **todos los registros que cumplen los filtros activos**, no solo la página visible en pantalla.
+- Si no existen filas coincidentes, la UI informa del caso y evita generar un archivo vacío.
 
 ### 3.6. Inmutabilidad y registro programático
 

@@ -314,13 +314,10 @@ El controlador delega lectura en `ClusterService` (que a su vez usa `ClusterBloc
 
 ### 3.5. Exportación
 
-La exportación pide al backend el conjunto completo (página 0, tamaño 100000) con los mismos criterios y ordenación activos. Construye el CSV con:
-
-- Cabeceras traducidas vía `TranslateService.instant` sobre las claves de campos.
-- Fecha de inicio pasada a local mediante `DateService.toLocalString`.
-- Separador `,` y escapado de campos que contienen `,`, `"` o `\n`.
-- BOM UTF-8 (`\uFEFF`) para compatibilidad con Excel.
-- Descarga `cluster_blocks_YYYY-MM-DD.csv` mediante `Blob` + `URL.createObjectURL`.
+- El botón de exportación funciona igual que en el resto de pantallas del módulo: está siempre disponible y exporta la totalidad de registros que cumplen los filtros activos.
+- Para construir el CSV se reutiliza la misma consulta del listado contra los mismos métodos backend (`GET /api/v1/administration/cluster/blocks` y `GET /api/v1/administration/cluster/blocks/count`) con los filtros activos.
+- La exportación incluye **todos los registros que cumplen los filtros activos**, no solo la página visible en pantalla.
+- Si no existen filas coincidentes, la UI informa del caso y evita generar un archivo vacío.
 
 ### 3.6. Paginación, orden y filtros
 

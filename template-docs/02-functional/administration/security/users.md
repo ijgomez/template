@@ -5,7 +5,7 @@ Documentación funcional y técnica de la pantalla de gestión de usuarios, dent
 - **Ruta frontend:** `/administration/security/users`
 - **Componentes:** `UserListComponent` (listado) y `UserFormComponent` (detalle / alta / edición)
 - **Endpoint backend base:** `/api/v1/administration/security/users` (`UserController`)
-- **Acceso:** requiere sesión y la acción `USER_READ`; las operaciones de escritura requieren `USER_WRITE`
+- **Acceso:** `/me` requiere sesión autenticada; el resto del módulo exige `USER_READ` para lectura y `USER_WRITE` para escritura
 
 ---
 
@@ -70,6 +70,7 @@ Identificadores locales de este documento: `RF-USR-*` (requisitos funcionales) y
 - AC6.1: El doble clic sobre una fila abre el detalle.
 - AC6.2: El detalle muestra la información de auditoría (último acceso, creación, última modificación).
 - AC6.3: La contraseña se muestra enmascarada.
+- AC6.4: Además del detalle administrativo, el usuario autenticado puede consultar y actualizar su propio perfil mediante los endpoints `/me`.
 
 #### RF-USR-7: Exportación a CSV
 
@@ -98,6 +99,7 @@ Ofrecer a los administradores una pantalla completa para administrar los usuario
 
 - Consultar el listado paginado y filtrado de usuarios.
 - Ver el detalle de un usuario, incluyendo su información de auditoría.
+- Consultar y actualizar el propio perfil del usuario autenticado mediante `/me`.
 - Crear, editar y eliminar usuarios.
 - Asignar un perfil y una lista de informes a cada usuario.
 - Exportar el listado filtrado a CSV.
@@ -398,9 +400,10 @@ Datos de referencia consumidos por el formulario y los filtros:
 
 ### 3.5. Exportación
 
-- La exportación reutiliza la consulta filtrada con un tamaño de página muy grande (`EXPORT_PAGE_SIZE = 100000`) para recuperar todas las filas y generar el CSV en cliente vía `CsvExportService`.
-- El fichero generado mantiene el orden y los filtros activos, sin limitarse a la página visible en pantalla.
-- Si no hay filas que cumplan los criterios, la UI informa al usuario y evita la descarga del archivo vacío.
+- El botón de exportación funciona igual que en el resto de pantallas del módulo: está siempre disponible y exporta la totalidad de registros que cumplen los filtros activos.
+- Para construir el CSV se reutiliza la misma consulta del listado contra los mismos métodos backend (`GET /` y `GET /count`) con los filtros activos.
+- La exportación incluye **todos los registros que cumplen los filtros activos**, no solo la página visible en pantalla.
+- Si no existen filas coincidentes, la UI informa del caso y evita generar un archivo vacío.
 
 ### 3.6. Paginación, orden y filtros
 
@@ -409,7 +412,8 @@ Datos de referencia consumidos por el formulario y los filtros:
 
 ### 3.7. Seguridad y permisos
 
-- El acceso a la ruta está protegido por `actionGuard` con las acciones `USER_READ`, `USER_WRITE`, `PROFILE_READ`, `PROFILE_WRITE`, `ACTION_READ` (basta una para acceder, lógica OR).
+- El acceso a la administración de usuarios se protege en `SecurityConfig` mediante `GET /api/v1/administration/security/users/**` con `hasAnyAuthority("USER_READ", "USER_WRITE")`, y `POST/PUT/DELETE` con `hasAuthority("USER_WRITE")`.
+- Los endpoints `/me` no dependen de una acción de seguridad concreta: requieren autenticación con `authenticated()`.
 - Las acciones de crear, editar y eliminar solo se muestran si el usuario posee la acción `USER_WRITE` (`canWrite`).
 - El campo `usuario` es inmutable una vez creado (solo editable en alta).
 - La contraseña nunca se muestra: en modo detalle aparece enmascarada.
