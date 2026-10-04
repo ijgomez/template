@@ -25,7 +25,7 @@ export class CsvExportService {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `${filename}.csv`;
+    link.download = this.withDateStamp(filename, 'csv');
     link.style.visibility = 'hidden';
     document.body.appendChild(link);
     link.click();
@@ -34,12 +34,21 @@ export class CsvExportService {
   }
 
   /**
+   * Generates a filename with the date of export to keep all downloads consistent.
+   */
+  withDateStamp(filename: string, extension = 'csv'): string {
+    const dateStamp = new Date().toISOString().slice(0, 10);
+    return `${filename}_${dateStamp}.${extension}`;
+  }
+
+  /**
    * Escapes a CSV field value to handle commas, quotes, and newlines.
    */
   private escapeCsvField(field: string): string {
-    if (field.includes(',') || field.includes('"') || field.includes('\n')) {
-      return `"${field.replace(/"/g, '""')}"`;
+    const value = field == null ? '' : String(field);
+    if (value.includes(',') || value.includes('"') || value.includes('\n')) {
+      return `"${value.replace(/"/g, '""')}"`;
     }
-    return field;
+    return value;
   }
 }

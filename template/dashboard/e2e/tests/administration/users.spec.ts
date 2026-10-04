@@ -162,7 +162,7 @@ test.describe.serial('Users management', () => {
     // Act: pulsar exportar y capturar la descarga
     const download = await usersPage.exportCsv();
 
-    // Assert: se genera un fichero CSV
-    expect(download.suggestedFilename()).toBe('users.csv');
+    // Assert: se genera un fichero CSV con marca temporal
+    expect(download.suggestedFilename()).toMatch(/^users_\d{4}-\d{2}-\d{2}\.csv$/);
   });
 });

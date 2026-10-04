@@ -7,6 +7,7 @@ import { ClusterService } from '../../../../../core/services/cluster.service';
 import { AuthService } from '../../../../../core/services/auth.service';
 import { NotificationService } from '../../../../../core/services/notification.service';
 import { DateService } from '../../../../../core/services/date.service';
+import { CsvExportService } from '../../../../../core/services/csv-export.service';
 import { LocalDatePipe } from '../../../../../shared/pipes/local-date.pipe';
 import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../../shared/components/data-table';
 import { ClusterNode } from '../../../../../core/models/cluster.model';
@@ -34,6 +35,7 @@ export class NodeListComponent implements OnInit {
   private readonly notificationService = inject(NotificationService);
   private readonly translateService = inject(TranslateService);
   private readonly dateService = inject(DateService);
+  private readonly csvExportService = inject(CsvExportService);
 
   // Data state
   readonly allNodes = signal<ClusterNode[]>([]);
@@ -309,13 +311,6 @@ export class NodeListComponent implements OnInit {
       freePercent(n.usedMemory, n.totalMemory),
     ]);
 
-    const csvContent = [headers, ...rows].map((row) => row.join(';')).join('\n');
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'cluster-nodes.csv';
-    link.click();
-    URL.revokeObjectURL(url);
+    this.csvExportService.export(headers, rows, 'cluster-nodes');
   }
 }

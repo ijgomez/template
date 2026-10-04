@@ -189,7 +189,7 @@ export class ActionListComponent implements OnInit {
           action.description ?? '',
         ]);
 
-        this.csvExportService.export(headers, rows, `actions_${new Date().toISOString().slice(0, 10)}`);
+        this.csvExportService.export(headers, rows, 'actions');
         this.notificationService.updateToSuccess(progressId, 'notification.export.success');
       },
       error: () => {

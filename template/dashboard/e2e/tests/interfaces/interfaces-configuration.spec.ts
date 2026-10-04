@@ -87,7 +87,7 @@ test.describe('Interfaces configuration', () => {
 
     if (await configPage.rows.count() > 0) {
       const download = await configPage.exportCsv();
-      expect(download.suggestedFilename()).toBe('interface-configurations.csv');
+      expect(download.suggestedFilename()).toMatch(/^interface-configurations_\d{4}-\d{2}-\d{2}\.csv$/);
     }
   });
 

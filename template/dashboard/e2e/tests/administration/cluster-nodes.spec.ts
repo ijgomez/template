@@ -73,6 +73,6 @@ test.describe('Cluster nodes', () => {
 
     const download = await nodesPage.exportCsv();
 
-    expect(download.suggestedFilename()).toBe('cluster-nodes.csv');
+    expect(download.suggestedFilename()).toMatch(/^cluster-nodes_\d{4}-\d{2}-\d{2}\.csv$/);
   });
 });

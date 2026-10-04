@@ -77,7 +77,7 @@ Identificadores locales de este documento: `RF-PRO-*` (requisitos funcionales) y
 
 **Criterios de aceptación:**
 - AC7.1: La exportación incluye todos los registros que cumplen los filtros activos, no solo la página visible.
-- AC7.2: El fichero descargado se llama `profiles.csv`.
+- AC7.2: El fichero descargado sigue el patrón `profiles_YYYY-MM-DD.csv`.
 - AC7.3: Si no hay filas que cumplan los filtros, se notifica que no hay datos que exportar.
 
 ### 1.2. Requisitos no funcionales
@@ -426,7 +426,7 @@ Ubicación: `dashboard/e2e/tests/administration/profiles.spec.ts` (Page Object e
 | Crear perfil | Alta desde el formulario con datos válidos | El backend responde 201, se vuelve al listado y el nuevo perfil aparece al buscarlo |
 | Editar perfil | Seleccionar un perfil y modificar sus datos | El backend responde 200 y el cambio se refleja en el listado |
 | Eliminar perfil | Seleccionar un perfil y confirmar el borrado | El backend responde 204 y el perfil deja de aparecer al buscarlo |
-| Exportar CSV | Pulsar el botón de exportar | El navegador descarga el fichero `profiles.csv` |
+| Exportar CSV | Pulsar el botón de exportar | El navegador descarga el fichero `profiles_YYYY-MM-DD.csv` |
 
 - Cada test inicia sesión con un usuario administrador (acciones `PROFILE_READ` y `PROFILE_WRITE`) y navega directamente a `/administration/security/profiles`.
 - Los casos de creación y edición insertan un registro en el backend por ejecución; el caso de eliminación borra el perfil que él mismo crea.

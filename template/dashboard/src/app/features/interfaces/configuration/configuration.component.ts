@@ -6,6 +6,7 @@ import { InterfaceService } from '../../../core/services/interface.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { DateService } from '../../../core/services/date.service';
+import { CsvExportService } from '../../../core/services/csv-export.service';
 import { LocalDatePipe } from '../../../shared/pipes/local-date.pipe';
 import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../shared/components/data-table';
 import { InterfaceConfig } from '../../../core/models/interface.model';
@@ -29,6 +30,7 @@ export class ConfigurationComponent implements OnInit {
   private readonly notificationService = inject(NotificationService);
   private readonly translateService = inject(TranslateService);
   private readonly dateService = inject(DateService);
+  private readonly csvExportService = inject(CsvExportService);
 
   // View state
   readonly viewMode = signal<'list' | 'detail'>('list');
@@ -228,21 +230,14 @@ export class ConfigurationComponent implements OnInit {
     ];
 
     const rows = configs.map((c) => [
-      c.name,
-      c.protocol,
-      c.url,
-      c.status,
-      c.checkFrequency,
+      c.name ?? '',
+      c.protocol ?? '',
+      c.url ?? '',
+      c.status ?? '',
+      String(c.checkFrequency ?? ''),
       c.lastModifiedAt ? this.dateService.toLocalString(c.lastModifiedAt) : '',
     ]);
 
-    const csvContent = [headers, ...rows].map((row) => row.join(';')).join('\n');
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'interface-configurations.csv';
-    link.click();
-    URL.revokeObjectURL(url);
+    this.csvExportService.export(headers, rows, 'interface-configurations');
   }
 }

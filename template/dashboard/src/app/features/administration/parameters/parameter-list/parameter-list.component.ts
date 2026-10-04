@@ -5,6 +5,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../../../core/services/auth.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { ParameterService } from '../../../../core/services/parameter.service';
+import { CsvExportService } from '../../../../core/services/csv-export.service';
 import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../shared/components/data-table';
 import { Parameter, ParameterCriteria, ParameterType } from '../../../../core/models/parameter.model';
 import { ParameterFormComponent } from '../parameter-form/parameter-form.component';
@@ -28,6 +29,7 @@ export class ParameterListComponent {
   private readonly authService = inject(AuthService);
   private readonly notificationService = inject(NotificationService);
   private readonly translateService = inject(TranslateService);
+  private readonly csvExportService = inject(CsvExportService);
 
   // ─── View State ──────────────────────────────────────────────
 
@@ -266,21 +268,14 @@ export class ParameterListComponent {
         }
 
         const headers = ['code', 'description', 'value', 'type'];
-        const csvRows = [
-          headers.join(','),
-          ...data.map(p =>
-            [p.code, `"${(p.description || '').replace(/"/g, '""')}"`, `"${(p.value || '').replace(/"/g, '""')}"`, p.type].join(',')
-          ),
-        ];
+        const rows = data.map((p) => [
+          p.code ?? '',
+          p.description ?? '',
+          String(p.value ?? ''),
+          p.type ?? '',
+        ]);
 
-        const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = 'parameters.csv';
-        link.click();
-        URL.revokeObjectURL(url);
-
+        this.csvExportService.export(headers, rows, 'parameters');
         this.notificationService.showSuccess('notification.export.success');
       },
       error: () => {

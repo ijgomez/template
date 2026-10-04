@@ -93,13 +93,13 @@ describe('CsvExportService', () => {
     expect(await blobBody(capturedBlob!)).toBe('A,B');
   });
 
-  it('should set the download filename with a .csv extension', () => {
+  it('should set the download filename with a date-stamped .csv extension', () => {
     const appendSpy = vi.spyOn(document.body, 'appendChild');
 
     service.export(['A'], [['1']], 'my-report');
 
     const anchor = appendSpy.mock.calls[0][0] as HTMLAnchorElement;
-    expect(anchor.download).toBe('my-report.csv');
+    expect(anchor.download).toMatch(/^my-report_\d{4}-\d{2}-\d{2}\.csv$/);
     expect(anchor.href).toContain('blob:mock-url');
   });
 });

@@ -445,7 +445,7 @@ Ubicación: `dashboard/e2e/tests/administration/parameters.spec.ts` (Page Object
 | Crear parámetro | Alta desde el formulario con datos válidos | El backend responde 201, se vuelve al listado y el nuevo parámetro aparece al buscarlo |
 | Editar parámetro | Seleccionar un parámetro y modificar sus datos | El backend responde 200 y el cambio se refleja en el listado |
 | Eliminar parámetro | Seleccionar un parámetro y confirmar el borrado | El backend responde 204 y el parámetro deja de aparecer al buscarlo |
-| Exportar CSV | Pulsar el botón de exportar | El navegador descarga el fichero `parameters.csv` |
+| Exportar CSV | Pulsar el botón de exportar | El navegador descarga el fichero `parameters_YYYY-MM-DD.csv` |
 
 - Cada test inicia sesión con un usuario administrador y navega directamente a `/administration/parameters`.
 - La suite se ejecuta en modo `serial` para evitar contención al trabajar con datos creados por cada caso.

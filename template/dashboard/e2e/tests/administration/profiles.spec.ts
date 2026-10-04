@@ -87,6 +87,6 @@ test.describe.serial('Profiles management', () => {
     await profilesPage.goto();
 
     const download = await profilesPage.exportCsv();
-    expect(download.suggestedFilename()).toMatch(/^profiles\.csv$/);
+    expect(download.suggestedFilename()).toMatch(/^profiles_\d{4}-\d{2}-\d{2}\.csv$/);
   });
 });

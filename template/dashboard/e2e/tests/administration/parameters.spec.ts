@@ -89,6 +89,6 @@ test.describe.serial('Parameters management', () => {
     await parametersPage.goto();
 
     const download = await parametersPage.exportCsv();
-    expect(download.suggestedFilename()).toBe('parameters.csv');
+    expect(download.suggestedFilename()).toMatch(/^parameters_\d{4}-\d{2}-\d{2}\.csv$/);
   });
 });

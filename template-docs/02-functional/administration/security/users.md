@@ -78,7 +78,7 @@ Identificadores locales de este documento: `RF-USR-*` (requisitos funcionales) y
 
 **Criterios de aceptación:**
 - AC7.1: La exportación incluye todos los registros que cumplen los filtros activos, no solo la página visible.
-- AC7.2: El fichero descargado se llama `users.csv`.
+- AC7.2: El fichero descargado sigue el patrón `users_YYYY-MM-DD.csv`.
 - AC7.3: Si no hay filas que cumplan los filtros, se notifica que no hay datos que exportar.
 
 ### 1.2. Requisitos no funcionales
@@ -459,7 +459,7 @@ Ubicación: `dashboard/e2e/tests/administration/users.spec.ts` (Page Object en `
 | Crear usuario | Alta desde el formulario con datos válidos | El backend responde 201, se vuelve al listado y el nuevo usuario aparece al buscarlo |
 | Editar usuario | Seleccionar un usuario y modificar sus datos | El campo usuario es de solo lectura, el backend responde 200 y el cambio se refleja en el listado |
 | Eliminar usuario | Seleccionar un usuario y confirmar el borrado | El backend responde 204 y el usuario deja de aparecer al buscarlo |
-| Exportar CSV | Pulsar el botón de exportar | El navegador descarga el fichero `users.csv` |
+| Exportar CSV | Pulsar el botón de exportar | El navegador descarga el fichero `users_YYYY-MM-DD.csv` |
 
 - Cada test inicia sesión con un usuario administrador (acciones `USER_READ` y `USER_WRITE`) y navega directamente a `/administration/security/users`.
 - La suite se ejecuta en modo `serial` para evitar contención en el backend al compartir el usuario administrador entre casos.

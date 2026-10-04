@@ -65,7 +65,7 @@ Identificadores locales de este documento: `RF-CLN-*` (requisitos funcionales) y
 **Criterios de aceptación:**
 
 - AC5.1: La exportación incluye todos los resultados filtrados, no solo la página visible.
-- AC5.2: El fichero se descarga como `cluster-nodes.csv`.
+- AC5.2: El fichero se descarga con el patrón `cluster-nodes_YYYY-MM-DD.csv`.
 - AC5.3: El CSV incluye las columnas visibles del listado y las métricas de memoria expresadas en GB y porcentaje.
 
 #### RF-CLN-6: Registro y eliminación controlados por el sistema
@@ -396,7 +396,7 @@ Ubicación: `dashboard/e2e/tests/administration/cluster-nodes.spec.ts` (Page Obj
 | Listado controlado | Acceder a la pantalla tras iniciar sesión | La tabla y filtros son visibles; no existen acciones de crear ni eliminar y Designar maestro está deshabilitado sin selección |
 | Filtrado | Filtrar por el hostname de un nodo existente y limpiar | El listado queda reducido al nodo coincidente y se restaura al limpiar |
 | Detalle | Abrir el primer nodo y volver | El detalle muestra su hostname y Volver restaura el listado |
-| Exportación CSV | Exportar el listado de nodos | El navegador descarga `cluster-nodes.csv` |
+| Exportación CSV | Exportar el listado de nodos | El navegador descarga `cluster-nodes_YYYY-MM-DD.csv` |
 
 La suite no ejecuta el cambio de maestro: es una operación que modifica estado compartido y requiere al menos dos nodos activos para validarse de forma aislada o con restauración posterior.
 

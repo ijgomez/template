@@ -53,7 +53,7 @@ Identificadores locales de este documento: `RF-CFG-*` (requisitos funcionales) y
 
 **Criterios de aceptación:**
 - AC4.1: La exportación incluye todos los registros que cumplen los filtros activos, no solo la página visible.
-- AC4.2: El fichero descargado se llama `interface-configurations.csv`.
+- AC4.2: El fichero descargado sigue el patrón `interface-configurations_YYYY-MM-DD.csv`.
 - AC4.3: Si no hay filas que cumplan los filtros, no se genera ninguna descarga.
 
 #### RF-CFG-5: Pantalla de solo lectura
@@ -391,7 +391,7 @@ Ubicación: `template/dashboard/e2e/tests/interfaces/interfaces-configuration.sp
 | Filtrar por nombre, protocolo y estado | Aplicar filtros y luego limpiarlos | El listado se filtra y, al limpiar, vuelve a mostrarse completo |
 | Abrir detalle desde la barra de acciones | Seleccionar una fila y pulsar el botón de detalle | Se muestra la vista de detalle con el botón volver; al volver reaparece el listado |
 | Abrir detalle con doble clic | Hacer doble clic sobre una fila | Se abre la vista de detalle de la interfaz |
-| Exportar CSV | Pulsar la acción de exportación | Se descarga el fichero `interface-configurations.csv` |
+| Exportar CSV | Pulsar la acción de exportación | Se descarga el fichero `interface-configurations_YYYY-MM-DD.csv` |
 | Navegación desde el menú lateral | Desplegar la sección de Interfaces y pulsar Configuración | Navega a `/interfaces/configuration` y muestra la tabla |
 
 - Cada test inicia sesión con un usuario válido (`testUsers.valid`) y navega a `/interfaces/configuration`.

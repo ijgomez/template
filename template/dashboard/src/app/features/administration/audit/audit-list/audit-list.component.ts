@@ -6,6 +6,7 @@ import { AuditService } from '../../../../core/services/audit.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { DateService } from '../../../../core/services/date.service';
+import { CsvExportService } from '../../../../core/services/csv-export.service';
 import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
 import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../shared/components/data-table';
 import { AuditLog, AuditCriteria, OperationType, AuditSection } from '../../../../core/models/audit.model';
@@ -28,6 +29,7 @@ export class AuditListComponent implements OnInit {
   private readonly notificationService = inject(NotificationService);
   private readonly translateService = inject(TranslateService);
   private readonly dateService = inject(DateService);
+  private readonly csvExportService = inject(CsvExportService);
 
   // View state
   readonly viewMode = signal<'list' | 'detail'>('list');
@@ -190,23 +192,16 @@ export class AuditListComponent implements OnInit {
           ];
 
           const rows = data.map((log) => [
-            this.escapeCsvField(log.timestamp ? this.dateService.toLocalString(log.timestamp) : ''),
-            this.escapeCsvField(log.username),
-            this.escapeCsvField(log.operationType),
-            this.escapeCsvField(log.section),
-            this.escapeCsvField(log.entityId),
-            this.escapeCsvField(log.entityName),
-            this.escapeCsvField(log.detail),
+            log.timestamp ? this.dateService.toLocalString(log.timestamp) : '',
+            log.username ?? '',
+            log.operationType ?? '',
+            log.section ?? '',
+            String(log.entityId ?? ''),
+            log.entityName ?? '',
+            log.detail ?? '',
           ]);
 
-          const csvContent = [headers.join(','), ...rows.map((row) => row.join(','))].join('\n');
-          const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
-          const url = URL.createObjectURL(blob);
-          const link = document.createElement('a');
-          link.href = url;
-          link.download = `audit_${new Date().toISOString().slice(0, 10)}.csv`;
-          link.click();
-          URL.revokeObjectURL(url);
+          this.csvExportService.export(headers, rows, 'audit');
 
           this.notificationService.updateToSuccess(progressId, 'notification.export.success');
         } catch {
@@ -227,12 +222,5 @@ export class AuditListComponent implements OnInit {
     if (this.filterOperationType()) criteria.operationType = this.filterOperationType() as OperationType;
     if (this.filterSection()) criteria.section = this.filterSection() as AuditSection;
     return criteria;
-  }
-
-  private escapeCsvField(field: string): string {
-    if (field.includes(',') || field.includes('"') || field.includes('\n')) {
-      return `"${field.replace(/"/g, '""')}"`;
-    }
-    return field;
   }
 }
