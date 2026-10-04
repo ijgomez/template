@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideTranslateService } from '@ngx-translate/core';
-import { of, throwError } from 'rxjs';
+import { of, throwError, Subject } from 'rxjs';
 
 import { TpProfileSelectComponent } from './profile-select.component';
 import { UserService } from '../../../core/services/user.service';
@@ -72,6 +72,26 @@ describe('TpProfileSelectComponent', () => {
     it('should keep the selected profile when the list loads after the model value', async () => {
       await setup();
       component.writeValue(20);
+      fixture.detectChanges();
+
+      expect(component.selectedId()).toBe(20);
+      expect(fixture.nativeElement.querySelector('select').value).toBe('20');
+    });
+
+    it('should reflect the selected profile when the value is written before the options load', async () => {
+      // Reproduce real runtime order: a freshly recreated component receives the
+      // model value via writeValue BEFORE the async profile list resolves.
+      const subject = new Subject<ProfileRef[]>();
+      userService.getProfiles.mockReturnValue(subject.asObservable());
+      await setup();
+
+      // Options not loaded yet.
+      component.writeValue(20);
+      fixture.detectChanges();
+
+      // Options arrive afterwards.
+      subject.next(profiles);
+      subject.complete();
       fixture.detectChanges();
 
       expect(component.selectedId()).toBe(20);

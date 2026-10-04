@@ -9,11 +9,11 @@
         [attr.aria-label]="ariaLabelKey ? (ariaLabelKey | translate) : null"
         [attr.data-testid]="testId">
   @if (placeholderSelectable) {
-    <option value="">{{ placeholderKey | translate }}</option>
+    <option value="" [selected]="selectedId() == null">{{ placeholderKey | translate }}</option>
   } @else {
-    <option value="" disabled>{{ placeholderKey | translate }}</option>
+    <option value="" disabled [selected]="selectedId() == null">{{ placeholderKey | translate }}</option>
   }
   @for (profile of profiles(); track profile.id) {
-    <option [value]="profile.id">{{ profile.name }}</option>
+    <option [value]="profile.id" [selected]="profile.id === selectedId()">{{ profile.name }}</option>
   }
 </select>
