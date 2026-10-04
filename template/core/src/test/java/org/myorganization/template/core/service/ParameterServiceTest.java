@@ -494,7 +494,6 @@ class ParameterServiceTest {
 
         @Test
         @DisplayName("all filters build a full specification (code, description, type)")
-        @SuppressWarnings("unchecked")
         void allFilters_buildsSpecification() {
             ParameterCriteria criteria = new ParameterCriteria("APP", "name", ParameterType.STRING);
             Pageable pageable = PageRequest.of(0, 10);
@@ -511,7 +510,6 @@ class ParameterServiceTest {
 
         @Test
         @DisplayName("blank criteria build an empty specification")
-        @SuppressWarnings("unchecked")
         void blankCriteria_buildsEmptySpecification() {
             ParameterCriteria criteria = new ParameterCriteria("  ", "", null);
             Pageable pageable = PageRequest.of(0, 10);
@@ -526,7 +524,6 @@ class ParameterServiceTest {
             assertThat(predicate).isNotNull();
         }
 
-        @SuppressWarnings("unchecked")
         private Predicate evaluateSpecification(Specification<Parameter> spec) {
             Root<Parameter> root = mock(Root.class, RETURNS_DEEP_STUBS);
             CriteriaQuery<?> query = mock(CriteriaQuery.class);

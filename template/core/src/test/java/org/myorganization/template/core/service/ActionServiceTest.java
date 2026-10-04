@@ -86,7 +86,6 @@ class ActionServiceTest {
 
     @Test
     @DisplayName("findByCriteria: returns paginated results")
-    @SuppressWarnings("unchecked")
     void findByCriteria_returnsPaginatedResults() {
         Action action = createAction(1L, "USER_READ", ActionType.READ, "Consultar usuarios", null);
         Page<Action> page = new PageImpl<>(List.of(action), PageRequest.of(0, 10), 1);
@@ -104,7 +103,6 @@ class ActionServiceTest {
 
     @Test
     @DisplayName("countByCriteria: returns total count matching criteria")
-    @SuppressWarnings("unchecked")
     void countByCriteria_returnsCount() {
         ActionCriteria criteria = new ActionCriteria("USER", null, null);
 
@@ -179,7 +177,6 @@ class ActionServiceTest {
 
     @Test
     @DisplayName("findByCriteria: all filters build a full specification (code, name, type)")
-    @SuppressWarnings("unchecked")
     void findByCriteria_allFilters_buildsSpecification() {
         ActionCriteria criteria = new ActionCriteria("USER", "Consultar", ActionType.READ);
         Pageable pageable = PageRequest.of(0, 10);
@@ -196,7 +193,6 @@ class ActionServiceTest {
 
     @Test
     @DisplayName("findByCriteria: blank criteria build an empty specification")
-    @SuppressWarnings("unchecked")
     void findByCriteria_blankCriteria_buildsEmptySpecification() {
         ActionCriteria criteria = new ActionCriteria("  ", "", null);
         Pageable pageable = PageRequest.of(0, 10);
@@ -215,7 +211,6 @@ class ActionServiceTest {
      * Runs the given {@link Specification} against a mocked JPA Criteria API so the lambdas inside
      * {@code buildSpecification} execute and their branches are covered.
      */
-    @SuppressWarnings("unchecked")
     private Predicate evaluateSpecification(Specification<Action> spec) {
         Root<Action> root = mock(Root.class, RETURNS_DEEP_STUBS);
         CriteriaQuery<?> query = mock(CriteriaQuery.class);

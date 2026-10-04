@@ -188,7 +188,6 @@ class UserServiceTest {
 
     @Test
     @DisplayName("findByCriteria: returns paginated results")
-    @SuppressWarnings("unchecked")
     void findByCriteria_returnsPaginatedResults() {
         UserCriteria criteria = new UserCriteria("john", null, null, null, null);
         Pageable pageable = PageRequest.of(0, 10);
@@ -207,7 +206,6 @@ class UserServiceTest {
 
     @Test
     @DisplayName("countByCriteria: returns count of matching users")
-    @SuppressWarnings("unchecked")
     void countByCriteria_returnsCount() {
         UserCriteria criteria = new UserCriteria(null, null, null, null, null);
         when(userRepository.count(any(Specification.class))).thenReturn(5L);
@@ -442,7 +440,6 @@ class UserServiceTest {
 
     @Test
     @DisplayName("findByCriteria: all criteria fields build a full specification")
-    @SuppressWarnings("unchecked")
     void findByCriteria_allFilters_buildsSpecification() {
         UserCriteria criteria = new UserCriteria("john", "John", "Doe", "john@test.com", 3L);
         Pageable pageable = PageRequest.of(0, 10);
@@ -464,7 +461,6 @@ class UserServiceTest {
 
     @Test
     @DisplayName("findByCriteria: blank criteria produce an empty specification (conjunction only)")
-    @SuppressWarnings("unchecked")
     void findByCriteria_blankCriteria_buildsEmptySpecification() {
         UserCriteria criteria = new UserCriteria("  ", "", "  ", "", null);
         Pageable pageable = PageRequest.of(0, 10);
@@ -485,7 +481,6 @@ class UserServiceTest {
      * Runs the given {@link Specification} against a mocked JPA Criteria API. This forces the
      * lambdas inside {@code buildSpecification} to execute so their branches are covered.
      */
-    @SuppressWarnings("unchecked")
     private Predicate evaluateSpecification(Specification<User> spec) {
         Root<User> root = mock(Root.class, RETURNS_DEEP_STUBS);
         CriteriaQuery<?> query = mock(CriteriaQuery.class);

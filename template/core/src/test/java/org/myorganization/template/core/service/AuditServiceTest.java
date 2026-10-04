@@ -62,7 +62,6 @@ class AuditServiceTest {
 
     @Test
     @DisplayName("findByCriteria: returns paginated results with all filters applied")
-    @SuppressWarnings("unchecked")
     void findByCriteria_allFilters_returnsPaginatedResults() {
         // Arrange
         AuditLog auditLog = createAuditLog(1L, "admin", OperationType.CREATE, AuditSection.SECURITY, "User");
@@ -91,7 +90,6 @@ class AuditServiceTest {
 
     @Test
     @DisplayName("findByCriteria: returns results with empty criteria (no filters)")
-    @SuppressWarnings("unchecked")
     void findByCriteria_emptyCriteria_returnsAllResults() {
         // Arrange
         AuditLog log1 = createAuditLog(1L, "admin", OperationType.CREATE, AuditSection.SECURITY, "User");
@@ -112,7 +110,6 @@ class AuditServiceTest {
 
     @Test
     @DisplayName("countByCriteria: returns total count matching criteria")
-    @SuppressWarnings("unchecked")
     void countByCriteria_returnsCount() {
         // Arrange
         AuditCriteria criteria = new AuditCriteria(null, null, "admin", null, null);
@@ -189,7 +186,6 @@ class AuditServiceTest {
 
     @Test
     @DisplayName("archiveIfRetentionExceeded: archives old records when retention period configured")
-    @SuppressWarnings("unchecked")
     void archiveIfRetentionExceeded_withRetentionParam_archivesOldRecords() {
         // Arrange
         ParameterDTO retentionParam = new ParameterDTO(
@@ -208,7 +204,6 @@ class AuditServiceTest {
 
     @Test
     @DisplayName("archiveIfRetentionExceeded: does nothing when parameter not configured")
-    @SuppressWarnings("unchecked")
     void archiveIfRetentionExceeded_noParam_doesNothing() {
         // Arrange
         when(parameterService.findByCode("AUDIT_RETENTION_DAYS"))
@@ -223,7 +218,6 @@ class AuditServiceTest {
 
     @Test
     @DisplayName("archiveIfRetentionExceeded: does nothing when no old records exist")
-    @SuppressWarnings("unchecked")
     void archiveIfRetentionExceeded_noOldRecords_doesNotDelete() {
         // Arrange
         ParameterDTO retentionParam = new ParameterDTO(
@@ -241,7 +235,6 @@ class AuditServiceTest {
 
     @Test
     @DisplayName("archiveIfRetentionExceeded: does nothing when retention days is zero")
-    @SuppressWarnings("unchecked")
     void archiveIfRetentionExceeded_zeroDays_doesNothing() {
         // Arrange
         ParameterDTO retentionParam = new ParameterDTO(
@@ -259,7 +252,6 @@ class AuditServiceTest {
 
     @Test
     @DisplayName("findByCriteria: maps all entity fields to DTO correctly")
-    @SuppressWarnings("unchecked")
     void findByCriteria_mapsAllFieldsCorrectly() {
         // Arrange
         AuditLog auditLog = createAuditLog(5L, "testuser", OperationType.UPDATE, AuditSection.CLUSTER, "ClusterNode");
@@ -315,7 +307,6 @@ class AuditServiceTest {
 
     @Test
     @DisplayName("buildSpecification: all filters build a full specification via captured spec")
-    @SuppressWarnings("unchecked")
     void buildSpecification_allFilters_executesLambdas() {
         AuditCriteria criteria = new AuditCriteria(
                 OffsetDateTime.now(ZoneOffset.UTC).minusDays(1),
@@ -336,7 +327,6 @@ class AuditServiceTest {
         assertThat(predicate).isNotNull();
     }
 
-    @SuppressWarnings("unchecked")
     private Predicate evaluateSpecification(Specification<AuditLog> spec) {
         Root<AuditLog> root = mock(Root.class, RETURNS_DEEP_STUBS);
         CriteriaQuery<?> query = mock(CriteriaQuery.class);

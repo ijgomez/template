@@ -278,7 +278,6 @@ class ClusterServiceTest {
 
         @Test
         @DisplayName("returns paginated results")
-        @SuppressWarnings("unchecked")
         void returnsPaginatedResults() {
             ClusterBlock block = createBlock(1L, "NODOS", 150L, 100L, 200L, 10L);
             Page<ClusterBlock> page = new PageImpl<>(List.of(block), PageRequest.of(0, 10), 1);
@@ -301,7 +300,6 @@ class ClusterServiceTest {
 
         @Test
         @DisplayName("returns total count matching criteria")
-        @SuppressWarnings("unchecked")
         void returnsCount() {
             ClusterBlockCriteria criteria = new ClusterBlockCriteria("NODOS");
             when(clusterBlockRepository.count(any(Specification.class))).thenReturn(3L);

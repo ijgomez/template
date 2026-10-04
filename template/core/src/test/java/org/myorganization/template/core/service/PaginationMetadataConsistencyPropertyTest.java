@@ -132,7 +132,6 @@ class PaginationMetadataConsistencyPropertyTest {
 
     // --- Helpers ---
 
-    @SuppressWarnings("unchecked")
     private void configureMock(PaginationScenario scenario) {
         int totalPages = (int) Math.ceil((double) scenario.totalElements() / scenario.pageSize());
         int contentSize;

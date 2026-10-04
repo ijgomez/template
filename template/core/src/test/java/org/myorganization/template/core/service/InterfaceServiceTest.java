@@ -160,7 +160,6 @@ class InterfaceServiceTest {
 
     @Test
     @DisplayName("findLogsByCriteria: returns paginated results with no filters")
-    @SuppressWarnings("unchecked")
     void findLogsByCriteria_noFilters_returnsPaginatedResults() {
         InterfaceLog log = createInterfaceLog(1L, InterfaceOperationType.POST, "REST API",
                 "{\"key\":\"value\"}", "{\"result\":\"ok\"}", InterfaceLogStatus.SUCCESS);
@@ -180,7 +179,6 @@ class InterfaceServiceTest {
 
     @Test
     @DisplayName("findLogsByCriteria: applies all filter criteria")
-    @SuppressWarnings("unchecked")
     void findLogsByCriteria_withFilters_returnsPaginatedResults() {
         OffsetDateTime from = OffsetDateTime.of(2024, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC);
         OffsetDateTime to = OffsetDateTime.of(2024, 12, 31, 23, 59, 59, 0, ZoneOffset.UTC);
@@ -201,7 +199,6 @@ class InterfaceServiceTest {
 
     @Test
     @DisplayName("countLogsByCriteria: returns total count matching criteria")
-    @SuppressWarnings("unchecked")
     void countLogsByCriteria_returnsCount() {
         InterfaceLogCriteria criteria = new InterfaceLogCriteria(null, null,
                 InterfaceOperationType.POST, null, InterfaceLogStatus.SUCCESS);

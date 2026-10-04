@@ -183,7 +183,6 @@ class ProfileServiceTest {
 
     @Test
     @DisplayName("findByCriteria: returns paginated profiles")
-    @SuppressWarnings("unchecked")
     void findByCriteria_returnsPagedProfiles() {
         Profile profile = createProfileEntity(1L, "ADMIN", "Admin");
         Pageable pageable = PageRequest.of(0, 10);
@@ -203,7 +202,6 @@ class ProfileServiceTest {
 
     @Test
     @DisplayName("countByCriteria: returns count of matching profiles")
-    @SuppressWarnings("unchecked")
     void countByCriteria_returnsCount() {
         when(profileRepository.count(any(Specification.class))).thenReturn(5L);
 
@@ -350,7 +348,6 @@ class ProfileServiceTest {
 
     @Test
     @DisplayName("findByCriteria: name filter builds a specification with the name predicate")
-    @SuppressWarnings("unchecked")
     void findByCriteria_nameFilter_buildsSpecification() {
         Pageable pageable = PageRequest.of(0, 10);
         Page<Profile> page = new PageImpl<>(Collections.emptyList(), pageable, 0);
@@ -366,7 +363,6 @@ class ProfileServiceTest {
 
     @Test
     @DisplayName("findByCriteria: null criteria builds an empty specification")
-    @SuppressWarnings("unchecked")
     void findByCriteria_nullCriteria_buildsEmptySpecification() {
         Pageable pageable = PageRequest.of(0, 10);
         Page<Profile> page = new PageImpl<>(Collections.emptyList(), pageable, 0);
@@ -386,7 +382,6 @@ class ProfileServiceTest {
      * Runs the given {@link Specification} against a mocked JPA Criteria API so the lambdas inside
      * {@code buildSpecification} execute and their branches are covered.
      */
-    @SuppressWarnings("unchecked")
     private Predicate evaluateSpecification(Specification<Profile> spec) {
         Root<Profile> root = mock(Root.class, RETURNS_DEEP_STUBS);
         CriteriaQuery<?> query = mock(CriteriaQuery.class);

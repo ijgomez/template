@@ -105,7 +105,6 @@ public class JwtTokenProvider implements TokenProvider {
      * @return list of action codes
      */
     @Override
-    @SuppressWarnings("unchecked")
     public List<String> extractActions(String token) {
         Claims claims = extractClaims(token);
         return claims.get(CLAIM_ACTIONS, List.class);
