@@ -111,7 +111,7 @@
                    data-testid="node-jobs-input-priority">
             @if (isPriorityInvalid()) {
               <div class="invalid-feedback d-block" data-testid="node-jobs-priority-error">
-                @if (formData().priority.trim() === '') {
+                @if (formData().priority === null) {
                   {{ 'cluster.nodes.jobs.validation.priorityRequired' | translate }}
                 } @else {
                   {{ 'cluster.nodes.jobs.validation.priorityInvalid' | translate }}

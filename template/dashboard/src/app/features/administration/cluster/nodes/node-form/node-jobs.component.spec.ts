@@ -106,14 +106,14 @@ describe('NodeJobsComponent', () => {
     expect(component.showModal()).toBe(true);
     expect(component.modalMode()).toBe('edit');
     expect(component.formData().clusterTaskId).toBe(1);
-    expect(component.formData().priority).toBe('5');
+    expect(component.formData().priority).toBe(5);
     expect(component.formData().enabled).toBe(false);
   });
 
   it('save is disabled in assign mode when no task is selected', () => {
     setup();
     component.openAssign();
-    component.updateField('priority', '1');
+    component.updateField('priority', 1);
     expect(component.isSaveDisabled()).toBe(true);
     component.updateField('clusterTaskId', 2);
     expect(component.isSaveDisabled()).toBe(false);
@@ -122,29 +122,67 @@ describe('NodeJobsComponent', () => {
   it('save is disabled when priority is negative', () => {
     setup();
     component.openEdit(buildJob({ clusterTaskId: 1 }));
-    component.updateField('priority', '-1');
+    component.updateField('priority', -1);
     expect(component.isSaveDisabled()).toBe(true);
-    component.updateField('priority', '0');
+    component.updateField('priority', 0);
     expect(component.isSaveDisabled()).toBe(false);
   });
 
-  it('priority is required: empty priority marks the form invalid and disables save', () => {
+  it('priority is required: null priority marks the form invalid and disables save', () => {
     setup();
     component.openAssign();
     component.updateField('clusterTaskId', 2);
-    component.updateField('priority', '');
+    component.updateField('priority', null);
     expect(component.isPriorityInvalid()).toBe(true);
     expect(component.isSaveDisabled()).toBe(true);
-    component.updateField('priority', '1');
+    component.updateField('priority', 1);
     expect(component.isPriorityInvalid()).toBe(false);
     expect(component.isSaveDisabled()).toBe(false);
   });
 
-  it('save does not submit when priority is empty', () => {
+  it('priority 0 is valid and enables save', () => {
     setup();
     component.openAssign();
     component.updateField('clusterTaskId', 2);
-    component.updateField('priority', '');
+    component.updateField('priority', 0);
+    expect(component.isPriorityInvalid()).toBe(false);
+    expect(component.isSaveDisabled()).toBe(false);
+  });
+
+  it('entering a valid number after being invalid clears the invalid state', () => {
+    setup();
+    component.openAssign();
+    component.updateField('clusterTaskId', 2);
+    component.updateField('priority', null);
+    expect(component.isPriorityInvalid()).toBe(true);
+    // user types a valid numeric value: type=number emits a number, not a string
+    component.updateField('priority', 3);
+    expect(component.isPriorityInvalid()).toBe(false);
+    expect(component.isSaveDisabled()).toBe(false);
+  });
+
+  it('shows priorityRequired when priority is null and priorityInvalid when negative', () => {
+    setup();
+    component.openAssign();
+    component.updateField('clusterTaskId', 2);
+    component.updateField('priority', null);
+    fixture.detectChanges();
+    let el: HTMLElement = fixture.nativeElement;
+    let error = el.querySelector('[data-testid="node-jobs-priority-error"]');
+    expect(error?.textContent).toContain('cluster.nodes.jobs.validation.priorityRequired');
+
+    component.updateField('priority', -2);
+    fixture.detectChanges();
+    el = fixture.nativeElement;
+    error = el.querySelector('[data-testid="node-jobs-priority-error"]');
+    expect(error?.textContent).toContain('cluster.nodes.jobs.validation.priorityInvalid');
+  });
+
+  it('save does not submit when priority is null', () => {
+    setup();
+    component.openAssign();
+    component.updateField('clusterTaskId', 2);
+    component.updateField('priority', null);
     component.save();
 
     expect(clusterService.assignJob).not.toHaveBeenCalled();
@@ -155,7 +193,7 @@ describe('NodeJobsComponent', () => {
     setup();
     component.openAssign();
     component.updateField('clusterTaskId', 2);
-    component.updateField('priority', '4');
+    component.updateField('priority', 4);
     component.save();
 
     expect(clusterService.assignJob).toHaveBeenCalledTimes(1);
@@ -169,7 +207,7 @@ describe('NodeJobsComponent', () => {
   it('save delegates to updateJob in edit mode', () => {
     setup();
     component.openEdit(buildJob({ clusterTaskId: 1, priority: 2 }));
-    component.updateField('priority', '3');
+    component.updateField('priority', 3);
     component.save();
 
     expect(clusterService.updateJob).toHaveBeenCalledTimes(1);
@@ -195,7 +233,7 @@ describe('NodeJobsComponent', () => {
     expect(clusterService.findJobsByNode).toHaveBeenCalledTimes(1);
     component.openAssign();
     component.updateField('clusterTaskId', 2);
-    component.updateField('priority', '1');
+    component.updateField('priority', 1);
     component.save();
     expect(clusterService.findJobsByNode).toHaveBeenCalledTimes(2);
   });

@@ -14,7 +14,7 @@ type JobModalMode = 'assign' | 'edit';
 /** Internal form state for the assign/edit modal. */
 interface JobFormData {
   clusterTaskId: number | null;
-  priority: string;
+  priority: number | null;
   enabled: boolean;
 }
 
@@ -48,7 +48,7 @@ export class NodeJobsComponent implements OnInit {
   // Modal state
   readonly showModal = signal(false);
   readonly modalMode = signal<JobModalMode>('assign');
-  readonly formData = signal<JobFormData>({ clusterTaskId: null, priority: '', enabled: true });
+  readonly formData = signal<JobFormData>({ clusterTaskId: null, priority: null, enabled: true });
 
   // Delete confirmation state
   readonly showConfirmDelete = signal(false);
@@ -80,12 +80,11 @@ export class NodeJobsComponent implements OnInit {
 
   /** Whether the priority field is invalid (required and must be >= 0). */
   readonly isPriorityInvalid = computed(() => {
-    const trimmed = this.formData().priority.trim();
-    if (trimmed === '') {
+    const value = this.formData().priority;
+    if (value === null || value === undefined) {
       return true;
     }
-    const value = Number(trimmed);
-    return Number.isNaN(value) || value < 0;
+    return value < 0;
   });
 
   /** Whether the save action in the modal must be disabled. */
@@ -152,7 +151,7 @@ export class NodeJobsComponent implements OnInit {
       return;
     }
     this.modalMode.set('assign');
-    this.formData.set({ clusterTaskId: null, priority: '', enabled: true });
+    this.formData.set({ clusterTaskId: null, priority: null, enabled: true });
     this.showModal.set(true);
   }
 
@@ -166,7 +165,7 @@ export class NodeJobsComponent implements OnInit {
     this.modalMode.set('edit');
     this.formData.set({
       clusterTaskId: job.clusterTaskId,
-      priority: job.priority === null ? '' : String(job.priority),
+      priority: job.priority,
       enabled: job.enabled,
     });
     this.showModal.set(true);
@@ -200,12 +199,11 @@ export class NodeJobsComponent implements OnInit {
       return;
     }
 
-    const priority = Number(form.priority.trim());
     const nodeId = this.nodeId();
     const job: ClusterJob = {
       clusterNodeId: nodeId,
       clusterTaskId: taskId,
-      priority,
+      priority: form.priority as number,
       enabled: form.enabled,
     };
 
