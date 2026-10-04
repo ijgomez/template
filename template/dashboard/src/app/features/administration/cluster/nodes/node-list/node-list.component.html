@@ -72,7 +72,7 @@
     [selectable]="true"
     [selectedItem]="selectedRow()"
     (rowSelect)="selectRow($event)"
-    (rowDoubleClick)="viewDetail($event)"
+    (rowDoubleClick)="openForm($event)"
     (pageChange)="goToPage($event)"
     (pageSizeChange)="changePageSize($event)"
     (sortChange)="onSort($event)"
@@ -118,11 +118,11 @@
 }
 
 <!-- ═══════════════════════════════════════════════════════════════════════════
-     DETAIL VIEW
+     FORM VIEW
      ═══════════════════════════════════════════════════════════════════════════ -->
-@if (viewMode() === 'detail') {
+@if (viewMode() === 'form') {
   @if (selectedNode(); as node) {
-    <app-node-detail
+    <app-node-form
       [node]="node"
       (back)="backToList()" />
   }

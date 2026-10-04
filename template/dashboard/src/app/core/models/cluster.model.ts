@@ -41,6 +41,27 @@ export interface ClusterBlockCriteria {
   name?: string;
 }
 
+/**
+ * Represents a job assigned to a cluster node (ClusterJob).
+ */
+export interface ClusterJob {
+  clusterNodeId: number;
+  clusterTaskId: number;
+  priority: number | null;
+  enabled: boolean;
+}
+
+/**
+ * Represents a cluster task from the task catalogue.
+ */
+export interface ClusterTask {
+  id: number;
+  name: string;
+  description: string | null;
+  nodes: number | null;
+  minNodes: number | null;
+}
+
 
 /**
  * Paginated response from the backend.

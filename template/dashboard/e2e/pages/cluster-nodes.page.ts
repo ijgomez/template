@@ -20,6 +20,7 @@ export class ClusterNodesPage {
   readonly setMasterButton: Locator;
   readonly exportButton: Locator;
   readonly backButton: Locator;
+  readonly nodeCard: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -35,6 +36,7 @@ export class ClusterNodesPage {
     this.setMasterButton = page.getByTestId('btn-set-master');
     this.exportButton = page.getByTestId('btn-export');
     this.backButton = page.getByTestId('node-detail-btn-back');
+    this.nodeCard = page.getByTestId('node-form-card');
   }
 
   /** Navega al listado de nodos y espera a que esté visible. */

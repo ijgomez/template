@@ -395,8 +395,37 @@
         "title": "Confirm Master Change",
         "message": "Are you sure you want to set \"{{hostname}}\" as the new master node? The current master will be demoted."
       },
-      "detail": {
-        "title": "Node Detail"
+      "form": {
+        "title": "Cluster Node"
+      },
+      "jobs": {
+        "title": "Node Jobs",
+        "empty": "There are no tasks available to assign",
+        "assign": "Assign task",
+        "fields": {
+          "task": "Task",
+          "priority": "Priority",
+          "enabled": "Enabled",
+          "description": "Actions"
+        },
+        "form": {
+          "assignTitle": "Assign Task",
+          "editTitle": "Edit Task",
+          "taskPlaceholder": "Select a task"
+        },
+        "validation": {
+          "taskRequired": "Task is required",
+          "priorityInvalid": "Priority must be greater than or equal to 0",
+          "duplicate": "The task is already assigned to this node"
+        },
+        "confirmDelete": {
+          "title": "Delete Task",
+          "message": "Are you sure you want to remove the task \"{{task}}\" from this node?"
+        },
+        "actions": {
+          "edit": "Edit task",
+          "delete": "Delete task"
+        }
       }
     },
     "blocks": {

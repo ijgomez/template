@@ -3,7 +3,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { provideHttpClient } from '@angular/common/http';
 
 import { ClusterService } from './cluster.service';
-import { ClusterNode, ClusterBlock } from '../models/cluster.model';
+import { ClusterNode, ClusterBlock, ClusterJob, ClusterTask } from '../models/cluster.model';
 import { Page } from '../models/page.model';
 import { environment } from '../../../environments/environment';
 
@@ -13,6 +13,22 @@ describe('ClusterService', () => {
 
   const nodesUrl = `${environment.apiUrl}/administration/cluster/nodes`;
   const blocksUrl = `${environment.apiUrl}/administration/cluster/blocks`;
+  const tasksUrl = `${environment.apiUrl}/administration/cluster/tasks`;
+
+  const mockJob: ClusterJob = {
+    clusterNodeId: 1,
+    clusterTaskId: 10,
+    priority: 1,
+    enabled: true,
+  };
+
+  const mockTask: ClusterTask = {
+    id: 10,
+    name: 'TASK_A',
+    description: 'A task',
+    nodes: 2,
+    minNodes: 1,
+  };
 
   const mockNode: ClusterNode = {
     id: 1,
@@ -90,6 +106,63 @@ describe('ClusterService', () => {
       expect(req.request.method).toBe('PATCH');
       expect(req.request.body).toEqual({ master: true });
       req.flush(mockNode);
+    });
+  });
+
+  describe('jobs', () => {
+    it('findJobsByNode should GET the jobs of a node', () => {
+      service.findJobsByNode(1).subscribe((jobs) => {
+        expect(jobs).toEqual([mockJob]);
+      });
+
+      const req = httpMock.expectOne(`${nodesUrl}/1/jobs`);
+      expect(req.request.method).toBe('GET');
+      req.flush([mockJob]);
+    });
+
+    it('assignJob should POST the job to the node jobs URL', () => {
+      service.assignJob(1, mockJob).subscribe((job) => {
+        expect(job).toEqual(mockJob);
+      });
+
+      const req = httpMock.expectOne(`${nodesUrl}/1/jobs`);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual(mockJob);
+      req.flush(mockJob);
+    });
+
+    it('updateJob should PUT the job to the node job URL', () => {
+      service.updateJob(1, 10, mockJob).subscribe((job) => {
+        expect(job).toEqual(mockJob);
+      });
+
+      const req = httpMock.expectOne(`${nodesUrl}/1/jobs/10`);
+      expect(req.request.method).toBe('PUT');
+      expect(req.request.body).toEqual(mockJob);
+      req.flush(mockJob);
+    });
+
+    it('deleteJob should DELETE the node job URL', () => {
+      service.deleteJob(1, 10).subscribe((result) => {
+        expect(result).toBeNull();
+      });
+
+      const req = httpMock.expectOne(`${nodesUrl}/1/jobs/10`);
+      expect(req.request.method).toBe('DELETE');
+      req.flush(null);
+    });
+  });
+
+  describe('tasks', () => {
+    it('findAllTasks should GET the tasks catalogue URL', () => {
+      service.findAllTasks().subscribe((tasks) => {
+        expect(tasks).toEqual([mockTask]);
+      });
+
+      const req = httpMock.expectOne(tasksUrl);
+      expect(req.request.method).toBe('GET');
+      expect(req.request.url).toBe(`${environment.apiUrl}/administration/cluster/tasks`);
+      req.flush([mockTask]);
     });
   });
 

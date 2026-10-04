@@ -4,20 +4,23 @@ import { TranslatePipe } from '@ngx-translate/core';
 
 import { LocalDatePipe } from '../../../../../shared/pipes/local-date.pipe';
 import { ClusterNode } from '../../../../../core/models/cluster.model';
+import { NodeJobsComponent } from './node-jobs.component';
 
 /**
- * Node detail component.
- * Displays the read-only detail view for a single cluster node.
+ * Node form component.
+ * Shows the cluster node attributes always in read-only mode (Req 25.11)
+ * and lets the user manage the jobs (ClusterJob) assigned to the node.
+ * Replaces the former node-detail view.
  */
 @Component({
-  selector: 'app-node-detail',
+  selector: 'app-node-form',
   standalone: true,
-  imports: [DecimalPipe, TranslatePipe, LocalDatePipe],
-  templateUrl: './node-detail.component.html',
+  imports: [DecimalPipe, TranslatePipe, LocalDatePipe, NodeJobsComponent],
+  templateUrl: './node-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NodeDetailComponent {
-  /** The cluster node to display. */
+export class NodeFormComponent {
+  /** The cluster node to display (always read-only). */
   readonly node = input.required<ClusterNode>();
 
   /** Emitted when the user clicks the back button. */

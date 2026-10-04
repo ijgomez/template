@@ -11,9 +11,9 @@ import { CsvExportService } from '../../../../../core/services/csv-export.servic
 import { LocalDatePipe } from '../../../../../shared/pipes/local-date.pipe';
 import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../../shared/components/data-table';
 import { ClusterNode } from '../../../../../core/models/cluster.model';
-import { NodeDetailComponent } from '../node-detail/node-detail.component';
+import { NodeFormComponent } from '../node-form/node-form.component';
 
-type ViewMode = 'list' | 'detail';
+type ViewMode = 'list' | 'form';
 
 /**
  * Cluster nodes component.
@@ -25,7 +25,7 @@ type ViewMode = 'list' | 'detail';
 @Component({
   selector: 'app-cluster-node-list',
   standalone: true,
-  imports: [FormsModule, DecimalPipe, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective, NodeDetailComponent],
+  imports: [FormsModule, DecimalPipe, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective, NodeFormComponent],
   templateUrl: './node-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -158,11 +158,11 @@ export class NodeListComponent implements OnInit {
   }
 
   /**
-   * Navigates to the detail view for a given node.
+   * Navigates to the form view for a given node.
    */
-  viewDetail(node: ClusterNode): void {
+  openForm(node: ClusterNode): void {
     this.selectedNode.set(node);
-    this.viewMode.set('detail');
+    this.viewMode.set('form');
   }
 
   /**

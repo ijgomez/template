@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
-import { ClusterNode, ClusterBlock, ClusterBlockCriteria } from '../models/cluster.model';
+import { ClusterNode, ClusterBlock, ClusterBlockCriteria, ClusterJob, ClusterTask } from '../models/cluster.model';
 import { Page } from '../models/page.model';
 
 /** Page size used to fetch the full filtered list for exports (bypasses UI pagination). */
@@ -18,8 +18,10 @@ const EXPORT_PAGE_SIZE = 100000;
 @Injectable({ providedIn: 'root' })
 export class ClusterService {
   private readonly http = inject(HttpClient);
-  private readonly nodesUrl = `${environment.apiUrl}/administration/cluster/nodes`;
-  private readonly blocksUrl = `${environment.apiUrl}/administration/cluster/blocks`;
+  private readonly clusterUrl = `${environment.apiUrl}/administration/cluster`;
+  private readonly nodesUrl = `${this.clusterUrl}/nodes`;
+  private readonly blocksUrl = `${this.clusterUrl}/blocks`;
+  private readonly tasksUrl = `${this.clusterUrl}/tasks`;
 
   // ─── Nodes ─────────────────────────────────────────────────
 
@@ -42,6 +44,45 @@ export class ClusterService {
    */
   setMaster(id: number, master: boolean): Observable<ClusterNode> {
     return this.http.patch<ClusterNode>(`${this.nodesUrl}/${id}`, { master });
+  }
+
+  // ─── Jobs ──────────────────────────────────────────────────
+
+  /**
+   * Retrieves the jobs assigned to a node, ordered by priority.
+   */
+  findJobsByNode(nodeId: number): Observable<ClusterJob[]> {
+    return this.http.get<ClusterJob[]>(`${this.nodesUrl}/${nodeId}/jobs`);
+  }
+
+  /**
+   * Assigns a task to a node (POST). The node id is taken from the path.
+   */
+  assignJob(nodeId: number, job: ClusterJob): Observable<ClusterJob> {
+    return this.http.post<ClusterJob>(`${this.nodesUrl}/${nodeId}/jobs`, job);
+  }
+
+  /**
+   * Updates an existing job of a node (PUT).
+   */
+  updateJob(nodeId: number, taskId: number, job: ClusterJob): Observable<ClusterJob> {
+    return this.http.put<ClusterJob>(`${this.nodesUrl}/${nodeId}/jobs/${taskId}`, job);
+  }
+
+  /**
+   * Removes a job from a node (DELETE).
+   */
+  deleteJob(nodeId: number, taskId: number): Observable<void> {
+    return this.http.delete<void>(`${this.nodesUrl}/${nodeId}/jobs/${taskId}`);
+  }
+
+  // ─── Tasks ─────────────────────────────────────────────────
+
+  /**
+   * Retrieves the full catalogue of cluster tasks.
+   */
+  findAllTasks(): Observable<ClusterTask[]> {
+    return this.http.get<ClusterTask[]>(this.tasksUrl);
   }
 
   // ─── Blocks ────────────────────────────────────────────────

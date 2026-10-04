@@ -1,0 +1,174 @@
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     NODE JOBS PANEL
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<div class="card mt-3">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h2 class="h5 mb-0">{{ 'cluster.nodes.jobs.title' | translate }}</h2>
+      @if (canWrite) {
+        <button type="button" class="btn btn-primary btn-sm"
+                [disabled]="!canAssign()"
+                (click)="openAssign()"
+                data-testid="node-jobs-btn-assign">
+          <i class="bi bi-plus-lg me-1" aria-hidden="true"></i> {{ 'cluster.nodes.jobs.assign' | translate }}
+        </button>
+      }
+    </div>
+
+    <tp-data-table
+      [columns]="columns"
+      [data]="jobs()"
+      [loading]="isLoading()"
+      [totalElements]="jobs().length"
+      [currentPage]="0"
+      [pageSize]="jobs().length || 1"
+      [selectable]="false"
+      ariaLabel="Tareas asignadas al nodo"
+      testId="node-jobs-table">
+
+      <ng-template tpColumn="task" let-job>
+        {{ taskName(job.clusterTaskId) }}
+      </ng-template>
+
+      <ng-template tpColumn="priority" let-job>
+        {{ job.priority ?? '—' }}
+      </ng-template>
+
+      <ng-template tpColumn="enabled" let-job>
+        <span class="badge" [class.bg-success]="job.enabled" [class.bg-secondary]="!job.enabled">
+          {{ (job.enabled ? 'common.yes' : 'common.no') | translate }}
+        </span>
+      </ng-template>
+
+      <ng-template tpColumn="actions" let-job>
+        @if (canWrite) {
+          <div class="d-flex gap-2">
+            <button type="button" class="btn btn-outline-secondary btn-sm"
+                    (click)="openEdit(job)"
+                    [attr.aria-label]="'cluster.nodes.jobs.actions.edit' | translate"
+                    data-testid="node-jobs-btn-edit">
+              <i class="bi bi-pencil" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="btn btn-outline-danger btn-sm"
+                    (click)="confirmDelete(job)"
+                    [attr.aria-label]="'cluster.nodes.jobs.actions.delete' | translate"
+                    data-testid="node-jobs-btn-delete">
+              <i class="bi bi-trash" aria-hidden="true"></i>
+            </button>
+          </div>
+        }
+      </ng-template>
+    </tp-data-table>
+
+    @if (!canAssign() && canWrite && assignableTasks().length === 0) {
+      <p class="text-muted small mb-0 mt-2">{{ 'cluster.nodes.jobs.empty' | translate }}</p>
+    }
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     ASSIGN / EDIT MODAL
+     ═══════════════════════════════════════════════════════════════════════════ -->
+@if (showModal()) {
+  <div class="modal d-block" tabindex="-1" role="dialog" data-testid="node-jobs-modal"
+       [attr.aria-label]="(modalMode() === 'assign' ? 'cluster.nodes.jobs.form.assignTitle' : 'cluster.nodes.jobs.form.editTitle') | translate">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            {{ (modalMode() === 'assign' ? 'cluster.nodes.jobs.form.assignTitle' : 'cluster.nodes.jobs.form.editTitle') | translate }}
+          </h5>
+          <button type="button" class="btn-close"
+                  data-testid="node-jobs-modal-close"
+                  (click)="closeModal()"
+                  [attr.aria-label]="'button.close' | translate"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="jobTask" class="form-label">{{ 'cluster.nodes.jobs.fields.task' | translate }}</label>
+            @if (modalMode() === 'assign') {
+              <select id="jobTask" class="form-select"
+                      [ngModel]="formData().clusterTaskId"
+                      (ngModelChange)="updateField('clusterTaskId', $event)"
+                      name="jobTask"
+                      data-testid="node-jobs-select-task">
+                <option [ngValue]="null" disabled>{{ 'cluster.nodes.jobs.form.taskPlaceholder' | translate }}</option>
+                @for (task of assignableTasks(); track task.id) {
+                  <option [ngValue]="task.id">{{ task.name }}</option>
+                }
+              </select>
+            } @else {
+              <p class="form-control-plaintext" data-testid="node-jobs-task-fixed">{{ taskName(formData().clusterTaskId!) }}</p>
+            }
+          </div>
+          <div class="mb-3">
+            <label for="jobPriority" class="form-label">{{ 'cluster.nodes.jobs.fields.priority' | translate }}</label>
+            <input id="jobPriority" type="number" min="0" class="form-control"
+                   [ngModel]="formData().priority"
+                   (ngModelChange)="updateField('priority', $event)"
+                   name="jobPriority"
+                   data-testid="node-jobs-input-priority">
+          </div>
+          <div class="form-check">
+            <input id="jobEnabled" type="checkbox" class="form-check-input"
+                   [ngModel]="formData().enabled"
+                   (ngModelChange)="updateField('enabled', $event)"
+                   name="jobEnabled"
+                   data-testid="node-jobs-input-enabled">
+            <label for="jobEnabled" class="form-check-label">{{ 'cluster.nodes.jobs.fields.enabled' | translate }}</label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary"
+                  data-testid="node-jobs-modal-cancel"
+                  (click)="closeModal()">
+            {{ 'button.cancel' | translate }}
+          </button>
+          <button type="button" class="btn btn-primary"
+                  data-testid="node-jobs-modal-save"
+                  [disabled]="isSaveDisabled()"
+                  (click)="save()">
+            {{ 'button.save' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-backdrop fade show"></div>
+}
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     DELETE CONFIRMATION
+     ═══════════════════════════════════════════════════════════════════════════ -->
+@if (showConfirmDelete()) {
+  <div class="modal d-block" tabindex="-1" role="dialog" data-testid="node-jobs-confirm-dialog"
+       [attr.aria-label]="'cluster.nodes.jobs.confirmDelete.title' | translate">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">{{ 'cluster.nodes.jobs.confirmDelete.title' | translate }}</h5>
+          <button type="button" class="btn-close"
+                  data-testid="node-jobs-confirm-close"
+                  (click)="cancelDelete()"
+                  [attr.aria-label]="'button.close' | translate"></button>
+        </div>
+        <div class="modal-body">
+          <p>{{ 'cluster.nodes.jobs.confirmDelete.message' | translate: { task: confirmTaskName() } }}</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary"
+                  data-testid="node-jobs-confirm-cancel"
+                  (click)="cancelDelete()">
+            {{ 'button.cancel' | translate }}
+          </button>
+          <button type="button" class="btn btn-danger"
+                  data-testid="node-jobs-confirm-ok"
+                  (click)="executeDelete()">
+            {{ 'button.delete' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-backdrop fade show"></div>
+}

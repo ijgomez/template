@@ -395,8 +395,37 @@
         "title": "Confirmar cambio de Maestro",
         "message": "¿Está seguro de que desea establecer \"{{hostname}}\" como nuevo nodo maestro? El maestro actual será degradado."
       },
-      "detail": {
-        "title": "Detalle de Nodo"
+      "form": {
+        "title": "Nodo del Cluster"
+      },
+      "jobs": {
+        "title": "Tareas del Nodo",
+        "empty": "No hay tareas disponibles para asignar",
+        "assign": "Asignar tarea",
+        "fields": {
+          "task": "Tarea",
+          "priority": "Prioridad",
+          "enabled": "Habilitada",
+          "description": "Acciones"
+        },
+        "form": {
+          "assignTitle": "Asignar Tarea",
+          "editTitle": "Editar Tarea",
+          "taskPlaceholder": "Seleccione una tarea"
+        },
+        "validation": {
+          "taskRequired": "La tarea es obligatoria",
+          "priorityInvalid": "La prioridad debe ser mayor o igual a 0",
+          "duplicate": "La tarea ya está asignada a este nodo"
+        },
+        "confirmDelete": {
+          "title": "Eliminar Tarea",
+          "message": "¿Está seguro de que desea eliminar la tarea \"{{task}}\" de este nodo?"
+        },
+        "actions": {
+          "edit": "Editar tarea",
+          "delete": "Eliminar tarea"
+        }
       }
     },
     "blocks": {
