@@ -396,7 +396,8 @@
         "message": "¿Está seguro de que desea establecer \"{{hostname}}\" como nuevo nodo maestro? El maestro actual será degradado."
       },
       "form": {
-        "title": "Nodo del Cluster"
+        "title": "Nodo del Cluster",
+        "sectionNode": "Datos del nodo"
       },
       "jobs": {
         "title": "Tareas del Nodo",

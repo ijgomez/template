@@ -56,15 +56,22 @@ describe('NodeFormComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('renders the node attributes in read-only plaintext controls', () => {
+  it('renders the node attributes in read-only controls', () => {
     setup(buildNode({ hostname: 'node-alpha', ip: '10.0.0.5' }));
     const el: HTMLElement = fixture.nativeElement;
-    const plaintext = el.querySelectorAll('.form-control-plaintext');
-    expect(plaintext.length).toBeGreaterThan(0);
-    expect(el.textContent).toContain('node-alpha');
-    expect(el.textContent).toContain('10.0.0.5');
-    // No editable inputs for the node attributes (Req 25.11).
-    expect(el.querySelector('.card .card-body input')).toBeNull();
+    const card = el.querySelector('[data-testid="node-form-card"]')!;
+    expect(card).not.toBeNull();
+    const inputs = card.querySelectorAll('input');
+    expect(inputs.length).toBeGreaterThan(0);
+    // All node attribute inputs are read-only and disabled (Req 25.11).
+    inputs.forEach((input) => {
+      expect(input.hasAttribute('readonly')).toBe(true);
+      expect(input.hasAttribute('disabled')).toBe(true);
+    });
+    const hostnameInput = Array.from(inputs).find((i) => i.value === 'node-alpha');
+    expect(hostnameInput).toBeTruthy();
+    const ipInput = Array.from(inputs).find((i) => i.value === '10.0.0.5');
+    expect(ipInput).toBeTruthy();
   });
 
   it('exposes the back button with the preserved data-testid', () => {

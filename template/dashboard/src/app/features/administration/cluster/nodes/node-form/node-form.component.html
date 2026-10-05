@@ -9,59 +9,94 @@
   </div>
 </div>
 
-<div class="card" data-testid="node-form-card">
-  <div class="card-body">
-    <div class="tp-form-grid">
-      <div class="form-group">
-        <label class="form-label fw-bold">{{ 'cluster.nodes.fields.hostname' | translate }}</label>
-        <p class="form-control-plaintext">{{ node().hostname }}</p>
+<div class="tp-filter-bar" data-testid="node-form-card">
+  <!-- Datos del nodo (solo lectura, Req 25.11) -->
+  <h6 class="text-muted text-uppercase fw-semibold mb-2" style="font-size: 0.75rem; letter-spacing: 0.05em;">
+    {{ 'cluster.nodes.form.sectionNode' | translate }}
+  </h6>
+  <div class="row g-2 mb-3">
+    <div class="col-md-4">
+      <label class="form-label form-label-sm mb-1">{{ 'cluster.nodes.fields.hostname' | translate }}</label>
+      <input type="text"
+             class="form-control form-control-sm"
+             [value]="node().hostname"
+             readonly
+             disabled
+             [attr.aria-label]="'cluster.nodes.fields.hostname' | translate">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label form-label-sm mb-1">{{ 'cluster.nodes.fields.ip' | translate }}</label>
+      <input type="text"
+             class="form-control form-control-sm"
+             [value]="node().ip ?? '-'"
+             readonly
+             disabled
+             [attr.aria-label]="'cluster.nodes.fields.ip' | translate">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label form-label-sm mb-1">{{ 'cluster.nodes.fields.status' | translate }}</label>
+      <div>
+        <span class="badge"
+              [class.bg-success]="node().status === 'ACTIVE'"
+              [class.bg-danger]="node().status === 'INACTIVE'">
+          {{ 'cluster.nodes.status.' + node().status.toLowerCase() | translate }}
+        </span>
       </div>
-      <div class="form-group">
-        <label class="form-label fw-bold">{{ 'cluster.nodes.fields.ip' | translate }}</label>
-        <p class="form-control-plaintext">{{ node().ip ?? '-' }}</p>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label form-label-sm mb-1">{{ 'cluster.nodes.fields.master' | translate }}</label>
+      <div>
+        @if (node().master) {
+          <span class="badge bg-primary">MASTER</span>
+        } @else {
+          <span class="text-muted">&mdash;</span>
+        }
       </div>
-      <div class="form-group">
-        <label class="form-label fw-bold">{{ 'cluster.nodes.fields.status' | translate }}</label>
-        <p class="form-control-plaintext">
-          <span class="badge"
-                [class.bg-success]="node().status === 'ACTIVE'"
-                [class.bg-danger]="node().status === 'INACTIVE'">
-            {{ 'cluster.nodes.status.' + node().status.toLowerCase() | translate }}
-          </span>
-        </p>
-      </div>
-      <div class="form-group">
-        <label class="form-label fw-bold">{{ 'cluster.nodes.fields.master' | translate }}</label>
-        <p class="form-control-plaintext">
-          @if (node().master) {
-            <span class="badge bg-primary">MASTER</span>
-          } @else {
-            <span class="text-muted">&mdash;</span>
-          }
-        </p>
-      </div>
-      <div class="form-group">
-        <label class="form-label fw-bold">{{ 'cluster.nodes.fields.startedAt' | translate }}</label>
-        <p class="form-control-plaintext">{{ node().startedAt | localDate }}</p>
-      </div>
-      <div class="form-group">
-        <label class="form-label fw-bold">{{ 'cluster.nodes.fields.lastModifiedAt' | translate }}</label>
-        <p class="form-control-plaintext">{{ node().lastModifiedAt | localDate }}</p>
-      </div>
-      <div class="form-group">
-        <label class="form-label fw-bold">{{ 'cluster.nodes.fields.usedMemoryGb' | translate }}</label>
-        <p class="form-control-plaintext">{{ node().usedMemory / 1073741824 | number:'1.2-2' }} GB</p>
-      </div>
-      <div class="form-group">
-        <label class="form-label fw-bold">{{ 'cluster.nodes.fields.totalMemoryGb' | translate }}</label>
-        <p class="form-control-plaintext">{{ node().totalMemory / 1073741824 | number:'1.2-2' }} GB</p>
-      </div>
-      <div class="form-group">
-        <label class="form-label fw-bold">{{ 'cluster.nodes.fields.freeMemoryPercent' | translate }}</label>
-        <p class="form-control-plaintext">
-          {{ (node().totalMemory > 0 ? ((node().totalMemory - node().usedMemory) / node().totalMemory * 100) : 0) | number:'1.1-1' }}%
-        </p>
-      </div>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label form-label-sm mb-1">{{ 'cluster.nodes.fields.startedAt' | translate }}</label>
+      <input type="text"
+             class="form-control form-control-sm"
+             [value]="(node().startedAt | localDate) ?? ''"
+             readonly
+             disabled
+             [attr.aria-label]="'cluster.nodes.fields.startedAt' | translate">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label form-label-sm mb-1">{{ 'cluster.nodes.fields.lastModifiedAt' | translate }}</label>
+      <input type="text"
+             class="form-control form-control-sm"
+             [value]="(node().lastModifiedAt | localDate) ?? ''"
+             readonly
+             disabled
+             [attr.aria-label]="'cluster.nodes.fields.lastModifiedAt' | translate">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label form-label-sm mb-1">{{ 'cluster.nodes.fields.usedMemoryGb' | translate }}</label>
+      <input type="text"
+             class="form-control form-control-sm"
+             [value]="(node().usedMemory / 1073741824 | number:'1.2-2') + ' GB'"
+             readonly
+             disabled
+             [attr.aria-label]="'cluster.nodes.fields.usedMemoryGb' | translate">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label form-label-sm mb-1">{{ 'cluster.nodes.fields.totalMemoryGb' | translate }}</label>
+      <input type="text"
+             class="form-control form-control-sm"
+             [value]="(node().totalMemory / 1073741824 | number:'1.2-2') + ' GB'"
+             readonly
+             disabled
+             [attr.aria-label]="'cluster.nodes.fields.totalMemoryGb' | translate">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label form-label-sm mb-1">{{ 'cluster.nodes.fields.freeMemoryPercent' | translate }}</label>
+      <input type="text"
+             class="form-control form-control-sm"
+             [value]="((node().totalMemory > 0 ? ((node().totalMemory - node().usedMemory) / node().totalMemory * 100) : 0) | number:'1.1-1') + '%'"
+             readonly
+             disabled
+             [attr.aria-label]="'cluster.nodes.fields.freeMemoryPercent' | translate">
     </div>
   </div>
 </div>
