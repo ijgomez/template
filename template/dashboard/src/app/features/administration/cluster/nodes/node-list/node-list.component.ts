@@ -166,6 +166,16 @@ export class NodeListComponent implements OnInit {
   }
 
   /**
+   * Opens the form view for the currently selected row.
+   */
+  editSelected(): void {
+    const node = this.selectedRow();
+    if (node) {
+      this.openForm(node);
+    }
+  }
+
+  /**
    * Returns to the list view.
    */
   backToList(): void {

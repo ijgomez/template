@@ -49,6 +49,11 @@
 
 <!-- Action toolbar -->
 <div class="tp-toolbar d-flex gap-2 mb-3">
+  <button type="button" class="btn btn-outline-primary btn-sm"
+          [disabled]="!selectedRow()"
+          (click)="editSelected()" data-testid="btn-edit">
+    <i class="bi bi-pencil me-1" aria-hidden="true"></i> {{ 'button.edit' | translate }}
+  </button>
   @if (canWrite) {
     <button type="button" class="btn btn-primary btn-sm"
             [disabled]="!selectedRow() || selectedRow()!.master || selectedRow()!.status === 'INACTIVE'"
