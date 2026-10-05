@@ -3,9 +3,9 @@ import { provideTranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 
 import { NodeJobsComponent } from './node-jobs.component';
-import { ClusterService } from '../../../../../core/services/cluster.service';
-import { AuthService } from '../../../../../core/services/auth.service';
-import { ClusterJob, ClusterTask } from '../../../../../core/models/cluster.model';
+import { ClusterService } from '../../../../core/services/cluster.service';
+import { AuthService } from '../../../../core/services/auth.service';
+import { ClusterJob, ClusterTask } from '../../../../core/models/cluster.model';
 
 function buildTask(overrides: Partial<ClusterTask> = {}): ClusterTask {
   return { id: 1, name: 'TASK_A', description: null, nodes: null, minNodes: null, ...overrides };

@@ -4,7 +4,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 
 import { LocalDatePipe } from '../../../../../shared/pipes/local-date.pipe';
 import { ClusterNode } from '../../../../../core/models/cluster.model';
-import { NodeJobsComponent } from './node-jobs.component';
+import { NodeJobsComponent } from '../../../components/node-jobs/node-jobs.component';
 
 /**
  * Node form component.

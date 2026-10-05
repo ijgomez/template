@@ -3,7 +3,7 @@ import { provideTranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 
 import { NodeFormComponent } from './node-form.component';
-import { NodeJobsComponent } from './node-jobs.component';
+import { NodeJobsComponent } from '../../../components/node-jobs/node-jobs.component';
 import { ClusterService } from '../../../../../core/services/cluster.service';
 import { AuthService } from '../../../../../core/services/auth.service';
 import { ClusterNode } from '../../../../../core/models/cluster.model';

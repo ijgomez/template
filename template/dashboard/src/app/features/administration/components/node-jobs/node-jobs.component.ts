@@ -2,11 +2,11 @@ import { Component, ChangeDetectionStrategy, inject, input, signal, computed, On
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
-import { ClusterService } from '../../../../../core/services/cluster.service';
-import { AuthService } from '../../../../../core/services/auth.service';
-import { NotificationService } from '../../../../../core/services/notification.service';
-import { TpDataTableComponent, TpColumnDirective, ColumnDef } from '../../../../../shared/components/data-table';
-import { ClusterJob, ClusterTask } from '../../../../../core/models/cluster.model';
+import { ClusterService } from '../../../../core/services/cluster.service';
+import { AuthService } from '../../../../core/services/auth.service';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { TpDataTableComponent, TpColumnDirective, ColumnDef } from '../../../../shared/components/data-table';
+import { ClusterJob, ClusterTask } from '../../../../core/models/cluster.model';
 
 /** Modal editing mode for the jobs panel. */
 type JobModalMode = 'assign' | 'edit';
