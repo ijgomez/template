@@ -21,6 +21,22 @@ services:
       timeout: 5s
       retries: 5
 
+  wildfly:
+    build:
+      context: ./wildfly
+      dockerfile: Dockerfile
+    container_name: template-wildfly
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "${WILDFLY_HTTP_PORT:-8080}:8080"
+      - "${WILDFLY_MANAGEMENT_PORT:-9990}:9990"
+    environment:
+      WILDFLY_ADMIN_USER: ${WILDFLY_ADMIN_USER:-admin}
+      WILDFLY_ADMIN_PASSWORD: ${WILDFLY_ADMIN_PASSWORD:-admin}
+
 
 
 volumes:

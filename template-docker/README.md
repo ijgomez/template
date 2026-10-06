@@ -1,6 +1,7 @@
 # Template Docker
 
-Infraestructura Docker para la plataforma Template. Permite levantar todos los servicios (base de datos, backend y frontend) de forma local mediante Docker Compose.
+template-docker es un ejemplo de infraestructura del entorno de desarrollo para la plataforma Template.
+Permite levantar de forma local los servicios de base de datos (PostgreSQL) y servidor de aplicaciones (WildFly) mediante Docker Compose.
 
 ## Requisitos previos
 
@@ -19,10 +20,10 @@ cp .env.example .env
 
 ## Uso
 
-### Arrancar todos los servicios
+### Arrancar todos los servicios (recomendado)
 
 ```bash
-docker compose up -d
+./compose.sh start
 ```
 
 Esto levantará:
@@ -30,8 +31,18 @@ Esto levantará:
 | Servicio   | Puerto | Descripción                    |
 |------------|--------|--------------------------------|
 | PostgreSQL | 5432   | Base de datos                  |
-| Backend    | 8080   | API REST (Spring Boot)         |
-| Frontend   | 4200   | Aplicación Angular (via Nginx) |
+| WildFly    | 8080   | HTTP del servidor de aplicaciones |
+| WildFly Management | 9990 | Consola de administración de WildFly |
+
+`./compose.sh start` fuerza reconstrucción de imágenes (`docker compose up -d --build`) para que cambios en Dockerfile y scripts se apliquen automáticamente.
+
+### Reinicializar desde cero (incluyendo volumen de datos)
+
+```bash
+./compose.sh reset
+```
+
+Este comando elimina contenedores y volúmenes y vuelve a construir/levantar servicios. Úsalo cuando cambies scripts de inicialización de PostgreSQL.
 
 ### Ver logs
 
@@ -42,13 +53,14 @@ docker compose logs -f
 Para ver los logs de un servicio concreto:
 
 ```bash
-docker compose logs -f backend
+docker compose logs -f postgres
+docker compose logs -f wildfly
 ```
 
 ### Detener todos los servicios
 
 ```bash
-docker compose down
+./compose.sh stop
 ```
 
 ### Detener y eliminar volúmenes (datos)
@@ -62,10 +74,15 @@ docker compose down -v
 ```text
 template-docker/
 ├── docker-compose.yml      ← Orquestación de servicios
-├── Dockerfile.backend      ← Build multi-stage del backend (Maven + JDK 21)
-├── Dockerfile.frontend     ← Build multi-stage del frontend (Node + Nginx)
-├── nginx.conf              ← Configuración Nginx para el frontend
+├── compose.sh              ← Script de arranque/parada/reset
 ├── .env.example            ← Variables de entorno de ejemplo
+├── postgres/
+│   ├── Dockerfile          ← Imagen de PostgreSQL personalizada
+│   ├── init-tablespaces.sh ← Crea rutas físicas de tablespaces
+│   └── init.sql            ← Inicializa roles, schema y tablespaces
+├── wildfly/
+│   ├── Dockerfile          ← Imagen de WildFly personalizada
+│   └── docker-entrypoint.sh ← Crea usuario admin y arranca WildFly
 └── README.md               ← Este fichero
 ```
 
@@ -73,19 +90,36 @@ template-docker/
 
 ### PostgreSQL 18
 
-- Imagen: `postgres:18`
+- Build local desde `postgres/Dockerfile` (base `postgres:18`)
 - Puerto: configurable via `POSTGRES_PORT` (por defecto 5432)
 - Los datos se persisten en un volumen Docker (`postgres-data`) montado en `/var/lib/postgresql`
 - `PGDATA` se fija en `/var/lib/postgresql/18/docker` para seguir el esquema recomendado en 18+
+- Inicialización al primer arranque del volumen:
+  - Schema `template`
+  - Tablespaces `template_data_tbs` y `template_index_tbs`
+  - Roles `template_admin` y `template_user`
 
-### Backend
+### WildFly
 
-- Build multi-stage: compilación con Maven + ejecución con JDK 21
-- Puerto: configurable via `BACKEND_PORT` (por defecto 8080)
-- Espera a que PostgreSQL esté disponible antes de arrancar
+- Build local desde `wildfly/Dockerfile` (base `quay.io/wildfly/wildfly:latest-jdk21`)
+- Puerto HTTP: configurable via `WILDFLY_HTTP_PORT` (por defecto 8080)
+- Puerto de gestión: configurable via `WILDFLY_MANAGEMENT_PORT` (por defecto 9990)
+- Crea automáticamente el usuario de administración (si no existe) a través de:
+  - `WILDFLY_ADMIN_USER`
+  - `WILDFLY_ADMIN_PASSWORD`
+- Espera a que PostgreSQL esté saludable antes de arrancar
 
-### Frontend
+## Variables de entorno
 
-- Build multi-stage: compilación con Node + servicio con Nginx
-- Puerto: configurable via `FRONTEND_PORT` (por defecto 4200)
-- Espera a que el backend esté disponible antes de arrancar
+Archivo de referencia: `.env.example`
+
+- PostgreSQL
+  - `POSTGRES_DB`
+  - `POSTGRES_USER`
+  - `POSTGRES_PASSWORD`
+  - `POSTGRES_PORT`
+- WildFly
+  - `WILDFLY_HTTP_PORT`
+  - `WILDFLY_MANAGEMENT_PORT`
+  - `WILDFLY_ADMIN_USER`
+  - `WILDFLY_ADMIN_PASSWORD`
