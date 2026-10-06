@@ -1,0 +1,37 @@
+{
+  "name": "feature-backend",
+  "description": "Feature backend en el stack Spring Boot modular. Investiga, planifica, implementa con bucle de revision y verifica (mvn) una sola vez al final en el modulo afectado. Respeta la separacion por capas domain/core/ws/webapp.",
+  "inputs": {
+    "task": "prompt",
+    "module": "string"
+  },
+  "steps": [
+    {
+      "agent": "wf-planner",
+      "id": "plan",
+      "type": "step",
+      "prompt": "Eres el planificador de una feature de BACKEND en el proyecto 'template' (Java 21, Spring Boot, Maven multimodulo).\n\nTAREA:\n{{task}}\n\nMODULO PRINCIPAL AFECTADO: {{module}} (uno de: commons, cluster, domain, core, ws, webapp).\n\nREGLAS ARQUITECTONICAS OBLIGATORIAS:\n- Mantener la separacion por capas: dominio (domain), core (logica de negocio), ws (API) y webapp (web/integracion).\n- No introducir dependencias cruzadas innecesarias entre modulos.\n- Mantener el alcance minimo: localiza el punto exacto del cambio, no reescribas modulos completos.\n- Preservar seguridad, auditoria y trazabilidad en servicios y endpoints.\n- No tocar target/ ni artefactos generados.\n\nInvestiga el codebase (lee los ficheros relevantes del modulo {{module}} y sus dependencias) y produce un plan de implementacion ordenado, con rutas de fichero concretas y los puntos exactos a modificar. Si la tarea toca logica de negocio, indica que pruebas hay que anadir o actualizar. No implementes todavia: solo entrega el plan."
+    },
+    {
+      "maxIterations": 6,
+      "id": "impl-loop",
+      "stopWhen": "{{review.output}} contains APPROVED",
+      "type": "repeat",
+      "onMaxIterations": "pause",
+      "steps": [
+        {
+          "agent": "wf-coder",
+          "id": "implement",
+          "type": "step",
+          "prompt": "Implementa la feature de BACKEND siguiendo el plan.\n\nTAREA ORIGINAL:\n{{task}}\n\nPLAN:\n{{plan.output}}\n\nSi esta es una nueva iteracion del bucle, ya existe una revision previa con cambios solicitados: lee el estado actual del codigo y los comentarios de revision mas recientes y aplicalos antes de continuar.\n\nREGLAS:\n- Respeta la separacion por capas (domain/core/ws/webapp) y no introduzcas dependencias cruzadas innecesarias.\n- Alcance minimo: cambia solo lo necesario.\n- Si cambias comportamiento de negocio, anade o actualiza las pruebas del modulo afectado.\n- Sigue las guias de steering del proyecto (coding-java, coding-maven, coding-security, coding-testing).\n- NO compiles ni ejecutes tests tras cada edicion individual. Realiza TODAS las modificaciones primero.\n- Al terminar TODAS las modificaciones, ejecuta la verificacion agrupada UNA sola vez en el modulo {{module}}: 'mvn -pl {{module}} -am clean install' y 'mvn -pl {{module}} test'. Corrige los errores que aparezcan.\n- No toques target/ ni artefactos generados."
+        },
+        {
+          "agent": "semantic_reviewer",
+          "id": "review",
+          "type": "step",
+          "prompt": "Revisa el cambio de BACKEND recien implementado respecto a esta tarea:\n{{task}}\n\nComprueba especialmente:\n- Separacion por capas respetada (domain/core/ws/webapp), sin dependencias cruzadas innecesarias.\n- Seguridad, auditoria y trazabilidad preservadas en servicios y endpoints.\n- Pruebas anadidas/actualizadas si cambio comportamiento de negocio.\n- Que la verificacion (mvn install + test del modulo {{module}}) se ejecuto y paso.\n- Alcance minimo: sin refactorizaciones amplias ni cambios innecesarios.\n\nSi todo es correcto, responde exactamente con la palabra APPROVED en una linea y un resumen breve. Si hay problemas, lista los cambios concretos a corregir (sin la palabra APPROVED)."
+        }
+      ]
+    }
+  ]
+}
