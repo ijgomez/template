@@ -9,12 +9,14 @@
   </h1>
   @if (isReadonly()) {
     <div class="d-flex gap-2">
-      @if (canWrite()) {
+      @if (canEditView() || canWrite()) {
         <button class="btn btn-primary btn-sm"
                 (click)="onEdit()"
                 data-testid="user-form-btn-edit">
           <i class="bi bi-pencil me-1" aria-hidden="true"></i>{{ 'button.edit' | translate }}
         </button>
+      }
+      @if (canWrite()) {
         <button class="btn btn-danger btn-sm"
                 (click)="onDelete()"
                 data-testid="user-form-btn-delete">
@@ -139,7 +141,7 @@
                  data-testid="input-profile-readonly">
         } @else {
           <label for="profileId" class="form-label form-label-sm mb-1">
-            {{ 'users.fields.profile' | translate }} <span class="text-danger">*</span>
+            {{ 'users.fields.profile' | translate }} @if (requireProfile()) { <span class="text-danger">*</span> }
           </label>
           <tp-profile-select
             [ngClass]="{ 'is-invalid': profileId.invalid && (profileId.dirty || profileId.touched) }"
@@ -147,7 +149,7 @@
             (ngModelChange)="updateField('profileId', $event)"
             name="profileId"
             #profileId="ngModel"
-            [required]="true"
+            [required]="requireProfile()"
             placeholderKey="users.form.selectProfile"
             ariaLabelKey="users.fields.profile"
             testId="select-profile">

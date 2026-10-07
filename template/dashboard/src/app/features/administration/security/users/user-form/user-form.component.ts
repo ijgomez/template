@@ -31,6 +31,12 @@ export class UserFormComponent {
   /** Whether the current user has write permissions (used in view mode). */
   readonly canWrite = input<boolean>(false);
 
+  /** Whether edit action is enabled in view mode even without delete/write privileges. */
+  readonly canEditView = input<boolean>(false);
+
+  /** Whether selecting a profile is required in create/edit modes. */
+  readonly requireProfile = input<boolean>(true);
+
   /** Emitted when the form is submitted with valid data. */
   readonly save = output<UserDTO>();
 
@@ -62,8 +68,9 @@ export class UserFormComponent {
     const username = user.username?.trim() ?? '';
     const password = user.password?.trim() ?? '';
     const profileId = user.profileId;
+    const profileIsMissing = this.requireProfile() && !profileId;
 
-    return !username || (this.mode() === 'create' && !password) || !profileId || this.emailIsInvalid();
+    return !username || (this.mode() === 'create' && !password) || profileIsMissing || this.emailIsInvalid();
   });
 
   // Internal form state

@@ -1,61 +1,74 @@
 import { Component, ChangeDetectionStrategy, inject, signal, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
+import { Router } from '@angular/router';
+import { forkJoin } from 'rxjs';
 
-import { LocalDatePipe } from '../../shared/pipes/local-date.pipe';
+import { AuthService } from '../../core/services/auth.service';
 import { NotificationService } from '../../core/services/notification.service';
+import { ReportService } from '../../core/services/report.service';
+import { UserDTO } from '../../core/models/user.model';
+import { UserFormComponent } from '../administration/security/users/user-form/user-form.component';
 import { ProfileService } from './services/profile.service';
-import { UserProfile } from './models/profile.model';
+import { UpdateProfileRequest, UserProfile } from './models/profile.model';
 
 /**
- * User Profile page — self-service profile management.
- * Displays read-only fields (username, lastAccess) and editable fields (nombre, apellidos, email).
+ * User Profile page.
+ * Reuses the unified user form in read-only mode for "Mi perfil".
  */
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [ReactiveFormsModule, TranslatePipe, LocalDatePipe],
+  imports: [TranslatePipe, UserFormComponent],
   templateUrl: './profile.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProfileComponent implements OnInit {
-  private readonly fb = inject(FormBuilder);
+  private readonly router = inject(Router);
+  private readonly authService = inject(AuthService);
   private readonly profileService = inject(ProfileService);
+  private readonly reportService = inject(ReportService);
   private readonly notificationService = inject(NotificationService);
 
   readonly loading = signal(true);
   readonly saving = signal(false);
-
-  profileForm!: FormGroup;
-  username = signal('');
-  lastAccess = signal<string | null>(null);
+  readonly mode = signal<'view' | 'edit'>('view');
+  readonly profileUser = signal<UserDTO>(this.emptyUser());
 
   ngOnInit(): void {
-    this.profileForm = this.fb.group({
-      nombre: ['', [Validators.required, Validators.maxLength(100)]],
-      apellidos: ['', [Validators.required, Validators.maxLength(200)]],
-      email: ['', [Validators.required, Validators.email, Validators.maxLength(255)]],
-    });
-
-    this.loadProfile();
+    this.loadProfileContext();
   }
 
-  /**
-   * Saves profile changes via PUT /api/v1/administration/security/users/me.
-   */
-  save(): void {
-    if (this.profileForm.invalid || this.saving()) {
-      this.profileForm.markAllAsTouched();
-      return;
-    }
+  onEdit(): void {
+    this.mode.set('edit');
+  }
 
+  onBack(): void {
+    this.router.navigate(['/dashboard']);
+  }
+
+  onCancel(): void {
+    if (this.mode() === 'edit') {
+      this.mode.set('view');
+    } else {
+      this.onBack();
+    }
+  }
+
+  onSave(user: UserDTO): void {
     this.saving.set(true);
     const progressId = this.notificationService.showProgress('notification.update.progress');
 
-    this.profileService.updateProfile(this.profileForm.value).subscribe({
+    const payload: UpdateProfileRequest = {
+      nombre: user.firstName ?? '',
+      apellidos: user.lastName ?? '',
+      email: user.email ?? '',
+    };
+
+    this.profileService.updateProfile(payload).subscribe({
       next: (profile) => {
-        this.patchForm(profile);
+        this.patchEditableFields(profile);
         this.saving.set(false);
+        this.mode.set('view');
         this.notificationService.updateToSuccess(progressId, 'notification.update.success');
       },
       error: () => {
@@ -65,18 +78,14 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  /**
-   * Checks if a form control has a validation error and has been touched.
-   */
-  hasError(controlName: string, errorType: string): boolean {
-    const control = this.profileForm.get(controlName);
-    return !!control && control.hasError(errorType) && control.touched;
-  }
-
-  private loadProfile(): void {
-    this.profileService.getProfile().subscribe({
-      next: (profile) => {
-        this.patchForm(profile);
+  private loadProfileContext(): void {
+    forkJoin({
+      profile: this.profileService.getProfile(),
+      reports: this.reportService.findUserReports(),
+    }).subscribe({
+      next: ({ profile, reports }) => {
+        this.patchEditableFields(profile);
+        this.profileUser.set(this.toUserDto(profile, reports.map((r) => r.id)));
         this.loading.set(false);
       },
       error: () => {
@@ -86,13 +95,48 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  private patchForm(profile: UserProfile): void {
-    this.username.set(profile.username);
-    this.lastAccess.set(profile.lastAccess);
-    this.profileForm.patchValue({
-      nombre: profile.nombre,
-      apellidos: profile.apellidos,
-      email: profile.email,
-    });
+  private patchEditableFields(profile: UserProfile): void {
+    this.profileUser.update((user) => ({
+      ...user,
+      username: profile.username,
+      firstName: profile.nombre ?? null,
+      lastName: profile.apellidos ?? null,
+      email: profile.email ?? null,
+      lastAccess: profile.lastAccess,
+    }));
+  }
+
+  private toUserDto(profile: UserProfile, reportIds: number[]): UserDTO {
+    return {
+      id: null,
+      username: profile.username,
+      password: '',
+      firstName: profile.nombre ?? null,
+      lastName: profile.apellidos ?? null,
+      email: profile.email ?? null,
+      profileId: null,
+      profileName: this.authService.getCurrentUser()?.profile,
+      reportIds,
+      lastAccess: profile.lastAccess,
+      createdAt: null,
+      lastModifiedAt: null,
+    };
+  }
+
+  private emptyUser(): UserDTO {
+    return {
+      id: null,
+      username: '',
+      password: '',
+      firstName: null,
+      lastName: null,
+      email: null,
+      profileId: null,
+      profileName: undefined,
+      reportIds: [],
+      lastAccess: null,
+      createdAt: null,
+      lastModifiedAt: null,
+    };
   }
 }
