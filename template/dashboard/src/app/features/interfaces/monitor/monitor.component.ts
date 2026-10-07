@@ -7,6 +7,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { DateService } from '../../../core/services/date.service';
 import { LocalDatePipe } from '../../../shared/pipes/local-date.pipe';
+import { TpDatePickerComponent } from '../../../shared/components/date-picker/date-picker.component';
 import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../shared/components/data-table';
 import {
   InterfaceConfig,
@@ -24,7 +25,7 @@ import {
 @Component({
   selector: 'app-interfaces-monitor',
   standalone: true,
-  imports: [FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective],
+  imports: [FormsModule, TranslatePipe, LocalDatePipe, TpDatePickerComponent, TpDataTableComponent, TpColumnDirective],
   templateUrl: './monitor.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -56,6 +57,12 @@ export class MonitorComponent implements OnInit {
   readonly filterOperationType = signal('');
   readonly filterInterfaceId = signal('');
   readonly filterStatus = signal('');
+
+  readonly hasInvalidDateRange = computed(
+    () => !!this.filterDateFrom() && !!this.filterDateTo() && this.filterDateFrom() > this.filterDateTo(),
+  );
+
+  readonly isFilterDisabled = computed(() => this.isLoading() || this.hasInvalidDateRange());
 
   // Available interfaces for filter dropdown
   readonly availableInterfaces = signal<InterfaceConfig[]>([]);
@@ -119,6 +126,10 @@ export class MonitorComponent implements OnInit {
    * Applies filters and reloads the data from page 0.
    */
   applyFilters(): void {
+    if (this.hasInvalidDateRange()) {
+      return;
+    }
+
     this.currentPage.set(0);
     this.loadLogs();
   }

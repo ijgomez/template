@@ -12,23 +12,27 @@
     <div class="row g-3 align-items-end">
       <div class="col-md-2">
         <label for="filterDateFrom" class="form-label">{{ 'interfaces.monitor.filters.dateFrom' | translate }}</label>
-        <input
+        <tp-date-picker
           id="filterDateFrom"
-          type="date"
-          class="form-control form-control-sm"
-          data-testid="monitor-filter-date-from"
-          [attr.aria-label]="'interfaces.monitor.filters.dateFrom' | translate"
-          [(ngModel)]="filterDateFrom" />
+          name="filterDateFrom"
+          [ngModel]="filterDateFrom()"
+          (ngModelChange)="filterDateFrom.set($event)"
+          [ariaLabel]="'interfaces.monitor.filters.dateFrom' | translate"
+          [testId]="'monitor-filter-date-from'"
+          [invalid]="hasInvalidDateRange()">
+        </tp-date-picker>
       </div>
       <div class="col-md-2">
         <label for="filterDateTo" class="form-label">{{ 'interfaces.monitor.filters.dateTo' | translate }}</label>
-        <input
+        <tp-date-picker
           id="filterDateTo"
-          type="date"
-          class="form-control form-control-sm"
-          data-testid="monitor-filter-date-to"
-          [attr.aria-label]="'interfaces.monitor.filters.dateTo' | translate"
-          [(ngModel)]="filterDateTo" />
+          name="filterDateTo"
+          [ngModel]="filterDateTo()"
+          (ngModelChange)="filterDateTo.set($event)"
+          [ariaLabel]="'interfaces.monitor.filters.dateTo' | translate"
+          [testId]="'monitor-filter-date-to'"
+          [invalid]="hasInvalidDateRange()">
+        </tp-date-picker>
       </div>
       <div class="col-md-2">
         <label for="filterOperationType" class="form-label">{{ 'interfaces.monitor.fields.operationType' | translate }}</label>
@@ -72,11 +76,17 @@
           }
         </select>
       </div>
+      @if (hasInvalidDateRange()) {
+        <div class="col-12">
+          <small class="text-danger d-block">La fecha desde no puede ser posterior a la fecha hasta.</small>
+        </div>
+      }
       <div class="col-12 d-flex justify-content-end gap-2 mt-2">
         <button
           class="btn btn-primary btn-sm"
           type="button"
           data-testid="monitor-apply-filters"
+          [disabled]="isFilterDisabled()"
           (click)="applyFilters()">
           <i class="bi bi-search me-1" aria-hidden="true"></i>{{ 'button.search' | translate }}
         </button>

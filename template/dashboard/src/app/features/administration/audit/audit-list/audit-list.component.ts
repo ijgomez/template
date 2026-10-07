@@ -8,6 +8,7 @@ import { NotificationService } from '../../../../core/services/notification.serv
 import { DateService } from '../../../../core/services/date.service';
 import { CsvExportService } from '../../../../core/services/csv-export.service';
 import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
+import { TpDatePickerComponent } from '../../../../shared/components/date-picker/date-picker.component';
 import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../shared/components/data-table';
 import { AuditLog, AuditCriteria, OperationType, AuditSection } from '../../../../core/models/audit.model';
 
@@ -19,7 +20,7 @@ import { AuditLog, AuditCriteria, OperationType, AuditSection } from '../../../.
 @Component({
   selector: 'app-audit-list',
   standalone: true,
-  imports: [FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective],
+  imports: [FormsModule, TranslatePipe, LocalDatePipe, TpDatePickerComponent, TpDataTableComponent, TpColumnDirective],
   templateUrl: './audit-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -52,6 +53,12 @@ export class AuditListComponent implements OnInit {
   readonly filterUsername = signal('');
   readonly filterOperationType = signal('');
   readonly filterSection = signal('');
+
+  readonly hasInvalidDateRange = computed(
+    () => !!this.filterDateFrom() && !!this.filterDateTo() && this.filterDateFrom() > this.filterDateTo(),
+  );
+
+  readonly isFilterDisabled = computed(() => this.isLoading() || this.hasInvalidDateRange());
 
   // Pagination display helpers
   readonly showingFrom = computed(() => this.totalElements() === 0 ? 0 : this.currentPage() * this.pageSize() + 1);
@@ -105,6 +112,10 @@ export class AuditListComponent implements OnInit {
    * Applies filters and reloads the data from page 0.
    */
   applyFilters(): void {
+    if (this.hasInvalidDateRange()) {
+      return;
+    }
+
     this.currentPage.set(0);
     this.loadAuditLogs();
   }

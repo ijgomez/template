@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs';
 
 import { ReportService } from '../../../../core/services/report.service';
 import { NotificationService } from '../../../../core/services/notification.service';
+import { TpDatePickerComponent } from '../../../../shared/components/date-picker/date-picker.component';
 import { Report, ReportFilter, ReportResult, ExportFormat } from '../../../../core/models/report.model';
 
 /**
@@ -19,7 +20,7 @@ import { Report, ReportFilter, ReportResult, ExportFormat } from '../../../../co
 @Component({
   selector: 'app-report-list',
   standalone: true,
-  imports: [FormsModule, TranslatePipe],
+  imports: [FormsModule, TranslatePipe, TpDatePickerComponent],
   templateUrl: './report-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

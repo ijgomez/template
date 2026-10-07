@@ -49,14 +49,15 @@
                      [attr.data-testid]="'report-filter-' + filter.name">
             }
             @case ('DATE') {
-              <input [id]="'filter-' + filter.name"
-                     type="date"
-                     class="form-control form-control-sm"
-                     [ngModel]="filterValues()[filter.name]"
-                     (ngModelChange)="updateFilterValue(filter.name, $event)"
-                     [required]="filter.required"
-                     [attr.aria-label]="filter.label"
-                     [attr.data-testid]="'report-filter-' + filter.name">
+              <tp-date-picker
+                [id]="'filter-' + filter.name"
+                [name]="'filter-' + filter.name"
+                [ngModel]="filterValues()[filter.name]"
+                (ngModelChange)="updateFilterValue(filter.name, $event)"
+                [required]="filter.required"
+                [ariaLabel]="filter.label"
+                [testId]="'report-filter-' + filter.name">
+              </tp-date-picker>
             }
             @case ('SELECT') {
               <select [id]="'filter-' + filter.name"

@@ -1,0 +1,13 @@
+<input
+  [id]="id"
+  [name]="name"
+  type="date"
+  class="form-control form-control-sm"
+  [class.is-invalid]="invalid"
+  [value]="value()"
+  [required]="required"
+  [disabled]="disabled()"
+  [attr.aria-label]="ariaLabel || null"
+  [attr.data-testid]="testId"
+  (input)="onInputChange($any($event.target).value)"
+  (blur)="onBlur()">

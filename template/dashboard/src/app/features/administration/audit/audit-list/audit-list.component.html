@@ -40,18 +40,35 @@
       </div>
       <div class="col-md-2">
         <label for="filterDateFrom" class="form-label">{{ 'audit.filters.dateFrom' | translate }}</label>
-        <input id="filterDateFrom" type="date" class="form-control form-control-sm"
-               [ngModel]="filterDateFrom()" (ngModelChange)="filterDateFrom.set($event)" name="filterDateFrom"
-               [attr.aria-label]="'audit.filters.dateFrom' | translate" data-testid="audit-filter-date-from">
+        <tp-date-picker
+          id="filterDateFrom"
+          name="filterDateFrom"
+          [ngModel]="filterDateFrom()"
+          (ngModelChange)="filterDateFrom.set($event)"
+          [ariaLabel]="'audit.filters.dateFrom' | translate"
+          [testId]="'audit-filter-date-from'"
+          [invalid]="hasInvalidDateRange()">
+        </tp-date-picker>
       </div>
       <div class="col-md-2">
         <label for="filterDateTo" class="form-label">{{ 'audit.filters.dateTo' | translate }}</label>
-        <input id="filterDateTo" type="date" class="form-control form-control-sm"
-               [ngModel]="filterDateTo()" (ngModelChange)="filterDateTo.set($event)" name="filterDateTo"
-               [attr.aria-label]="'audit.filters.dateTo' | translate" data-testid="audit-filter-date-to">
+        <tp-date-picker
+          id="filterDateTo"
+          name="filterDateTo"
+          [ngModel]="filterDateTo()"
+          (ngModelChange)="filterDateTo.set($event)"
+          [ariaLabel]="'audit.filters.dateTo' | translate"
+          [testId]="'audit-filter-date-to'"
+          [invalid]="hasInvalidDateRange()">
+        </tp-date-picker>
       </div>
+      @if (hasInvalidDateRange()) {
+        <div class="col-12">
+          <small class="text-danger d-block">La fecha desde no puede ser posterior a la fecha hasta.</small>
+        </div>
+      }
       <div class="col-12 d-flex justify-content-end gap-2 mt-2">
-        <button type="submit" class="btn btn-primary btn-sm" data-testid="audit-apply-filters">
+        <button type="submit" class="btn btn-primary btn-sm" data-testid="audit-apply-filters" [disabled]="isFilterDisabled()">
           <i class="bi bi-search me-1" aria-hidden="true"></i> {{ 'button.filter' | translate }}
         </button>
         <button type="button" class="btn btn-outline-secondary btn-sm" (click)="clearFilters()" data-testid="audit-clear-filters">
