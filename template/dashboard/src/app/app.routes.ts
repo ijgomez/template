@@ -29,8 +29,8 @@ export const routes: Routes = [
         data: { actions: ['INTERFACES_READ'] },
       },
       {
-        path: 'profile',
-        loadChildren: () => import('./features/profile/profile.routes').then((m) => m.PROFILE_ROUTES),
+        path: 'administration/security/user-me',
+        loadComponent: () => import('./features/administration/security/user-me/user-me.component').then((m) => m.UserMeComponent),
       },
       {
         path: 'administration',

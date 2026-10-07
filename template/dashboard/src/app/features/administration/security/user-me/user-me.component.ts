@@ -3,29 +3,29 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
 
-import { AuthService } from '../../core/services/auth.service';
-import { NotificationService } from '../../core/services/notification.service';
-import { ReportService } from '../../core/services/report.service';
-import { UserDTO } from '../../core/models/user.model';
-import { UserFormComponent } from '../administration/security/users/user-form/user-form.component';
-import { ProfileService } from './services/profile.service';
-import { UpdateProfileRequest, UserProfile } from './models/profile.model';
+import { AuthService } from '../../../../core/services/auth.service';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { ReportService } from '../../../../core/services/report.service';
+import { UserDTO } from '../../../../core/models/user.model';
+import { UserFormComponent } from '../users/user-form/user-form.component';
+import { UserMeService } from './services/user-me.service';
+import { UpdateProfileRequest, UserProfile } from './models/user-me.model';
 
 /**
  * User Profile page.
  * Reuses the unified user form in read-only mode for "Mi perfil".
  */
 @Component({
-  selector: 'app-profile',
+  selector: 'app-user-me',
   standalone: true,
   imports: [TranslatePipe, UserFormComponent],
-  templateUrl: './profile.component.html',
+  templateUrl: './user-me.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProfileComponent implements OnInit {
+export class UserMeComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
-  private readonly profileService = inject(ProfileService);
+  private readonly userMeService = inject(UserMeService);
   private readonly reportService = inject(ReportService);
   private readonly notificationService = inject(NotificationService);
 
@@ -64,7 +64,7 @@ export class ProfileComponent implements OnInit {
       email: user.email ?? '',
     };
 
-    this.profileService.updateProfile(payload).subscribe({
+    this.userMeService.updateProfile(payload).subscribe({
       next: (profile) => {
         this.patchEditableFields(profile);
         this.saving.set(false);
@@ -80,7 +80,7 @@ export class ProfileComponent implements OnInit {
 
   private loadProfileContext(): void {
     forkJoin({
-      profile: this.profileService.getProfile(),
+      profile: this.userMeService.getProfile(),
       reports: this.reportService.findUserReports(),
     }).subscribe({
       next: ({ profile, reports }) => {

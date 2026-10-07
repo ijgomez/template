@@ -277,7 +277,7 @@ export class LayoutComponent implements OnInit {
     cluster: 'menu.administration.cluster',
     nodes: 'menu.administration.cluster.nodes',
     blocks: 'menu.administration.cluster.blocks',
-    profile: 'profile.title',
+    user-me: 'profile.title',
     forbidden: 'forbidden.title',
   };
 

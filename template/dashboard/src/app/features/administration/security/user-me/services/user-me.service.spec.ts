@@ -2,12 +2,12 @@ import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
 
-import { ProfileService } from './profile.service';
-import { UpdateProfileRequest, UserProfile } from '../models/profile.model';
-import { environment } from '../../../../environments/environment';
+import { UserMeService } from './user-me.service';
+import { UpdateProfileRequest, UserProfile } from '../models/user-me.model';
+import { environment } from '../../../../../../environments/environment';
 
-describe('ProfileService (feature)', () => {
-  let service: ProfileService;
+describe('UserMeService (feature)', () => {
+  let service: UserMeService;
   let httpMock: HttpTestingController;
 
   const baseUrl = `${environment.apiUrl}/administration/security/users/me`;
@@ -24,7 +24,7 @@ describe('ProfileService (feature)', () => {
     TestBed.configureTestingModule({
       providers: [provideHttpClient(), provideHttpClientTesting()],
     });
-    service = TestBed.inject(ProfileService);
+    service = TestBed.inject(UserMeService);
     httpMock = TestBed.inject(HttpTestingController);
   });
 

@@ -4,15 +4,15 @@ import { provideTranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 
-import { ProfileComponent } from './profile.component';
-import { UserFormComponent } from '../administration/security/users/user-form/user-form.component';
-import { ProfileService } from './services/profile.service';
-import { AuthService } from '../../core/services/auth.service';
-import { NotificationService } from '../../core/services/notification.service';
-import { ReportService } from '../../core/services/report.service';
+import { UserMeComponent } from './user-me.component';
+import { UserFormComponent } from '../users/user-form/user-form.component';
+import { UserMeService } from './services/user-me.service';
+import { AuthService } from '../../../../core/services/auth.service';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { ReportService } from '../../../../core/services/report.service';
 
-describe('ProfileComponent behavior', () => {
-  let profileServiceMock: {
+describe('UserMeComponent behavior', () => {
+  let userMeServiceMock: {
     getProfile: ReturnType<typeof vi.fn>;
     updateProfile: ReturnType<typeof vi.fn>;
   };
@@ -31,7 +31,7 @@ describe('ProfileComponent behavior', () => {
   };
 
   beforeEach(async () => {
-    profileServiceMock = {
+    userMeServiceMock = {
       getProfile: vi.fn().mockReturnValue(of({
         username: 'user001',
         nombre: 'Ada',
@@ -78,10 +78,10 @@ describe('ProfileComponent behavior', () => {
     };
 
     await TestBed.configureTestingModule({
-      imports: [ProfileComponent],
+      imports: [UserMeComponent],
       providers: [
         provideTranslateService({ lang: 'en', fallbackLang: 'en' }),
-        { provide: ProfileService, useValue: profileServiceMock },
+        { provide: UserMeService, useValue: userMeServiceMock },
         { provide: NotificationService, useValue: notificationServiceMock },
         { provide: AuthService, useValue: authServiceMock },
         { provide: ReportService, useValue: reportServiceMock },
@@ -91,7 +91,7 @@ describe('ProfileComponent behavior', () => {
   });
 
   it('should render user-form in view mode with mapped current user data', () => {
-    const fixture = TestBed.createComponent(ProfileComponent);
+    const fixture = TestBed.createComponent(UserMeComponent);
     fixture.detectChanges();
 
     const formDebugEl = fixture.debugElement.query(By.directive(UserFormComponent));
@@ -110,8 +110,8 @@ describe('ProfileComponent behavior', () => {
   });
 
   it('should show an error notification when profile loading fails', () => {
-    profileServiceMock.getProfile.mockReturnValueOnce(throwError(() => new Error('boom')));
-    const fixture = TestBed.createComponent(ProfileComponent);
+    userMeServiceMock.getProfile.mockReturnValueOnce(throwError(() => new Error('boom')));
+    const fixture = TestBed.createComponent(UserMeComponent);
     const component = fixture.componentInstance;
 
     component.ngOnInit();
@@ -120,7 +120,7 @@ describe('ProfileComponent behavior', () => {
   });
 
   it('should switch user-form to edit mode when edit action is triggered', () => {
-    const fixture = TestBed.createComponent(ProfileComponent);
+    const fixture = TestBed.createComponent(UserMeComponent);
     const component = fixture.componentInstance;
 
     fixture.detectChanges();
@@ -137,7 +137,7 @@ describe('ProfileComponent behavior', () => {
   });
 
   it('should navigate to dashboard when cancel is triggered in view mode', () => {
-    const fixture = TestBed.createComponent(ProfileComponent);
+    const fixture = TestBed.createComponent(UserMeComponent);
     const component = fixture.componentInstance;
 
     component.onCancel();
@@ -146,7 +146,7 @@ describe('ProfileComponent behavior', () => {
   });
 
   it('should return to view mode when cancel is triggered in edit mode', () => {
-    const fixture = TestBed.createComponent(ProfileComponent);
+    const fixture = TestBed.createComponent(UserMeComponent);
     const component = fixture.componentInstance;
 
     fixture.detectChanges();

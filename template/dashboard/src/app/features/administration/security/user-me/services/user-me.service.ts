@@ -2,15 +2,15 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-import { environment } from '../../../../environments/environment';
-import { UpdateProfileRequest, UserProfile } from '../models/profile.model';
+import { environment } from '../../../../../../environments/environment';
+import { UpdateProfileRequest, UserProfile } from '../models/user-me.model';
 
 /**
  * Service for managing the authenticated user's profile.
  * Calls the /users/me endpoints for self-service profile operations.
  */
 @Injectable({ providedIn: 'root' })
-export class ProfileService {
+export class UserMeService {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = `${environment.apiUrl}/administration/security/users/me`;
 
