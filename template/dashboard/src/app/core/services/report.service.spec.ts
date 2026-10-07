@@ -124,6 +124,44 @@ describe('ReportService', () => {
       expect(req.request.params.get('size')).toBe('10');
       req.flush(result);
     });
+
+    it('should normalize legacy paged payload using content/page metadata', () => {
+      const filters = { region: 'EU' };
+      const legacyResponse = {
+        content: [{ code: 'A1', total: 15 }],
+        page: { totalElements: 44, totalPages: 5, size: 10, number: 2 },
+      };
+
+      service.execute(9, filters, 0, 10).subscribe((res) => {
+        expect(res.columns).toEqual(['code', 'total']);
+        expect(res.rows).toEqual([{ code: 'A1', total: 15 }]);
+        expect(res.totalElements).toBe(44);
+        expect(res.totalPages).toBe(5);
+        expect(res.size).toBe(10);
+        expect(res.number).toBe(2);
+      });
+
+      const req = httpMock.expectOne((r) => r.url === `${baseUrl}/9/execute`);
+      req.flush(legacyResponse);
+    });
+
+    it('should normalize legacy payload with empty rows and fallback defaults', () => {
+      const legacyResponse = {
+        content: [],
+      };
+
+      service.execute(9, {}, 3, 25).subscribe((res) => {
+        expect(res.columns).toEqual([]);
+        expect(res.rows).toEqual([]);
+        expect(res.totalElements).toBe(0);
+        expect(res.totalPages).toBe(1);
+        expect(res.size).toBe(25);
+        expect(res.number).toBe(3);
+      });
+
+      const req = httpMock.expectOne((r) => r.url === `${baseUrl}/9/execute`);
+      req.flush(legacyResponse);
+    });
   });
 
   describe('export', () => {

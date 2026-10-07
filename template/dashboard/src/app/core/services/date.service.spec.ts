@@ -35,6 +35,11 @@ describe('DateService', () => {
       expect(result.getUTCMinutes()).toBe(45);
       expect(result.getUTCSeconds()).toBe(30);
     });
+
+    it('should return an Invalid Date for malformed input', () => {
+      const result = service.toLocalDate('not-a-date');
+      expect(Number.isNaN(result.getTime())).toBe(true);
+    });
   });
 
   describe('toUtcIsoString', () => {
@@ -74,6 +79,13 @@ describe('DateService', () => {
       const result = service.toLocalString('2024-01-15T10:30:00Z', 'time');
       expect(result).toBeTruthy();
       expect(result.length).toBeGreaterThan(0);
+    });
+
+    it('should use "full" format by default when format is omitted', () => {
+      const spy = vi.spyOn(service, 'getUserTimezone').mockReturnValue('UTC');
+      const result = service.toLocalString('2024-01-15T10:30:00Z');
+      expect(result).toContain('2024');
+      expect(spy).toHaveBeenCalledTimes(1);
     });
   });
 

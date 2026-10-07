@@ -116,6 +116,19 @@ describe('UserService', () => {
       expect(req.request.params.get('profileId')).toBe('3');
       req.flush(42);
     });
+
+    it('should include username, firstName and lastName params when provided', () => {
+      service.countByCriteria({ username: 'jdoe', firstName: 'John', lastName: 'Doe' }).subscribe((count) => {
+        expect(count).toBe(7);
+      });
+
+      const req = httpMock.expectOne((r) => r.url === `${baseUrl}/count`);
+      expect(req.request.method).toBe('GET');
+      expect(req.request.params.get('username')).toBe('jdoe');
+      expect(req.request.params.get('firstName')).toBe('John');
+      expect(req.request.params.get('lastName')).toBe('Doe');
+      req.flush(7);
+    });
   });
 
   describe('findById', () => {

@@ -6,6 +6,7 @@
   border: var(--tp-border-width) solid var(--tp-color-border);
   border-radius: var(--tp-border-radius);
   background: var(--tp-color-background);
+  color: var(--tp-color-text, #2f3337);
 
   // ─── Disabled State ──────────────────────────────────────
   &--disabled {
@@ -36,12 +37,13 @@
     font-weight: var(--tp-font-weight-bold);
     text-transform: uppercase;
     letter-spacing: 0.025em;
-    color: var(--tp-color-text);
+    color: var(--tp-color-text, #2f3337);
     white-space: nowrap;
   }
 
   &__badge {
     font-size: 0.75rem;
+    color: #4f5357 !important;
   }
 
   &__actions {
@@ -97,7 +99,7 @@
     padding: var(--tp-space-3);
     text-align: center;
     font-size: 0.75rem;
-    color: var(--tp-color-text-muted);
+    color: #4f5357;
   }
 
   // ─── Footer / Pagination ─────────────────────────────────
@@ -112,14 +114,67 @@
 
   &__footer-info {
     font-size: 0.8125rem;
+    color: #4f5357 !important;
   }
 
   &__footer-label {
     font-size: 0.8125rem;
+    color: #4f5357 !important;
   }
 
   &__page-size-select {
     width: auto;
+    color: #2f3337;
+    border-color: #8c959e;
+  }
+
+  // Refuerza contraste en textos de badges sutiles dentro del listado.
+  .bg-secondary-subtle.text-secondary {
+    color: #3f4348 !important;
+  }
+
+  .text-muted {
+    color: #4f5357 !important;
+  }
+
+  .pagination .page-link {
+    color: #2f3337 !important;
+    border-color: #c2c8ce;
+    background-color: #ffffff;
+  }
+
+  .pagination .page-link:focus-visible {
+    outline: 2px solid #0b5ed7;
+    outline-offset: 1px;
+  }
+
+  .pagination .page-item.active .page-link {
+    color: #ffffff;
+    background-color: #0b5ed7;
+    border-color: #0b5ed7;
+  }
+
+  .pagination .page-item.disabled .page-link {
+    color: #5f6670;
+    background-color: #f3f5f7;
+  }
+
+  // El contenido de itemTemplate llega proyectado desde fuera del componente.
+  // ::ng-deep permite aplicar contraste correcto a esos badges en Storybook.
+  :host ::ng-deep .bg-secondary-subtle.text-secondary {
+    color: #3f4348 !important;
+    background-color: #e8ebef !important;
+  }
+
+  :host ::ng-deep .page-link {
+    color: #2f3337 !important;
+  }
+
+  :host ::ng-deep .form-select.tp-data-list__page-size-select,
+  :host ::ng-deep .form-select.form-select-sm {
+    color: #2f3337 !important;
+    background-color: #ffffff !important;
+    border-color: #8c959e !important;
   }
 }
 

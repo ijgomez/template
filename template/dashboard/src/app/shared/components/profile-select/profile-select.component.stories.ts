@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/angular-vite';
 import { applicationConfig } from '@storybook/angular-vite';
+import { moduleMetadata } from '@storybook/angular-vite';
+import { FormsModule } from '@angular/forms';
 import { of } from 'rxjs';
 import { expect, userEvent, within } from 'storybook/test';
 
@@ -32,10 +34,11 @@ const profiles: ProfileRef[] = [
  * (filtros).
  */
 const meta: Meta<TpProfileSelectComponent> = {
-  title: 'Shared/ProfileSelect',
+  title: 'Features/ProfileSelect',
   component: TpProfileSelectComponent,
   tags: ['autodocs'],
   decorators: [
+    moduleMetadata({ imports: [FormsModule] }),
     applicationConfig({
       providers: [{ provide: UserService, useValue: stubUserService(profiles) }],
     }),
@@ -109,4 +112,59 @@ export const NoProfiles: Story = {
       providers: [{ provide: UserService, useValue: stubUserService([]) }],
     }),
   ],
+};
+
+/**
+ * Cobertura de comportamiento CVA con ngModel y estado disabled.
+ */
+export const CvaIntegration: Story = {
+  args: {
+    ...FormRequired.args,
+    testId: 'cva-profile',
+  },
+  render: args => ({
+    props: {
+      ...args,
+      profileId: 2,
+      disabledState: false,
+    },
+    template: `
+      <form>
+        <tp-profile-select
+          [(ngModel)]="profileId"
+          [disabled]="disabledState"
+          [placeholderKey]="placeholderKey"
+          [placeholderSelectable]="placeholderSelectable"
+          [required]="required"
+          [name]="name"
+          [ariaLabelKey]="ariaLabelKey"
+          [testId]="testId">
+        </tp-profile-select>
+      </form>
+    `,
+  }),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const select = canvas.getByTestId('cva-profile');
+
+    await userEvent.selectOptions(select, '1');
+    await expect(select).toHaveValue('1');
+  },
+};
+
+/**
+ * Requerido sin seleccion: al perder foco debe marcarse como invalido.
+ */
+export const RequiredWithoutSelection: Story = {
+  args: {
+    ...FormRequired.args,
+    testId: 'required-empty-profile',
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const select = canvas.getByTestId('required-empty-profile');
+    await userEvent.click(select);
+    await userEvent.tab();
+    await expect(select).toHaveClass('is-invalid');
+  },
 };

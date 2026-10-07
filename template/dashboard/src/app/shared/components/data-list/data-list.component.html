@@ -10,7 +10,8 @@
         <span class="tp-data-list__title">{{ title }}</span>
       }
       <span class="badge bg-secondary-subtle text-secondary tp-data-list__badge"
-            [attr.aria-label]="('data-list.count' | translate) + ': ' + totalElements">
+            [attr.title]="('data-list.count' | translate) + ': ' + totalElements">
+        <span class="visually-hidden">{{ 'data-list.count' | translate }}: </span>
         {{ totalElements }}
       </span>
     </div>
@@ -109,33 +110,35 @@
       <nav [attr.aria-label]="'common.pagination.nav' | translate">
         <ul class="pagination pagination-sm mb-0">
           <li class="page-item" [class.disabled]="currentPage === 0">
-            <a class="page-link"
-               href="javascript:void(0)"
+            <button type="button"
+               class="page-link"
                (click)="goToPage(currentPage - 1)"
+               [disabled]="currentPage === 0"
                [attr.aria-label]="'common.pagination.previous' | translate"
                [attr.data-testid]="testId + '-pagination-prev'">
               <i class="bi bi-chevron-left" aria-hidden="true"></i>
-            </a>
+            </button>
           </li>
           @for (p of visiblePages; track p) {
             <li class="page-item"
                 [class.active]="p === currentPage"
                 [attr.aria-current]="p === currentPage ? 'page' : null">
-              <a class="page-link"
-                 href="javascript:void(0)"
+              <button type="button"
+                 class="page-link"
                  (click)="goToPage(p)">
                 {{ p + 1 }}
-              </a>
+              </button>
             </li>
           }
           <li class="page-item" [class.disabled]="currentPage >= totalPages - 1">
-            <a class="page-link"
-               href="javascript:void(0)"
+            <button type="button"
+               class="page-link"
                (click)="goToPage(currentPage + 1)"
+               [disabled]="currentPage >= totalPages - 1"
                [attr.aria-label]="'common.pagination.next' | translate"
                [attr.data-testid]="testId + '-pagination-next'">
               <i class="bi bi-chevron-right" aria-hidden="true"></i>
-            </a>
+            </button>
           </li>
         </ul>
       </nav>
