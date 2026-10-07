@@ -60,7 +60,7 @@ test.describe('Cluster nodes', () => {
     await expect(nodesPage.backButton).toBeVisible();
     await expect(page.locator('h1')).toContainText(/node/i);
     if (hostname) {
-      await expect(nodesPage.nodeCard).toContainText(hostname);
+      await expect(nodesPage.nodeCard.getByRole('textbox', { name: /hostname/i })).toHaveValue(hostname);
     }
 
     await nodesPage.backToList();
