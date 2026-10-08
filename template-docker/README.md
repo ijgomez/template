@@ -33,6 +33,7 @@ Esto levantará:
 | PostgreSQL | 5432   | Base de datos                  |
 | WildFly    | 8080   | HTTP del servidor de aplicaciones |
 | WildFly Management | 9990 | Consola de administración de WildFly |
+| OpenProject | 8088   | Gestión de proyectos           |
 
 `./compose.sh start` fuerza reconstrucción de imágenes (`docker compose up -d --build`) para que cambios en Dockerfile y scripts se apliquen automáticamente.
 
@@ -55,6 +56,7 @@ Para ver los logs de un servicio concreto:
 ```bash
 docker compose logs -f postgres
 docker compose logs -f wildfly
+docker compose logs -f openproject
 ```
 
 ### Detener todos los servicios
@@ -76,6 +78,8 @@ template-docker/
 ├── docker-compose.yml      ← Orquestación de servicios
 ├── compose.sh              ← Script de arranque/parada/reset
 ├── .env.example            ← Variables de entorno de ejemplo
+├── openproyect/
+│   └── Dockerfile          ← Imagen de OpenProject personalizada
 ├── postgres/
 │   ├── Dockerfile          ← Imagen de PostgreSQL personalizada
 │   ├── init-tablespaces.sh ← Crea rutas físicas de tablespaces
@@ -109,6 +113,13 @@ template-docker/
   - `WILDFLY_ADMIN_PASSWORD`
 - Espera a que PostgreSQL esté saludable antes de arrancar
 
+### OpenProject
+
+- Build local desde `openproyect/Dockerfile` (base `openproject/openproject:17`)
+- Puerto HTTP: configurable via `OPENPROJECT_PORT` (por defecto 8088 mapeado al 80 interno)
+- Los datos y adjuntos se persisten en los volúmenes `openproject-assets` y `openproject-pgdata`
+- Configuración de host y HTTPS configurable mediante `OPENPROJECT_HOST_NAME` y `OPENPROJECT_HTTPS`
+
 ## Variables de entorno
 
 Archivo de referencia: `.env.example`
@@ -123,3 +134,9 @@ Archivo de referencia: `.env.example`
   - `WILDFLY_MANAGEMENT_PORT`
   - `WILDFLY_ADMIN_USER`
   - `WILDFLY_ADMIN_PASSWORD`
+- OpenProject
+  - `OPENPROJECT_PORT`
+  - `OPENPROJECT_HOST_NAME`
+  - `OPENPROJECT_SECRET_KEY_BASE`
+  - `OPENPROJECT_HTTPS`
+
