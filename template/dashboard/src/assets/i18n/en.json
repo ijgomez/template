@@ -444,9 +444,6 @@
       },
       "filters": {
         "clear": "Clear"
-      },
-      "detail": {
-        "title": "Block Detail"
       }
     }
   },

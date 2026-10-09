@@ -1119,7 +1119,7 @@ Fuente: `02-functional/administration/cluster/cluster-blocks.md` (`RF-CLB-*`, `R
 |---|--------|--------------------|
 | 1 | Escribir parte del nombre en `cluster-blocks-filter-name` (insensible a mayúsculas) y pulsar `cluster-blocks-apply-filters` | El listado se reduce a las filas cuyo nombre coincide y vuelve a página 1 |
 
-### TC-CLB-03 · Detalle de bloqueo
+### TC-CLB-03 · Métricas visibles en el listado (sin pantalla de detalle)
 
 - **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-CLB-3 (AC3.1–AC3.3) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`; al menos una fila.
@@ -1127,8 +1127,8 @@ Fuente: `02-functional/administration/cluster/cluster-blocks.md` (`RF-CLB-*`, `R
 
 | # | Acción | Resultado esperado |
 |---|--------|--------------------|
-| 1 | Seleccionar una fila | Detalle con nombre, fecha de inicio y las cuatro métricas, sin controles de edición |
-| 2 | Pulsar `cluster-blocks-back-to-list` | Regresa al listado sin cambios |
+| 1 | Observar una fila de `cluster-blocks-table` | La fila muestra nombre de tarea, fecha de inicio y las cuatro métricas (promedio, mínimo, máximo, total), sin controles de edición |
+| 2 | Comprobar que no existe navegación a detalle | Seleccionar la fila no abre ninguna pantalla de detalle; no existe el botón `cluster-blocks-back-to-list` |
 
 ### TC-CLB-04 · Exportación CSV
 

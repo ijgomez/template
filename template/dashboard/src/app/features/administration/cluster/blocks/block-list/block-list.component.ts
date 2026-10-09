@@ -3,29 +3,25 @@ import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { ClusterService } from '../../../../../core/services/cluster.service';
-import { AuthService } from '../../../../../core/services/auth.service';
 import { NotificationService } from '../../../../../core/services/notification.service';
 import { DateService } from '../../../../../core/services/date.service';
 import { LocalDatePipe } from '../../../../../shared/pipes/local-date.pipe';
 import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../../shared/components/data-table';
 import { ClusterBlock, ClusterBlockCriteria } from '../../../../../core/models/cluster.model';
-import { BlockDetailComponent } from '../block-detail/block-detail.component';
 
 /**
  * Cluster blocks component.
  * Displays a paginated, filterable table of cluster blocks (read-only per Req 25.12).
- * Delegates detail rendering to BlockDetailComponent (SRP).
  */
 @Component({
   selector: 'app-cluster-block-list',
   standalone: true,
-  imports: [FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective, BlockDetailComponent],
+  imports: [FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective],
   templateUrl: './block-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BlockListComponent implements OnInit {
   private readonly clusterService = inject(ClusterService);
-  private readonly authService = inject(AuthService);
   private readonly notificationService = inject(NotificationService);
   private readonly translateService = inject(TranslateService);
   private readonly dateService = inject(DateService);
@@ -39,10 +35,6 @@ export class BlockListComponent implements OnInit {
     { key: 'maxTime', header: 'cluster.blocks.fields.maxTime', sortable: true, resizable: true, reorderable: true },
     { key: 'total', header: 'cluster.blocks.fields.total', sortable: true, resizable: true, reorderable: true },
   ];
-
-  // View state
-  readonly viewMode = signal<'list' | 'detail'>('list');
-  readonly selectedBlock = signal<ClusterBlock | null>(null);
 
   // Pagination state
   readonly blocks = signal<ClusterBlock[]>([]);
@@ -132,22 +124,6 @@ export class BlockListComponent implements OnInit {
     this.pageSize.set(size);
     this.currentPage.set(0);
     this.loadBlocks();
-  }
-
-  /**
-   * Opens the detail view for a cluster block.
-   */
-  viewDetail(block: ClusterBlock): void {
-    this.selectedBlock.set(block);
-    this.viewMode.set('detail');
-  }
-
-  /**
-   * Returns to the list view.
-   */
-  backToList(): void {
-    this.viewMode.set('list');
-    this.selectedBlock.set(null);
   }
 
   /**

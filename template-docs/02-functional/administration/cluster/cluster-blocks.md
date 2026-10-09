@@ -3,7 +3,7 @@
 Documentación funcional y técnica de la pantalla de administración de bloqueos del cluster, dentro de Administración > Cluster. Permite consultar los registros de bloqueos (locks) gestionados por el sistema, con métricas de ejecución por tarea, filtrado por nombre y exportación CSV.
 
 - **Ruta frontend:** `/administration/cluster/blocks`
-- **Componentes:** `BlockListComponent` (listado + navegación a detalle) y `BlockDetailComponent` (detalle)
+- **Componente:** `BlockListComponent` (listado); el listado muestra todas las métricas de cada bloqueo, por lo que no existe pantalla de detalle
 - **Endpoint backend base:** `/api/v1/administration/cluster/blocks` (`ClusterController`)
 - **Acceso:** requiere sesión y `CLUSTER_LOCK_READ`; la pantalla es de solo lectura, no existe permiso de escritura
 
@@ -35,15 +35,15 @@ Identificadores locales de este documento: `RF-CLB-*` (requisitos funcionales) y
 - AC2.1: El nombre se filtra por coincidencia parcial sin distinguir mayúsculas de minúsculas.
 - AC2.2: Al aplicar o limpiar filtros, se vuelve a la primera página.
 
-#### RF-CLB-3: Consulta de detalle
+#### RF-CLB-3: Consulta de métricas en el listado
 
-**Descripción:** el sistema debe permitir consultar un bloqueo en modo de solo lectura.
+**Descripción:** el sistema debe permitir consultar todas las métricas de cada bloqueo directamente en el listado, en modo de solo lectura.
 
 **Criterios de aceptación:**
 
-- AC3.1: Una selección sobre una fila abre el detalle del bloqueo.
-- AC3.2: El detalle muestra nombre de tarea, fecha de inicio, tiempo promedio, tiempo mínimo, tiempo máximo y total de ejecuciones.
-- AC3.3: La acción Volver retorna al listado sin modificar nada.
+- AC3.1: El listado muestra, por fila, nombre de tarea, fecha de inicio, tiempo promedio, tiempo mínimo, tiempo máximo y total de ejecuciones.
+- AC3.2: No existe una pantalla de detalle independiente: toda la información del bloqueo es visible en la propia fila del listado.
+- AC3.3: La vista es exclusivamente de consulta y no permite modificar ningún dato.
 
 #### RF-CLB-4: Exportación CSV
 
@@ -91,21 +91,19 @@ Ofrecer a los administradores visibilidad sobre los bloqueos gestionados por el 
 
 ### 2.2. Vistas de la pantalla
 
-La funcionalidad usa dos modos de vista dentro de `BlockListComponent`:
+La funcionalidad usa un único modo de vista dentro de `BlockListComponent`:
 
 | Modo | Descripción |
 |------|-------------|
-| `list` | Listado de bloqueos con filtros, ordenación, paginación y exportación |
-| `detail` | Vista no editable del bloqueo seleccionado, delegada a `BlockDetailComponent` |
+| `list` | Listado de bloqueos con filtros, ordenación, paginación y exportación. Muestra todas las métricas de cada bloqueo, por lo que no existe vista de detalle |
 
 ### 2.3. Patrón visual reutilizable y wireframes
 
-La estructura visual base se define en [layout.md](../../../03-technical/frontend/layout.md). La pantalla usa `List screen` para la consulta y una variante de `Form screen` solo lectura para el detalle.
+La estructura visual base se define en [layout.md](../../../03-technical/frontend/layout.md). La pantalla usa `List screen` para la consulta; al mostrar todas las métricas en la tabla, no requiere pantalla de detalle.
 
 | Tipo de pantalla | Uso en bloqueos | Estructura base |
 |------------------|-----------------|-----------------|
 | `List screen` | Consulta principal | Cabecera, filtros, barra de acciones, tabla y paginación |
-| `Form screen` solo lectura | Detalle del bloqueo | Encabezado, datos operativos y acción Volver |
 
 #### 2.3.1. Wireframe del `List screen`
 
@@ -123,21 +121,6 @@ La estructura visual base se define en [layout.md](../../../03-technical/fronten
 +--------------------------------------------------------------------------------+
 | < 1 2 3 > | Registros por pagina: 5 / 10 / 20 / 50                            |
 +--------------------------------------------------------------------------------+
-```
-
-#### 2.3.2. Wireframe del detalle
-
-```text
-+------------------------------------------------------------------+
-| Detalle de Bloqueo                                    [Volver]  |
-+------------------------------------------------------------------+
-| Nombre de Tarea    | nombre-tarea-01                             |
-| Fecha de Inicio    | fecha/hora                                  |
-| Tiempo Promedio    | 125 ms                                      |
-| Tiempo Minimo      | 10 ms                                       |
-| Tiempo Maximo      | 512 ms                                      |
-| Total Ejecuciones  | 128                                         |
-+------------------------------------------------------------------+
 ```
 
 ### 2.4. Listado
@@ -167,11 +150,11 @@ La estructura visual base se define en [layout.md](../../../03-technical/fronten
 | Limpiar | Siempre disponible | `cluster-blocks-clear-filters` |
 | Exportar CSV | Siempre disponible; notifica vacío si no hay resultados tras filtrar | `cluster-blocks-export-csv` |
 
-- Una selección sobre una fila abre el detalle del bloqueo.
+- El listado muestra todas las métricas de cada bloqueo; no hay navegación a una pantalla de detalle.
 - El filtrado, la ordenación y la paginación se resuelven en servidor (Spring Data `Pageable`).
 - `data-testid` de la tabla: `cluster-blocks-table`.
 
-### 2.4. Identificadores para pruebas (`data-testid`)
+### 2.5. Identificadores para pruebas (`data-testid`)
 
 | Elemento | `data-testid` |
 | --- | --- |
@@ -181,13 +164,6 @@ La estructura visual base se define en [layout.md](../../../03-technical/fronten
 | Botón Filtrar | `cluster-blocks-apply-filters` |
 | Botón Limpiar | `cluster-blocks-clear-filters` |
 | Botón Exportar CSV | `cluster-blocks-export-csv` |
-| Botón Volver | `cluster-blocks-back-to-list` |
-
-### 2.5. Detalle
-
-El detalle es exclusivamente informativo. Muestra nombre de tarea, fecha de inicio y las cuatro métricas de tiempo (promedio, mínimo, máximo, total de ejecuciones) sin controles de edición. El botón Volver retorna al listado paginado sin alterar filtros ni página.
-
-`data-testid` del botón Volver: `cluster-blocks-back-to-list`.
 
 ### 2.6. Diagramas
 
@@ -214,9 +190,8 @@ flowchart TD
 
 | Capa | Elemento | Responsabilidad |
 |------|----------|-----------------|
-| Frontend | `BlockListComponent` | Consulta paginada, filtros del servidor, ordenación, selección, exportación CSV y cambio de vista list/detalle. |
-| Frontend | `BlockDetailComponent` | Presentación de solo lectura de un bloqueo. |
-| Frontend | `ClusterService` | Llamadas REST de bloqueos para paginado, conteo, detalle y exportación. |
+| Frontend | `BlockListComponent` | Consulta paginada, filtros del servidor, ordenación y exportación CSV. Muestra todas las métricas en el listado, sin vista de detalle. |
+| Frontend | `ClusterService` | Llamadas REST de bloqueos para paginado, conteo y exportación. |
 | Frontend | `TpDataTableComponent` | Tabla reutilizable para ordenación, selección y paginación. |
 | Backend | `ClusterController` | Endpoints REST de lectura de bloqueos. |
 | Backend | `ClusterBlockService` | Consultas por criterios y por id; las operaciones CUD quedan prohibidas. |
@@ -297,7 +272,7 @@ Ruta base: `/api/v1/administration/cluster/blocks`.
 |---------------|-------------|-----------|
 | `GET /` | Obtiene bloqueos paginados con filtro opcional por `name` y ordenación `Pageable` | 200 OK con `Page<ClusterBlockDTO>` |
 | `GET /count` | Cuenta bloqueos que coinciden con el filtro `name` opcional | 200 OK con `Long` |
-| `GET /{id}` | Obtiene un bloqueo por identificador | 200 OK con el bloqueo; 404 si no existe |
+| `GET /{id}` | Obtiene un bloqueo por identificador (expuesto en backend; no lo consume el frontend al no existir pantalla de detalle) | 200 OK con el bloqueo; 404 si no existe |
 | `POST /` | Creación manual no permitida | 405 Method Not Allowed |
 | `PUT /{id}` | Actualización no permitida | 405 Method Not Allowed |
 | `PATCH /{id}` | Modificación parcial no permitida | 405 Method Not Allowed |
@@ -369,7 +344,7 @@ El controlador delega lectura en `ClusterService` (que a su vez usa `ClusterBloc
 |-----------|---------|
 | `dashboard/src/app/core/services/cluster.service.spec.ts` | Métodos `findBlocksByCriteria`, `findAllBlocksByCriteria`, `countBlocksByCriteria`, `findBlockById` |
 
-No hay actualmente pruebas unitarias específicas de `BlockListComponent` ni de `BlockDetailComponent` en el repositorio.
+No hay actualmente pruebas unitarias específicas de `BlockListComponent` en el repositorio.
 
 ### 4.3. Cobertura E2E (Playwright)
 
@@ -379,7 +354,7 @@ Ubicación: `dashboard/e2e/tests/administration/cluster-blocks.spec.ts` (Page Ob
 |------|-------------|--------------------|
 | Listado controlado | Acceder a la pantalla tras iniciar sesión | La tabla y filtros son visibles; no existen acciones de crear, editar ni eliminar |
 | Filtrado | Filtrar por el nombre de una tarea existente y limpiar | El listado queda reducido a filas cuyo nombre coincide y se restaura al limpiar |
-| Detalle | Abrir el primer bloqueo y volver | El detalle muestra sus valores de fila y Volver restaura el listado |
+| Métricas en listado | Observar una fila del listado | La fila muestra nombre, fecha de inicio y las cuatro métricas, sin navegación a detalle |
 | Exportación CSV | Exportar el listado de bloqueos | El navegador descarga un fichero con nombre `cluster_blocks_YYYY-MM-DD.csv` |
 
 La suite es de solo lectura y no modifica `cluster_block`. Para que existan filas visibles, el backend debe haber adquirido y liberado al menos un lock durante su ciclo de vida (habitualmente el bloqueo `NODOS` del `HeartbeatWorker`).

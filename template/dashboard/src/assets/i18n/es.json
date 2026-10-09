@@ -444,9 +444,6 @@
       },
       "filters": {
         "clear": "Limpiar"
-      },
-      "detail": {
-        "title": "Detalle de Bloqueo"
       }
     }
   },

@@ -1,67 +1,53 @@
 <!-- ═══════════════════════════════════════════════════════════════════════════
      CLUSTER BLOCKS LIST VIEW
      ═══════════════════════════════════════════════════════════════════════════ -->
-@if (viewMode() === 'list') {
-  <!-- Title -->
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3 mb-0">{{ 'cluster.blocks.title' | translate }}</h1>
-  </div>
+<!-- Title -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1 class="h3 mb-0">{{ 'cluster.blocks.title' | translate }}</h1>
+</div>
 
-  <!-- Filter bar -->
-  <div class="tp-filter-bar">
-    <form class="row g-3 align-items-end" (ngSubmit)="applyFilters()" aria-label="Filtros de búsqueda de bloqueos" data-testid="blocks-filter-form">
-      <div class="col-md-4">
-        <label for="filterName" class="form-label">{{ 'cluster.blocks.fields.name' | translate }}</label>
-        <input id="filterName" type="text" class="form-control form-control-sm"
-               [ngModel]="filterName()" (ngModelChange)="filterName.set($event)" name="filterName"
-               [placeholder]="'cluster.blocks.fields.name' | translate" data-testid="cluster-blocks-filter-name">
-      </div>
-      <div class="col-12 d-flex justify-content-end gap-2 mt-2">
-        <button type="submit" class="btn btn-primary btn-sm" data-testid="cluster-blocks-apply-filters">
-          <i class="bi bi-search me-1" aria-hidden="true"></i> {{ 'button.filter' | translate }}
-        </button>
-        <button type="button" class="btn btn-outline-secondary btn-sm" (click)="clearFilters()" data-testid="cluster-blocks-clear-filters">
-          <i class="bi bi-x-circle me-1" aria-hidden="true"></i> {{ 'cluster.blocks.filters.clear' | translate }}
-        </button>
-      </div>
-    </form>
-  </div>
+<!-- Filter bar -->
+<div class="tp-filter-bar">
+  <form class="row g-3 align-items-end" (ngSubmit)="applyFilters()" aria-label="Filtros de búsqueda de bloqueos" data-testid="blocks-filter-form">
+    <div class="col-md-4">
+      <label for="filterName" class="form-label">{{ 'cluster.blocks.fields.name' | translate }}</label>
+      <input id="filterName" type="text" class="form-control form-control-sm"
+             [ngModel]="filterName()" (ngModelChange)="filterName.set($event)" name="filterName"
+             [placeholder]="'cluster.blocks.fields.name' | translate" data-testid="cluster-blocks-filter-name">
+    </div>
+    <div class="col-12 d-flex justify-content-end gap-2 mt-2">
+      <button type="submit" class="btn btn-primary btn-sm" data-testid="cluster-blocks-apply-filters">
+        <i class="bi bi-search me-1" aria-hidden="true"></i> {{ 'button.filter' | translate }}
+      </button>
+      <button type="button" class="btn btn-outline-secondary btn-sm" (click)="clearFilters()" data-testid="cluster-blocks-clear-filters">
+        <i class="bi bi-x-circle me-1" aria-hidden="true"></i> {{ 'cluster.blocks.filters.clear' | translate }}
+      </button>
+    </div>
+  </form>
+</div>
 
-  <!-- Action toolbar -->
-  <div class="tp-toolbar d-flex gap-2 mb-3">
-    <button type="button" class="btn btn-outline-secondary btn-sm ms-auto" (click)="exportCsv()" data-testid="cluster-blocks-export-csv">
-      <i class="bi bi-download me-1" aria-hidden="true"></i> {{ 'button.export' | translate }}
-    </button>
-  </div>
+<!-- Action toolbar -->
+<div class="tp-toolbar d-flex gap-2 mb-3">
+  <button type="button" class="btn btn-outline-secondary btn-sm ms-auto" (click)="exportCsv()" data-testid="cluster-blocks-export-csv">
+    <i class="bi bi-download me-1" aria-hidden="true"></i> {{ 'button.export' | translate }}
+  </button>
+</div>
 
-  <!-- Data table -->
-  <tp-data-table
-    [columns]="columns"
-    [data]="blocks()"
-    [loading]="isLoading()"
-    [totalElements]="totalElements()"
-    [currentPage]="currentPage()"
-    [pageSize]="pageSize()"
-    [selectable]="true"
-    [selectedItem]="null"
-    (rowSelect)="viewDetail($event)"
-    (pageChange)="goToPage($event)"
-    (pageSizeChange)="changePageSize($event)"
-    (sortChange)="onSort($event)"
-    ariaLabel="Listado de bloqueos del cluster"
-    testId="cluster-blocks-table">
+<!-- Data table -->
+<tp-data-table
+  [columns]="columns"
+  [data]="blocks()"
+  [loading]="isLoading()"
+  [totalElements]="totalElements()"
+  [currentPage]="currentPage()"
+  [pageSize]="pageSize()"
+  (pageChange)="goToPage($event)"
+  (pageSizeChange)="changePageSize($event)"
+  (sortChange)="onSort($event)"
+  ariaLabel="Listado de bloqueos del cluster"
+  testId="cluster-blocks-table">
 
-    <ng-template tpColumn="startDate" let-block>
-      {{ block.startDate | localDate }}
-    </ng-template>
-  </tp-data-table>
-}
-
-<!-- ═══════════════════════════════════════════════════════════════════════════
-     CLUSTER BLOCK DETAIL VIEW
-     ═══════════════════════════════════════════════════════════════════════════ -->
-@if (viewMode() === 'detail') {
-  @if (selectedBlock(); as block) {
-    <app-cluster-block-detail [block]="block" (back)="backToList()" />
-  }
-}
+  <ng-template tpColumn="startDate" let-block>
+    {{ block.startDate | localDate }}
+  </ng-template>
+</tp-data-table>
