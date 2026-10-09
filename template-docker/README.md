@@ -99,9 +99,10 @@ template-docker/
 - Los datos se persisten en un volumen Docker (`postgres-data`) montado en `/var/lib/postgresql`
 - `PGDATA` se fija en `/var/lib/postgresql/18/docker` para seguir el esquema recomendado en 18+
 - Inicialización al primer arranque del volumen:
-  - Schema `template`
-  - Tablespaces `template_data_tbs` y `template_index_tbs`
+  - Base de datos `openproject` con tablespaces `openproject_data_tbs` y `openproject_index_tbs`
+  - Base de datos y schema `template` con tablespaces `template_data_tbs` y `template_index_tbs`
   - Roles `template_admin` y `template_user`
+
 
 ### WildFly
 
@@ -117,8 +118,10 @@ template-docker/
 
 - Build local desde `openproyect/Dockerfile` (base `openproject/openproject:17`)
 - Puerto HTTP: configurable via `OPENPROJECT_PORT` (por defecto 8088 mapeado al 80 interno)
-- Los datos y adjuntos se persisten en los volúmenes `openproject-assets` y `openproject-pgdata`
+- Utiliza el servicio PostgreSQL (`postgres`) compartido mediante la base de datos `openproject`
+- Los archivos adjuntos y datos de usuario se persisten en el volumen `openproject-assets`
 - Configuración de host y HTTPS configurable mediante `OPENPROJECT_HOST_NAME` y `OPENPROJECT_HTTPS`
+- Espera a que PostgreSQL esté saludable antes de arrancar
 
 ## Variables de entorno
 
@@ -137,6 +140,8 @@ Archivo de referencia: `.env.example`
 - OpenProject
   - `OPENPROJECT_PORT`
   - `OPENPROJECT_HOST_NAME`
+  - `OPENPROJECT_DB`
   - `OPENPROJECT_SECRET_KEY_BASE`
   - `OPENPROJECT_HTTPS`
+
 

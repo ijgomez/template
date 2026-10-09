@@ -12,6 +12,22 @@ BEGIN
 END
 $$;
 
+CREATE TABLESPACE openproject_data_tbs
+  OWNER administrador
+  LOCATION '/var/lib/postgresql/tablespaces/openproject_data';
+
+CREATE TABLESPACE openproject_index_tbs
+  OWNER administrador
+  LOCATION '/var/lib/postgresql/tablespaces/openproject_index';
+
+CREATE DATABASE openproject
+  OWNER administrador
+  TABLESPACE openproject_data_tbs;
+
+ALTER DATABASE openproject SET default_tablespace = 'openproject_data_tbs';
+
+
+
 CREATE SCHEMA IF NOT EXISTS template AUTHORIZATION administrador;
 ALTER SCHEMA template OWNER TO administrador;
 
