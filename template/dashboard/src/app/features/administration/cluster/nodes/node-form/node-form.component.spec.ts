@@ -74,6 +74,27 @@ describe('NodeFormComponent', () => {
     expect(ipInput).toBeTruthy();
   });
 
+  it('renders the status as a disabled select with the active option selected', () => {
+    setup(buildNode({ status: 'ACTIVE' }));
+    const el: HTMLElement = fixture.nativeElement;
+    const select = el.querySelector<HTMLSelectElement>('[data-testid="node-form-status-select"]');
+    expect(select).not.toBeNull();
+    // Read-only mode: the select is present but disabled (Req 25.11).
+    expect(select!.hasAttribute('disabled')).toBe(true);
+    const options = Array.from(select!.querySelectorAll('option'));
+    expect(options.map((o) => o.value)).toEqual(['ACTIVE', 'INACTIVE']);
+    const activeOption = options.find((o) => o.value === 'ACTIVE')!;
+    expect(activeOption.selected).toBe(true);
+  });
+
+  it('selects the inactive option when the node is inactive', () => {
+    setup(buildNode({ status: 'INACTIVE' }));
+    const el: HTMLElement = fixture.nativeElement;
+    const select = el.querySelector<HTMLSelectElement>('[data-testid="node-form-status-select"]');
+    const inactiveOption = Array.from(select!.querySelectorAll('option')).find((o) => o.value === 'INACTIVE')!;
+    expect(inactiveOption.selected).toBe(true);
+  });
+
   it('exposes the back button with the preserved data-testid', () => {
     setup();
     const el: HTMLElement = fixture.nativeElement;

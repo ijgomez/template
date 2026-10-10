@@ -34,14 +34,15 @@
              [attr.aria-label]="'cluster.nodes.fields.ip' | translate">
     </div>
     <div class="col-md-4">
-      <label class="form-label form-label-sm mb-1">{{ 'cluster.nodes.fields.status' | translate }}</label>
-      <div>
-        <span class="badge"
-              [class.bg-success]="node().status === 'ACTIVE'"
-              [class.bg-danger]="node().status === 'INACTIVE'">
-          {{ 'cluster.nodes.status.' + node().status.toLowerCase() | translate }}
-        </span>
-      </div>
+      <label class="form-label form-label-sm mb-1" for="node-status-select">{{ 'cluster.nodes.fields.status' | translate }}</label>
+      <select id="node-status-select"
+              class="form-select form-select-sm"
+              disabled
+              [attr.aria-label]="'cluster.nodes.fields.status' | translate"
+              data-testid="node-form-status-select">
+        <option value="ACTIVE" [selected]="node().status === 'ACTIVE'">{{ 'cluster.nodes.status.active' | translate }}</option>
+        <option value="INACTIVE" [selected]="node().status === 'INACTIVE'">{{ 'cluster.nodes.status.inactive' | translate }}</option>
+      </select>
     </div>
     <div class="col-md-4">
       <label class="form-label form-label-sm mb-1">{{ 'cluster.nodes.fields.master' | translate }}</label>
