@@ -3,8 +3,9 @@ import { type Locator, type Page } from '@playwright/test';
 /**
  * Page Object de la pantalla de bloqueos del cluster.
  *
- * Encapsula la consulta paginada en servidor, filtrado por nombre, detalle
- * de solo lectura y exportación CSV de `/administration/cluster/blocks`.
+ * Encapsula la consulta paginada en servidor, el filtrado por nombre y la
+ * exportación CSV de `/administration/cluster/blocks`. El listado muestra todas
+ * las métricas de cada bloqueo, por lo que no existe pantalla de detalle.
  */
 export class ClusterBlocksPage {
   private readonly page: Page;
@@ -16,7 +17,6 @@ export class ClusterBlocksPage {
   readonly applyFiltersButton: Locator;
   readonly clearFiltersButton: Locator;
   readonly exportButton: Locator;
-  readonly backToListButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -28,7 +28,6 @@ export class ClusterBlocksPage {
     this.applyFiltersButton = page.getByTestId('cluster-blocks-apply-filters');
     this.clearFiltersButton = page.getByTestId('cluster-blocks-clear-filters');
     this.exportButton = page.getByTestId('cluster-blocks-export-csv');
-    this.backToListButton = page.getByTestId('cluster-blocks-back-to-list');
   }
 
   /** Navega a la pantalla y espera al listado inicial. */
@@ -56,18 +55,6 @@ export class ClusterBlocksPage {
     const response = this.waitForBlocksQuery();
     await this.clearFiltersButton.click();
     await response;
-  }
-
-  /** Abre el detalle de la fila indicada (selección simple). */
-  async openDetail(row: Locator): Promise<void> {
-    await row.click();
-    await this.backToListButton.waitFor({ state: 'visible' });
-  }
-
-  /** Vuelve desde el detalle al listado. */
-  async backToList(): Promise<void> {
-    await this.backToListButton.click();
-    await this.table.waitFor({ state: 'visible' });
   }
 
   /** Exporta el resultado filtrado y devuelve la descarga del navegador. */

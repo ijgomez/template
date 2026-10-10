@@ -57,25 +57,21 @@ test.describe('Cluster blocks', () => {
     await expect(blocksPage.rows.first()).toBeVisible();
   });
 
-  test('should open a block detail and return to the list', async ({ page }) => {
+  test('should show all block metrics in the list without a detail screen', async ({ page }) => {
     const blocksPage = new ClusterBlocksPage(page);
     await blocksPage.goto();
 
-    const selectedRow = blocksPage.rows.first();
-    const cells = await selectedRow.locator('td').allTextContents();
-    await blocksPage.openDetail(selectedRow);
+    // Cada fila expone las seis columnas (nombre, fecha de inicio y las cuatro métricas)
+    // directamente en el listado, sin necesidad de abrir un detalle.
+    const firstRow = blocksPage.rows.first();
+    await expect(firstRow).toBeVisible();
+    expect(await firstRow.locator('td').count()).toBeGreaterThanOrEqual(6);
 
-    await expect(blocksPage.backToListButton).toBeVisible();
-    await expect(page.locator('h1')).toContainText(/detail/i);
-
-    const detail = page.locator('.card .card-body');
-    const expectedValues = cells.map((c) => c.trim()).filter((v) => v.length > 0);
-    for (const value of expectedValues.slice(0, 6)) {
-      await expect(detail).toContainText(value);
-    }
-
-    await blocksPage.backToList();
+    // Al seleccionar una fila no se navega a ninguna pantalla de detalle:
+    // el filtro sigue visible y no aparece el botón "Volver" del antiguo detalle.
+    await firstRow.click();
     await expect(blocksPage.filterForm).toBeVisible();
+    await expect(page.getByTestId('cluster-blocks-back-to-list')).toHaveCount(0);
   });
 
   test('should export the filtered blocks to CSV', async ({ page }) => {
