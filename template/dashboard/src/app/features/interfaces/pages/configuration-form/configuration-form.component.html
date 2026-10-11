@@ -79,14 +79,13 @@
           <label for="protocol" class="form-label form-label-sm mb-1">
             {{ 'interfaces.configuration.fields.protocol' | translate }}
           </label>
-          <input id="protocol"
-                 type="text"
-                 class="form-control form-control-sm"
-                 [value]="config.protocol ?? ''"
-                 readonly
-                 disabled
-                 [attr.aria-label]="'interfaces.configuration.fields.protocol' | translate"
-                 data-testid="input-protocol">
+          <tp-protocol-select
+            id="protocol"
+            variant="readonly"
+            [ngModel]="config.protocol ?? ''"
+            name="protocol"
+            ariaLabelKey="interfaces.configuration.fields.protocol"
+            testId="input-protocol" />
         </div>
         <div class="col-md-6">
           <label for="checkFrequency" class="form-label form-label-sm mb-1">

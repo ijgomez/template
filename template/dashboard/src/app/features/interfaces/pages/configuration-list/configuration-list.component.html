@@ -18,15 +18,13 @@
       </div>
       <div class="col-md-3">
         <label for="filterProtocol" class="form-label">{{ 'interfaces.configuration.fields.protocol' | translate }}</label>
-        <select id="filterProtocol" class="form-select form-select-sm"
-                [ngModel]="filterProtocol()" (ngModelChange)="filterProtocol.set($event)" name="filterProtocol"
-                [attr.aria-label]="'interfaces.configuration.fields.protocol' | translate" data-testid="filter-protocol">
-          <option value="">{{ 'interfaces.configuration.filters.allProtocols' | translate }}</option>
-          <option value="REST">REST</option>
-          <option value="SOAP">SOAP</option>
-          <option value="LDAP">LDAP</option>
-          <option value="SMTP">SMTP</option>
-        </select>
+        <tp-protocol-select
+          id="filterProtocol"
+          [ngModel]="filterProtocol()" (ngModelChange)="filterProtocol.set($event)" name="filterProtocol"
+          [placeholderSelectable]="true"
+          placeholderKey="interfaces.configuration.filters.allProtocols"
+          ariaLabelKey="interfaces.configuration.fields.protocol"
+          testId="filter-protocol" />
       </div>
       <div class="col-md-3">
         <label for="filterStatus" class="form-label">{{ 'interfaces.configuration.fields.status' | translate }}</label>

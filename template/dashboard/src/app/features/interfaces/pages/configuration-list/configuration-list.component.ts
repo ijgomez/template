@@ -9,7 +9,8 @@ import { CsvExportService } from '../../../../core/services/csv-export.service';
 import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
 import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../shared/components/data-table';
 import { InterfaceConfig } from '../../../../core/models/interface.model';
-import { ConfigurationFormComponent } from './components/configuration-form/configuration-form.component';
+import { ConfigurationFormComponent } from '../configuration-form/configuration-form.component';
+import { ProtocolSelectComponent } from '../../components/protocol-select';
 
 /**
  * Interface configuration list component.
@@ -20,7 +21,7 @@ import { ConfigurationFormComponent } from './components/configuration-form/conf
 @Component({
   selector: 'app-configuration-list',
   standalone: true,
-  imports: [FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective, ConfigurationFormComponent],
+  imports: [FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective, ConfigurationFormComponent, ProtocolSelectComponent],
   templateUrl: './configuration-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

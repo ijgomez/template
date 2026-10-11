@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideTranslateService } from '@ngx-translate/core';
 
 import { ConfigurationFormComponent, FormMode } from './configuration-form.component';
-import { InterfaceConfig } from '../../../../../../core/models/interface.model';
+import { InterfaceConfig } from '../../../../core/models/interface.model';
 
 /** Builds an InterfaceConfig with sensible defaults. */
 function buildConfig(overrides: Partial<InterfaceConfig> = {}): InterfaceConfig {
@@ -95,8 +95,12 @@ describe('ConfigurationFormComponent', () => {
       }
     });
 
-    it('should render field values', () => {
+    it('should render field values', async () => {
       setup('view');
+      // The protocol field is rendered by tp-protocol-select bound via ngModel,
+      // which propagates its value to the CVA asynchronously.
+      await fixture.whenStable();
+      fixture.detectChanges();
       const name = fixture.nativeElement.querySelector('[data-testid="input-name"]') as HTMLInputElement;
       const url = fixture.nativeElement.querySelector('[data-testid="input-url"]') as HTMLInputElement;
       const protocol = fixture.nativeElement.querySelector('[data-testid="input-protocol"]') as HTMLInputElement;

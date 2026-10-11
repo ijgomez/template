@@ -3,7 +3,8 @@ import { Component, ChangeDetectionStrategy, computed, effect, input, output, si
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 
-import { InterfaceConfig } from '../../../../../../core/models/interface.model';
+import { InterfaceConfig } from '../../../../core/models/interface.model';
+import { ProtocolSelectComponent } from '../../components/protocol-select';
 
 export type FormMode = 'create' | 'edit' | 'view';
 
@@ -16,7 +17,7 @@ export type FormMode = 'create' | 'edit' | 'view';
 @Component({
   selector: 'app-configuration-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe],
+  imports: [CommonModule, FormsModule, TranslatePipe, ProtocolSelectComponent],
   templateUrl: './configuration-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
