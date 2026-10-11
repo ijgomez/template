@@ -1,0 +1,142 @@
+<!-- Title -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 mb-0">
+    @switch (mode()) {
+      @case ('create') { {{ 'interfaces.configuration.detail.title' | translate }} }
+      @case ('edit') { {{ 'interfaces.configuration.detail.title' | translate }} }
+      @case ('view') { {{ 'interfaces.configuration.detail.title' | translate }} }
+    }
+  </h1>
+  @if (isReadonly()) {
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-secondary btn-sm"
+              (click)="onBack()"
+              data-testid="configuration-form-btn-back">
+        <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>{{ 'button.back' | translate }}
+      </button>
+    </div>
+  }
+</div>
+
+@if (formConfig(); as config) {
+  <div class="tp-filter-bar">
+    <form novalidate data-testid="configuration-form">
+      <!-- General data -->
+      <div class="row g-2 mb-3">
+        <div class="col-md-6">
+          <label for="name" class="form-label form-label-sm mb-1">
+            {{ 'interfaces.configuration.fields.name' | translate }}
+          </label>
+          <input id="name"
+                 type="text"
+                 class="form-control form-control-sm"
+                 [value]="config.name ?? ''"
+                 readonly
+                 disabled
+                 [attr.aria-label]="'interfaces.configuration.fields.name' | translate"
+                 data-testid="input-name">
+        </div>
+        <div class="col-md-6">
+          <label for="status" class="form-label form-label-sm mb-1">
+            {{ 'interfaces.configuration.fields.status' | translate }}
+          </label>
+          <input id="status"
+                 type="text"
+                 class="form-control form-control-sm"
+                 [value]="config.status ?? ''"
+                 readonly
+                 disabled
+                 [attr.aria-label]="'interfaces.configuration.fields.status' | translate"
+                 data-testid="input-status">
+        </div>
+        <div class="col-12">
+          <label for="description" class="form-label form-label-sm mb-1">
+            {{ 'interfaces.configuration.fields.description' | translate }}
+          </label>
+          <input id="description"
+                 type="text"
+                 class="form-control form-control-sm"
+                 [value]="config.description ?? ''"
+                 readonly
+                 disabled
+                 [attr.aria-label]="'interfaces.configuration.fields.description' | translate"
+                 data-testid="input-description">
+        </div>
+        <div class="col-md-6">
+          <label for="url" class="form-label form-label-sm mb-1">
+            {{ 'interfaces.configuration.fields.url' | translate }}
+          </label>
+          <input id="url"
+                 type="text"
+                 class="form-control form-control-sm"
+                 [value]="config.url ?? ''"
+                 readonly
+                 disabled
+                 [attr.aria-label]="'interfaces.configuration.fields.url' | translate"
+                 data-testid="input-url">
+        </div>
+        <div class="col-md-6">
+          <label for="protocol" class="form-label form-label-sm mb-1">
+            {{ 'interfaces.configuration.fields.protocol' | translate }}
+          </label>
+          <input id="protocol"
+                 type="text"
+                 class="form-control form-control-sm"
+                 [value]="config.protocol ?? ''"
+                 readonly
+                 disabled
+                 [attr.aria-label]="'interfaces.configuration.fields.protocol' | translate"
+                 data-testid="input-protocol">
+        </div>
+        <div class="col-md-6">
+          <label for="checkFrequency" class="form-label form-label-sm mb-1">
+            {{ 'interfaces.configuration.fields.checkFrequency' | translate }}
+          </label>
+          <input id="checkFrequency"
+                 type="text"
+                 class="form-control form-control-sm"
+                 [value]="config.checkFrequency ?? ''"
+                 readonly
+                 disabled
+                 [attr.aria-label]="'interfaces.configuration.fields.checkFrequency' | translate"
+                 data-testid="input-check-frequency">
+        </div>
+      </div>
+
+      <!-- Audit information (view mode only) -->
+      @if (isReadonly()) {
+        <h6 class="text-muted text-uppercase fw-semibold mb-2" style="font-size: 0.75rem; letter-spacing: 0.05em;">
+          {{ 'interfaces.configuration.detail.title' | translate }}
+        </h6>
+        <div class="row g-2 mb-3">
+          <div class="col-md-6">
+            <label for="createdAt" class="form-label form-label-sm mb-1">
+              {{ 'interfaces.configuration.fields.createdAt' | translate }}
+            </label>
+            <input id="createdAt"
+                   type="text"
+                   class="form-control form-control-sm"
+                   [value]="(config.createdAt | localDate) ?? ''"
+                   readonly
+                   disabled
+                   [attr.aria-label]="'interfaces.configuration.fields.createdAt' | translate"
+                   data-testid="input-created-at">
+          </div>
+          <div class="col-md-6">
+            <label for="lastModifiedAt" class="form-label form-label-sm mb-1">
+              {{ 'interfaces.configuration.fields.lastModifiedAt' | translate }}
+            </label>
+            <input id="lastModifiedAt"
+                   type="text"
+                   class="form-control form-control-sm"
+                   [value]="(config.lastModifiedAt | localDate) ?? ''"
+                   readonly
+                   disabled
+                   [attr.aria-label]="'interfaces.configuration.fields.lastModifiedAt' | translate"
+                   data-testid="input-last-modified-at">
+          </div>
+        </div>
+      }
+    </form>
+  </div>
+}

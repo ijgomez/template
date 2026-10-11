@@ -2,31 +2,30 @@ import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit } 
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
-import { InterfaceService } from '../../../core/services/interface.service';
-import { AuthService } from '../../../core/services/auth.service';
-import { NotificationService } from '../../../core/services/notification.service';
-import { DateService } from '../../../core/services/date.service';
-import { CsvExportService } from '../../../core/services/csv-export.service';
-import { LocalDatePipe } from '../../../shared/pipes/local-date.pipe';
-import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../shared/components/data-table';
-import { InterfaceConfig } from '../../../core/models/interface.model';
+import { InterfaceService } from '../../../../core/services/interface.service';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { DateService } from '../../../../core/services/date.service';
+import { CsvExportService } from '../../../../core/services/csv-export.service';
+import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
+import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../shared/components/data-table';
+import { InterfaceConfig } from '../../../../core/models/interface.model';
+import { ConfigurationFormComponent } from '../../components/configuration-form/configuration-form.component';
 
 /**
- * Interface configuration component.
- * Displays all interface configurations with status indicators (read-only per Req 25.12).
- * Client-side filtering and pagination for consistency with standard listing mockup pattern.
- * Supports row selection and detail view.
+ * Interface configuration list component.
+ * Displays all interface configurations with status indicators (read-only).
+ * Client-side filtering and pagination for consistency with the standard listing pattern.
+ * Supports row selection and a read-only detail view rendered via ConfigurationFormComponent.
  */
 @Component({
-  selector: 'app-interfaces-configuration',
+  selector: 'app-configuration-list',
   standalone: true,
-  imports: [FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective],
-  templateUrl: './configuration.component.html',
+  imports: [FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective, ConfigurationFormComponent],
+  templateUrl: './configuration-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ConfigurationComponent implements OnInit {
+export class ConfigurationListComponent implements OnInit {
   private readonly interfaceService = inject(InterfaceService);
-  private readonly authService = inject(AuthService);
   private readonly notificationService = inject(NotificationService);
   private readonly translateService = inject(TranslateService);
   private readonly dateService = inject(DateService);

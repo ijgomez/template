@@ -116,60 +116,9 @@
      INTERFACE CONFIGURATION DETAIL VIEW
      ═══════════════════════════════════════════════════════════════════════════ -->
 @if (viewMode() === 'detail') {
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="h3 mb-0">{{ 'interfaces.configuration.detail.title' | translate }}</h1>
-    <button class="btn btn-outline-secondary btn-sm"
-            data-testid="configuration-back-to-list"
-            (click)="backToList()">
-      <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>{{ 'button.back' | translate }}
-    </button>
-  </div>
-
-  @if (selectedConfig(); as config) {
-    <div class="card">
-      <div class="card-body">
-        <div class="tp-form-grid">
-          <div class="form-group">
-            <label class="form-label fw-bold">{{ 'interfaces.configuration.fields.name' | translate }}</label>
-            <p class="form-control-plaintext">{{ config.name }}</p>
-          </div>
-          <div class="form-group">
-            <label class="form-label fw-bold">{{ 'interfaces.configuration.fields.status' | translate }}</label>
-            <p class="form-control-plaintext">
-              <span class="badge"
-                    [class.bg-success]="config.status === 'ACTIVE'"
-                    [class.bg-danger]="config.status === 'ERROR'"
-                    [class.bg-secondary]="config.status === 'INACTIVE'">
-                {{ config.status }}
-              </span>
-            </p>
-          </div>
-          <div class="form-group form-field-full">
-            <label class="form-label fw-bold">{{ 'interfaces.configuration.fields.description' | translate }}</label>
-            <p class="form-control-plaintext">{{ config.description }}</p>
-          </div>
-          <div class="form-group">
-            <label class="form-label fw-bold">{{ 'interfaces.configuration.fields.url' | translate }}</label>
-            <p class="form-control-plaintext">{{ config.url }}</p>
-          </div>
-          <div class="form-group">
-            <label class="form-label fw-bold">{{ 'interfaces.configuration.fields.protocol' | translate }}</label>
-            <p class="form-control-plaintext">{{ config.protocol }}</p>
-          </div>
-          <div class="form-group">
-            <label class="form-label fw-bold">{{ 'interfaces.configuration.fields.checkFrequency' | translate }}</label>
-            <p class="form-control-plaintext">{{ config.checkFrequency }}</p>
-          </div>
-          <div class="form-group">
-            <label class="form-label fw-bold">{{ 'interfaces.configuration.fields.createdAt' | translate }}</label>
-            <p class="form-control-plaintext">{{ config.createdAt | localDate }}</p>
-          </div>
-          <div class="form-group">
-            <label class="form-label fw-bold">{{ 'interfaces.configuration.fields.lastModifiedAt' | translate }}</label>
-            <p class="form-control-plaintext">{{ config.lastModifiedAt | localDate }}</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  }
+  <app-configuration-form
+    mode="view"
+    [config]="selectedConfig()"
+    (back)="backToList()"
+    (cancel)="backToList()" />
 }

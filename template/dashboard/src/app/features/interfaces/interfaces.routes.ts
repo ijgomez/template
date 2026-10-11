@@ -7,7 +7,7 @@ export const INTERFACES_ROUTES: Routes = [
   },
   {
     path: 'configuration',
-    loadComponent: () => import('./configuration/configuration.component').then((m) => m.ConfigurationComponent),
+    loadComponent: () => import('./pages/configuration-list/configuration-list.component').then((m) => m.ConfigurationListComponent),
   },
   {
     path: '',
