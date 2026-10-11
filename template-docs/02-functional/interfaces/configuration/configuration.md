@@ -3,7 +3,7 @@
 Documentación funcional y técnica de la pantalla de configuración de interfaces, dentro del módulo de Interfaces. Permite consultar, filtrar y visualizar en modo solo lectura la definición y el estado de todas las interfaces registradas en el sistema, así como exportar el listado filtrado a CSV. Ofrece una visión consolidada de la salud de las integraciones con indicadores visuales de estado.
 
 - **Ruta frontend:** `/interfaces/configuration`
-- **Componente:** `ConfigurationComponent` (listado y detalle en un único componente)
+- **Componentes:** `ConfigurationListComponent` (listado, en `pages/configuration-list/`) y `ConfigurationFormComponent` (detalle de solo lectura reutilizable, en `pages/configuration-list/components/configuration-form/`)
 - **Endpoint backend base:** `/api/v1/interfaces/configuration` (`InterfaceController`)
 - **Acceso:** requiere sesión y la acción `INTERFACES_READ`
 - **Restricción de negocio:** no está permitido crear, editar ni eliminar interfaces desde la interfaz de usuario; las interfaces se gestionan externamente y solo se consultan
@@ -44,7 +44,7 @@ Identificadores locales de este documento: `RF-CFG-*` (requisitos funcionales) y
 **Criterios de aceptación:**
 - AC3.1: El doble clic sobre una fila abre el detalle de la interfaz.
 - AC3.2: El botón de detalle de la barra de acciones abre la interfaz seleccionada y solo está habilitado cuando hay una fila seleccionada.
-- AC3.3: El detalle muestra nombre, descripción, URL, protocolo, estado, frecuencia de check, fecha de creación y última modificación.
+- AC3.3: El detalle muestra nombre, descripción, URL, protocolo, estado y frecuencia de check. No se muestran campos de auditoría (fecha de creación ni última modificación).
 - AC3.4: El detalle incluye un botón de volver que regresa al listado.
 
 #### RF-CFG-4: Exportación a CSV
@@ -82,18 +82,18 @@ Identificadores locales de este documento: `RF-CFG-*` (requisitos funcionales) y
 Ofrecer a los administradores una pantalla para consultar y supervisar la configuración y el estado de salud de las integraciones del sistema:
 
 - Consultar el listado paginado y filtrado de interfaces.
-- Ver el detalle de una interfaz con su información de auditoría.
+- Ver el detalle de solo lectura de una interfaz con su definición y estado.
 - Detectar rápidamente problemas de conectividad mediante indicadores visuales de estado.
 - Exportar el listado filtrado a CSV.
 
 ### 2.2. Vistas de la pantalla
 
-La pantalla gestiona dos modos de vista (`viewMode`) dentro del mismo componente:
+La pantalla gestiona dos modos de vista (`viewMode`) desde `ConfigurationListComponent`, que delega el detalle en `ConfigurationFormComponent` (modo `view`):
 
 | Modo | Descripción |
 |------|-------------|
 | `list` | Listado paginado con filtros, exportación y acceso al detalle |
-| `detail` | Vista de solo lectura de una interfaz |
+| `detail` | Vista de solo lectura de una interfaz renderizada con `ConfigurationFormComponent` |
 
 > No existe un modo `create` ni `edit`, ni operación de borrado; las interfaces se gestionan externamente y la pantalla es exclusivamente de consulta.
 
@@ -138,7 +138,6 @@ La estructura visual base de esta pantalla se define en [layout.md](../../../03-
 | URL    | [https://erp.example.com/api]                           |
 | Protocolo | [REST]                                               |
 | Frecuencia de check | [60]                                       |
-| Fecha creación 2026-09-01 | Última modificación 2026-09-15       |
 +------------------------------------------------------------------+
 ```
 
@@ -208,8 +207,8 @@ La diferencia frente a usuarios y acciones es que interfaces no tiene alta, edic
 | Protocolo | Protocolo de comunicación (REST, SOAP, LDAP, SMTP) |
 | Estado | Estado actual (`ACTIVE`, `INACTIVE`, `ERROR`) |
 | Frecuencia de check | Intervalo de verificación de disponibilidad (segundos) |
-| Fecha de creación | Fecha de registro en el sistema |
-| Última modificación | Fecha de última actualización |
+
+> Los campos de auditoría (fecha de creación y última modificación) no se muestran en el detalle; el modelo sigue incluyéndolos pero la pantalla no los expone al usuario.
 
 ### 2.6. Validaciones funcionales
 
@@ -244,7 +243,8 @@ flowchart TD
 
 | Capa | Elemento | Responsabilidad |
 |------|----------|-----------------|
-| Frontend | `ConfigurationComponent` | Listado, filtros, paginación, orden, exportación y vista de detalle. |
+| Frontend | `ConfigurationListComponent` | Listado, filtros, paginación, orden, exportación y gestión del modo de vista; renderiza el detalle con `ConfigurationFormComponent`. |
+| Frontend | `ConfigurationFormComponent` | Formulario reutilizable (`FormMode` `create` / `edit` / `view`) que muestra el detalle de una interfaz en modo solo lectura. |
 | Frontend | `InterfaceService` | Consulta de configuraciones de interfaz y transformación de la respuesta. |
 | Frontend | `TpDataTableComponent` | Tabla reutilizable para ordenación, paginación y selección de filas. |
 | Frontend | `NotificationService` | Notificaciones de progreso, avisos y errores. |
@@ -378,7 +378,8 @@ Estas pruebas cubren la lógica principal del módulo y complementan la validaci
 
 | Ubicación | Alcance |
 |-----------|---------|
-| `configuration.component.spec.ts` | Estado del listado, filtros en cliente, paginación, orden, detalle y exportación |
+| `configuration-list.component.spec.ts` | Estado del listado, filtros en cliente, paginación, orden, apertura del detalle y exportación |
+| `configuration-form.component.spec.ts` | Render de solo lectura del detalle (campos readonly/disabled), `isReadonly`, ausencia de campos de auditoría y evento de volver |
 | `interface.service.spec.ts` | Construcción de las peticiones de consulta de configuraciones |
 
 ### 4.3. Cobertura E2E (Playwright)

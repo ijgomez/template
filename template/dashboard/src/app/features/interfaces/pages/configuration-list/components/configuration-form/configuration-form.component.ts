@@ -3,8 +3,7 @@ import { Component, ChangeDetectionStrategy, computed, effect, input, output, si
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 
-import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
-import { InterfaceConfig } from '../../../../core/models/interface.model';
+import { InterfaceConfig } from '../../../../../../core/models/interface.model';
 
 export type FormMode = 'create' | 'edit' | 'view';
 
@@ -17,7 +16,7 @@ export type FormMode = 'create' | 'edit' | 'view';
 @Component({
   selector: 'app-configuration-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, LocalDatePipe],
+  imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './configuration-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

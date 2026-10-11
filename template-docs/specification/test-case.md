@@ -975,7 +975,7 @@ Fuente: `02-functional/interfaces/configuration/configuration.md` (`RF-CFG-*`, `
 
 | # | Acción | Resultado esperado |
 |---|--------|--------------------|
-| 1 | Doble clic sobre una fila (o seleccionar y pulsar `btn-view-detail`) | Muestra nombre, descripción, URL, protocolo, estado, frecuencia de check y fechas |
+| 1 | Doble clic sobre una fila (o seleccionar y pulsar `btn-view-detail`) | Muestra nombre, descripción, URL, protocolo, estado y frecuencia de check; no muestra campos de auditoría (creación ni última modificación) |
 | 2 | Pulsar *Volver* | Regresa al listado |
 
 ### TC-CFG-04 · Exportación CSV

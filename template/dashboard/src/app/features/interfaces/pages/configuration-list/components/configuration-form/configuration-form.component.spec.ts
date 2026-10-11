@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideTranslateService } from '@ngx-translate/core';
 
 import { ConfigurationFormComponent, FormMode } from './configuration-form.component';
-import { InterfaceConfig } from '../../../../core/models/interface.model';
+import { InterfaceConfig } from '../../../../../../core/models/interface.model';
 
 /** Builds an InterfaceConfig with sensible defaults. */
 function buildConfig(overrides: Partial<InterfaceConfig> = {}): InterfaceConfig {
@@ -73,9 +73,9 @@ describe('ConfigurationFormComponent', () => {
       'input-url',
       'input-protocol',
       'input-check-frequency',
-      'input-created-at',
-      'input-last-modified-at',
     ];
+
+    const hiddenAuditIds = ['input-created-at', 'input-last-modified-at'];
 
     it('should render all fields as readonly and disabled', () => {
       setup('view');
@@ -84,6 +84,14 @@ describe('ConfigurationFormComponent', () => {
         expect(input).toBeTruthy();
         expect(input.readOnly).toBe(true);
         expect(input.disabled).toBe(true);
+      }
+    });
+
+    it('should not render audit fields (createdAt / lastModifiedAt)', () => {
+      setup('view');
+      for (const id of hiddenAuditIds) {
+        const input = fixture.nativeElement.querySelector(`[data-testid="${id}"]`);
+        expect(input).toBeNull();
       }
     });
 

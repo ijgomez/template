@@ -102,41 +102,6 @@
                  data-testid="input-check-frequency">
         </div>
       </div>
-
-      <!-- Audit information (view mode only) -->
-      @if (isReadonly()) {
-        <h6 class="text-muted text-uppercase fw-semibold mb-2" style="font-size: 0.75rem; letter-spacing: 0.05em;">
-          {{ 'interfaces.configuration.detail.title' | translate }}
-        </h6>
-        <div class="row g-2 mb-3">
-          <div class="col-md-6">
-            <label for="createdAt" class="form-label form-label-sm mb-1">
-              {{ 'interfaces.configuration.fields.createdAt' | translate }}
-            </label>
-            <input id="createdAt"
-                   type="text"
-                   class="form-control form-control-sm"
-                   [value]="(config.createdAt | localDate) ?? ''"
-                   readonly
-                   disabled
-                   [attr.aria-label]="'interfaces.configuration.fields.createdAt' | translate"
-                   data-testid="input-created-at">
-          </div>
-          <div class="col-md-6">
-            <label for="lastModifiedAt" class="form-label form-label-sm mb-1">
-              {{ 'interfaces.configuration.fields.lastModifiedAt' | translate }}
-            </label>
-            <input id="lastModifiedAt"
-                   type="text"
-                   class="form-control form-control-sm"
-                   [value]="(config.lastModifiedAt | localDate) ?? ''"
-                   readonly
-                   disabled
-                   [attr.aria-label]="'interfaces.configuration.fields.lastModifiedAt' | translate"
-                   data-testid="input-last-modified-at">
-          </div>
-        </div>
-      }
     </form>
   </div>
 }
