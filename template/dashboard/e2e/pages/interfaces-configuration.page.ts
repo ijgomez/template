@@ -50,8 +50,8 @@ export class InterfacesConfigurationPage {
     this.paginationInfo = page.getByTestId('pagination-info');
     this.pageSizeSelect = page.getByTestId('pagination-page-size');
 
-    this.backToListButton = page.getByTestId('configuration-back-to-list');
-    this.detailCard = page.locator('.card .card-body');
+    this.backToListButton = page.getByTestId('configuration-form-btn-back');
+    this.detailCard = page.getByTestId('configuration-form');
 
     this.interfacesNavToggle = page.getByTestId('nav-toggle-menu.interfaces');
     this.configurationNavItem = page.getByTestId('nav-menu.interfaces.configuration');
