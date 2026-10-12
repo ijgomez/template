@@ -101,13 +101,15 @@ export const Readonly: Story = {
   render: args => ({
     props: { ...args, protocol: 'LDAP' },
     template: `
-      <tp-protocol-select
-        [ngModel]="protocol"
-        [variant]="variant"
-        [name]="name"
-        [ariaLabelKey]="ariaLabelKey"
-        [testId]="testId">
-      </tp-protocol-select>
+      <form>
+        <tp-protocol-select
+          [ngModel]="protocol"
+          [variant]="variant"
+          [name]="name"
+          [ariaLabelKey]="ariaLabelKey"
+          [testId]="testId">
+        </tp-protocol-select>
+      </form>
     `,
   }),
   play: async ({ canvasElement }) => {
