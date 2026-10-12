@@ -374,10 +374,130 @@ Los datos semilla para informes y asignaciones al usuario administrador se encue
 | Modal: "seleccionar página" | Marca/desmarca todos los IDs de `modalReports` en `modalSelectedIds` |
 | Confirmar modal | `selectedIds` actualizado, `onChange` emitido, modal cerrado |
 
+### 4.7. Casos de prueba detallados (TCY-RPT)
+
+Catálogo de test cases derivado de los requisitos funcionales de informes (`RF-RPT-*`, `RNF-RPT-*`). Para el marco global de pruebas, variables (`{{BASE_URL_UI}}`, `{{BASE_URL_API}}`, `{{ADMIN_USER}}`, `{{TODAY}}`) y modelo de ejecución, consultar el [Plan Maestro de Pruebas](../../specification/test-case.md).
+
+Precondición del ciclo: usuario con `REPORT_EXECUTE` y al menos un informe asignado vía `user2report` (seed `20250117-seed-local-reports.xml`); el informe de referencia es el de id `1` ("Informe de actividad mensual"). Cada caso incluye su propio login con `{{ADMIN_USER}}`.
+
+#### TC-RPT-01 · Carga de metadatos y filtros sin ejecución automática
+
+- **Prioridad:** Alta · **Tipo:** Funcional · **Traza:** RF-RPT-1 (AC1.1–AC1.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`; el usuario tiene asignado el informe `1`.
+- **Teardown:** logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Navegar a `{{BASE_URL_UI}}/reports/1` | Cabecera con `report.name` y `report.description` visibles |
+| 2 | Observar la barra de filtros (`report-filter-form`) | Se renderiza un control por filtro según su `type` (TEXT/NUMBER → input, DATE → input date, SELECT → select con opción `common.all`) |
+| 3 | Observar la tabla y la barra de exportación | `report-results-table` y los botones `report-export-*` permanecen ocultos hasta pulsar *Ejecutar* |
+
+#### TC-RPT-02 · Informe no asignado al usuario
+
+- **Prioridad:** Media · **Tipo:** Negativo, Seguridad · **Traza:** RF-RPT-1 (AC1.4), RNF-RPT-1 · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`; identificar un `id` de informe **no** asignado al usuario (p. ej. uno inexistente o no relacionado en `user2report`).
+- **Teardown:** logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Navegar a `{{BASE_URL_UI}}/reports/<id-no-asignado>` | `findByUser` no devuelve el informe; el componente queda con `report = null` (sin cabecera ni posibilidad de ejecución) |
+
+#### TC-RPT-03 · Validación de filtros obligatorios
+
+- **Prioridad:** Alta · **Tipo:** Negativo · **Traza:** RF-RPT-2 (AC2.2, AC2.4), RNF-RPT-2 · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`; informe `1` con al menos un filtro `required=true`.
+- **Teardown:** logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Navegar a `{{BASE_URL_UI}}/reports/1` y dejar vacío un filtro `required=true` | El filtro se marca con asterisco rojo y atributo HTML5 `required` |
+| 2 | Pulsar `report-execute-btn` | El submit HTML5 bloquea la ejecución; no se envía `/execute`. (Si la validación se saltara, el backend respondería `ValidationException` con los filtros faltantes.) |
+
+#### TC-RPT-04 · Limpiar filtros
+
+- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-RPT-2 (AC2.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`.
+- **Teardown:** logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Navegar a `{{BASE_URL_UI}}/reports/1`, rellenar filtros y pulsar `report-execute-btn` | Se muestran resultados en `report-results-table` |
+| 2 | Pulsar `report-clear-btn` | Todos los filtros vuelven a `''`, los resultados se resetean, la paginación vuelve a página 0 y se ocultan la tabla y la barra de exportación |
+
+#### TC-RPT-05 · Ejecución con paginación en servidor
+
+- **Prioridad:** Alta · **Tipo:** Funcional, E2E · **Traza:** RF-RPT-3 (AC3.1–AC3.5) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`; informe `1` con datos.
+- **Teardown:** logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Navegar a `{{BASE_URL_UI}}/reports/1`, rellenar los filtros obligatorios (si los hay) y pulsar `report-execute-btn` | Se invoca `POST /api/v1/reports/1/execute?page=0&size=10` con el body de filtros; se muestra spinner y `notification.progress` |
+| 2 | Observar los resultados | `report-results-table` muestra columnas y filas de `ReportResult`; si viene vacío, muestra `common.noData` |
+| 3 | Observar el paginador | Muestra anterior/siguiente, hasta 5 números de página y la etiqueta `common.pagination.showing` (from/to/total) |
+
+#### TC-RPT-06 · Cambio de página y tamaño re-ejecuta
+
+- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-RPT-3 (AC3.6) · **Independiente:** No del todo · **Dependencias:** reutiliza el flujo de TC-RPT-05 (ejecución previa dentro del mismo caso)
+- **Setup:** login con `{{ADMIN_USER}}`; ejecutar primero el informe (pasos de TC-RPT-05) para tener resultados paginables. El caso incluye esa ejecución en el paso 1, por lo que sigue siendo autoejecutable.
+- **Teardown:** logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Navegar a `{{BASE_URL_UI}}/reports/1`, rellenar filtros y pulsar `report-execute-btn` | Se muestran resultados (precondición interna) |
+| 2 | Cambiar `report-page-size` a 50 | Nueva llamada `/execute?size=50&page=0` con los mismos filtros |
+| 3 | Navegar a la página 3 del paginador | Nueva llamada `/execute?page=2&size=50` |
+
+#### TC-RPT-07 · Exportación CSV / TXT
+
+- **Prioridad:** Alta · **Tipo:** Funcional, E2E · **Traza:** RF-RPT-4 (AC4.1–AC4.6), RNF-RPT-7 · **Independiente:** Sí (incluye la ejecución previa) · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`.
+- **Teardown:** logout; eliminar los ficheros descargados del directorio de descargas.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Navegar a `{{BASE_URL_UI}}/reports/1`, rellenar filtros y pulsar `report-execute-btn` | La barra de exportación (`report-export-pdf/xlsx/csv/txt`) aparece |
+| 2 | Pulsar `report-export-csv` | Se invoca `POST /api/v1/reports/1/export/CSV`; el navegador descarga `Informe de actividad mensual_{{TODAY}}.csv` |
+| 3 | Pulsar `report-export-txt` | Se descarga el fichero `.txt` con cabecera y separador `---` |
+
+#### TC-RPT-08 · Exportación PDF / XLSX no implementada
+
+- **Prioridad:** Baja · **Tipo:** Negativo · **Traza:** RF-RPT-4 (AC4.5) · **Independiente:** Sí (incluye la ejecución previa) · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`.
+- **Teardown:** logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Navegar a `{{BASE_URL_UI}}/reports/1`, ejecutar el informe y pulsar `report-export-pdf` (o `report-export-xlsx`) | El backend lanza `ReportExportException` ("Export format PDF/XLSX not yet implemented"); el frontend muestra `notification.export.error` y no descarga fichero |
+
+#### TC-RPT-09 · Acceso sin autoridad REPORT_EXECUTE
+
+- **Prioridad:** Alta · **Tipo:** Seguridad, API · **Traza:** RNF-RPT-1 · **Independiente:** Sí · **Dependencias:** requiere disponer de un token de un usuario **sin** `REPORT_EXECUTE`
+- **Setup:** vía API. Obtener un access token de un usuario sin la autoridad `REPORT_EXECUTE` (crear uno con un perfil sin esa acción, o usar uno existente del entorno).
+- **Teardown:** si se creó un usuario para la prueba, eliminarlo.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | `GET {{BASE_URL_API}}/api/v1/reports` con el token sin `REPORT_EXECUTE` | 403 Forbidden |
+| 2 | `POST {{BASE_URL_API}}/api/v1/reports/1/execute` con el mismo token | 403 Forbidden |
+
+#### TC-RPT-10 · Componente de selección múltiple de informes (CVA)
+
+- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-RPT-5 (AC5.1–AC5.7) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`; navegar al formulario de alta de usuario donde se integra `<tp-selected-reports>` (`{{BASE_URL_UI}}/administration/security/users` → *Crear*).
+- **Teardown:** cancelar el formulario sin guardar; logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Abrir el modal de selección de informes con *Añadir* | Se abre el modal con búsqueda servidor (`GET /api/v1/reports/search?name=&page=&size=`) y paginación |
+| 2 | Escribir un nombre en el buscador del modal y usar "Seleccionar página" | Se marcan/desmarcan los IDs de los informes de la página actual |
+| 3 | Confirmar el modal (*Aceptar*) | El valor del CVA (`number[]`) se sobrescribe con los IDs seleccionados; se emiten `onChange()` y `onTouched()`; el modal se cierra |
+
 ---
 
 ## Documentación relacionada
 
+- [Plan Maestro de Pruebas](../../specification/test-case.md)
 - [Requisitos](../../specification/requirements.md)
 - [Glosario](../../specification/glossary.md)
 - [Modelo de datos](../../specification/data-model.md)

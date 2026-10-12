@@ -444,10 +444,117 @@ Definidos en `dashboard/e2e/fixtures/test-data.ts`: `testProfiles.valid` y helpe
 - Los casos de creación y edición insertan un registro en el backend por ejecución; el caso de eliminación borra el perfil que él mismo crea.
 - La exportación a CSV depende de que existan filas que cumplan los filtros activos; en caso contrario se notifica que no hay datos que exportar.
 
+### 4.6. Casos de prueba detallados (TCY-PRO)
+
+Catálogo de test cases derivado de los requisitos funcionales de perfiles (`RF-PRO-*`, `RNF-PRO-*`). Para el marco global de pruebas, variables (`{{BASE_URL_UI}}`, `{{BASE_URL_API}}`, `{{ADMIN_USER}}`, `{{UNIQUE}}`) y modelo de ejecución, consultar el [Plan Maestro de Pruebas](../../../specification/test-case.md).
+
+Precondición del ciclo: usuario con `PROFILE_READ` y `PROFILE_WRITE`. Datos de alta tomados de `buildNewProfile()`: nombre `e2e_profile_{{UNIQUE}}`, descripción `Perfil de prueba {{UNIQUE}}`. Cada caso que crea un perfil lo elimina en el teardown.
+
+#### TC-PRO-01 · Listado paginado y ordenable
+
+- **Prioridad:** Alta · **Tipo:** Funcional · **Traza:** RF-PRO-1 (AC1.1–AC1.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`.
+- **Teardown:** logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Navegar a `{{BASE_URL_UI}}/administration/security/profiles` | `profiles-table` visible con nombre, descripción, nº de acciones y fecha de creación |
+| 2 | Ordenar por una columna y paginar | La ordenación y la paginación funcionan |
+
+#### TC-PRO-02 · Búsqueda por nombre
+
+- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-PRO-2 (AC2.1–AC2.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`; existe el perfil semilla `ADMIN`.
+- **Teardown:** logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Escribir `ADMIN` en `filter-name` y buscar | Muestra la fila del perfil `ADMIN` y vuelve a la página 1 |
+| 2 | Escribir `zzz_inexistente` y buscar | Listado vacío |
+| 3 | Limpiar | Recarga el listado completo |
+
+#### TC-PRO-03 · Alta de perfil con acciones
+
+- **Prioridad:** Alta · **Tipo:** Funcional, E2E · **Traza:** RF-PRO-3 (AC3.1–AC3.4), RNF-PRO-3 · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`; catálogo de acciones disponible.
+- **Teardown:** eliminar el perfil `e2e_profile_{{UNIQUE}}`.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Pulsar `btn-create`, informar nombre `e2e_profile_{{UNIQUE}}`, descripción y seleccionar 2 acciones distintas | Formulario válido |
+| 2 | Guardar | El backend responde 201; el perfil aparece al buscarlo |
+| 3 | Comprobar la integridad | El perfil no admite acciones duplicadas (el backend rechaza duplicados) |
+
+#### TC-PRO-04 · Edición de perfil (reemplazo de acciones)
+
+- **Prioridad:** Alta · **Tipo:** Funcional, E2E · **Traza:** RF-PRO-4 (AC4.1–AC4.3) · **Independiente:** Sí (crea su propio perfil) · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`; crear previamente `e2e_profile_{{UNIQUE}}`.
+- **Teardown:** eliminar `e2e_profile_{{UNIQUE}}`.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Seleccionar `e2e_profile_{{UNIQUE}}` y pulsar `btn-edit` | Formulario en modo edición |
+| 2 | Cambiar la descripción y reemplazar la lista de acciones por otra distinta, guardar | 200 OK; la lista de acciones se reemplaza completa (no se fusiona) y el cambio se refleja en el listado |
+
+#### TC-PRO-05 · Eliminación con confirmación
+
+- **Prioridad:** Alta · **Tipo:** Funcional, E2E · **Traza:** RF-PRO-5 (AC5.1–AC5.3) · **Independiente:** Sí (crea su propio perfil) · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`; crear `e2e_profile_{{UNIQUE}}` sin usuarios asociados.
+- **Teardown:** si queda tras un fallo, eliminarlo por API.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Seleccionar `e2e_profile_{{UNIQUE}}` y pulsar `btn-delete` → cancelar | No se elimina |
+| 2 | Repetir y confirmar | 204; el perfil desaparece al buscarlo |
+
+#### TC-PRO-06 · Eliminación de perfil en uso
+
+- **Prioridad:** Alta · **Tipo:** Negativo · **Traza:** RF-PRO-5 (AC5.4) · **Independiente:** Sí · **Dependencias:** ninguna (usa un perfil semilla asignado a usuarios, p. ej. `ADMIN`)
+- **Setup:** login con `{{ADMIN_USER}}`; identificar un perfil asignado a al menos un usuario (`ADMIN`).
+- **Teardown:** logout (no se elimina nada).
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Seleccionar el perfil `ADMIN` (en uso) y confirmar su eliminación | El backend devuelve `EntityInUseException`; la operación se rechaza y el perfil permanece |
+
+#### TC-PRO-07 · Detalle de perfil
+
+- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-PRO-6 (AC6.1–AC6.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`.
+- **Teardown:** logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Doble clic sobre el perfil `ADMIN` | Detalle en solo lectura con datos generales, acciones asignadas y fechas de creación/modificación |
+
+#### TC-PRO-08 · Exportación CSV
+
+- **Prioridad:** Media · **Tipo:** Funcional, E2E · **Traza:** RF-PRO-7 (AC7.1–AC7.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`.
+- **Teardown:** eliminar el fichero descargado; logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Sin filtros, pulsar `btn-export` | Descarga `profiles_{{TODAY}}.csv` con todos los registros filtrados |
+| 2 | Filtrar por `zzz_inexistente` y exportar | Notifica que no hay datos; sin descarga |
+
+#### TC-PRO-09 · Autorización y endpoint de referencias
+
+- **Prioridad:** Alta · **Tipo:** Seguridad, API · **Traza:** RNF-PRO-1, RNF-PRO-2 · **Independiente:** Sí · **Dependencias:** requiere tokens con distintos permisos
+- **Setup:** vía API. Preparar: (a) token sin `PROFILE_READ`; (b) token con `PROFILE_READ` sin `PROFILE_WRITE`; (c) token con `USER_READ`.
+- **Teardown:** eliminar usuarios/perfiles de prueba.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Con token sin `PROFILE_READ`, `GET /api/v1/administration/security/profiles` | 403 Forbidden |
+| 2 | Con token `PROFILE_READ` sin `PROFILE_WRITE`, abrir el listado en UI y luego `POST /profiles` | Botones crear/editar/eliminar ocultos; el POST responde 403 |
+| 3 | Con token `USER_READ`, `GET /api/v1/administration/security/profiles/references` | 200 OK (el endpoint de referencias se permite al consumidor del listado de usuarios) |
+
 ---
 
 ## Referencias
 
+- [Plan Maestro de Pruebas](../../../specification/test-case.md)
 - [Requisitos](../../../specification/requirements.md)
 - [Glosario](../../../specification/glossary.md)
 - [Modelo de datos](../../../specification/data-model.md)

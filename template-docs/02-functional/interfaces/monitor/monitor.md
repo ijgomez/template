@@ -409,10 +409,102 @@ Los datos semilla de backend para registros de interfaces se encuentran en `doma
 | **Exportación CSV** | Pulsar *Exportar CSV* con filtros aplicados | Descarga fichero `interfaces_monitor_YYYY-MM-DD.csv` con todos los registros filtrados |
 | **Exportación vacía** | Exportar cuando ningún registro coincide con los filtros | Notificación de aviso `notification.export.empty` sin descarga |
 
+### 4.7. Casos de prueba detallados (TCY-IFM)
+
+Catálogo de test cases derivado de los requisitos funcionales del monitor de interfaces (`RF-IFM-*`, `RNF-IFM-*`). Para el marco global de pruebas, variables (`{{BASE_URL_UI}}`, `{{BASE_URL_API}}`, `{{ADMIN_USER}}`, `{{TODAY}}`) y modelo de ejecución, consultar el [Plan Maestro de Pruebas](../../../specification/test-case.md).
+
+Precondición del ciclo: usuario con `INTERFACES_READ`; tabla `interface_log` con datos semilla (`20250120-seed-local-interface-log.xml`). Pantalla de solo lectura.
+
+#### TC-IFM-01 · Listado paginado de solo lectura
+
+- **Prioridad:** Alta · **Tipo:** Funcional · **Traza:** RF-IFM-1 (AC1.1–AC1.5) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`.
+- **Teardown:** logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Navegar a `{{BASE_URL_UI}}/interfaces/monitor` | `monitor-table` visible con fecha/hora, tipo de operación, interfaz y estado; sin acciones de crear/editar/eliminar |
+| 2 | Ordenar por una columna y cambiar tamaño de página (5/10/20/50) | Ordenación/paginación en servidor; si no hay datos muestra `common.noData` |
+
+#### TC-IFM-02 · Filtrado por tipo y estado
+
+- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-IFM-2 (AC2.2, AC2.4–AC2.6) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`.
+- **Teardown:** logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Seleccionar `monitor-filter-operation-type` = `POST`, `monitor-filter-status` = `ERROR` y pulsar `monitor-apply-filters` | El listado muestra solo operaciones POST con estado ERROR y reinicia a página 0 |
+| 2 | Pulsar `monitor-clear-filters` | Se restablecen filtros y se recarga el listado completo desde la página 0 |
+
+#### TC-IFM-03 · Filtrado por interfaz
+
+- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-IFM-2 (AC2.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`; el desplegable de interfaz se puebla desde `GET /api/v1/interfaces/configuration`.
+- **Teardown:** logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Seleccionar una interfaz concreta en `monitor-filter-interface` y aplicar | Solo se muestran operaciones de esa interfaz |
+
+#### TC-IFM-04 · Detalle desde la barra de acciones
+
+- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-IFM-3 (AC3.1–AC3.4) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`; al menos una fila en el listado.
+- **Teardown:** logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Seleccionar una fila y pulsar `monitor-view-detail` | La vista de detalle muestra timestamp, tipo, interfaz, estado, `requestPayload`, `responsePayload` y `errorMessage` en bloques `<pre>` |
+| 2 | Pulsar `monitor-back-to-list` | Restaura el listado manteniendo la página y la selección previas |
+
+#### TC-IFM-05 · Detalle por doble clic
+
+- **Prioridad:** Baja · **Tipo:** UI · **Traza:** RF-IFM-3 (AC3.1) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`.
+- **Teardown:** logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Doble clic sobre la primera fila de `monitor-table` | Abre la vista de detalle |
+| 2 | Pulsar `monitor-back-to-list` | Restaura el listado |
+
+#### TC-IFM-06 · Exportación CSV completa
+
+- **Prioridad:** Alta · **Tipo:** Funcional · **Traza:** RF-IFM-4 (AC4.1, AC4.3–AC4.5) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`.
+- **Teardown:** eliminar el fichero descargado; logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Aplicar algún filtro con resultados y pulsar `monitor-export-csv` | Descarga `interfaces_monitor_{{TODAY}}.csv` con BOM UTF-8, cabeceras traducidas y campos escapados; incluye todos los registros filtrados (no solo la página) |
+
+#### TC-IFM-07 · Exportación sin coincidencias
+
+- **Prioridad:** Baja · **Tipo:** Negativo · **Traza:** RF-IFM-4 (AC4.2) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`.
+- **Teardown:** logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Aplicar un filtro que no devuelva resultados (p. ej. rango de fechas vacío de datos) y pulsar `monitor-export-csv` | Notificación de aviso `notification.export.empty` sin descarga |
+
+#### TC-IFM-08 · Acceso sin autorización y bloqueo de escritura
+
+- **Prioridad:** Alta · **Tipo:** Seguridad, Negativo, API · **Traza:** RNF-IFM-1 · **Independiente:** Sí · **Dependencias:** requiere token sin `INTERFACES_READ`
+- **Setup:** preparar un usuario sin `INTERFACES_READ` y su token; también un token de `{{ADMIN_USER}}` para el bloqueo de escritura.
+- **Teardown:** eliminar el usuario/perfil de prueba.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Con el usuario sin `INTERFACES_READ`, navegar a `{{BASE_URL_UI}}/interfaces/monitor` | El guard redirige a `/forbidden`; la API responde 403 |
+| 2 | Con token de `{{ADMIN_USER}}`, `POST`/`PUT`/`DELETE` sobre `/api/v1/interfaces/**` | `MethodNotAllowedException` / operación denegada |
+
 ---
 
 ## Documentación relacionada
 
+- [Plan Maestro de Pruebas](../../../specification/test-case.md)
 - [Requisitos](../../../specification/requirements.md)
 - [Glosario](../../../specification/glossary.md)
 - [Modelo de datos](../../../specification/data-model.md)

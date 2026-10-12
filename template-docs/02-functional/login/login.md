@@ -305,10 +305,149 @@ Definidos en `dashboard/e2e/fixtures/test-data.ts`. Deben ajustarse a las creden
 - Los casos de login válido e inválido requieren el backend de integración levantado (por defecto en `http://localhost:8080`).
 - Los casos de render, validación y toggle no dependen del backend.
 
+### 4.6. Casos de prueba detallados (TCY-LOGIN)
+
+Catálogo de test cases derivado de los requisitos funcionales de login (`RF-LOG-*`, `RNF-LOG-*`) y autenticación transversal (`RF-AUT-*`, `RNF-AUT-*`). Para convenciones de ejecución, variables de entorno (`{{BASE_URL_UI}}`, `{{BASE_URL_API}}`, `{{ADMIN_USER}}`) y pautas de importación, consultar el [Plan Maestro de Pruebas](../../specification/test-case.md).
+
+#### TC-LOG-01 · Render del formulario de login
+
+- **Prioridad:** Media · **Tipo:** UI · **Traza:** RF-LOG-2 · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** navegador sin sesión activa (sin cookie de refresh). Si hubiera sesión, ejecutar logout o abrir ventana privada.
+- **Teardown:** No aplica (no modifica estado).
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Navegar a `{{BASE_URL_UI}}/login` | Carga la pantalla de login |
+| 2 | Comprobar elementos | Son visibles `login-title`, `input-username`, `input-password` y `btn-login-submit` |
+| 3 | Comprobar selector de idioma | Está presente el control `btn-lang-<lang>` |
+
+#### TC-LOG-02 · Login con credenciales válidas
+
+- **Prioridad:** Alta · **Tipo:** Funcional, E2E · **Traza:** RF-LOG-1 (AC1.1–AC1.3), RF-AUT-1 · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** usuario `{{ADMIN_USER}}` existe en el entorno (dato semilla). Navegador sin sesión.
+- **Teardown:** ejecutar logout para no dejar sesión abierta.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Navegar a `{{BASE_URL_UI}}/login` | Pantalla de login visible |
+| 2 | Rellenar `input-username` = `{{ADMIN_USER}}` y `input-password` = `{{ADMIN_PASS}}` | Campos informados |
+| 3 | Pulsar `btn-login-submit` | Se invoca `POST {{BASE_URL_API}}/api/v1/auth/login`; responde 200 con `accessToken` en el body y `Set-Cookie` con el refresh token |
+| 4 | Esperar navegación | La URL pasa a `{{BASE_URL_UI}}/dashboard` y se muestra `dashboard-title` |
+
+#### TC-LOG-03 · Login con credenciales inválidas
+
+- **Prioridad:** Alta · **Tipo:** Negativo · **Traza:** RF-LOG-3 (AC3.1–AC3.3), RF-AUT-1 (AC1.2) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** navegador sin sesión.
+- **Teardown:** No aplica.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Navegar a `{{BASE_URL_UI}}/login` | Pantalla de login visible |
+| 2 | Rellenar `input-username` = `{{ADMIN_USER}}` y `input-password` = `wrong-password` | Campos informados |
+| 3 | Pulsar `btn-login-submit` | El backend responde 401 sin establecer cookie |
+| 4 | Observar la pantalla | Se muestra `login-error-alert` con el texto de `login.error`; la URL sigue siendo `/login` |
+
+#### TC-LOG-04 · Validación de campos obligatorios
+
+- **Prioridad:** Media · **Tipo:** Negativo · **Traza:** RF-LOG-2 (AC2.1–AC2.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** navegador sin sesión.
+- **Teardown:** No aplica.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Navegar a `{{BASE_URL_UI}}/login` | Pantalla de login visible |
+| 2 | Dejar `input-username` e `input-password` vacíos y pulsar `btn-login-submit` | No se realiza ninguna llamada a `/api/v1/auth/login` |
+| 3 | Observar los campos | Se marcan como tocados y muestran el error `validation.required`; la URL sigue en `/login` |
+
+#### TC-LOG-05 · Mostrar / ocultar contraseña
+
+- **Prioridad:** Baja · **Tipo:** UI · **Traza:** RF-LOG-5 (AC5.1–AC5.2) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** navegador sin sesión.
+- **Teardown:** No aplica.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Navegar a `{{BASE_URL_UI}}/login` y escribir en `input-password` el texto `secreto123` | El campo es de tipo `password` (valor oculto) |
+| 2 | Pulsar `btn-toggle-password` | El input pasa a tipo `text` y muestra `secreto123` |
+| 3 | Pulsar de nuevo `btn-toggle-password` | Vuelve a tipo `password` conservando `secreto123` |
+
+#### TC-LOG-06 · Control de envío (evitar duplicados)
+
+- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-LOG-4 (AC4.1–AC4.2) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** navegador sin sesión; usuario `{{ADMIN_USER}}` válido.
+- **Teardown:** si el login llega a completarse, ejecutar logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Navegar a `{{BASE_URL_UI}}/login` y rellenar credenciales válidas | Campos informados |
+| 2 | Pulsar `btn-login-submit` y observar el botón durante la petición | El botón `btn-login-submit` queda deshabilitado y muestra estado de carga mientras dura la llamada |
+
+#### TC-LOG-07 · Selección de idioma en login
+
+- **Prioridad:** Baja · **Tipo:** UI · **Traza:** RF-LOG-6 (AC6.1–AC6.2) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** navegador sin sesión.
+- **Teardown:** restablecer idioma a ES (pulsar `btn-lang-es`) para dejar el estado por defecto.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Navegar a `{{BASE_URL_UI}}/login` | Textos en el idioma por defecto |
+| 2 | Pulsar `btn-lang-en` | Los textos del login cambian a inglés sin recargar la página |
+| 3 | Pulsar `btn-lang-es` | Los textos vuelven a español sin recargar |
+
+#### TC-LOG-08 · Persistencia de sesión tras recarga
+
+- **Prioridad:** Alta · **Tipo:** Funcional · **Traza:** RF-AUT-2 (AC2.1, AC2.4, AC2.5) · **Independiente:** Sí · **Dependencias:** ninguna (incluye su propio login)
+- **Setup:** navegador sin sesión; usuario `{{ADMIN_USER}}` válido.
+- **Teardown:** ejecutar logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Iniciar sesión con `{{ADMIN_USER}}` / `{{ADMIN_PASS}}` | Sesión activa en `/dashboard` |
+| 2 | Recargar la página (F5) | Al arrancar, se invoca `POST /api/v1/auth/refresh`; con refresh token válido se restaura la sesión sin pedir credenciales |
+| 3 | Observar la URL | Permanece en `/dashboard` (no redirige a `/login`) |
+
+#### TC-LOG-09 · Renovación automática del access token
+
+- **Prioridad:** Alta · **Tipo:** Funcional · **Traza:** RF-AUT-3 (AC3.1–AC3.4), RNF-AUT-6 · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** sesión iniciada; conviene reducir `jwt.access-token-expiration` y/o ajustar `tokenRefreshMargin` en el entorno de prueba para observar la renovación en un tiempo razonable.
+- **Teardown:** ejecutar logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Mantener la sesión hasta que el access token esté próximo a expirar (margen `tokenRefreshMargin`) | El interceptor dispara `POST /api/v1/auth/refresh` de forma proactiva |
+| 2 | Lanzar varias peticiones a la API en ese instante (p. ej. abrir dos listados a la vez) | Solo una ejecuta el refresh; las demás esperan su resultado (sin múltiples llamadas) |
+| 3 | Inspeccionar la cookie de refresh | Se ha generado un nuevo refresh token (rotación) y el anterior queda invalidado |
+
+#### TC-LOG-10 · Logout invalida la sesión en cliente y servidor
+
+- **Prioridad:** Alta · **Tipo:** Seguridad · **Traza:** RF-AUT-4 (AC4.1–AC4.6) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** sesión iniciada con `{{ADMIN_USER}}`.
+- **Teardown:** No aplica (el propio caso deja la sesión cerrada).
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Con sesión activa, ejecutar logout desde la UI | Se invoca `POST /api/v1/auth/logout`; el servidor revoca los refresh tokens y envía `Set-Cookie maxAge=0` |
+| 2 | Observar el cliente | El access token ya no está en memoria y `currentUser` queda a null; redirección a `/login` |
+| 3 | Invocar `POST {{BASE_URL_API}}/api/v1/auth/refresh` reutilizando la cookie anterior | Responde 401 |
+| 4 | Intentar navegar a `{{BASE_URL_UI}}/dashboard` | Redirige a `/login` |
+
+#### TC-LOG-11 · Reutilización de refresh token revocado (detección de robo)
+
+- **Prioridad:** Alta · **Tipo:** Seguridad · **Traza:** RF-AUT-5 (AC5.4), RF-AUT-3 (AC3.5) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** vía API. Hacer login y capturar la cookie de refresh inicial (`RT0`).
+- **Teardown:** ejecutar logout para revocar cualquier token vivo.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | `POST {{BASE_URL_API}}/api/v1/auth/refresh` con la cookie `RT0` | 200 OK; se emite un nuevo refresh token `RT1` y `RT0` queda revocado (rotación) |
+| 2 | Repetir `POST .../auth/refresh` con la cookie `RT0` (ya revocada) | El servidor revoca **todos** los refresh tokens del usuario (revocación masiva) y responde con error de autorización |
+| 3 | `POST .../auth/refresh` con `RT1` | También falla (401/403), porque la revocación masiva invalidó toda la cadena |
+
 ---
 
 ## Referencias
 
+- [Plan Maestro de Pruebas](../../specification/test-case.md)
 - [Autenticación y Gestión de Sesión](authentication.md)
 - [Seguridad backend](../../03-technical/backend/security.md)
 - [Navegación frontend](../../03-technical/frontend/navigation.md)

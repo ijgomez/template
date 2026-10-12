@@ -409,10 +409,82 @@ Definidos en `template/dashboard/e2e/fixtures/test-data.ts`: `testUsers.valid` (
 - La exportación a CSV depende de que existan filas que cumplan los filtros activos; en caso contrario no se genera descarga.
 - Los casos de detalle y exportación están condicionados a la existencia de filas en el listado.
 
+### 4.6. Casos de prueba detallados (TCY-CFG)
+
+Catálogo de test cases derivado de los requisitos funcionales de configuración de interfaces (`RF-CFG-*`, `RNF-CFG-*`). Para el marco global de pruebas, variables (`{{BASE_URL_UI}}`, `{{BASE_URL_API}}`, `{{ADMIN_USER}}`, `{{TODAY}}`) y modelo de ejecución, consultar el [Plan Maestro de Pruebas](../../../specification/test-case.md).
+
+Precondición del ciclo: usuario con `INTERFACES_READ`; al menos una interfaz registrada. Pantalla de solo lectura; paginación/orden/filtrado en cliente.
+
+#### TC-CFG-01 · Listado paginado con indicadores de estado
+
+- **Prioridad:** Alta · **Tipo:** Funcional · **Traza:** RF-CFG-1 (AC1.1–AC1.4) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`.
+- **Teardown:** logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Navegar a `{{BASE_URL_UI}}/interfaces/configuration` | `interfaces-table` visible con nombre, protocolo, URL, estado, frecuencia de check y última modificación |
+| 2 | Observar la columna estado | Etiquetas de color: verde `ACTIVE`, rojo `ERROR`, gris `INACTIVE` |
+
+#### TC-CFG-02 · Filtrado por nombre, protocolo y estado
+
+- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-CFG-2 (AC2.1–AC2.5) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`.
+- **Teardown:** logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Rellenar `filter-name` (parcial), seleccionar `filter-protocol` y `filter-status`, buscar | El listado se reduce a las filas coincidentes y vuelve a página 1 |
+| 2 | Limpiar | Recarga el listado completo |
+
+#### TC-CFG-03 · Detalle de interfaz
+
+- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-CFG-3 (AC3.1–AC3.4) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`; al menos una fila.
+- **Teardown:** logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Doble clic sobre una fila (o seleccionar y pulsar `btn-view-detail`) | Muestra nombre, descripción, URL, protocolo, estado y frecuencia de check; no muestra campos de auditoría (creación ni última modificación) |
+| 2 | Pulsar *Volver* | Regresa al listado |
+
+#### TC-CFG-04 · Exportación CSV
+
+- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-CFG-4 (AC4.1–AC4.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`.
+- **Teardown:** eliminar el fichero descargado; logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Sin filtros, pulsar `btn-export` | Descarga `interface-configurations_{{TODAY}}.csv` con todos los registros filtrados |
+| 2 | Filtrar por `filter-name` = `zzz_inexistente` y exportar | No se genera ninguna descarga |
+
+#### TC-CFG-05 · Pantalla de solo lectura
+
+- **Prioridad:** Alta · **Tipo:** Negativo, Seguridad · **Traza:** RF-CFG-5 (AC5.1–AC5.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`.
+- **Teardown:** logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Observar la pantalla de configuración | No hay acciones de crear, editar ni eliminar |
+| 2 | Comprobar la API (`GET /api/v1/interfaces/configuration`) | Solo expone operaciones `GET` sobre interfaces |
+
+#### TC-CFG-06 · Acceso sin autorización
+
+- **Prioridad:** Alta · **Tipo:** Seguridad · **Traza:** RNF-CFG-1 · **Independiente:** Sí · **Dependencias:** requiere token/usuario sin `INTERFACES_READ`
+- **Setup:** preparar un usuario sin `INTERFACES_READ`.
+- **Teardown:** eliminar el usuario/perfil de prueba.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Con ese usuario, navegar a `{{BASE_URL_UI}}/interfaces/configuration` | Acceso denegado por `actionGuard` (redirección a `/forbidden`) |
+
 ---
 
 ## Referencias
 
+- [Plan Maestro de Pruebas](../../../specification/test-case.md)
 - [Requisitos](../../../specification/requirements.md)
 - [Glosario](../../../specification/glossary.md)
 - [Modelo de datos](../../../specification/data-model.md)

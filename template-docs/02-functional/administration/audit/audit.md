@@ -406,10 +406,98 @@ Los datos semilla de backend para registros de auditoría se encuentran en `doma
 - El usuario de prueba debe contar con `SYSTEM_LOG_READ`; de lo contrario, el guard de ruta impide el acceso a `/administration/audit`.
 - Para validar los filtros de fecha de extremo a extremo debe resolverse primero la discrepancia de nombres y formato descrita en la sección 3.4.
 
+### 4.6. Casos de prueba detallados (TCY-AUD)
+
+Catálogo de test cases derivado de los requisitos funcionales de auditoría (`RF-AUD-*`, `RNF-AUD-*`). Para el marco global de pruebas, variables (`{{BASE_URL_UI}}`, `{{BASE_URL_API}}`, `{{ADMIN_USER}}`, `{{TODAY}}`) y modelo de ejecución, consultar el [Plan Maestro de Pruebas](../../../specification/test-case.md).
+
+Precondición del ciclo: usuario con `SYSTEM_LOG_READ`; tabla `audit_log` con datos (el propio login genera un registro `EXECUTE` en sección `SECURITY`). Pantalla de solo lectura.
+
+> ⚠️ **Caso bloqueado en este ciclo:** TC-AUD-03 (filtrado por rango de fechas) está 🔴 **BLOQUEADO** por una discrepancia de contrato pendiente de revisión funcional y técnica. Excluirlo de la ejecución hasta desbloquearlo.
+
+#### TC-AUD-01 · Listado de solo lectura paginado
+
+- **Prioridad:** Alta · **Tipo:** Funcional · **Traza:** RF-AUD-1 (AC1.1–AC1.3), RF-AUD-5 (AC5.2) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}` (genera un registro de auditoría conocido).
+- **Teardown:** logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Navegar a `{{BASE_URL_UI}}/administration/audit` | `audit-table` y los filtros son visibles; no existen acciones de crear, editar ni eliminar |
+| 2 | Ordenar por una columna y cambiar el tamaño de página (5/10/20/50) | Ordenación y paginación funcionan |
+
+#### TC-AUD-02 · Filtrado por usuario, operación y sección
+
+- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-AUD-2 (AC2.1–AC2.5) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`.
+- **Teardown:** logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Rellenar `audit-filter-username` = `{{ADMIN_USER}}`, `audit-filter-operation-type` = `EXECUTE`, `audit-filter-section` = `SECURITY` y pulsar `audit-apply-filters` | El listado muestra los registros coincidentes y vuelve a página 1 |
+| 2 | Pulsar `audit-clear-filters` | Se recarga la consulta sin criterios |
+
+#### TC-AUD-03 · Filtrado por rango de fechas
+
+- **Estado:** 🔴 **BLOQUEADO** — pendiente de revisión funcional y técnica. No ejecutar hasta desbloquear.
+- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-AUD-2 (AC2.4) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Motivo del bloqueo:** la sección 3.4 del documento funcional (`audit.md`) declara una **discrepancia abierta** en el contrato de filtros de fecha: el frontend envía `dateFrom`/`dateTo` (controles HTML `date`) y el backend espera `fromDate`/`toDate` (`OffsetDateTime`). El filtrado por fecha no está alineado de extremo a extremo. Esta parte está pendiente de revisión funcional y técnica.
+- **Condición para desbloquear:** alinear el contrato de fechas entre `AuditService` (frontend) y `AuditController` (backend), verificar el comportamiento de extremo a extremo y actualizar la sección 3.4 de `audit.md`. Una vez hecho, retirar el estado BLOQUEADO y validar los pasos.
+- **Setup:** login con `{{ADMIN_USER}}`.
+- **Teardown:** logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Informar `audit-filter-date-from` = fecha de hace 7 días y `audit-filter-date-to` = `{{TODAY}}`, aplicar | Los registros se restringen al rango (una vez alineado el contrato de fechas) |
+
+#### TC-AUD-04 · Consulta de detalle
+
+- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-AUD-3 (AC3.1–AC3.4) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`; al menos un registro en el listado.
+- **Teardown:** logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Seleccionar la primera fila del listado | Se abre el detalle con todos los datos del registro, sin acciones CRUD |
+| 2 | Pulsar *Volver* | Se restaura el listado y se elimina la selección |
+
+#### TC-AUD-05 · Exportación CSV filtrada
+
+- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-AUD-4 (AC4.1–AC4.4) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`.
+- **Teardown:** eliminar el fichero descargado; logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Filtrar por `audit-filter-username` = `{{ADMIN_USER}}` y pulsar `audit-export-csv` | Descarga `audit_{{TODAY}}.csv` con todos los registros filtrados (no solo la página) |
+| 2 | Filtrar por un usuario inexistente y exportar | Se notifica que no hay datos; sin descarga |
+
+#### TC-AUD-06 · Inmutabilidad del registro (API)
+
+- **Prioridad:** Alta · **Tipo:** Seguridad, Negativo, API · **Traza:** RF-AUD-5 (AC5.1), RNF-AUD-3 · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** vía API con token de `{{ADMIN_USER}}`.
+- **Teardown:** No aplica.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | `GET {{BASE_URL_API}}/api/v1/administration/audit` y `GET .../audit/count` | 200 OK (son los únicos verbos expuestos) |
+| 2 | Intentar `POST`, `PUT`, `PATCH` o `DELETE` sobre `/api/v1/administration/audit` | No existe endpoint de escritura; la operación se rechaza (no permitida) |
+
+#### TC-AUD-07 · Registro automático de operación auditable
+
+- **Prioridad:** Alta · **Tipo:** Funcional · **Traza:** RF-AUD-5 (AC5.3), RNF-AUD-4 · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** vía API/UI. Partir sin sesión.
+- **Teardown:** logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Iniciar sesión con `{{ADMIN_USER}}` (operación auditable) | Tras completarse, se genera una entrada `EXECUTE` en sección `SECURITY` |
+| 2 | Consultar la auditoría filtrando por `{{ADMIN_USER}}` y `EXECUTE` | Aparece el registro recién generado por el login |
+
 ---
 
 ## Referencias
 
+- [Plan Maestro de Pruebas](../../../specification/test-case.md)
 - [Requisitos](../../../specification/requirements.md)
 - [Glosario](../../../specification/glossary.md)
 - [Modelo de datos](../../../specification/data-model.md)

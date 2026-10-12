@@ -428,10 +428,94 @@ Definidos en `template/dashboard/e2e/fixtures/test-data.ts`: `testUsers.valid` (
 - La edición usa un registro real del catálogo semilla y valida que el cambio se refleja en la tabla del listado.
 - La exportación a CSV depende de que existan filas que cumplan los filtros activos; en caso contrario se notifica que no hay datos que exportar.
 
+### 4.6. Casos de prueba detallados (TCY-ACC)
+
+Catálogo de test cases derivado de los requisitos funcionales del catálogo de acciones (`RF-ACC-*`, `RNF-ACC-*`). Para el marco global de pruebas, variables (`{{BASE_URL_UI}}`, `{{BASE_URL_API}}`, `{{ADMIN_USER}}`, `{{UNIQUE}}`) y modelo de ejecución, consultar el [Plan Maestro de Pruebas](../../../specification/test-case.md).
+
+Precondición del ciclo: usuario con `ACTION_READ`; catálogo semilla cargado (p. ej. `USER_READ`, `USER_WRITE`). No hay alta ni borrado: el catálogo es semilla.
+
+#### TC-ACC-01 · Listado paginado y ordenable
+
+- **Prioridad:** Alta · **Tipo:** Funcional · **Traza:** RF-ACC-1 (AC1.1–AC1.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`.
+- **Teardown:** logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Navegar a `{{BASE_URL_UI}}/administration/security/actions` | `actions-table` visible con código, nombre, tipo y descripción |
+| 2 | Ordenar por una columna y paginar | Ordenación y paginación funcionan |
+
+#### TC-ACC-02 · Filtrado por código y tipo
+
+- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-ACC-2 (AC2.1–AC2.4) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`.
+- **Teardown:** logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Escribir `USER` en `filter-code` y seleccionar tipo `READ` en `filter-type`, buscar | El listado se reduce a las acciones cuyo código contiene `USER` y son de tipo `READ`; vuelve a página 1 |
+| 2 | Limpiar | Recarga el listado completo |
+
+#### TC-ACC-03 · Detalle de acción
+
+- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-ACC-3 (AC3.1–AC3.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`.
+- **Teardown:** logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Doble clic sobre la acción `USER_READ` | Detalle con código, nombre, tipo, descripción y fechas; botón de edición disponible |
+
+#### TC-ACC-04 · Edición de metadatos (código inmutable)
+
+- **Prioridad:** Alta · **Tipo:** Funcional, E2E · **Traza:** RF-ACC-4 (AC4.1–AC4.5) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`. Nota: edita un registro semilla; anotar el valor original para restaurarlo.
+- **Teardown:** restaurar el nombre/descripcion/tipo originales de la acción editada.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Seleccionar `USER_READ`, pulsar `btn-edit` | El campo código es de solo lectura |
+| 2 | Cambiar el nombre a `Leer usuarios (test {{UNIQUE}})`, mantener tipo `READ`, guardar | 200 OK; el cambio se refleja en el listado |
+| 3 | (Teardown) Restaurar el nombre original | El registro vuelve a su valor semilla |
+
+#### TC-ACC-05 · Exportación CSV
+
+- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-ACC-5 (AC5.1–AC5.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`.
+- **Teardown:** eliminar el fichero descargado; logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Sin filtros, pulsar `btn-export` | Descarga `actions_{{TODAY}}.csv` con todos los registros filtrados |
+| 2 | Filtrar por `zzz_inexistente` y exportar | Notifica que no hay datos; sin descarga |
+
+#### TC-ACC-06 · Alta y borrado prohibidos (catálogo semilla)
+
+- **Prioridad:** Alta · **Tipo:** Negativo, Seguridad, API · **Traza:** RF-ACC-6 (AC6.1–AC6.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** vía API con token de `{{ADMIN_USER}}`.
+- **Teardown:** No aplica.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | `POST {{BASE_URL_API}}/api/v1/administration/security/actions` con un cuerpo cualquiera | 405 Method Not Allowed (`MethodNotAllowedException`) |
+| 2 | `DELETE {{BASE_URL_API}}/api/v1/administration/security/actions/1` | 405 Method Not Allowed |
+| 3 | Abrir la pantalla en la UI | No existen botones de crear ni eliminar |
+
+#### TC-ACC-07 · Integridad del catálogo de tipos
+
+- **Prioridad:** Media · **Tipo:** Negativo, API · **Traza:** RNF-ACC-3 · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** vía API con token de `{{ADMIN_USER}}`; identificar el `id` de la acción `USER_READ`.
+- **Teardown:** si el valor cambiara, restaurarlo.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | `PUT {{BASE_URL_API}}/api/v1/administration/security/actions/{id}` con `type` fuera de `READ`/`WRITE`/`EXECUTE` (p. ej. `"DELETE"`) | La operación se rechaza por validación (el tipo debe pertenecer al enum) |
+
 ---
 
 ## Referencias
 
+- [Plan Maestro de Pruebas](../../../specification/test-case.md)
 - [Requisitos](../../../specification/requirements.md)
 - [Glosario](../../../specification/glossary.md)
 - [Modelo de datos](../../../specification/data-model.md)

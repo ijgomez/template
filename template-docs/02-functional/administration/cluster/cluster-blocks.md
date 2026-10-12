@@ -370,10 +370,72 @@ Los registros de `cluster_block` no se cargan mediante datos semilla: se generan
 - La exportación solo descarga un fichero cuando existen filas que cumplan los filtros activos.
 - Los tests E2E requieren que el usuario `admin` (definido en `testUsers.valid`) posea la acción `CLUSTER_LOCK_READ` y que el frontend se arranque con `--configuration=test` (perfil `test` de `playwright.config.ts`).
 
+### 4.6. Casos de prueba detallados (TCY-CLB)
+
+Catálogo de test cases derivado de los requisitos funcionales de bloqueos del cluster (`RF-CLB-*`, `RNF-CLB-*`). Para el marco global de pruebas, variables (`{{BASE_URL_UI}}`, `{{BASE_URL_API}}`, `{{ADMIN_USER}}`, `{{TODAY}}`) y modelo de ejecución, consultar el [Plan Maestro de Pruebas](../../../specification/test-case.md).
+
+Precondición del ciclo: usuario con `CLUSTER_LOCK_READ`; backend con al menos un lock adquirido/liberado (habitualmente el bloqueo `NODOS` del `HeartbeatWorker`). Requiere PostgreSQL (los advisory locks no operan sobre H2). Pantalla de solo lectura.
+
+#### TC-CLB-01 · Listado de bloqueos con métricas
+
+- **Prioridad:** Alta · **Tipo:** Funcional · **Traza:** RF-CLB-1 (AC1.1–AC1.4) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`; el backend ha generado al menos un bloqueo.
+- **Teardown:** logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Navegar a `{{BASE_URL_UI}}/administration/cluster/blocks` | `cluster-blocks-table` visible con nombre de tarea, fecha de inicio, tiempo promedio/mínimo/máximo y total de ejecuciones; sin acciones CRUD |
+| 2 | Ordenar y cambiar tamaño de página (5/10/20/50) | Ordenación/paginación en servidor |
+
+#### TC-CLB-02 · Filtrado por nombre de tarea
+
+- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-CLB-2 (AC2.1–AC2.2) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`; identificar el nombre de un bloqueo existente (p. ej. `NODOS`).
+- **Teardown:** logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Escribir parte del nombre en `cluster-blocks-filter-name` (insensible a mayúsculas) y pulsar `cluster-blocks-apply-filters` | El listado se reduce a las filas cuyo nombre coincide y vuelve a página 1 |
+
+#### TC-CLB-03 · Métricas visibles en el listado (sin pantalla de detalle)
+
+- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-CLB-3 (AC3.1–AC3.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`; al menos una fila.
+- **Teardown:** logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Observar una fila de `cluster-blocks-table` | La fila muestra nombre de tarea, fecha de inicio y las cuatro métricas (promedio, mínimo, máximo, total), sin controles de edición |
+| 2 | Comprobar que no existe navegación a detalle | Seleccionar la fila no abre ninguna pantalla de detalle; no existe el botón `cluster-blocks-back-to-list` |
+
+#### TC-CLB-04 · Exportación CSV
+
+- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-CLB-4 (AC4.1–AC4.4) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`.
+- **Teardown:** eliminar el fichero descargado; logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Con filtros que devuelvan resultados, pulsar `cluster-blocks-export-csv` | Descarga `cluster_blocks_{{TODAY}}.csv` con todos los resultados filtrados, fechas en hora local y BOM UTF-8 |
+| 2 | Filtrar por un nombre inexistente y exportar | Se notifica error y no se descarga ningún fichero |
+
+#### TC-CLB-05 · Gestión controlada por el sistema
+
+- **Prioridad:** Alta · **Tipo:** Negativo, Seguridad, API · **Traza:** RF-CLB-5 (AC5.1–AC5.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** vía API con token de `{{ADMIN_USER}}`.
+- **Teardown:** No aplica.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Observar la pantalla | No hay acciones de crear/editar/eliminar |
+| 2 | `POST`/`PUT`/`PATCH`/`DELETE` sobre `/api/v1/administration/cluster/blocks` | 405 Method Not Allowed |
+| 3 | Ejecutar una tarea clusterizada que adquiere y libera un lock | Se crea el registro la primera vez y se actualizan sus métricas (total, promedio, mínimo, máximo) en cada liberación |
+
 ---
 
 ## Referencias
 
+- [Plan Maestro de Pruebas](../../../specification/test-case.md)
 - [Requisitos](../../../specification/requirements.md)
 - [Glosario](../../../specification/glossary.md)
 - [Modelo de datos](../../../specification/data-model.md)

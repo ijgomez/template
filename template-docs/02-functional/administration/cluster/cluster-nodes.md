@@ -412,10 +412,93 @@ Los nodos del cluster se registran automáticamente al arrancar la aplicación; 
 - La designación de maestro requiere al menos un nodo activo que no sea ya maestro.
 - La exportación solo descarga un fichero cuando existen nodos que cumplan los filtros activos.
 
+### 4.6. Casos de prueba detallados (TCY-CLN)
+
+Catálogo de test cases derivado de los requisitos funcionales de nodos del cluster (`RF-CLN-*`, `RNF-CLN-*`). Para el marco global de pruebas, variables (`{{BASE_URL_UI}}`, `{{BASE_URL_API}}`, `{{ADMIN_USER}}`, `{{TODAY}}`) y modelo de ejecución, consultar el [Plan Maestro de Pruebas](../../../specification/test-case.md).
+
+Precondición del ciclo: usuario con `CLUSTER_NODE_READ` (y `CLUSTER_NODE_WRITE` para designar maestro); al menos una instancia registrada (se registra sola al arrancar). Requiere PostgreSQL.
+
+#### TC-CLN-01 · Listado de nodos
+
+- **Prioridad:** Alta · **Tipo:** Funcional · **Traza:** RF-CLN-1 (AC1.1–AC1.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`.
+- **Teardown:** logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Navegar a `{{BASE_URL_UI}}/administration/cluster/nodes` | `cluster-nodes-table` visible con hostname, IP, estado, maestro, inicio, última actualización y métricas de memoria; sin acciones de crear/eliminar |
+| 2 | Ordenar y cambiar tamaño de página (5/10/20/50) | Ordenación y paginación funcionan |
+
+#### TC-CLN-02 · Filtrado por hostname, estado y maestro
+
+- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-CLN-2 (AC2.1–AC2.4) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`; identificar el hostname de un nodo existente.
+- **Teardown:** logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Rellenar `filter-hostname` (parcial), seleccionar `filter-status` y `filter-master`, pulsar `btn-filter-search` | El listado se reduce a las filas coincidentes; vuelve a página 1 y elimina la selección |
+| 2 | Pulsar `btn-filter-clear` | Recarga el listado completo |
+
+#### TC-CLN-03 · Detalle de nodo
+
+- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-CLN-3 (AC3.1–AC3.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`.
+- **Teardown:** logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Doble clic sobre una fila | Detalle en solo lectura con datos operativos y métricas de memoria |
+| 2 | Pulsar *Volver* | Regresa al listado sin modificar el nodo |
+
+#### TC-CLN-04 · Designación de nodo maestro
+
+- **Prioridad:** Alta · **Tipo:** Funcional · **Traza:** RF-CLN-4 (AC4.1–AC4.5), RNF-CLN-2 · **Independiente:** Condicional · **Dependencias:** requiere al menos **dos** nodos activos (uno no maestro) para validarse de forma aislada; modifica estado compartido
+- **Setup:** login con `{{ADMIN_USER}}` (con `CLUSTER_NODE_WRITE`); entorno con ≥2 nodos activos. Anotar quién es el maestro actual.
+- **Teardown:** restaurar el maestro original designándolo de nuevo (`PATCH /{idOriginal}` con `{ "master": true }`), para dejar el cluster como estaba.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Seleccionar un nodo activo que no sea maestro | `btn-set-master` se habilita |
+| 2 | Pulsar `btn-set-master` y confirmar en el modal (identifica el hostname) | `PATCH /{id}` con `{ "master": true }`; el nodo pasa a maestro y el anterior pierde el indicador; el listado se recarga |
+
+#### TC-CLN-05 · Botón de maestro deshabilitado por reglas
+
+- **Prioridad:** Media · **Tipo:** Negativo · **Traza:** RF-CLN-4 (AC4.2) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`.
+- **Teardown:** logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Seleccionar el nodo maestro actual (o un nodo inactivo) | `btn-set-master` permanece deshabilitado |
+
+#### TC-CLN-06 · Exportación CSV
+
+- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-CLN-5 (AC5.1–AC5.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`.
+- **Teardown:** eliminar el fichero descargado; logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Sin filtros, pulsar `btn-export` | Descarga `cluster-nodes_{{TODAY}}.csv` con todos los registros filtrados y métricas de memoria en GB y porcentaje |
+
+#### TC-CLN-07 · Registro y eliminación controlados por el sistema
+
+- **Prioridad:** Alta · **Tipo:** Negativo, Seguridad, API · **Traza:** RF-CLN-6 (AC6.1–AC6.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** vía API con token de `{{ADMIN_USER}}`.
+- **Teardown:** No aplica.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | `POST {{BASE_URL_API}}/api/v1/administration/cluster/nodes` | 405 Method Not Allowed |
+| 2 | `DELETE {{BASE_URL_API}}/api/v1/administration/cluster/nodes/1` | 405 Method Not Allowed |
+| 3 | Observar la pantalla | No hay acciones de crear ni eliminar; los nodos se registran automáticamente al arrancar la instancia |
+
 ---
 
 ## Referencias
 
+- [Plan Maestro de Pruebas](../../../specification/test-case.md)
 - [Requisitos](../../../specification/requirements.md)
 - [Glosario](../../../specification/glossary.md)
 - [Modelo de datos](../../../specification/data-model.md)

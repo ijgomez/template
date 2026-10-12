@@ -463,10 +463,117 @@ Definidos en `dashboard/e2e/fixtures/test-data.ts`: `testUsers.valid` (credencia
 - Los casos de creación y edición insertan un registro en el backend por ejecución; el caso de eliminación borra el parámetro que él mismo crea.
 - La exportación depende de que existan filas que cumplan los filtros activos; en caso contrario se notifica que no hay datos que exportar.
 
+### 4.6. Casos de prueba detallados (TCY-PAR)
+
+Catálogo de test cases derivado de los requisitos funcionales de parámetros (`RF-PAR-*`, `RNF-PAR-*`). Para el marco global de pruebas, variables (`{{BASE_URL_UI}}`, `{{BASE_URL_API}}`, `{{ADMIN_USER}}`, `{{UNIQUE}}`) y modelo de ejecución, consultar el [Plan Maestro de Pruebas](../../../specification/test-case.md).
+
+Precondición del ciclo: usuario con `SYSTEM_PARAMETER_READ` / `SYSTEM_PARAMETER_WRITE`. Datos de alta tomados de `buildNewParameter()`: código `E2E_PARAM_{{UNIQUE}}`, descripción `Parámetro de prueba {{UNIQUE}}`, valor `value-{{UNIQUE}}`, tipo `STRING`. Cada caso que crea un parámetro lo elimina en el teardown.
+
+#### TC-PAR-01 · Listado paginado y ordenable
+
+- **Prioridad:** Alta · **Tipo:** Funcional · **Traza:** RF-PAR-1 (AC1.1–AC1.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`.
+- **Teardown:** logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Navegar a `{{BASE_URL_UI}}/administration/parameters` | `parameters-table` visible con código, descripción, tipo y valor |
+| 2 | Ordenar por una columna y paginar | Ordenación y paginación funcionan |
+
+#### TC-PAR-02 · Filtrado por código, descripción y tipo
+
+- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-PAR-2 (AC2.1–AC2.5) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`.
+- **Teardown:** logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Filtrar por un fragmento de código y por un tipo (p. ej. `STRING`), buscar | El listado se reduce y vuelve a página 1 |
+| 2 | Limpiar | Recarga el listado completo |
+
+#### TC-PAR-03 · Alta de parámetro válida
+
+- **Prioridad:** Alta · **Tipo:** Funcional, E2E · **Traza:** RF-PAR-3 (AC3.1–AC3.5) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`.
+- **Teardown:** eliminar `E2E_PARAM_{{UNIQUE}}`.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Pulsar `btn-create`, informar código `E2E_PARAM_{{UNIQUE}}`, tipo `STRING`, valor `value-{{UNIQUE}}`, descripción | Formulario válido; `Guardar` habilitado |
+| 2 | Vaciar el campo valor (obligatorio) | El campo se marca inválido y `Guardar` queda deshabilitado |
+| 3 | Restaurar el valor y guardar | El backend responde 201; el parámetro aparece al buscarlo |
+
+#### TC-PAR-04 · Alta con código duplicado
+
+- **Prioridad:** Alta · **Tipo:** Negativo · **Traza:** RF-PAR-3 (AC3.3), RNF-PAR-3 · **Independiente:** Sí (crea y luego duplica) · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`; crear `E2E_PARAM_{{UNIQUE}}` como primer parámetro.
+- **Teardown:** eliminar `E2E_PARAM_{{UNIQUE}}`.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Intentar crear otro parámetro con el mismo código `E2E_PARAM_{{UNIQUE}}` | El backend devuelve `409 Conflict` y la operación queda bloqueada |
+
+#### TC-PAR-05 · Edición (código inmutable)
+
+- **Prioridad:** Alta · **Tipo:** Funcional, E2E · **Traza:** RF-PAR-4 (AC4.1–AC4.4) · **Independiente:** Sí (crea su propio parámetro) · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`; crear `E2E_PARAM_{{UNIQUE}}`.
+- **Teardown:** eliminar `E2E_PARAM_{{UNIQUE}}`.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Seleccionar `E2E_PARAM_{{UNIQUE}}` y pulsar `btn-edit` | El código es de solo lectura |
+| 2 | Cambiar el valor a `value-editado-{{UNIQUE}}` (compatible con tipo `STRING`) y guardar | 200 OK; el cambio se refleja en el listado |
+
+#### TC-PAR-06 · Eliminación con confirmación
+
+- **Prioridad:** Media · **Tipo:** Funcional, E2E · **Traza:** RF-PAR-5 (AC5.1–AC5.3) · **Independiente:** Sí (crea su propio parámetro) · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`; crear `E2E_PARAM_{{UNIQUE}}`.
+- **Teardown:** si queda tras un fallo, eliminarlo por API.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Seleccionar `E2E_PARAM_{{UNIQUE}}` y pulsar `btn-delete` → cancelar | No se elimina |
+| 2 | Repetir y confirmar | 204; desaparece del listado |
+
+#### TC-PAR-07 · Detalle de parámetro
+
+- **Prioridad:** Baja · **Tipo:** Funcional · **Traza:** RF-PAR-6 (AC6.1–AC6.3) · **Independiente:** Sí (crea su propio parámetro) · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`; crear `E2E_PARAM_{{UNIQUE}}`.
+- **Teardown:** eliminar `E2E_PARAM_{{UNIQUE}}`.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Doble clic sobre `E2E_PARAM_{{UNIQUE}}` | Detalle con datos y auditoría; valor y tipo deshabilitados |
+
+#### TC-PAR-08 · Validación de compatibilidad tipo/valor
+
+- **Prioridad:** Alta · **Tipo:** Negativo · **Traza:** RF-PAR-7 (AC7.1–AC7.4), RNF-PAR-4 · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`; usar el formulario de alta (cancelar al final de cada subcaso).
+- **Teardown:** eliminar los parámetros que se lleguen a crear.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Tipo `INTEGER`, valor `abc` | Rechazado (exige entero válido) |
+| 2 | Tipo `BOOLEAN`, valor `yes` | Rechazado (solo `true`/`false`) |
+| 3 | Tipo `DATE`, valor `31-12-2026` | Rechazado (exige ISO 8601) |
+| 4 | Tipo `STRING`, valor `cualquier texto` | Aceptado |
+
+#### TC-PAR-09 · Autorización y visibilidad
+
+- **Prioridad:** Alta · **Tipo:** Seguridad, API · **Traza:** RNF-PAR-1, RNF-PAR-2 · **Independiente:** Sí · **Dependencias:** requiere token con `SYSTEM_PARAMETER_READ` sin `SYSTEM_PARAMETER_WRITE`
+- **Setup:** preparar un usuario de solo lectura de parámetros y su token.
+- **Teardown:** eliminar el usuario/perfil de prueba.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Con token `SYSTEM_PARAMETER_READ` (sin write), abrir el listado en UI | Los botones `btn-create`, `btn-edit`, `btn-delete` no se muestran |
+| 2 | Con ese token, `POST /api/v1/administration/parameters` | 403 Forbidden |
+
 ---
 
 ## Referencias
 
+- [Plan Maestro de Pruebas](../../../specification/test-case.md)
 - [Requisitos](../../../specification/requirements.md)
 - [Glosario](../../../specification/glossary.md)
 - [Modelo de datos](../../../specification/data-model.md)

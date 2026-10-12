@@ -267,11 +267,20 @@ Ruta base de autenticación: `/api/v1/auth`.
 
 ---
 
+## 4. Pruebas
+
+Los casos de prueba correspondientes a autenticación transversal, persistencia de sesión, ciclo de vida del refresh token y cierre de sesión (`TC-LOG-08` a `TC-LOG-11`) se integran dentro del ciclo unificado **TCY-LOGIN** en [Login · Casos de prueba detallados (TCY-LOGIN)](login.md#46-casos-de-prueba-detallados-tcy-login).
+
+Para el marco global de pruebas, variables de entorno y estrategia de ejecución, consultar el [Plan Maestro de Pruebas](../../specification/test-case.md).
+
+---
+
 ## Referencias
 
+- [Plan Maestro de Pruebas](../../specification/test-case.md)
+- [Login (pantalla de inicio de sesión)](login.md)
 - [Requisitos](../../specification/requirements.md)
 - [Glosario](../../specification/glossary.md)
 - [Modelo de datos](../../specification/data-model.md)
 - [Seguridad backend](../../03-technical/backend/security.md)
 - [Entornos](../../04-development/environments.md)
-- [Login (pantalla de inicio de sesión)](login.md)

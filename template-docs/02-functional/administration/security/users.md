@@ -477,10 +477,134 @@ Definidos en `dashboard/e2e/fixtures/test-data.ts`: `testUsers.valid` (credencia
 - Los casos de creación y edición insertan un registro en el backend por ejecución; el caso de eliminación borra el usuario que él mismo crea.
 - La exportación a CSV depende de que existan filas que cumplan los filtros activos; en caso contrario se notifica que no hay datos que exportar.
 
+### 4.6. Casos de prueba detallados (TCY-USR)
+
+Catálogo de test cases derivado de los requisitos funcionales de usuarios (`RF-USR-*`, `RNF-USR-*`). Para el marco global de pruebas, variables (`{{BASE_URL_UI}}`, `{{BASE_URL_API}}`, `{{ADMIN_USER}}`, `{{UNIQUE}}`) y modelo de ejecución, consultar el [Plan Maestro de Pruebas](../../../specification/test-case.md).
+
+Precondición del ciclo: usuario administrador `{{ADMIN_USER}}` con `USER_READ` y `USER_WRITE`; al menos un perfil de referencia disponible. Datos de alta tomados de `buildNewUser()`: usuario `e2e_user_{{UNIQUE}}`, contraseña `Test1234!`, email `e2e_user_{{UNIQUE}}@example.com`, nombre `E2E`, apellidos `Test`. Cada caso que crea un usuario lo elimina en el teardown, por lo que todos son independientes.
+
+#### TC-USR-01 · Listado paginado y ordenable
+
+- **Prioridad:** Alta · **Tipo:** Funcional, E2E · **Traza:** RF-USR-1 (AC1.1–AC1.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`.
+- **Teardown:** logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Navegar a `{{BASE_URL_UI}}/administration/security/users` | `users-table` visible con columnas usuario, nombre, apellidos, email, perfil y último acceso |
+| 2 | Pulsar la cabecera de una columna | El listado se reordena ascendente; al volver a pulsar, descendente |
+| 3 | Cambiar de página y de tamaño de página | La navegación paginada funciona y recarga los datos |
+
+#### TC-USR-02 · Búsqueda y filtrado
+
+- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-USR-2 (AC2.1–AC2.4) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}` (el propio `admin` sirve como fila existente a buscar).
+- **Teardown:** logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | En `{{BASE_URL_UI}}/administration/security/users`, escribir `admin` en `filter-username` y buscar | El listado muestra la fila del usuario `admin` y vuelve a la página 1 |
+| 2 | Escribir `zzz_inexistente` en `filter-username` y buscar | El listado queda vacío |
+| 3 | Pulsar limpiar filtros | Se restablecen los filtros y se recarga el listado completo |
+
+#### TC-USR-03 · Alta de usuario válida
+
+- **Prioridad:** Alta · **Tipo:** Funcional, E2E · **Traza:** RF-USR-3 (AC3.1–AC3.4) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`; existe al menos un perfil seleccionable.
+- **Teardown:** eliminar el usuario `e2e_user_{{UNIQUE}}` (vía UI o `DELETE /api/v1/administration/security/users/{id}`).
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | En el listado, pulsar `btn-create` | Se abre el formulario en modo alta |
+| 2 | Rellenar usuario `e2e_user_{{UNIQUE}}`, contraseña `Test1234!`, email `e2e_user_{{UNIQUE}}@example.com`, nombre `E2E`, apellidos `Test` y seleccionar un perfil | Formulario válido |
+| 3 | Guardar | El backend responde 201; se vuelve al listado |
+| 4 | Buscar `e2e_user_{{UNIQUE}}` en `filter-username` | El nuevo usuario aparece en el listado |
+
+#### TC-USR-04 · Alta con email con formato inválido
+
+- **Prioridad:** Media · **Tipo:** Negativo · **Traza:** RF-USR-3 (AC3.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`.
+- **Teardown:** cancelar el formulario (no se crea nada); logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Abrir `btn-create` y rellenar usuario `e2e_user_{{UNIQUE}}`, contraseña `Test1234!`, perfil, y email `correo-sin-arroba` | — |
+| 2 | Intentar guardar | El campo email marca error de formato y el guardado no se completa |
+
+#### TC-USR-05 · Edición de usuario (usuario inmutable)
+
+- **Prioridad:** Alta · **Tipo:** Funcional, E2E · **Traza:** RF-USR-4 (AC4.1–AC4.3) · **Independiente:** Sí (crea su propio usuario) · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`; crear previamente el usuario `e2e_user_{{UNIQUE}}` (vía `POST /api/v1/administration/security/users` o repitiendo TC-USR-03) para editar un registro aislado.
+- **Teardown:** eliminar `e2e_user_{{UNIQUE}}`.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Buscar y seleccionar `e2e_user_{{UNIQUE}}` y pulsar `btn-edit` | Se abre el formulario en modo edición; el campo usuario es de solo lectura; la contraseña no es obligatoria |
+| 2 | Cambiar apellidos a `Test-Editado` y guardar | El backend responde 200 |
+| 3 | Volver al listado y buscar el usuario | El cambio (`Test-Editado`) se refleja en la fila |
+
+#### TC-USR-06 · Eliminación con confirmación
+
+- **Prioridad:** Alta · **Tipo:** Funcional, E2E · **Traza:** RF-USR-5 (AC5.1–AC5.3) · **Independiente:** Sí (crea su propio usuario) · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`; crear previamente `e2e_user_{{UNIQUE}}`.
+- **Teardown:** si tras el caso el usuario sigue existiendo (fallo), eliminarlo por API.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Seleccionar `e2e_user_{{UNIQUE}}` y pulsar `btn-delete` | Se abre el modal de confirmación con el nombre del usuario |
+| 2 | Pulsar cancelar | El modal se cierra y el usuario sigue en el listado |
+| 3 | Repetir y confirmar | El backend responde 204 y el usuario desaparece al buscarlo |
+
+#### TC-USR-07 · Detalle con doble clic y auditoría
+
+- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-USR-6 (AC6.1–AC6.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`.
+- **Teardown:** logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | En el listado, doble clic sobre la fila del usuario `admin` | Se abre el detalle en modo solo lectura |
+| 2 | Observar el contenido | Muestra auditoría (último acceso, creación, última modificación) y la contraseña enmascarada |
+
+#### TC-USR-08 · Autoservicio del perfil propio (/me)
+
+- **Prioridad:** Media · **Tipo:** Funcional, API · **Traza:** RF-USR-6 (AC6.4) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** vía API. Login con `{{ADMIN_USER}}` y obtener token.
+- **Teardown:** restaurar los valores originales del usuario (`PUT /me` con los datos previos) para no dejar el perfil alterado.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | `GET {{BASE_URL_API}}/api/v1/administration/security/users/me` | 200 OK con el perfil del usuario autenticado |
+| 2 | `PUT {{BASE_URL_API}}/api/v1/administration/security/users/me` con `{ "firstName": "Admin", "lastName": "Autoservicio", "email": "admin@example.com" }` | 200 OK con los datos actualizados |
+
+#### TC-USR-09 · Exportación CSV filtrada
+
+- **Prioridad:** Media · **Tipo:** Funcional, E2E · **Traza:** RF-USR-7 (AC7.1–AC7.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`.
+- **Teardown:** eliminar el fichero descargado; logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | En el listado, sin filtros, pulsar `btn-export` | El navegador descarga `users_{{TODAY}}.csv` con todos los registros que cumplen los filtros (no solo la página visible) |
+| 2 | Filtrar por `zzz_inexistente` y pulsar `btn-export` | Se notifica que no hay datos que exportar y no se genera fichero |
+
+#### TC-USR-10 · Autorización y visibilidad de acciones
+
+- **Prioridad:** Alta · **Tipo:** Seguridad, API · **Traza:** RNF-USR-1, RNF-USR-2 · **Independiente:** Sí · **Dependencias:** requiere un usuario con `USER_READ` pero sin `USER_WRITE`
+- **Setup:** vía API/UI. Preparar un usuario de solo lectura (perfil con `USER_READ` sin `USER_WRITE`) y obtener su token.
+- **Teardown:** eliminar el usuario/perfil de prueba creados.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Con token sin `USER_READ` ni `USER_WRITE`, `GET /api/v1/administration/security/users` | 403 Forbidden |
+| 2 | Con token `USER_READ` (sin `USER_WRITE`), abrir el listado en la UI | Los botones `btn-create`, `btn-edit` y `btn-delete` no se muestran |
+| 3 | Con ese mismo token, `POST /api/v1/administration/security/users` | 403 Forbidden |
+
 ---
 
 ## Referencias
 
+- [Plan Maestro de Pruebas](../../../specification/test-case.md)
 - [Requisitos](../../../specification/requirements.md)
 - [Glosario](../../../specification/glossary.md)
 - [Modelo de datos](../../../specification/data-model.md)
