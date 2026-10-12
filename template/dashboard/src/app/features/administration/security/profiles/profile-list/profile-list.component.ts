@@ -12,6 +12,7 @@ import { LocalDatePipe } from '../../../../../shared/pipes/local-date.pipe';
 import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent, SortDirection } from '../../../../../shared/components/data-table';
 import { Profile, ProfileCriteria } from '../models/profile.model';
 import { ProfileFormComponent } from '../profile-form/profile-form.component';
+import { TpDetailButtonComponent } from '../../../../../shared/components/detail-button';
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit';
 
@@ -23,7 +24,7 @@ type ViewMode = 'list' | 'detail' | 'create' | 'edit';
 @Component({
   selector: 'app-profile-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective, ProfileFormComponent],
+  imports: [CommonModule, FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective, ProfileFormComponent, TpDetailButtonComponent],
   templateUrl: './profile-list.component.html',
   styleUrls: ['./profile-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -165,6 +166,13 @@ export class ProfileListComponent implements OnInit {
 
   selectRow(profile: Profile): void {
     this.selectedRow.set(this.selectedRow()?.id === profile.id ? null : profile);
+  }
+
+  viewSelectedProfile(): void {
+    const row = this.selectedRow();
+    if (row) {
+      this.showDetail(row);
+    }
   }
 
   editSelectedProfile(): void {

@@ -67,7 +67,7 @@ Identificadores locales de este documento: `RF-USR-*` (requisitos funcionales) y
 **Descripción:** el sistema debe permitir consultar el detalle de un usuario en modo solo lectura.
 
 **Criterios de aceptación:**
-- AC6.1: El doble clic sobre una fila abre el detalle.
+- AC6.1: El detalle se abre seleccionando una fila y pulsando el botón *Detalle* (`btn-detail`), que solo está habilitado cuando hay una fila seleccionada, o mediante doble clic sobre la fila.
 - AC6.2: El detalle muestra la información de auditoría (último acceso, creación, última modificación).
 - AC6.3: La contraseña se muestra enmascarada.
 - AC6.4: Además del detalle administrativo, el usuario autenticado puede consultar y actualizar su propio perfil mediante los endpoints `/me`.
@@ -201,13 +201,14 @@ La pantalla de usuarios usa `List screen` para la consulta, `Form screen` para a
 
 | Acción | Condición de disponibilidad | `data-testid` |
 |--------|-----------------------------|---------------|
+| Detalle | Requiere una fila seleccionada | `btn-detail` |
 | Crear | Requiere `USER_WRITE` | `btn-create` |
 | Editar | Requiere `USER_WRITE` y una fila seleccionada | `btn-edit` |
 | Eliminar | Requiere `USER_WRITE` y una fila seleccionada | `btn-delete` |
 | Exportar CSV | Siempre disponible | `btn-export` |
 
 - La selección de una fila alterna (seleccionar / deseleccionar).
-- El doble clic sobre una fila abre la vista de detalle.
+- El detalle se abre pulsando el botón *Detalle* con una fila seleccionada o mediante doble clic sobre la fila.
 - La exportación a CSV incluye **todos los registros que cumplen los filtros activos**, no solo la página actual.
 
 ### 2.4. Identificadores para pruebas (`data-testid`)
@@ -219,6 +220,7 @@ La pantalla de usuarios usa `List screen` para la consulta, `Form screen` para a
 | Filtro de nombre | `filter-firstName` |
 | Filtro de perfil | `filter-profile` |
 | Tabla de usuarios | `users-table` |
+| Botón Detalle | `btn-detail` |
 | Botón Crear | `btn-create` |
 | Botón Editar | `btn-edit` |
 | Botón Eliminar | `btn-delete` |
@@ -259,7 +261,7 @@ flowchart TD
   B -->|Crear| C["Formulario en modo create"]
   B -->|Editar| D["Formulario en modo edit"]
   B -->|Eliminar| E["Modal de confirmacion"]
-  B -->|Doble clic| F["Detalle en modo view"]
+  B -->|Detalle o doble clic| F["Detalle en modo view"]
   C --> G["Guardar"]
   D --> G
   G --> H{"Operacion correcta"}

@@ -9,6 +9,7 @@ import { CsvExportService } from '../../../../core/services/csv-export.service';
 import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../shared/components/data-table';
 import { Parameter, ParameterCriteria, ParameterType } from '../../../../core/models/parameter.model';
 import { ParameterFormComponent } from '../parameter-form/parameter-form.component';
+import { TpDetailButtonComponent } from '../../../../shared/components/detail-button';
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit';
 
@@ -20,7 +21,7 @@ type ViewMode = 'list' | 'detail' | 'create' | 'edit';
 @Component({
   selector: 'app-parameter-list',
   standalone: true,
-  imports: [FormsModule, TranslatePipe, TpDataTableComponent, TpColumnDirective, ParameterFormComponent],
+  imports: [FormsModule, TranslatePipe, TpDataTableComponent, TpColumnDirective, ParameterFormComponent, TpDetailButtonComponent],
   templateUrl: './parameter-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -144,6 +145,13 @@ export class ParameterListComponent {
 
   selectRow(parameter: Parameter): void {
     this.selectedRow.update(current => current?.code === parameter.code ? null : parameter);
+  }
+
+  viewSelectedParameter(): void {
+    const row = this.selectedRow();
+    if (row) {
+      this.viewDetail(row);
+    }
   }
 
   editSelectedParameter(): void {

@@ -19,6 +19,7 @@ export class AuditPage {
   readonly filterDateTo: Locator;
   readonly applyFiltersButton: Locator;
   readonly clearFiltersButton: Locator;
+  readonly viewDetailButton: Locator;
   readonly exportButton: Locator;
   readonly backToListButton: Locator;
 
@@ -35,6 +36,7 @@ export class AuditPage {
     this.filterDateTo = page.getByTestId('audit-filter-date-to');
     this.applyFiltersButton = page.getByTestId('audit-apply-filters');
     this.clearFiltersButton = page.getByTestId('audit-clear-filters');
+    this.viewDetailButton = page.getByTestId('audit-view-detail');
     this.exportButton = page.getByTestId('audit-export-csv');
     this.backToListButton = page.getByTestId('audit-back-to-list');
   }
@@ -72,9 +74,16 @@ export class AuditPage {
     await response;
   }
 
-  /** Abre el detalle de la fila indicada. */
+  /** Abre el detalle de la fila indicada seleccionándola y pulsando el botón Detalle. */
   async openDetail(row: Locator): Promise<void> {
     await row.click();
+    await this.viewDetailButton.click();
+    await this.backToListButton.waitFor({ state: 'visible' });
+  }
+
+  /** Abre el detalle de la fila indicada mediante doble clic. */
+  async openDetailByDoubleClick(row: Locator): Promise<void> {
+    await row.dblclick();
     await this.backToListButton.waitFor({ state: 'visible' });
   }
 

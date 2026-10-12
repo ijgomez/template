@@ -62,6 +62,10 @@
 
   <!-- Action toolbar -->
   <div class="tp-toolbar d-flex gap-2 mb-3">
+    <tp-detail-button
+      [disabled]="!selectedRow()"
+      testId="btn-detail"
+      (detail)="viewSelectedUser()" />
     @if (canWrite()) {
       <button type="button"
               class="btn btn-primary btn-sm"

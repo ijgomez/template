@@ -9,6 +9,7 @@ import { CsvExportService } from '../../../../../core/services/csv-export.servic
 import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../../shared/components/data-table';
 import { Action, ActionCriteria } from '../models/action.model';
 import { ActionFormComponent } from '../action-form/action-form.component';
+import { TpDetailButtonComponent } from '../../../../../shared/components/detail-button';
 
 type ViewMode = 'list' | 'detail' | 'edit';
 
@@ -21,7 +22,7 @@ type ViewMode = 'list' | 'detail' | 'edit';
 @Component({
   selector: 'app-action-list',
   standalone: true,
-  imports: [FormsModule, TranslatePipe, TpDataTableComponent, TpColumnDirective, ActionFormComponent],
+  imports: [FormsModule, TranslatePipe, TpDataTableComponent, TpColumnDirective, ActionFormComponent, TpDetailButtonComponent],
   templateUrl: './action-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -149,6 +150,16 @@ export class ActionListComponent implements OnInit {
    */
   selectRow(action: Action): void {
     this.selectedRow.set(this.selectedRow()?.id === action.id ? null : action);
+  }
+
+  /**
+   * Opens the detail view for the currently selected row.
+   */
+  viewSelectedAction(): void {
+    const row = this.selectedRow();
+    if (row) {
+      this.showDetail(row);
+    }
   }
 
   /**

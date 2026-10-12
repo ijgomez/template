@@ -3,7 +3,7 @@
 Documentación funcional y técnica de la pantalla de administración de nodos del cluster, dentro de Administración > Cluster. Permite consultar el estado de las instancias de la aplicación, filtrar y exportar la información, consultar su detalle y designar de forma controlada el nodo maestro.
 
 - **Ruta frontend:** `/administration/cluster/nodes`
-- **Componentes:** `NodeListComponent` (listado) y `NodeDetailComponent` (detalle)
+- **Componentes:** `NodeListComponent` (listado) y `NodeFormComponent` (detalle de solo lectura)
 - **Endpoint backend base:** `/api/v1/administration/cluster/nodes` (`ClusterController`)
 - **Acceso:** requiere sesión y `CLUSTER_NODE_READ` o `CLUSTER_NODE_WRITE`; designar maestro requiere `CLUSTER_NODE_WRITE`
 
@@ -42,7 +42,7 @@ Identificadores locales de este documento: `RF-CLN-*` (requisitos funcionales) y
 
 **Criterios de aceptación:**
 
-- AC3.1: El doble clic sobre una fila abre el detalle del nodo.
+- AC3.1: El detalle se abre seleccionando una fila y pulsando el botón *Detalle* (`btn-detail`), que solo está habilitado cuando hay una fila seleccionada, o mediante doble clic sobre la fila.
 - AC3.2: El detalle muestra los mismos datos operativos y métricas que el listado.
 - AC3.3: La acción Volver retorna al listado sin modificar el nodo.
 
@@ -128,7 +128,7 @@ La estructura visual base se define en [layout.md](../../../03-technical/fronten
 +--------------------------------------------------------------------------------+
 | Hostname | Estado | Maestro | [Filtrar] [Limpiar]                              |
 +--------------------------------------------------------------------------------+
-| [Designar maestro]                                           [Exportar CSV]    |
+| [Detalle] [Designar maestro]                                 [Exportar CSV]    |
 +--------------------------------------------------------------------------------+
 | Hostname | IP | Estado | Maestro | Inicio | Ultima actualizacion | Memoria     |
 |----------|----|--------|---------|--------|----------------------|-------------|
@@ -182,11 +182,12 @@ La estructura visual base se define en [layout.md](../../../03-technical/fronten
 |--------|-----------------------------|---------------|
 | Filtrar | Siempre disponible | `btn-filter-search` |
 | Limpiar | Siempre disponible | `btn-filter-clear` |
+| Detalle | Requiere una fila seleccionada | `btn-detail` |
 | Designar maestro | `CLUSTER_NODE_WRITE`, fila activa no maestra seleccionada | `btn-set-master` |
 | Exportar CSV | Siempre disponible cuando existen resultados filtrados | `btn-export` |
 
 - Un clic selecciona o deselecciona la fila.
-- Un doble clic abre el detalle.
+- El detalle se abre pulsando el botón *Detalle* con una fila seleccionada o mediante doble clic sobre la fila.
 - El filtrado, la ordenación y la paginación se resuelven en cliente sobre la colección de nodos recuperada del backend.
 
 ### 2.4. Identificadores para pruebas (`data-testid`)
@@ -200,6 +201,7 @@ La estructura visual base se define en [layout.md](../../../03-technical/fronten
 | Tabla de nodos | `cluster-nodes-table` |
 | Botón Filtrar | `btn-filter-search` |
 | Botón Limpiar | `btn-filter-clear` |
+| Botón Detalle | `btn-detail` |
 | Botón Designar maestro | `btn-set-master` |
 | Botón Exportar CSV | `btn-export` |
 
@@ -237,7 +239,7 @@ flowchart TD
 | Capa | Elemento | Responsabilidad |
 |------|----------|-----------------|
 | Frontend | `NodeListComponent` | Consulta, filtros cliente, ordenación, paginación, selección y cambio de maestro. |
-| Frontend | `NodeDetailComponent` | Presentación de solo lectura del nodo. |
+| Frontend | `NodeFormComponent` | Presentación de solo lectura del nodo. |
 | Frontend | `ClusterService` | Llamadas REST de nodos y actualización del liderazgo. |
 | Frontend | `TpDataTableComponent` | Tabla reutilizable para ordenación, selección y paginación. |
 | Backend | `ClusterController` | Endpoints REST de lectura de nodos y actualización del maestro. |
@@ -385,7 +387,7 @@ El controlador delega la designación en `ClusterService.setMaster(id)`: el valo
 |-----------|---------|
 | `dashboard/src/app/core/services/cluster.service.spec.ts` | Consultas de nodos, consulta por identificador y `PATCH` para designar maestro |
 
-No hay actualmente pruebas unitarias específicas de `NodeListComponent` o `NodeDetailComponent` en el repositorio.
+No hay actualmente pruebas unitarias específicas de `NodeListComponent` o `NodeFormComponent` en el repositorio.
 
 ### 4.3. Cobertura E2E (Playwright)
 
@@ -395,7 +397,7 @@ Ubicación: `dashboard/e2e/tests/administration/cluster-nodes.spec.ts` (Page Obj
 |------|-------------|--------------------|
 | Listado controlado | Acceder a la pantalla tras iniciar sesión | La tabla y filtros son visibles; no existen acciones de crear ni eliminar y Designar maestro está deshabilitado sin selección |
 | Filtrado | Filtrar por el hostname de un nodo existente y limpiar | El listado queda reducido al nodo coincidente y se restaura al limpiar |
-| Detalle | Abrir el primer nodo y volver | El detalle muestra su hostname y Volver restaura el listado |
+| Detalle | Seleccionar el primer nodo, pulsar *Detalle* y volver | El detalle muestra su hostname y Volver restaura el listado |
 | Exportación CSV | Exportar el listado de nodos | El navegador descarga `cluster-nodes_YYYY-MM-DD.csv` |
 
 La suite no ejecuta el cambio de maestro: es una operación que modifica estado compartido y requiere al menos dos nodos activos para validarse de forma aislada o con restauración posterior.

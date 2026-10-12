@@ -3,7 +3,7 @@
 Documentación funcional y técnica de la pantalla de configuración de interfaces, dentro del módulo de Interfaces. Permite consultar, filtrar y visualizar en modo solo lectura la definición y el estado de todas las interfaces registradas en el sistema, así como exportar el listado filtrado a CSV. Ofrece una visión consolidada de la salud de las integraciones con indicadores visuales de estado.
 
 - **Ruta frontend:** `/interfaces/configuration`
-- **Componentes:** `ConfigurationListComponent` (listado, en `pages/configuration-list/`) y `ConfigurationFormComponent` (detalle de solo lectura reutilizable, en `pages/configuration-list/components/configuration-form/`)
+- **Componentes:** `ConfigurationListComponent` (listado, en `pages/configuration-list/`) y `ConfigurationFormComponent` (detalle de solo lectura reutilizable, en `pages/configuration-form/`)
 - **Endpoint backend base:** `/api/v1/interfaces/configuration` (`InterfaceController`)
 - **Acceso:** requiere sesión y la acción `INTERFACES_READ`
 - **Restricción de negocio:** no está permitido crear, editar ni eliminar interfaces desde la interfaz de usuario; las interfaces se gestionan externamente y solo se consultan

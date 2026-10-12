@@ -43,7 +43,7 @@ Identificadores locales de este documento: `RF-AUD-*` (requisitos funcionales) y
 
 **Criterios de aceptación:**
 
-- AC3.1: Al seleccionar una fila se abre el detalle del registro.
+- AC3.1: Se accede al detalle seleccionando una fila y pulsando el botón *Detalle* (`audit-view-detail`), que solo está habilitado cuando hay una fila seleccionada, o mediante doble clic sobre la fila.
 - AC3.2: El detalle muestra todos los datos conservados por el registro, incluidos usuario, operación, sección, entidad y detalle.
 - AC3.3: El detalle no ofrece acciones para crear, editar ni eliminar registros.
 - AC3.4: La acción Volver restaura el listado y elimina la selección actual.
@@ -117,7 +117,7 @@ La estructura visual base se define en [layout.md](../../../03-technical/fronten
 +--------------------------------------------------------------------------------+
 | Usuario | Operación | Sección | Desde | Hasta | [Filtrar] [Limpiar]           |
 +--------------------------------------------------------------------------------+
-|                                                   [Exportar CSV]               |
+| [Detalle]                                         [Exportar CSV]               |
 +--------------------------------------------------------------------------------+
 | Fecha/Hora | Usuario | Operación | Sección | Entidad | ID | Detalle            |
 |------------|---------|-----------|---------|---------|----|--------------------|
@@ -170,9 +170,11 @@ La estructura visual base se define en [layout.md](../../../03-technical/fronten
 |--------|-----------------------------|---------------|
 | Filtrar | Siempre disponible | `audit-apply-filters` |
 | Limpiar | Siempre disponible | `audit-clear-filters` |
+| Detalle | Requiere una fila seleccionada | `audit-view-detail` |
 | Exportar CSV | Siempre disponible | `audit-export-csv` |
 
-- La selección de una fila abre directamente el detalle; no existe selección persistente en el listado.
+- La selección de una fila alterna (seleccionar / deseleccionar) y mantiene la fila marcada en el listado.
+- El detalle se abre pulsando el botón *Detalle* con una fila seleccionada o mediante doble clic sobre la fila.
 - Al no haber resultados, el listado queda vacío y la exportación informa de que no hay datos.
 - Los tamaños de página disponibles son 5, 10, 20 y 50; el valor inicial es 10.
 
@@ -189,6 +191,7 @@ La estructura visual base se define en [layout.md](../../../03-technical/fronten
 | Tabla de auditoría | `audit-table` |
 | Botón Filtrar | `audit-apply-filters` |
 | Botón Limpiar | `audit-clear-filters` |
+| Botón Detalle | `audit-view-detail` |
 | Botón Exportar CSV | `audit-export-csv` |
 
 ### 2.5. Detalle de una entrada
@@ -207,7 +210,7 @@ flowchart TD
   B --> C{Aplica filtros}
   C -->|Si| D[Reinicia en pagina uno]
   D --> B
-  C -->|No| E{Selecciona fila}
+  C -->|No| E{Abre detalle con boton o doble clic}
   E -->|Si| F[Muestra detalle]
   F --> G[Volver al listado]
   G --> B
@@ -387,7 +390,8 @@ Ubicación: `dashboard/e2e/tests/administration/audit.spec.ts` (Page Object en `
 |------|-------------|--------------------|
 | Listado de solo lectura | Acceder a la pantalla tras iniciar sesión | La tabla y filtros son visibles; no existen acciones de crear, editar ni eliminar |
 | Filtrado | Filtrar por administrador, `EXECUTE` y `SECURITY`; después limpiar | El listado contiene los registros coincidentes y se recarga sin filtros al limpiar |
-| Detalle | Abrir la primera entrada y volver | El detalle muestra los datos de la fila y la acción Volver restaura el listado |
+| Detalle desde barra de acciones | Seleccionar una fila y pulsar *Detalle* | El detalle muestra los datos de la fila y la acción Volver restaura el listado |
+| Detalle por doble clic | Doble clic sobre la primera entrada | Abre la vista de detalle; *Volver* restaura el listado |
 | Exportación CSV | Exportar registros filtrados por administrador | El navegador descarga un fichero `audit_YYYY-MM-DD.csv` |
 
 Cada caso inicia sesión con el usuario administrador. Ese inicio de sesión genera la operación auditable `EXECUTE` en la sección `SECURITY`, que proporciona un registro conocido para las comprobaciones sin modificar el registro desde la pantalla de auditoría.

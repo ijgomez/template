@@ -12,6 +12,7 @@ import { LocalDatePipe } from '../../../../../shared/pipes/local-date.pipe';
 import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../../shared/components/data-table';
 import { ClusterNode } from '../../../../../core/models/cluster.model';
 import { NodeFormComponent } from '../node-form/node-form.component';
+import { TpDetailButtonComponent } from '../../../../../shared/components/detail-button';
 
 type ViewMode = 'list' | 'form';
 
@@ -25,7 +26,7 @@ type ViewMode = 'list' | 'form';
 @Component({
   selector: 'app-cluster-node-list',
   standalone: true,
-  imports: [FormsModule, DecimalPipe, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective, NodeFormComponent],
+  imports: [FormsModule, DecimalPipe, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective, NodeFormComponent, TpDetailButtonComponent],
   templateUrl: './node-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -163,6 +164,16 @@ export class NodeListComponent implements OnInit {
   openForm(node: ClusterNode): void {
     this.selectedNode.set(node);
     this.viewMode.set('form');
+  }
+
+  /**
+   * Opens the detail (form) view for the currently selected row.
+   */
+  viewSelected(): void {
+    const node = this.selectedRow();
+    if (node) {
+      this.openForm(node);
+    }
   }
 
   /**

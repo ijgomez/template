@@ -13,13 +13,14 @@ import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '.
 import { UserDTO, UserCriteria } from '../../../../../core/models/user.model';
 import { UserFormComponent } from '../user-form/user-form.component';
 import { TpProfileSelectComponent } from '../../../../../shared/components/profile-select';
+import { TpDetailButtonComponent } from '../../../../../shared/components/detail-button';
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit';
 
 @Component({
   selector: 'app-user-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective, UserFormComponent, TpProfileSelectComponent],
+  imports: [CommonModule, FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective, UserFormComponent, TpProfileSelectComponent, TpDetailButtonComponent],
   templateUrl: './user-list.component.html',
   styleUrl: './user-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -157,6 +158,13 @@ export class UserListComponent implements OnInit {
 
   selectRow(user: UserDTO): void {
     this.selectedRow.set(this.selectedRow()?.id === user.id ? null : user);
+  }
+
+  viewSelectedUser(): void {
+    const user = this.selectedRow();
+    if (user) {
+      this.showDetail(user);
+    }
   }
 
   editSelectedUser(): void {

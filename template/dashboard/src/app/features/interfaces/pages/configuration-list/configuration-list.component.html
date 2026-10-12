@@ -50,9 +50,10 @@
 
   <!-- Action toolbar -->
   <div class="tp-toolbar d-flex gap-2 mb-3">
-    <button type="button" class="btn btn-primary btn-sm" [disabled]="!selectedRow()" (click)="viewSelectedDetail()" data-testid="btn-view-detail">
-      <i class="bi bi-eye me-1" aria-hidden="true"></i> {{ 'common.detail' | translate }}
-    </button>
+    <tp-detail-button
+      [disabled]="!selectedRow()"
+      testId="btn-view-detail"
+      (detail)="viewSelectedDetail()" />
     <button type="button" class="btn btn-outline-secondary btn-sm ms-auto" (click)="exportCsv()" data-testid="btn-export">
       <i class="bi bi-download me-1" aria-hidden="true"></i> {{ 'button.export' | translate }}
     </button>

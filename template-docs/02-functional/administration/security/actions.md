@@ -40,7 +40,7 @@ Identificadores locales de este documento: `RF-ACC-*` (requisitos funcionales) y
 **Descripción:** el sistema debe permitir consultar el detalle de una acción en modo solo lectura.
 
 **Criterios de aceptación:**
-- AC3.1: El doble clic sobre una fila abre el detalle de la acción.
+- AC3.1: El detalle se abre seleccionando una fila y pulsando el botón *Detalle* (`btn-detail`), que solo está habilitado cuando hay una fila seleccionada, o mediante doble clic sobre la fila.
 - AC3.2: El detalle muestra el código, nombre, tipo, descripción y fechas de creación y última modificación.
 - AC3.3: La vista detalle incluye el botón de edición cuando el usuario tiene permiso de lectura.
 
@@ -189,11 +189,12 @@ La diferencia frente a usuarios y perfiles es que acciones no tiene alta ni borr
 
 | Acción | Condición de disponibilidad | `data-testid` |
 |--------|-----------------------------|---------------|
+| Detalle | Requiere una fila seleccionada | `btn-detail` |
 | Editar | Requiere `ACTION_READ` y una fila seleccionada | `btn-edit` |
 | Exportar CSV | Siempre disponible | `btn-export` |
 
 - La selección de una fila alterna (seleccionar / deseleccionar).
-- El doble clic sobre una fila abre la vista de detalle.
+- El detalle se abre pulsando el botón *Detalle* con una fila seleccionada o mediante doble clic sobre la fila.
 - La exportación a CSV incluye **todos los registros que cumplen los filtros activos**, no solo la página actual.
 
 ### 2.4. Identificadores para pruebas (`data-testid`)
@@ -204,6 +205,7 @@ La diferencia frente a usuarios y perfiles es que acciones no tiene alta ni borr
 | Filtro de código | `filter-code` |
 | Filtro de tipo | `filter-type` |
 | Tabla de acciones | `actions-table` |
+| Botón Detalle | `btn-detail` |
 | Botón Editar | `btn-edit` |
 | Botón Exportar CSV | `btn-export` |
 
@@ -237,7 +239,7 @@ La diferencia frente a usuarios y perfiles es que acciones no tiene alta ni borr
 flowchart TD
   A["Listado de acciones"] --> B{"Acción"}
   B -->|Editar| C["Formulario en modo edit"]
-  B -->|Doble clic| D["Detalle en modo view"]
+  B -->|Detalle o doble clic| D["Detalle en modo view"]
   C --> E["Guardar"]
   E --> F{"Operación correcta"}
   F -->|Sí| G["Notificación de éxito y refresco del listado"]

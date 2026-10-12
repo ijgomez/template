@@ -11,6 +11,7 @@ import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '.
 import { InterfaceConfig } from '../../../../core/models/interface.model';
 import { ConfigurationFormComponent } from '../configuration-form/configuration-form.component';
 import { ProtocolSelectComponent } from '../../components/protocol-select';
+import { TpDetailButtonComponent } from '../../../../shared/components/detail-button';
 
 /**
  * Interface configuration list component.
@@ -21,7 +22,7 @@ import { ProtocolSelectComponent } from '../../components/protocol-select';
 @Component({
   selector: 'app-configuration-list',
   standalone: true,
-  imports: [FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective, ConfigurationFormComponent, ProtocolSelectComponent],
+  imports: [FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective, ConfigurationFormComponent, ProtocolSelectComponent, TpDetailButtonComponent],
   templateUrl: './configuration-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

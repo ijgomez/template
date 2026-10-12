@@ -11,6 +11,7 @@ import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
 import { TpDatePickerComponent } from '../../../../shared/components/date-picker/date-picker.component';
 import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../shared/components/data-table';
 import { AuditLog, AuditCriteria, OperationType, AuditSection } from '../../../../core/models/audit.model';
+import { TpDetailButtonComponent } from '../../../../shared/components/detail-button';
 
 /**
  * Audit log component.
@@ -20,7 +21,7 @@ import { AuditLog, AuditCriteria, OperationType, AuditSection } from '../../../.
 @Component({
   selector: 'app-audit-list',
   standalone: true,
-  imports: [FormsModule, TranslatePipe, LocalDatePipe, TpDatePickerComponent, TpDataTableComponent, TpColumnDirective],
+  imports: [FormsModule, TranslatePipe, LocalDatePipe, TpDatePickerComponent, TpDataTableComponent, TpColumnDirective, TpDetailButtonComponent],
   templateUrl: './audit-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -35,6 +36,7 @@ export class AuditListComponent implements OnInit {
   // View state
   readonly viewMode = signal<'list' | 'detail'>('list');
   readonly selectedAuditLog = signal<AuditLog | null>(null);
+  readonly selectedRow = signal<AuditLog | null>(null);
 
   // Pagination state
   readonly auditLogs = signal<AuditLog[]>([]);
@@ -159,6 +161,23 @@ export class AuditListComponent implements OnInit {
     this.pageSize.set(size);
     this.currentPage.set(0);
     this.loadAuditLogs();
+  }
+
+  /**
+   * Selects or deselects a row in the table.
+   */
+  selectRow(auditLog: AuditLog): void {
+    this.selectedRow.set(this.selectedRow()?.id === auditLog.id ? null : auditLog);
+  }
+
+  /**
+   * Opens the detail view for the currently selected row.
+   */
+  viewSelected(): void {
+    const log = this.selectedRow();
+    if (log) {
+      this.viewDetail(log);
+    }
   }
 
   /**

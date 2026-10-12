@@ -40,6 +40,10 @@
 
   <!-- Action toolbar -->
   <div class="tp-toolbar d-flex gap-2 mb-3">
+    <tp-detail-button
+      [disabled]="!selectedRow()"
+      testId="btn-detail"
+      (detail)="viewSelectedParameter()" />
     @if (canWrite()) {
       <button type="button" class="btn btn-primary btn-sm" (click)="openCreate()" data-testid="btn-create">
         <i class="bi bi-plus-lg me-1" aria-hidden="true"></i> {{ 'button.create' | translate }}
