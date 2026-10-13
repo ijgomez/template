@@ -36,7 +36,7 @@
     "dashboard": "Panel Principal",
     "reports": "Informes",
     "interfaces": "Interfaces",
-    "interfaces.interfaceList": "Listado de interfaces",
+    "interfaces.interfaceList": "Monitor de interfaces",
     "interfaces.configuration": "Configuración",
     "administration": "Administración",
     "administration.security": "Seguridad",
@@ -323,7 +323,7 @@
   },
   "interfaces": {
     "interfaceList": {
-      "title": "Listado de Interfaces",
+      "title": "Monitor de Interfaces",
       "fields": {
         "timestamp": "Fecha/Hora",
         "operationType": "Tipo de Operación",
