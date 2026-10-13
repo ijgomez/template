@@ -2,20 +2,20 @@ import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit } 
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
-import { InterfaceService } from '../../../core/services/interface.service';
-import { AuthService } from '../../../core/services/auth.service';
-import { NotificationService } from '../../../core/services/notification.service';
-import { DateService } from '../../../core/services/date.service';
-import { LocalDatePipe } from '../../../shared/pipes/local-date.pipe';
-import { TpDatePickerComponent } from '../../../shared/components/date-picker/date-picker.component';
-import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../shared/components/data-table';
+import { InterfaceService } from '../../../../core/services/interface.service';
+import { AuthService } from '../../../../core/services/auth.service';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { DateService } from '../../../../core/services/date.service';
+import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
+import { TpDatePickerComponent } from '../../../../shared/components/date-picker/date-picker.component';
+import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../shared/components/data-table';
 import {
   InterfaceConfig,
   InterfaceLog,
   InterfaceLogCriteria,
   InterfaceOperationType,
   InterfaceLogStatus,
-} from '../../../core/models/interface.model';
+} from '../../../../core/models/interface.model';
 
 /**
  * Interface monitor component.
@@ -23,13 +23,13 @@ import {
  * Supports detail view and CSV export.
  */
 @Component({
-  selector: 'app-interfaces-monitor',
+  selector: 'app-interface-list',
   standalone: true,
   imports: [FormsModule, TranslatePipe, LocalDatePipe, TpDatePickerComponent, TpDataTableComponent, TpColumnDirective],
-  templateUrl: './monitor.component.html',
+  templateUrl: './interface-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MonitorComponent implements OnInit {
+export class InterfaceListComponent implements OnInit {
   private readonly interfaceService = inject(InterfaceService);
   private readonly authService = inject(AuthService);
   private readonly notificationService = inject(NotificationService);

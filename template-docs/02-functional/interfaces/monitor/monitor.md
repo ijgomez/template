@@ -2,7 +2,7 @@
 
 Documentación funcional y técnica de la pantalla de **Monitor de Interfaces**, dentro del módulo de **Interfaces**. Permite supervisar la trazabilidad de las operaciones de integración del sistema con servicios y clientes externos (entrantes y salientes), consultar su detalle técnico (payloads de petición y respuesta, estado y errores) y exportar los registros filtrados a formato CSV.
 
-- **Ruta frontend:** `/interfaces/monitor` (`MonitorComponent`)
+- **Ruta frontend:** `/interfaces/monitor` (`InterfaceListComponent`)
 - **Endpoint backend base:** `/api/v1/interfaces/monitor` (`InterfaceController` / `InterfaceControllerImpl`)
 - **Acceso:** requiere sesión activa y la acción `INTERFACES_READ`
 - **Naturaleza:** vista de solo lectura (`read-only`) sobre registros inmutables (`append-only`)
@@ -172,7 +172,7 @@ La estructura visual base de esta pantalla se define en [layout.md](../../../03-
 ```mermaid
 sequenceDiagram
     participant U as Usuario / Navegador
-    participant MC as MonitorComponent
+    participant MC as InterfaceListComponent
     participant IS as InterfaceService (TS)
     participant IC as InterfaceController (Spring)
     participant S as InterfaceService (Java)
@@ -216,7 +216,7 @@ sequenceDiagram
 
 | Capa | Componente | Responsabilidad |
 | --- | --- | --- |
-| Frontend | `MonitorComponent` | Gestión de filtros, paginación, cambio a vista de detalle y exportación CSV. |
+| Frontend | `InterfaceListComponent` | Gestión de filtros, paginación, cambio a vista de detalle y exportación CSV. |
 | Frontend | `InterfaceService` | Cliente HTTP para monitor y configuración de interfaces. |
 | Frontend | `TpDataTableComponent` | Tabla reutilizable con ordenación, paginación y plantillas de visualización. |
 | Frontend | `LocalDatePipe` y `DateService` | Formateo de fechas a la zona horaria del usuario. |
@@ -369,7 +369,8 @@ No existen endpoints ni métodos que permitan alterar o borrar registros existen
 | Ubicación | Alcance |
 | --- | --- |
 | `dashboard/src/app/core/services/interface.service.spec.ts` | Pruebas de cliente HTTP: `findAllConfigurations`, `findConfigurationById`, `findLogsByCriteria`, `findAllLogsByCriteria`, `countLogsByCriteria`, `findLogById`. |
-| `dashboard/src/app/features/interfaces/monitor/monitor.component.stories.ts` | Historias de Storybook para validación visual de estados del monitor de interfaces. |
+| `dashboard/src/app/features/interfaces/pages/interface-list/interface-list.component.stories.ts` | Historias de Storybook para validación visual de estados del monitor de interfaces. |
+| `dashboard/src/app/features/interfaces/pages/interface-list/interface-list.component.spec.ts` | Pruebas de componente: creación, estado inicial de vista y reseteo de filtros. |
 
 ### 4.3. Cobertura E2E (Playwright)
 

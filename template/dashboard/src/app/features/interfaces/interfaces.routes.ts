@@ -3,7 +3,7 @@ import { Routes } from '@angular/router';
 export const INTERFACES_ROUTES: Routes = [
   {
     path: 'monitor',
-    loadComponent: () => import('./monitor/monitor.component').then((m) => m.MonitorComponent),
+    loadComponent: () => import('./pages/interface-list/interface-list.component').then((m) => m.InterfaceListComponent),
   },
   {
     path: 'configuration',
