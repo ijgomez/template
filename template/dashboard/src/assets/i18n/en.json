@@ -36,7 +36,7 @@
     "dashboard": "Dashboard",
     "reports": "Reports",
     "interfaces": "Interfaces",
-    "interfaces.monitor": "Monitor",
+    "interfaces.interfaceList": "Interface List",
     "interfaces.configuration": "Configuration",
     "administration": "Administration",
     "administration.security": "Security",
@@ -322,8 +322,8 @@
     }
   },
   "interfaces": {
-    "monitor": {
-      "title": "Interface Monitor",
+    "interfaceList": {
+      "title": "Interface List",
       "fields": {
         "timestamp": "Timestamp",
         "operationType": "Operation Type",

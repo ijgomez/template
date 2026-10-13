@@ -1,6 +1,6 @@
-# Monitor de Interfaces
+# Listado de Interfaces
 
-Documentación funcional y técnica de la pantalla de **Monitor de Interfaces**, dentro del módulo de **Interfaces**. Permite supervisar la trazabilidad de las operaciones de integración del sistema con servicios y clientes externos (entrantes y salientes), consultar su detalle técnico (payloads de petición y respuesta, estado y errores) y exportar los registros filtrados a formato CSV.
+Documentación funcional y técnica de la pantalla de **Listado de Interfaces**, dentro del módulo de **Interfaces**. Permite supervisar la trazabilidad de las operaciones de integración del sistema con servicios y clientes externos (entrantes y salientes), consultar su detalle técnico (payloads de petición y respuesta, estado y errores) y exportar los registros filtrados a formato CSV.
 
 - **Ruta frontend:** `/interfaces/monitor` (`InterfaceListComponent`)
 - **Endpoint backend base:** `/api/v1/interfaces/monitor` (`InterfaceController` / `InterfaceControllerImpl`)
@@ -35,25 +35,25 @@ Identificadores locales de este documento: `RF-IFM-*` (funcionales) y `RNF-IFM-*
 - AC2.2: Selector de tipo de operación con valores `GET`, `POST`, `PUT`, `PATCH`, `DELETE` y opción "Todos".
 - AC2.3: Selector de interfaz alimentado dinámicamente desde `GET /api/v1/interfaces/configuration` y opción "Todas".
 - AC2.4: Selector de estado con valores `SUCCESS`, `ERROR`, `BAD_REQUEST`, `NOT_FOUND` y opción "Todos".
-- AC2.5: Al pulsar *Buscar* (`monitor-apply-filters`), se aplican los criterios y se reinicia la paginación a la página 0.
-- AC2.6: Al pulsar *Limpiar* (`monitor-clear-filters`), se restablecen todos los filtros a sus valores por defecto y se recarga el listado completo desde la página 0.
+- AC2.5: Al pulsar *Buscar* (`interface-list-apply-filters`), se aplican los criterios y se reinicia la paginación a la página 0.
+- AC2.6: Al pulsar *Limpiar* (`interface-list-clear-filters`), se restablecen todos los filtros a sus valores por defecto y se recarga el listado completo desde la página 0.
 
 #### RF-IFM-3: Visualización de detalle de operación
 
 **Descripción:** el sistema debe permitir consultar la información técnica completa de una operación seleccionada.
 
 **Criterios de aceptación:**
-- AC3.1: Se accede al detalle seleccionando una fila y pulsando *Ver detalle* (`monitor-view-detail`), o mediante doble clic sobre la fila.
+- AC3.1: Se accede al detalle seleccionando una fila y pulsando *Ver detalle* (`interface-list-view-detail`), o mediante doble clic sobre la fila.
 - AC3.2: La vista de detalle muestra: Timestamp (local), Tipo de operación, Nombre de interfaz, Estado, Payload de petición (`requestPayload`), Payload de respuesta (`responsePayload`) y Mensaje de error (`errorMessage` si aplica).
 - AC3.3: Los payloads se presentan en bloques preformateados (`<pre>`) para preservar su formato estructurado (JSON / XML).
-- AC3.4: El botón *Volver* (`monitor-back-to-list`) restaura la vista de listado manteniendo la selección y paginación previas.
+- AC3.4: El botón *Volver* (`interface-list-back-to-list`) restaura la vista de listado manteniendo la selección y paginación previas.
 
 #### RF-IFM-4: Exportación completa a CSV
 
 **Descripción:** el sistema debe permitir exportar a CSV todos los registros que cumplan los filtros activos, independientemente de la paginación de la UI.
 
 **Criterios de aceptación:**
-- AC4.1: Al pulsar *Exportar CSV* (`monitor-export-csv`), el frontend consulta todos los registros filtrados mediante `findAllLogsByCriteria` (tamaño de lote para exportación `EXPORT_PAGE_SIZE = 100000`).
+- AC4.1: Al pulsar *Exportar CSV* (`interface-list-export-csv`), el frontend consulta todos los registros filtrados mediante `findAllLogsByCriteria` (tamaño de lote para exportación `EXPORT_PAGE_SIZE = 100000`).
 - AC4.2: Si no existen registros coincidentes, muestra una notificación de aviso (`notification.export.empty`).
 - AC4.3: El fichero generado incluye BOM UTF-8 (`\uFEFF`), cabeceras traducidas y campos escapados con comillas dobles si contienen comas, comillas o saltos de línea.
 - AC4.4: El nombre del fichero descargado sigue el patrón `interfaces_monitor_YYYY-MM-DD.csv`.
@@ -71,7 +71,7 @@ Identificadores locales de este documento: `RF-IFM-*` (funcionales) y `RNF-IFM-*
 - **RNF-IFM-3 (Paginación en servidor y rendimiento):**
   - La consulta utiliza Spring Data `Pageable` y `Specification` dinámicas sobre JPA, garantizando alto rendimiento con grandes volúmenes de datos.
 - **RNF-IFM-4 (Internacionalización):**
-  - Todos los textos, etiquetas y cabeceras están internacionalizados bajo el espacio de nombres `interfaces.monitor.*`, `common.*` y `button.*`.
+  - Todos los textos, etiquetas y cabeceras están internacionalizados bajo el espacio de nombres `interfaces.interfaceList.*`, `common.*` y `button.*`.
 - **RNF-IFM-5 (Presentación de fechas y zona horaria):**
   - Las fechas UTC del servidor se convierten y muestran en la zona horaria local del cliente mediante `LocalDatePipe` y `DateService`.
 - **RNF-IFM-6 (Feedback al usuario):**
@@ -96,9 +96,9 @@ La pantalla gestiona dos modos de vista principales dentro del mismo componente:
 
 ### 2.3. Patrón visual reutilizable y wireframes
 
-La estructura visual base de esta pantalla se define en [layout.md](../../../03-technical/frontend/layout.md). Ese documento es la fuente única de verdad para los templates `List Screen`, `Form Screen` y `Confirmation Modal`; la documentación funcional del monitor describe cómo se aplica ese patrón a la entidad auditiva de operaciones de integración.
+La estructura visual base de esta pantalla se define en [layout.md](../../../03-technical/frontend/layout.md). Ese documento es la fuente única de verdad para los templates `List Screen`, `Form Screen` y `Confirmation Modal`; la documentación funcional del listado describe cómo se aplica ese patrón a la entidad auditiva de operaciones de integración.
 
-| Tipo de pantalla | Uso en monitor | Estructura base |
+| Tipo de pantalla | Uso en el listado | Estructura base |
 |------------------|----------------|-----------------|
 | `List screen` | Listado principal de logs | Cabecera, filtros, tabla, acciones y paginación |
 | `Detail screen` | Consulta de una operación | Encabezado, metadatos, payloads y botón de retorno |
@@ -110,7 +110,7 @@ La estructura visual base de esta pantalla se define en [layout.md](../../../03-
 
 ```text
 ┌─────────────────────────────────────────────────────────────────────────────────────────┐
-│ Monitor de Interfaces                                                                   │
+│ Listado de Interfaces                                                                   │
 ├─────────────────────────────────────────────────────────────────────────────────────────┤
 │ [Desde: yyyy-mm-dd] [Hasta: yyyy-mm-dd] [Tipo: Todos ▾] [Interfaz: Todas ▾] [Estado ▾] │
 │                                                                   [Limpiar] [🔍 Buscar] │
@@ -152,18 +152,18 @@ La estructura visual base de esta pantalla se define en [layout.md](../../../03-
 
 | Elemento | `data-testid` |
 | --- | --- |
-| Título de la pantalla | `monitor-title` |
-| Filtro Fecha desde | `monitor-filter-date-from` |
-| Filtro Fecha hasta | `monitor-filter-date-to` |
-| Filtro Tipo de operación | `monitor-filter-operation-type` |
-| Filtro Interfaz | `monitor-filter-interface` |
-| Filtro Estado | `monitor-filter-status` |
-| Botón Buscar / Aplicar filtros | `monitor-apply-filters` |
-| Botón Limpiar filtros | `monitor-clear-filters` |
-| Botón Ver detalle (toolbar) | `monitor-view-detail` |
-| Botón Exportar CSV | `monitor-export-csv` |
-| Tabla de datos | `monitor-table` |
-| Botón Volver (desde detalle) | `monitor-back-to-list` |
+| Título de la pantalla | `interface-list-title` |
+| Filtro Fecha desde | `interface-list-filter-date-from` |
+| Filtro Fecha hasta | `interface-list-filter-date-to` |
+| Filtro Tipo de operación | `interface-list-filter-operation-type` |
+| Filtro Interfaz | `interface-list-filter-interface` |
+| Filtro Estado | `interface-list-filter-status` |
+| Botón Buscar / Aplicar filtros | `interface-list-apply-filters` |
+| Botón Limpiar filtros | `interface-list-clear-filters` |
+| Botón Ver detalle (toolbar) | `interface-list-view-detail` |
+| Botón Exportar CSV | `interface-list-export-csv` |
+| Tabla de datos | `interface-list-table` |
+| Botón Volver (desde detalle) | `interface-list-back-to-list` |
 
 ### 2.5. Diagramas
 
@@ -217,14 +217,14 @@ sequenceDiagram
 | Capa | Componente | Responsabilidad |
 | --- | --- | --- |
 | Frontend | `InterfaceListComponent` | Gestión de filtros, paginación, cambio a vista de detalle y exportación CSV. |
-| Frontend | `InterfaceService` | Cliente HTTP para monitor y configuración de interfaces. |
+| Frontend | `InterfaceService` | Cliente HTTP para el listado y configuración de interfaces. |
 | Frontend | `TpDataTableComponent` | Tabla reutilizable con ordenación, paginación y plantillas de visualización. |
 | Frontend | `LocalDatePipe` y `DateService` | Formateo de fechas a la zona horaria del usuario. |
 | Backend | `InterfaceControllerImpl` | Endpoints REST bajo `/api/v1/interfaces` para consultas de logs y configuración. |
 | Backend | `InterfaceService` | Lógica de consulta paginada con `Specification`, conteo y registro programático `logOperation`. |
 | Backend | `InterfaceLogRepository` | Repositorio Spring Data JPA con soporte de `JpaSpecificationExecutor`. |
 | Domain | `InterfaceLog` | Entidad JPA mapeada a la tabla `interface_log`. |
-| Domain | `InterfaceLogDTO` | Record para transferencia de datos del monitor. |
+| Domain | `InterfaceLogDTO` | Record para transferencia de datos del listado. |
 | Security | `SecurityConfig` | Reglas de autorización (`INTERFACES_READ`) y bloqueo de métodos CUD. |
 
 ### 3.2. Modelos de datos
@@ -369,12 +369,12 @@ No existen endpoints ni métodos que permitan alterar o borrar registros existen
 | Ubicación | Alcance |
 | --- | --- |
 | `dashboard/src/app/core/services/interface.service.spec.ts` | Pruebas de cliente HTTP: `findAllConfigurations`, `findConfigurationById`, `findLogsByCriteria`, `findAllLogsByCriteria`, `countLogsByCriteria`, `findLogById`. |
-| `dashboard/src/app/features/interfaces/pages/interface-list/interface-list.component.stories.ts` | Historias de Storybook para validación visual de estados del monitor de interfaces. |
+| `dashboard/src/app/features/interfaces/pages/interface-list/interface-list.component.stories.ts` | Historias de Storybook para validación visual de estados del listado de interfaces. |
 | `dashboard/src/app/features/interfaces/pages/interface-list/interface-list.component.spec.ts` | Pruebas de componente: creación, estado inicial de vista y reseteo de filtros. |
 
 ### 4.3. Cobertura E2E (Playwright)
 
-Ubicación: `dashboard/e2e/tests/interfaces/interfaces-monitor.spec.ts` (Page Object en `dashboard/e2e/pages/interfaces-monitor.page.ts`).
+Ubicación: `dashboard/e2e/tests/interfaces/interface-list.spec.ts` (Page Object en `dashboard/e2e/pages/interface-list.page.ts`).
 
 | Caso | Descripción | Resultado esperado |
 |------|-------------|--------------------|
@@ -384,7 +384,7 @@ Ubicación: `dashboard/e2e/tests/interfaces/interfaces-monitor.spec.ts` (Page Ob
 | Detalle por doble clic | Doble clic sobre la primera fila | Abre la vista de detalle; *Volver* restaura el listado |
 | Cambio de tamaño de página | Cambiar tamaño a 5 registros | La tabla se actualiza con un máximo de 5 filas |
 | Exportación CSV | Exportar registros filtrados | El navegador descarga un fichero `interfaces_monitor_YYYY-MM-DD.csv` |
-| Navegación lateral | Desplegar menú *Interfaces* y seleccionar *Monitor* | Navega a `/interfaces/monitor` y carga el listado de logs |
+| Navegación lateral | Desplegar menú *Interfaces* y seleccionar *Listado de Interfaces* | Navega a `/interfaces/monitor` y carga el listado de logs |
 
 ### 4.4. Datos de prueba
 
@@ -412,7 +412,7 @@ Los datos semilla de backend para registros de interfaces se encuentran en `doma
 
 ### 4.7. Casos de prueba detallados (TCY-IFM)
 
-Catálogo de test cases derivado de los requisitos funcionales del monitor de interfaces (`RF-IFM-*`, `RNF-IFM-*`). Para el marco global de pruebas, variables (`{{BASE_URL_UI}}`, `{{BASE_URL_API}}`, `{{ADMIN_USER}}`, `{{TODAY}}`) y modelo de ejecución, consultar el [Plan Maestro de Pruebas](../../../specification/test-case.md).
+Catálogo de test cases derivado de los requisitos funcionales del listado de interfaces (`RF-IFM-*`, `RNF-IFM-*`). Para el marco global de pruebas, variables (`{{BASE_URL_UI}}`, `{{BASE_URL_API}}`, `{{ADMIN_USER}}`, `{{TODAY}}`) y modelo de ejecución, consultar el [Plan Maestro de Pruebas](../../../specification/test-case.md).
 
 Precondición del ciclo: usuario con `INTERFACES_READ`; tabla `interface_log` con datos semilla (`20250120-seed-local-interface-log.xml`). Pantalla de solo lectura.
 
@@ -424,7 +424,7 @@ Precondición del ciclo: usuario con `INTERFACES_READ`; tabla `interface_log` co
 
 | # | Acción | Resultado esperado |
 |---|--------|--------------------|
-| 1 | Navegar a `{{BASE_URL_UI}}/interfaces/monitor` | `monitor-table` visible con fecha/hora, tipo de operación, interfaz y estado; sin acciones de crear/editar/eliminar |
+| 1 | Navegar a `{{BASE_URL_UI}}/interfaces/monitor` | `interface-list-table` visible con fecha/hora, tipo de operación, interfaz y estado; sin acciones de crear/editar/eliminar |
 | 2 | Ordenar por una columna y cambiar tamaño de página (5/10/20/50) | Ordenación/paginación en servidor; si no hay datos muestra `common.noData` |
 
 #### TC-IFM-02 · Filtrado por tipo y estado
@@ -435,8 +435,8 @@ Precondición del ciclo: usuario con `INTERFACES_READ`; tabla `interface_log` co
 
 | # | Acción | Resultado esperado |
 |---|--------|--------------------|
-| 1 | Seleccionar `monitor-filter-operation-type` = `POST`, `monitor-filter-status` = `ERROR` y pulsar `monitor-apply-filters` | El listado muestra solo operaciones POST con estado ERROR y reinicia a página 0 |
-| 2 | Pulsar `monitor-clear-filters` | Se restablecen filtros y se recarga el listado completo desde la página 0 |
+| 1 | Seleccionar `interface-list-filter-operation-type` = `POST`, `interface-list-filter-status` = `ERROR` y pulsar `interface-list-apply-filters` | El listado muestra solo operaciones POST con estado ERROR y reinicia a página 0 |
+| 2 | Pulsar `interface-list-clear-filters` | Se restablecen filtros y se recarga el listado completo desde la página 0 |
 
 #### TC-IFM-03 · Filtrado por interfaz
 
@@ -446,7 +446,7 @@ Precondición del ciclo: usuario con `INTERFACES_READ`; tabla `interface_log` co
 
 | # | Acción | Resultado esperado |
 |---|--------|--------------------|
-| 1 | Seleccionar una interfaz concreta en `monitor-filter-interface` y aplicar | Solo se muestran operaciones de esa interfaz |
+| 1 | Seleccionar una interfaz concreta en `interface-list-filter-interface` y aplicar | Solo se muestran operaciones de esa interfaz |
 
 #### TC-IFM-04 · Detalle desde la barra de acciones
 
@@ -456,8 +456,8 @@ Precondición del ciclo: usuario con `INTERFACES_READ`; tabla `interface_log` co
 
 | # | Acción | Resultado esperado |
 |---|--------|--------------------|
-| 1 | Seleccionar una fila y pulsar `monitor-view-detail` | La vista de detalle muestra timestamp, tipo, interfaz, estado, `requestPayload`, `responsePayload` y `errorMessage` en bloques `<pre>` |
-| 2 | Pulsar `monitor-back-to-list` | Restaura el listado manteniendo la página y la selección previas |
+| 1 | Seleccionar una fila y pulsar `interface-list-view-detail` | La vista de detalle muestra timestamp, tipo, interfaz, estado, `requestPayload`, `responsePayload` y `errorMessage` en bloques `<pre>` |
+| 2 | Pulsar `interface-list-back-to-list` | Restaura el listado manteniendo la página y la selección previas |
 
 #### TC-IFM-05 · Detalle por doble clic
 
@@ -467,8 +467,8 @@ Precondición del ciclo: usuario con `INTERFACES_READ`; tabla `interface_log` co
 
 | # | Acción | Resultado esperado |
 |---|--------|--------------------|
-| 1 | Doble clic sobre la primera fila de `monitor-table` | Abre la vista de detalle |
-| 2 | Pulsar `monitor-back-to-list` | Restaura el listado |
+| 1 | Doble clic sobre la primera fila de `interface-list-table` | Abre la vista de detalle |
+| 2 | Pulsar `interface-list-back-to-list` | Restaura el listado |
 
 #### TC-IFM-06 · Exportación CSV completa
 
@@ -478,7 +478,7 @@ Precondición del ciclo: usuario con `INTERFACES_READ`; tabla `interface_log` co
 
 | # | Acción | Resultado esperado |
 |---|--------|--------------------|
-| 1 | Aplicar algún filtro con resultados y pulsar `monitor-export-csv` | Descarga `interfaces_monitor_{{TODAY}}.csv` con BOM UTF-8, cabeceras traducidas y campos escapados; incluye todos los registros filtrados (no solo la página) |
+| 1 | Aplicar algún filtro con resultados y pulsar `interface-list-export-csv` | Descarga `interfaces_monitor_{{TODAY}}.csv` con BOM UTF-8, cabeceras traducidas y campos escapados; incluye todos los registros filtrados (no solo la página) |
 
 #### TC-IFM-07 · Exportación sin coincidencias
 
@@ -488,7 +488,7 @@ Precondición del ciclo: usuario con `INTERFACES_READ`; tabla `interface_log` co
 
 | # | Acción | Resultado esperado |
 |---|--------|--------------------|
-| 1 | Aplicar un filtro que no devuelva resultados (p. ej. rango de fechas vacío de datos) y pulsar `monitor-export-csv` | Notificación de aviso `notification.export.empty` sin descarga |
+| 1 | Aplicar un filtro que no devuelva resultados (p. ej. rango de fechas vacío de datos) y pulsar `interface-list-export-csv` | Notificación de aviso `notification.export.empty` sin descarga |
 
 #### TC-IFM-08 · Acceso sin autorización y bloqueo de escritura
 

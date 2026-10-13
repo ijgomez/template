@@ -143,7 +143,7 @@ export class LayoutComponent implements OnInit {
         actions: ['INTERFACES_READ'],
         children: [
           {
-            labelKey: 'menu.interfaces.monitor',
+            labelKey: 'menu.interfaces.interfaceList',
             icon: 'activity',
             route: '/interfaces/monitor',
             actions: ['INTERFACES_READ'],
@@ -265,7 +265,7 @@ export class LayoutComponent implements OnInit {
     dashboard: 'menu.dashboard',
     reports: 'menu.reports',
     interfaces: 'menu.interfaces',
-    monitor: 'menu.interfaces.monitor',
+    monitor: 'menu.interfaces.interfaceList',
     configuration: 'menu.interfaces.configuration',
     administration: 'menu.administration',
     security: 'menu.administration.security',

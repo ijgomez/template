@@ -74,7 +74,7 @@ A continuación se indexan todos los ciclos de prueba del sistema con enlace dir
 | **TCY-ACC** | Catálogo de acciones | Administración · Seguridad | 7 | Activo | [Acciones · Casos detallados](../02-functional/administration/security/actions.md#46-casos-de-prueba-detallados-tcy-acc) |
 | **TCY-PAR** | Parámetros | Administración | 9 | Activo | [Parámetros · Casos detallados](../02-functional/administration/parameters/parameters.md#46-casos-de-prueba-detallados-tcy-par) |
 | **TCY-AUD** | Auditoría | Administración | 7 | Activo (1 🔴 bloqueado) | [Auditoría · Casos detallados](../02-functional/administration/audit/audit.md#46-casos-de-prueba-detallados-tcy-aud) |
-| **TCY-IFM** | Monitor de interfaces | Interfaces | 8 | Activo | [Monitor · Casos detallados](../02-functional/interfaces/monitor/monitor.md#47-casos-de-prueba-detallados-tcy-ifm) |
+| **TCY-IFM** | Listado de interfaces | Interfaces | 8 | Activo | [Listado de Interfaces · Casos detallados](../02-functional/interfaces/interface-list/interface-list.md#47-casos-de-prueba-detallados-tcy-ifm) |
 | **TCY-CFG** | Configuración de interfaces | Interfaces | 6 | Activo | [Configuración · Casos detallados](../02-functional/interfaces/configuration/configuration.md#46-casos-de-prueba-detallados-tcy-cfg) |
 | **TCY-CLN** | Nodos del cluster | Administración · Cluster | 7 | Activo | [Nodos · Casos detallados](../02-functional/administration/cluster/cluster-nodes.md#46-casos-de-prueba-detallados-tcy-cln) |
 | **TCY-CLB** | Bloqueos del cluster | Administración · Cluster | 5 | Activo | [Bloqueos · Casos detallados](../02-functional/administration/cluster/cluster-blocks.md#46-casos-de-prueba-detallados-tcy-clb) |
@@ -103,7 +103,7 @@ A continuación se indexan todos los ciclos de prueba del sistema con enlace dir
 | Acciones | RF-ACC-1..6, RNF-ACC-3 | TC-ACC-01..07 | [02-functional/administration/security/actions.md](../02-functional/administration/security/actions.md#46-casos-de-prueba-detallados-tcy-acc) |
 | Parámetros | RF-PAR-1..7, RNF-PAR-1..4 | TC-PAR-01..09 | [02-functional/administration/parameters/parameters.md](../02-functional/administration/parameters/parameters.md#46-casos-de-prueba-detallados-tcy-par) |
 | Auditoría | RF-AUD-1..5, RNF-AUD-3..4 | TC-AUD-01..07 | [02-functional/administration/audit/audit.md](../02-functional/administration/audit/audit.md#46-casos-de-prueba-detallados-tcy-aud) |
-| Monitor interfaces | RF-IFM-1..4, RNF-IFM-1 | TC-IFM-01..08 | [02-functional/interfaces/monitor/monitor.md](../02-functional/interfaces/monitor/monitor.md#47-casos-de-prueba-detallados-tcy-ifm) |
+| Listado de interfaces | RF-IFM-1..4, RNF-IFM-1 | TC-IFM-01..08 | [02-functional/interfaces/interface-list/interface-list.md](../02-functional/interfaces/interface-list/interface-list.md#47-casos-de-prueba-detallados-tcy-ifm) |
 | Config. interfaces | RF-CFG-1..5, RNF-CFG-1 | TC-CFG-01..06 | [02-functional/interfaces/configuration/configuration.md](../02-functional/interfaces/configuration/configuration.md#46-casos-de-prueba-detallados-tcy-cfg) |
 | Nodos cluster | RF-CLN-1..6, RNF-CLN-2 | TC-CLN-01..07 | [02-functional/administration/cluster/cluster-nodes.md](../02-functional/administration/cluster/cluster-nodes.md#46-casos-de-prueba-detallados-tcy-cln) |
 | Bloqueos cluster | RF-CLB-1..5 | TC-CLB-01..05 | [02-functional/administration/cluster/cluster-blocks.md](../02-functional/administration/cluster/cluster-blocks.md#46-casos-de-prueba-detallados-tcy-clb) |

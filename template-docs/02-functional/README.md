@@ -64,7 +64,7 @@ Supervisión e integración de la aplicación con sistemas externos.
 | Documento | Descripción |
 |-----------|-------------|
 | [Interfaces](interfaces/interfaces.md) | Índice del módulo: visión unificada del estado, la actividad y la configuración de las interfaces. |
-| [Monitor](interfaces/monitor/monitor.md) | Monitor de actividad de las integraciones: consulta y filtrado de los logs de operación de las interfaces. |
+| [Listado de Interfaces](interfaces/interface-list/interface-list.md) | Listado de actividad de las integraciones: consulta y filtrado de los logs de operación de las interfaces. |
 | [Configuración](interfaces/configuration/configuration.md) | Consulta en solo lectura de la definición y el estado de las interfaces registradas, con filtros, detalle y exportación CSV. |
 
 ### Administración

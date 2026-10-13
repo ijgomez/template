@@ -1,76 +1,76 @@
 <!-- ═══════════════════════════════════════════════════════════════════════════
-     INTERFACE MONITOR LIST VIEW
+     INTERFACE LIST VIEW
      ═══════════════════════════════════════════════════════════════════════════ -->
 @if (viewMode() === 'list') {
   <!-- Title -->
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3 mb-0" data-testid="monitor-title">{{ 'interfaces.monitor.title' | translate }}</h1>
+    <h1 class="h3 mb-0" data-testid="interface-list-title">{{ 'interfaces.interfaceList.title' | translate }}</h1>
   </div>
 
   <!-- Filter bar -->
   <div class="tp-filter-bar mb-3">
     <div class="row g-3 align-items-end">
       <div class="col-md-2">
-        <label for="filterDateFrom" class="form-label">{{ 'interfaces.monitor.filters.dateFrom' | translate }}</label>
+        <label for="filterDateFrom" class="form-label">{{ 'interfaces.interfaceList.filters.dateFrom' | translate }}</label>
         <tp-date-picker
           id="filterDateFrom"
           name="filterDateFrom"
           [ngModel]="filterDateFrom()"
           (ngModelChange)="filterDateFrom.set($event)"
-          [ariaLabel]="'interfaces.monitor.filters.dateFrom' | translate"
-          [testId]="'monitor-filter-date-from'"
+          [ariaLabel]="'interfaces.interfaceList.filters.dateFrom' | translate"
+          [testId]="'interface-list-filter-date-from'"
           [invalid]="hasInvalidDateRange()">
         </tp-date-picker>
       </div>
       <div class="col-md-2">
-        <label for="filterDateTo" class="form-label">{{ 'interfaces.monitor.filters.dateTo' | translate }}</label>
+        <label for="filterDateTo" class="form-label">{{ 'interfaces.interfaceList.filters.dateTo' | translate }}</label>
         <tp-date-picker
           id="filterDateTo"
           name="filterDateTo"
           [ngModel]="filterDateTo()"
           (ngModelChange)="filterDateTo.set($event)"
-          [ariaLabel]="'interfaces.monitor.filters.dateTo' | translate"
-          [testId]="'monitor-filter-date-to'"
+          [ariaLabel]="'interfaces.interfaceList.filters.dateTo' | translate"
+          [testId]="'interface-list-filter-date-to'"
           [invalid]="hasInvalidDateRange()">
         </tp-date-picker>
       </div>
       <div class="col-md-2">
-        <label for="filterOperationType" class="form-label">{{ 'interfaces.monitor.fields.operationType' | translate }}</label>
+        <label for="filterOperationType" class="form-label">{{ 'interfaces.interfaceList.fields.operationType' | translate }}</label>
         <select
           id="filterOperationType"
           class="form-select form-select-sm"
-          data-testid="monitor-filter-operation-type"
-          [attr.aria-label]="'interfaces.monitor.fields.operationType' | translate"
+          data-testid="interface-list-filter-operation-type"
+          [attr.aria-label]="'interfaces.interfaceList.fields.operationType' | translate"
           [(ngModel)]="filterOperationType">
-          <option value="">{{ 'interfaces.monitor.filters.allTypes' | translate }}</option>
+          <option value="">{{ 'interfaces.interfaceList.filters.allTypes' | translate }}</option>
           @for (type of operationTypes; track type) {
             <option [value]="type">{{ type }}</option>
           }
         </select>
       </div>
       <div class="col-md-2">
-        <label for="filterInterface" class="form-label">{{ 'interfaces.monitor.fields.interfaceName' | translate }}</label>
+        <label for="filterInterface" class="form-label">{{ 'interfaces.interfaceList.fields.interfaceName' | translate }}</label>
         <select
           id="filterInterface"
           class="form-select form-select-sm"
-          data-testid="monitor-filter-interface"
-          [attr.aria-label]="'interfaces.monitor.fields.interfaceName' | translate"
+          data-testid="interface-list-filter-interface"
+          [attr.aria-label]="'interfaces.interfaceList.fields.interfaceName' | translate"
           [(ngModel)]="filterInterfaceId">
-          <option value="">{{ 'interfaces.monitor.filters.allInterfaces' | translate }}</option>
+          <option value="">{{ 'interfaces.interfaceList.filters.allInterfaces' | translate }}</option>
           @for (iface of availableInterfaces(); track iface.id) {
             <option [value]="iface.id">{{ iface.name }}</option>
           }
         </select>
       </div>
       <div class="col-md-2">
-        <label for="filterStatus" class="form-label">{{ 'interfaces.monitor.fields.status' | translate }}</label>
+        <label for="filterStatus" class="form-label">{{ 'interfaces.interfaceList.fields.status' | translate }}</label>
         <select
           id="filterStatus"
           class="form-select form-select-sm"
-          data-testid="monitor-filter-status"
-          [attr.aria-label]="'interfaces.monitor.fields.status' | translate"
+          data-testid="interface-list-filter-status"
+          [attr.aria-label]="'interfaces.interfaceList.fields.status' | translate"
           [(ngModel)]="filterStatus">
-          <option value="">{{ 'interfaces.monitor.filters.allStatuses' | translate }}</option>
+          <option value="">{{ 'interfaces.interfaceList.filters.allStatuses' | translate }}</option>
           @for (s of logStatuses; track s) {
             <option [value]="s">{{ s }}</option>
           }
@@ -85,7 +85,7 @@
         <button
           class="btn btn-primary btn-sm"
           type="button"
-          data-testid="monitor-apply-filters"
+          data-testid="interface-list-apply-filters"
           [disabled]="isFilterDisabled()"
           (click)="applyFilters()">
           <i class="bi bi-search me-1" aria-hidden="true"></i>{{ 'button.search' | translate }}
@@ -93,9 +93,9 @@
         <button
           class="btn btn-outline-secondary btn-sm"
           type="button"
-          data-testid="monitor-clear-filters"
+          data-testid="interface-list-clear-filters"
           (click)="clearFilters()">
-          <i class="bi bi-x-circle me-1" aria-hidden="true"></i>{{ 'interfaces.monitor.filters.clear' | translate }}
+          <i class="bi bi-x-circle me-1" aria-hidden="true"></i>{{ 'interfaces.interfaceList.filters.clear' | translate }}
         </button>
       </div>
     </div>
@@ -107,14 +107,14 @@
       class="btn btn-primary btn-sm"
       type="button"
       [disabled]="!selectedLog()"
-      data-testid="monitor-view-detail"
+      data-testid="interface-list-view-detail"
       (click)="viewDetail(selectedLog()!)">
       <i class="bi bi-eye me-1" aria-hidden="true"></i>{{ 'common.detail' | translate }}
     </button>
     <button
       class="btn btn-outline-secondary btn-sm ms-auto"
       type="button"
-      data-testid="monitor-export-csv"
+      data-testid="interface-list-export-csv"
       (click)="exportCsv()">
       <i class="bi bi-download me-1" aria-hidden="true"></i>{{ 'button.export' | translate }} CSV
     </button>
@@ -136,8 +136,8 @@
     (pageChange)="goToPage($event)"
     (pageSizeChange)="changePageSize($event)"
     (sortChange)="onSort($event)"
-    ariaLabel="Listado de monitor de interfaces"
-    testId="monitor-table">
+    ariaLabel="Listado de interfaces"
+    testId="interface-list-table">
 
     <ng-template tpColumn="timestamp" let-log>
       {{ log.timestamp | localDate }}
@@ -162,13 +162,13 @@
 }
 
 <!-- ═══════════════════════════════════════════════════════════════════════════
-     INTERFACE MONITOR DETAIL VIEW
+     INTERFACE LIST DETAIL VIEW
      ═══════════════════════════════════════════════════════════════════════════ -->
 @if (viewMode() === 'detail') {
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="h3 mb-0">{{ 'interfaces.monitor.detail.title' | translate }}</h1>
+    <h1 class="h3 mb-0">{{ 'interfaces.interfaceList.detail.title' | translate }}</h1>
     <button class="btn btn-outline-secondary btn-sm"
-            data-testid="monitor-back-to-list"
+            data-testid="interface-list-back-to-list"
             (click)="backToList()">
       <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>{{ 'button.back' | translate }}
     </button>
@@ -179,11 +179,11 @@
       <div class="card-body">
         <div class="row g-3">
           <div class="col-md-4">
-            <label class="form-label fw-bold">{{ 'interfaces.monitor.fields.timestamp' | translate }}</label>
+            <label class="form-label fw-bold">{{ 'interfaces.interfaceList.fields.timestamp' | translate }}</label>
             <p class="form-control-plaintext">{{ log.timestamp | localDate }}</p>
           </div>
           <div class="col-md-4">
-            <label class="form-label fw-bold">{{ 'interfaces.monitor.fields.operationType' | translate }}</label>
+            <label class="form-label fw-bold">{{ 'interfaces.interfaceList.fields.operationType' | translate }}</label>
             <p class="form-control-plaintext">
               <span class="badge bg-secondary-subtle text-secondary">
                 {{ log.operationType }}
@@ -191,11 +191,11 @@
             </p>
           </div>
           <div class="col-md-4">
-            <label class="form-label fw-bold">{{ 'interfaces.monitor.fields.interfaceName' | translate }}</label>
+            <label class="form-label fw-bold">{{ 'interfaces.interfaceList.fields.interfaceName' | translate }}</label>
             <p class="form-control-plaintext">{{ log.interfaceName }}</p>
           </div>
           <div class="col-md-4">
-            <label class="form-label fw-bold">{{ 'interfaces.monitor.fields.status' | translate }}</label>
+            <label class="form-label fw-bold">{{ 'interfaces.interfaceList.fields.status' | translate }}</label>
             <p class="form-control-plaintext">
               <span class="badge"
                     [class.bg-success-subtle]="log.status === 'SUCCESS'"
@@ -207,16 +207,16 @@
             </p>
           </div>
           <div class="col-12">
-            <label class="form-label fw-bold">{{ 'interfaces.monitor.fields.requestPayload' | translate }}</label>
+            <label class="form-label fw-bold">{{ 'interfaces.interfaceList.fields.requestPayload' | translate }}</label>
             <pre class="bg-light p-2 rounded small">{{ log.requestPayload ?? '-' }}</pre>
           </div>
           <div class="col-12">
-            <label class="form-label fw-bold">{{ 'interfaces.monitor.fields.responsePayload' | translate }}</label>
+            <label class="form-label fw-bold">{{ 'interfaces.interfaceList.fields.responsePayload' | translate }}</label>
             <pre class="bg-light p-2 rounded small">{{ log.responsePayload ?? '-' }}</pre>
           </div>
           @if (log.errorMessage) {
             <div class="col-12">
-              <label class="form-label fw-bold">{{ 'interfaces.monitor.fields.errorMessage' | translate }}</label>
+              <label class="form-label fw-bold">{{ 'interfaces.interfaceList.fields.errorMessage' | translate }}</label>
               <p class="form-control-plaintext text-danger">{{ log.errorMessage }}</p>
             </div>
           }

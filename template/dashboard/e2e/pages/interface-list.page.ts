@@ -4,12 +4,12 @@ export type InterfaceOperationType = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
 export type InterfaceLogStatus = 'SUCCESS' | 'ERROR' | 'BAD_REQUEST' | 'NOT_FOUND';
 
 /**
- * Page Object de la pantalla de monitor de interfaces.
+ * Page Object de la pantalla de listado de interfaces.
  *
  * Encapsula la interacción con `/interfaces/monitor` usando los `data-testid`
- * definidos en `monitor.component.html` y la tabla reutilizable `tp-data-table`.
+ * definidos en `interface-list.component.html` y la tabla reutilizable `tp-data-table`.
  */
-export class InterfacesMonitorPage {
+export class InterfaceListPage {
   private readonly page: Page;
 
   readonly title: Locator;
@@ -33,37 +33,37 @@ export class InterfacesMonitorPage {
   readonly detailCard: Locator;
 
   readonly interfacesNavToggle: Locator;
-  readonly monitorNavItem: Locator;
+  readonly interfaceListNavItem: Locator;
 
   constructor(page: Page) {
     this.page = page;
 
-    this.title = page.getByTestId('monitor-title');
-    this.filterDateFrom = page.getByTestId('monitor-filter-date-from');
-    this.filterDateTo = page.getByTestId('monitor-filter-date-to');
-    this.filterOperationType = page.getByTestId('monitor-filter-operation-type');
-    this.filterInterface = page.getByTestId('monitor-filter-interface');
-    this.filterStatus = page.getByTestId('monitor-filter-status');
-    this.applyFiltersButton = page.getByTestId('monitor-apply-filters');
-    this.clearFiltersButton = page.getByTestId('monitor-clear-filters');
+    this.title = page.getByTestId("interface-list-title");
+    this.filterDateFrom = page.getByTestId("interface-list-filter-date-from");
+    this.filterDateTo = page.getByTestId("interface-list-filter-date-to");
+    this.filterOperationType = page.getByTestId("interface-list-filter-operation-type");
+    this.filterInterface = page.getByTestId("interface-list-filter-interface");
+    this.filterStatus = page.getByTestId("interface-list-filter-status");
+    this.applyFiltersButton = page.getByTestId("interface-list-apply-filters");
+    this.clearFiltersButton = page.getByTestId("interface-list-clear-filters");
 
-    this.viewDetailButton = page.getByTestId('monitor-view-detail');
-    this.exportButton = page.getByTestId('monitor-export-csv');
+    this.viewDetailButton = page.getByTestId("interface-list-view-detail");
+    this.exportButton = page.getByTestId("interface-list-export-csv");
 
-    this.table = page.getByTestId('monitor-table');
+    this.table = page.getByTestId("interface-list-table");
     this.rows = this.table.locator('tbody tr[role="row"]');
     this.paginationInfo = page.getByTestId('pagination-info');
     this.pageSizeSelect = page.getByTestId('pagination-page-size');
 
-    this.backToListButton = page.getByTestId('monitor-back-to-list');
+    this.backToListButton = page.getByTestId("interface-list-back-to-list");
     this.detailCard = page.locator('.card .card-body');
 
     this.interfacesNavToggle = page.getByTestId('nav-toggle-menu.interfaces');
-    this.monitorNavItem = page.getByTestId('nav-menu.interfaces.monitor');
+    this.interfaceListNavItem = page.getByTestId("nav-menu.interfaces.interfaceList");
   }
 
   /**
-   * Navega a la pantalla del monitor de interfaces y espera a que la tabla sea visible.
+   * Navega a la pantalla de listado de interfaces y espera a que la tabla sea visible.
    */
   async goto(): Promise<void> {
     await this.page.goto('/interfaces/monitor');
@@ -97,7 +97,7 @@ export class InterfacesMonitorPage {
       await this.filterStatus.selectOption(filters.status);
     }
 
-    const response = this.waitForMonitorQuery();
+    const response = this.waitForInterfaceListQuery();
     await this.applyFiltersButton.click();
     await response;
   }
@@ -106,7 +106,7 @@ export class InterfacesMonitorPage {
    * Limpia los filtros y espera la recarga completa del listado.
    */
   async clearFilters(): Promise<void> {
-    const response = this.waitForMonitorQuery();
+    const response = this.waitForInterfaceListQuery();
     await this.clearFiltersButton.click();
     await response;
   }
@@ -149,7 +149,7 @@ export class InterfacesMonitorPage {
    * Cambia el tamaño de página y espera la respuesta del backend.
    */
   async changePageSize(size: number): Promise<void> {
-    const response = this.waitForMonitorQuery();
+    const response = this.waitForInterfaceListQuery();
     await this.pageSizeSelect.selectOption(size.toString());
     await response;
   }
@@ -173,7 +173,7 @@ export class InterfacesMonitorPage {
     }
   }
 
-  private waitForMonitorQuery(): Promise<unknown> {
+  private waitForInterfaceListQuery(): Promise<unknown> {
     return this.page.waitForResponse(
       (response) =>
         response.request().method() === 'GET' &&

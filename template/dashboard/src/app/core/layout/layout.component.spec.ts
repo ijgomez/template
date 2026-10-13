@@ -201,14 +201,14 @@ describe('LayoutComponent', () => {
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    const monitorLink = compiled.querySelector('[data-testid="nav-menu.interfaces.monitor"]');
-    expect(monitorLink).toBeTruthy();
+    const interfaceListLink = compiled.querySelector('[data-testid="nav-menu.interfaces.interfaceList"]');
+    expect(interfaceListLink).toBeTruthy();
   });
 
   it('should hide child items when section is collapsed', () => {
     const compiled = fixture.nativeElement as HTMLElement;
-    const monitorLink = compiled.querySelector('[data-testid="nav-menu.interfaces.monitor"]');
-    expect(monitorLink).toBeNull();
+    const interfaceListLink = compiled.querySelector('[data-testid="nav-menu.interfaces.interfaceList"]');
+    expect(interfaceListLink).toBeNull();
   });
 
   it('should support nested expandable sections (Administration > Security)', () => {

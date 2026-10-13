@@ -80,10 +80,10 @@ export class InterfaceListComponent implements OnInit {
 
   // Column definitions for tp-data-table
   readonly columns: ColumnDef[] = [
-    { key: 'timestamp', header: 'interfaces.monitor.fields.timestamp', sortable: true, resizable: true, reorderable: true },
-    { key: 'operationType', header: 'interfaces.monitor.fields.operationType', sortable: true, resizable: true, reorderable: true },
-    { key: 'interfaceName', header: 'interfaces.monitor.fields.interfaceName', sortable: true, resizable: true, reorderable: true },
-    { key: 'status', header: 'interfaces.monitor.fields.status', sortable: true, resizable: true, reorderable: true },
+    { key: 'timestamp', header: 'interfaces.interfaceList.fields.timestamp', sortable: true, resizable: true, reorderable: true },
+    { key: 'operationType', header: 'interfaces.interfaceList.fields.operationType', sortable: true, resizable: true, reorderable: true },
+    { key: 'interfaceName', header: 'interfaces.interfaceList.fields.interfaceName', sortable: true, resizable: true, reorderable: true },
+    { key: 'status', header: 'interfaces.interfaceList.fields.status', sortable: true, resizable: true, reorderable: true },
   ];
 
   ngOnInit(): void {
@@ -218,10 +218,10 @@ export class InterfaceListComponent implements OnInit {
 
         try {
           const headers = [
-            this.translateService.instant('interfaces.monitor.fields.timestamp'),
-            this.translateService.instant('interfaces.monitor.fields.operationType'),
-            this.translateService.instant('interfaces.monitor.fields.interfaceName'),
-            this.translateService.instant('interfaces.monitor.fields.status'),
+            this.translateService.instant('interfaces.interfaceList.fields.timestamp'),
+            this.translateService.instant('interfaces.interfaceList.fields.operationType'),
+            this.translateService.instant('interfaces.interfaceList.fields.interfaceName'),
+            this.translateService.instant('interfaces.interfaceList.fields.status'),
           ];
 
           const rows = data.map((log) => [

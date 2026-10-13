@@ -23,7 +23,7 @@ Describe los distintos módulos funcionales de la aplicación.
   - [Autenticación y Gestión de Sesión](02-functional/login/authentication.md)
 - [Informes](02-functional/reports/reports.md)
 - [Interfaces](02-functional/interfaces/interfaces.md)
-  - [Monitor](02-functional/interfaces/monitor/monitor.md)
+  - [Listado de Interfaces](02-functional/interfaces/interface-list/interface-list.md)
   - [Configuración](02-functional/interfaces/configuration/configuration.md)
 - [Administración](02-functional/administration/administration.md)
   - [Seguridad](02-functional/administration/security/security.md)
