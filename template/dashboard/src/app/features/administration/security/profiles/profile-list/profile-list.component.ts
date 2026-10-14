@@ -1,4 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit } from '@angular/core';
+import { toObservable, takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { debounceTime, distinctUntilChanged, skip } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -76,6 +78,14 @@ export class ProfileListComponent implements OnInit {
 
   // Action-based permissions
   readonly canWrite = computed(() => this.authService.hasAction('PROFILE_WRITE'));
+
+  constructor() {
+    // Automatically apply the filter as the user types, debounced to avoid
+    // flooding the backend on every keystroke (mirrors the auto-search UX).
+    toObservable(this.filterName)
+      .pipe(skip(1), debounceTime(300), distinctUntilChanged(), takeUntilDestroyed())
+      .subscribe(() => this.applyFilter());
+  }
 
   ngOnInit(): void {
     this.loadProfiles();

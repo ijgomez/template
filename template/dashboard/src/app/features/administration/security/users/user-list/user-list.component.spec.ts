@@ -107,9 +107,9 @@ describe('UserListComponent', () => {
   describe('filters', () => {
     it('applyFilters should build criteria from filter fields and reset the page', () => {
       component.currentPage.set(3);
-      component.filterUsername = 'jdoe';
-      component.filterFirstName = 'John';
-      component.filterProfileId = 2;
+      component.filterUsername.set('jdoe');
+      component.filterFirstName.set('John');
+      component.filterProfileId.set(2);
 
       component.applyFilters();
 
@@ -118,9 +118,9 @@ describe('UserListComponent', () => {
     });
 
     it('applyFilters should omit empty fields', () => {
-      component.filterUsername = '';
-      component.filterFirstName = '';
-      component.filterProfileId = null;
+      component.filterUsername.set('');
+      component.filterFirstName.set('');
+      component.filterProfileId.set(null);
 
       component.applyFilters();
 
@@ -128,16 +128,16 @@ describe('UserListComponent', () => {
     });
 
     it('clearFilters should reset filter fields and criteria', () => {
-      component.filterUsername = 'x';
-      component.filterFirstName = 'y';
-      component.filterProfileId = 9;
+      component.filterUsername.set('x');
+      component.filterFirstName.set('y');
+      component.filterProfileId.set(9);
       component.criteria.set({ username: 'x' });
 
       component.clearFilters();
 
-      expect(component.filterUsername).toBe('');
-      expect(component.filterFirstName).toBe('');
-      expect(component.filterProfileId).toBeNull();
+      expect(component.filterUsername()).toBe('');
+      expect(component.filterFirstName()).toBe('');
+      expect(component.filterProfileId()).toBeNull();
       expect(component.criteria()).toEqual({});
       expect(component.currentPage()).toBe(0);
     });

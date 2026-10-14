@@ -1,4 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject, signal, computed } from '@angular/core';
+import { toObservable, takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { debounceTime, distinctUntilChanged, skip } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
@@ -83,8 +85,26 @@ export class ParameterListComponent {
   readonly showingFrom = computed(() => this.currentPage() * this.pageSize() + 1);
   readonly showingTo = computed(() => Math.min((this.currentPage() + 1) * this.pageSize(), this.totalElements()));
 
+  /** Snapshot of the active filter values. Drives automatic (debounced) search. */
+  private readonly filterState = computed(() => ({
+    code: this.filterCode(),
+    description: this.filterDescription(),
+    type: this.filterType(),
+  }));
+
   constructor() {
     this.loadParameters();
+
+    // Automatically apply filters as the user types, debounced to avoid
+    // flooding the backend on every keystroke (mirrors the auto-search UX).
+    toObservable(this.filterState)
+      .pipe(
+        skip(1),
+        debounceTime(300),
+        distinctUntilChanged((a, b) => a.code === b.code && a.description === b.description && a.type === b.type),
+        takeUntilDestroyed(),
+      )
+      .subscribe(() => this.applyFilters());
   }
 
   // ─── List Actions ────────────────────────────────────────────

@@ -69,6 +69,11 @@ export class InterfaceListPage {
     await this.page.goto('/interfaces/monitor');
     await this.page.waitForURL(/\/interfaces\/monitor$/);
     await this.table.waitFor({ state: 'visible' });
+    // La tabla se vuelve visible mientras aún muestra el estado de carga (sin
+    // filas de datos). Esperar a la primera fila garantiza que la carga inicial
+    // ha terminado antes de que un test lea celdas o cuente filas, evitando
+    // carreras cuando la respuesta del backend llega con retraso bajo carga.
+    await this.rows.first().waitFor({ state: 'visible' });
   }
 
   /**
@@ -97,7 +102,11 @@ export class InterfaceListPage {
       await this.filterStatus.selectOption(filters.status);
     }
 
-    const response = this.waitForInterfaceListQuery();
+    // Al aplicar filtros se reinicia a la página 0; esperar una respuesta con
+    // page=0 evita confundirla con una petición previa aún en vuelo. No se
+    // espera a que haya filas visibles porque un filtro puede no devolver
+    // resultados (estado vacío legítimo).
+    const response = this.waitForInterfaceListQuery({ page: 0 });
     await this.applyFiltersButton.click();
     await response;
   }
@@ -106,9 +115,10 @@ export class InterfaceListPage {
    * Limpia los filtros y espera la recarga completa del listado.
    */
   async clearFilters(): Promise<void> {
-    const response = this.waitForInterfaceListQuery();
+    const response = this.waitForInterfaceListQuery({ page: 0 });
     await this.clearFiltersButton.click();
     await response;
+    await this.rows.first().waitFor({ state: 'visible' });
   }
 
   /**
@@ -147,11 +157,20 @@ export class InterfaceListPage {
 
   /**
    * Cambia el tamaño de página y espera la respuesta del backend.
+   *
+   * Espera específicamente la respuesta cuyo parámetro `size` coincide con el
+   * solicitado. Así se evita confundir una petición previa aún en vuelo (p. ej.
+   * la carga inicial con `size=10` que resuelve con retraso) con la respuesta
+   * del cambio de tamaño, lo que provocaría leer la tabla antes de tiempo.
    */
   async changePageSize(size: number): Promise<void> {
-    const response = this.waitForInterfaceListQuery();
+    const response = this.waitForInterfaceListQuery({ size });
     await this.pageSizeSelect.selectOption(size.toString());
     await response;
+    // La respuesta de red llega antes de que Angular repinte la tabla. Esperar
+    // a que la primera fila sea visible garantiza que el estado de carga ha
+    // terminado antes de que el test cuente filas.
+    await this.rows.first().waitFor({ state: 'visible' });
   }
 
   /**
@@ -173,13 +192,31 @@ export class InterfaceListPage {
     }
   }
 
-  private waitForInterfaceListQuery(): Promise<unknown> {
-    return this.page.waitForResponse(
-      (response) =>
-        response.request().method() === 'GET' &&
-        response.url().includes('/interfaces/monitor') &&
-        !response.url().includes('/count') &&
-        response.status() === 200,
-    );
+  /**
+   * Espera una respuesta GET del listado de interfaces (`/interfaces/monitor`,
+   * excluyendo `/count`). Si se indica `size` y/o `page`, solo resuelve cuando
+   * los parámetros de la URL coinciden, de modo que una petición distinta aún
+   * en vuelo no satisfaga la espera de forma prematura.
+   */
+  private waitForInterfaceListQuery(match?: { size?: number; page?: number }): Promise<unknown> {
+    return this.page.waitForResponse((response) => {
+      if (
+        response.request().method() !== 'GET' ||
+        !response.url().includes('/interfaces/monitor') ||
+        response.url().includes('/count') ||
+        response.status() !== 200
+      ) {
+        return false;
+      }
+
+      const params = new URL(response.url()).searchParams;
+      if (match?.size !== undefined && params.get('size') !== String(match.size)) {
+        return false;
+      }
+      if (match?.page !== undefined && params.get('page') !== String(match.page)) {
+        return false;
+      }
+      return true;
+    });
   }
 }

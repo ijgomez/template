@@ -18,7 +18,8 @@
         <input id="filterUsername"
                type="text"
                class="form-control form-control-sm"
-               [(ngModel)]="filterUsername"
+               [ngModel]="filterUsername()"
+               (ngModelChange)="filterUsername.set($event)"
                name="filterUsername"
                [placeholder]="'users.fields.username' | translate"
                data-testid="filter-username">
@@ -28,7 +29,8 @@
         <input id="filterFirstName"
                type="text"
                class="form-control form-control-sm"
-               [(ngModel)]="filterFirstName"
+               [ngModel]="filterFirstName()"
+               (ngModelChange)="filterFirstName.set($event)"
                name="filterFirstName"
                [placeholder]="'users.fields.firstName' | translate"
                data-testid="filter-firstName">
@@ -36,7 +38,8 @@
       <div class="col-md-3">
         <label for="filterProfile" class="form-label">{{ 'users.fields.profile' | translate }}</label>
         <tp-profile-select
-          [(ngModel)]="filterProfileId"
+          [ngModel]="filterProfileId()"
+          (ngModelChange)="filterProfileId.set($event)"
           name="filterProfile"
           placeholderKey="users.filters.allProfiles"
           [placeholderSelectable]="true"

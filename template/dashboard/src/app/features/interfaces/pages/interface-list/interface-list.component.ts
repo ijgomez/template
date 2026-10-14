@@ -1,4 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit } from '@angular/core';
+import { toObservable, takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { debounceTime, distinctUntilChanged, skip } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
@@ -85,6 +87,36 @@ export class InterfaceListComponent implements OnInit {
     { key: 'interfaceName', header: 'interfaces.interfaceList.fields.interfaceName', sortable: true, resizable: true, reorderable: true },
     { key: 'status', header: 'interfaces.interfaceList.fields.status', sortable: true, resizable: true, reorderable: true },
   ];
+
+  /** Snapshot of the active filter values. Drives automatic (debounced) search. */
+  private readonly filterState = computed(() => ({
+    dateFrom: this.filterDateFrom(),
+    dateTo: this.filterDateTo(),
+    operationType: this.filterOperationType(),
+    interfaceId: this.filterInterfaceId(),
+    status: this.filterStatus(),
+  }));
+
+  constructor() {
+    // Automatically apply filters as the user types or picks values, debounced
+    // to avoid flooding the backend on every keystroke. applyFilters() already
+    // skips the request when the date range is invalid.
+    toObservable(this.filterState)
+      .pipe(
+        skip(1),
+        debounceTime(300),
+        distinctUntilChanged(
+          (a, b) =>
+            a.dateFrom === b.dateFrom &&
+            a.dateTo === b.dateTo &&
+            a.operationType === b.operationType &&
+            a.interfaceId === b.interfaceId &&
+            a.status === b.status,
+        ),
+        takeUntilDestroyed(),
+      )
+      .subscribe(() => this.applyFilters());
+  }
 
   ngOnInit(): void {
     this.loadAvailableInterfaces();

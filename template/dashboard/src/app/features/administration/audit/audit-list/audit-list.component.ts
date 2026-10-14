@@ -1,4 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit } from '@angular/core';
+import { toObservable, takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { debounceTime, distinctUntilChanged, skip } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
@@ -83,6 +85,36 @@ export class AuditListComponent implements OnInit {
     { key: 'entityId', header: 'audit.fields.entityId' },
     { key: 'detail', header: 'audit.fields.detail' },
   ];
+
+  /** Snapshot of the active filter values. Drives automatic (debounced) search. */
+  private readonly filterState = computed(() => ({
+    dateFrom: this.filterDateFrom(),
+    dateTo: this.filterDateTo(),
+    username: this.filterUsername(),
+    operationType: this.filterOperationType(),
+    section: this.filterSection(),
+  }));
+
+  constructor() {
+    // Automatically apply filters as the user types or picks values, debounced
+    // to avoid flooding the backend on every keystroke. applyFilters() already
+    // skips the request when the date range is invalid.
+    toObservable(this.filterState)
+      .pipe(
+        skip(1),
+        debounceTime(300),
+        distinctUntilChanged(
+          (a, b) =>
+            a.dateFrom === b.dateFrom &&
+            a.dateTo === b.dateTo &&
+            a.username === b.username &&
+            a.operationType === b.operationType &&
+            a.section === b.section,
+        ),
+        takeUntilDestroyed(),
+      )
+      .subscribe(() => this.applyFilters());
+  }
 
   ngOnInit(): void {
     this.loadAuditLogs();

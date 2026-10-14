@@ -1,4 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit } from '@angular/core';
+import { toObservable, takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { debounceTime, distinctUntilChanged, skip } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -59,9 +61,9 @@ export class UserListComponent implements OnInit {
 
   // Filter state
   readonly criteria = signal<UserCriteria>({});
-  filterUsername = '';
-  filterFirstName = '';
-  filterProfileId: number | null = null;
+  readonly filterUsername = signal('');
+  readonly filterFirstName = signal('');
+  readonly filterProfileId = signal<number | null>(null);
 
   // Detail / Form state
   readonly selectedRow = signal<UserDTO | null>(null);
@@ -74,6 +76,26 @@ export class UserListComponent implements OnInit {
   // Delete confirmation
   readonly showDeleteConfirm = signal(false);
   readonly userToDelete = signal<UserDTO | null>(null);
+
+  /** Snapshot of the active filter values. Drives automatic (debounced) search. */
+  private readonly filterState = computed(() => ({
+    username: this.filterUsername(),
+    firstName: this.filterFirstName(),
+    profileId: this.filterProfileId(),
+  }));
+
+  constructor() {
+    // Automatically apply filters as the user types or picks a profile,
+    // debounced to avoid flooding the backend on every keystroke.
+    toObservable(this.filterState)
+      .pipe(
+        skip(1),
+        debounceTime(300),
+        distinctUntilChanged((a, b) => a.username === b.username && a.firstName === b.firstName && a.profileId === b.profileId),
+        takeUntilDestroyed(),
+      )
+      .subscribe(() => this.applyFilters());
+  }
 
   ngOnInit(): void {
     this.loadUsers();
@@ -120,18 +142,18 @@ export class UserListComponent implements OnInit {
 
   applyFilters(): void {
     this.criteria.set({
-      username: this.filterUsername || undefined,
-      firstName: this.filterFirstName || undefined,
-      profileId: this.filterProfileId ?? undefined,
+      username: this.filterUsername() || undefined,
+      firstName: this.filterFirstName() || undefined,
+      profileId: this.filterProfileId() ?? undefined,
     });
     this.currentPage.set(0);
     this.loadUsersWithProgress();
   }
 
   clearFilters(): void {
-    this.filterUsername = '';
-    this.filterFirstName = '';
-    this.filterProfileId = null;
+    this.filterUsername.set('');
+    this.filterFirstName.set('');
+    this.filterProfileId.set(null);
     this.criteria.set({});
     this.currentPage.set(0);
     this.loadUsersWithProgress();

@@ -1,4 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit } from '@angular/core';
+import { toObservable, takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { debounceTime, distinctUntilChanged, skip } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
@@ -54,6 +56,14 @@ export class BlockListComponent implements OnInit {
   // Pagination display helpers
   readonly showingFrom = computed(() => this.totalElements() === 0 ? 0 : this.currentPage() * this.pageSize() + 1);
   readonly showingTo = computed(() => Math.min((this.currentPage() + 1) * this.pageSize(), this.totalElements()));
+
+  constructor() {
+    // Automatically apply the filter as the user types, debounced to avoid
+    // flooding the backend on every keystroke (mirrors the auto-search UX).
+    toObservable(this.filterName)
+      .pipe(skip(1), debounceTime(300), distinctUntilChanged(), takeUntilDestroyed())
+      .subscribe(() => this.applyFilters());
+  }
 
   ngOnInit(): void {
     this.loadBlocks();
