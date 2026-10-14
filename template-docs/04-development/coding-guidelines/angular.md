@@ -41,6 +41,7 @@ src/
 
 - **Principio de Responsabilidad Única (SRP):** cada componente debe tener una única responsabilidad bien definida. Si un componente gestiona más de una funcionalidad (por ejemplo, visualización y edición, o listado y detalle), se debe dividir en componentes más pequeños y cohesivos.
 - **Reutilización obligatoria:** antes de crear un componente nuevo o escribir lógica de tabla/paginación/formulario inline, se debe consultar el catálogo de componentes reutilizables (`shared/components/`) documentado en `template-docs/03-technical/frontend/components.md`. Si ya existe un componente que cubre la necesidad (por ejemplo, `tp-data-table` para listados con paginación), se debe usar en lugar de reimplementar la funcionalidad.
+- **Filtros de listados:** las pantallas de listado aplican la búsqueda **automáticamente** al cambiar un filtro (con debounce en los listados paginados en servidor). El patrón canónico —signals de filtro, modo client-side vs server-side, debounce y las implicaciones para los tests E2E— está en `template-docs/03-technical/frontend/list-filters.md`. Al crear o modificar un listado, seguir ese patrón; no reimplementar la búsqueda con un botón manual.
 - Preferir componentes standalone (Angular 22).
 - Separar plantilla (`.html`), estilos (`.scss`) y lógica (`.ts`).
 - Usar `OnPush` como estrategia de detección de cambios cuando sea posible.

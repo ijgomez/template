@@ -46,6 +46,7 @@ Describe los distintos módulos funcionales de la aplicación.
 - [PWA](03-technical/frontend/pwa.md)
 - [Notificaciones](03-technical/frontend/notifications.md)
 - [Componentes](03-technical/frontend/components.md)
+- [Filtros de listados](03-technical/frontend/list-filters.md)
 
 #### Backend
 

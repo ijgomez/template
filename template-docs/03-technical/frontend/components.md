@@ -197,6 +197,8 @@ Componente reutilizable que encapsula una tabla con paginacion, seleccion de fil
 
 **Ubicacion:** `shared/components/data-table/`
 
+> La **barra de filtros** que acompaña a `tp-data-table` en las pantallas de listado (búsqueda automática al teclear, con debounce en server-side) se documenta aparte en [list-filters.md](list-filters.md). Este componente solo cubre la tabla, la paginación y los estados.
+
 ### Inputs
 
 | Propiedad       | Tipo                          | Defecto           | Descripcion                                |
