@@ -44,6 +44,9 @@ export class ClusterNodesPage {
     await this.page.goto('/administration/cluster/nodes');
     await this.page.waitForURL(/\/administration\/cluster\/nodes$/);
     await this.table.waitFor({ state: 'visible' });
+    // La tabla aparece mientras aún muestra el estado de carga; esperar a la
+    // primera fila garantiza que la carga inicial terminó antes de leer celdas.
+    await this.rows.first().waitFor({ state: 'visible' });
   }
 
   /** Filtra por hostname y aplica la búsqueda local. */

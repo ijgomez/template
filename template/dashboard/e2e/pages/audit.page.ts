@@ -46,6 +46,11 @@ export class AuditPage {
     await this.page.goto('/administration/audit');
     await this.page.waitForURL(/\/administration\/audit$/);
     await this.table.waitFor({ state: 'visible' });
+    // La tabla se vuelve visible mientras aún muestra el estado de carga (sin
+    // filas). Esperar a la primera fila garantiza que la carga inicial terminó
+    // antes de que un test lea celdas o cuente filas, evitando carreras cuando
+    // la respuesta del backend llega con retraso bajo carga.
+    await this.rows.first().waitFor({ state: 'visible' });
   }
 
   /** Aplica los filtros indicados y espera la respuesta de la consulta. */
@@ -69,9 +74,10 @@ export class AuditPage {
 
   /** Limpia los filtros y espera la recarga del listado. */
   async clearFilters(): Promise<void> {
-    const response = this.waitForAuditQuery();
+    const response = this.waitForAuditQuery({ page: 0 });
     await this.clearFiltersButton.click();
     await response;
+    await this.rows.first().waitFor({ state: 'visible' });
   }
 
   /** Abre el detalle de la fila indicada seleccionándola y pulsando el botón Detalle. */
@@ -101,18 +107,29 @@ export class AuditPage {
   }
 
   private async submitFilters(): Promise<void> {
-    const response = this.waitForAuditQuery();
+    // Aplicar filtros reinicia a la página 0; esperar una respuesta con page=0
+    // evita confundirla con una petición previa aún en vuelo (p. ej. la carga
+    // inicial que resuelve con retraso). No se espera a que haya filas porque
+    // un filtro puede no devolver resultados (estado vacío legítimo).
+    const response = this.waitForAuditQuery({ page: 0 });
     await this.applyFiltersButton.click();
     await response;
   }
 
-  private waitForAuditQuery(): Promise<unknown> {
-    return this.page.waitForResponse(
-      (response) =>
-        response.request().method() === 'GET' &&
-        response.url().includes('/administration/audit') &&
-        !response.url().includes('/count') &&
-        response.status() === 200,
-    );
+  private waitForAuditQuery(match?: { page?: number }): Promise<unknown> {
+    return this.page.waitForResponse((response) => {
+      if (
+        response.request().method() !== 'GET' ||
+        !response.url().includes('/administration/audit') ||
+        response.url().includes('/count') ||
+        response.status() !== 200
+      ) {
+        return false;
+      }
+      if (match?.page !== undefined && new URL(response.url()).searchParams.get('page') !== String(match.page)) {
+        return false;
+      }
+      return true;
+    });
   }
 }

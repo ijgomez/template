@@ -65,15 +65,58 @@ export class ProfilesPage {
     await this.page.goto('/administration/security/profiles');
     await this.page.waitForURL(/\/administration\/security\/profiles$/);
     await this.table.waitFor({ state: 'visible' });
+    // La tabla se vuelve visible mientras aún muestra el estado de carga. Esperar
+    // a la primera fila garantiza que la carga inicial terminó antes de leer.
+    await this.rows.first().waitFor({ state: 'visible' });
   }
 
   async searchByName(name: string): Promise<void> {
+    // Con búsqueda automática (debounce) basta rellenar el filtro, pero el botón
+    // Buscar sigue disparando la consulta. Se espera la respuesta cuyo parámetro
+    // `name` coincide: la identifica de forma inequívoca y evita confundirla con
+    // una petición previa en vuelo. No se espera a que haya filas: la búsqueda
+    // puede no devolver resultados (estado vacío legítimo).
+    const response = this.waitForProfilesQuery({ name });
     await this.filterName.fill(name);
     await this.searchButton.click();
+    await response;
   }
 
   async clearFilters(): Promise<void> {
+    // Tras limpiar no hay filtro `name`; se espera una respuesta sin ese
+    // parámetro para no capturar la respuesta de un filtro anterior.
+    const response = this.waitForProfilesQuery({ noFilters: true });
     await this.clearButton.click();
+    await response;
+    await this.rows.first().waitFor({ state: 'visible' });
+  }
+
+  /**
+   * Espera una respuesta GET del listado de perfiles. Excluye el endpoint de
+   * acciones (`/actions`, consumido por el formulario). Los campos de `match`
+   * acotan la respuesta esperada por sus parámetros de URL para no satisfacer
+   * la espera con una petición distinta aún en vuelo.
+   */
+  private waitForProfilesQuery(match?: { name?: string; noFilters?: boolean }): Promise<unknown> {
+    return this.page.waitForResponse((response) => {
+      const url = response.url();
+      if (
+        response.request().method() !== 'GET' ||
+        !url.includes('/administration/security/profiles') ||
+        url.includes('/count') ||
+        response.status() !== 200
+      ) {
+        return false;
+      }
+      const params = new URL(url).searchParams;
+      if (match?.name !== undefined && params.get('name') !== match.name) {
+        return false;
+      }
+      if (match?.noFilters && params.has('name')) {
+        return false;
+      }
+      return true;
+    });
   }
 
   async openCreateForm(): Promise<void> {

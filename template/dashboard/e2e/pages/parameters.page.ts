@@ -71,20 +71,65 @@ export class ParametersPage {
     await this.page.goto('/administration/parameters');
     await this.page.waitForURL(/\/administration\/parameters$/);
     await this.table.waitFor({ state: 'visible' });
+    // La tabla se vuelve visible mientras aún muestra el estado de carga. Esperar
+    // a la primera fila garantiza que la carga inicial terminó antes de leer.
+    await this.rows.first().waitFor({ state: 'visible' });
   }
 
   async searchByCode(code: string): Promise<void> {
+    // Con búsqueda automática (debounce) basta rellenar el filtro, pero el botón
+    // Buscar sigue disparando la consulta. Se espera la respuesta cuyo parámetro
+    // `code` coincide para que la tabla refleje el filtro antes de continuar.
+    const response = this.waitForParametersQuery({ code });
     await this.filterCode.fill(code);
     await this.searchButton.click();
+    await response;
   }
 
   async applyTypeFilter(type: 'STRING' | 'INTEGER' | 'BOOLEAN' | 'DATE'): Promise<void> {
+    const response = this.waitForParametersQuery({ type });
     await this.filterType.selectOption(type);
     await this.searchButton.click();
+    await response;
   }
 
   async clearFilters(): Promise<void> {
+    // Tras limpiar no hay filtros; se espera una respuesta sin `code` ni `type`
+    // para no capturar la respuesta de un filtro anterior.
+    const response = this.waitForParametersQuery({ noFilters: true });
     await this.clearButton.click();
+    await response;
+    await this.rows.first().waitFor({ state: 'visible' });
+  }
+
+  /**
+   * Espera una respuesta GET del listado de parámetros. Los campos de `match`
+   * acotan la respuesta esperada por sus parámetros de URL para no satisfacer
+   * la espera con una petición distinta aún en vuelo.
+   */
+  private waitForParametersQuery(match?: { code?: string; type?: string; noFilters?: boolean }): Promise<unknown> {
+    return this.page.waitForResponse((response) => {
+      const url = response.url();
+      if (
+        response.request().method() !== 'GET' ||
+        !url.includes('/administration/parameters') ||
+        url.includes('/count') ||
+        response.status() !== 200
+      ) {
+        return false;
+      }
+      const params = new URL(url).searchParams;
+      if (match?.code !== undefined && params.get('code') !== match.code) {
+        return false;
+      }
+      if (match?.type !== undefined && params.get('type') !== match.type) {
+        return false;
+      }
+      if (match?.noFilters && (params.has('code') || params.has('type'))) {
+        return false;
+      }
+      return true;
+    });
   }
 
   async openCreateForm(): Promise<void> {

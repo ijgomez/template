@@ -65,20 +65,71 @@ export class ActionsPage {
     await this.page.goto('/administration/security/actions');
     await this.page.waitForURL(/\/administration\/security\/actions$/);
     await this.table.waitFor({ state: 'visible' });
+    // La tabla se vuelve visible mientras aún muestra el estado de carga. Esperar
+    // a la primera fila garantiza que la carga inicial terminó antes de leer.
+    await this.rows.first().waitFor({ state: 'visible' });
   }
 
   async applyCodeFilter(code: string): Promise<void> {
+    // Con búsqueda automática (debounce) basta rellenar el filtro, pero el botón
+    // Buscar sigue disparando la consulta. Se espera la respuesta cuyo parámetro
+    // `code` coincide para que la tabla refleje el filtro antes de continuar.
+    const response = this.waitForActionsQuery({ code });
     await this.filterCode.fill(code);
     await this.searchButton.click();
+    await response;
   }
 
   async applyTypeFilter(type: 'READ' | 'WRITE' | 'EXECUTE'): Promise<void> {
+    // Se espera la respuesta cuyo parámetro `type` coincide: la identifica de
+    // forma inequívoca y evita confundirla con una petición previa en vuelo
+    // (p. ej. la del clearFilters anterior reemitida por el debounce).
+    const response = this.waitForActionsQuery({ type });
     await this.filterType.selectOption(type);
     await this.searchButton.click();
+    await response;
   }
 
   async clearFilters(): Promise<void> {
+    // Tras limpiar no hay parámetros de filtro; se espera una respuesta sin
+    // `code` ni `type` para no capturar la respuesta de un filtro anterior.
+    const response = this.waitForActionsQuery({ noFilters: true });
     await this.clearButton.click();
+    await response;
+    await this.rows.first().waitFor({ state: 'visible' });
+  }
+
+  /**
+   * Espera una respuesta GET del listado de acciones. Los campos de `match`
+   * acotan la respuesta esperada por sus parámetros de URL para no satisfacer
+   * la espera con una petición distinta aún en vuelo.
+   */
+  private waitForActionsQuery(match?: { page?: number; code?: string; type?: string; noFilters?: boolean }): Promise<unknown> {
+    return this.page.waitForResponse((response) => {
+      const url = response.url();
+      if (
+        response.request().method() !== 'GET' ||
+        !url.includes('/administration/security/actions') ||
+        url.includes('/count') ||
+        response.status() !== 200
+      ) {
+        return false;
+      }
+      const params = new URL(url).searchParams;
+      if (match?.page !== undefined && params.get('page') !== String(match.page)) {
+        return false;
+      }
+      if (match?.code !== undefined && params.get('code') !== match.code) {
+        return false;
+      }
+      if (match?.type !== undefined && params.get('type') !== match.type) {
+        return false;
+      }
+      if (match?.noFilters && (params.has('code') || params.has('type'))) {
+        return false;
+      }
+      return true;
+    });
   }
 
   async openEditFormByIndex(index = 0): Promise<void> {

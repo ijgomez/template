@@ -35,6 +35,10 @@ export class ClusterBlocksPage {
     await this.page.goto('/administration/cluster/blocks');
     await this.page.waitForURL(/\/administration\/cluster\/blocks$/);
     await this.table.waitFor({ state: 'visible' });
+    // La tabla se vuelve visible mientras aún muestra el estado de carga (sin
+    // filas). Esperar a la primera fila garantiza que la carga inicial terminó
+    // antes de que un test lea celdas o cuente filas.
+    await this.rows.first().waitFor({ state: 'visible' });
   }
 
   /** Filtra por nombre de tarea y espera la respuesta paginada del backend. */
@@ -45,16 +49,20 @@ export class ClusterBlocksPage {
 
   /** Aplica los filtros rellenados y espera la recarga de la tabla. */
   async applyFilters(): Promise<void> {
-    const response = this.waitForBlocksQuery();
+    // Aplicar filtros reinicia a la página 0; esperar una respuesta con page=0
+    // evita confundirla con una petición previa aún en vuelo. No se espera a
+    // que haya filas porque un filtro puede no devolver resultados.
+    const response = this.waitForBlocksQuery({ page: 0 });
     await this.applyFiltersButton.click();
     await response;
   }
 
   /** Limpia los filtros y espera la recarga del listado. */
   async clearFilters(): Promise<void> {
-    const response = this.waitForBlocksQuery();
+    const response = this.waitForBlocksQuery({ page: 0 });
     await this.clearFiltersButton.click();
     await response;
+    await this.rows.first().waitFor({ state: 'visible' });
   }
 
   /** Exporta el resultado filtrado y devuelve la descarga del navegador. */
@@ -64,13 +72,20 @@ export class ClusterBlocksPage {
     return download;
   }
 
-  private waitForBlocksQuery(): Promise<unknown> {
-    return this.page.waitForResponse(
-      (response) =>
-        response.request().method() === 'GET' &&
-        response.url().includes('/administration/cluster/blocks') &&
-        !response.url().includes('/count') &&
-        response.status() === 200,
-    );
+  private waitForBlocksQuery(match?: { page?: number }): Promise<unknown> {
+    return this.page.waitForResponse((response) => {
+      if (
+        response.request().method() !== 'GET' ||
+        !response.url().includes('/administration/cluster/blocks') ||
+        response.url().includes('/count') ||
+        response.status() !== 200
+      ) {
+        return false;
+      }
+      if (match?.page !== undefined && new URL(response.url()).searchParams.get('page') !== String(match.page)) {
+        return false;
+      }
+      return true;
+    });
   }
 }

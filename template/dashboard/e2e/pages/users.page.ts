@@ -104,21 +104,66 @@ export class UsersPage {
     await this.page.goto('/administration/security/users');
     await this.page.waitForURL(/\/administration\/security\/users$/);
     await this.table.waitFor({ state: 'visible' });
+    // La tabla se vuelve visible mientras aún muestra el estado de carga. Esperar
+    // a la primera fila garantiza que la carga inicial terminó antes de leer.
+    await this.rows.first().waitFor({ state: 'visible' });
   }
 
   /**
    * Aplica un filtro por nombre de usuario y ejecuta la búsqueda.
+   *
+   * Con búsqueda automática (debounce) basta rellenar el filtro, pero el botón
+   * Buscar sigue disparando la consulta. Se espera la respuesta con page=0 para
+   * que la tabla refleje el filtro antes de continuar. No se espera a que haya
+   * filas: un filtro puede no devolver resultados (estado vacío legítimo).
    */
   async searchByUsername(username: string): Promise<void> {
+    // Se espera la respuesta cuyo parámetro `username` coincide: la identifica
+    // de forma inequívoca y evita confundirla con una petición previa en vuelo.
+    const response = this.waitForUsersQuery({ username });
     await this.filterUsername.fill(username);
     await this.searchButton.click();
+    await response;
   }
 
   /**
    * Limpia todos los filtros aplicados.
    */
   async clearFilters(): Promise<void> {
+    // Tras limpiar no hay filtro `username`; se espera una respuesta sin ese
+    // parámetro para no capturar la respuesta de un filtro anterior.
+    const response = this.waitForUsersQuery({ noFilters: true });
     await this.clearButton.click();
+    await response;
+    await this.rows.first().waitFor({ state: 'visible' });
+  }
+
+  /**
+   * Espera una respuesta GET del listado de usuarios. Requiere `/users` para no
+   * confundirse con la carga del desplegable de perfiles (`/profiles`) que
+   * alimenta el filtro. Los campos de `match` acotan la respuesta esperada por
+   * sus parámetros de URL para no satisfacer la espera con otra petición en vuelo.
+   */
+  private waitForUsersQuery(match?: { username?: string; noFilters?: boolean }): Promise<unknown> {
+    return this.page.waitForResponse((response) => {
+      const url = response.url();
+      if (
+        response.request().method() !== 'GET' ||
+        !url.includes('/administration/security/users') ||
+        url.includes('/count') ||
+        response.status() !== 200
+      ) {
+        return false;
+      }
+      const params = new URL(url).searchParams;
+      if (match?.username !== undefined && params.get('username') !== match.username) {
+        return false;
+      }
+      if (match?.noFilters && params.has('username')) {
+        return false;
+      }
+      return true;
+    });
   }
 
   /**
