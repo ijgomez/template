@@ -50,17 +50,16 @@
       </div>
       <div class="col-md-2">
         <label for="filterInterface" class="form-label">{{ 'interfaces.interfaceList.fields.interfaceName' | translate }}</label>
-        <select
+        <tp-interface-select
           id="filterInterface"
-          class="form-select form-select-sm"
-          data-testid="interface-list-filter-interface"
-          [attr.aria-label]="'interfaces.interfaceList.fields.interfaceName' | translate"
-          [(ngModel)]="filterInterfaceId">
-          <option value="">{{ 'interfaces.interfaceList.filters.allInterfaces' | translate }}</option>
-          @for (iface of availableInterfaces(); track iface.id) {
-            <option [value]="iface.id">{{ iface.name }}</option>
-          }
-        </select>
+          name="filterInterface"
+          [ngModel]="filterInterfaceName()"
+          (ngModelChange)="filterInterfaceName.set($event)"
+          [placeholderSelectable]="true"
+          placeholderKey="interfaces.interfaceList.filters.allInterfaces"
+          ariaLabelKey="interfaces.interfaceList.fields.interfaceName"
+          testId="interface-list-filter-interface">
+        </tp-interface-select>
       </div>
       <div class="col-md-2">
         <label for="filterStatus" class="form-label">{{ 'interfaces.interfaceList.fields.status' | translate }}</label>

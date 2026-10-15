@@ -11,8 +11,8 @@ import { DateService } from '../../../../core/services/date.service';
 import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
 import { TpDatePickerComponent } from '../../../../shared/components/date-picker/date-picker.component';
 import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../shared/components/data-table';
+import { TpInterfaceSelectComponent } from '../../components/interface-select';
 import {
-  InterfaceConfig,
   InterfaceLog,
   InterfaceLogCriteria,
   InterfaceOperationType,
@@ -27,7 +27,15 @@ import {
 @Component({
   selector: 'app-interface-list',
   standalone: true,
-  imports: [FormsModule, TranslatePipe, LocalDatePipe, TpDatePickerComponent, TpDataTableComponent, TpColumnDirective],
+  imports: [
+    FormsModule,
+    TranslatePipe,
+    LocalDatePipe,
+    TpDatePickerComponent,
+    TpDataTableComponent,
+    TpColumnDirective,
+    TpInterfaceSelectComponent,
+  ],
   templateUrl: './interface-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -57,7 +65,7 @@ export class InterfaceListComponent implements OnInit {
   readonly filterDateFrom = signal('');
   readonly filterDateTo = signal('');
   readonly filterOperationType = signal('');
-  readonly filterInterfaceId = signal('');
+  readonly filterInterfaceName = signal('');
   readonly filterStatus = signal('');
 
   readonly hasInvalidDateRange = computed(
@@ -65,9 +73,6 @@ export class InterfaceListComponent implements OnInit {
   );
 
   readonly isFilterDisabled = computed(() => this.isLoading() || this.hasInvalidDateRange());
-
-  // Available interfaces for filter dropdown
-  readonly availableInterfaces = signal<InterfaceConfig[]>([]);
 
   // Filter dropdown options
   readonly operationTypes: InterfaceOperationType[] = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
@@ -93,7 +98,7 @@ export class InterfaceListComponent implements OnInit {
     dateFrom: this.filterDateFrom(),
     dateTo: this.filterDateTo(),
     operationType: this.filterOperationType(),
-    interfaceId: this.filterInterfaceId(),
+    interfaceName: this.filterInterfaceName(),
     status: this.filterStatus(),
   }));
 
@@ -110,7 +115,7 @@ export class InterfaceListComponent implements OnInit {
             a.dateFrom === b.dateFrom &&
             a.dateTo === b.dateTo &&
             a.operationType === b.operationType &&
-            a.interfaceId === b.interfaceId &&
+            a.interfaceName === b.interfaceName &&
             a.status === b.status,
         ),
         takeUntilDestroyed(),
@@ -119,17 +124,7 @@ export class InterfaceListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadAvailableInterfaces();
     this.loadLogs();
-  }
-
-  /**
-   * Loads available interface configurations for the filter dropdown.
-   */
-  loadAvailableInterfaces(): void {
-    this.interfaceService.findAllConfigurations().subscribe({
-      next: (configs) => this.availableInterfaces.set(configs),
-    });
   }
 
   /**
@@ -173,7 +168,7 @@ export class InterfaceListComponent implements OnInit {
     this.filterDateFrom.set('');
     this.filterDateTo.set('');
     this.filterOperationType.set('');
-    this.filterInterfaceId.set('');
+    this.filterInterfaceName.set('');
     this.filterStatus.set('');
     this.currentPage.set(0);
     this.loadLogs();
@@ -288,7 +283,7 @@ export class InterfaceListComponent implements OnInit {
     if (this.filterDateFrom()) criteria.dateFrom = this.filterDateFrom();
     if (this.filterDateTo()) criteria.dateTo = this.filterDateTo();
     if (this.filterOperationType()) criteria.operationType = this.filterOperationType() as InterfaceOperationType;
-    if (this.filterInterfaceId()) criteria.interfaceId = Number(this.filterInterfaceId());
+    if (this.filterInterfaceName()) criteria.interfaceName = this.filterInterfaceName();
     if (this.filterStatus()) criteria.status = this.filterStatus() as InterfaceLogStatus;
     return criteria;
   }

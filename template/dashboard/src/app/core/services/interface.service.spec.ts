@@ -102,7 +102,7 @@ describe('InterfaceService', () => {
             dateFrom: '2026-01-01',
             dateTo: '2026-01-31',
             operationType: 'POST',
-            interfaceId: 1,
+            interfaceName: 'FTP',
             status: 'ERROR',
           },
           1,
@@ -118,7 +118,7 @@ describe('InterfaceService', () => {
       expect(req.request.params.get('dateFrom')).toBe('2026-01-01');
       expect(req.request.params.get('dateTo')).toBe('2026-01-31');
       expect(req.request.params.get('operationType')).toBe('POST');
-      expect(req.request.params.get('interfaceId')).toBe('1');
+      expect(req.request.params.get('interfaceName')).toBe('FTP');
       expect(req.request.params.get('status')).toBe('ERROR');
       req.flush(mockLogPage);
     });
@@ -135,13 +135,13 @@ describe('InterfaceService', () => {
     });
 
     it('countLogsByCriteria should GET the count endpoint with filter params', () => {
-      service.countLogsByCriteria({ interfaceId: 2, status: 'ERROR' }).subscribe((count) => {
+      service.countLogsByCriteria({ interfaceName: 'ERP', status: 'ERROR' }).subscribe((count) => {
         expect(count).toBe(9);
       });
 
       const req = httpMock.expectOne((r) => r.url === `${monitorUrl}/count`);
       expect(req.request.method).toBe('GET');
-      expect(req.request.params.get('interfaceId')).toBe('2');
+      expect(req.request.params.get('interfaceName')).toBe('ERP');
       expect(req.request.params.get('status')).toBe('ERROR');
       req.flush(9);
     });

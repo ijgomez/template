@@ -1,0 +1,19 @@
+<select class="form-select form-select-sm"
+        [ngClass]="{ 'is-invalid': isInvalid() }"
+        [value]="selected()"
+        (change)="onSelectionChange($any($event.target).value)"
+        (blur)="onBlur()"
+        [name]="name"
+        [required]="required"
+        [disabled]="disabled()"
+        [attr.aria-label]="ariaLabelKey ? (ariaLabelKey | translate) : null"
+        [attr.data-testid]="testId">
+  @if (placeholderSelectable) {
+    <option value="" [selected]="selected() === ''">{{ placeholderKey | translate }}</option>
+  } @else {
+    <option value="" disabled [selected]="selected() === ''">{{ placeholderKey | translate }}</option>
+  }
+  @for (iface of interfaces(); track iface.id) {
+    <option [value]="iface.name" [selected]="iface.name === selected()">{{ iface.name }}</option>
+  }
+</select>

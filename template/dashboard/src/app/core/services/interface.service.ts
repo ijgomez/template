@@ -55,8 +55,8 @@ export class InterfaceService {
     if (criteria.operationType) {
       params = params.set('operationType', criteria.operationType);
     }
-    if (criteria.interfaceId) {
-      params = params.set('interfaceId', criteria.interfaceId.toString());
+    if (criteria.interfaceName) {
+      params = params.set('interfaceName', criteria.interfaceName);
     }
     if (criteria.status) {
       params = params.set('status', criteria.status);
@@ -88,8 +88,8 @@ export class InterfaceService {
     if (criteria.operationType) {
       params = params.set('operationType', criteria.operationType);
     }
-    if (criteria.interfaceId) {
-      params = params.set('interfaceId', criteria.interfaceId.toString());
+    if (criteria.interfaceName) {
+      params = params.set('interfaceName', criteria.interfaceName);
     }
     if (criteria.status) {
       params = params.set('status', criteria.status);

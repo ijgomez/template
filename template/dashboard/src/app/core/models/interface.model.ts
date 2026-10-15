@@ -50,7 +50,7 @@ export interface InterfaceLogCriteria {
   dateFrom?: string;
   dateTo?: string;
   operationType?: InterfaceOperationType;
-  interfaceId?: number;
+  interfaceName?: string;
   status?: InterfaceLogStatus;
 }
 

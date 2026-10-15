@@ -187,8 +187,7 @@ public class InterfaceService {
 
         if (criteria.interfaceName() != null && !criteria.interfaceName().isBlank()) {
             spec = spec.and((root, query, cb) ->
-                    cb.like(cb.lower(root.get("interfaceName")),
-                            "%" + criteria.interfaceName().toLowerCase() + "%"));
+                    cb.equal(root.get("interfaceName"), criteria.interfaceName()));
         }
 
         if (criteria.status() != null) {

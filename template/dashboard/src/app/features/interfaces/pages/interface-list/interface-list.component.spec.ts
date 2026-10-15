@@ -69,7 +69,7 @@ describe('InterfaceListComponent', () => {
       component.filterDateFrom.set('2026-01-01');
       component.filterDateTo.set('2026-01-31');
       component.filterOperationType.set('POST');
-      component.filterInterfaceId.set('5');
+      component.filterInterfaceName.set('FTP');
       component.filterStatus.set('ERROR');
       component.currentPage.set(2);
 
@@ -80,7 +80,7 @@ describe('InterfaceListComponent', () => {
       expect(component.filterDateFrom()).toBe('');
       expect(component.filterDateTo()).toBe('');
       expect(component.filterOperationType()).toBe('');
-      expect(component.filterInterfaceId()).toBe('');
+      expect(component.filterInterfaceName()).toBe('');
       expect(component.filterStatus()).toBe('');
       expect(component.currentPage()).toBe(0);
     });
