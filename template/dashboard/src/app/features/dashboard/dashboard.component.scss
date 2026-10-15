@@ -1,54 +1,73 @@
 .tp-stat-card {
-  border-left: 4px solid var(--tp-color-primary);
-  border-radius: var(--tp-border-radius-lg);
+  border: 1px solid var(--tp-color-border);
+  border-top: 2px solid var(--tp-color-primary);
+  border-radius: var(--tp-border-radius);
+  background: var(--tp-color-surface);
   box-shadow: var(--tp-shadow-sm);
+  transition: box-shadow 120ms ease-in-out;
+
+  &:hover {
+    box-shadow: var(--tp-shadow);
+  }
 }
 
 .tp-stat-card-success {
-  border-left-color: var(--tp-color-success);
+  border-top-color: var(--tp-color-success);
 }
 
 .tp-stat-card-warning {
-  border-left-color: var(--tp-color-warning);
+  border-top-color: var(--tp-color-warning);
 }
 
 .tp-stat-card-info {
-  border-left-color: var(--tp-color-info);
+  border-top-color: var(--tp-color-info);
 }
 
 .stat-value {
-  font-size: 1.75rem;
-  font-weight: var(--tp-font-weight-bold);
+  font-size: 1.625rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
   color: var(--tp-color-text);
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
 }
 
 .stat-label {
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
+  font-weight: 600;
   color: var(--tp-color-text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
 }
 
 .tp-table {
   font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
 
   th {
-    background: var(--tp-color-surface);
+    background: var(--tp-color-surface-subtle);
+    color: var(--tp-color-secondary);
     font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.03em;
     white-space: nowrap;
-    padding: 0.5rem 0.75rem;
-    border-bottom: 2px solid var(--tp-color-border);
+    padding: 0.625rem 0.875rem;
+    border-bottom: 1px solid var(--tp-color-border);
   }
 
   td {
-    padding: 0.5rem 0.75rem;
+    padding: 0.625rem 0.875rem;
     vertical-align: middle;
+    border-bottom: 1px solid var(--tp-color-border-subtle);
   }
 }
 
 .card-header {
-  padding: 1rem 1.25rem;
+  padding: 0.75rem 1.25rem;
   background: var(--tp-color-surface);
   border-bottom: 1px solid var(--tp-color-border);
   font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--tp-color-text);
 }

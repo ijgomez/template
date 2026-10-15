@@ -31,7 +31,7 @@
           </div>
           <small class="text-muted" role="status">{{ 'common.loading' | translate }}</small>
         } @else if (nodesError()) {
-          <div class="stat-value text-muted">—</div>
+          <div class="stat-value text-muted" aria-label="Not available">-</div>
           <small class="text-danger">
             <i class="bi bi-exclamation-octagon" aria-hidden="true"></i>
             {{ 'dashboard.stats.nodesLoadError' | translate }}
