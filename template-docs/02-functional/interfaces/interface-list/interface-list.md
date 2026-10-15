@@ -33,7 +33,7 @@ Identificadores locales de este documento: `RF-IFM-*` (funcionales) y `RNF-IFM-*
 **Criterios de aceptación:**
 - AC2.1: Filtro de fecha desde (`filterDateFrom`) y fecha hasta (`filterDateTo`) mediante controles de tipo `date`.
 - AC2.2: Selector de tipo de operación con valores `GET`, `POST`, `PUT`, `PATCH`, `DELETE` y opción "Todos".
-- AC2.3: Selector de interfaz alimentado dinámicamente desde `GET /api/v1/interfaces/configuration` y opción "Todas".
+- AC2.3: Selector de interfaz implementado con el componente reutilizable `tp-interface-select` (`TpInterfaceSelectComponent`), alimentado dinámicamente desde `GET /api/v1/interfaces/configuration` y con opción "Todas". El filtro se envía por **nombre** de interfaz (`interfaceName`), que es el campo con el que se correlaciona cada registro de operación.
 - AC2.4: Selector de estado con valores `SUCCESS`, `ERROR`, `BAD_REQUEST`, `NOT_FOUND` y opción "Todos".
 - AC2.5: Al pulsar *Buscar* (`interface-list-apply-filters`), se aplican los criterios y se reinicia la paginación a la página 0.
 - AC2.6: Al pulsar *Limpiar* (`interface-list-clear-filters`), se restablecen todos los filtros a sus valores por defecto y se recarga el listado completo desde la página 0.
@@ -112,10 +112,10 @@ La estructura visual base de esta pantalla se define en [layout.md](../../../03-
 ┌─────────────────────────────────────────────────────────────────────────────────────────┐
 │ Listado de Interfaces                                                                   │
 ├─────────────────────────────────────────────────────────────────────────────────────────┤
-│ [Desde: yyyy-mm-dd] [Hasta: yyyy-mm-dd] [Tipo: Todos ▾] [Interfaz: Todas ▾] [Estado ▾] │
+│ [Desde: yyyy-mm-dd] [Hasta: yyyy-mm-dd] [Tipo: Todos ▾] [Interfaz: Todas ▾] [Estado ▾]  │
 │                                                                   [Limpiar] [🔍 Buscar] │
 ├─────────────────────────────────────────────────────────────────────────────────────────┤
-│ [👁 Ver detalle]                                                      [📥 Exportar CSV] │
+│ [👁 Ver detalle]                                                      [📥 Exportar CSV]  │
 ├─────────────────────────────────────────────────────────────────────────────────────────┤
 │ Fecha/hora ▲          │ Tipo   │ Interfaz            │ Estado                           │
 │───────────────────────┼────────┼─────────────────────┼──────────────────────────────────│
@@ -144,7 +144,7 @@ La estructura visual base de esta pantalla se define en [layout.md](../../../03-
 │ │ { "error": "Internal Server Error", "code": 500, "message": "Timeout conexión" }    │ │
 │ └─────────────────────────────────────────────────────────────────────────────────────┘ │
 │ Mensaje de Error:                                                                       │
-│ Timeout de conexión con servicio externo al ejecutar generación de informe             │
+│ Timeout de conexión con servicio externo al ejecutar generación de informe              │
 └─────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -173,15 +173,16 @@ La estructura visual base de esta pantalla se define en [layout.md](../../../03-
 sequenceDiagram
     participant U as Usuario / Navegador
     participant MC as InterfaceListComponent
+    participant SEL as TpInterfaceSelectComponent
     participant IS as InterfaceService (TS)
     participant IC as InterfaceController (Spring)
     participant S as InterfaceService (Java)
     participant DB as PostgreSQL (interface_log)
 
     U->>MC: Accede a /interfaces/monitor
-    MC->>IS: findAllConfigurations()
+    SEL->>IS: findAllConfigurations()
     IS->>IC: GET /api/v1/interfaces/configuration
-    IC-->>MC: 200 OK [InterfaceDTO...] (para dropdown)
+    IC-->>SEL: 200 OK [InterfaceDTO...] (opciones del combo)
     MC->>IS: findLogsByCriteria(criteria, page=0, size=10)
     IS->>IC: GET /api/v1/interfaces/monitor?page=0&size=10
     IC->>S: findLogsByCriteria(criteria, pageable)
@@ -218,6 +219,7 @@ sequenceDiagram
 | --- | --- | --- |
 | Frontend | `InterfaceListComponent` | Gestión de filtros, paginación, cambio a vista de detalle y exportación CSV. |
 | Frontend | `InterfaceService` | Cliente HTTP para el listado y configuración de interfaces. |
+| Frontend | `TpInterfaceSelectComponent` | Combo reutilizable (`ControlValueAccessor`) del filtro de interfaz; carga las interfaces desde `InterfaceService.findAllConfigurations()` y emite el nombre de la interfaz seleccionada. |
 | Frontend | `TpDataTableComponent` | Tabla reutilizable con ordenación, paginación y plantillas de visualización. |
 | Frontend | `LocalDatePipe` y `DateService` | Formateo de fechas a la zona horaria del usuario. |
 | Backend | `InterfaceControllerImpl` | Endpoints REST bajo `/api/v1/interfaces` para consultas de logs y configuración. |
@@ -251,7 +253,7 @@ export interface InterfaceLogCriteria {
   dateFrom?: string;
   dateTo?: string;
   operationType?: InterfaceOperationType;
-  interfaceId?: number;
+  interfaceName?: string;
   status?: InterfaceLogStatus;
 }
 ```
@@ -318,7 +320,8 @@ public class InterfaceLog extends BaseEntity {
 ### 3.4. Validaciones
 
 - Los filtros de fecha, tipo de operación, interfaz y estado se validan antes de ejecutar la consulta; valores no permitidos se descartan o se convierten al tipo del enum.
-- El nombre de interfaz y el estado debe existir en el catálogo de configuración para que la consulta devuelva resultados coherentes.
+- El filtro de interfaz se aplica por **igualdad exacta** sobre el nombre (`interfaceName`): el backend compara el nombre completo (`cb.equal`), no una coincidencia parcial.
+- El nombre de interfaz y el estado deben existir en el catálogo de configuración para que la consulta devuelva resultados coherentes.
 - La API exige que el usuario tenga la autoridad `INTERFACES_READ`; en caso contrario el acceso se deniega antes de procesar la consulta.
 - El backend no permite crear, editar ni borrar registros de `interface_log`; la operación de registro es programática y se ejecuta solo desde `InterfaceService.logOperation()`.
 
@@ -371,6 +374,8 @@ No existen endpoints ni métodos que permitan alterar o borrar registros existen
 | `dashboard/src/app/core/services/interface.service.spec.ts` | Pruebas de cliente HTTP: `findAllConfigurations`, `findConfigurationById`, `findLogsByCriteria`, `findAllLogsByCriteria`, `countLogsByCriteria`, `findLogById`. |
 | `dashboard/src/app/features/interfaces/pages/interface-list/interface-list.component.stories.ts` | Historias de Storybook para validación visual de estados del listado de interfaces. |
 | `dashboard/src/app/features/interfaces/pages/interface-list/interface-list.component.spec.ts` | Pruebas de componente: creación, estado inicial de vista y reseteo de filtros. |
+| `dashboard/src/app/features/interfaces/components/interface-select/interface-select.component.spec.ts` | Pruebas del combo reutilizable de interfaz: carga desde el servicio, comportamiento `ControlValueAccessor`, validación y render. |
+| `dashboard/src/app/features/interfaces/components/interface-select/interface-select.component.stories.ts` | Historias de Storybook del combo de interfaz (filtro, formulario, sin interfaces e integración CVA). |
 
 ### 4.3. Cobertura E2E (Playwright)
 
@@ -446,7 +451,7 @@ Precondición del ciclo: usuario con `INTERFACES_READ`; tabla `interface_log` co
 
 | # | Acción | Resultado esperado |
 |---|--------|--------------------|
-| 1 | Seleccionar una interfaz concreta en `interface-list-filter-interface` y aplicar | Solo se muestran operaciones de esa interfaz |
+| 1 | Seleccionar una interfaz concreta en `interface-list-filter-interface` y aplicar | Solo se muestran operaciones cuyo `interfaceName` coincide **exactamente** con la interfaz seleccionada (no coincidencias parciales) |
 
 #### TC-IFM-04 · Detalle desde la barra de acciones
 

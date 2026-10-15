@@ -76,7 +76,7 @@ Interfaces > Configuración
 
 | Pantalla | Tipo | Descripción |
 |---------------|-------------|-----------|
-| [Monitor](./monitor/monitor.md) | Pagina | Panel de actividad de las interfaces: trazabilidad de operaciones de entrada/salida, estados y payloads. |
+| [Monitor](./interface-list/interface-list.md) | Pagina | Panel de actividad de las interfaces: trazabilidad de operaciones de entrada/salida, estados y payloads. |
 | [Configuración](./configuration/configuration.md) | Pagina | Listado de interfaces registradas con su estado actual y detalle de cada interfaz. |
 
 ## Referencias

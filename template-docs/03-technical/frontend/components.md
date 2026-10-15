@@ -95,6 +95,11 @@ src/
             │   ├── profile-select.component.html
             │   ├── profile-select.component.spec.ts
             │   └── index.ts
+            ├── detail-button/
+            │   ├── detail-button.component.ts
+            │   ├── detail-button.component.spec.ts
+            │   ├── detail-button.component.stories.ts
+            │   └── index.ts
             ├── modal/
             ├── card/
             ├── alert/
@@ -963,6 +968,127 @@ Reutiliza claves existentes del namespace `users`, no define namespace propio:
 - `users.form.selectProfile` — placeholder del formulario ("Seleccione un perfil...").
 - `users.filters.allProfiles` — opcion "todos" del filtro ("Todos los perfiles").
 - `users.fields.profile` — texto del `aria-label`.
+
+---
+
+## Boton de Detalle (`tp-detail-button`)
+
+Boton de accion "Detalle" reutilizable para las barras de herramientas de los listados (usuarios, perfiles, acciones, parametros, auditoria, nodos del cluster, monitor de interfaces). Unifica el boton primario con icono de ojo que se deshabilita cuando no hay fila seleccionada y emite un evento `detail` al pulsarlo.
+
+**Selector:** `<tp-detail-button>`
+
+**Ubicacion:** `shared/components/detail-button/`
+
+### Concepto
+
+El componente encapsula el patron comun del boton de detalle de la barra de acciones:
+
+1. Renderiza un `<button class="btn btn-primary btn-sm">` con el icono `bi-eye` y la etiqueta traducida.
+2. Se deshabilita cuando `disabled=true` (tipicamente cuando no hay fila seleccionada en el listado).
+3. Emite el evento `detail` al hacer clic (no emite si esta deshabilitado).
+
+No depende de ningun servicio ni conoce el dominio: es un boton generico de presentacion configurable por inputs.
+
+### Inputs
+
+| Propiedad   | Tipo      | Defecto         | Descripcion                                               |
+|-------------|-----------|-----------------|-----------------------------------------------------------|
+| `disabled`  | `boolean` | `false`         | Deshabilita el boton (tipicamente sin fila seleccionada)  |
+| `labelKey`  | `string`  | `'common.detail'` | Clave i18n de la etiqueta del boton                     |
+| `testId`    | `string`  | `'btn-detail'`  | Valor de `data-testid` del boton                          |
+
+### Outputs
+
+| Evento     | Tipo            | Descripcion                              |
+|------------|-----------------|------------------------------------------|
+| `(detail)` | `output<void>`  | Emitido al pulsar el boton (si no esta deshabilitado) |
+
+### Accesibilidad
+
+- El atributo `disabled` del `<button>` refleja el input `disabled`; un boton deshabilitado no recibe foco ni emite eventos.
+- El icono `bi-eye` es decorativo (`aria-hidden="true"`); el texto accesible proviene de la etiqueta traducida.
+
+### Ejemplo de uso
+
+```html
+<tp-detail-button
+  [disabled]="!selectedItem()"
+  (detail)="viewDetail(selectedItem()!)"
+  testId="users-view-detail">
+</tp-detail-button>
+```
+
+### Claves de traduccion (i18n)
+
+- `common.detail` — etiqueta por defecto del boton ("Detalle"). Se puede sobrescribir con `labelKey`.
+
+---
+
+## Selector de Interfaz (`tp-interface-select`)
+
+Selector desplegable de una unica interfaz, implementado como `ControlValueAccessor`. Es el equivalente a `tp-profile-select` para el dominio de interfaces: encapsula el `<select>` de interfaces del filtro del monitor. A diferencia de los componentes de `shared/`, vive en la feature de interfaces porque esta ligado a su dominio.
+
+**Selector:** `<tp-interface-select>`
+
+**Ubicacion:** `features/interfaces/components/interface-select/` (componente de feature, no `shared/`)
+
+### Concepto
+
+El componente:
+
+1. **Carga internamente la lista de interfaces** desde `InterfaceService.findAllConfigurations()` en `ngOnInit` (no depende del padre para obtener los datos). El servicio mapea la entidad backend `Interface` a `InterfaceDTO` via el `InterfaceService` de Java.
+2. Renderiza un `<select class="form-select form-select-sm">` con una opcion de placeholder configurable y una opcion por cada interfaz, mostrando su nombre.
+3. Como `ControlValueAccessor`, escribe el **nombre de la interfaz seleccionada** (`string`, o `''` cuando no hay seleccion) como valor del formulario.
+
+> **Decision de diseno:** el valor es el **nombre** de la interfaz, no su `id`. Los registros de operacion (`InterfaceLog`) se correlacionan con su interfaz por nombre (`interfaceName`), que es el campo por el que filtra el backend del monitor (con igualdad exacta). Usar el nombre evita el desajuste `id`/`name` entre el combo y el criterio de busqueda.
+
+Al igual que `tp-profile-select`, soporta dos estilos de opcion vacia mediante inputs:
+
+- **Filtro** (opcion "todas"): opcion vacia seleccionable que representa "sin filtro" (`placeholderSelectable=true`).
+- **Formulario** (interfaz obligatoria): placeholder deshabilitado y no seleccionable (`placeholderSelectable=false`, `required=true`).
+
+### Inputs
+
+| Propiedad               | Tipo      | Defecto             | Descripcion                                                      |
+|-------------------------|-----------|---------------------|------------------------------------------------------------------|
+| `placeholderKey`        | `string`  | `''`                | Clave i18n de la opcion vacia/placeholder                        |
+| `placeholderSelectable` | `boolean` | `false`             | Si la opcion vacia es seleccionable (`true` en filtros, `false` en formularios) |
+| `required`              | `boolean` | `false`             | Anade el atributo `required` al `<select>`                       |
+| `name`                  | `string`  | `'interfaceName'`   | Atributo `name` del `<select>` (necesario dentro de forms template-driven) |
+| `ariaLabelKey`          | `string`  | `''`                | Clave i18n para el `aria-label` del `<select>`                   |
+| `testId`                | `string`  | `'interface-select'`| Valor de `data-testid` del `<select>`                            |
+
+### ControlValueAccessor
+
+- **Valor**: `string` — nombre de la interfaz seleccionada (`''` cuando no hay seleccion o se elige la opcion vacia).
+- Compatible con `ngModel`, `formControlName` y `formControl`.
+- Soporta `setDisabledState` (deshabilita el `<select>`).
+
+### Accesibilidad
+
+- `aria-label` configurable via `ariaLabelKey` (traducido).
+- Atributo `required` reflejado en el `<select>` cuando `required=true`.
+
+### Ejemplo de uso (filtro, opcion "todas")
+
+```html
+<tp-interface-select
+  [ngModel]="filterInterfaceName()"
+  (ngModelChange)="filterInterfaceName.set($event)"
+  name="filterInterface"
+  [placeholderSelectable]="true"
+  placeholderKey="interfaces.interfaceList.filters.allInterfaces"
+  ariaLabelKey="interfaces.interfaceList.fields.interfaceName"
+  testId="interface-list-filter-interface">
+</tp-interface-select>
+```
+
+### Claves de traduccion (i18n)
+
+Reutiliza claves existentes del namespace `interfaces`, no define namespace propio:
+
+- `interfaces.interfaceList.filters.allInterfaces` — opcion "todas" del filtro ("Todas las interfaces").
+- `interfaces.interfaceList.fields.interfaceName` — texto del `aria-label`.
 
 ---
 
