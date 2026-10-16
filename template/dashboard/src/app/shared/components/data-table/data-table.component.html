@@ -3,6 +3,7 @@
   <div class="card-body p-0">
     <div class="table-responsive">
       <table class="table table-hover tp-table mb-0"
+             [class.table-striped]="striped"
              [class.tp-table--fixed]="columns.some(c => c.width || c.resizable)"
              [attr.aria-label]="ariaLabel"
              [attr.data-testid]="testId">

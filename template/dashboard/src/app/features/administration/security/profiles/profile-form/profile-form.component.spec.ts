@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
+import { NgForm } from '@angular/forms';
 import { provideTranslateService } from '@ngx-translate/core';
 
 import { ProfileFormComponent } from './profile-form.component';
@@ -109,5 +111,79 @@ describe('ProfileFormComponent', () => {
     expect(component.getActionTypeBadgeClass('WRITE')).toBe('bg-warning-subtle text-warning');
     expect(component.getActionTypeBadgeClass('DELETE')).toBe('bg-danger-subtle text-danger');
     expect(component.getActionTypeBadgeClass('OTHER')).toBe('bg-secondary-subtle text-secondary');
+  });
+
+  describe('inline validation errors (accessibility)', () => {
+    /**
+     * Marks the named control as touched + dirty through Angular's forms API
+     * (robust against one-way [ngModel] + signal rebinding) and refreshes the view.
+     */
+    async function touchControl(name: string) {
+      await fixture.whenStable();
+      fixture.detectChanges();
+      const form = fixture.debugElement.query(By.directive(NgForm)).injector.get(NgForm);
+      const control = form.controls[name];
+      control.markAsTouched();
+      control.markAsDirty();
+      control.updateValueAndValidity();
+      fixture.detectChanges();
+    }
+
+    it('should show an inline required error for an empty name, linked via aria-describedby', async () => {
+      await setup('create', buildProfile({ name: '' }), []);
+      await touchControl('profileName');
+
+      const input = fixture.nativeElement.querySelector('[data-testid="input-name"]') as HTMLInputElement;
+      const error = fixture.nativeElement.querySelector('[data-testid="error-name"]') as HTMLElement;
+      expect(error).toBeTruthy();
+      expect(error.id).toBe('profileName-error');
+      expect(input.getAttribute('aria-describedby')).toBe('profileName-error');
+      expect(input.getAttribute('aria-invalid')).toBe('true');
+    });
+
+    it('should NOT render an error nor aria-describedby when the name is valid', async () => {
+      await setup('edit', buildProfile({ name: 'Operador' }));
+      const input = fixture.nativeElement.querySelector('[data-testid="input-name"]') as HTMLInputElement;
+
+      expect(fixture.nativeElement.querySelector('[data-testid="error-name"]')).toBeNull();
+      expect(input.getAttribute('aria-describedby')).toBeNull();
+    });
+  });
+
+  describe('error summary (accessibility)', () => {
+    it('should not render the summary before a submit is attempted', async () => {
+      await setup('create', buildProfile({ name: '' }), []);
+      expect(fixture.nativeElement.querySelector('[data-testid="error-summary"]')).toBeNull();
+    });
+
+    it('should list the name error and move focus to the summary after a failed submit', async () => {
+      await setup('create', buildProfile({ name: '' }), []);
+
+      component.onSubmit();
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      const summary = fixture.nativeElement.querySelector('[data-testid="error-summary"]') as HTMLElement;
+      expect(summary).toBeTruthy();
+      expect(summary.getAttribute('role')).toBe('alert');
+      expect(summary.getAttribute('tabindex')).toBe('-1');
+
+      const link = summary.querySelector('a.alert-link') as HTMLAnchorElement;
+      expect(link.getAttribute('href')).toBe('#profileName');
+
+      expect(summary).toBe(document.activeElement);
+    });
+
+    it('should NOT render the summary when the submit is valid', async () => {
+      await setup('create', buildProfile({ name: 'Operador' }), []);
+      const spy = vi.fn();
+      component.save.subscribe(spy);
+
+      component.onSubmit();
+      fixture.detectChanges();
+
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(fixture.nativeElement.querySelector('[data-testid="error-summary"]')).toBeNull();
+    });
   });
 });

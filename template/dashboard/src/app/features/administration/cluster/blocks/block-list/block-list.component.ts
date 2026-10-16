@@ -32,10 +32,10 @@ export class BlockListComponent implements OnInit {
   readonly columns: ColumnDef[] = [
     { key: 'name', header: 'cluster.blocks.fields.name', sortable: true, resizable: true, reorderable: true },
     { key: 'startDate', header: 'cluster.blocks.fields.startDate', sortable: true, resizable: true, reorderable: true },
-    { key: 'avgTime', header: 'cluster.blocks.fields.avgTime', sortable: true, resizable: true, reorderable: true },
-    { key: 'minTime', header: 'cluster.blocks.fields.minTime', sortable: true, resizable: true, reorderable: true },
-    { key: 'maxTime', header: 'cluster.blocks.fields.maxTime', sortable: true, resizable: true, reorderable: true },
-    { key: 'total', header: 'cluster.blocks.fields.total', sortable: true, resizable: true, reorderable: true },
+    { key: 'avgTime', header: 'cluster.blocks.fields.avgTime', sortable: true, resizable: true, reorderable: true, cssClass: 'text-end' },
+    { key: 'minTime', header: 'cluster.blocks.fields.minTime', sortable: true, resizable: true, reorderable: true, cssClass: 'text-end' },
+    { key: 'maxTime', header: 'cluster.blocks.fields.maxTime', sortable: true, resizable: true, reorderable: true, cssClass: 'text-end' },
+    { key: 'total', header: 'cluster.blocks.fields.total', sortable: true, resizable: true, reorderable: true, cssClass: 'text-end' },
   ];
 
   // Pagination state

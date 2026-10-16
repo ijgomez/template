@@ -64,7 +64,7 @@ export class ConfigurationListComponent implements OnInit {
     { key: 'protocol', header: 'interfaces.configuration.fields.protocol', sortable: true, resizable: true, reorderable: true },
     { key: 'url', header: 'interfaces.configuration.fields.url' },
     { key: 'status', header: 'interfaces.configuration.fields.status', sortable: true, resizable: true, reorderable: true },
-    { key: 'checkFrequency', header: 'interfaces.configuration.fields.checkFrequency', sortable: true, resizable: true, reorderable: true },
+    { key: 'checkFrequency', header: 'interfaces.configuration.fields.checkFrequency', sortable: true, resizable: true, reorderable: true, cssClass: 'text-end' },
     { key: 'lastModifiedAt', header: 'interfaces.configuration.fields.lastModifiedAt', sortable: true, resizable: true, reorderable: true },
   ];
 

@@ -18,7 +18,10 @@
   --tp-color-surface: #ffffff;
   --tp-color-surface-subtle: #f8fafc;
   --tp-color-text: #0f172a;
-  --tp-color-text-muted: #64748b;
+  // Muted text: #52606f → ~6.4:1 sobre superficie blanca y ~6.1:1 sobre
+  // superficie sutil (#f8fafc). Cumple WCAG AA con holgura incluso a 12px,
+  // donde el anterior #64748b quedaba al límite (~4.55:1 sobre #f8fafc).
+  --tp-color-text-muted: #52606f;
   --tp-color-border: #e2e8f0;
   --tp-color-border-subtle: #f1f5f9;
 

@@ -79,6 +79,7 @@
     [currentPage]="currentPage()"
     [pageSize]="pageSize()"
     [selectable]="true"
+    [striped]="true"
     [selectedItem]="selectedRow()"
     (rowSelect)="selectRow($event)"
     (rowDoubleClick)="openForm($event)"
@@ -92,6 +93,10 @@
       <span class="badge"
             [class.bg-success]="node.status === 'ACTIVE'"
             [class.bg-danger]="node.status === 'INACTIVE'">
+        <i class="bi me-1"
+           [class.bi-check-circle-fill]="node.status === 'ACTIVE'"
+           [class.bi-x-circle-fill]="node.status === 'INACTIVE'"
+           aria-hidden="true"></i>
         {{ 'cluster.nodes.status.' + node.status.toLowerCase() | translate }}
       </span>
     </ng-template>

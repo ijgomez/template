@@ -237,4 +237,10 @@ describe('NodeJobsComponent', () => {
     component.save();
     expect(clusterService.findJobsByNode).toHaveBeenCalledTimes(2);
   });
+
+  it('right-aligns the numeric priority column (text-end)', () => {
+    setup();
+    const priority = component.columns.find((c) => c.key === 'priority');
+    expect(priority?.cssClass).toBe('text-end');
+  });
 });

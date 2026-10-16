@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ChangeDetectionStrategy, computed, effect, input, output, signal, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, computed, effect, ElementRef, input, output, signal, viewChild, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -58,6 +58,28 @@ export class ProfileFormComponent implements OnInit {
     return !name;
   });
 
+  /** Whether a save was attempted while the form was invalid (controls the error summary). */
+  readonly submitAttempted = signal(false);
+
+  /** Reference to the error summary container, used to move focus after a failed submit. */
+  private readonly errorSummary = viewChild<ElementRef<HTMLElement>>('errorSummary');
+
+  /**
+   * List of validation errors for the error summary.
+   * Each entry links to the invalid field via its DOM id. Only computed in edit/create modes.
+   */
+  readonly formErrors = computed<ReadonlyArray<{ fieldId: string; messageKey: string }>>(() => {
+    if (this.isReadonly()) {
+      return [];
+    }
+
+    const errors: { fieldId: string; messageKey: string }[] = [];
+    if (!(this.formProfile().name?.trim())) {
+      errors.push({ fieldId: 'profileName', messageKey: 'profiles.errors.nameRequired' });
+    }
+    return errors;
+  });
+
   // Internal form state
   readonly formProfile = signal<Profile>({ id: null, name: '', description: '', actions: [] });
   readonly selectedActionIds = signal<number[]>([]);
@@ -70,6 +92,13 @@ export class ProfileFormComponent implements OnInit {
 
     effect(() => {
       this.selectedActionIds.set([...this.actionIds()]);
+    });
+
+    // Move focus to the error summary after a failed submit.
+    effect(() => {
+      if (this.submitAttempted() && this.formErrors().length > 0) {
+        this.errorSummary()?.nativeElement.focus();
+      }
     });
   }
 
@@ -84,7 +113,14 @@ export class ProfileFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.isReadonly() || this.isSaveDisabled()) return;
+    if (this.isReadonly()) return;
+
+    if (this.isSaveDisabled()) {
+      this.submitAttempted.set(true);
+      return;
+    }
+
+    this.submitAttempted.set(false);
     this.save.emit({
       profile: this.formProfile(),
       actionIds: this.selectedActionIds(),

@@ -69,6 +69,9 @@ export class TpDataTableComponent<T extends { id?: number | string | null }> imp
   /** Whether rows are selectable. */
   @Input() selectable = true;
 
+  /** Whether to apply zebra striping (alternating row background) for readability. */
+  @Input() striped = false;
+
   /** Currently selected item (compared by id). */
   @Input() selectedItem: T | null = null;
 

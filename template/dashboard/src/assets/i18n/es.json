@@ -105,7 +105,8 @@
     "email": "Dirección de email inválida",
     "minLength": "La longitud mínima es {{min}} caracteres",
     "maxLength": "La longitud máxima es {{max}} caracteres",
-    "dateRangeInvalid": "La fecha desde no puede ser posterior a la fecha hasta."
+    "dateRangeInvalid": "La fecha desde no puede ser posterior a la fecha hasta.",
+    "summaryTitle": "Revise los errores del formulario"
   },
   "error": {
     "title": "Error",
@@ -162,6 +163,12 @@
       "createdAt": "Fecha de creación",
       "lastModifiedAt": "Última modificación"
     },
+    "errors": {
+      "usernameRequired": "El usuario es obligatorio",
+      "passwordRequired": "La contraseña es obligatoria",
+      "emailInvalid": "La dirección de email no es válida",
+      "profileRequired": "El perfil es obligatorio"
+    },
     "filters": {
       "allProfiles": "Todos los perfiles",
       "clear": "Limpiar"
@@ -202,6 +209,9 @@
       "actions": "Acciones",
       "createdAt": "Fecha de creación",
       "lastModifiedAt": "Última modificación"
+    },
+    "errors": {
+      "nameRequired": "El nombre es obligatorio"
     },
     "filters": {
       "clear": "Limpiar"
@@ -251,6 +261,10 @@
       "createdAt": "Fecha de creación",
       "lastModifiedAt": "Última modificación"
     },
+    "errors": {
+      "nameRequired": "El nombre es obligatorio",
+      "typeRequired": "El tipo es obligatorio"
+    },
     "filters": {
       "clear": "Limpiar",
       "allTypes": "Todos los tipos"
@@ -273,6 +287,10 @@
       "type": "Tipo",
       "createdAt": "Fecha de creación",
       "lastModifiedAt": "Última modificación"
+    },
+    "errors": {
+      "codeRequired": "El código es obligatorio",
+      "valueRequired": "El valor es obligatorio"
     },
     "filters": {
       "allTypes": "Todos los tipos",

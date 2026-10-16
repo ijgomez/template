@@ -48,6 +48,20 @@ describe('TpDataTableComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  describe('striped input', () => {
+    it('should NOT apply table-striped by default', () => {
+      const table = fixture.nativeElement.querySelector('table.tp-table') as HTMLTableElement;
+      expect(table.classList.contains('table-striped')).toBe(false);
+    });
+
+    it('should apply table-striped when striped is true', () => {
+      component.striped = true;
+      fixture.detectChanges();
+      const table = fixture.nativeElement.querySelector('table.tp-table') as HTMLTableElement;
+      expect(table.classList.contains('table-striped')).toBe(true);
+    });
+  });
+
   it('should initialise pixel column widths from ColumnDef on init', () => {
     expect(component.columnWidths['id']).toBe(80);
     expect(component.columnWidths['name']).toBeUndefined();

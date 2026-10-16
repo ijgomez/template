@@ -99,7 +99,7 @@ export class NodeJobsComponent implements OnInit {
   // Column definitions for tp-data-table
   readonly columns: ColumnDef[] = [
     { key: 'task', header: 'cluster.nodes.jobs.fields.task' },
-    { key: 'priority', header: 'cluster.nodes.jobs.fields.priority', width: '120px' },
+    { key: 'priority', header: 'cluster.nodes.jobs.fields.priority', width: '120px', cssClass: 'text-end' },
     { key: 'enabled', header: 'cluster.nodes.jobs.fields.enabled', width: '120px' },
     { key: 'actions', header: 'cluster.nodes.jobs.fields.description', width: '120px' },
   ];

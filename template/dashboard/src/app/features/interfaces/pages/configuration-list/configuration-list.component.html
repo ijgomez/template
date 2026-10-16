@@ -97,6 +97,11 @@
             [class.bg-success]="config.status === 'ACTIVE'"
             [class.bg-danger]="config.status === 'ERROR'"
             [class.bg-secondary]="config.status === 'INACTIVE'">
+        <i class="bi me-1"
+           [class.bi-check-circle-fill]="config.status === 'ACTIVE'"
+           [class.bi-x-circle-fill]="config.status === 'ERROR'"
+           [class.bi-dash-circle-fill]="config.status === 'INACTIVE'"
+           aria-hidden="true"></i>
         {{ config.status }}
       </span>
     </ng-template>

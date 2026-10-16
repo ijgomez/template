@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
+import { NgForm } from '@angular/forms';
 import { provideTranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 
@@ -197,6 +199,115 @@ describe('ParameterFormComponent', () => {
       component.onSubmit();
       expect(spy).toHaveBeenCalledTimes(1);
       expect(spy.mock.calls[0][0].value).toBe('updated');
+    });
+  });
+
+  describe('inline validation errors (accessibility)', () => {
+    /**
+     * Marks the named control as touched + dirty through Angular's forms API
+     * (robust against one-way [ngModel] + signal rebinding) and refreshes the view.
+     * ngModel controls register asynchronously, so we await stabilization first.
+     */
+    async function touchControl(name: string) {
+      await fixture.whenStable();
+      fixture.detectChanges();
+      const form = fixture.debugElement.query(By.directive(NgForm)).injector.get(NgForm);
+      const control = form.controls[name];
+      control.markAsTouched();
+      control.markAsDirty();
+      control.updateValueAndValidity();
+      fixture.detectChanges();
+    }
+
+    it('should show an inline required error for an empty code, linked via aria-describedby', async () => {
+      setup('create', buildParameter({ code: '' }));
+      await touchControl('paramCode');
+
+      const input = fixture.nativeElement.querySelector('[data-testid="input-code"]') as HTMLInputElement;
+      const error = fixture.nativeElement.querySelector('[data-testid="error-code"]') as HTMLElement;
+      expect(error).toBeTruthy();
+      expect(error.id).toBe('paramCode-error');
+      expect(input.getAttribute('aria-describedby')).toBe('paramCode-error');
+      expect(input.getAttribute('aria-invalid')).toBe('true');
+    });
+
+    it('should show the codeExists error linked via aria-describedby', async () => {
+      const parameterService = TestBed.inject(ParameterService);
+      vi.spyOn(parameterService, 'countByCriteria').mockReturnValue(of(1));
+
+      setup('create', buildParameter({ code: '' }));
+      component.updateField('code', 'EXISTING');
+      await touchControl('paramCode');
+
+      const input = fixture.nativeElement.querySelector('[data-testid="input-code"]') as HTMLInputElement;
+      const error = fixture.nativeElement.querySelector('[data-testid="error-code"]') as HTMLElement;
+      expect(error).toBeTruthy();
+      // Non-empty code is valid for the required rule, so the message is the uniqueness one.
+      expect(error.textContent?.trim()).toBe('Code already exists in the database');
+      expect(input.getAttribute('aria-describedby')).toBe('paramCode-error');
+    });
+
+    it('should show an inline type/value error for a malformed INTEGER value', async () => {
+      setup('create', buildParameter({ type: 'INTEGER', value: 'abc', code: 'C1' }));
+      await touchControl('paramValue');
+
+      const input = fixture.nativeElement.querySelector('[data-testid="input-value"]') as HTMLInputElement;
+      const error = fixture.nativeElement.querySelector('[data-testid="error-value"]') as HTMLElement;
+      expect(error).toBeTruthy();
+      expect(input.getAttribute('aria-describedby')).toBe('paramValue-error');
+    });
+
+    it('should NOT render an error nor aria-describedby when the code is valid', () => {
+      setup('edit', buildParameter({ code: 'VALID_CODE' }));
+      const input = fixture.nativeElement.querySelector('[data-testid="input-code"]') as HTMLInputElement;
+
+      expect(fixture.nativeElement.querySelector('[data-testid="error-code"]')).toBeNull();
+      expect(input.getAttribute('aria-describedby')).toBeNull();
+    });
+  });
+
+  describe('error summary (accessibility)', () => {
+    it('should not render the summary before a submit is attempted', () => {
+      setup('create', buildParameter({ code: '', value: '' }));
+      expect(fixture.nativeElement.querySelector('[data-testid="error-summary"]')).toBeNull();
+    });
+
+    it('should list required errors and move focus to the summary after a failed submit', async () => {
+      setup('create', buildParameter({ code: '', value: '' }));
+
+      component.onSubmit();
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      const summary = fixture.nativeElement.querySelector('[data-testid="error-summary"]') as HTMLElement;
+      expect(summary).toBeTruthy();
+      expect(summary.getAttribute('role')).toBe('alert');
+      expect(summary.getAttribute('tabindex')).toBe('-1');
+
+      const hrefs = Array.from(summary.querySelectorAll('a.alert-link')).map((a) => a.getAttribute('href'));
+      expect(hrefs).toContain('#paramCode');
+      expect(hrefs).toContain('#paramValue');
+
+      expect(summary).toBe(document.activeElement);
+    });
+
+    it('should include the type/value business error in the summary', () => {
+      setup('create', buildParameter({ code: 'C1', type: 'INTEGER', value: 'abc' }));
+      const entries = component.formErrors();
+      const valueError = entries.find((e) => e.fieldId === 'paramValue');
+      expect(valueError?.message).toBeTruthy();
+    });
+
+    it('should NOT render the summary when the submit is valid', () => {
+      setup('create', buildParameter({ code: 'C1', type: 'STRING', value: 'ok' }));
+      const spy = vi.fn();
+      component.save.subscribe(spy);
+
+      component.onSubmit();
+      fixture.detectChanges();
+
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(fixture.nativeElement.querySelector('[data-testid="error-summary"]')).toBeNull();
     });
   });
 

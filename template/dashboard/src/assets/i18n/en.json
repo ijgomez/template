@@ -105,7 +105,8 @@
     "email": "Invalid email address",
     "minLength": "Minimum length is {{min}} characters",
     "maxLength": "Maximum length is {{max}} characters",
-    "dateRangeInvalid": "The start date cannot be later than the end date."
+    "dateRangeInvalid": "The start date cannot be later than the end date.",
+    "summaryTitle": "Please review the form errors"
   },
   "error": {
     "title": "Error",
@@ -162,6 +163,12 @@
       "createdAt": "Created At",
       "lastModifiedAt": "Last Modified At"
     },
+    "errors": {
+      "usernameRequired": "Username is required",
+      "passwordRequired": "Password is required",
+      "emailInvalid": "The email address is not valid",
+      "profileRequired": "Profile is required"
+    },
     "filters": {
       "allProfiles": "All profiles",
       "clear": "Clear"
@@ -202,6 +209,9 @@
       "actions": "Actions",
       "createdAt": "Created At",
       "lastModifiedAt": "Last Modified At"
+    },
+    "errors": {
+      "nameRequired": "Name is required"
     },
     "filters": {
       "clear": "Clear"
@@ -251,6 +261,10 @@
       "createdAt": "Created At",
       "lastModifiedAt": "Last Modified At"
     },
+    "errors": {
+      "nameRequired": "Name is required",
+      "typeRequired": "Type is required"
+    },
     "filters": {
       "clear": "Clear",
       "allTypes": "All types"
@@ -273,6 +287,10 @@
       "type": "Type",
       "createdAt": "Created At",
       "lastModifiedAt": "Last Modified At"
+    },
+    "errors": {
+      "codeRequired": "Code is required",
+      "valueRequired": "Value is required"
     },
     "filters": {
       "allTypes": "All types",

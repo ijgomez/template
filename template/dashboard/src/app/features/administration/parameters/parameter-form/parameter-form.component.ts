@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ChangeDetectionStrategy, computed, effect, input, output, signal, OnInit, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, computed, effect, ElementRef, input, output, signal, viewChild, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, take } from 'rxjs/operators';
@@ -61,6 +61,39 @@ export class ParameterFormComponent implements OnInit {
     return !code || this.codeExistsError() !== '' || this.typeValueError() !== '';
   });
 
+  /** Whether a save was attempted while the form was invalid (controls the error summary). */
+  readonly submitAttempted = signal(false);
+
+  /** Reference to the error summary container, used to move focus after a failed submit. */
+  private readonly errorSummary = viewChild<ElementRef<HTMLElement>>('errorSummary');
+
+  /**
+   * List of validation errors for the error summary.
+   * Entries carry either a translation key (`messageKey`) or an already resolved
+   * message (`message`, for business rules such as duplicate code / type mismatch).
+   */
+  readonly formErrors = computed<ReadonlyArray<{ fieldId: string; messageKey?: string; message?: string }>>(() => {
+    if (this.isReadonly()) {
+      return [];
+    }
+
+    const data = this.formData();
+    const errors: { fieldId: string; messageKey?: string; message?: string }[] = [];
+
+    if (!(data.code?.trim())) {
+      errors.push({ fieldId: 'paramCode', messageKey: 'parameters.errors.codeRequired' });
+    } else if (this.codeExistsError()) {
+      errors.push({ fieldId: 'paramCode', message: this.codeExistsError() });
+    }
+    if (!(data.value?.trim())) {
+      errors.push({ fieldId: 'paramValue', messageKey: 'parameters.errors.valueRequired' });
+    } else if (this.typeValueError()) {
+      errors.push({ fieldId: 'paramValue', message: this.typeValueError() });
+    }
+
+    return errors;
+  });
+
   // Internal form state
   readonly formData = signal<Parameter>({
     id: null,
@@ -87,6 +120,13 @@ export class ParameterFormComponent implements OnInit {
       this.typeValueError.set(this.getTypeValueValidationError(next.type, next.value));
       this.validateCodeUniqueness(next.code ?? '');
     });
+
+    // Move focus to the error summary after a failed submit.
+    effect(() => {
+      if (this.submitAttempted() && this.formErrors().length > 0) {
+        this.errorSummary()?.nativeElement.focus();
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -110,8 +150,17 @@ export class ParameterFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.isReadonly() || this.isSaveDisabled()) return;
-    if (!this.validateTypeValue()) return;
+    if (this.isReadonly()) return;
+
+    // Re-run the type/value check so the summary reflects the latest state.
+    this.validateTypeValue();
+
+    if (this.isSaveDisabled()) {
+      this.submitAttempted.set(true);
+      return;
+    }
+
+    this.submitAttempted.set(false);
     this.save.emit(this.formData());
   }
 

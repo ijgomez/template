@@ -119,9 +119,9 @@ export class NodeListComponent implements OnInit {
     { key: 'master', header: 'cluster.nodes.fields.master', sortable: true, resizable: true, reorderable: true, width: '80px' },
     { key: 'startedAt', header: 'cluster.nodes.fields.startedAt', sortable: true, resizable: true, reorderable: true },
     { key: 'lastModifiedAt', header: 'cluster.nodes.fields.lastModifiedAt', sortable: true, resizable: true, reorderable: true },
-    { key: 'usedMemoryGb', header: 'cluster.nodes.fields.usedMemoryGb', sortable: true, resizable: true, reorderable: true, width: '100px' },
-    { key: 'totalMemoryGb', header: 'cluster.nodes.fields.totalMemoryGb', sortable: true, resizable: true, reorderable: true, width: '100px' },
-    { key: 'freeMemoryPercent', header: 'cluster.nodes.fields.freeMemoryPercent', sortable: true, resizable: true, reorderable: true, width: '90px' },
+    { key: 'usedMemoryGb', header: 'cluster.nodes.fields.usedMemoryGb', sortable: true, resizable: true, reorderable: true, width: '100px', cssClass: 'text-end' },
+    { key: 'totalMemoryGb', header: 'cluster.nodes.fields.totalMemoryGb', sortable: true, resizable: true, reorderable: true, width: '100px', cssClass: 'text-end' },
+    { key: 'freeMemoryPercent', header: 'cluster.nodes.fields.freeMemoryPercent', sortable: true, resizable: true, reorderable: true, width: '90px', cssClass: 'text-end' },
   ];
 
   // Permission

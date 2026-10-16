@@ -34,6 +34,28 @@
 
 <div class="tp-filter-bar">
   <form id="userForm" (ngSubmit)="onSubmit()" #userForm="ngForm" novalidate data-testid="user-form">
+    <!-- Error summary (shown after a failed submit) -->
+    @if (submitAttempted() && formErrors().length > 0) {
+      <div #errorSummary
+           role="alert"
+           tabindex="-1"
+           class="alert alert-danger py-2 px-3 mb-3"
+           aria-labelledby="user-form-error-title"
+           data-testid="error-summary">
+        <h2 id="user-form-error-title" class="h6 mb-2">
+          <i class="bi bi-exclamation-triangle-fill me-1" aria-hidden="true"></i>
+          {{ 'validation.summaryTitle' | translate }}
+        </h2>
+        <ul class="mb-0 ps-3">
+          @for (err of formErrors(); track err.fieldId) {
+            <li>
+              <a [href]="'#' + err.fieldId" class="alert-link">{{ err.messageKey | translate }}</a>
+            </li>
+          }
+        </ul>
+      </div>
+    }
+
     <!-- Datos generales -->
     <h6 class="text-muted text-uppercase fw-semibold mb-2" style="font-size: 0.75rem; letter-spacing: 0.05em;">
       {{ 'users.form.sectionGeneral' | translate }}
@@ -56,7 +78,14 @@
                [readonly]="isReadonly() || mode() === 'edit'"
                [disabled]="isReadonly()"
                [attr.aria-label]="'users.fields.username' | translate"
+               [attr.aria-invalid]="username.invalid && (username.dirty || username.touched) ? 'true' : null"
+               [attr.aria-describedby]="username.invalid && (username.dirty || username.touched) ? 'username-error' : null"
                data-testid="input-username">
+        @if (username.invalid && (username.dirty || username.touched)) {
+          <div id="username-error" class="invalid-feedback" data-testid="error-username">
+            {{ 'validation.required' | translate }}
+          </div>
+        }
       </div>
       <div class="col-md-4">
         <label for="password" class="form-label form-label-sm mb-1">
@@ -75,7 +104,14 @@
                [readonly]="isReadonly()"
                [disabled]="isReadonly()"
                [attr.aria-label]="'users.fields.password' | translate"
+               [attr.aria-invalid]="password.invalid && (password.dirty || password.touched) ? 'true' : null"
+               [attr.aria-describedby]="password.invalid && (password.dirty || password.touched) ? 'password-error' : null"
                data-testid="input-password">
+        @if (password.invalid && (password.dirty || password.touched)) {
+          <div id="password-error" class="invalid-feedback" data-testid="error-password">
+            {{ 'validation.required' | translate }}
+          </div>
+        }
       </div>
       <div class="col-md-4">
         <label for="email" class="form-label form-label-sm mb-1">
@@ -94,7 +130,14 @@
                [readonly]="isReadonly()"
                [disabled]="isReadonly()"
                [attr.aria-label]="'users.fields.email' | translate"
+               [attr.aria-invalid]="(email.invalid && (email.dirty || email.touched)) || emailIsInvalid() ? 'true' : null"
+               [attr.aria-describedby]="(email.invalid && (email.dirty || email.touched)) || emailIsInvalid() ? 'email-error' : null"
                data-testid="input-email">
+        @if ((email.invalid && (email.dirty || email.touched)) || emailIsInvalid()) {
+          <div id="email-error" class="invalid-feedback" data-testid="error-email">
+            {{ 'validation.email' | translate }}
+          </div>
+        }
       </div>
       <div class="col-md-4">
         <label for="firstName" class="form-label form-label-sm mb-1">
@@ -144,6 +187,7 @@
             {{ 'users.fields.profile' | translate }} @if (requireProfile()) { <span class="text-danger">*</span> }
           </label>
           <tp-profile-select
+            id="profileId"
             [ngClass]="{ 'is-invalid': profileId.invalid && (profileId.dirty || profileId.touched) }"
             [ngModel]="formUser().profileId"
             (ngModelChange)="updateField('profileId', $event)"

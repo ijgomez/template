@@ -154,6 +154,10 @@
             [class.text-success]="log.status === 'SUCCESS'"
             [class.bg-danger-subtle]="log.status !== 'SUCCESS'"
             [class.text-danger]="log.status !== 'SUCCESS'">
+        <i class="bi me-1"
+           [class.bi-check-circle-fill]="log.status === 'SUCCESS'"
+           [class.bi-x-circle-fill]="log.status !== 'SUCCESS'"
+           aria-hidden="true"></i>
         {{ log.status }}
       </span>
     </ng-template>
@@ -201,6 +205,10 @@
                     [class.text-success]="log.status === 'SUCCESS'"
                     [class.bg-danger-subtle]="log.status !== 'SUCCESS'"
                     [class.text-danger]="log.status !== 'SUCCESS'">
+                <i class="bi me-1"
+                   [class.bi-check-circle-fill]="log.status === 'SUCCESS'"
+                   [class.bi-x-circle-fill]="log.status !== 'SUCCESS'"
+                   aria-hidden="true"></i>
                 {{ log.status }}
               </span>
             </p>

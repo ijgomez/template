@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ChangeDetectionStrategy, computed, effect, input, output, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, computed, effect, ElementRef, input, output, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -73,6 +73,40 @@ export class UserFormComponent {
     return !username || (this.mode() === 'create' && !password) || profileIsMissing || this.emailIsInvalid();
   });
 
+  /** Whether a save was attempted while the form was invalid (controls the error summary). */
+  readonly submitAttempted = signal(false);
+
+  /** Reference to the error summary container, used to move focus after a failed submit. */
+  private readonly errorSummary = viewChild<ElementRef<HTMLElement>>('errorSummary');
+
+  /**
+   * List of validation errors for the error summary.
+   * Each entry links to the invalid field via its DOM id. Only computed in edit/create modes.
+   */
+  readonly formErrors = computed<ReadonlyArray<{ fieldId: string; messageKey: string }>>(() => {
+    if (this.isReadonly()) {
+      return [];
+    }
+
+    const user = this.formUser();
+    const errors: { fieldId: string; messageKey: string }[] = [];
+
+    if (!(user.username?.trim())) {
+      errors.push({ fieldId: 'username', messageKey: 'users.errors.usernameRequired' });
+    }
+    if (this.mode() === 'create' && !(user.password?.trim())) {
+      errors.push({ fieldId: 'password', messageKey: 'users.errors.passwordRequired' });
+    }
+    if (this.emailIsInvalid()) {
+      errors.push({ fieldId: 'email', messageKey: 'users.errors.emailInvalid' });
+    }
+    if (this.requireProfile() && !user.profileId) {
+      errors.push({ fieldId: 'profileId', messageKey: 'users.errors.profileRequired' });
+    }
+
+    return errors;
+  });
+
   // Internal form state
   readonly formUser = signal<UserDTO>({
     id: null,
@@ -92,6 +126,14 @@ export class UserFormComponent {
     effect(() => {
       this.formUser.set({ ...this.user() });
     });
+
+    // Move focus to the error summary after a failed submit so keyboard and
+    // screen reader users are taken straight to the list of problems.
+    effect(() => {
+      if (this.submitAttempted() && this.formErrors().length > 0) {
+        this.errorSummary()?.nativeElement.focus();
+      }
+    });
   }
 
   updateField(field: keyof UserDTO, value: unknown): void {
@@ -100,7 +142,15 @@ export class UserFormComponent {
   }
 
   onSubmit(): void {
-    if (this.isReadonly() || this.isSaveDisabled()) return;
+    if (this.isReadonly()) return;
+
+    if (this.isSaveDisabled()) {
+      // Reveal the error summary and move focus to it (handled by the effect).
+      this.submitAttempted.set(true);
+      return;
+    }
+
+    this.submitAttempted.set(false);
     this.save.emit(this.formUser());
   }
 

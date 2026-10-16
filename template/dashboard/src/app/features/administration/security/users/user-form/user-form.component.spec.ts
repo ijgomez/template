@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
+import { NgForm } from '@angular/forms';
 import { provideTranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 
@@ -150,6 +152,114 @@ describe('UserFormComponent', () => {
       component.save.subscribe(spy);
       component.onSubmit();
       expect(spy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('inline validation errors (accessibility)', () => {
+    /**
+     * Marks the named control as touched + dirty through Angular's forms API
+     * (robust against one-way [ngModel] + signal rebinding) and refreshes the view.
+     * ngModel controls register asynchronously, so we await stabilization first.
+     */
+    async function touchControl(name: string) {
+      await fixture.whenStable();
+      fixture.detectChanges();
+      const form = fixture.debugElement.query(By.directive(NgForm)).injector.get(NgForm);
+      const control = form.controls[name];
+      control.markAsTouched();
+      control.markAsDirty();
+      control.updateValueAndValidity();
+      fixture.detectChanges();
+    }
+
+    it('should show an inline error for a required empty username, linked via aria-describedby', async () => {
+      setup('create', buildUser({ username: '' }));
+      await touchControl('username');
+
+      const input = fixture.nativeElement.querySelector('[data-testid="input-username"]') as HTMLInputElement;
+      const error = fixture.nativeElement.querySelector('[data-testid="error-username"]') as HTMLElement;
+      expect(error).toBeTruthy();
+      expect(error.id).toBe('username-error');
+      expect(input.getAttribute('aria-describedby')).toBe('username-error');
+      expect(input.getAttribute('aria-invalid')).toBe('true');
+    });
+
+    it('should show an inline error for a required empty password in create mode', async () => {
+      setup('create', buildUser({ password: '' }));
+      await touchControl('password');
+
+      const input = fixture.nativeElement.querySelector('[data-testid="input-password"]') as HTMLInputElement;
+      const error = fixture.nativeElement.querySelector('[data-testid="error-password"]') as HTMLElement;
+      expect(error).toBeTruthy();
+      expect(input.getAttribute('aria-describedby')).toBe('password-error');
+    });
+
+    it('should show an inline error for a malformed email', async () => {
+      setup('create', buildUser({ email: 'invalid-email' }));
+      await touchControl('email');
+
+      const input = fixture.nativeElement.querySelector('[data-testid="input-email"]') as HTMLInputElement;
+      const error = fixture.nativeElement.querySelector('[data-testid="error-email"]') as HTMLElement;
+      expect(error).toBeTruthy();
+      expect(input.getAttribute('aria-describedby')).toBe('email-error');
+    });
+
+    it('should NOT render an error nor aria-describedby when the field is valid', () => {
+      setup('edit', buildUser({ username: 'valid-user' }));
+      const input = fixture.nativeElement.querySelector('[data-testid="input-username"]') as HTMLInputElement;
+
+      expect(fixture.nativeElement.querySelector('[data-testid="error-username"]')).toBeNull();
+      expect(input.getAttribute('aria-describedby')).toBeNull();
+    });
+  });
+
+  describe('error summary (accessibility)', () => {
+    it('should not render the summary before a submit is attempted', () => {
+      setup('create', buildUser({ username: '', password: '', profileId: null }));
+      expect(fixture.nativeElement.querySelector('[data-testid="error-summary"]')).toBeNull();
+    });
+
+    it('should list all validation errors and move focus to the summary after a failed submit', async () => {
+      setup('create', buildUser({ username: '', password: '', email: 'bad', profileId: null }));
+
+      component.onSubmit();
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      const summary = fixture.nativeElement.querySelector('[data-testid="error-summary"]') as HTMLElement;
+      expect(summary).toBeTruthy();
+      expect(summary.getAttribute('role')).toBe('alert');
+      expect(summary.getAttribute('tabindex')).toBe('-1');
+
+      // One link per invalid field, each anchored to the field id.
+      const links = summary.querySelectorAll('a.alert-link');
+      expect(links.length).toBe(4);
+      const hrefs = Array.from(links).map((a) => a.getAttribute('href'));
+      expect(hrefs).toContain('#username');
+      expect(hrefs).toContain('#password');
+      expect(hrefs).toContain('#email');
+      expect(hrefs).toContain('#profileId');
+
+      // Focus moved to the summary.
+      expect(fixture.nativeElement.querySelector('[data-testid="error-summary"]')).toBe(document.activeElement);
+    });
+
+    it('should NOT render the summary when the submit is valid', () => {
+      setup('create', buildUser({ username: 'jdoe', password: 'secret', email: 'jdoe@example.com', profileId: 10 }));
+      const spy = vi.fn();
+      component.save.subscribe(spy);
+
+      component.onSubmit();
+      fixture.detectChanges();
+
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(fixture.nativeElement.querySelector('[data-testid="error-summary"]')).toBeNull();
+    });
+
+    it('should expose the computed formErrors for an invalid create form', () => {
+      setup('create', buildUser({ username: '', password: '', email: 'bad', profileId: null }));
+      const fieldIds = component.formErrors().map((e) => e.fieldId);
+      expect(fieldIds).toEqual(['username', 'password', 'email', 'profileId']);
     });
   });
 
