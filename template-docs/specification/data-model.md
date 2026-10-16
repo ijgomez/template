@@ -62,14 +62,14 @@ Nivel mínimo de autorización. Cada funcionalidad protegida requiere una acció
 
 ### Token de refresco
 
-Token opaco persistente asociado a un usuario, usado para renovar la sesión sin reautenticar. Se entrega al cliente mediante cookie HttpOnly y permite su revocación desde el servidor.
+Token opaco persistente asociado a un usuario, usado para renovar la sesión sin re-autenticar. Se entrega al cliente mediante cookie HttpOnly y permite su revocación desde el servidor.
 
-| Atributo funcional | Descripción                                       |
-|--------------------|---------------------------------------------------|
-| Token              | Valor opaco único                                 |
-| Usuario            | Usuario propietario del token                     |
-| Fecha de expiración| Momento a partir del cual deja de ser válido      |
-| Revocado           | Indicador de token invalidado                     |
+| Atributo funcional  | Descripción                                  |
+|---------------------|----------------------------------------------|
+| Token               | Valor opaco único                            |
+| Usuario             | Usuario propietario del token                |
+| Fecha de expiración | Momento a partir del cual deja de ser válido |
+| Revocado            | Indicador de token invalidado                |
 
 ### Parámetro
 
@@ -109,38 +109,38 @@ Informe que puede asignarse a los usuarios para su ejecución y exportación.
 
 Interfaz externa (endpoint) supervisada por el sistema en el módulo de Interfaces.
 
-| Atributo funcional  | Descripción                                      |
-|---------------------|--------------------------------------------------|
-| Nombre              | Nombre de la interfaz                            |
-| Descripción         | Texto descriptivo                                |
-| URL                 | Dirección del endpoint                           |
-| Protocolo           | Protocolo de comunicación                        |
-| Estado              | Estado actual (activa, inactiva, error)          |
-| Frecuencia de chequeo | Periodicidad de la comprobación                |
+| Atributo funcional    | Descripción                             |
+|-----------------------|-----------------------------------------|
+| Nombre                | Nombre de la interfaz                   |
+| Descripción           | Texto descriptivo                       |
+| URL                   | Dirección del endpoint                  |
+| Protocolo             | Protocolo de comunicación               |
+| Estado                | Estado actual (activa, inactiva, error) |
+| Frecuencia de chequeo | Periodicidad de la comprobación         |
 
 ### Registro de interfaz
 
 Entrada inmutable (solo inserción) que registra cada operación de una interfaz, con su trazabilidad de entrada/salida.
 
-| Atributo funcional | Descripción                                       |
-|--------------------|---------------------------------------------------|
-| Fecha y hora       | Momento de la operación (UTC)                     |
-| Tipo de operación  | Naturaleza de la operación                        |
-| Nombre de interfaz | Interfaz que originó el registro                  |
-| Payload de petición| Contenido de la petición                          |
-| Payload de respuesta| Contenido de la respuesta                        |
-| Estado             | Resultado de la operación                         |
+| Atributo funcional   | Descripción                      |
+|----------------------|----------------------------------|
+| Fecha y hora         | Momento de la operación (UTC)    |
+| Tipo de operación    | Naturaleza de la operación       |
+| Nombre de interfaz   | Interfaz que originó el registro |
+| Payload de petición  | Contenido de la petición         |
+| Payload de respuesta | Contenido de la respuesta        |
+| Estado               | Resultado de la operación        |
 
 ### Entidades del cluster
 
 El módulo de alta disponibilidad gestiona la coordinación entre nodos:
 
-| Entidad  | Descripción                                                                        |
-|----------|------------------------------------------------------------------------------------|
-| Nodo     | Nodo del cluster con su estado, host, IP, indicador de maestro y métricas de memoria |
-| Tarea    | Definición de una tarea ejecutable en el cluster                                   |
-| Trabajo  | Asignación de una tarea a un nodo, con prioridad y estado (clave compuesta nodo+tarea) |
-| Bloqueo  | Registro de bloqueo (lock) de una tarea con métricas de ejecución                  |
+| Entidad | Descripción                                                                            |
+|---------|----------------------------------------------------------------------------------------|
+| Nodo    | Nodo del cluster con su estado, host, IP, indicador de maestro y métricas de memoria   |
+| Tarea   | Definición de una tarea ejecutable en el cluster                                       |
+| Trabajo | Asignación de una tarea a un nodo, con prioridad y estado (clave compuesta nodo+tarea) |
+| Bloqueo | Registro de bloqueo (lock) de una tarea con métricas de ejecución                      |
 
 ---
 

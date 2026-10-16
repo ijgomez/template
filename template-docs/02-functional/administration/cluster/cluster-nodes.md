@@ -105,20 +105,20 @@ Ofrecer a los administradores visibilidad y control seguro del cluster:
 
 La funcionalidad usa dos modos de vista dentro de `NodeListComponent`:
 
-| Modo | Descripción |
-|------|-------------|
-| `list` | Listado de nodos con filtros, ordenación, selección, paginación y exportación |
-| `detail` | Vista no editable del nodo seleccionado |
+| Modo     | Descripción                                                                   |
+|----------|-------------------------------------------------------------------------------|
+| `list`   | Listado de nodos con filtros, ordenación, selección, paginación y exportación |
+| `detail` | Vista no editable del nodo seleccionado                                       |
 
 ### 2.3. Patrón visual reutilizable y wireframes
 
 La estructura visual base se define en [layout.md](../../../03-technical/frontend/layout.md). La pantalla usa `List screen` para la consulta y una variante de `Form screen` solo lectura para el detalle; el cambio de maestro utiliza un modal de confirmación.
 
-| Tipo de pantalla | Uso en nodos | Estructura base |
-|------------------|--------------|-----------------|
-| `List screen` | Consulta principal | Cabecera, filtros, barra de acciones, tabla y paginación |
-| `Form screen` solo lectura | Detalle del nodo | Encabezado, datos operativos y acción Volver |
-| `Confirmation modal` | Designar maestro | Nombre del nodo y acciones cancelar / confirmar |
+| Tipo de pantalla           | Uso en nodos       | Estructura base                                          |
+|----------------------------|--------------------|----------------------------------------------------------|
+| `List screen`              | Consulta principal | Cabecera, filtros, barra de acciones, tabla y paginación |
+| `Form screen` solo lectura | Detalle del nodo   | Encabezado, datos operativos y acción Volver             |
+| `Confirmation modal`       | Designar maestro   | Nombre del nodo y acciones cancelar / confirmar          |
 
 #### 2.3.1. Wireframe del `List screen`
 
@@ -134,7 +134,7 @@ La estructura visual base se define en [layout.md](../../../03-technical/fronten
 |----------|----|--------|---------|--------|----------------------|-------------|
 | ...                                                                            |
 +--------------------------------------------------------------------------------+
-| < 1 2 3 > | Nodos por pagina: 5 / 10 / 20 / 50                                |
+| < 1 2 3 > | Nodos por pagina: 5 / 10 / 20 / 50                                 |
 +--------------------------------------------------------------------------------+
 ```
 
@@ -142,13 +142,13 @@ La estructura visual base se define en [layout.md](../../../03-technical/fronten
 
 ```text
 +------------------------------------------------------------------+
-| Detalle del nodo                                      [Volver]  |
+| Detalle del nodo                                      [Volver]   |
 +------------------------------------------------------------------+
-| Hostname | node-01        | IP | 10.0.0.10                      |
-| Estado   | ACTIVE         | Maestro | MASTER                    |
-| Inicio   | fecha/hora     | Ultima actualizacion | fecha/hora   |
-| Memoria usada | 1.25 GB   | Memoria total | 4.00 GB             |
-| Memoria libre | 68.8 %                                       |
+| Hostname | node-01        | IP | 10.0.0.10                       |
+| Estado   | ACTIVE         | Maestro | MASTER                     |
+| Inicio   | fecha/hora     | Ultima actualizacion | fecha/hora    |
+| Memoria usada | 1.25 GB   | Memoria total | 4.00 GB              |
+| Memoria libre | 68.8 %                                           |
 +------------------------------------------------------------------+
 ```
 
@@ -156,35 +156,35 @@ La estructura visual base se define en [layout.md](../../../03-technical/fronten
 
 **Columnas de la tabla:**
 
-| Columna | Clave i18n | Notas |
-|---------|------------|-------|
-| Hostname | `cluster.nodes.fields.hostname` | Identificador de la instancia |
-| IP | `cluster.nodes.fields.ip` | Dirección IP conocida del nodo |
-| Estado | `cluster.nodes.fields.status` | `ACTIVE` o `INACTIVE`, mostrado como etiqueta |
-| Maestro | `cluster.nodes.fields.master` | Muestra `MASTER` cuando el indicador es verdadero |
-| Inicio | `cluster.nodes.fields.startedAt` | Fecha/hora de arranque, formateada localmente |
-| Última actualización | `cluster.nodes.fields.lastModifiedAt` | Marca temporal del último heartbeat o cambio |
-| Memoria usada | `cluster.nodes.fields.usedMemoryGb` | Conversión de bytes a GB |
-| Memoria total | `cluster.nodes.fields.totalMemoryGb` | Conversión de bytes a GB |
-| Memoria libre | `cluster.nodes.fields.freeMemoryPercent` | Porcentaje calculado a partir de memoria usada y total |
+| Columna              | Clave i18n                               | Notas                                                  |
+|----------------------|------------------------------------------|--------------------------------------------------------|
+| Hostname             | `cluster.nodes.fields.hostname`          | Identificador de la instancia                          |
+| IP                   | `cluster.nodes.fields.ip`                | Dirección IP conocida del nodo                         |
+| Estado               | `cluster.nodes.fields.status`            | `ACTIVE` o `INACTIVE`, mostrado como etiqueta          |
+| Maestro              | `cluster.nodes.fields.master`            | Muestra `MASTER` cuando el indicador es verdadero      |
+| Inicio               | `cluster.nodes.fields.startedAt`         | Fecha/hora de arranque, formateada localmente          |
+| Última actualización | `cluster.nodes.fields.lastModifiedAt`    | Marca temporal del último heartbeat o cambio           |
+| Memoria usada        | `cluster.nodes.fields.usedMemoryGb`      | Conversión de bytes a GB                               |
+| Memoria total        | `cluster.nodes.fields.totalMemoryGb`     | Conversión de bytes a GB                               |
+| Memoria libre        | `cluster.nodes.fields.freeMemoryPercent` | Porcentaje calculado a partir de memoria usada y total |
 
 **Filtros disponibles:**
 
-| Filtro | Tipo | Regla | `data-testid` |
-|--------|------|-------|---------------|
-| Hostname | Texto | Coincidencia parcial | `filter-hostname` |
-| Estado | Selección | Todos, activo o inactivo | `filter-status` |
-| Maestro | Selección | Todos, sí o no | `filter-master` |
+| Filtro   | Tipo      | Regla                    | `data-testid`     |
+|----------|-----------|--------------------------|-------------------|
+| Hostname | Texto     | Coincidencia parcial     | `filter-hostname` |
+| Estado   | Selección | Todos, activo o inactivo | `filter-status`   |
+| Maestro  | Selección | Todos, sí o no           | `filter-master`   |
 
 **Barra de acciones:**
 
-| Acción | Condición de disponibilidad | `data-testid` |
-|--------|-----------------------------|---------------|
-| Filtrar | Siempre disponible | `btn-filter-search` |
-| Limpiar | Siempre disponible | `btn-filter-clear` |
-| Detalle | Requiere una fila seleccionada | `btn-detail` |
-| Designar maestro | `CLUSTER_NODE_WRITE`, fila activa no maestra seleccionada | `btn-set-master` |
-| Exportar CSV | Siempre disponible cuando existen resultados filtrados | `btn-export` |
+| Acción           | Condición de disponibilidad                               | `data-testid`       |
+|------------------|-----------------------------------------------------------|---------------------|
+| Filtrar          | Siempre disponible                                        | `btn-filter-search` |
+| Limpiar          | Siempre disponible                                        | `btn-filter-clear`  |
+| Detalle          | Requiere una fila seleccionada                            | `btn-detail`        |
+| Designar maestro | `CLUSTER_NODE_WRITE`, fila activa no maestra seleccionada | `btn-set-master`    |
+| Exportar CSV     | Siempre disponible cuando existen resultados filtrados    | `btn-export`        |
 
 - Un clic selecciona o deselecciona la fila.
 - El detalle se abre pulsando el botón *Detalle* con una fila seleccionada o mediante doble clic sobre la fila.
@@ -192,18 +192,18 @@ La estructura visual base se define en [layout.md](../../../03-technical/fronten
 
 ### 2.4. Identificadores para pruebas (`data-testid`)
 
-| Elemento | `data-testid` |
-| --- | --- |
-| Formulario de filtros | `cluster-nodes-filter-form` |
-| Filtro de hostname | `filter-hostname` |
-| Filtro de estado | `filter-status` |
-| Filtro de maestro | `filter-master` |
-| Tabla de nodos | `cluster-nodes-table` |
-| Botón Filtrar | `btn-filter-search` |
-| Botón Limpiar | `btn-filter-clear` |
-| Botón Detalle | `btn-detail` |
-| Botón Designar maestro | `btn-set-master` |
-| Botón Exportar CSV | `btn-export` |
+| Elemento               | `data-testid`               |
+|------------------------|-----------------------------|
+| Formulario de filtros  | `cluster-nodes-filter-form` |
+| Filtro de hostname     | `filter-hostname`           |
+| Filtro de estado       | `filter-status`             |
+| Filtro de maestro      | `filter-master`             |
+| Tabla de nodos         | `cluster-nodes-table`       |
+| Botón Filtrar          | `btn-filter-search`         |
+| Botón Limpiar          | `btn-filter-clear`          |
+| Botón Detalle          | `btn-detail`                |
+| Botón Designar maestro | `btn-set-master`            |
+| Botón Exportar CSV     | `btn-export`                |
 
 ### 2.5. Detalle y designación de maestro
 
@@ -236,17 +236,17 @@ flowchart TD
 
 ### 3.1. Componentes afectados
 
-| Capa | Elemento | Responsabilidad |
-|------|----------|-----------------|
-| Frontend | `NodeListComponent` | Consulta, filtros cliente, ordenación, paginación, selección y cambio de maestro. |
-| Frontend | `NodeFormComponent` | Presentación de solo lectura del nodo. |
-| Frontend | `ClusterService` | Llamadas REST de nodos y actualización del liderazgo. |
-| Frontend | `TpDataTableComponent` | Tabla reutilizable para ordenación, selección y paginación. |
-| Backend | `ClusterController` | Endpoints REST de lectura de nodos y actualización del maestro. |
-| Backend | `ClusterService` | Consulta, heartbeat, detección de inactivos y elección de maestro. |
-| Domain | `ClusterNode` | Entidad JPA que representa el estado live de cada nodo del clúster. |
-| Domain | `ClusterNodeDTO` y `NodeStatus` | Transporte y estado del nodo en el frontend y backend. |
-| Security | `SecurityConfig` | Reglas de autorización y protección del módulo de clúster. |
+| Capa     | Elemento                        | Responsabilidad                                                                   |
+|----------|---------------------------------|-----------------------------------------------------------------------------------|
+| Frontend | `NodeListComponent`             | Consulta, filtros cliente, ordenación, paginación, selección y cambio de maestro. |
+| Frontend | `NodeFormComponent`             | Presentación de solo lectura del nodo.                                            |
+| Frontend | `ClusterService`                | Llamadas REST de nodos y actualización del liderazgo.                             |
+| Frontend | `TpDataTableComponent`          | Tabla reutilizable para ordenación, selección y paginación.                       |
+| Backend  | `ClusterController`             | Endpoints REST de lectura de nodos y actualización del maestro.                   |
+| Backend  | `ClusterService`                | Consulta, heartbeat, detección de inactivos y elección de maestro.                |
+| Domain   | `ClusterNode`                   | Entidad JPA que representa el estado live de cada nodo del clúster.               |
+| Domain   | `ClusterNodeDTO` y `NodeStatus` | Transporte y estado del nodo en el frontend y backend.                            |
+| Security | `SecurityConfig`                | Reglas de autorización y protección del módulo de clúster.                        |
 
 ### 3.2. Modelos de datos
 
@@ -318,13 +318,13 @@ Las métricas de memoria se almacenan en bytes. La pantalla calcula la memoria l
 
 Ruta base: `/api/v1/administration/cluster/nodes`.
 
-| Método y ruta | Descripción | Respuesta |
-|---------------|-------------|-----------|
-| `GET /` | Obtiene todos los nodos registrados | 200 OK con lista de nodos |
-| `GET /{id}` | Obtiene un nodo por identificador | 200 OK con el nodo; 404 si no existe |
-| `PATCH /{id}` | Designa el nodo como maestro; el cliente envía `{ "master": true }` | 200 OK con el nodo actualizado |
-| `POST /` | Creación manual no permitida | 405 Method Not Allowed |
-| `DELETE /{id}` | Eliminación no permitida | 405 Method Not Allowed |
+| Método y ruta  | Descripción                                                         | Respuesta                            |
+|----------------|---------------------------------------------------------------------|--------------------------------------|
+| `GET /`        | Obtiene todos los nodos registrados                                 | 200 OK con lista de nodos            |
+| `GET /{id}`    | Obtiene un nodo por identificador                                   | 200 OK con el nodo; 404 si no existe |
+| `PATCH /{id}`  | Designa el nodo como maestro; el cliente envía `{ "master": true }` | 200 OK con el nodo actualizado       |
+| `POST /`       | Creación manual no permitida                                        | 405 Method Not Allowed               |
+| `DELETE /{id}` | Eliminación no permitida                                            | 405 Method Not Allowed               |
 
 El controlador delega la designación en `ClusterService.setMaster(id)`: el valor del cuerpo de petición no habilita otros cambios y la operación establece el indicador de maestro a verdadero.
 
@@ -374,17 +374,17 @@ El controlador delega la designación en `ClusterService.setMaster(id)`: el valo
 
 ### 4.1. Cobertura unitaria (backend)
 
-| Ubicación | Alcance |
-|-----------|---------|
-| `core/src/test/java/org/myorganization/template/core/service/ClusterServiceTest.java` | Consulta de nodos, designación de maestro y operaciones de cluster |
-| `core/src/test/java/org/myorganization/template/core/service/ClusterServiceSingleMasterPropertyTest.java` | Propiedad de un único maestro tras secuencias de cambios |
-| `webapp/src/test/java/org/myorganization/template/webapp/controller/ClusterControllerTest.java` | Contrato de los endpoints de nodos |
-| `webapp/src/test/java/org/myorganization/template/webapp/integration/AuditAndClusterIntegrationTest.java` | Invariante de maestro único en integración |
+| Ubicación                                                                                                 | Alcance                                                            |
+|-----------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------|
+| `core/src/test/java/org/myorganization/template/core/service/ClusterServiceTest.java`                     | Consulta de nodos, designación de maestro y operaciones de cluster |
+| `core/src/test/java/org/myorganization/template/core/service/ClusterServiceSingleMasterPropertyTest.java` | Propiedad de un único maestro tras secuencias de cambios           |
+| `webapp/src/test/java/org/myorganization/template/webapp/controller/ClusterControllerTest.java`           | Contrato de los endpoints de nodos                                 |
+| `webapp/src/test/java/org/myorganization/template/webapp/integration/AuditAndClusterIntegrationTest.java` | Invariante de maestro único en integración                         |
 
 ### 4.2. Cobertura unitaria (frontend)
 
-| Ubicación | Alcance |
-|-----------|---------|
+| Ubicación                                                 | Alcance                                                                        |
+|-----------------------------------------------------------|--------------------------------------------------------------------------------|
 | `dashboard/src/app/core/services/cluster.service.spec.ts` | Consultas de nodos, consulta por identificador y `PATCH` para designar maestro |
 
 No hay actualmente pruebas unitarias específicas de `NodeListComponent` o `NodeFormComponent` en el repositorio.
@@ -393,12 +393,12 @@ No hay actualmente pruebas unitarias específicas de `NodeListComponent` o `Node
 
 Ubicación: `dashboard/e2e/tests/administration/cluster-nodes.spec.ts` (Page Object en `dashboard/e2e/pages/cluster-nodes.page.ts`).
 
-| Caso | Descripción | Resultado esperado |
-|------|-------------|--------------------|
-| Listado controlado | Acceder a la pantalla tras iniciar sesión | La tabla y filtros son visibles; no existen acciones de crear ni eliminar y Designar maestro está deshabilitado sin selección |
-| Filtrado | Filtrar por el hostname de un nodo existente y limpiar | El listado queda reducido al nodo coincidente y se restaura al limpiar |
-| Detalle | Seleccionar el primer nodo, pulsar *Detalle* y volver | El detalle muestra su hostname y Volver restaura el listado |
-| Exportación CSV | Exportar el listado de nodos | El navegador descarga `cluster-nodes_YYYY-MM-DD.csv` |
+| Caso               | Descripción                                            | Resultado esperado                                                                                                            |
+|--------------------|--------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------|
+| Listado controlado | Acceder a la pantalla tras iniciar sesión              | La tabla y filtros son visibles; no existen acciones de crear ni eliminar y Designar maestro está deshabilitado sin selección |
+| Filtrado           | Filtrar por el hostname de un nodo existente y limpiar | El listado queda reducido al nodo coincidente y se restaura al limpiar                                                        |
+| Detalle            | Seleccionar el primer nodo, pulsar *Detalle* y volver  | El detalle muestra su hostname y Volver restaura el listado                                                                   |
+| Exportación CSV    | Exportar el listado de nodos                           | El navegador descarga `cluster-nodes_YYYY-MM-DD.csv`                                                                          |
 
 La suite no ejecuta el cambio de maestro: es una operación que modifica estado compartido y requiere al menos dos nodos activos para validarse de forma aislada o con restauración posterior.
 
@@ -424,10 +424,10 @@ Precondición del ciclo: usuario con `CLUSTER_NODE_READ` (y `CLUSTER_NODE_WRITE`
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
+| # | Acción                                                   | Resultado esperado                                                                                                                                  |
+|---|----------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
 | 1 | Navegar a `{{BASE_URL_UI}}/administration/cluster/nodes` | `cluster-nodes-table` visible con hostname, IP, estado, maestro, inicio, última actualización y métricas de memoria; sin acciones de crear/eliminar |
-| 2 | Ordenar y cambiar tamaño de página (5/10/20/50) | Ordenación y paginación funcionan |
+| 2 | Ordenar y cambiar tamaño de página (5/10/20/50)          | Ordenación y paginación funcionan                                                                                                                   |
 
 #### TC-CLN-02 · Filtrado por hostname, estado y maestro
 
@@ -435,10 +435,10 @@ Precondición del ciclo: usuario con `CLUSTER_NODE_READ` (y `CLUSTER_NODE_WRITE`
 - **Setup:** login con `{{ADMIN_USER}}`; identificar el hostname de un nodo existente.
 - **Teardown:** logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
+| # | Acción                                                                                                          | Resultado esperado                                                                      |
+|---|-----------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------|
 | 1 | Rellenar `filter-hostname` (parcial), seleccionar `filter-status` y `filter-master`, pulsar `btn-filter-search` | El listado se reduce a las filas coincidentes; vuelve a página 1 y elimina la selección |
-| 2 | Pulsar `btn-filter-clear` | Recarga el listado completo |
+| 2 | Pulsar `btn-filter-clear`                                                                                       | Recarga el listado completo                                                             |
 
 #### TC-CLN-03 · Detalle de nodo
 
@@ -446,10 +446,10 @@ Precondición del ciclo: usuario con `CLUSTER_NODE_READ` (y `CLUSTER_NODE_WRITE`
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
+| # | Acción                    | Resultado esperado                                                 |
+|---|---------------------------|--------------------------------------------------------------------|
 | 1 | Doble clic sobre una fila | Detalle en solo lectura con datos operativos y métricas de memoria |
-| 2 | Pulsar *Volver* | Regresa al listado sin modificar el nodo |
+| 2 | Pulsar *Volver*           | Regresa al listado sin modificar el nodo                           |
 
 #### TC-CLN-04 · Designación de nodo maestro
 
@@ -457,9 +457,9 @@ Precondición del ciclo: usuario con `CLUSTER_NODE_READ` (y `CLUSTER_NODE_WRITE`
 - **Setup:** login con `{{ADMIN_USER}}` (con `CLUSTER_NODE_WRITE`); entorno con ≥2 nodos activos. Anotar quién es el maestro actual.
 - **Teardown:** restaurar el maestro original designándolo de nuevo (`PATCH /{idOriginal}` con `{ "master": true }`), para dejar el cluster como estaba.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | Seleccionar un nodo activo que no sea maestro | `btn-set-master` se habilita |
+| # | Acción                                                                   | Resultado esperado                                                                                                      |
+|---|--------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------|
+| 1 | Seleccionar un nodo activo que no sea maestro                            | `btn-set-master` se habilita                                                                                            |
 | 2 | Pulsar `btn-set-master` y confirmar en el modal (identifica el hostname) | `PATCH /{id}` con `{ "master": true }`; el nodo pasa a maestro y el anterior pierde el indicador; el listado se recarga |
 
 #### TC-CLN-05 · Botón de maestro deshabilitado por reglas
@@ -468,8 +468,8 @@ Precondición del ciclo: usuario con `CLUSTER_NODE_READ` (y `CLUSTER_NODE_WRITE`
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
+| # | Acción                                                  | Resultado esperado                       |
+|---|---------------------------------------------------------|------------------------------------------|
 | 1 | Seleccionar el nodo maestro actual (o un nodo inactivo) | `btn-set-master` permanece deshabilitado |
 
 #### TC-CLN-06 · Exportación CSV
@@ -478,8 +478,8 @@ Precondición del ciclo: usuario con `CLUSTER_NODE_READ` (y `CLUSTER_NODE_WRITE`
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** eliminar el fichero descargado; logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
+| # | Acción                           | Resultado esperado                                                                                                |
+|---|----------------------------------|-------------------------------------------------------------------------------------------------------------------|
 | 1 | Sin filtros, pulsar `btn-export` | Descarga `cluster-nodes_{{TODAY}}.csv` con todos los registros filtrados y métricas de memoria en GB y porcentaje |
 
 #### TC-CLN-07 · Registro y eliminación controlados por el sistema
@@ -488,11 +488,11 @@ Precondición del ciclo: usuario con `CLUSTER_NODE_READ` (y `CLUSTER_NODE_WRITE`
 - **Setup:** vía API con token de `{{ADMIN_USER}}`.
 - **Teardown:** No aplica.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | `POST {{BASE_URL_API}}/api/v1/administration/cluster/nodes` | 405 Method Not Allowed |
-| 2 | `DELETE {{BASE_URL_API}}/api/v1/administration/cluster/nodes/1` | 405 Method Not Allowed |
-| 3 | Observar la pantalla | No hay acciones de crear ni eliminar; los nodos se registran automáticamente al arrancar la instancia |
+| # | Acción                                                          | Resultado esperado                                                                                    |
+|---|-----------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|
+| 1 | `POST {{BASE_URL_API}}/api/v1/administration/cluster/nodes`     | 405 Method Not Allowed                                                                                |
+| 2 | `DELETE {{BASE_URL_API}}/api/v1/administration/cluster/nodes/1` | 405 Method Not Allowed                                                                                |
+| 3 | Observar la pantalla                                            | No hay acciones de crear ni eliminar; los nodos se registran automáticamente al arrancar la instancia |
 
 ---
 

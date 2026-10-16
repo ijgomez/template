@@ -1,4 +1,4 @@
-# Template Documentation - Espcificacion funcional
+# Template Documentation - Especificación funcional
 
 ## Índice
 

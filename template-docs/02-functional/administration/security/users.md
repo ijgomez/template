@@ -108,50 +108,50 @@ Ofrecer a los administradores una pantalla completa para administrar los usuario
 
 La pantalla gestiona cuatro modos de vista (`viewMode`) dentro del mismo componente:
 
-| Modo | Descripción |
-|------|-------------|
-| `list` | Listado paginado con barra de filtros y barra de acciones |
-| `detail` | Vista de solo lectura de un usuario (incluye auditoría) |
-| `create` | Formulario de alta de usuario |
-| `edit` | Formulario de edición de usuario |
+| Modo     | Descripción                                               |
+|----------|-----------------------------------------------------------|
+| `list`   | Listado paginado con barra de filtros y barra de acciones |
+| `detail` | Vista de solo lectura de un usuario (incluye auditoría)   |
+| `create` | Formulario de alta de usuario                             |
+| `edit`   | Formulario de edición de usuario                          |
 
 ### 2.3. Patrón visual reutilizable y wireframes
 
 La estructura visual base de esta pantalla se define en [layout.md](../../../03-technical/frontend/layout.md). Ese documento es la fuente única de verdad para los templates `List Screen`, `Form Screen` y `Confirmation Modal`; la documentación funcional de usuarios solo describe cómo se aplica ese patrón a la entidad concreta.
 
-| Tipo de pantalla | Uso en usuarios | Estructura base |
-|------------------|-----------------|-----------------|
-| `List screen` | Listado principal | Cabecera, filtros, tabla, acciones y paginación |
-| `Form screen` | Alta, edición y consulta en modo lectura | Encabezado, campos, validación, auditoría y pie de acciones |
-| `Confirmation modal` | Eliminación | Mensaje de confirmación con aceptar/cancelar |
+| Tipo de pantalla     | Uso en usuarios                          | Estructura base                                             |
+|----------------------|------------------------------------------|-------------------------------------------------------------|
+| `List screen`        | Listado principal                        | Cabecera, filtros, tabla, acciones y paginación             |
+| `Form screen`        | Alta, edición y consulta en modo lectura | Encabezado, campos, validación, auditoría y pie de acciones |
+| `Confirmation modal` | Eliminación                              | Mensaje de confirmación con aceptar/cancelar                |
 
 #### 2.3.1. Wireframe del `List screen`
 
 ```text
-+------------------------------------------------------------------+
-| Usuarios                                                          |
-| [Crear] [Exportar]                                                |
-+------------------------------------------------------------------+
++---------------------------------------------------------------------+
+| Usuarios                                                            |
+| [Crear] [Exportar]                                                  |
++---------------------------------------------------------------------+
 | Filtro usuario | Filtro nombre | Filtro perfil | [Buscar] [Limpiar] |
-+------------------------------------------------------------------+
-| Usuario | Nombre | Apellidos | Email | Perfil | Último acceso     |
-|-------- |--------|-----------|-------|--------|------------------|
-| admin   | Admin  | User      | ...   | ADMIN  | 2026-09-29       |
-| tester  | Test   | User      | ...   | USER   | 2026-09-28       |
-+------------------------------------------------------------------+
-| < 1 2 3 > | Registros por página: 10                            |
-+------------------------------------------------------------------+
++---------------------------------------------------------------------+
+| Usuario | Nombre | Apellidos | Email | Perfil | Último acceso       |
+|-------- |--------|-----------|-------|--------|---------------------|
+| admin   | Admin  | User      | ...   | ADMIN  | 2026-09-29          |
+| tester  | Test   | User      | ...   | USER   | 2026-09-28          |
++---------------------------------------------------------------------+
+| < 1 2 3 > | Registros por página: 10                                |
++---------------------------------------------------------------------+
 ```
 
 #### 2.3.2. Wireframe del `Form screen`
 
 ```text
 +------------------------------------------------------------------+
-| Crear usuario / Editar usuario                                     |
+| Crear usuario / Editar usuario                                   |
 +------------------------------------------------------------------+
-| Usuario * | [texto]          | Perfil * | [select]                |
-| Contraseña | [texto]        | Email    | [texto]                  |
-| Nombre    | [texto]         | Apellidos| [texto]                  |
+| Usuario * | [texto]          | Perfil * | [select]               |
+| Contraseña | [texto]        | Email    | [texto]                 |
+| Nombre    | [texto]         | Apellidos| [texto]                 |
 | Informes asignados | [multiselect]                               |
 +------------------------------------------------------------------+
 | [Guardar] [Cancelar]                                             |
@@ -162,15 +162,15 @@ La estructura visual base de esta pantalla se define en [layout.md](../../../03-
 
 ```text
 +------------------------------------------------------------------+
-| Consultar usuario                                                 |
+| Consultar usuario                                                |
 | [Volver] [Editar]                                                |
 +------------------------------------------------------------------+
-| Usuario | [admin]                                                 |
-| Nombre  | [Admin]                                                 |
-| Email   | [admin@domain.com]                                      |
-| Perfil  | [ADMIN]                                                 |
-| Informes asignados | [3]                                          |
-| Auditoría: Creado 2026-09-01 | Última modificación 2026-09-15   |
+| Usuario | [admin]                                                |
+| Nombre  | [Admin]                                                |
+| Email   | [admin@domain.com]                                     |
+| Perfil  | [ADMIN]                                                |
+| Informes asignados | [3]                                         |
+| Auditoría: Creado 2026-09-01 | Última modificación 2026-09-15    |
 +------------------------------------------------------------------+
 ```
 
@@ -180,32 +180,32 @@ La pantalla de usuarios usa `List screen` para la consulta, `Form screen` para a
 
 **Columnas de la tabla** (todas ordenables y reordenables):
 
-| Columna | Clave i18n | Notas |
-|---------|-----------|-------|
-| Usuario | `users.fields.username` | — |
-| Nombre | `users.fields.firstName` | — |
-| Apellidos | `users.fields.lastName` | — |
-| Email | `users.fields.email` | — |
-| Perfil | `users.fields.profile` | Se muestra como etiqueta (badge) |
-| Último acceso | `users.fields.lastAccess` | Formateado con `localDate` |
+| Columna       | Clave i18n                | Notas                            |
+|---------------|---------------------------|----------------------------------|
+| Usuario       | `users.fields.username`   | —                                |
+| Nombre        | `users.fields.firstName`  | —                                |
+| Apellidos     | `users.fields.lastName`   | —                                |
+| Email         | `users.fields.email`      | —                                |
+| Perfil        | `users.fields.profile`    | Se muestra como etiqueta (badge) |
+| Último acceso | `users.fields.lastAccess` | Formateado con `localDate`       |
 
 **Filtros disponibles:**
 
-| Filtro | Tipo | `data-testid` |
-|--------|------|---------------|
-| Usuario | Texto (coincidencia parcial) | `filter-username` |
-| Nombre | Texto (coincidencia parcial) | `filter-firstName` |
-| Perfil | Selección (todos por defecto) | `filter-profile` |
+| Filtro  | Tipo                          | `data-testid`      |
+|---------|-------------------------------|--------------------|
+| Usuario | Texto (coincidencia parcial)  | `filter-username`  |
+| Nombre  | Texto (coincidencia parcial)  | `filter-firstName` |
+| Perfil  | Selección (todos por defecto) | `filter-profile`   |
 
 **Barra de acciones:**
 
-| Acción | Condición de disponibilidad | `data-testid` |
-|--------|-----------------------------|---------------|
-| Detalle | Requiere una fila seleccionada | `btn-detail` |
-| Crear | Requiere `USER_WRITE` | `btn-create` |
-| Editar | Requiere `USER_WRITE` y una fila seleccionada | `btn-edit` |
-| Eliminar | Requiere `USER_WRITE` y una fila seleccionada | `btn-delete` |
-| Exportar CSV | Siempre disponible | `btn-export` |
+| Acción       | Condición de disponibilidad                   | `data-testid` |
+|--------------|-----------------------------------------------|---------------|
+| Detalle      | Requiere una fila seleccionada                | `btn-detail`  |
+| Crear        | Requiere `USER_WRITE`                         | `btn-create`  |
+| Editar       | Requiere `USER_WRITE` y una fila seleccionada | `btn-edit`    |
+| Eliminar     | Requiere `USER_WRITE` y una fila seleccionada | `btn-delete`  |
+| Exportar CSV | Siempre disponible                            | `btn-export`  |
 
 - La selección de una fila alterna (seleccionar / deseleccionar).
 - El detalle se abre pulsando el botón *Detalle* con una fila seleccionada o mediante doble clic sobre la fila.
@@ -213,43 +213,43 @@ La pantalla de usuarios usa `List screen` para la consulta, `Form screen` para a
 
 ### 2.4. Identificadores para pruebas (`data-testid`)
 
-| Elemento | `data-testid` |
-| --- | --- |
+| Elemento              | `data-testid`       |
+|-----------------------|---------------------|
 | Formulario de filtros | `users-filter-form` |
-| Filtro de usuario | `filter-username` |
-| Filtro de nombre | `filter-firstName` |
-| Filtro de perfil | `filter-profile` |
-| Tabla de usuarios | `users-table` |
-| Botón Detalle | `btn-detail` |
-| Botón Crear | `btn-create` |
-| Botón Editar | `btn-edit` |
-| Botón Eliminar | `btn-delete` |
-| Botón Exportar CSV | `btn-export` |
+| Filtro de usuario     | `filter-username`   |
+| Filtro de nombre      | `filter-firstName`  |
+| Filtro de perfil      | `filter-profile`    |
+| Tabla de usuarios     | `users-table`       |
+| Botón Detalle         | `btn-detail`        |
+| Botón Crear           | `btn-create`        |
+| Botón Editar          | `btn-edit`          |
+| Botón Eliminar        | `btn-delete`        |
+| Botón Exportar CSV    | `btn-export`        |
 
 ### 2.5. Formulario de usuario
 
 **Campos:**
 
-| Campo | Obligatorio | Notas |
-|-------|-------------|-------|
-| Usuario | Sí | No editable en modo edición (solo alta) |
-| Contraseña | Solo en alta | En modo detalle se muestra enmascarada |
-| Email | No | Validación de formato email |
-| Nombre | No | — |
-| Apellidos | No | — |
-| Perfil | Sí | Selección de un perfil existente |
-| Informes asignados | No | Multi-selección de informes |
+| Campo              | Obligatorio  | Notas                                   |
+|--------------------|--------------|-----------------------------------------|
+| Usuario            | Sí           | No editable en modo edición (solo alta) |
+| Contraseña         | Solo en alta | En modo detalle se muestra enmascarada  |
+| Email              | No           | Validación de formato email             |
+| Nombre             | No           | —                                       |
+| Apellidos          | No           | —                                       |
+| Perfil             | Sí           | Selección de un perfil existente        |
+| Informes asignados | No           | Multi-selección de informes             |
 
 **Información de auditoría** (solo en modo detalle, solo lectura): último acceso, fecha de creación y última modificación.
 
 ### 2.6. Validaciones funcionales
 
-| Campo | Regla |
-|-------|-------|
-| Usuario | Obligatorio en alta; inmutable en edición |
+| Campo      | Regla                                      |
+|------------|--------------------------------------------|
+| Usuario    | Obligatorio en alta; inmutable en edición  |
 | Contraseña | Obligatoria únicamente al crear un usuario |
-| Perfil | Obligatorio |
-| Email | Formato de email cuando se informa |
+| Perfil     | Obligatorio                                |
+| Email      | Formato de email cuando se informa         |
 
 ### 2.7. Diagramas
 
@@ -283,18 +283,18 @@ flowchart TD
 
 ### 3.1. Componentes afectados
 
-| Capa | Elemento | Responsabilidad |
-|------|----------|-----------------|
-| Frontend | `UserListComponent` | Listado, filtros, paginación, orden, exportación y orquestación de vistas. |
-| Frontend | `UserFormComponent` | Alta, edición y detalle de un usuario. |
-| Frontend | `UserService` | Llamadas CRUD y carga de datos de referencia como perfiles e informes. |
-| Frontend | `TpDataTableComponent` | Tabla reutilizable para ordenación, paginación y selección. |
-| Frontend | `AuthService` | Comprobación de permisos por acción y acceso según el perfil activo. |
-| Backend | `UserController` | Exposición de endpoints CRUD y `/me` para autoservicio del usuario. |
-| Backend | `UserService` | Lógica de negocio, validación y persistencia del usuario. |
-| Domain | `User` | Entidad principal del sistema con perfil, credenciales y relaciones asociadas. |
-| Domain | `User2Report` | Relación entre usuarios e informes visibles para cada perfil. |
-| Security | `SecurityConfig` | Reglas de autorización y protección de rutas del módulo de usuarios. |
+| Capa     | Elemento               | Responsabilidad                                                                |
+|----------|------------------------|--------------------------------------------------------------------------------|
+| Frontend | `UserListComponent`    | Listado, filtros, paginación, orden, exportación y orquestación de vistas.     |
+| Frontend | `UserFormComponent`    | Alta, edición y detalle de un usuario.                                         |
+| Frontend | `UserService`          | Llamadas CRUD y carga de datos de referencia como perfiles e informes.         |
+| Frontend | `TpDataTableComponent` | Tabla reutilizable para ordenación, paginación y selección.                    |
+| Frontend | `AuthService`          | Comprobación de permisos por acción y acceso según el perfil activo.           |
+| Backend  | `UserController`       | Exposición de endpoints CRUD y `/me` para autoservicio del usuario.            |
+| Backend  | `UserService`          | Lógica de negocio, validación y persistencia del usuario.                      |
+| Domain   | `User`                 | Entidad principal del sistema con perfil, credenciales y relaciones asociadas. |
+| Domain   | `User2Report`          | Relación entre usuarios e informes visibles para cada perfil.                  |
+| Security | `SecurityConfig`       | Reglas de autorización y protección de rutas del módulo de usuarios.           |
 
 ### 3.2. Modelos de datos
 
@@ -377,16 +377,16 @@ public class User extends BaseEntity {
 
 Ruta base: `/api/v1/administration/security/users`.
 
-| Método y ruta | Descripción | Respuesta |
-|---------------|-------------|-----------|
-| `GET /` | Listado paginado con filtros (`username`, `firstName`, `lastName`, `email`, `profileId`) y `Pageable` | 200 OK con página de usuarios |
-| `GET /count` | Número de usuarios que cumplen los filtros | 200 OK con el total |
-| `GET /{id}` | Usuario por identificador | 200 OK con el usuario |
-| `POST /` | Alta de usuario (`id` nulo) | 201 Created con el usuario creado |
-| `PUT /{id}` | Actualización de usuario | 200 OK con el usuario actualizado |
-| `DELETE /{id}` | Eliminación de usuario | 204 No Content |
-| `GET /me` | Perfil del usuario autenticado | 200 OK |
-| `PUT /me` | Autoservicio: actualiza nombre, apellidos y email del usuario autenticado | 200 OK |
+| Método y ruta  | Descripción                                                                                           | Respuesta                         |
+|----------------|-------------------------------------------------------------------------------------------------------|-----------------------------------|
+| `GET /`        | Listado paginado con filtros (`username`, `firstName`, `lastName`, `email`, `profileId`) y `Pageable` | 200 OK con página de usuarios     |
+| `GET /count`   | Número de usuarios que cumplen los filtros                                                            | 200 OK con el total               |
+| `GET /{id}`    | Usuario por identificador                                                                             | 200 OK con el usuario             |
+| `POST /`       | Alta de usuario (`id` nulo)                                                                           | 201 Created con el usuario creado |
+| `PUT /{id}`    | Actualización de usuario                                                                              | 200 OK con el usuario actualizado |
+| `DELETE /{id}` | Eliminación de usuario                                                                                | 204 No Content                    |
+| `GET /me`      | Perfil del usuario autenticado                                                                        | 200 OK                            |
+| `PUT /me`      | Autoservicio: actualiza nombre, apellidos y email del usuario autenticado                             | 200 OK                            |
 
 Datos de referencia consumidos por el formulario y los filtros:
 
@@ -435,33 +435,33 @@ Datos de referencia consumidos por el formulario y los filtros:
 
 La suite actual incluye pruebas específicas del servicio y del controlador que cubren la lógica principal de la pantalla:
 
-| Ubicación | Alcance |
-|-----------|---------|
-| `template/core/src/test/java/org/myorganization/template/core/service/UserServiceTest.java` | Validaciones de negocio, creación, consulta por ID y username, filtrado por criterios, actualización, borrado y asociaciones con perfiles e informes |
-| `template/webapp/src/test/java/org/myorganization/template/webapp/controller/UserControllerTest.java` | Respuestas HTTP del endpoint, parámetros de consulta, autenticación del usuario actual y propagación de excepciones del servicio |
+| Ubicación                                                                                             | Alcance                                                                                                                                              |
+|-------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `template/core/src/test/java/org/myorganization/template/core/service/UserServiceTest.java`           | Validaciones de negocio, creación, consulta por ID y username, filtrado por criterios, actualización, borrado y asociaciones con perfiles e informes |
+| `template/webapp/src/test/java/org/myorganization/template/webapp/controller/UserControllerTest.java` | Respuestas HTTP del endpoint, parámetros de consulta, autenticación del usuario actual y propagación de excepciones del servicio                     |
 
 Estas pruebas cubren el flujo principal de usuarios y complementan la cobertura E2E del frontend, sin reemplazar la validación funcional end-to-end del comportamiento completo de la pantalla.
 
 ### 4.2. Cobertura unitaria (frontend)
 
-| Ubicación | Alcance |
-|-----------|---------|
+| Ubicación                     | Alcance                                           |
+|-------------------------------|---------------------------------------------------|
 | `user-list.component.spec.ts` | Estado de listado, filtros, paginación y acciones |
-| `user-form.component.spec.ts` | Modos del formulario y emisión de eventos |
-| `user.service.spec.ts` | Construcción de peticiones CRUD y parámetros |
+| `user-form.component.spec.ts` | Modos del formulario y emisión de eventos         |
+| `user.service.spec.ts`        | Construcción de peticiones CRUD y parámetros      |
 
 ### 4.3. Cobertura E2E (Playwright)
 
 Ubicación: `dashboard/e2e/tests/administration/users.spec.ts` (Page Object en `dashboard/e2e/pages/users.page.ts`).
 
-| Caso | Descripción | Resultado esperado |
-|------|-------------|--------------------|
-| Listar usuarios | Acceder a la pantalla tras iniciar sesión | La tabla es visible, hay al menos una fila y se muestran filtros y el botón de crear |
-| Buscar por usuario | Filtrar por un usuario existente y por uno inexistente | El listado muestra la fila coincidente; con un término sin coincidencias queda vacío |
-| Crear usuario | Alta desde el formulario con datos válidos | El backend responde 201, se vuelve al listado y el nuevo usuario aparece al buscarlo |
-| Editar usuario | Seleccionar un usuario y modificar sus datos | El campo usuario es de solo lectura, el backend responde 200 y el cambio se refleja en el listado |
-| Eliminar usuario | Seleccionar un usuario y confirmar el borrado | El backend responde 204 y el usuario deja de aparecer al buscarlo |
-| Exportar CSV | Pulsar el botón de exportar | El navegador descarga el fichero `users_YYYY-MM-DD.csv` |
+| Caso               | Descripción                                            | Resultado esperado                                                                                |
+|--------------------|--------------------------------------------------------|---------------------------------------------------------------------------------------------------|
+| Listar usuarios    | Acceder a la pantalla tras iniciar sesión              | La tabla es visible, hay al menos una fila y se muestran filtros y el botón de crear              |
+| Buscar por usuario | Filtrar por un usuario existente y por uno inexistente | El listado muestra la fila coincidente; con un término sin coincidencias queda vacío              |
+| Crear usuario      | Alta desde el formulario con datos válidos             | El backend responde 201, se vuelve al listado y el nuevo usuario aparece al buscarlo              |
+| Editar usuario     | Seleccionar un usuario y modificar sus datos           | El campo usuario es de solo lectura, el backend responde 200 y el cambio se refleja en el listado |
+| Eliminar usuario   | Seleccionar un usuario y confirmar el borrado          | El backend responde 204 y el usuario deja de aparecer al buscarlo                                 |
+| Exportar CSV       | Pulsar el botón de exportar                            | El navegador descarga el fichero `users_YYYY-MM-DD.csv`                                           |
 
 - Cada test inicia sesión con un usuario administrador (acciones `USER_READ` y `USER_WRITE`) y navega directamente a `/administration/security/users`.
 - La suite se ejecuta en modo `serial` para evitar contención en el backend al compartir el usuario administrador entre casos.
@@ -489,11 +489,11 @@ Precondición del ciclo: usuario administrador `{{ADMIN_USER}}` con `USER_READ` 
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
+| # | Acción                                                    | Resultado esperado                                                                           |
+|---|-----------------------------------------------------------|----------------------------------------------------------------------------------------------|
 | 1 | Navegar a `{{BASE_URL_UI}}/administration/security/users` | `users-table` visible con columnas usuario, nombre, apellidos, email, perfil y último acceso |
-| 2 | Pulsar la cabecera de una columna | El listado se reordena ascendente; al volver a pulsar, descendente |
-| 3 | Cambiar de página y de tamaño de página | La navegación paginada funciona y recarga los datos |
+| 2 | Pulsar la cabecera de una columna                         | El listado se reordena ascendente; al volver a pulsar, descendente                           |
+| 3 | Cambiar de página y de tamaño de página                   | La navegación paginada funciona y recarga los datos                                          |
 
 #### TC-USR-02 · Búsqueda y filtrado
 
@@ -501,11 +501,11 @@ Precondición del ciclo: usuario administrador `{{ADMIN_USER}}` con `USER_READ` 
 - **Setup:** login con `{{ADMIN_USER}}` (el propio `admin` sirve como fila existente a buscar).
 - **Teardown:** logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
+| # | Acción                                                                                             | Resultado esperado                                                    |
+|---|----------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------|
 | 1 | En `{{BASE_URL_UI}}/administration/security/users`, escribir `admin` en `filter-username` y buscar | El listado muestra la fila del usuario `admin` y vuelve a la página 1 |
-| 2 | Escribir `zzz_inexistente` en `filter-username` y buscar | El listado queda vacío |
-| 3 | Pulsar limpiar filtros | Se restablecen los filtros y se recarga el listado completo |
+| 2 | Escribir `zzz_inexistente` en `filter-username` y buscar                                           | El listado queda vacío                                                |
+| 3 | Pulsar limpiar filtros                                                                             | Se restablecen los filtros y se recarga el listado completo           |
 
 #### TC-USR-03 · Alta de usuario válida
 
@@ -513,12 +513,12 @@ Precondición del ciclo: usuario administrador `{{ADMIN_USER}}` con `USER_READ` 
 - **Setup:** login con `{{ADMIN_USER}}`; existe al menos un perfil seleccionable.
 - **Teardown:** eliminar el usuario `e2e_user_{{UNIQUE}}` (vía UI o `DELETE /api/v1/administration/security/users/{id}`).
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | En el listado, pulsar `btn-create` | Se abre el formulario en modo alta |
-| 2 | Rellenar usuario `e2e_user_{{UNIQUE}}`, contraseña `Test1234!`, email `e2e_user_{{UNIQUE}}@example.com`, nombre `E2E`, apellidos `Test` y seleccionar un perfil | Formulario válido |
-| 3 | Guardar | El backend responde 201; se vuelve al listado |
-| 4 | Buscar `e2e_user_{{UNIQUE}}` en `filter-username` | El nuevo usuario aparece en el listado |
+| # | Acción                                                                                                                                                          | Resultado esperado                            |
+|---|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------|
+| 1 | En el listado, pulsar `btn-create`                                                                                                                              | Se abre el formulario en modo alta            |
+| 2 | Rellenar usuario `e2e_user_{{UNIQUE}}`, contraseña `Test1234!`, email `e2e_user_{{UNIQUE}}@example.com`, nombre `E2E`, apellidos `Test` y seleccionar un perfil | Formulario válido                             |
+| 3 | Guardar                                                                                                                                                         | El backend responde 201; se vuelve al listado |
+| 4 | Buscar `e2e_user_{{UNIQUE}}` en `filter-username`                                                                                                               | El nuevo usuario aparece en el listado        |
 
 #### TC-USR-04 · Alta con email con formato inválido
 
@@ -526,10 +526,10 @@ Precondición del ciclo: usuario administrador `{{ADMIN_USER}}` con `USER_READ` 
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** cancelar el formulario (no se crea nada); logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | Abrir `btn-create` y rellenar usuario `e2e_user_{{UNIQUE}}`, contraseña `Test1234!`, perfil, y email `correo-sin-arroba` | — |
-| 2 | Intentar guardar | El campo email marca error de formato y el guardado no se completa |
+| # | Acción                                                                                                                   | Resultado esperado                                                 |
+|---|--------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------|
+| 1 | Abrir `btn-create` y rellenar usuario `e2e_user_{{UNIQUE}}`, contraseña `Test1234!`, perfil, y email `correo-sin-arroba` | —                                                                  |
+| 2 | Intentar guardar                                                                                                         | El campo email marca error de formato y el guardado no se completa |
 
 #### TC-USR-05 · Edición de usuario (usuario inmutable)
 
@@ -537,11 +537,11 @@ Precondición del ciclo: usuario administrador `{{ADMIN_USER}}` con `USER_READ` 
 - **Setup:** login con `{{ADMIN_USER}}`; crear previamente el usuario `e2e_user_{{UNIQUE}}` (vía `POST /api/v1/administration/security/users` o repitiendo TC-USR-03) para editar un registro aislado.
 - **Teardown:** eliminar `e2e_user_{{UNIQUE}}`.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
+| # | Acción                                                         | Resultado esperado                                                                                          |
+|---|----------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------|
 | 1 | Buscar y seleccionar `e2e_user_{{UNIQUE}}` y pulsar `btn-edit` | Se abre el formulario en modo edición; el campo usuario es de solo lectura; la contraseña no es obligatoria |
-| 2 | Cambiar apellidos a `Test-Editado` y guardar | El backend responde 200 |
-| 3 | Volver al listado y buscar el usuario | El cambio (`Test-Editado`) se refleja en la fila |
+| 2 | Cambiar apellidos a `Test-Editado` y guardar                   | El backend responde 200                                                                                     |
+| 3 | Volver al listado y buscar el usuario                          | El cambio (`Test-Editado`) se refleja en la fila                                                            |
 
 #### TC-USR-06 · Eliminación con confirmación
 
@@ -549,11 +549,11 @@ Precondición del ciclo: usuario administrador `{{ADMIN_USER}}` con `USER_READ` 
 - **Setup:** login con `{{ADMIN_USER}}`; crear previamente `e2e_user_{{UNIQUE}}`.
 - **Teardown:** si tras el caso el usuario sigue existiendo (fallo), eliminarlo por API.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | Seleccionar `e2e_user_{{UNIQUE}}` y pulsar `btn-delete` | Se abre el modal de confirmación con el nombre del usuario |
-| 2 | Pulsar cancelar | El modal se cierra y el usuario sigue en el listado |
-| 3 | Repetir y confirmar | El backend responde 204 y el usuario desaparece al buscarlo |
+| # | Acción                                                  | Resultado esperado                                          |
+|---|---------------------------------------------------------|-------------------------------------------------------------|
+| 1 | Seleccionar `e2e_user_{{UNIQUE}}` y pulsar `btn-delete` | Se abre el modal de confirmación con el nombre del usuario  |
+| 2 | Pulsar cancelar                                         | El modal se cierra y el usuario sigue en el listado         |
+| 3 | Repetir y confirmar                                     | El backend responde 204 y el usuario desaparece al buscarlo |
 
 #### TC-USR-07 · Detalle con doble clic y auditoría
 
@@ -561,10 +561,10 @@ Precondición del ciclo: usuario administrador `{{ADMIN_USER}}` con `USER_READ` 
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | En el listado, doble clic sobre la fila del usuario `admin` | Se abre el detalle en modo solo lectura |
-| 2 | Observar el contenido | Muestra auditoría (último acceso, creación, última modificación) y la contraseña enmascarada |
+| # | Acción                                                      | Resultado esperado                                                                           |
+|---|-------------------------------------------------------------|----------------------------------------------------------------------------------------------|
+| 1 | En el listado, doble clic sobre la fila del usuario `admin` | Se abre el detalle en modo solo lectura                                                      |
+| 2 | Observar el contenido                                       | Muestra auditoría (último acceso, creación, última modificación) y la contraseña enmascarada |
 
 #### TC-USR-08 · Autoservicio del perfil propio (/me)
 
@@ -572,10 +572,10 @@ Precondición del ciclo: usuario administrador `{{ADMIN_USER}}` con `USER_READ` 
 - **Setup:** vía API. Login con `{{ADMIN_USER}}` y obtener token.
 - **Teardown:** restaurar los valores originales del usuario (`PUT /me` con los datos previos) para no dejar el perfil alterado.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | `GET {{BASE_URL_API}}/api/v1/administration/security/users/me` | 200 OK con el perfil del usuario autenticado |
-| 2 | `PUT {{BASE_URL_API}}/api/v1/administration/security/users/me` con `{ "firstName": "Admin", "lastName": "Autoservicio", "email": "admin@example.com" }` | 200 OK con los datos actualizados |
+| # | Acción                                                                                                                                                  | Resultado esperado                           |
+|---|---------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------|
+| 1 | `GET {{BASE_URL_API}}/api/v1/administration/security/users/me`                                                                                          | 200 OK con el perfil del usuario autenticado |
+| 2 | `PUT {{BASE_URL_API}}/api/v1/administration/security/users/me` con `{ "firstName": "Admin", "lastName": "Autoservicio", "email": "admin@example.com" }` | 200 OK con los datos actualizados            |
 
 #### TC-USR-09 · Exportación CSV filtrada
 
@@ -583,10 +583,10 @@ Precondición del ciclo: usuario administrador `{{ADMIN_USER}}` con `USER_READ` 
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** eliminar el fichero descargado; logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | En el listado, sin filtros, pulsar `btn-export` | El navegador descarga `users_{{TODAY}}.csv` con todos los registros que cumplen los filtros (no solo la página visible) |
-| 2 | Filtrar por `zzz_inexistente` y pulsar `btn-export` | Se notifica que no hay datos que exportar y no se genera fichero |
+| # | Acción                                              | Resultado esperado                                                                                                      |
+|---|-----------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------|
+| 1 | En el listado, sin filtros, pulsar `btn-export`     | El navegador descarga `users_{{TODAY}}.csv` con todos los registros que cumplen los filtros (no solo la página visible) |
+| 2 | Filtrar por `zzz_inexistente` y pulsar `btn-export` | Se notifica que no hay datos que exportar y no se genera fichero                                                        |
 
 #### TC-USR-10 · Autorización y visibilidad de acciones
 
@@ -594,11 +594,11 @@ Precondición del ciclo: usuario administrador `{{ADMIN_USER}}` con `USER_READ` 
 - **Setup:** vía API/UI. Preparar un usuario de solo lectura (perfil con `USER_READ` sin `USER_WRITE`) y obtener su token.
 - **Teardown:** eliminar el usuario/perfil de prueba creados.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | Con token sin `USER_READ` ni `USER_WRITE`, `GET /api/v1/administration/security/users` | 403 Forbidden |
-| 2 | Con token `USER_READ` (sin `USER_WRITE`), abrir el listado en la UI | Los botones `btn-create`, `btn-edit` y `btn-delete` no se muestran |
-| 3 | Con ese mismo token, `POST /api/v1/administration/security/users` | 403 Forbidden |
+| # | Acción                                                                                 | Resultado esperado                                                 |
+|---|----------------------------------------------------------------------------------------|--------------------------------------------------------------------|
+| 1 | Con token sin `USER_READ` ni `USER_WRITE`, `GET /api/v1/administration/security/users` | 403 Forbidden                                                      |
+| 2 | Con token `USER_READ` (sin `USER_WRITE`), abrir el listado en la UI                    | Los botones `btn-create`, `btn-edit` y `btn-delete` no se muestran |
+| 3 | Con ese mismo token, `POST /api/v1/administration/security/users`                      | 403 Forbidden                                                      |
 
 ---
 

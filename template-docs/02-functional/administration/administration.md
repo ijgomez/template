@@ -11,12 +11,12 @@ Todos los módulos comparten la protección por `actionGuard` a nivel de ruta fr
 
 ## Conceptos clave
 
-| Concepto | Descripción |
-|-----------|---------|
-| Seguridad | Gestión de usuarios, perfiles y permisos funcionales del sistema. |
+| Concepto   | Descripción                                                                        |
+|------------|------------------------------------------------------------------------------------|
+| Seguridad  | Gestión de usuarios, perfiles y permisos funcionales del sistema.                  |
 | Parámetros | Catálogo global de configuración con tipado fuerte y validación de compatibilidad. |
-| Auditoría | Registro inmutable de operaciones realizadas por usuarios y procesos del sistema. |
-| Cluster | Orquestación de alta disponibilidad, salud de nodos y exclusión mutua distribuida. |
+| Auditoría  | Registro inmutable de operaciones realizadas por usuarios y procesos del sistema.  |
+| Cluster    | Orquestación de alta disponibilidad, salud de nodos y exclusión mutua distribuida. |
 
 ## Modelo de entidades
 
@@ -126,12 +126,12 @@ Administración > Seguridad
 
 ## Pantallas
 
-| Pantalla | Tipo | Descripción |
-|---------------|-------------|-----------|
-| [Seguridad](./security/security.md) | Sección |  |
-| [Parámetros](./parameters/parameters.md) | Pagina |  |
-| [Auditoría](./audit/audit.md) | Pagina |  |
-| [Cluster](./cluster/cluster.md) | Sección |  |
+| Pantalla                                 | Tipo    | Descripción |
+|------------------------------------------|---------|-------------|
+| [Seguridad](./security/security.md)      | Sección |             |
+| [Parámetros](./parameters/parameters.md) | Pagina  |             |
+| [Auditoría](./audit/audit.md)            | Pagina  |             |
+| [Cluster](./cluster/cluster.md)          | Sección |             |
 
 ## Referencias
 

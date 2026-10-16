@@ -84,23 +84,23 @@ Permitir que un usuario se autentique con usuario y contraseña para acceder a l
 
 ### 2.2. Elementos de la pantalla
 
-| Elemento | Descripción | `data-testid` |
-|----------|-------------|---------------|
-| Título | Nombre de la aplicación (`login.title`) | `login-title` |
-| Subtítulo | Texto de ayuda (`login.subtitle`) | — |
-| Campo Usuario | Entrada de texto para el nombre de usuario | `input-username` |
-| Campo Contraseña | Entrada de contraseña, oculta por defecto | `input-password` |
-| Botón mostrar/ocultar contraseña | Alterna la visibilidad del campo contraseña | `btn-toggle-password` |
-| Checkbox Recordarme | Opción de recordar la sesión | `checkbox-remember` |
-| Botón Iniciar sesión | Envía el formulario | `btn-login-submit` |
-| Alerta de error | Aviso visible solo cuando fallan las credenciales | `login-error-alert` |
-| Selector de idioma | Cambia el idioma de la interfaz (ES / EN) | `btn-lang-<lang>` |
+| Elemento                         | Descripción                                       | `data-testid`         |
+|----------------------------------|---------------------------------------------------|-----------------------|
+| Título                           | Nombre de la aplicación (`login.title`)           | `login-title`         |
+| Subtítulo                        | Texto de ayuda (`login.subtitle`)                 | —                     |
+| Campo Usuario                    | Entrada de texto para el nombre de usuario        | `input-username`      |
+| Campo Contraseña                 | Entrada de contraseña, oculta por defecto         | `input-password`      |
+| Botón mostrar/ocultar contraseña | Alterna la visibilidad del campo contraseña       | `btn-toggle-password` |
+| Checkbox Recordarme              | Opción de recordar la sesión                      | `checkbox-remember`   |
+| Botón Iniciar sesión             | Envía el formulario                               | `btn-login-submit`    |
+| Alerta de error                  | Aviso visible solo cuando fallan las credenciales | `login-error-alert`   |
+| Selector de idioma               | Cambia el idioma de la interfaz (ES / EN)         | `btn-lang-<lang>`     |
 
 ### 2.3. Validaciones funcionales
 
-| Campo | Regla | Mensaje |
-|-------|-------|---------|
-| Usuario | Obligatorio | `validation.required` |
+| Campo      | Regla       | Mensaje               |
+|------------|-------------|-----------------------|
+| Usuario    | Obligatorio | `validation.required` |
 | Contraseña | Obligatoria | `validation.required` |
 
 - Las validaciones de campo obligatorio se muestran cuando el campo ha sido tocado y está vacío.
@@ -126,13 +126,13 @@ flowchart TD
 
 ### 2.5. Mensajes al usuario
 
-| Situación | Texto (clave i18n) | Valor en español |
-|-----------|--------------------|------------------|
-| Campo obligatorio vacío | `validation.required` | (mensaje de campo requerido) |
-| Credenciales incorrectas | `login.error` | `Credenciales incorrectas. Inténtalo de nuevo.` |
-| Placeholder usuario | `login.username.placeholder` | `Introduce tu usuario` |
-| Placeholder contraseña | `login.password.placeholder` | `Introduce tu contraseña` |
-| Subtítulo | `login.subtitle` | `Introduce tus credenciales para acceder` |
+| Situación                | Texto (clave i18n)           | Valor en español                                |
+|--------------------------|------------------------------|-------------------------------------------------|
+| Campo obligatorio vacío  | `validation.required`        | (mensaje de campo requerido)                    |
+| Credenciales incorrectas | `login.error`                | `Credenciales incorrectas. Inténtalo de nuevo.` |
+| Placeholder usuario      | `login.username.placeholder` | `Introduce tu usuario`                          |
+| Placeholder contraseña   | `login.password.placeholder` | `Introduce tu contraseña`                       |
+| Subtítulo                | `login.subtitle`             | `Introduce tus credenciales para acceder`       |
 
 ### 2.6. Internacionalización
 
@@ -146,16 +146,16 @@ flowchart TD
 
 ### 3.1. Componentes afectados
 
-| Capa | Elemento | Responsabilidad |
-|------|----------|-----------------|
-| Frontend | `LoginComponent` | Formulario reactivo, validación y orquestación del flujo de autenticación. |
-| Frontend | `AuthService` | Invocación del endpoint, almacenamiento del access token y gestión de la sesión. |
-| Frontend | `authGuard` | Protección de rutas privadas y redirección a `/login` cuando la sesión no existe. |
-| Frontend | `actionGuard` | Verificación de permisos por acción antes de permitir el acceso a la vista. |
-| Backend | `AuthController` | Exposición de los endpoints `/login`, `/refresh` y `/logout`. |
-| Backend | `AuthService` | Autenticación con credenciales, emisión y renovación de tokens. |
-| Domain | `User` | Entidad principal para la autenticación y asociación con perfil y permisos. |
-| Security | `SecurityConfig` | Reglas de autorización y protección de rutas del módulo de autenticación. |
+| Capa     | Elemento         | Responsabilidad                                                                   |
+|----------|------------------|-----------------------------------------------------------------------------------|
+| Frontend | `LoginComponent` | Formulario reactivo, validación y orquestación del flujo de autenticación.        |
+| Frontend | `AuthService`    | Invocación del endpoint, almacenamiento del access token y gestión de la sesión.  |
+| Frontend | `authGuard`      | Protección de rutas privadas y redirección a `/login` cuando la sesión no existe. |
+| Frontend | `actionGuard`    | Verificación de permisos por acción antes de permitir el acceso a la vista.       |
+| Backend  | `AuthController` | Exposición de los endpoints `/login`, `/refresh` y `/logout`.                     |
+| Backend  | `AuthService`    | Autenticación con credenciales, emisión y renovación de tokens.                   |
+| Domain   | `User`           | Entidad principal para la autenticación y asociación con perfil y permisos.       |
+| Security | `SecurityConfig` | Reglas de autorización y protección de rutas del módulo de autenticación.         |
 
 ### 3.2. Modelos de datos
 
@@ -209,11 +209,11 @@ public class User extends BaseEntity {
 
 Ruta base de autenticación: `/api/v1/auth`.
 
-| Método y ruta | Descripción | Respuesta |
-|---------------|-------------|-----------|
-| `POST /login` | Autenticación con usuario y contraseña | 200 OK con `accessToken` y cookie de refresh |
-| `POST /refresh` | Renovación de sesión usando cookie HttpOnly | 200 OK con nuevo `accessToken` |
-| `POST /logout` | Cierre de sesión | 200 OK |
+| Método y ruta   | Descripción                                 | Respuesta                                    |
+|-----------------|---------------------------------------------|----------------------------------------------|
+| `POST /login`   | Autenticación con usuario y contraseña      | 200 OK con `accessToken` y cookie de refresh |
+| `POST /refresh` | Renovación de sesión usando cookie HttpOnly | 200 OK con nuevo `accessToken`               |
+| `POST /logout`  | Cierre de sesión                            | 200 OK                                       |
 
 ### 3.4. Contrato del endpoint de login
 
@@ -271,30 +271,30 @@ sequenceDiagram
 
 Hay cobertura unitaria de backend para la autenticación, centrada en la capa de controlador de la API y en la validación de las rutas de sesión:
 
-| Ubicación | Alcance |
-|-----------|---------|
+| Ubicación                                                                                             | Alcance                                                                                                                                       |
+|-------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
 | `template/webapp/src/test/java/org/myorganization/template/webapp/controller/AuthControllerTest.java` | Respuestas HTTP de login, refresh y logout, así como la propagación de errores de autenticación y la gestión del flujo principal del endpoint |
 
 No se documenta una clase de servicio específica para login con una suite dedicada en el repositorio actual; la comprobación de la autenticación se mantiene validada mediante el controlador y la batería de pruebas funcionales del frontend.
 
 ### 4.2. Cobertura unitaria (frontend)
 
-| Ubicación | Alcance |
-|-----------|---------|
+| Ubicación                 | Alcance                                                            |
+|---------------------------|--------------------------------------------------------------------|
 | `login.component.spec.ts` | Validación del formulario, envío y manejo de estado de carga/error |
-| `auth.service.spec.ts` | Login, refresh, logout y gestión de token en memoria |
+| `auth.service.spec.ts`    | Login, refresh, logout y gestión de token en memoria               |
 
 ### 4.3. Cobertura E2E (Playwright)
 
 Ubicación: `dashboard/e2e/tests/auth/login.spec.ts` (Page Object en `dashboard/e2e/pages/login.page.ts`).
 
-| Caso | Descripción | Resultado esperado |
-|------|-------------|--------------------|
-| Render del formulario | Se muestran título, campos y botón | Elementos visibles |
-| Campos obligatorios | Enviar el formulario vacío | Permanece en `/login` |
-| Mostrar/ocultar contraseña | Pulsar el toggle | El campo alterna `password` / `text` |
-| Login válido | Usuario y contraseña correctos | Navega a `/dashboard` y muestra `dashboard-title` |
-| Login inválido | Contraseña incorrecta | Muestra alerta de error y permanece en `/login` |
+| Caso                       | Descripción                        | Resultado esperado                                |
+|----------------------------|------------------------------------|---------------------------------------------------|
+| Render del formulario      | Se muestran título, campos y botón | Elementos visibles                                |
+| Campos obligatorios        | Enviar el formulario vacío         | Permanece en `/login`                             |
+| Mostrar/ocultar contraseña | Pulsar el toggle                   | El campo alterna `password` / `text`              |
+| Login válido               | Usuario y contraseña correctos     | Navega a `/dashboard` y muestra `dashboard-title` |
+| Login inválido             | Contraseña incorrecta              | Muestra alerta de error y permanece en `/login`   |
 
 ### 4.4. Datos de prueba
 
@@ -315,11 +315,11 @@ Catálogo de test cases derivado de los requisitos funcionales de login (`RF-LOG
 - **Setup:** navegador sin sesión activa (sin cookie de refresh). Si hubiera sesión, ejecutar logout o abrir ventana privada.
 - **Teardown:** No aplica (no modifica estado).
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | Navegar a `{{BASE_URL_UI}}/login` | Carga la pantalla de login |
-| 2 | Comprobar elementos | Son visibles `login-title`, `input-username`, `input-password` y `btn-login-submit` |
-| 3 | Comprobar selector de idioma | Está presente el control `btn-lang-<lang>` |
+| # | Acción                            | Resultado esperado                                                                  |
+|---|-----------------------------------|-------------------------------------------------------------------------------------|
+| 1 | Navegar a `{{BASE_URL_UI}}/login` | Carga la pantalla de login                                                          |
+| 2 | Comprobar elementos               | Son visibles `login-title`, `input-username`, `input-password` y `btn-login-submit` |
+| 3 | Comprobar selector de idioma      | Está presente el control `btn-lang-<lang>`                                          |
 
 #### TC-LOG-02 · Login con credenciales válidas
 
@@ -327,12 +327,12 @@ Catálogo de test cases derivado de los requisitos funcionales de login (`RF-LOG
 - **Setup:** usuario `{{ADMIN_USER}}` existe en el entorno (dato semilla). Navegador sin sesión.
 - **Teardown:** ejecutar logout para no dejar sesión abierta.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | Navegar a `{{BASE_URL_UI}}/login` | Pantalla de login visible |
-| 2 | Rellenar `input-username` = `{{ADMIN_USER}}` y `input-password` = `{{ADMIN_PASS}}` | Campos informados |
-| 3 | Pulsar `btn-login-submit` | Se invoca `POST {{BASE_URL_API}}/api/v1/auth/login`; responde 200 con `accessToken` en el body y `Set-Cookie` con el refresh token |
-| 4 | Esperar navegación | La URL pasa a `{{BASE_URL_UI}}/dashboard` y se muestra `dashboard-title` |
+| # | Acción                                                                             | Resultado esperado                                                                                                                 |
+|---|------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------|
+| 1 | Navegar a `{{BASE_URL_UI}}/login`                                                  | Pantalla de login visible                                                                                                          |
+| 2 | Rellenar `input-username` = `{{ADMIN_USER}}` y `input-password` = `{{ADMIN_PASS}}` | Campos informados                                                                                                                  |
+| 3 | Pulsar `btn-login-submit`                                                          | Se invoca `POST {{BASE_URL_API}}/api/v1/auth/login`; responde 200 con `accessToken` en el body y `Set-Cookie` con el refresh token |
+| 4 | Esperar navegación                                                                 | La URL pasa a `{{BASE_URL_UI}}/dashboard` y se muestra `dashboard-title`                                                           |
 
 #### TC-LOG-03 · Login con credenciales inválidas
 
@@ -340,12 +340,12 @@ Catálogo de test cases derivado de los requisitos funcionales de login (`RF-LOG
 - **Setup:** navegador sin sesión.
 - **Teardown:** No aplica.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | Navegar a `{{BASE_URL_UI}}/login` | Pantalla de login visible |
-| 2 | Rellenar `input-username` = `{{ADMIN_USER}}` y `input-password` = `wrong-password` | Campos informados |
-| 3 | Pulsar `btn-login-submit` | El backend responde 401 sin establecer cookie |
-| 4 | Observar la pantalla | Se muestra `login-error-alert` con el texto de `login.error`; la URL sigue siendo `/login` |
+| # | Acción                                                                             | Resultado esperado                                                                         |
+|---|------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|
+| 1 | Navegar a `{{BASE_URL_UI}}/login`                                                  | Pantalla de login visible                                                                  |
+| 2 | Rellenar `input-username` = `{{ADMIN_USER}}` y `input-password` = `wrong-password` | Campos informados                                                                          |
+| 3 | Pulsar `btn-login-submit`                                                          | El backend responde 401 sin establecer cookie                                              |
+| 4 | Observar la pantalla                                                               | Se muestra `login-error-alert` con el texto de `login.error`; la URL sigue siendo `/login` |
 
 #### TC-LOG-04 · Validación de campos obligatorios
 
@@ -353,11 +353,11 @@ Catálogo de test cases derivado de los requisitos funcionales de login (`RF-LOG
 - **Setup:** navegador sin sesión.
 - **Teardown:** No aplica.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | Navegar a `{{BASE_URL_UI}}/login` | Pantalla de login visible |
-| 2 | Dejar `input-username` e `input-password` vacíos y pulsar `btn-login-submit` | No se realiza ninguna llamada a `/api/v1/auth/login` |
-| 3 | Observar los campos | Se marcan como tocados y muestran el error `validation.required`; la URL sigue en `/login` |
+| # | Acción                                                                       | Resultado esperado                                                                         |
+|---|------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|
+| 1 | Navegar a `{{BASE_URL_UI}}/login`                                            | Pantalla de login visible                                                                  |
+| 2 | Dejar `input-username` e `input-password` vacíos y pulsar `btn-login-submit` | No se realiza ninguna llamada a `/api/v1/auth/login`                                       |
+| 3 | Observar los campos                                                          | Se marcan como tocados y muestran el error `validation.required`; la URL sigue en `/login` |
 
 #### TC-LOG-05 · Mostrar / ocultar contraseña
 
@@ -365,11 +365,11 @@ Catálogo de test cases derivado de los requisitos funcionales de login (`RF-LOG
 - **Setup:** navegador sin sesión.
 - **Teardown:** No aplica.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | Navegar a `{{BASE_URL_UI}}/login` y escribir en `input-password` el texto `secreto123` | El campo es de tipo `password` (valor oculto) |
-| 2 | Pulsar `btn-toggle-password` | El input pasa a tipo `text` y muestra `secreto123` |
-| 3 | Pulsar de nuevo `btn-toggle-password` | Vuelve a tipo `password` conservando `secreto123` |
+| # | Acción                                                                                 | Resultado esperado                                 |
+|---|----------------------------------------------------------------------------------------|----------------------------------------------------|
+| 1 | Navegar a `{{BASE_URL_UI}}/login` y escribir en `input-password` el texto `secreto123` | El campo es de tipo `password` (valor oculto)      |
+| 2 | Pulsar `btn-toggle-password`                                                           | El input pasa a tipo `text` y muestra `secreto123` |
+| 3 | Pulsar de nuevo `btn-toggle-password`                                                  | Vuelve a tipo `password` conservando `secreto123`  |
 
 #### TC-LOG-06 · Control de envío (evitar duplicados)
 
@@ -377,9 +377,9 @@ Catálogo de test cases derivado de los requisitos funcionales de login (`RF-LOG
 - **Setup:** navegador sin sesión; usuario `{{ADMIN_USER}}` válido.
 - **Teardown:** si el login llega a completarse, ejecutar logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | Navegar a `{{BASE_URL_UI}}/login` y rellenar credenciales válidas | Campos informados |
+| # | Acción                                                            | Resultado esperado                                                                                 |
+|---|-------------------------------------------------------------------|----------------------------------------------------------------------------------------------------|
+| 1 | Navegar a `{{BASE_URL_UI}}/login` y rellenar credenciales válidas | Campos informados                                                                                  |
 | 2 | Pulsar `btn-login-submit` y observar el botón durante la petición | El botón `btn-login-submit` queda deshabilitado y muestra estado de carga mientras dura la llamada |
 
 #### TC-LOG-07 · Selección de idioma en login
@@ -388,11 +388,11 @@ Catálogo de test cases derivado de los requisitos funcionales de login (`RF-LOG
 - **Setup:** navegador sin sesión.
 - **Teardown:** restablecer idioma a ES (pulsar `btn-lang-es`) para dejar el estado por defecto.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | Navegar a `{{BASE_URL_UI}}/login` | Textos en el idioma por defecto |
-| 2 | Pulsar `btn-lang-en` | Los textos del login cambian a inglés sin recargar la página |
-| 3 | Pulsar `btn-lang-es` | Los textos vuelven a español sin recargar |
+| # | Acción                            | Resultado esperado                                           |
+|---|-----------------------------------|--------------------------------------------------------------|
+| 1 | Navegar a `{{BASE_URL_UI}}/login` | Textos en el idioma por defecto                              |
+| 2 | Pulsar `btn-lang-en`              | Los textos del login cambian a inglés sin recargar la página |
+| 3 | Pulsar `btn-lang-es`              | Los textos vuelven a español sin recargar                    |
 
 #### TC-LOG-08 · Persistencia de sesión tras recarga
 
@@ -400,11 +400,11 @@ Catálogo de test cases derivado de los requisitos funcionales de login (`RF-LOG
 - **Setup:** navegador sin sesión; usuario `{{ADMIN_USER}}` válido.
 - **Teardown:** ejecutar logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | Iniciar sesión con `{{ADMIN_USER}}` / `{{ADMIN_PASS}}` | Sesión activa en `/dashboard` |
-| 2 | Recargar la página (F5) | Al arrancar, se invoca `POST /api/v1/auth/refresh`; con refresh token válido se restaura la sesión sin pedir credenciales |
-| 3 | Observar la URL | Permanece en `/dashboard` (no redirige a `/login`) |
+| # | Acción                                                 | Resultado esperado                                                                                                        |
+|---|--------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------|
+| 1 | Iniciar sesión con `{{ADMIN_USER}}` / `{{ADMIN_PASS}}` | Sesión activa en `/dashboard`                                                                                             |
+| 2 | Recargar la página (F5)                                | Al arrancar, se invoca `POST /api/v1/auth/refresh`; con refresh token válido se restaura la sesión sin pedir credenciales |
+| 3 | Observar la URL                                        | Permanece en `/dashboard` (no redirige a `/login`)                                                                        |
 
 #### TC-LOG-09 · Renovación automática del access token
 
@@ -412,11 +412,11 @@ Catálogo de test cases derivado de los requisitos funcionales de login (`RF-LOG
 - **Setup:** sesión iniciada; conviene reducir `jwt.access-token-expiration` y/o ajustar `tokenRefreshMargin` en el entorno de prueba para observar la renovación en un tiempo razonable.
 - **Teardown:** ejecutar logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | Mantener la sesión hasta que el access token esté próximo a expirar (margen `tokenRefreshMargin`) | El interceptor dispara `POST /api/v1/auth/refresh` de forma proactiva |
-| 2 | Lanzar varias peticiones a la API en ese instante (p. ej. abrir dos listados a la vez) | Solo una ejecuta el refresh; las demás esperan su resultado (sin múltiples llamadas) |
-| 3 | Inspeccionar la cookie de refresh | Se ha generado un nuevo refresh token (rotación) y el anterior queda invalidado |
+| # | Acción                                                                                            | Resultado esperado                                                                   |
+|---|---------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------|
+| 1 | Mantener la sesión hasta que el access token esté próximo a expirar (margen `tokenRefreshMargin`) | El interceptor dispara `POST /api/v1/auth/refresh` de forma proactiva                |
+| 2 | Lanzar varias peticiones a la API en ese instante (p. ej. abrir dos listados a la vez)            | Solo una ejecuta el refresh; las demás esperan su resultado (sin múltiples llamadas) |
+| 3 | Inspeccionar la cookie de refresh                                                                 | Se ha generado un nuevo refresh token (rotación) y el anterior queda invalidado      |
 
 #### TC-LOG-10 · Logout invalida la sesión en cliente y servidor
 
@@ -424,12 +424,12 @@ Catálogo de test cases derivado de los requisitos funcionales de login (`RF-LOG
 - **Setup:** sesión iniciada con `{{ADMIN_USER}}`.
 - **Teardown:** No aplica (el propio caso deja la sesión cerrada).
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | Con sesión activa, ejecutar logout desde la UI | Se invoca `POST /api/v1/auth/logout`; el servidor revoca los refresh tokens y envía `Set-Cookie maxAge=0` |
-| 2 | Observar el cliente | El access token ya no está en memoria y `currentUser` queda a null; redirección a `/login` |
-| 3 | Invocar `POST {{BASE_URL_API}}/api/v1/auth/refresh` reutilizando la cookie anterior | Responde 401 |
-| 4 | Intentar navegar a `{{BASE_URL_UI}}/dashboard` | Redirige a `/login` |
+| # | Acción                                                                              | Resultado esperado                                                                                        |
+|---|-------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------|
+| 1 | Con sesión activa, ejecutar logout desde la UI                                      | Se invoca `POST /api/v1/auth/logout`; el servidor revoca los refresh tokens y envía `Set-Cookie maxAge=0` |
+| 2 | Observar el cliente                                                                 | El access token ya no está en memoria y `currentUser` queda a null; redirección a `/login`                |
+| 3 | Invocar `POST {{BASE_URL_API}}/api/v1/auth/refresh` reutilizando la cookie anterior | Responde 401                                                                                              |
+| 4 | Intentar navegar a `{{BASE_URL_UI}}/dashboard`                                      | Redirige a `/login`                                                                                       |
 
 #### TC-LOG-11 · Reutilización de refresh token revocado (detección de robo)
 
@@ -437,11 +437,11 @@ Catálogo de test cases derivado de los requisitos funcionales de login (`RF-LOG
 - **Setup:** vía API. Hacer login y capturar la cookie de refresh inicial (`RT0`).
 - **Teardown:** ejecutar logout para revocar cualquier token vivo.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | `POST {{BASE_URL_API}}/api/v1/auth/refresh` con la cookie `RT0` | 200 OK; se emite un nuevo refresh token `RT1` y `RT0` queda revocado (rotación) |
+| # | Acción                                                            | Resultado esperado                                                                                                   |
+|---|-------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------|
+| 1 | `POST {{BASE_URL_API}}/api/v1/auth/refresh` con la cookie `RT0`   | 200 OK; se emite un nuevo refresh token `RT1` y `RT0` queda revocado (rotación)                                      |
 | 2 | Repetir `POST .../auth/refresh` con la cookie `RT0` (ya revocada) | El servidor revoca **todos** los refresh tokens del usuario (revocación masiva) y responde con error de autorización |
-| 3 | `POST .../auth/refresh` con `RT1` | También falla (401/403), porque la revocación masiva invalidó toda la cadena |
+| 3 | `POST .../auth/refresh` con `RT1`                                 | También falla (401/403), porque la revocación masiva invalidó toda la cadena                                         |
 
 ---
 

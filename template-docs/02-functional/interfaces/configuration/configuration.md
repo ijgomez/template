@@ -90,9 +90,9 @@ Ofrecer a los administradores una pantalla para consultar y supervisar la config
 
 La pantalla gestiona dos modos de vista (`viewMode`) desde `ConfigurationListComponent`, que delega el detalle en `ConfigurationFormComponent` (modo `view`):
 
-| Modo | Descripción |
-|------|-------------|
-| `list` | Listado paginado con filtros, exportación y acceso al detalle |
+| Modo     | Descripción                                                                        |
+|----------|------------------------------------------------------------------------------------|
+| `list`   | Listado paginado con filtros, exportación y acceso al detalle                      |
 | `detail` | Vista de solo lectura de una interfaz renderizada con `ConfigurationFormComponent` |
 
 > No existe un modo `create` ni `edit`, ni operación de borrado; las interfaces se gestionan externamente y la pantalla es exclusivamente de consulta.
@@ -101,11 +101,11 @@ La pantalla gestiona dos modos de vista (`viewMode`) desde `ConfigurationListCom
 
 La estructura visual base de esta pantalla se define en [layout.md](../../../03-technical/frontend/layout.md). Ese documento es la referencia canónica para los templates `List Screen` y `Form Screen`; la documentación funcional de interfaces solo describe cómo se aplica el patrón a una pantalla de solo lectura.
 
-| Tipo de pantalla | Uso en interfaces | Estructura base |
-|------------------|-------------------|-----------------|
-| `List screen` | Listado principal | Cabecera, filtros, tabla, exportación y acceso al detalle |
-| `Form screen` | Consulta en modo lectura | Encabezado, campos de solo lectura y pie con botón volver |
-| `Confirmation modal` | No aplica | No existe borrado ni edición |
+| Tipo de pantalla     | Uso en interfaces        | Estructura base                                           |
+|----------------------|--------------------------|-----------------------------------------------------------|
+| `List screen`        | Listado principal        | Cabecera, filtros, tabla, exportación y acceso al detalle |
+| `Form screen`        | Consulta en modo lectura | Encabezado, campos de solo lectura y pie con botón volver |
+| `Confirmation modal` | No aplica                | No existe borrado ni edición                              |
 
 #### 2.3.1. Wireframe del `List screen`
 
@@ -147,37 +147,37 @@ La diferencia frente a usuarios y acciones es que interfaces no tiene alta, edic
 
 **Columnas de la tabla:**
 
-| Columna | Clave i18n | Ordenable | Notas |
-|---------|-----------|-----------|-------|
-| Nombre | `interfaces.configuration.fields.name` | Sí | Nombre identificador de la interfaz |
-| Protocolo | `interfaces.configuration.fields.protocol` | Sí | Etiqueta (badge); se resalta `REST` |
-| URL | `interfaces.configuration.fields.url` | No | Dirección del servicio externo (formato `code`) |
-| Estado | `interfaces.configuration.fields.status` | Sí | Etiqueta con color por `ACTIVE` / `INACTIVE` / `ERROR` |
-| Frecuencia de check | `interfaces.configuration.fields.checkFrequency` | Sí | Intervalo de verificación en segundos |
-| Última modificación | `interfaces.configuration.fields.lastModifiedAt` | Sí | Formateado con `localDate` |
+| Columna             | Clave i18n                                       | Ordenable | Notas                                                  |
+|---------------------|--------------------------------------------------|-----------|--------------------------------------------------------|
+| Nombre              | `interfaces.configuration.fields.name`           | Sí        | Nombre identificador de la interfaz                    |
+| Protocolo           | `interfaces.configuration.fields.protocol`       | Sí        | Etiqueta (badge); se resalta `REST`                    |
+| URL                 | `interfaces.configuration.fields.url`            | No        | Dirección del servicio externo (formato `code`)        |
+| Estado              | `interfaces.configuration.fields.status`         | Sí        | Etiqueta con color por `ACTIVE` / `INACTIVE` / `ERROR` |
+| Frecuencia de check | `interfaces.configuration.fields.checkFrequency` | Sí        | Intervalo de verificación en segundos                  |
+| Última modificación | `interfaces.configuration.fields.lastModifiedAt` | Sí        | Formateado con `localDate`                             |
 
 **Indicadores de estado:**
 
-| Indicador | Estado | Descripción |
-|-----------|--------|-------------|
-| Verde | `ACTIVE` | La interfaz está operativa |
-| Rojo | `ERROR` | La interfaz presenta problemas |
-| Gris | `INACTIVE` | La interfaz está deshabilitada |
+| Indicador | Estado     | Descripción                    |
+|-----------|------------|--------------------------------|
+| Verde     | `ACTIVE`   | La interfaz está operativa     |
+| Rojo      | `ERROR`    | La interfaz presenta problemas |
+| Gris      | `INACTIVE` | La interfaz está deshabilitada |
 
 **Filtros disponibles:**
 
-| Filtro | Tipo | `data-testid` |
-|--------|------|---------------|
-| Nombre | Texto (coincidencia parcial) | `filter-name` |
+| Filtro    | Tipo                                               | `data-testid`     |
+|-----------|----------------------------------------------------|-------------------|
+| Nombre    | Texto (coincidencia parcial)                       | `filter-name`     |
 | Protocolo | Selección (`REST`, `SOAP`, `LDAP`, `SMTP` y todos) | `filter-protocol` |
-| Estado | Selección (`ACTIVE`, `INACTIVE`, `ERROR` y todos) | `filter-status` |
+| Estado    | Selección (`ACTIVE`, `INACTIVE`, `ERROR` y todos)  | `filter-status`   |
 
 **Barra de acciones:**
 
-| Acción | Condición de disponibilidad | `data-testid` |
-|--------|-----------------------------|---------------|
-| Detalle | Requiere una fila seleccionada | `btn-view-detail` |
-| Exportar CSV | Siempre disponible | `btn-export` |
+| Acción       | Condición de disponibilidad    | `data-testid`     |
+|--------------|--------------------------------|-------------------|
+| Detalle      | Requiere una fila seleccionada | `btn-view-detail` |
+| Exportar CSV | Siempre disponible             | `btn-export`      |
 
 - La selección de una fila alterna (seleccionar / deseleccionar).
 - El doble clic sobre una fila abre la vista de detalle.
@@ -185,27 +185,27 @@ La diferencia frente a usuarios y acciones es que interfaces no tiene alta, edic
 
 ### 2.4. Identificadores para pruebas (`data-testid`)
 
-| Elemento | `data-testid` |
-| --- | --- |
+| Elemento              | `data-testid`            |
+|-----------------------|--------------------------|
 | Formulario de filtros | `interfaces-filter-form` |
-| Filtro de nombre | `filter-name` |
-| Filtro de protocolo | `filter-protocol` |
-| Filtro de estado | `filter-status` |
-| Tabla de interfaces | `interfaces-table` |
-| Botón Ver detalle | `btn-view-detail` |
-| Botón Exportar CSV | `btn-export` |
+| Filtro de nombre      | `filter-name`            |
+| Filtro de protocolo   | `filter-protocol`        |
+| Filtro de estado      | `filter-status`          |
+| Tabla de interfaces   | `interfaces-table`       |
+| Botón Ver detalle     | `btn-view-detail`        |
+| Botón Exportar CSV    | `btn-export`             |
 
 ### 2.5. Detalle de interfaz
 
 **Campos (todos de solo lectura):**
 
-| Campo | Descripción |
-|-------|-------------|
-| Nombre | Nombre identificador de la interfaz |
-| Descripción | Descripción funcional de la interfaz |
-| URL | Dirección del servicio externo |
-| Protocolo | Protocolo de comunicación (REST, SOAP, LDAP, SMTP) |
-| Estado | Estado actual (`ACTIVE`, `INACTIVE`, `ERROR`) |
+| Campo               | Descripción                                            |
+|---------------------|--------------------------------------------------------|
+| Nombre              | Nombre identificador de la interfaz                    |
+| Descripción         | Descripción funcional de la interfaz                   |
+| URL                 | Dirección del servicio externo                         |
+| Protocolo           | Protocolo de comunicación (REST, SOAP, LDAP, SMTP)     |
+| Estado              | Estado actual (`ACTIVE`, `INACTIVE`, `ERROR`)          |
 | Frecuencia de check | Intervalo de verificación de disponibilidad (segundos) |
 
 > Los campos de auditoría (fecha de creación y última modificación) no se muestran en el detalle; el modelo sigue incluyéndolos pero la pantalla no los expone al usuario.
@@ -241,17 +241,17 @@ flowchart TD
 
 ### 3.1. Componentes afectados
 
-| Capa | Elemento | Responsabilidad |
-|------|----------|-----------------|
+| Capa     | Elemento                     | Responsabilidad                                                                                                                      |
+|----------|------------------------------|--------------------------------------------------------------------------------------------------------------------------------------|
 | Frontend | `ConfigurationListComponent` | Listado, filtros, paginación, orden, exportación y gestión del modo de vista; renderiza el detalle con `ConfigurationFormComponent`. |
-| Frontend | `ConfigurationFormComponent` | Formulario reutilizable (`FormMode` `create` / `edit` / `view`) que muestra el detalle de una interfaz en modo solo lectura. |
-| Frontend | `InterfaceService` | Consulta de configuraciones de interfaz y transformación de la respuesta. |
-| Frontend | `TpDataTableComponent` | Tabla reutilizable para ordenación, paginación y selección de filas. |
-| Frontend | `NotificationService` | Notificaciones de progreso, avisos y errores. |
-| Backend | `InterfaceControllerImpl` | Exposición de los endpoints de consulta de interfaces en modo solo lectura. |
-| Backend | `InterfaceService` | Recuperación de definiciones y estado actual de cada interfaz. |
-| Domain | `Interface` | Entidad JPA que representa la configuración de una interfaz del sistema. |
-| Security | `SecurityConfig` | Protección de la API y validación de permisos `INTERFACES_READ`. |
+| Frontend | `ConfigurationFormComponent` | Formulario reutilizable (`FormMode` `create` / `edit` / `view`) que muestra el detalle de una interfaz en modo solo lectura.         |
+| Frontend | `InterfaceService`           | Consulta de configuraciones de interfaz y transformación de la respuesta.                                                            |
+| Frontend | `TpDataTableComponent`       | Tabla reutilizable para ordenación, paginación y selección de filas.                                                                 |
+| Frontend | `NotificationService`        | Notificaciones de progreso, avisos y errores.                                                                                        |
+| Backend  | `InterfaceControllerImpl`    | Exposición de los endpoints de consulta de interfaces en modo solo lectura.                                                          |
+| Backend  | `InterfaceService`           | Recuperación de definiciones y estado actual de cada interfaz.                                                                       |
+| Domain   | `Interface`                  | Entidad JPA que representa la configuración de una interfaz del sistema.                                                             |
+| Security | `SecurityConfig`             | Protección de la API y validación de permisos `INTERFACES_READ`.                                                                     |
 
 ### 3.2. Modelos de datos
 
@@ -319,13 +319,13 @@ public class Interface extends BaseEntity {
 
 Ruta base: `/api/v1/interfaces/configuration`.
 
-| Método y ruta | Descripción | Respuesta |
-|---------------|-------------|-----------|
-| `GET /configuration` | Listado de todas las interfaces con su estado actual | 200 OK con `List<InterfaceDTO>` |
-| `GET /configuration/{id}` | Interfaz por identificador | 200 OK con `InterfaceDTO` (o 404 Not Found) |
-| `POST /configuration` | No disponible | No expuesto por la API (solo lectura) |
-| `PUT /configuration/{id}` | No disponible | No expuesto por la API (solo lectura) |
-| `DELETE /configuration/{id}` | No disponible | No expuesto por la API (solo lectura) |
+| Método y ruta                | Descripción                                          | Respuesta                                   |
+|------------------------------|------------------------------------------------------|---------------------------------------------|
+| `GET /configuration`         | Listado de todas las interfaces con su estado actual | 200 OK con `List<InterfaceDTO>`             |
+| `GET /configuration/{id}`    | Interfaz por identificador                           | 200 OK con `InterfaceDTO` (o 404 Not Found) |
+| `POST /configuration`        | No disponible                                        | No expuesto por la API (solo lectura)       |
+| `PUT /configuration/{id}`    | No disponible                                        | No expuesto por la API (solo lectura)       |
+| `DELETE /configuration/{id}` | No disponible                                        | No expuesto por la API (solo lectura)       |
 
 ### 3.4. Validaciones
 
@@ -367,33 +367,33 @@ Ruta base: `/api/v1/interfaces/configuration`.
 
 La suite actual cubre tanto la lógica de servicio como el comportamiento HTTP de los endpoints de consulta y restricción de operaciones no permitidas:
 
-| Ubicación | Alcance |
-|-----------|---------|
-| `template/core/src/test/java/org/myorganization/template/core/service/InterfaceServiceTest.java` | Consulta, detalle, estado y reglas del servicio de interfaces, además de la validación de la naturaleza de solo lectura del módulo |
-| `template/webapp/src/test/java/org/myorganization/template/webapp/controller/InterfaceControllerTest.java` | Respuestas HTTP de listado y detalle, y validación del acceso/negación de operaciones de escritura |
+| Ubicación                                                                                                  | Alcance                                                                                                                            |
+|------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------|
+| `template/core/src/test/java/org/myorganization/template/core/service/InterfaceServiceTest.java`           | Consulta, detalle, estado y reglas del servicio de interfaces, además de la validación de la naturaleza de solo lectura del módulo |
+| `template/webapp/src/test/java/org/myorganization/template/webapp/controller/InterfaceControllerTest.java` | Respuestas HTTP de listado y detalle, y validación del acceso/negación de operaciones de escritura                                 |
 
 Estas pruebas cubren la lógica principal del módulo y complementan la validación E2E del frontend para la pantalla de configuración.
 
 ### 4.2. Cobertura unitaria (frontend)
 
-| Ubicación | Alcance |
-|-----------|---------|
-| `configuration-list.component.spec.ts` | Estado del listado, filtros en cliente, paginación, orden, apertura del detalle y exportación |
+| Ubicación                              | Alcance                                                                                                                         |
+|----------------------------------------|---------------------------------------------------------------------------------------------------------------------------------|
+| `configuration-list.component.spec.ts` | Estado del listado, filtros en cliente, paginación, orden, apertura del detalle y exportación                                   |
 | `configuration-form.component.spec.ts` | Render de solo lectura del detalle (campos readonly/disabled), `isReadonly`, ausencia de campos de auditoría y evento de volver |
-| `interface.service.spec.ts` | Construcción de las peticiones de consulta de configuraciones |
+| `interface.service.spec.ts`            | Construcción de las peticiones de consulta de configuraciones                                                                   |
 
 ### 4.3. Cobertura E2E (Playwright)
 
 Ubicación: `template/dashboard/e2e/tests/interfaces/interfaces-configuration.spec.ts` con Page Object en `template/dashboard/e2e/pages/interfaces-configuration.page.ts`.
 
-| Caso | Descripción | Resultado esperado |
-|------|-------------|--------------------|
-| Listar interfaces (solo lectura) | Acceder a la pantalla tras iniciar sesión | La tabla, el formulario de filtros y el botón de exportar son visibles; no existen botones de crear, editar ni borrar |
-| Filtrar por nombre, protocolo y estado | Aplicar filtros y luego limpiarlos | El listado se filtra y, al limpiar, vuelve a mostrarse completo |
-| Abrir detalle desde la barra de acciones | Seleccionar una fila y pulsar el botón de detalle | Se muestra la vista de detalle con el botón volver; al volver reaparece el listado |
-| Abrir detalle con doble clic | Hacer doble clic sobre una fila | Se abre la vista de detalle de la interfaz |
-| Exportar CSV | Pulsar la acción de exportación | Se descarga el fichero `interface-configurations_YYYY-MM-DD.csv` |
-| Navegación desde el menú lateral | Desplegar la sección de Interfaces y pulsar Configuración | Navega a `/interfaces/configuration` y muestra la tabla |
+| Caso                                     | Descripción                                               | Resultado esperado                                                                                                    |
+|------------------------------------------|-----------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------|
+| Listar interfaces (solo lectura)         | Acceder a la pantalla tras iniciar sesión                 | La tabla, el formulario de filtros y el botón de exportar son visibles; no existen botones de crear, editar ni borrar |
+| Filtrar por nombre, protocolo y estado   | Aplicar filtros y luego limpiarlos                        | El listado se filtra y, al limpiar, vuelve a mostrarse completo                                                       |
+| Abrir detalle desde la barra de acciones | Seleccionar una fila y pulsar el botón de detalle         | Se muestra la vista de detalle con el botón volver; al volver reaparece el listado                                    |
+| Abrir detalle con doble clic             | Hacer doble clic sobre una fila                           | Se abre la vista de detalle de la interfaz                                                                            |
+| Exportar CSV                             | Pulsar la acción de exportación                           | Se descarga el fichero `interface-configurations_YYYY-MM-DD.csv`                                                      |
+| Navegación desde el menú lateral         | Desplegar la sección de Interfaces y pulsar Configuración | Navega a `/interfaces/configuration` y muestra la tabla                                                               |
 
 - Cada test inicia sesión con un usuario válido (`testUsers.valid`) y navega a `/interfaces/configuration`.
 - Los casos de detalle y exportación se ejecutan solo si existen filas en el listado.
@@ -421,10 +421,10 @@ Precondición del ciclo: usuario con `INTERFACES_READ`; al menos una interfaz re
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
+| # | Acción                                               | Resultado esperado                                                                                       |
+|---|------------------------------------------------------|----------------------------------------------------------------------------------------------------------|
 | 1 | Navegar a `{{BASE_URL_UI}}/interfaces/configuration` | `interfaces-table` visible con nombre, protocolo, URL, estado, frecuencia de check y última modificación |
-| 2 | Observar la columna estado | Etiquetas de color: verde `ACTIVE`, rojo `ERROR`, gris `INACTIVE` |
+| 2 | Observar la columna estado                           | Etiquetas de color: verde `ACTIVE`, rojo `ERROR`, gris `INACTIVE`                                        |
 
 #### TC-CFG-02 · Filtrado por nombre, protocolo y estado
 
@@ -432,10 +432,10 @@ Precondición del ciclo: usuario con `INTERFACES_READ`; al menos una interfaz re
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
+| # | Acción                                                                                    | Resultado esperado                                                |
+|---|-------------------------------------------------------------------------------------------|-------------------------------------------------------------------|
 | 1 | Rellenar `filter-name` (parcial), seleccionar `filter-protocol` y `filter-status`, buscar | El listado se reduce a las filas coincidentes y vuelve a página 1 |
-| 2 | Limpiar | Recarga el listado completo |
+| 2 | Limpiar                                                                                   | Recarga el listado completo                                       |
 
 #### TC-CFG-03 · Detalle de interfaz
 
@@ -443,10 +443,10 @@ Precondición del ciclo: usuario con `INTERFACES_READ`; al menos una interfaz re
 - **Setup:** login con `{{ADMIN_USER}}`; al menos una fila.
 - **Teardown:** logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
+| # | Acción                                                               | Resultado esperado                                                                                                                          |
+|---|----------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
 | 1 | Doble clic sobre una fila (o seleccionar y pulsar `btn-view-detail`) | Muestra nombre, descripción, URL, protocolo, estado y frecuencia de check; no muestra campos de auditoría (creación ni última modificación) |
-| 2 | Pulsar *Volver* | Regresa al listado |
+| 2 | Pulsar *Volver*                                                      | Regresa al listado                                                                                                                          |
 
 #### TC-CFG-04 · Exportación CSV
 
@@ -454,10 +454,10 @@ Precondición del ciclo: usuario con `INTERFACES_READ`; al menos una interfaz re
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** eliminar el fichero descargado; logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | Sin filtros, pulsar `btn-export` | Descarga `interface-configurations_{{TODAY}}.csv` con todos los registros filtrados |
-| 2 | Filtrar por `filter-name` = `zzz_inexistente` y exportar | No se genera ninguna descarga |
+| # | Acción                                                   | Resultado esperado                                                                  |
+|---|----------------------------------------------------------|-------------------------------------------------------------------------------------|
+| 1 | Sin filtros, pulsar `btn-export`                         | Descarga `interface-configurations_{{TODAY}}.csv` con todos los registros filtrados |
+| 2 | Filtrar por `filter-name` = `zzz_inexistente` y exportar | No se genera ninguna descarga                                                       |
 
 #### TC-CFG-05 · Pantalla de solo lectura
 
@@ -465,9 +465,9 @@ Precondición del ciclo: usuario con `INTERFACES_READ`; al menos una interfaz re
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | Observar la pantalla de configuración | No hay acciones de crear, editar ni eliminar |
+| # | Acción                                                    | Resultado esperado                             |
+|---|-----------------------------------------------------------|------------------------------------------------|
+| 1 | Observar la pantalla de configuración                     | No hay acciones de crear, editar ni eliminar   |
 | 2 | Comprobar la API (`GET /api/v1/interfaces/configuration`) | Solo expone operaciones `GET` sobre interfaces |
 
 #### TC-CFG-06 · Acceso sin autorización
@@ -476,8 +476,8 @@ Precondición del ciclo: usuario con `INTERFACES_READ`; al menos una interfaz re
 - **Setup:** preparar un usuario sin `INTERFACES_READ`.
 - **Teardown:** eliminar el usuario/perfil de prueba.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
+| # | Acción                                                                | Resultado esperado                                             |
+|---|-----------------------------------------------------------------------|----------------------------------------------------------------|
 | 1 | Con ese usuario, navegar a `{{BASE_URL_UI}}/interfaces/configuration` | Acceso denegado por `actionGuard` (redirección a `/forbidden`) |
 
 ---

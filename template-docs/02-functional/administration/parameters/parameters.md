@@ -111,22 +111,22 @@ Ofrecer a los administradores una pantalla completa para mantener los parámetro
 
 La pantalla gestiona cuatro modos de vista (`viewMode`) dentro del mismo componente:
 
-| Modo | Descripción |
-|------|-------------|
-| `list` | Listado paginado con barra de filtros y barra de acciones |
-| `detail` | Vista de solo lectura del parámetro |
-| `create` | Formulario de alta |
-| `edit` | Formulario de edición |
+| Modo     | Descripción                                               |
+|----------|-----------------------------------------------------------|
+| `list`   | Listado paginado con barra de filtros y barra de acciones |
+| `detail` | Vista de solo lectura del parámetro                       |
+| `create` | Formulario de alta                                        |
+| `edit`   | Formulario de edición                                     |
 
 ### 2.3. Patrón visual reutilizable y wireframes
 
 La estructura visual base de esta pantalla se define en [layout.md](../../../03-technical/frontend/layout.md). Ese documento es la fuente única de verdad para los templates `List Screen`, `Form Screen` y `Confirmation Modal`; la documentación funcional de parámetros solo describe cómo se aplica ese patrón a la entidad concreta.
 
-| Tipo de pantalla | Uso en parámetros | Estructura base |
-|------------------|------------------|-----------------|
-| `List screen` | Listado principal | Cabecera, filtros, tabla, acciones y paginación |
-| `Form screen` | Alta, edición y consulta en modo lectura | Encabezado, campos, validación, auditoría y pie de acciones |
-| `Confirmation modal` | Eliminación | Mensaje de confirmación con aceptar/cancelar |
+| Tipo de pantalla     | Uso en parámetros                        | Estructura base                                             |
+|----------------------|------------------------------------------|-------------------------------------------------------------|
+| `List screen`        | Listado principal                        | Cabecera, filtros, tabla, acciones y paginación             |
+| `Form screen`        | Alta, edición y consulta en modo lectura | Encabezado, campos, validación, auditoría y pie de acciones |
+| `Confirmation modal` | Eliminación                              | Mensaje de confirmación con aceptar/cancelar                |
 
 #### 2.3.1. Wireframe del `List screen`
 
@@ -138,12 +138,12 @@ La estructura visual base de esta pantalla se define en [layout.md](../../../03-
 | Filtro código | Filtro descripción | Filtro tipo | [Buscar] [Limpiar] |
 +------------------------------------------------------------------+
 | Código | Descripción | Tipo | Valor                              |
-|--------|-------------|------|-------------------------------------|
+|--------|-------------|------|------------------------------------|
 | APP_NAME | Nombre de la aplicación | STRING | Template App |
 | MAX_RETRIES | Número máximo de reintentos | INTEGER | 5 |
 | FEATURE_X | Habilita la nueva funcionalidad | BOOLEAN | true |
 +------------------------------------------------------------------+
-| < 1 2 3 > | Registros por página: 10                           |
+| < 1 2 3 > | Registros por página: 10                             |
 +------------------------------------------------------------------+
 ```
 
@@ -154,7 +154,7 @@ La estructura visual base de esta pantalla se define en [layout.md](../../../03-
 | Crear parámetro / Editar parámetro                               |
 +------------------------------------------------------------------+
 | Código * | [texto]       | Tipo * | [select: STRING/INTEGER/BOOLEAN/DATE] |
-| Valor * | [texto]       | Descripción | [texto]                     |
+| Valor * | [texto]       | Descripción | [texto]                  |
 +------------------------------------------------------------------+
 | [Guardar] [Cancelar]                                             |
 +------------------------------------------------------------------+
@@ -164,14 +164,14 @@ La estructura visual base de esta pantalla se define en [layout.md](../../../03-
 
 ```text
 +------------------------------------------------------------------+
-| Consultar parámetro                                               |
+| Consultar parámetro                                              |
 | [Volver] [Editar]                                                |
 +------------------------------------------------------------------+
 | Código | [APP_NAME]                                              |
 | Tipo   | [STRING]                                                |
 | Valor  | [Template App]                                          |
 | Descripción | [Nombre de la aplicación]                          |
-| Auditoría: Creado 2026-09-01 | Última modificación 2026-09-15   |
+| Auditoría: Creado 2026-09-01 | Última modificación 2026-09-15    |
 +------------------------------------------------------------------+
 ```
 
@@ -181,30 +181,30 @@ La pantalla de parámetros usa `List screen` para la consulta, `Form screen` par
 
 **Columnas de la tabla** (todas ordenables y reordenables):
 
-| Columna | Clave i18n | Notas |
-|---------|-----------|-------|
-| Código | `parameters.fields.code` | Identificador único del parámetro |
-| Descripción | `parameters.fields.description` | Texto descriptivo del parámetro |
-| Tipo | `parameters.fields.type` | Uno de `STRING`, `INTEGER`, `BOOLEAN`, `DATE` |
-| Valor | `parameters.fields.value` | Se muestra como texto tal y como se almacena |
+| Columna     | Clave i18n                      | Notas                                         |
+|-------------|---------------------------------|-----------------------------------------------|
+| Código      | `parameters.fields.code`        | Identificador único del parámetro             |
+| Descripción | `parameters.fields.description` | Texto descriptivo del parámetro               |
+| Tipo        | `parameters.fields.type`        | Uno de `STRING`, `INTEGER`, `BOOLEAN`, `DATE` |
+| Valor       | `parameters.fields.value`       | Se muestra como texto tal y como se almacena  |
 
 **Filtros disponibles:**
 
-| Filtro | Tipo | `data-testid` |
-|--------|------|---------------|
-| Código | Texto (coincidencia parcial) | `filter-code` |
-| Descripción | Texto (coincidencia parcial) | `filter-description` |
-| Tipo | Selección (todos por defecto) | `filter-type` |
+| Filtro      | Tipo                          | `data-testid`        |
+|-------------|-------------------------------|----------------------|
+| Código      | Texto (coincidencia parcial)  | `filter-code`        |
+| Descripción | Texto (coincidencia parcial)  | `filter-description` |
+| Tipo        | Selección (todos por defecto) | `filter-type`        |
 
 **Barra de acciones:**
 
-| Acción | Condición de disponibilidad | `data-testid` |
-|--------|-----------------------------|---------------|
-| Detalle | Requiere una fila seleccionada | `btn-detail` |
-| Crear | Requiere `SYSTEM_PARAMETER_WRITE` | `btn-create` |
-| Editar | Requiere `SYSTEM_PARAMETER_WRITE` y una fila seleccionada | `btn-edit` |
-| Eliminar | Requiere `SYSTEM_PARAMETER_WRITE` y una fila seleccionada | `btn-delete` |
-| Exportar CSV | Siempre disponible | `btn-export` |
+| Acción       | Condición de disponibilidad                               | `data-testid` |
+|--------------|-----------------------------------------------------------|---------------|
+| Detalle      | Requiere una fila seleccionada                            | `btn-detail`  |
+| Crear        | Requiere `SYSTEM_PARAMETER_WRITE`                         | `btn-create`  |
+| Editar       | Requiere `SYSTEM_PARAMETER_WRITE` y una fila seleccionada | `btn-edit`    |
+| Eliminar     | Requiere `SYSTEM_PARAMETER_WRITE` y una fila seleccionada | `btn-delete`  |
+| Exportar CSV | Siempre disponible                                        | `btn-export`  |
 
 - La selección de una fila alterna (seleccionar / deseleccionar).
 - El detalle se abre pulsando el botón *Detalle* con una fila seleccionada o mediante doble clic sobre la fila.
@@ -212,39 +212,39 @@ La pantalla de parámetros usa `List screen` para la consulta, `Form screen` par
 
 ### 2.4. Identificadores para pruebas (`data-testid`)
 
-| Elemento | `data-testid` |
-| --- | --- |
+| Elemento              | `data-testid`            |
+|-----------------------|--------------------------|
 | Formulario de filtros | `parameters-filter-form` |
-| Filtro de código | `filter-code` |
-| Filtro de descripción | `filter-description` |
-| Filtro de tipo | `filter-type` |
-| Tabla de parámetros | `parameters-table` |
-| Botón Detalle | `btn-detail` |
-| Botón Crear | `btn-create` |
-| Botón Editar | `btn-edit` |
-| Botón Eliminar | `btn-delete` |
-| Botón Exportar CSV | `btn-export` |
+| Filtro de código      | `filter-code`            |
+| Filtro de descripción | `filter-description`     |
+| Filtro de tipo        | `filter-type`            |
+| Tabla de parámetros   | `parameters-table`       |
+| Botón Detalle         | `btn-detail`             |
+| Botón Crear           | `btn-create`             |
+| Botón Editar          | `btn-edit`               |
+| Botón Eliminar        | `btn-delete`             |
+| Botón Exportar CSV    | `btn-export`             |
 
 ### 2.5. Formulario de parámetro
 
 **Campos:**
 
-| Campo | Obligatorio | Notas |
-|-------|-------------|-------|
-| Código | Sí | Identificador único y no editable en edición |
-| Tipo | Sí | Debe escogerse entre `STRING`, `INTEGER`, `BOOLEAN`, `DATE` |
-| Valor | Sí | Se valida según el tipo elegido |
-| Descripción | No | Texto explicativo opcional |
+| Campo       | Obligatorio | Notas                                                       |
+|-------------|-------------|-------------------------------------------------------------|
+| Código      | Sí          | Identificador único y no editable en edición                |
+| Tipo        | Sí          | Debe escogerse entre `STRING`, `INTEGER`, `BOOLEAN`, `DATE` |
+| Valor       | Sí          | Se valida según el tipo elegido                             |
+| Descripción | No          | Texto explicativo opcional                                  |
 
 **Validaciones funcionales:**
 
-| Campo | Regla |
-|-------|-------|
-| Código | Obligatorio, único y no modificable en edición; si se borra, el campo se marca como inválido y el botón Guardar queda deshabilitado |
-| Tipo | Obligatorio; permitido únicamente por el enum `ParameterType` |
-| Valor | Requerido y validado con el tipo; por ejemplo, `true`/`false` para booleanos |
-| Descripción | Opcional, permite explicar la finalidad del parámetro |
-| Unicidad | El backend rechaza duplicados con `409 Conflict` tanto en alta como en edición |
+| Campo       | Regla                                                                                                                               |
+|-------------|-------------------------------------------------------------------------------------------------------------------------------------|
+| Código      | Obligatorio, único y no modificable en edición; si se borra, el campo se marca como inválido y el botón Guardar queda deshabilitado |
+| Tipo        | Obligatorio; permitido únicamente por el enum `ParameterType`                                                                       |
+| Valor       | Requerido y validado con el tipo; por ejemplo, `true`/`false` para booleanos                                                        |
+| Descripción | Opcional, permite explicar la finalidad del parámetro                                                                               |
+| Unicidad    | El backend rechaza duplicados con `409 Conflict` tanto en alta como en edición                                                      |
 
 ### 2.6. Validaciones de negocio en backend
 
@@ -290,18 +290,18 @@ flowchart TD
 
 ### 3.1. Componentes afectados
 
-| Capa | Elemento | Responsabilidad |
-|------|----------|-----------------|
+| Capa     | Elemento                 | Responsabilidad                                                            |
+|----------|--------------------------|----------------------------------------------------------------------------|
 | Frontend | `ParameterListComponent` | Listado, filtros, paginación, orden, exportación y orquestación de vistas. |
-| Frontend | `ParameterFormComponent` | Alta, edición y detalle del parámetro. |
-| Frontend | `ParameterService` | Llamadas CRUD y validación de criterios del formulario. |
-| Frontend | `TpDataTableComponent` | Tabla reutilizable para ordenación, paginación y selección. |
-| Frontend | `AuthService` | Comprobación de permisos según la acción del usuario. |
-| Backend | `ParameterController` | Exposición de endpoints CRUD para administración de parámetros. |
-| Backend | `ParameterService` | Lógica de negocio, validación y persistencia del parámetro. |
-| Domain | `Parameter` | Entidad principal del sistema para configuración dinámica. |
-| Domain | `ParameterType` | Enumerado que tipifica el valor del parámetro. |
-| Security | `SecurityConfig` | Reglas de autorización y protección del módulo de parámetros. |
+| Frontend | `ParameterFormComponent` | Alta, edición y detalle del parámetro.                                     |
+| Frontend | `ParameterService`       | Llamadas CRUD y validación de criterios del formulario.                    |
+| Frontend | `TpDataTableComponent`   | Tabla reutilizable para ordenación, paginación y selección.                |
+| Frontend | `AuthService`            | Comprobación de permisos según la acción del usuario.                      |
+| Backend  | `ParameterController`    | Exposición de endpoints CRUD para administración de parámetros.            |
+| Backend  | `ParameterService`       | Lógica de negocio, validación y persistencia del parámetro.                |
+| Domain   | `Parameter`              | Entidad principal del sistema para configuración dinámica.                 |
+| Domain   | `ParameterType`          | Enumerado que tipifica el valor del parámetro.                             |
+| Security | `SecurityConfig`         | Reglas de autorización y protección del módulo de parámetros.              |
 
 ### 3.2. Modelos de datos
 
@@ -369,14 +369,14 @@ public class Parameter extends BaseEntity {
 
 Ruta base: `/api/v1/administration/parameters`.
 
-| Método y ruta | Descripción | Respuesta |
-|---------------|-------------|-----------|
-| `GET /` | Listado paginado con filtros (`code`, `description`, `type`) y `Pageable` | 200 OK con página de parámetros |
-| `GET /count` | Número de parámetros que cumplen los filtros | 200 OK con el total |
-| `GET /{code}` | Parámetro por código | 200 OK con el parámetro |
-| `POST /` | Alta de parámetro (`id` nulo) | 201 Created con el parámetro creado |
-| `PUT /{code}` | Actualización del parámetro | 200 OK con el parámetro actualizado |
-| `DELETE /{code}` | Eliminación del parámetro | 204 No Content |
+| Método y ruta    | Descripción                                                               | Respuesta                           |
+|------------------|---------------------------------------------------------------------------|-------------------------------------|
+| `GET /`          | Listado paginado con filtros (`code`, `description`, `type`) y `Pageable` | 200 OK con página de parámetros     |
+| `GET /count`     | Número de parámetros que cumplen los filtros                              | 200 OK con el total                 |
+| `GET /{code}`    | Parámetro por código                                                      | 200 OK con el parámetro             |
+| `POST /`         | Alta de parámetro (`id` nulo)                                             | 201 Created con el parámetro creado |
+| `PUT /{code}`    | Actualización del parámetro                                               | 200 OK con el parámetro actualizado |
+| `DELETE /{code}` | Eliminación del parámetro                                                 | 204 No Content                      |
 
 ### 3.4. Validaciones
 
@@ -421,33 +421,33 @@ Ruta base: `/api/v1/administration/parameters`.
 
 La suite actual incluye pruebas del servicio y del controlador que cubren la validación, el CRUD y la compatibilidad entre tipo y valor:
 
-| Ubicación | Alcance |
-|-----------|---------|
-| `template/core/src/test/java/org/myorganization/template/core/service/ParameterServiceTest.java` | Creación, consulta por código y criterios, validación de compatibilidad tipo/valor, actualización, borrado y conteo |
-| `template/webapp/src/test/java/org/myorganization/template/webapp/controller/ParameterControllerTest.java` | Respuestas HTTP de los endpoints, parámetros de consulta y propagación de excepciones del servicio |
+| Ubicación                                                                                                  | Alcance                                                                                                             |
+|------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------|
+| `template/core/src/test/java/org/myorganization/template/core/service/ParameterServiceTest.java`           | Creación, consulta por código y criterios, validación de compatibilidad tipo/valor, actualización, borrado y conteo |
+| `template/webapp/src/test/java/org/myorganization/template/webapp/controller/ParameterControllerTest.java` | Respuestas HTTP de los endpoints, parámetros de consulta y propagación de excepciones del servicio                  |
 
 Estas pruebas cubren la lógica principal del módulo y complementan la validación funcional del frontend.
 
 ### 4.2. Cobertura unitaria (frontend)
 
-| Ubicación | Alcance |
-|-----------|---------|
-| `parameter-list.component.spec.ts` | Estado del listado, filtros, paginación y acciones |
-| `parameter-form.component.spec.ts` | Modos del formulario y emisión de eventos |
-| `parameter.service.spec.ts` | Construcción de peticiones CRUD y criterios de filtrado |
+| Ubicación                          | Alcance                                                 |
+|------------------------------------|---------------------------------------------------------|
+| `parameter-list.component.spec.ts` | Estado del listado, filtros, paginación y acciones      |
+| `parameter-form.component.spec.ts` | Modos del formulario y emisión de eventos               |
+| `parameter.service.spec.ts`        | Construcción de peticiones CRUD y criterios de filtrado |
 
 ### 4.3. Cobertura E2E (Playwright)
 
 Ubicación: `dashboard/e2e/tests/administration/parameters.spec.ts` (Page Object en `dashboard/e2e/pages/parameters.page.ts`).
 
-| Caso | Descripción | Resultado esperado |
-|------|-------------|--------------------|
-| Listar parámetros | Acceder a la pantalla tras iniciar sesión | La tabla es visible, hay al menos una fila y se muestran filtros y el botón de crear |
-| Buscar por código | Filtrar por un código existente y por uno inexistente | El listado muestra la fila coincidente; con un término sin coincidencias queda vacío |
-| Crear parámetro | Alta desde el formulario con datos válidos | El backend responde 201, se vuelve al listado y el nuevo parámetro aparece al buscarlo |
-| Editar parámetro | Seleccionar un parámetro y modificar sus datos | El backend responde 200 y el cambio se refleja en el listado |
-| Eliminar parámetro | Seleccionar un parámetro y confirmar el borrado | El backend responde 204 y el parámetro deja de aparecer al buscarlo |
-| Exportar CSV | Pulsar el botón de exportar | El navegador descarga el fichero `parameters_YYYY-MM-DD.csv` |
+| Caso               | Descripción                                           | Resultado esperado                                                                     |
+|--------------------|-------------------------------------------------------|----------------------------------------------------------------------------------------|
+| Listar parámetros  | Acceder a la pantalla tras iniciar sesión             | La tabla es visible, hay al menos una fila y se muestran filtros y el botón de crear   |
+| Buscar por código  | Filtrar por un código existente y por uno inexistente | El listado muestra la fila coincidente; con un término sin coincidencias queda vacío   |
+| Crear parámetro    | Alta desde el formulario con datos válidos            | El backend responde 201, se vuelve al listado y el nuevo parámetro aparece al buscarlo |
+| Editar parámetro   | Seleccionar un parámetro y modificar sus datos        | El backend responde 200 y el cambio se refleja en el listado                           |
+| Eliminar parámetro | Seleccionar un parámetro y confirmar el borrado       | El backend responde 204 y el parámetro deja de aparecer al buscarlo                    |
+| Exportar CSV       | Pulsar el botón de exportar                           | El navegador descarga el fichero `parameters_YYYY-MM-DD.csv`                           |
 
 - Cada test inicia sesión con un usuario administrador y navega directamente a `/administration/parameters`.
 - La suite se ejecuta en modo `serial` para evitar contención al trabajar con datos creados por cada caso.
@@ -475,10 +475,10 @@ Precondición del ciclo: usuario con `SYSTEM_PARAMETER_READ` / `SYSTEM_PARAMETER
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
+| # | Acción                                                | Resultado esperado                                               |
+|---|-------------------------------------------------------|------------------------------------------------------------------|
 | 1 | Navegar a `{{BASE_URL_UI}}/administration/parameters` | `parameters-table` visible con código, descripción, tipo y valor |
-| 2 | Ordenar por una columna y paginar | Ordenación y paginación funcionan |
+| 2 | Ordenar por una columna y paginar                     | Ordenación y paginación funcionan                                |
 
 #### TC-PAR-02 · Filtrado por código, descripción y tipo
 
@@ -486,10 +486,10 @@ Precondición del ciclo: usuario con `SYSTEM_PARAMETER_READ` / `SYSTEM_PARAMETER
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
+| # | Acción                                                                     | Resultado esperado                       |
+|---|----------------------------------------------------------------------------|------------------------------------------|
 | 1 | Filtrar por un fragmento de código y por un tipo (p. ej. `STRING`), buscar | El listado se reduce y vuelve a página 1 |
-| 2 | Limpiar | Recarga el listado completo |
+| 2 | Limpiar                                                                    | Recarga el listado completo              |
 
 #### TC-PAR-03 · Alta de parámetro válida
 
@@ -497,11 +497,11 @@ Precondición del ciclo: usuario con `SYSTEM_PARAMETER_READ` / `SYSTEM_PARAMETER
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** eliminar `E2E_PARAM_{{UNIQUE}}`.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | Pulsar `btn-create`, informar código `E2E_PARAM_{{UNIQUE}}`, tipo `STRING`, valor `value-{{UNIQUE}}`, descripción | Formulario válido; `Guardar` habilitado |
-| 2 | Vaciar el campo valor (obligatorio) | El campo se marca inválido y `Guardar` queda deshabilitado |
-| 3 | Restaurar el valor y guardar | El backend responde 201; el parámetro aparece al buscarlo |
+| # | Acción                                                                                                            | Resultado esperado                                         |
+|---|-------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------|
+| 1 | Pulsar `btn-create`, informar código `E2E_PARAM_{{UNIQUE}}`, tipo `STRING`, valor `value-{{UNIQUE}}`, descripción | Formulario válido; `Guardar` habilitado                    |
+| 2 | Vaciar el campo valor (obligatorio)                                                                               | El campo se marca inválido y `Guardar` queda deshabilitado |
+| 3 | Restaurar el valor y guardar                                                                                      | El backend responde 201; el parámetro aparece al buscarlo  |
 
 #### TC-PAR-04 · Alta con código duplicado
 
@@ -509,8 +509,8 @@ Precondición del ciclo: usuario con `SYSTEM_PARAMETER_READ` / `SYSTEM_PARAMETER
 - **Setup:** login con `{{ADMIN_USER}}`; crear `E2E_PARAM_{{UNIQUE}}` como primer parámetro.
 - **Teardown:** eliminar `E2E_PARAM_{{UNIQUE}}`.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
+| # | Acción                                                                   | Resultado esperado                                                |
+|---|--------------------------------------------------------------------------|-------------------------------------------------------------------|
 | 1 | Intentar crear otro parámetro con el mismo código `E2E_PARAM_{{UNIQUE}}` | El backend devuelve `409 Conflict` y la operación queda bloqueada |
 
 #### TC-PAR-05 · Edición (código inmutable)
@@ -519,9 +519,9 @@ Precondición del ciclo: usuario con `SYSTEM_PARAMETER_READ` / `SYSTEM_PARAMETER
 - **Setup:** login con `{{ADMIN_USER}}`; crear `E2E_PARAM_{{UNIQUE}}`.
 - **Teardown:** eliminar `E2E_PARAM_{{UNIQUE}}`.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | Seleccionar `E2E_PARAM_{{UNIQUE}}` y pulsar `btn-edit` | El código es de solo lectura |
+| # | Acción                                                                                 | Resultado esperado                         |
+|---|----------------------------------------------------------------------------------------|--------------------------------------------|
+| 1 | Seleccionar `E2E_PARAM_{{UNIQUE}}` y pulsar `btn-edit`                                 | El código es de solo lectura               |
 | 2 | Cambiar el valor a `value-editado-{{UNIQUE}}` (compatible con tipo `STRING`) y guardar | 200 OK; el cambio se refleja en el listado |
 
 #### TC-PAR-06 · Eliminación con confirmación
@@ -530,10 +530,10 @@ Precondición del ciclo: usuario con `SYSTEM_PARAMETER_READ` / `SYSTEM_PARAMETER
 - **Setup:** login con `{{ADMIN_USER}}`; crear `E2E_PARAM_{{UNIQUE}}`.
 - **Teardown:** si queda tras un fallo, eliminarlo por API.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | Seleccionar `E2E_PARAM_{{UNIQUE}}` y pulsar `btn-delete` → cancelar | No se elimina |
-| 2 | Repetir y confirmar | 204; desaparece del listado |
+| # | Acción                                                              | Resultado esperado          |
+|---|---------------------------------------------------------------------|-----------------------------|
+| 1 | Seleccionar `E2E_PARAM_{{UNIQUE}}` y pulsar `btn-delete` → cancelar | No se elimina               |
+| 2 | Repetir y confirmar                                                 | 204; desaparece del listado |
 
 #### TC-PAR-07 · Detalle de parámetro
 
@@ -541,8 +541,8 @@ Precondición del ciclo: usuario con `SYSTEM_PARAMETER_READ` / `SYSTEM_PARAMETER
 - **Setup:** login con `{{ADMIN_USER}}`; crear `E2E_PARAM_{{UNIQUE}}`.
 - **Teardown:** eliminar `E2E_PARAM_{{UNIQUE}}`.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
+| # | Acción                                  | Resultado esperado                                         |
+|---|-----------------------------------------|------------------------------------------------------------|
 | 1 | Doble clic sobre `E2E_PARAM_{{UNIQUE}}` | Detalle con datos y auditoría; valor y tipo deshabilitados |
 
 #### TC-PAR-08 · Validación de compatibilidad tipo/valor
@@ -551,12 +551,12 @@ Precondición del ciclo: usuario con `SYSTEM_PARAMETER_READ` / `SYSTEM_PARAMETER
 - **Setup:** login con `{{ADMIN_USER}}`; usar el formulario de alta (cancelar al final de cada subcaso).
 - **Teardown:** eliminar los parámetros que se lleguen a crear.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | Tipo `INTEGER`, valor `abc` | Rechazado (exige entero válido) |
-| 2 | Tipo `BOOLEAN`, valor `yes` | Rechazado (solo `true`/`false`) |
-| 3 | Tipo `DATE`, valor `31-12-2026` | Rechazado (exige ISO 8601) |
-| 4 | Tipo `STRING`, valor `cualquier texto` | Aceptado |
+| # | Acción                                 | Resultado esperado              |
+|---|----------------------------------------|---------------------------------|
+| 1 | Tipo `INTEGER`, valor `abc`            | Rechazado (exige entero válido) |
+| 2 | Tipo `BOOLEAN`, valor `yes`            | Rechazado (solo `true`/`false`) |
+| 3 | Tipo `DATE`, valor `31-12-2026`        | Rechazado (exige ISO 8601)      |
+| 4 | Tipo `STRING`, valor `cualquier texto` | Aceptado                        |
 
 #### TC-PAR-09 · Autorización y visibilidad
 
@@ -564,10 +564,10 @@ Precondición del ciclo: usuario con `SYSTEM_PARAMETER_READ` / `SYSTEM_PARAMETER
 - **Setup:** preparar un usuario de solo lectura de parámetros y su token.
 - **Teardown:** eliminar el usuario/perfil de prueba.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
+| # | Acción                                                                | Resultado esperado                                                |
+|---|-----------------------------------------------------------------------|-------------------------------------------------------------------|
 | 1 | Con token `SYSTEM_PARAMETER_READ` (sin write), abrir el listado en UI | Los botones `btn-create`, `btn-edit`, `btn-delete` no se muestran |
-| 2 | Con ese token, `POST /api/v1/administration/parameters` | 403 Forbidden |
+| 2 | Con ese token, `POST /api/v1/administration/parameters`               | 403 Forbidden                                                     |
 
 ---
 

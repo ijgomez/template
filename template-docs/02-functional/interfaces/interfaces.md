@@ -6,12 +6,12 @@ Su objetivo es proporcionar al administrador una visión unificada del estado de
 
 ## Conceptos clave
 
-| Concepto | Descripción |
-|-----------|---------|
-| Interfaz | Integración externa configurada en el sistema y supervisada desde la consola de administración. |
-| Registro de operación | Evento inmutable generado por una interfaz: petición, respuesta, estado y errores asociados. |
-| Monitor | Vista de supervisión centralizada para consultar actividad, diagnósticos y trazabilidad. |
-| Configuración | Catálogo y estado actual de las interfaces registradas, únicamente de consulta. |
+| Concepto              | Descripción                                                                                     |
+|-----------------------|-------------------------------------------------------------------------------------------------|
+| Interfaz              | Integración externa configurada en el sistema y supervisada desde la consola de administración. |
+| Registro de operación | Evento inmutable generado por una interfaz: petición, respuesta, estado y errores asociados.    |
+| Monitor               | Vista de supervisión centralizada para consultar actividad, diagnósticos y trazabilidad.        |
+| Configuración         | Catálogo y estado actual de las interfaces registradas, únicamente de consulta.                 |
 
 ## Modelo de entidades
 

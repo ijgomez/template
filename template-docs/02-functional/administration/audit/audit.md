@@ -95,19 +95,19 @@ Ofrecer a los administradores una vista trazable de la actividad registrada por 
 
 La pantalla gestiona dos modos de vista dentro de `AuditListComponent`:
 
-| Modo | Descripción |
-|------|-------------|
-| `list` | Listado paginado con filtros, ordenación y exportación CSV |
-| `detail` | Vista de solo lectura de una entrada de auditoría |
+| Modo     | Descripción                                                |
+|----------|------------------------------------------------------------|
+| `list`   | Listado paginado con filtros, ordenación y exportación CSV |
+| `detail` | Vista de solo lectura de una entrada de auditoría          |
 
 ### 2.3. Patrón visual reutilizable y wireframes
 
 La estructura visual base se define en [layout.md](../../../03-technical/frontend/layout.md). Para auditoría se aplica el patrón `List screen` y una variante de `Form screen` de solo lectura; no se usan formularios de alta, edición ni modal de confirmación.
 
-| Tipo de pantalla | Uso en auditoría | Estructura base |
-|------------------|-----------------|-----------------|
-| `List screen` | Consulta principal | Cabecera, filtros, barra de acciones, tabla y paginación |
-| `Form screen` de solo lectura | Detalle de una entrada | Encabezado, datos no editables y acción de volver |
+| Tipo de pantalla              | Uso en auditoría       | Estructura base                                          |
+|-------------------------------|------------------------|----------------------------------------------------------|
+| `List screen`                 | Consulta principal     | Cabecera, filtros, barra de acciones, tabla y paginación |
+| `Form screen` de solo lectura | Detalle de una entrada | Encabezado, datos no editables y acción de volver        |
 
 #### 2.3.1. Wireframe del `List screen`
 
@@ -144,34 +144,34 @@ La estructura visual base se define en [layout.md](../../../03-technical/fronten
 
 **Columnas de la tabla:**
 
-| Columna | Clave i18n | Ordenable | Notas |
-|---------|------------|-----------|-------|
-| Fecha/Hora | `audit.fields.timestamp` | Sí | Se presenta con `LocalDatePipe` |
-| Usuario | `audit.fields.username` | Sí | Usuario autenticado o `SYSTEM` cuando no existe autenticación |
-| Operación | `audit.fields.operationType` | Sí | Se muestra como etiqueta visual |
-| Sección | `audit.fields.section` | Sí | Área funcional donde se produjo la operación |
-| Entidad | `audit.fields.entityName` | Sí | Nombre técnico de la entidad afectada |
-| ID Entidad | `audit.fields.entityId` | No | Identificador conservado como texto |
-| Detalle | `audit.fields.detail` | No | Información adicional, si existe |
+| Columna    | Clave i18n                   | Ordenable | Notas                                                         |
+|------------|------------------------------|-----------|---------------------------------------------------------------|
+| Fecha/Hora | `audit.fields.timestamp`     | Sí        | Se presenta con `LocalDatePipe`                               |
+| Usuario    | `audit.fields.username`      | Sí        | Usuario autenticado o `SYSTEM` cuando no existe autenticación |
+| Operación  | `audit.fields.operationType` | Sí        | Se muestra como etiqueta visual                               |
+| Sección    | `audit.fields.section`       | Sí        | Área funcional donde se produjo la operación                  |
+| Entidad    | `audit.fields.entityName`    | Sí        | Nombre técnico de la entidad afectada                         |
+| ID Entidad | `audit.fields.entityId`      | No        | Identificador conservado como texto                           |
+| Detalle    | `audit.fields.detail`        | No        | Información adicional, si existe                              |
 
 **Filtros disponibles:**
 
-| Filtro | Tipo | Valores o regla | `data-testid` |
-|--------|------|-----------------|---------------|
-| Usuario | Texto | Coincidencia parcial | `audit-filter-username` |
-| Operación | Selección | Todos, `CREATE`, `UPDATE`, `DELETE`, `EXECUTE` | `audit-filter-operation-type` |
-| Sección | Selección | Todos, `SECURITY`, `REPORTS`, `INTERFACES`, `CLUSTER`, `SYSTEM` | `audit-filter-section` |
-| Desde | Fecha | Inicio inclusivo del rango | `audit-filter-date-from` |
-| Hasta | Fecha | Fin inclusivo del rango | `audit-filter-date-to` |
+| Filtro    | Tipo      | Valores o regla                                                 | `data-testid`                 |
+|-----------|-----------|-----------------------------------------------------------------|-------------------------------|
+| Usuario   | Texto     | Coincidencia parcial                                            | `audit-filter-username`       |
+| Operación | Selección | Todos, `CREATE`, `UPDATE`, `DELETE`, `EXECUTE`                  | `audit-filter-operation-type` |
+| Sección   | Selección | Todos, `SECURITY`, `REPORTS`, `INTERFACES`, `CLUSTER`, `SYSTEM` | `audit-filter-section`        |
+| Desde     | Fecha     | Inicio inclusivo del rango                                      | `audit-filter-date-from`      |
+| Hasta     | Fecha     | Fin inclusivo del rango                                         | `audit-filter-date-to`        |
 
 **Barra de acciones:**
 
-| Acción | Condición de disponibilidad | `data-testid` |
-|--------|-----------------------------|---------------|
-| Filtrar | Siempre disponible | `audit-apply-filters` |
-| Limpiar | Siempre disponible | `audit-clear-filters` |
-| Detalle | Requiere una fila seleccionada | `audit-view-detail` |
-| Exportar CSV | Siempre disponible | `audit-export-csv` |
+| Acción       | Condición de disponibilidad    | `data-testid`         |
+|--------------|--------------------------------|-----------------------|
+| Filtrar      | Siempre disponible             | `audit-apply-filters` |
+| Limpiar      | Siempre disponible             | `audit-clear-filters` |
+| Detalle      | Requiere una fila seleccionada | `audit-view-detail`   |
+| Exportar CSV | Siempre disponible             | `audit-export-csv`    |
 
 - La selección de una fila alterna (seleccionar / deseleccionar) y mantiene la fila marcada en el listado.
 - El detalle se abre pulsando el botón *Detalle* con una fila seleccionada o mediante doble clic sobre la fila.
@@ -180,19 +180,19 @@ La estructura visual base se define en [layout.md](../../../03-technical/fronten
 
 ### 2.4. Identificadores para pruebas (`data-testid`)
 
-| Elemento | `data-testid` |
-| --- | --- |
-| Formulario de filtros | `audit-filter-form` |
-| Filtro de usuario | `audit-filter-username` |
-| Filtro de operación | `audit-filter-operation-type` |
-| Filtro de sección | `audit-filter-section` |
-| Filtro desde | `audit-filter-date-from` |
-| Filtro hasta | `audit-filter-date-to` |
-| Tabla de auditoría | `audit-table` |
-| Botón Filtrar | `audit-apply-filters` |
-| Botón Limpiar | `audit-clear-filters` |
-| Botón Detalle | `audit-view-detail` |
-| Botón Exportar CSV | `audit-export-csv` |
+| Elemento              | `data-testid`                 |
+|-----------------------|-------------------------------|
+| Formulario de filtros | `audit-filter-form`           |
+| Filtro de usuario     | `audit-filter-username`       |
+| Filtro de operación   | `audit-filter-operation-type` |
+| Filtro de sección     | `audit-filter-section`        |
+| Filtro desde          | `audit-filter-date-from`      |
+| Filtro hasta          | `audit-filter-date-to`        |
+| Tabla de auditoría    | `audit-table`                 |
+| Botón Filtrar         | `audit-apply-filters`         |
+| Botón Limpiar         | `audit-clear-filters`         |
+| Botón Detalle         | `audit-view-detail`           |
+| Botón Exportar CSV    | `audit-export-csv`            |
 
 ### 2.5. Detalle de una entrada
 
@@ -227,19 +227,19 @@ flowchart TD
 
 ### 3.1. Componentes afectados
 
-| Capa | Elemento | Responsabilidad |
-|------|----------|-----------------|
-| Frontend | `AuditListComponent` | Estado de filtros, paginación, ordenación, detalle y exportación. |
-| Frontend | `AuditService` | Consultas paginadas, recuento y recuperación completa para exportación. |
-| Frontend | `TpDataTableComponent` | Tabla reutilizable para ordenación, selección y paginación. |
-| Frontend | `LocalDatePipe` y `DateService` | Presentación local de fechas y serialización para CSV. |
-| Frontend | `NotificationService` | Feedback de carga, error y progreso en la exportación. |
-| Backend | `AuditController` | Exposición de endpoints REST de consulta de registros. |
-| Backend | `AuditService` | Consulta por criterios y persistencia interna de entradas. |
-| Backend | `AuditAspect` y `@Auditable` | Creación automática de registros al completar operaciones auditables. |
-| Domain | `AuditLog` | Entidad append-only para guardar los eventos de auditoría. |
-| Domain | `AuditLogDTO` y `AuditCriteria` | Transporte de datos y criterios de consulta para la pantalla. |
-| Security | `SecurityConfig` | Protección de rutas de consulta y control de permisos del módulo de auditoría. |
+| Capa     | Elemento                        | Responsabilidad                                                                |
+|----------|---------------------------------|--------------------------------------------------------------------------------|
+| Frontend | `AuditListComponent`            | Estado de filtros, paginación, ordenación, detalle y exportación.              |
+| Frontend | `AuditService`                  | Consultas paginadas, recuento y recuperación completa para exportación.        |
+| Frontend | `TpDataTableComponent`          | Tabla reutilizable para ordenación, selección y paginación.                    |
+| Frontend | `LocalDatePipe` y `DateService` | Presentación local de fechas y serialización para CSV.                         |
+| Frontend | `NotificationService`           | Feedback de carga, error y progreso en la exportación.                         |
+| Backend  | `AuditController`               | Exposición de endpoints REST de consulta de registros.                         |
+| Backend  | `AuditService`                  | Consulta por criterios y persistencia interna de entradas.                     |
+| Backend  | `AuditAspect` y `@Auditable`    | Creación automática de registros al completar operaciones auditables.          |
+| Domain   | `AuditLog`                      | Entidad append-only para guardar los eventos de auditoría.                     |
+| Domain   | `AuditLogDTO` y `AuditCriteria` | Transporte de datos y criterios de consulta para la pantalla.                  |
+| Security | `SecurityConfig`                | Protección de rutas de consulta y control de permisos del módulo de auditoría. |
 
 ### 3.2. Modelos de datos
 
@@ -323,10 +323,10 @@ En backend, `AuditCriteria` representa los mismos criterios con fechas `OffsetDa
 
 Ruta base: `/api/v1/administration/audit`.
 
-| Método y ruta | Descripción | Respuesta |
-|---------------|-------------|-----------|
-| `GET /` | Listado paginado con filtros `fromDate`, `toDate`, `username`, `operationType`, `section` y parámetros `page`, `size`, `sort` | 200 OK con página de registros |
-| `GET /count` | Número de registros que cumplen los mismos filtros | 200 OK con el total |
+| Método y ruta | Descripción                                                                                                                   | Respuesta                      |
+|---------------|-------------------------------------------------------------------------------------------------------------------------------|--------------------------------|
+| `GET /`       | Listado paginado con filtros `fromDate`, `toDate`, `username`, `operationType`, `section` y parámetros `page`, `size`, `sort` | 200 OK con página de registros |
+| `GET /count`  | Número de registros que cumplen los mismos filtros                                                                            | 200 OK con el total            |
 
 No hay endpoints `POST`, `PUT`, `PATCH` ni `DELETE` para registros de auditoría.
 
@@ -368,16 +368,16 @@ La consulta de la pantalla utiliza el mismo servicio de dominio para filtrar y p
 
 ### 4.1. Cobertura unitaria (backend)
 
-| Ubicación | Alcance |
-|-----------|---------|
-| `core/src/test/java/org/myorganization/template/core/service/AuditServiceTest.java` | Consulta por criterios, mapeo de resultados, persistencia de una entrada y comportamiento de retención |
-| `core/src/test/java/org/myorganization/template/core/service/AuditServiceImmutabilityPropertyTest.java` | Propiedades de inmutabilidad: ausencia de API pública de modificación y campos JPA no actualizables |
-| `core/src/test/java/org/myorganization/template/core/audit/AuditAspectTest.java` | Creación de entradas por el aspecto tras operaciones auditables |
+| Ubicación                                                                                               | Alcance                                                                                                |
+|---------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------|
+| `core/src/test/java/org/myorganization/template/core/service/AuditServiceTest.java`                     | Consulta por criterios, mapeo de resultados, persistencia de una entrada y comportamiento de retención |
+| `core/src/test/java/org/myorganization/template/core/service/AuditServiceImmutabilityPropertyTest.java` | Propiedades de inmutabilidad: ausencia de API pública de modificación y campos JPA no actualizables    |
+| `core/src/test/java/org/myorganization/template/core/audit/AuditAspectTest.java`                        | Creación de entradas por el aspecto tras operaciones auditables                                        |
 
 ### 4.2. Cobertura unitaria (frontend)
 
-| Ubicación | Alcance |
-|-----------|---------|
+| Ubicación                                               | Alcance                                                                                                  |
+|---------------------------------------------------------|----------------------------------------------------------------------------------------------------------|
 | `dashboard/src/app/core/services/audit.service.spec.ts` | Construcción de peticiones paginadas, envío de filtros, consulta para exportación y endpoint de recuento |
 
 No hay actualmente pruebas unitarias específicas de `AuditListComponent` en el repositorio.
@@ -386,13 +386,13 @@ No hay actualmente pruebas unitarias específicas de `AuditListComponent` en el 
 
 Ubicación: `dashboard/e2e/tests/administration/audit.spec.ts` (Page Object en `dashboard/e2e/pages/audit.page.ts`).
 
-| Caso | Descripción | Resultado esperado |
-|------|-------------|--------------------|
-| Listado de solo lectura | Acceder a la pantalla tras iniciar sesión | La tabla y filtros son visibles; no existen acciones de crear, editar ni eliminar |
-| Filtrado | Filtrar por administrador, `EXECUTE` y `SECURITY`; después limpiar | El listado contiene los registros coincidentes y se recarga sin filtros al limpiar |
-| Detalle desde barra de acciones | Seleccionar una fila y pulsar *Detalle* | El detalle muestra los datos de la fila y la acción Volver restaura el listado |
-| Detalle por doble clic | Doble clic sobre la primera entrada | Abre la vista de detalle; *Volver* restaura el listado |
-| Exportación CSV | Exportar registros filtrados por administrador | El navegador descarga un fichero `audit_YYYY-MM-DD.csv` |
+| Caso                            | Descripción                                                        | Resultado esperado                                                                 |
+|---------------------------------|--------------------------------------------------------------------|------------------------------------------------------------------------------------|
+| Listado de solo lectura         | Acceder a la pantalla tras iniciar sesión                          | La tabla y filtros son visibles; no existen acciones de crear, editar ni eliminar  |
+| Filtrado                        | Filtrar por administrador, `EXECUTE` y `SECURITY`; después limpiar | El listado contiene los registros coincidentes y se recarga sin filtros al limpiar |
+| Detalle desde barra de acciones | Seleccionar una fila y pulsar *Detalle*                            | El detalle muestra los datos de la fila y la acción Volver restaura el listado     |
+| Detalle por doble clic          | Doble clic sobre la primera entrada                                | Abre la vista de detalle; *Volver* restaura el listado                             |
+| Exportación CSV                 | Exportar registros filtrados por administrador                     | El navegador descarga un fichero `audit_YYYY-MM-DD.csv`                            |
 
 Cada caso inicia sesión con el usuario administrador. Ese inicio de sesión genera la operación auditable `EXECUTE` en la sección `SECURITY`, que proporciona un registro conocido para las comprobaciones sin modificar el registro desde la pantalla de auditoría.
 
@@ -420,10 +420,10 @@ Precondición del ciclo: usuario con `SYSTEM_LOG_READ`; tabla `audit_log` con da
 - **Setup:** login con `{{ADMIN_USER}}` (genera un registro de auditoría conocido).
 - **Teardown:** logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | Navegar a `{{BASE_URL_UI}}/administration/audit` | `audit-table` y los filtros son visibles; no existen acciones de crear, editar ni eliminar |
-| 2 | Ordenar por una columna y cambiar el tamaño de página (5/10/20/50) | Ordenación y paginación funcionan |
+| # | Acción                                                             | Resultado esperado                                                                         |
+|---|--------------------------------------------------------------------|--------------------------------------------------------------------------------------------|
+| 1 | Navegar a `{{BASE_URL_UI}}/administration/audit`                   | `audit-table` y los filtros son visibles; no existen acciones de crear, editar ni eliminar |
+| 2 | Ordenar por una columna y cambiar el tamaño de página (5/10/20/50) | Ordenación y paginación funcionan                                                          |
 
 #### TC-AUD-02 · Filtrado por usuario, operación y sección
 
@@ -431,10 +431,10 @@ Precondición del ciclo: usuario con `SYSTEM_LOG_READ`; tabla `audit_log` con da
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
+| # | Acción                                                                                                                                                             | Resultado esperado                                                |
+|---|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------|
 | 1 | Rellenar `audit-filter-username` = `{{ADMIN_USER}}`, `audit-filter-operation-type` = `EXECUTE`, `audit-filter-section` = `SECURITY` y pulsar `audit-apply-filters` | El listado muestra los registros coincidentes y vuelve a página 1 |
-| 2 | Pulsar `audit-clear-filters` | Se recarga la consulta sin criterios |
+| 2 | Pulsar `audit-clear-filters`                                                                                                                                       | Se recarga la consulta sin criterios                              |
 
 #### TC-AUD-03 · Filtrado por rango de fechas
 
@@ -445,8 +445,8 @@ Precondición del ciclo: usuario con `SYSTEM_LOG_READ`; tabla `audit_log` con da
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
+| # | Acción                                                                                                   | Resultado esperado                                                            |
+|---|----------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------|
 | 1 | Informar `audit-filter-date-from` = fecha de hace 7 días y `audit-filter-date-to` = `{{TODAY}}`, aplicar | Los registros se restringen al rango (una vez alineado el contrato de fechas) |
 
 #### TC-AUD-04 · Consulta de detalle
@@ -455,10 +455,10 @@ Precondición del ciclo: usuario con `SYSTEM_LOG_READ`; tabla `audit_log` con da
 - **Setup:** login con `{{ADMIN_USER}}`; al menos un registro en el listado.
 - **Teardown:** logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
+| # | Acción                                  | Resultado esperado                                                     |
+|---|-----------------------------------------|------------------------------------------------------------------------|
 | 1 | Seleccionar la primera fila del listado | Se abre el detalle con todos los datos del registro, sin acciones CRUD |
-| 2 | Pulsar *Volver* | Se restaura el listado y se elimina la selección |
+| 2 | Pulsar *Volver*                         | Se restaura el listado y se elimina la selección                       |
 
 #### TC-AUD-05 · Exportación CSV filtrada
 
@@ -466,10 +466,10 @@ Precondición del ciclo: usuario con `SYSTEM_LOG_READ`; tabla `audit_log` con da
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** eliminar el fichero descargado; logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
+| # | Acción                                                                             | Resultado esperado                                                                   |
+|---|------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------|
 | 1 | Filtrar por `audit-filter-username` = `{{ADMIN_USER}}` y pulsar `audit-export-csv` | Descarga `audit_{{TODAY}}.csv` con todos los registros filtrados (no solo la página) |
-| 2 | Filtrar por un usuario inexistente y exportar | Se notifica que no hay datos; sin descarga |
+| 2 | Filtrar por un usuario inexistente y exportar                                      | Se notifica que no hay datos; sin descarga                                           |
 
 #### TC-AUD-06 · Inmutabilidad del registro (API)
 
@@ -477,9 +477,9 @@ Precondición del ciclo: usuario con `SYSTEM_LOG_READ`; tabla `audit_log` con da
 - **Setup:** vía API con token de `{{ADMIN_USER}}`.
 - **Teardown:** No aplica.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | `GET {{BASE_URL_API}}/api/v1/administration/audit` y `GET .../audit/count` | 200 OK (son los únicos verbos expuestos) |
+| # | Acción                                                                          | Resultado esperado                                                      |
+|---|---------------------------------------------------------------------------------|-------------------------------------------------------------------------|
+| 1 | `GET {{BASE_URL_API}}/api/v1/administration/audit` y `GET .../audit/count`      | 200 OK (son los únicos verbos expuestos)                                |
 | 2 | Intentar `POST`, `PUT`, `PATCH` o `DELETE` sobre `/api/v1/administration/audit` | No existe endpoint de escritura; la operación se rechaza (no permitida) |
 
 #### TC-AUD-07 · Registro automático de operación auditable
@@ -488,10 +488,10 @@ Precondición del ciclo: usuario con `SYSTEM_LOG_READ`; tabla `audit_log` con da
 - **Setup:** vía API/UI. Partir sin sesión.
 - **Teardown:** logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | Iniciar sesión con `{{ADMIN_USER}}` (operación auditable) | Tras completarse, se genera una entrada `EXECUTE` en sección `SECURITY` |
-| 2 | Consultar la auditoría filtrando por `{{ADMIN_USER}}` y `EXECUTE` | Aparece el registro recién generado por el login |
+| # | Acción                                                            | Resultado esperado                                                      |
+|---|-------------------------------------------------------------------|-------------------------------------------------------------------------|
+| 1 | Iniciar sesión con `{{ADMIN_USER}}` (operación auditable)         | Tras completarse, se genera una entrada `EXECUTE` en sección `SECURITY` |
+| 2 | Consultar la auditoría filtrando por `{{ADMIN_USER}}` y `EXECUTE` | Aparece el registro recién generado por el login                        |
 
 ---
 

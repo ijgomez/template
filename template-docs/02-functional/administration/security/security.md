@@ -8,11 +8,11 @@ Documentación funcional de los módulos de administración y seguridad. Estos d
 
 ## Conceptos clave
 
-| Concepto | Descripción |
-|-----------|---------|
-| Usuario | Identidad autenticada del sistema, asociada a un o varios perfiles. |
-| Perfil | Agrupación funcional de permisos que define qué puede hacer un usuario. |
-| Acción | Permiso granular del sistema con código técnico y tipo de operación. |
+| Concepto     | Descripción                                                                |
+|--------------|----------------------------------------------------------------------------|
+| Usuario      | Identidad autenticada del sistema, asociada a un o varios perfiles.        |
+| Perfil       | Agrupación funcional de permisos que define qué puede hacer un usuario.    |
+| Acción       | Permiso granular del sistema con código técnico y tipo de operación.       |
 | Autorización | Validación de accesos en frontend y backend basada en acciones y perfiles. |
 
 
@@ -80,11 +80,11 @@ Administración > Seguridad > Usuarios
 
 ## Pantallas
 
-| Pantalla | Tipo | Descripción |
-|---------------|-------------|-----------|
-| [Usuarios](./users.md) | Pagina |  |
-| [Perfiles](./profiles.md) | Pagina |  |
-| [Acciones](./actions.md) | Pagina |  |
+| Pantalla                  | Tipo   | Descripción |
+|---------------------------|--------|-------------|
+| [Usuarios](./users.md)    | Pagina |             |
+| [Perfiles](./profiles.md) | Pagina |             |
+| [Acciones](./actions.md)  | Pagina |             |
 
 ## Referencias
 

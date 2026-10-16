@@ -93,17 +93,17 @@ Ofrecer a los administradores visibilidad sobre los bloqueos gestionados por el 
 
 La funcionalidad usa un único modo de vista dentro de `BlockListComponent`:
 
-| Modo | Descripción |
-|------|-------------|
+| Modo   | Descripción                                                                                                                                              |
+|--------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `list` | Listado de bloqueos con filtros, ordenación, paginación y exportación. Muestra todas las métricas de cada bloqueo, por lo que no existe vista de detalle |
 
 ### 2.3. Patrón visual reutilizable y wireframes
 
 La estructura visual base se define en [layout.md](../../../03-technical/frontend/layout.md). La pantalla usa `List screen` para la consulta; al mostrar todas las métricas en la tabla, no requiere pantalla de detalle.
 
-| Tipo de pantalla | Uso en bloqueos | Estructura base |
-|------------------|-----------------|-----------------|
-| `List screen` | Consulta principal | Cabecera, filtros, barra de acciones, tabla y paginación |
+| Tipo de pantalla | Uso en bloqueos    | Estructura base                                          |
+|------------------|--------------------|----------------------------------------------------------|
+| `List screen`    | Consulta principal | Cabecera, filtros, barra de acciones, tabla y paginación |
 
 #### 2.3.1. Wireframe del `List screen`
 
@@ -127,28 +127,28 @@ La estructura visual base se define en [layout.md](../../../03-technical/fronten
 
 **Columnas de la tabla:**
 
-| Columna | Clave i18n | Notas |
-|---------|------------|-------|
-| Nombre de Tarea | `cluster.blocks.fields.name` | Identificador único del recurso/tarea |
-| Fecha de Inicio | `cluster.blocks.fields.startDate` | Última fecha/hora de adquisición del lock, formateada localmente |
-| Tiempo Promedio (ms) | `cluster.blocks.fields.avgTime` | Duración media de lock en milisegundos |
-| Tiempo Mínimo (ms) | `cluster.blocks.fields.minTime` | Duración mínima histórica en milisegundos |
-| Tiempo Máximo (ms) | `cluster.blocks.fields.maxTime` | Duración máxima histórica en milisegundos |
-| Total Ejecuciones | `cluster.blocks.fields.total` | Número total de liberaciones de lock registradas |
+| Columna              | Clave i18n                        | Notas                                                            |
+|----------------------|-----------------------------------|------------------------------------------------------------------|
+| Nombre de Tarea      | `cluster.blocks.fields.name`      | Identificador único del recurso/tarea                            |
+| Fecha de Inicio      | `cluster.blocks.fields.startDate` | Última fecha/hora de adquisición del lock, formateada localmente |
+| Tiempo Promedio (ms) | `cluster.blocks.fields.avgTime`   | Duración media de lock en milisegundos                           |
+| Tiempo Mínimo (ms)   | `cluster.blocks.fields.minTime`   | Duración mínima histórica en milisegundos                        |
+| Tiempo Máximo (ms)   | `cluster.blocks.fields.maxTime`   | Duración máxima histórica en milisegundos                        |
+| Total Ejecuciones    | `cluster.blocks.fields.total`     | Número total de liberaciones de lock registradas                 |
 
 **Filtros disponibles:**
 
-| Filtro | Tipo | Regla | `data-testid` |
-|--------|------|-------|---------------|
+| Filtro          | Tipo  | Regla                                                      | `data-testid`                |
+|-----------------|-------|------------------------------------------------------------|------------------------------|
 | Nombre de Tarea | Texto | Coincidencia parcial `LIKE %name%` insensible a mayúsculas | `cluster-blocks-filter-name` |
 
 **Barra de acciones:**
 
-| Acción | Condición de disponibilidad | `data-testid` |
-|--------|-----------------------------|---------------|
-| Filtrar | Siempre disponible | `cluster-blocks-apply-filters` |
-| Limpiar | Siempre disponible | `cluster-blocks-clear-filters` |
-| Exportar CSV | Siempre disponible; notifica vacío si no hay resultados tras filtrar | `cluster-blocks-export-csv` |
+| Acción       | Condición de disponibilidad                                          | `data-testid`                  |
+|--------------|----------------------------------------------------------------------|--------------------------------|
+| Filtrar      | Siempre disponible                                                   | `cluster-blocks-apply-filters` |
+| Limpiar      | Siempre disponible                                                   | `cluster-blocks-clear-filters` |
+| Exportar CSV | Siempre disponible; notifica vacío si no hay resultados tras filtrar | `cluster-blocks-export-csv`    |
 
 - El listado muestra todas las métricas de cada bloqueo; no hay navegación a una pantalla de detalle.
 - El filtrado, la ordenación y la paginación se resuelven en servidor (Spring Data `Pageable`).
@@ -156,14 +156,14 @@ La estructura visual base se define en [layout.md](../../../03-technical/fronten
 
 ### 2.5. Identificadores para pruebas (`data-testid`)
 
-| Elemento | `data-testid` |
-| --- | --- |
-| Formulario de filtros | `cluster-blocks-filter-form` |
-| Filtro de nombre de tarea | `cluster-blocks-filter-name` |
-| Tabla de bloqueos | `cluster-blocks-table` |
-| Botón Filtrar | `cluster-blocks-apply-filters` |
-| Botón Limpiar | `cluster-blocks-clear-filters` |
-| Botón Exportar CSV | `cluster-blocks-export-csv` |
+| Elemento                  | `data-testid`                  |
+|---------------------------|--------------------------------|
+| Formulario de filtros     | `cluster-blocks-filter-form`   |
+| Filtro de nombre de tarea | `cluster-blocks-filter-name`   |
+| Tabla de bloqueos         | `cluster-blocks-table`         |
+| Botón Filtrar             | `cluster-blocks-apply-filters` |
+| Botón Limpiar             | `cluster-blocks-clear-filters` |
+| Botón Exportar CSV        | `cluster-blocks-export-csv`    |
 
 ### 2.6. Diagramas
 
@@ -188,18 +188,18 @@ flowchart TD
 
 ### 3.1. Componentes afectados
 
-| Capa | Elemento | Responsabilidad |
-|------|----------|-----------------|
-| Frontend | `BlockListComponent` | Consulta paginada, filtros del servidor, ordenación y exportación CSV. Muestra todas las métricas en el listado, sin vista de detalle. |
-| Frontend | `ClusterService` | Llamadas REST de bloqueos para paginado, conteo y exportación. |
-| Frontend | `TpDataTableComponent` | Tabla reutilizable para ordenación, selección y paginación. |
-| Backend | `ClusterController` | Endpoints REST de lectura de bloqueos. |
-| Backend | `ClusterBlockService` | Consultas por criterios y por id; las operaciones CUD quedan prohibidas. |
-| Backend | `ClusterLockService` | Adquisición/liberación de locks y actualización automática de métricas. |
-| Backend | `ClusterBlockRepository` | JPA + Specifications + consultas nativas para advisory locks y hora de base de datos. |
-| Domain | `ClusterBlock` | Entidad JPA que persiste la estadística de bloqueo por recurso. |
-| Domain | `ClusterBlockDTO` y `ClusterBlockCriteria` | Transporte y filtros de consulta del módulo. |
-| Security | `SecurityConfig` | Reglas de autorización y protección del acceso al módulo. |
+| Capa     | Elemento                                   | Responsabilidad                                                                                                                        |
+|----------|--------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------|
+| Frontend | `BlockListComponent`                       | Consulta paginada, filtros del servidor, ordenación y exportación CSV. Muestra todas las métricas en el listado, sin vista de detalle. |
+| Frontend | `ClusterService`                           | Llamadas REST de bloqueos para paginado, conteo y exportación.                                                                         |
+| Frontend | `TpDataTableComponent`                     | Tabla reutilizable para ordenación, selección y paginación.                                                                            |
+| Backend  | `ClusterController`                        | Endpoints REST de lectura de bloqueos.                                                                                                 |
+| Backend  | `ClusterBlockService`                      | Consultas por criterios y por id; las operaciones CUD quedan prohibidas.                                                               |
+| Backend  | `ClusterLockService`                       | Adquisición/liberación de locks y actualización automática de métricas.                                                                |
+| Backend  | `ClusterBlockRepository`                   | JPA + Specifications + consultas nativas para advisory locks y hora de base de datos.                                                  |
+| Domain   | `ClusterBlock`                             | Entidad JPA que persiste la estadística de bloqueo por recurso.                                                                        |
+| Domain   | `ClusterBlockDTO` y `ClusterBlockCriteria` | Transporte y filtros de consulta del módulo.                                                                                           |
+| Security | `SecurityConfig`                           | Reglas de autorización y protección del acceso al módulo.                                                                              |
 
 ### 3.2. Modelos de datos
 
@@ -268,15 +268,15 @@ public class ClusterBlock extends BaseEntity {
 
 Ruta base: `/api/v1/administration/cluster/blocks`.
 
-| Método y ruta | Descripción | Respuesta |
-|---------------|-------------|-----------|
-| `GET /` | Obtiene bloqueos paginados con filtro opcional por `name` y ordenación `Pageable` | 200 OK con `Page<ClusterBlockDTO>` |
-| `GET /count` | Cuenta bloqueos que coinciden con el filtro `name` opcional | 200 OK con `Long` |
-| `GET /{id}` | Obtiene un bloqueo por identificador (expuesto en backend; no lo consume el frontend al no existir pantalla de detalle) | 200 OK con el bloqueo; 404 si no existe |
-| `POST /` | Creación manual no permitida | 405 Method Not Allowed |
-| `PUT /{id}` | Actualización no permitida | 405 Method Not Allowed |
-| `PATCH /{id}` | Modificación parcial no permitida | 405 Method Not Allowed |
-| `DELETE /{id}` | Eliminación no permitida | 405 Method Not Allowed |
+| Método y ruta  | Descripción                                                                                                             | Respuesta                               |
+|----------------|-------------------------------------------------------------------------------------------------------------------------|-----------------------------------------|
+| `GET /`        | Obtiene bloqueos paginados con filtro opcional por `name` y ordenación `Pageable`                                       | 200 OK con `Page<ClusterBlockDTO>`      |
+| `GET /count`   | Cuenta bloqueos que coinciden con el filtro `name` opcional                                                             | 200 OK con `Long`                       |
+| `GET /{id}`    | Obtiene un bloqueo por identificador (expuesto en backend; no lo consume el frontend al no existir pantalla de detalle) | 200 OK con el bloqueo; 404 si no existe |
+| `POST /`       | Creación manual no permitida                                                                                            | 405 Method Not Allowed                  |
+| `PUT /{id}`    | Actualización no permitida                                                                                              | 405 Method Not Allowed                  |
+| `PATCH /{id}`  | Modificación parcial no permitida                                                                                       | 405 Method Not Allowed                  |
+| `DELETE /{id}` | Eliminación no permitida                                                                                                | 405 Method Not Allowed                  |
 
 El controlador delega lectura en `ClusterService` (que a su vez usa `ClusterBlockService`). Las operaciones CUD se interceptan en `SecurityConfig.denyAll()` y adicionalmente `ClusterBlockService` lanza `MethodNotAllowedException` por si la invocación llegase al servicio.
 
@@ -331,17 +331,17 @@ El controlador delega lectura en `ClusterService` (que a su vez usa `ClusterBloc
 
 ### 4.1. Cobertura unitaria (backend)
 
-| Ubicación | Alcance |
-|-----------|---------|
-| `core/src/test/java/org/myorganization/template/core/service/ClusterBlockServiceTest.java` | Lectura por id, por criterios y `MethodNotAllowedException` en CUD |
-| `core/src/test/java/org/myorganization/template/core/service/ClusterLockServiceTest.java` | Flujos `acquireLock`, `releaseLock`, `isLocked` y cálculo de métricas acumuladas |
-| `webapp/src/test/java/org/myorganization/template/webapp/controller/ClusterControllerTest.java` | Contrato de los endpoints de bloqueos (paginado, count, por id, 405 en escritura) |
-| `webapp/src/test/java/org/myorganization/template/webapp/integration/AuditAndClusterIntegrationTest.java` | Integración de locks y bloqueos en escenarios multi-componente |
+| Ubicación                                                                                                 | Alcance                                                                           |
+|-----------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------|
+| `core/src/test/java/org/myorganization/template/core/service/ClusterBlockServiceTest.java`                | Lectura por id, por criterios y `MethodNotAllowedException` en CUD                |
+| `core/src/test/java/org/myorganization/template/core/service/ClusterLockServiceTest.java`                 | Flujos `acquireLock`, `releaseLock`, `isLocked` y cálculo de métricas acumuladas  |
+| `webapp/src/test/java/org/myorganization/template/webapp/controller/ClusterControllerTest.java`           | Contrato de los endpoints de bloqueos (paginado, count, por id, 405 en escritura) |
+| `webapp/src/test/java/org/myorganization/template/webapp/integration/AuditAndClusterIntegrationTest.java` | Integración de locks y bloqueos en escenarios multi-componente                    |
 
 ### 4.2. Cobertura unitaria (frontend)
 
-| Ubicación | Alcance |
-|-----------|---------|
+| Ubicación                                                 | Alcance                                                                                             |
+|-----------------------------------------------------------|-----------------------------------------------------------------------------------------------------|
 | `dashboard/src/app/core/services/cluster.service.spec.ts` | Métodos `findBlocksByCriteria`, `findAllBlocksByCriteria`, `countBlocksByCriteria`, `findBlockById` |
 
 No hay actualmente pruebas unitarias específicas de `BlockListComponent` en el repositorio.
@@ -350,12 +350,12 @@ No hay actualmente pruebas unitarias específicas de `BlockListComponent` en el 
 
 Ubicación: `dashboard/e2e/tests/administration/cluster-blocks.spec.ts` (Page Object en `dashboard/e2e/pages/cluster-blocks.page.ts`).
 
-| Caso | Descripción | Resultado esperado |
-|------|-------------|--------------------|
-| Listado controlado | Acceder a la pantalla tras iniciar sesión | La tabla y filtros son visibles; no existen acciones de crear, editar ni eliminar |
-| Filtrado | Filtrar por el nombre de una tarea existente y limpiar | El listado queda reducido a filas cuyo nombre coincide y se restaura al limpiar |
-| Métricas en listado | Observar una fila del listado | La fila muestra nombre, fecha de inicio y las cuatro métricas, sin navegación a detalle |
-| Exportación CSV | Exportar el listado de bloqueos | El navegador descarga un fichero con nombre `cluster_blocks_YYYY-MM-DD.csv` |
+| Caso                | Descripción                                            | Resultado esperado                                                                      |
+|---------------------|--------------------------------------------------------|-----------------------------------------------------------------------------------------|
+| Listado controlado  | Acceder a la pantalla tras iniciar sesión              | La tabla y filtros son visibles; no existen acciones de crear, editar ni eliminar       |
+| Filtrado            | Filtrar por el nombre de una tarea existente y limpiar | El listado queda reducido a filas cuyo nombre coincide y se restaura al limpiar         |
+| Métricas en listado | Observar una fila del listado                          | La fila muestra nombre, fecha de inicio y las cuatro métricas, sin navegación a detalle |
+| Exportación CSV     | Exportar el listado de bloqueos                        | El navegador descarga un fichero con nombre `cluster_blocks_YYYY-MM-DD.csv`             |
 
 La suite es de solo lectura y no modifica `cluster_block`. Para que existan filas visibles, el backend debe haber adquirido y liberado al menos un lock durante su ciclo de vida (habitualmente el bloqueo `NODOS` del `HeartbeatWorker`).
 
@@ -382,10 +382,10 @@ Precondición del ciclo: usuario con `CLUSTER_LOCK_READ`; backend con al menos u
 - **Setup:** login con `{{ADMIN_USER}}`; el backend ha generado al menos un bloqueo.
 - **Teardown:** logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
+| # | Acción                                                    | Resultado esperado                                                                                                                           |
+|---|-----------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------|
 | 1 | Navegar a `{{BASE_URL_UI}}/administration/cluster/blocks` | `cluster-blocks-table` visible con nombre de tarea, fecha de inicio, tiempo promedio/mínimo/máximo y total de ejecuciones; sin acciones CRUD |
-| 2 | Ordenar y cambiar tamaño de página (5/10/20/50) | Ordenación/paginación en servidor |
+| 2 | Ordenar y cambiar tamaño de página (5/10/20/50)           | Ordenación/paginación en servidor                                                                                                            |
 
 #### TC-CLB-02 · Filtrado por nombre de tarea
 
@@ -393,8 +393,8 @@ Precondición del ciclo: usuario con `CLUSTER_LOCK_READ`; backend con al menos u
 - **Setup:** login con `{{ADMIN_USER}}`; identificar el nombre de un bloqueo existente (p. ej. `NODOS`).
 - **Teardown:** logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
+| # | Acción                                                                                                                      | Resultado esperado                                                        |
+|---|-----------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------|
 | 1 | Escribir parte del nombre en `cluster-blocks-filter-name` (insensible a mayúsculas) y pulsar `cluster-blocks-apply-filters` | El listado se reduce a las filas cuyo nombre coincide y vuelve a página 1 |
 
 #### TC-CLB-03 · Métricas visibles en el listado (sin pantalla de detalle)
@@ -403,10 +403,10 @@ Precondición del ciclo: usuario con `CLUSTER_LOCK_READ`; backend con al menos u
 - **Setup:** login con `{{ADMIN_USER}}`; al menos una fila.
 - **Teardown:** logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | Observar una fila de `cluster-blocks-table` | La fila muestra nombre de tarea, fecha de inicio y las cuatro métricas (promedio, mínimo, máximo, total), sin controles de edición |
-| 2 | Comprobar que no existe navegación a detalle | Seleccionar la fila no abre ninguna pantalla de detalle; no existe el botón `cluster-blocks-back-to-list` |
+| # | Acción                                       | Resultado esperado                                                                                                                 |
+|---|----------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------|
+| 1 | Observar una fila de `cluster-blocks-table`  | La fila muestra nombre de tarea, fecha de inicio y las cuatro métricas (promedio, mínimo, máximo, total), sin controles de edición |
+| 2 | Comprobar que no existe navegación a detalle | Seleccionar la fila no abre ninguna pantalla de detalle; no existe el botón `cluster-blocks-back-to-list`                          |
 
 #### TC-CLB-04 · Exportación CSV
 
@@ -414,10 +414,10 @@ Precondición del ciclo: usuario con `CLUSTER_LOCK_READ`; backend con al menos u
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** eliminar el fichero descargado; logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
+| # | Acción                                                                   | Resultado esperado                                                                                           |
+|---|--------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------|
 | 1 | Con filtros que devuelvan resultados, pulsar `cluster-blocks-export-csv` | Descarga `cluster_blocks_{{TODAY}}.csv` con todos los resultados filtrados, fechas en hora local y BOM UTF-8 |
-| 2 | Filtrar por un nombre inexistente y exportar | Se notifica error y no se descarga ningún fichero |
+| 2 | Filtrar por un nombre inexistente y exportar                             | Se notifica error y no se descarga ningún fichero                                                            |
 
 #### TC-CLB-05 · Gestión controlada por el sistema
 
@@ -425,11 +425,11 @@ Precondición del ciclo: usuario con `CLUSTER_LOCK_READ`; backend con al menos u
 - **Setup:** vía API con token de `{{ADMIN_USER}}`.
 - **Teardown:** No aplica.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | Observar la pantalla | No hay acciones de crear/editar/eliminar |
-| 2 | `POST`/`PUT`/`PATCH`/`DELETE` sobre `/api/v1/administration/cluster/blocks` | 405 Method Not Allowed |
-| 3 | Ejecutar una tarea clusterizada que adquiere y libera un lock | Se crea el registro la primera vez y se actualizan sus métricas (total, promedio, mínimo, máximo) en cada liberación |
+| # | Acción                                                                      | Resultado esperado                                                                                                   |
+|---|-----------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------|
+| 1 | Observar la pantalla                                                        | No hay acciones de crear/editar/eliminar                                                                             |
+| 2 | `POST`/`PUT`/`PATCH`/`DELETE` sobre `/api/v1/administration/cluster/blocks` | 405 Method Not Allowed                                                                                               |
+| 3 | Ejecutar una tarea clusterizada que adquiere y libera un lock               | Se crea el registro la primera vez y se actualizan sus métricas (total, promedio, mínimo, máximo) en cada liberación |
 
 ---
 

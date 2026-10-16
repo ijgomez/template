@@ -93,18 +93,18 @@ El refresh token es un valor opaco (UUID aleatorio) almacenado en base de datos 
 
 **Parámetros configurables:**
 
-| Parámetro                    | Propiedad YAML                   | Default               |
-|------------------------------|----------------------------------|-----------------------|
-| Duración access token        | `jwt.access-token-expiration`    | 900000 (15 min)       |
-| Duración refresh token       | `jwt.refresh-token-expiration`   | 604800000 (7 días)    |
-| Secreto JWT                  | `jwt.secret`                     | (requerido en prod)   |
-| Nombre de cookie             | `auth.cookie.name`               | `__Host-refresh-token`|
+| Parámetro                    | Propiedad YAML                   | Default                 |
+|------------------------------|----------------------------------|-------------------------|
+| Duración access token        | `jwt.access-token-expiration`    | 900000 (15 min)         |
+| Duración refresh token       | `jwt.refresh-token-expiration`   | 604800000 (7 días)      |
+| Secreto JWT                  | `jwt.secret`                     | (requerido en prod)     |
+| Nombre de cookie             | `auth.cookie.name`               | `__Host-refresh-token`  |
 | Path de cookie               | `auth.cookie.path`               | `/template/api/v1/auth` |
-| Max-Age de cookie (segundos) | `auth.cookie.max-age-seconds`    | 604800 (7 días)       |
-| Cookie Secure                | `auth.cookie.secure`             | true                  |
-| Cookie SameSite              | `auth.cookie.same-site`          | Strict                |
-| CORS origins                 | `cors.allowed-origins`           | (requerido)           |
-| Margen renovación (frontend) | `environment.tokenRefreshMargin` | 60000 (1 min)         |
+| Max-Age de cookie (segundos) | `auth.cookie.max-age-seconds`    | 604800 (7 días)         |
+| Cookie Secure                | `auth.cookie.secure`             | true                    |
+| Cookie SameSite              | `auth.cookie.same-site`          | Strict                  |
+| CORS origins                 | `cors.allowed-origins`           | (requerido)             |
+| Margen renovación (frontend) | `environment.tokenRefreshMargin` | 60000 (1 min)           |
 
 **Criterios de aceptación:**
 - AC6.1: Los parámetros son configurables vía variables de entorno.
@@ -184,16 +184,16 @@ flowchart TD
 
 ### 3.1. Componentes afectados
 
-| Capa | Elemento | Responsabilidad |
-|------|----------|-----------------|
-| Frontend | `AuthService` | Gestión del flujo de login, refresh, logout y almacenamiento del access token. |
+| Capa     | Elemento         | Responsabilidad                                                                              |
+|----------|------------------|----------------------------------------------------------------------------------------------|
+| Frontend | `AuthService`    | Gestión del flujo de login, refresh, logout y almacenamiento del access token.               |
 | Frontend | Interceptor HTTP | Detección de sesiones expiradas, renovación proactiva y encolado de peticiones concurrentes. |
-| Frontend | `authGuard` | Protección de rutas privadas y espera a la recuperación de sesión antes de rechazar. |
-| Backend | `AuthController` | Exposición de los endpoints `/login`, `/refresh` y `/logout`. |
-| Backend | `AuthService` | Autenticación, emisión, renovación y revocación de tokens. |
-| Domain | `User` | Entidad principal del proceso de autenticación y sesión. |
-| Domain | `RefreshToken` | Persistencia del refresh token para la renovación de sesiones. |
-| Security | `SecurityConfig` | Reglas de seguridad y control de acceso a endpoints de autenticación. |
+| Frontend | `authGuard`      | Protección de rutas privadas y espera a la recuperación de sesión antes de rechazar.         |
+| Backend  | `AuthController` | Exposición de los endpoints `/login`, `/refresh` y `/logout`.                                |
+| Backend  | `AuthService`    | Autenticación, emisión, renovación y revocación de tokens.                                   |
+| Domain   | `User`           | Entidad principal del proceso de autenticación y sesión.                                     |
+| Domain   | `RefreshToken`   | Persistencia del refresh token para la renovación de sesiones.                               |
+| Security | `SecurityConfig` | Reglas de seguridad y control de acceso a endpoints de autenticación.                        |
 
 ### 3.2. Modelos de datos
 
@@ -245,11 +245,11 @@ public class RefreshToken extends BaseEntity {
 
 Ruta base de autenticación: `/api/v1/auth`.
 
-| Método y ruta | Descripción | Respuesta |
-|---------------|-------------|-----------|
-| `POST /login` | Autenticación con usuario y contraseña | 200 OK con `accessToken` y cookie de refresh |
+| Método y ruta   | Descripción                                 | Respuesta                                      |
+|-----------------|---------------------------------------------|------------------------------------------------|
+| `POST /login`   | Autenticación con usuario y contraseña      | 200 OK con `accessToken` y cookie de refresh   |
 | `POST /refresh` | Renovación de sesión usando cookie HttpOnly | 200 OK con nuevo `accessToken` y cookie rotada |
-| `POST /logout` | Cierre de sesión | 200 OK y cookie eliminada (`maxAge=0`) |
+| `POST /logout`  | Cierre de sesión                            | 200 OK y cookie eliminada (`maxAge=0`)         |
 
 ### 3.4. Modelo de seguridad
 

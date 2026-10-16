@@ -165,16 +165,16 @@ Integrable en formularios. Cuenta con:
 
 ### 2.4. Identificadores para pruebas (`data-testid`)
 
-| Elemento | data-testid |
-| --- | --- |
-| Formulario de filtros | `report-filter-form` |
-| Input de filtro con nombre `name` | `report-filter-${name}` |
-| Botón Ejecutar | `report-execute-btn` |
-| Botón Limpiar | `report-clear-btn` |
-| Exportar PDF / XLSX / CSV / TXT | `report-export-pdf` / `xlsx` / `csv` / `txt` |
-| Tabla de resultados | `report-results-table` |
-| Tamaño página (resultados) | `report-page-size` |
-| Modal `tp-selected-reports` | `${testId}-modal` |
+| Elemento                                                          | data-testid                                                                                                                  |
+|-------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------|
+| Formulario de filtros                                             | `report-filter-form`                                                                                                         |
+| Input de filtro con nombre `name`                                 | `report-filter-${name}`                                                                                                      |
+| Botón Ejecutar                                                    | `report-execute-btn`                                                                                                         |
+| Botón Limpiar                                                     | `report-clear-btn`                                                                                                           |
+| Exportar PDF / XLSX / CSV / TXT                                   | `report-export-pdf` / `xlsx` / `csv` / `txt`                                                                                 |
+| Tabla de resultados                                               | `report-results-table`                                                                                                       |
+| Tamaño página (resultados)                                        | `report-page-size`                                                                                                           |
+| Modal `tp-selected-reports`                                       | `${testId}-modal`                                                                                                            |
 | Buscar modal / fila id / paginación / tamaño / cancelar / aceptar | `${testId}-modal-search` / `-modal-row-${id}` / `-modal-pagination` / `-modal-page-size` / `-modal-cancel` / `-modal-accept` |
 
 ### 2.5. Diagramas
@@ -213,17 +213,17 @@ sequenceDiagram
 
 ### 3.1. Componentes afectados
 
-| Capa | Componente | Propósito |
-| --- | --- | --- |
-| Frontend | `ReportListComponent` | Pantalla de ejecución paramétrica y consulta de resultados. |
-| Frontend | `TpSelectedReportsComponent` | CVA reutilizable de selección múltiple para informes asignados. |
-| Frontend | `ReportService` (TS) | Cliente HTTP para `/reports`, filtros y exportación. |
-| Backend | `ReportController` | Exposición de endpoints `/api/v1/reports` para listado, ejecución y exportación. |
-| Backend | `ReportService` | Listado, asignación, ejecución y exportación de informes. |
-| Backend | `ReportRepository` y `User2ReportRepository` | Acceso a datos para informes y relaciones usuario–informe. |
-| Domain | `Report` | Entidad principal con metadatos del informe. |
-| Domain | `User2Report` | Relación N:M entre usuarios e informes. |
-| Security | `SecurityConfig` | Regla `/api/v1/reports/**` requiere `REPORT_EXECUTE`. |
+| Capa     | Componente                                   | Propósito                                                                        |
+|----------|----------------------------------------------|----------------------------------------------------------------------------------|
+| Frontend | `ReportListComponent`                        | Pantalla de ejecución paramétrica y consulta de resultados.                      |
+| Frontend | `TpSelectedReportsComponent`                 | CVA reutilizable de selección múltiple para informes asignados.                  |
+| Frontend | `ReportService` (TS)                         | Cliente HTTP para `/reports`, filtros y exportación.                             |
+| Backend  | `ReportController`                           | Exposición de endpoints `/api/v1/reports` para listado, ejecución y exportación. |
+| Backend  | `ReportService`                              | Listado, asignación, ejecución y exportación de informes.                        |
+| Backend  | `ReportRepository` y `User2ReportRepository` | Acceso a datos para informes y relaciones usuario–informe.                       |
+| Domain   | `Report`                                     | Entidad principal con metadatos del informe.                                     |
+| Domain   | `User2Report`                                | Relación N:M entre usuarios e informes.                                          |
+| Security | `SecurityConfig`                             | Regla `/api/v1/reports/**` requiere `REPORT_EXECUTE`.                            |
 
 ### 3.2. Modelos de datos
 
@@ -293,14 +293,14 @@ public class User2Report {
 
 ### 3.3. Endpoints
 
-| Método HTTP | Ruta | Descripción |
-| --- | --- | --- |
-| `GET`  | `/api/v1/reports` | Lista informes asignados al usuario autenticado (vía `user2report`) |
-| `GET`  | `/api/v1/reports/all` | Todos los informes (administración y carga de caché en CVA) |
-| `GET`  | `/api/v1/reports/search?name=&page=&size=` | Búsqueda paginada servidor |
-| `GET`  | `/api/v1/reports/{id}/filters` | Definición de filtros de un informe |
-| `POST` | `/api/v1/reports/{id}/execute?page=&size=` | Ejecución paginada servidor; body: `Map<String,Object>` de filtros |
-| `POST` | `/api/v1/reports/{id}/export/{format}` | Exportación; body: mismos filtros; respuesta `application/octet` con `Content-Disposition: attachment` |
+| Método HTTP | Ruta                                       | Descripción                                                                                            |
+|-------------|--------------------------------------------|--------------------------------------------------------------------------------------------------------|
+| `GET`       | `/api/v1/reports`                          | Lista informes asignados al usuario autenticado (vía `user2report`)                                    |
+| `GET`       | `/api/v1/reports/all`                      | Todos los informes (administración y carga de caché en CVA)                                            |
+| `GET`       | `/api/v1/reports/search?name=&page=&size=` | Búsqueda paginada servidor                                                                             |
+| `GET`       | `/api/v1/reports/{id}/filters`             | Definición de filtros de un informe                                                                    |
+| `POST`      | `/api/v1/reports/{id}/execute?page=&size=` | Ejecución paginada servidor; body: `Map<String,Object>` de filtros                                     |
+| `POST`      | `/api/v1/reports/{id}/export/{format}`     | Exportación; body: mismos filtros; respuesta `application/octet` con `Content-Disposition: attachment` |
 
 ### 3.4. Validaciones
 
@@ -321,32 +321,32 @@ public class User2Report {
 
 ### 4.1. Cobertura unitaria (backend)
 
-| Ubicación | Alcance |
-|-----------|---------|
-| `core/src/test/java/org/myorganization/template/core/service/ReportServiceTest.java` | `findByUser`, `findAll`, `findAll(name, pageable)`, `getFilters`, `execute` (control de acceso y filtros obligatorios), `export` (CSV/TXT OK, PDF/XLSX no implementados) |
-| `webapp/src/test/java/org/myorganization/template/webapp/controller/ReportControllerTest.java` | Endpoints `/all`, `/search`, `/filters`, `/execute`, `/export/*` con validación de estados 200, 403 y 404 |
-| `ws/src/test/java/org/myorganization/template/ws/security/AuthorizationEnforcementProperties.java` | `Property 5`: verificación de 403 Forbidden en `/api/v1/reports/**` sin `REPORT_EXECUTE` |
-| `ws/src/test/java/org/myorganization/template/ws/security/JwtTokenProvider*Test.java` | Verificación de claims y autorización con acción `REPORT_EXECUTE` |
+| Ubicación                                                                                          | Alcance                                                                                                                                                                  |
+|----------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `core/src/test/java/org/myorganization/template/core/service/ReportServiceTest.java`               | `findByUser`, `findAll`, `findAll(name, pageable)`, `getFilters`, `execute` (control de acceso y filtros obligatorios), `export` (CSV/TXT OK, PDF/XLSX no implementados) |
+| `webapp/src/test/java/org/myorganization/template/webapp/controller/ReportControllerTest.java`     | Endpoints `/all`, `/search`, `/filters`, `/execute`, `/export/*` con validación de estados 200, 403 y 404                                                                |
+| `ws/src/test/java/org/myorganization/template/ws/security/AuthorizationEnforcementProperties.java` | `Property 5`: verificación de 403 Forbidden en `/api/v1/reports/**` sin `REPORT_EXECUTE`                                                                                 |
+| `ws/src/test/java/org/myorganization/template/ws/security/JwtTokenProvider*Test.java`              | Verificación de claims y autorización con acción `REPORT_EXECUTE`                                                                                                        |
 
 ### 4.2. Cobertura unitaria (frontend)
 
-| Ubicación | Alcance |
-|-----------|---------|
-| `dashboard/src/app/core/services/report.service.spec.ts` | Endpoints `findUserReports`, `findAll`, `search`, `getFilters`, `execute` y `export` |
+| Ubicación                                                                                | Alcance                                                                                                     |
+|------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------|
+| `dashboard/src/app/core/services/report.service.spec.ts`                                 | Endpoints `findUserReports`, `findAll`, `search`, `getFilters`, `execute` y `export`                        |
 | `dashboard/src/app/features/reports/selected-reports/selected-reports.component.spec.ts` | Ciclo CVA, modal de selección, paginación, búsqueda, selección multiple y emisión de `onChange`/`onTouched` |
 
 ### 4.3. Cobertura E2E (Playwright)
 
 Ubicación: `dashboard/e2e/tests/reports/reports.spec.ts` (Page Object en `dashboard/e2e/pages/report.page.ts`).
 
-| Caso | Descripción | Resultado esperado |
-|------|-------------|--------------------|
-| Estado inicial | Navegar a `/reports/1` tras iniciar sesión | Título y descripción visibles; formulario y botones presentes; tabla y botones de exportación ocultos antes de ejecutar |
-| Ejecución y resultados | Pulsar botón *Ejecutar* | Carga datos vía `POST /execute`, muestra tabla de resultados con filas y activa la barra de exportación (PDF, XLSX, CSV, TXT) |
-| Limpieza de filtros | Pulsar botón *Limpiar* tras ejecutar | Restablece valores de filtros y oculta la tabla de resultados y barra de exportación |
-| Cambio de tamaño de página | Cambiar selector de tamaño de página (p. ej. a 5) | Dispara nueva petición paginada al servidor y actualiza la tabla |
-| Exportación CSV y TXT | Exportar a CSV y TXT | El navegador descarga los ficheros con el formato `Informe de actividad mensual_YYYY-MM-DD.csv` y `.txt` |
-| Navegación lateral | Desplegar menú lateral "Informes" y pulsar "Informe de actividad mensual" | Navega a `/reports/1` y carga el informe correspondiente |
+| Caso                       | Descripción                                                               | Resultado esperado                                                                                                            |
+|----------------------------|---------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------|
+| Estado inicial             | Navegar a `/reports/1` tras iniciar sesión                                | Título y descripción visibles; formulario y botones presentes; tabla y botones de exportación ocultos antes de ejecutar       |
+| Ejecución y resultados     | Pulsar botón *Ejecutar*                                                   | Carga datos vía `POST /execute`, muestra tabla de resultados con filas y activa la barra de exportación (PDF, XLSX, CSV, TXT) |
+| Limpieza de filtros        | Pulsar botón *Limpiar* tras ejecutar                                      | Restablece valores de filtros y oculta la tabla de resultados y barra de exportación                                          |
+| Cambio de tamaño de página | Cambiar selector de tamaño de página (p. ej. a 5)                         | Dispara nueva petición paginada al servidor y actualiza la tabla                                                              |
+| Exportación CSV y TXT      | Exportar a CSV y TXT                                                      | El navegador descarga los ficheros con el formato `Informe de actividad mensual_YYYY-MM-DD.csv` y `.txt`                      |
+| Navegación lateral         | Desplegar menú lateral "Informes" y pulsar "Informe de actividad mensual" | Navega a `/reports/1` y carga el informe correspondiente                                                                      |
 
 ### 4.4. Datos de prueba
 
@@ -360,19 +360,19 @@ Los datos semilla para informes y asignaciones al usuario administrador se encue
 
 ### 4.6. Casos clave (matriz)
 
-| Caso | Resultado esperado |
-| --- | --- |
-| Usuario sin `REPORT_EXECUTE` accede a `/api/v1/reports/**` | 403 Forbidden |
-| Usuario sin `user2report` ejecuta `POST /{id}/execute` | `AccessDeniedException` / 403 |
-| Faltan filtros obligatorios en `execute` | `ValidationException` (filtros faltantes) |
-| Ejecutar informe | 200 + `ReportResult {columns, rows, totalElements, totalPages, size, number}` |
-| Cambiar `resultSize` a 50 tras ejecutar | Nueva llamada `/execute?size=50&page=0` |
-| Cambiar página `resultPage=2` | `/execute?page=2&size=actual` |
-| Exportar CSV | `text/csv` + `Content-Disposition: attachment; filename="report_{id}.csv"` |
-| Exportar PDF/XLSX | `ReportExportException`; frontend notificación error |
-| Modal: buscar nombre | `/search?name=` + `page=0` y actualiza `modalReports` y `modalTotalElements` |
-| Modal: "seleccionar página" | Marca/desmarca todos los IDs de `modalReports` en `modalSelectedIds` |
-| Confirmar modal | `selectedIds` actualizado, `onChange` emitido, modal cerrado |
+| Caso                                                       | Resultado esperado                                                            |
+|------------------------------------------------------------|-------------------------------------------------------------------------------|
+| Usuario sin `REPORT_EXECUTE` accede a `/api/v1/reports/**` | 403 Forbidden                                                                 |
+| Usuario sin `user2report` ejecuta `POST /{id}/execute`     | `AccessDeniedException` / 403                                                 |
+| Faltan filtros obligatorios en `execute`                   | `ValidationException` (filtros faltantes)                                     |
+| Ejecutar informe                                           | 200 + `ReportResult {columns, rows, totalElements, totalPages, size, number}` |
+| Cambiar `resultSize` a 50 tras ejecutar                    | Nueva llamada `/execute?size=50&page=0`                                       |
+| Cambiar página `resultPage=2`                              | `/execute?page=2&size=actual`                                                 |
+| Exportar CSV                                               | `text/csv` + `Content-Disposition: attachment; filename="report_{id}.csv"`    |
+| Exportar PDF/XLSX                                          | `ReportExportException`; frontend notificación error                          |
+| Modal: buscar nombre                                       | `/search?name=` + `page=0` y actualiza `modalReports` y `modalTotalElements`  |
+| Modal: "seleccionar página"                                | Marca/desmarca todos los IDs de `modalReports` en `modalSelectedIds`          |
+| Confirmar modal                                            | `selectedIds` actualizado, `onChange` emitido, modal cerrado                  |
 
 ### 4.7. Casos de prueba detallados (TCY-RPT)
 
@@ -386,11 +386,11 @@ Precondición del ciclo: usuario con `REPORT_EXECUTE` y al menos un informe asig
 - **Setup:** login con `{{ADMIN_USER}}`; el usuario tiene asignado el informe `1`.
 - **Teardown:** logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | Navegar a `{{BASE_URL_UI}}/reports/1` | Cabecera con `report.name` y `report.description` visibles |
+| # | Acción                                              | Resultado esperado                                                                                                                   |
+|---|-----------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------|
+| 1 | Navegar a `{{BASE_URL_UI}}/reports/1`               | Cabecera con `report.name` y `report.description` visibles                                                                           |
 | 2 | Observar la barra de filtros (`report-filter-form`) | Se renderiza un control por filtro según su `type` (TEXT/NUMBER → input, DATE → input date, SELECT → select con opción `common.all`) |
-| 3 | Observar la tabla y la barra de exportación | `report-results-table` y los botones `report-export-*` permanecen ocultos hasta pulsar *Ejecutar* |
+| 3 | Observar la tabla y la barra de exportación         | `report-results-table` y los botones `report-export-*` permanecen ocultos hasta pulsar *Ejecutar*                                    |
 
 #### TC-RPT-02 · Informe no asignado al usuario
 
@@ -398,8 +398,8 @@ Precondición del ciclo: usuario con `REPORT_EXECUTE` y al menos un informe asig
 - **Setup:** login con `{{ADMIN_USER}}`; identificar un `id` de informe **no** asignado al usuario (p. ej. uno inexistente o no relacionado en `user2report`).
 - **Teardown:** logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
+| # | Acción                                               | Resultado esperado                                                                                                      |
+|---|------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------|
 | 1 | Navegar a `{{BASE_URL_UI}}/reports/<id-no-asignado>` | `findByUser` no devuelve el informe; el componente queda con `report = null` (sin cabecera ni posibilidad de ejecución) |
 
 #### TC-RPT-03 · Validación de filtros obligatorios
@@ -408,10 +408,10 @@ Precondición del ciclo: usuario con `REPORT_EXECUTE` y al menos un informe asig
 - **Setup:** login con `{{ADMIN_USER}}`; informe `1` con al menos un filtro `required=true`.
 - **Teardown:** logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | Navegar a `{{BASE_URL_UI}}/reports/1` y dejar vacío un filtro `required=true` | El filtro se marca con asterisco rojo y atributo HTML5 `required` |
-| 2 | Pulsar `report-execute-btn` | El submit HTML5 bloquea la ejecución; no se envía `/execute`. (Si la validación se saltara, el backend respondería `ValidationException` con los filtros faltantes.) |
+| # | Acción                                                                        | Resultado esperado                                                                                                                                                   |
+|---|-------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 1 | Navegar a `{{BASE_URL_UI}}/reports/1` y dejar vacío un filtro `required=true` | El filtro se marca con asterisco rojo y atributo HTML5 `required`                                                                                                    |
+| 2 | Pulsar `report-execute-btn`                                                   | El submit HTML5 bloquea la ejecución; no se envía `/execute`. (Si la validación se saltara, el backend respondería `ValidationException` con los filtros faltantes.) |
 
 #### TC-RPT-04 · Limpiar filtros
 
@@ -419,10 +419,10 @@ Precondición del ciclo: usuario con `REPORT_EXECUTE` y al menos un informe asig
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | Navegar a `{{BASE_URL_UI}}/reports/1`, rellenar filtros y pulsar `report-execute-btn` | Se muestran resultados en `report-results-table` |
-| 2 | Pulsar `report-clear-btn` | Todos los filtros vuelven a `''`, los resultados se resetean, la paginación vuelve a página 0 y se ocultan la tabla y la barra de exportación |
+| # | Acción                                                                                | Resultado esperado                                                                                                                            |
+|---|---------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
+| 1 | Navegar a `{{BASE_URL_UI}}/reports/1`, rellenar filtros y pulsar `report-execute-btn` | Se muestran resultados en `report-results-table`                                                                                              |
+| 2 | Pulsar `report-clear-btn`                                                             | Todos los filtros vuelven a `''`, los resultados se resetean, la paginación vuelve a página 0 y se ocultan la tabla y la barra de exportación |
 
 #### TC-RPT-05 · Ejecución con paginación en servidor
 
@@ -430,11 +430,11 @@ Precondición del ciclo: usuario con `REPORT_EXECUTE` y al menos un informe asig
 - **Setup:** login con `{{ADMIN_USER}}`; informe `1` con datos.
 - **Teardown:** logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
+| # | Acción                                                                                                              | Resultado esperado                                                                                                             |
+|---|---------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
 | 1 | Navegar a `{{BASE_URL_UI}}/reports/1`, rellenar los filtros obligatorios (si los hay) y pulsar `report-execute-btn` | Se invoca `POST /api/v1/reports/1/execute?page=0&size=10` con el body de filtros; se muestra spinner y `notification.progress` |
-| 2 | Observar los resultados | `report-results-table` muestra columnas y filas de `ReportResult`; si viene vacío, muestra `common.noData` |
-| 3 | Observar el paginador | Muestra anterior/siguiente, hasta 5 números de página y la etiqueta `common.pagination.showing` (from/to/total) |
+| 2 | Observar los resultados                                                                                             | `report-results-table` muestra columnas y filas de `ReportResult`; si viene vacío, muestra `common.noData`                     |
+| 3 | Observar el paginador                                                                                               | Muestra anterior/siguiente, hasta 5 números de página y la etiqueta `common.pagination.showing` (from/to/total)                |
 
 #### TC-RPT-06 · Cambio de página y tamaño re-ejecuta
 
@@ -442,11 +442,11 @@ Precondición del ciclo: usuario con `REPORT_EXECUTE` y al menos un informe asig
 - **Setup:** login con `{{ADMIN_USER}}`; ejecutar primero el informe (pasos de TC-RPT-05) para tener resultados paginables. El caso incluye esa ejecución en el paso 1, por lo que sigue siendo autoejecutable.
 - **Teardown:** logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | Navegar a `{{BASE_URL_UI}}/reports/1`, rellenar filtros y pulsar `report-execute-btn` | Se muestran resultados (precondición interna) |
-| 2 | Cambiar `report-page-size` a 50 | Nueva llamada `/execute?size=50&page=0` con los mismos filtros |
-| 3 | Navegar a la página 3 del paginador | Nueva llamada `/execute?page=2&size=50` |
+| # | Acción                                                                                | Resultado esperado                                             |
+|---|---------------------------------------------------------------------------------------|----------------------------------------------------------------|
+| 1 | Navegar a `{{BASE_URL_UI}}/reports/1`, rellenar filtros y pulsar `report-execute-btn` | Se muestran resultados (precondición interna)                  |
+| 2 | Cambiar `report-page-size` a 50                                                       | Nueva llamada `/execute?size=50&page=0` con los mismos filtros |
+| 3 | Navegar a la página 3 del paginador                                                   | Nueva llamada `/execute?page=2&size=50`                        |
 
 #### TC-RPT-07 · Exportación CSV / TXT
 
@@ -454,11 +454,11 @@ Precondición del ciclo: usuario con `REPORT_EXECUTE` y al menos un informe asig
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** logout; eliminar los ficheros descargados del directorio de descargas.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | Navegar a `{{BASE_URL_UI}}/reports/1`, rellenar filtros y pulsar `report-execute-btn` | La barra de exportación (`report-export-pdf/xlsx/csv/txt`) aparece |
-| 2 | Pulsar `report-export-csv` | Se invoca `POST /api/v1/reports/1/export/CSV`; el navegador descarga `Informe de actividad mensual_{{TODAY}}.csv` |
-| 3 | Pulsar `report-export-txt` | Se descarga el fichero `.txt` con cabecera y separador `---` |
+| # | Acción                                                                                | Resultado esperado                                                                                                |
+|---|---------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------|
+| 1 | Navegar a `{{BASE_URL_UI}}/reports/1`, rellenar filtros y pulsar `report-execute-btn` | La barra de exportación (`report-export-pdf/xlsx/csv/txt`) aparece                                                |
+| 2 | Pulsar `report-export-csv`                                                            | Se invoca `POST /api/v1/reports/1/export/CSV`; el navegador descarga `Informe de actividad mensual_{{TODAY}}.csv` |
+| 3 | Pulsar `report-export-txt`                                                            | Se descarga el fichero `.txt` con cabecera y separador `---`                                                      |
 
 #### TC-RPT-08 · Exportación PDF / XLSX no implementada
 
@@ -466,8 +466,8 @@ Precondición del ciclo: usuario con `REPORT_EXECUTE` y al menos un informe asig
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
+| # | Acción                                                                                                           | Resultado esperado                                                                                                                                             |
+|---|------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | 1 | Navegar a `{{BASE_URL_UI}}/reports/1`, ejecutar el informe y pulsar `report-export-pdf` (o `report-export-xlsx`) | El backend lanza `ReportExportException` ("Export format PDF/XLSX not yet implemented"); el frontend muestra `notification.export.error` y no descarga fichero |
 
 #### TC-RPT-09 · Acceso sin autoridad REPORT_EXECUTE
@@ -476,10 +476,10 @@ Precondición del ciclo: usuario con `REPORT_EXECUTE` y al menos un informe asig
 - **Setup:** vía API. Obtener un access token de un usuario sin la autoridad `REPORT_EXECUTE` (crear uno con un perfil sin esa acción, o usar uno existente del entorno).
 - **Teardown:** si se creó un usuario para la prueba, eliminarlo.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | `GET {{BASE_URL_API}}/api/v1/reports` con el token sin `REPORT_EXECUTE` | 403 Forbidden |
-| 2 | `POST {{BASE_URL_API}}/api/v1/reports/1/execute` con el mismo token | 403 Forbidden |
+| # | Acción                                                                  | Resultado esperado |
+|---|-------------------------------------------------------------------------|--------------------|
+| 1 | `GET {{BASE_URL_API}}/api/v1/reports` con el token sin `REPORT_EXECUTE` | 403 Forbidden      |
+| 2 | `POST {{BASE_URL_API}}/api/v1/reports/1/execute` con el mismo token     | 403 Forbidden      |
 
 #### TC-RPT-10 · Componente de selección múltiple de informes (CVA)
 
@@ -487,11 +487,11 @@ Precondición del ciclo: usuario con `REPORT_EXECUTE` y al menos un informe asig
 - **Setup:** login con `{{ADMIN_USER}}`; navegar al formulario de alta de usuario donde se integra `<tp-selected-reports>` (`{{BASE_URL_UI}}/administration/security/users` → *Crear*).
 - **Teardown:** cancelar el formulario sin guardar; logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | Abrir el modal de selección de informes con *Añadir* | Se abre el modal con búsqueda servidor (`GET /api/v1/reports/search?name=&page=&size=`) y paginación |
-| 2 | Escribir un nombre en el buscador del modal y usar "Seleccionar página" | Se marcan/desmarcan los IDs de los informes de la página actual |
-| 3 | Confirmar el modal (*Aceptar*) | El valor del CVA (`number[]`) se sobrescribe con los IDs seleccionados; se emiten `onChange()` y `onTouched()`; el modal se cierra |
+| # | Acción                                                                  | Resultado esperado                                                                                                                 |
+|---|-------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------|
+| 1 | Abrir el modal de selección de informes con *Añadir*                    | Se abre el modal con búsqueda servidor (`GET /api/v1/reports/search?name=&page=&size=`) y paginación                               |
+| 2 | Escribir un nombre en el buscador del modal y usar "Seleccionar página" | Se marcan/desmarcan los IDs de los informes de la página actual                                                                    |
+| 3 | Confirmar el modal (*Aceptar*)                                          | El valor del CVA (`number[]`) se sobrescribe con los IDs seleccionados; se emiten `onChange()` y `onTouched()`; el modal se cierra |
 
 ---
 

@@ -64,7 +64,7 @@ Identificadores locales de este documento: `RF-ACC-*` (requisitos funcionales) y
 - AC5.2: El nombre del fichero exportado se genera automáticamente con el formato `actions_YYYY-MM-DD`.
 - AC5.3: Si no hay filas que cumplan los filtros, se notifica que no hay datos que exportar.
 
-#### RF-ACC-6: Catalogo de acciones administrado por semilla
+#### RF-ACC-6: Cátalogo de acciones administrado por semilla
 
 **Descripción:** el sistema debe tratar las acciones como un catálogo definido por datos semilla y no como entidades CRUD normales.
 
@@ -99,11 +99,11 @@ Ofrecer a los administradores una pantalla para consultar y mantener el catálog
 
 La pantalla gestiona tres modos de vista (`viewMode`) dentro del mismo componente:
 
-| Modo | Descripción |
-|------|-------------|
-| `list` | Listado paginado con filtros y acciones de exportación/edición |
-| `detail` | Vista de solo lectura de una acción |
-| `edit` | Formulario de edición de una acción |
+| Modo     | Descripción                                                    |
+|----------|----------------------------------------------------------------|
+| `list`   | Listado paginado con filtros y acciones de exportación/edición |
+| `detail` | Vista de solo lectura de una acción                            |
+| `edit`   | Formulario de edición de una acción                            |
 
 > No existe un modo `create` ni una operación de borrado; la entidad acción es de tipo catálogo y se mantiene por datos semilla.
 
@@ -111,11 +111,11 @@ La pantalla gestiona tres modos de vista (`viewMode`) dentro del mismo component
 
 La estructura visual base de esta pantalla se define en [layout.md](../../../03-technical/frontend/layout.md). Ese documento es la referencia canónica para los templates `List Screen`, `Form Screen` y `Confirmation Modal`; la documentación funcional de acciones solo describe cómo se aplica el patrón al catálogo semilla.
 
-| Tipo de pantalla | Uso en acciones | Estructura base |
-|------------------|-----------------|-----------------|
-| `List screen` | Listado principal | Cabecera, filtros, tabla, exportación y edición |
-| `Form screen` | Edición y consulta en modo lectura | Encabezado, campos y pie de acciones con estado readonly |
-| `Confirmation modal` | No aplica | La eliminación está prohibida por negocio |
+| Tipo de pantalla     | Uso en acciones                    | Estructura base                                          |
+|----------------------|------------------------------------|----------------------------------------------------------|
+| `List screen`        | Listado principal                  | Cabecera, filtros, tabla, exportación y edición          |
+| `Form screen`        | Edición y consulta en modo lectura | Encabezado, campos y pie de acciones con estado readonly |
+| `Confirmation modal` | No aplica                          | La eliminación está prohibida por negocio                |
 
 #### 2.3.1. Wireframe del `List screen`
 
@@ -127,11 +127,11 @@ La estructura visual base de esta pantalla se define en [layout.md](../../../03-
 | Filtro código | Filtro tipo | [Buscar] [Limpiar]                 |
 +------------------------------------------------------------------+
 | Código | Nombre | Tipo | Descripción                             |
-|--------|--------|------|------------------------------------------|
+|--------|--------|------|-----------------------------------------|
 | USER_READ | Leer usuarios | READ | Permiso de consulta ...       |
 | USER_WRITE | Modificar usuarios | WRITE | Permiso de edición ... |
 +------------------------------------------------------------------+
-| < 1 2 3 > | Registros por página: 10                           |
+| < 1 2 3 > | Registros por página: 10                             |
 +------------------------------------------------------------------+
 ```
 
@@ -143,7 +143,7 @@ La estructura visual base de esta pantalla se define en [layout.md](../../../03-
 +------------------------------------------------------------------+
 | Código | [USER_READ]                                             |
 | Nombre * | [Leer usuarios]                                       |
-| Tipo * | [READ]                                                 |
+| Tipo * | [READ]                                                  |
 | Descripción | [Permiso de consulta ...]                          |
 +------------------------------------------------------------------+
 | [Guardar] [Cancelar]                                             |
@@ -171,27 +171,27 @@ La diferencia frente a usuarios y perfiles es que acciones no tiene alta ni borr
 
 **Columnas de la tabla** (todas ordenables):
 
-| Columna | Clave i18n | Notas |
-|---------|-----------|-------|
-| Código | `actions.fields.code` | Identificador técnico, solo lectura |
-| Nombre | `actions.fields.name` | Texto editable |
-| Tipo | `actions.fields.type` | Etiqueta con color por `READ` / `WRITE` / `EXECUTE` |
-| Descripción | `actions.fields.description` | Muestra `-` si está vacía |
+| Columna     | Clave i18n                   | Notas                                               |
+|-------------|------------------------------|-----------------------------------------------------|
+| Código      | `actions.fields.code`        | Identificador técnico, solo lectura                 |
+| Nombre      | `actions.fields.name`        | Texto editable                                      |
+| Tipo        | `actions.fields.type`        | Etiqueta con color por `READ` / `WRITE` / `EXECUTE` |
+| Descripción | `actions.fields.description` | Muestra `-` si está vacía                           |
 
 **Filtros disponibles:**
 
-| Filtro | Tipo | `data-testid` |
-|--------|------|---------------|
-| Código | Texto (coincidencia parcial) | `filter-code` |
-| Tipo | Selección (`READ`, `WRITE`, `EXECUTE` y todos) | `filter-type` |
+| Filtro | Tipo                                           | `data-testid` |
+|--------|------------------------------------------------|---------------|
+| Código | Texto (coincidencia parcial)                   | `filter-code` |
+| Tipo   | Selección (`READ`, `WRITE`, `EXECUTE` y todos) | `filter-type` |
 
 **Barra de acciones:**
 
-| Acción | Condición de disponibilidad | `data-testid` |
-|--------|-----------------------------|---------------|
-| Detalle | Requiere una fila seleccionada | `btn-detail` |
-| Editar | Requiere `ACTION_READ` y una fila seleccionada | `btn-edit` |
-| Exportar CSV | Siempre disponible | `btn-export` |
+| Acción       | Condición de disponibilidad                    | `data-testid` |
+|--------------|------------------------------------------------|---------------|
+| Detalle      | Requiere una fila seleccionada                 | `btn-detail`  |
+| Editar       | Requiere `ACTION_READ` y una fila seleccionada | `btn-edit`    |
+| Exportar CSV | Siempre disponible                             | `btn-export`  |
 
 - La selección de una fila alterna (seleccionar / deseleccionar).
 - El detalle se abre pulsando el botón *Detalle* con una fila seleccionada o mediante doble clic sobre la fila.
@@ -199,37 +199,37 @@ La diferencia frente a usuarios y perfiles es que acciones no tiene alta ni borr
 
 ### 2.4. Identificadores para pruebas (`data-testid`)
 
-| Elemento | `data-testid` |
-| --- | --- |
+| Elemento              | `data-testid`         |
+|-----------------------|-----------------------|
 | Formulario de filtros | `actions-filter-form` |
-| Filtro de código | `filter-code` |
-| Filtro de tipo | `filter-type` |
-| Tabla de acciones | `actions-table` |
-| Botón Detalle | `btn-detail` |
-| Botón Editar | `btn-edit` |
-| Botón Exportar CSV | `btn-export` |
+| Filtro de código      | `filter-code`         |
+| Filtro de tipo        | `filter-type`         |
+| Tabla de acciones     | `actions-table`       |
+| Botón Detalle         | `btn-detail`          |
+| Botón Editar          | `btn-edit`            |
+| Botón Exportar CSV    | `btn-export`          |
 
 ### 2.5. Formulario de acción
 
 **Campos:**
 
-| Campo | Obligatorio | Notas |
-|-------|-------------|-------|
-| Código | Sí | Solo lectura, no editable |
-| Nombre | Sí | Texto visible para usuarios |
-| Tipo | Sí | Enumerado: `READ`, `WRITE`, `EXECUTE` |
-| Descripción | No | Texto libre opcional |
+| Campo       | Obligatorio | Notas                                 |
+|-------------|-------------|---------------------------------------|
+| Código      | Sí          | Solo lectura, no editable             |
+| Nombre      | Sí          | Texto visible para usuarios           |
+| Tipo        | Sí          | Enumerado: `READ`, `WRITE`, `EXECUTE` |
+| Descripción | No          | Texto libre opcional                  |
 
 **Información de auditoría** (solo en modo detalle, solo lectura): fechas de creación y última modificación.
 
 ### 2.6. Validaciones funcionales
 
-| Campo | Regla |
-|-------|-------|
-| Código | Fijo, no editable y generado por semilla |
-| Nombre | Obligatorio |
-| Tipo | Obligatorio y limitado a los valores del catálogo |
-| Descripción | Opcional |
+| Campo       | Regla                                             |
+|-------------|---------------------------------------------------|
+| Código      | Fijo, no editable y generado por semilla          |
+| Nombre      | Obligatorio                                       |
+| Tipo        | Obligatorio y limitado a los valores del catálogo |
+| Descripción | Opcional                                          |
 
 ### 2.7. Diagramas
 
@@ -259,17 +259,17 @@ flowchart TD
 
 ### 3.1. Componentes afectados
 
-| Capa | Elemento | Responsabilidad |
-|------|----------|-----------------|
-| Frontend | `ActionListComponent` | Listado, filtros, paginación, orden y orquestación de la vista. |
-| Frontend | `ActionFormComponent` | Detalle y edición de una acción. |
-| Frontend | `ActionService` | Consulta y actualización de permisos de acción. |
-| Frontend | `TpDataTableComponent` | Tabla reutilizable para ordenación, paginación y selección. |
-| Frontend | `AuthService` | Comprobación de permisos del usuario según la acción seleccionada. |
-| Backend | `ActionControllerImpl` | Exposición de endpoints de consulta y actualización de acciones. |
-| Backend | `ActionService` | Validación, persistencia y bloqueo de operaciones no permitidas. |
-| Domain | `Action` | Entidad de autoridad de negocio que representa un permiso del sistema. |
-| Security | `SecurityConfig` | Reglas de autorización y protección del módulo de acciones y permisos. |
+| Capa     | Elemento               | Responsabilidad                                                        |
+|----------|------------------------|------------------------------------------------------------------------|
+| Frontend | `ActionListComponent`  | Listado, filtros, paginación, orden y orquestación de la vista.        |
+| Frontend | `ActionFormComponent`  | Detalle y edición de una acción.                                       |
+| Frontend | `ActionService`        | Consulta y actualización de permisos de acción.                        |
+| Frontend | `TpDataTableComponent` | Tabla reutilizable para ordenación, paginación y selección.            |
+| Frontend | `AuthService`          | Comprobación de permisos del usuario según la acción seleccionada.     |
+| Backend  | `ActionControllerImpl` | Exposición de endpoints de consulta y actualización de acciones.       |
+| Backend  | `ActionService`        | Validación, persistencia y bloqueo de operaciones no permitidas.       |
+| Domain   | `Action`               | Entidad de autoridad de negocio que representa un permiso del sistema. |
+| Security | `SecurityConfig`       | Reglas de autorización y protección del módulo de acciones y permisos. |
 
 ### 3.2. Modelos de datos
 
@@ -337,14 +337,14 @@ public class Action extends BaseEntity {
 
 Ruta base: `/api/v1/administration/security/actions`.
 
-| Método y ruta | Descripción | Respuesta |
-|---------------|-------------|-----------|
-| `GET /` | Listado paginado con filtros (`code`, `name`, `type`) y `Pageable` | 200 OK con página de acciones |
-| `GET /count` | Número de acciones que cumplen los filtros | 200 OK con el total |
-| `GET /{id}` | Acción por identificador | 200 OK con la acción |
-| `PUT /{id}` | Actualización del nombre, descripción y tipo | 200 OK con la acción actualizada |
-| `POST /` | No permitido por negocio | 405 Method Not Allowed |
-| `DELETE /{id}` | No permitido por negocio | 405 Method Not Allowed |
+| Método y ruta  | Descripción                                                        | Respuesta                        |
+|----------------|--------------------------------------------------------------------|----------------------------------|
+| `GET /`        | Listado paginado con filtros (`code`, `name`, `type`) y `Pageable` | 200 OK con página de acciones    |
+| `GET /count`   | Número de acciones que cumplen los filtros                         | 200 OK con el total              |
+| `GET /{id}`    | Acción por identificador                                           | 200 OK con la acción             |
+| `PUT /{id}`    | Actualización del nombre, descripción y tipo                       | 200 OK con la acción actualizada |
+| `POST /`       | No permitido por negocio                                           | 405 Method Not Allowed           |
+| `DELETE /{id}` | No permitido por negocio                                           | 405 Method Not Allowed           |
 
 ### 3.4. Validaciones
 
@@ -387,31 +387,31 @@ Ruta base: `/api/v1/administration/security/actions`.
 
 La suite actual incluye pruebas del servicio y del controlador que cubren la lógica principal del catálogo semilla, la edición y las restricciones de negocio:
 
-| Ubicación | Alcance |
-|-----------|---------|
-| `template/core/src/test/java/org/myorganization/template/core/service/ActionServiceTest.java` | Validaciones de negocio, listado, filtro, detalle, actualización del nombre/descripcion/tipo y bloqueo de operaciones no permitidas |
-| `template/webapp/src/test/java/org/myorganization/template/webapp/controller/ActionControllerTest.java` | Respuestas HTTP de los endpoints, parámetros de consulta y gestión de errores del controlador |
+| Ubicación                                                                                               | Alcance                                                                                                                             |
+|---------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
+| `template/core/src/test/java/org/myorganization/template/core/service/ActionServiceTest.java`           | Validaciones de negocio, listado, filtro, detalle, actualización del nombre/descripcion/tipo y bloqueo de operaciones no permitidas |
+| `template/webapp/src/test/java/org/myorganization/template/webapp/controller/ActionControllerTest.java` | Respuestas HTTP de los endpoints, parámetros de consulta y gestión de errores del controlador                                       |
 
 Estas pruebas cubren el comportamiento principal del módulo y complementan la validación E2E del flujo de usuario.
 
 ### 4.2. Cobertura unitaria (frontend)
 
-| Ubicación | Alcance |
-|-----------|---------|
-| `action-list.component.spec.ts` | Estado del listado, filtros, paginación, orden y exportación |
-| `action-form.component.spec.ts` | Modo edición y modo lectura, validación y emisión de eventos |
-| `action.service.spec.ts` | Construcción de peticiones de consulta y actualización, y criterios de filtrado |
+| Ubicación                       | Alcance                                                                         |
+|---------------------------------|---------------------------------------------------------------------------------|
+| `action-list.component.spec.ts` | Estado del listado, filtros, paginación, orden y exportación                    |
+| `action-form.component.spec.ts` | Modo edición y modo lectura, validación y emisión de eventos                    |
+| `action.service.spec.ts`        | Construcción de peticiones de consulta y actualización, y criterios de filtrado |
 
 ### 4.3. Cobertura E2E (Playwright)
 
 Ubicación: `template/dashboard/e2e/tests/administration/actions.spec.ts` con Page Object en `template/dashboard/e2e/pages/actions.page.ts`.
 
-| Caso | Descripción | Resultado esperado |
-|------|-------------|--------------------|
-| Listar acciones | Acceder a la pantalla tras iniciar sesión | La tabla es visible, hay más de una fila y se muestran los filtros |
-| Filtrar por código y tipo | Aplicar filtro por código y luego por tipo `READ` | El listado se reduce y muestra solo los registros coincidentes |
-| Abrir detalle y editar | Seleccionar una fila y guardar un cambio de nombre/descripcion/tipo | El registro aparece actualizado en la tabla |
-| Exportar CSV | Pulsar la acción de exportación | Se descarga un fichero con nombre `actions_YYYY-MM-DD.csv` |
+| Caso                      | Descripción                                                         | Resultado esperado                                                 |
+|---------------------------|---------------------------------------------------------------------|--------------------------------------------------------------------|
+| Listar acciones           | Acceder a la pantalla tras iniciar sesión                           | La tabla es visible, hay más de una fila y se muestran los filtros |
+| Filtrar por código y tipo | Aplicar filtro por código y luego por tipo `READ`                   | El listado se reduce y muestra solo los registros coincidentes     |
+| Abrir detalle y editar    | Seleccionar una fila y guardar un cambio de nombre/descripcion/tipo | El registro aparece actualizado en la tabla                        |
+| Exportar CSV              | Pulsar la acción de exportación                                     | Se descarga un fichero con nombre `actions_YYYY-MM-DD.csv`         |
 
 - Cada test inicia sesión con un usuario válido y navega directamente a `/administration/security/actions`.
 - La suite se ejecuta en modo `serial` para evitar contención con datos del catálogo semilla.
@@ -425,7 +425,7 @@ Definidos en `template/dashboard/e2e/fixtures/test-data.ts`: `testUsers.valid` (
 ### 4.5. Dependencias de ejecución
 
 - Los casos E2E de listado, filtrado, edición y exportación requieren el backend de integración levantado y la base de datos con el catálogo de permisos inicializado.
-- La edición usa un registro real del catálogo semilla y valida que el cambio se refleja en la tabla del listado.
+- La edición usa un registro real del catálogo semilla y válida que el cambio se refleja en la tabla del listado.
 - La exportación a CSV depende de que existan filas que cumplan los filtros activos; en caso contrario se notifica que no hay datos que exportar.
 
 ### 4.6. Casos de prueba detallados (TCY-ACC)
@@ -440,10 +440,10 @@ Precondición del ciclo: usuario con `ACTION_READ`; catálogo semilla cargado (p
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
+| # | Acción                                                      | Resultado esperado                                             |
+|---|-------------------------------------------------------------|----------------------------------------------------------------|
 | 1 | Navegar a `{{BASE_URL_UI}}/administration/security/actions` | `actions-table` visible con código, nombre, tipo y descripción |
-| 2 | Ordenar por una columna y paginar | Ordenación y paginación funcionan |
+| 2 | Ordenar por una columna y paginar                           | Ordenación y paginación funcionan                              |
 
 #### TC-ACC-02 · Filtrado por código y tipo
 
@@ -451,10 +451,10 @@ Precondición del ciclo: usuario con `ACTION_READ`; catálogo semilla cargado (p
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
+| # | Acción                                                                              | Resultado esperado                                                                                      |
+|---|-------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------|
 | 1 | Escribir `USER` en `filter-code` y seleccionar tipo `READ` en `filter-type`, buscar | El listado se reduce a las acciones cuyo código contiene `USER` y son de tipo `READ`; vuelve a página 1 |
-| 2 | Limpiar | Recarga el listado completo |
+| 2 | Limpiar                                                                             | Recarga el listado completo                                                                             |
 
 #### TC-ACC-03 · Detalle de acción
 
@@ -462,8 +462,8 @@ Precondición del ciclo: usuario con `ACTION_READ`; catálogo semilla cargado (p
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
+| # | Acción                                 | Resultado esperado                                                                  |
+|---|----------------------------------------|-------------------------------------------------------------------------------------|
 | 1 | Doble clic sobre la acción `USER_READ` | Detalle con código, nombre, tipo, descripción y fechas; botón de edición disponible |
 
 #### TC-ACC-04 · Edición de metadatos (código inmutable)
@@ -472,11 +472,11 @@ Precondición del ciclo: usuario con `ACTION_READ`; catálogo semilla cargado (p
 - **Setup:** login con `{{ADMIN_USER}}`. Nota: edita un registro semilla; anotar el valor original para restaurarlo.
 - **Teardown:** restaurar el nombre/descripcion/tipo originales de la acción editada.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | Seleccionar `USER_READ`, pulsar `btn-edit` | El campo código es de solo lectura |
+| # | Acción                                                                               | Resultado esperado                         |
+|---|--------------------------------------------------------------------------------------|--------------------------------------------|
+| 1 | Seleccionar `USER_READ`, pulsar `btn-edit`                                           | El campo código es de solo lectura         |
 | 2 | Cambiar el nombre a `Leer usuarios (test {{UNIQUE}})`, mantener tipo `READ`, guardar | 200 OK; el cambio se refleja en el listado |
-| 3 | (Teardown) Restaurar el nombre original | El registro vuelve a su valor semilla |
+| 3 | (Teardown) Restaurar el nombre original                                              | El registro vuelve a su valor semilla      |
 
 #### TC-ACC-05 · Exportación CSV
 
@@ -484,10 +484,10 @@ Precondición del ciclo: usuario con `ACTION_READ`; catálogo semilla cargado (p
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** eliminar el fichero descargado; logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | Sin filtros, pulsar `btn-export` | Descarga `actions_{{TODAY}}.csv` con todos los registros filtrados |
-| 2 | Filtrar por `zzz_inexistente` y exportar | Notifica que no hay datos; sin descarga |
+| # | Acción                                   | Resultado esperado                                                 |
+|---|------------------------------------------|--------------------------------------------------------------------|
+| 1 | Sin filtros, pulsar `btn-export`         | Descarga `actions_{{TODAY}}.csv` con todos los registros filtrados |
+| 2 | Filtrar por `zzz_inexistente` y exportar | Notifica que no hay datos; sin descarga                            |
 
 #### TC-ACC-06 · Alta y borrado prohibidos (catálogo semilla)
 
@@ -495,11 +495,11 @@ Precondición del ciclo: usuario con `ACTION_READ`; catálogo semilla cargado (p
 - **Setup:** vía API con token de `{{ADMIN_USER}}`.
 - **Teardown:** No aplica.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
+| # | Acción                                                                                  | Resultado esperado                                   |
+|---|-----------------------------------------------------------------------------------------|------------------------------------------------------|
 | 1 | `POST {{BASE_URL_API}}/api/v1/administration/security/actions` con un cuerpo cualquiera | 405 Method Not Allowed (`MethodNotAllowedException`) |
-| 2 | `DELETE {{BASE_URL_API}}/api/v1/administration/security/actions/1` | 405 Method Not Allowed |
-| 3 | Abrir la pantalla en la UI | No existen botones de crear ni eliminar |
+| 2 | `DELETE {{BASE_URL_API}}/api/v1/administration/security/actions/1`                      | 405 Method Not Allowed                               |
+| 3 | Abrir la pantalla en la UI                                                              | No existen botones de crear ni eliminar              |
 
 #### TC-ACC-07 · Integridad del catálogo de tipos
 
@@ -507,8 +507,8 @@ Precondición del ciclo: usuario con `ACTION_READ`; catálogo semilla cargado (p
 - **Setup:** vía API con token de `{{ADMIN_USER}}`; identificar el `id` de la acción `USER_READ`.
 - **Teardown:** si el valor cambiara, restaurarlo.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
+| # | Acción                                                                                                                              | Resultado esperado                                                       |
+|---|-------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------|
 | 1 | `PUT {{BASE_URL_API}}/api/v1/administration/security/actions/{id}` con `type` fuera de `READ`/`WRITE`/`EXECUTE` (p. ej. `"DELETE"`) | La operación se rechaza por validación (el tipo debe pertenecer al enum) |
 
 ---

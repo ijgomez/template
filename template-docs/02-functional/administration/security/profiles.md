@@ -106,22 +106,22 @@ Ofrecer a los administradores una pantalla para gestionar los perfiles de permis
 
 La pantalla gestiona cuatro modos de vista (`viewMode`) dentro del mismo componente:
 
-| Modo | Descripción |
-|------|-------------|
-| `list` | Listado paginado con barra de filtros y barra de acciones |
-| `detail` | Vista de solo lectura del perfil (incluye auditoría) |
-| `create` | Formulario de alta de perfil |
-| `edit` | Formulario de edición de perfil |
+| Modo     | Descripción                                               |
+|----------|-----------------------------------------------------------|
+| `list`   | Listado paginado con barra de filtros y barra de acciones |
+| `detail` | Vista de solo lectura del perfil (incluye auditoría)      |
+| `create` | Formulario de alta de perfil                              |
+| `edit`   | Formulario de edición de perfil                           |
 
 ### 2.3. Patrón visual reutilizable y wireframes
 
 La estructura visual base de esta pantalla se define en [layout.md](../../../03-technical/frontend/layout.md). Ese documento es la referencia canónica para los templates `List Screen`, `Form Screen` y `Confirmation Modal`; la documentación funcional del perfil solo describe cómo se aplican a la entidad concreta.
 
-| Tipo de pantalla | Uso en perfiles | Estructura base |
-|------------------|-----------------|-----------------|
-| `List screen` | Listado principal | Cabecera, filtros, tabla, acciones y paginación |
-| `Form screen` | Alta, edición y consulta en modo lectura | Encabezado, campos, validación, auditoría y pie de acciones |
-| `Confirmation modal` | Eliminación | Mensaje de confirmación con aceptar/cancelar |
+| Tipo de pantalla     | Uso en perfiles                          | Estructura base                                             |
+|----------------------|------------------------------------------|-------------------------------------------------------------|
+| `List screen`        | Listado principal                        | Cabecera, filtros, tabla, acciones y paginación             |
+| `Form screen`        | Alta, edición y consulta en modo lectura | Encabezado, campos, validación, auditoría y pie de acciones |
+| `Confirmation modal` | Eliminación                              | Mensaje de confirmación con aceptar/cancelar                |
 
 #### 2.3.1. Wireframe del `List screen`
 
@@ -145,7 +145,7 @@ La estructura visual base de esta pantalla se define en [layout.md](../../../03-
 
 ```text
 +------------------------------------------------------------------+
-| Crear perfil / Editar perfil                                      |
+| Crear perfil / Editar perfil                                     |
 +------------------------------------------------------------------+
 | Nombre * | [texto]                                               |
 | Descripción | [textarea]                                         |
@@ -159,12 +159,12 @@ La estructura visual base de esta pantalla se define en [layout.md](../../../03-
 
 ```text
 +------------------------------------------------------------------+
-| Consultar perfil                                                  |
+| Consultar perfil                                                 |
 | [Volver] [Editar]                                                |
 +------------------------------------------------------------------+
 | Nombre | [ADMIN]                                                 |
 | Descripción | [Perfil de administración]                         |
-| Acciones asignadas | [12]                                         |
+| Acciones asignadas | [12]                                        |
 | Auditoría: Creado 2026-09-01 | Última modificación 2026-09-15    |
 +------------------------------------------------------------------+
 ```
@@ -175,28 +175,28 @@ En perfiles, el `List screen` soporta filtrado por nombre, el `Form screen` inte
 
 **Columnas de la tabla** (todas ordenables y reordenables):
 
-| Columna | Clave i18n | Notas |
-|---------|-----------|-------|
-| Nombre | `profiles.fields.name` | Se muestra en negrita |
-| Descripción | `profiles.fields.description` | Muestra `-` si está vacía |
-| Acciones | `profiles.fields.actions` | Cuenta el número de acciones asignadas |
-| Fecha de creación | `profiles.fields.createdAt` | Formateado con `localDate` |
+| Columna           | Clave i18n                    | Notas                                  |
+|-------------------|-------------------------------|----------------------------------------|
+| Nombre            | `profiles.fields.name`        | Se muestra en negrita                  |
+| Descripción       | `profiles.fields.description` | Muestra `-` si está vacía              |
+| Acciones          | `profiles.fields.actions`     | Cuenta el número de acciones asignadas |
+| Fecha de creación | `profiles.fields.createdAt`   | Formateado con `localDate`             |
 
 **Filtros disponibles:**
 
-| Filtro | Tipo | `data-testid` |
-|--------|------|---------------|
+| Filtro | Tipo                         | `data-testid` |
+|--------|------------------------------|---------------|
 | Nombre | Texto (coincidencia parcial) | `filter-name` |
 
 **Barra de acciones:**
 
-| Acción | Condición de disponibilidad | `data-testid` |
-|--------|-----------------------------|---------------|
-| Detalle | Requiere una fila seleccionada | `btn-detail` |
-| Crear | Requiere `PROFILE_WRITE` | `btn-create` |
-| Editar | Requiere `PROFILE_WRITE` y una fila seleccionada | `btn-edit` |
-| Eliminar | Requiere `PROFILE_WRITE` y una fila seleccionada | `btn-delete` |
-| Exportar CSV | Siempre disponible | `btn-export` |
+| Acción       | Condición de disponibilidad                      | `data-testid` |
+|--------------|--------------------------------------------------|---------------|
+| Detalle      | Requiere una fila seleccionada                   | `btn-detail`  |
+| Crear        | Requiere `PROFILE_WRITE`                         | `btn-create`  |
+| Editar       | Requiere `PROFILE_WRITE` y una fila seleccionada | `btn-edit`    |
+| Eliminar     | Requiere `PROFILE_WRITE` y una fila seleccionada | `btn-delete`  |
+| Exportar CSV | Siempre disponible                               | `btn-export`  |
 
 - La selección de una fila alterna (seleccionar / deseleccionar).
 - El detalle se abre pulsando el botón *Detalle* con una fila seleccionada o mediante doble clic sobre la fila.
@@ -204,36 +204,36 @@ En perfiles, el `List screen` soporta filtrado por nombre, el `Form screen` inte
 
 ### 2.4. Identificadores para pruebas (`data-testid`)
 
-| Elemento | `data-testid` |
-| --- | --- |
+| Elemento              | `data-testid`          |
+|-----------------------|------------------------|
 | Formulario de filtros | `profiles-filter-form` |
-| Filtro de nombre | `filter-name` |
-| Tabla de perfiles | `profiles-table` |
-| Botón Detalle | `btn-detail` |
-| Botón Crear | `btn-create` |
-| Botón Editar | `btn-edit` |
-| Botón Eliminar | `btn-delete` |
-| Botón Exportar CSV | `btn-export` |
+| Filtro de nombre      | `filter-name`          |
+| Tabla de perfiles     | `profiles-table`       |
+| Botón Detalle         | `btn-detail`           |
+| Botón Crear           | `btn-create`           |
+| Botón Editar          | `btn-edit`             |
+| Botón Eliminar        | `btn-delete`           |
+| Botón Exportar CSV    | `btn-export`           |
 
 ### 2.5. Formulario de perfil
 
 **Campos:**
 
-| Campo | Obligatorio | Notas |
-|-------|-------------|-------|
-| Nombre | Sí | Requerido en alta y edición |
-| Descripción | No | Texto libre opcional |
-| Acciones asignadas | No | Multi-selección de acciones a través de `TpSelectedActionsComponent` |
+| Campo              | Obligatorio | Notas                                                                |
+|--------------------|-------------|----------------------------------------------------------------------|
+| Nombre             | Sí          | Requerido en alta y edición                                          |
+| Descripción        | No          | Texto libre opcional                                                 |
+| Acciones asignadas | No          | Multi-selección de acciones a través de `TpSelectedActionsComponent` |
 
 **Información de auditoría** (solo en modo detalle, solo lectura): fecha de creación y última modificación.
 
 ### 2.6. Validaciones funcionales
 
-| Campo | Regla |
-|-------|-------|
-| Nombre | Obligatorio |
-| Descripción | Opcional |
-| Acciones | Deben ser únicas y existir en el catálogo |
+| Campo       | Regla                                     |
+|-------------|-------------------------------------------|
+| Nombre      | Obligatorio                               |
+| Descripción | Opcional                                  |
+| Acciones    | Deben ser únicas y existir en el catálogo |
 
 ### 2.7. Diagramas
 
@@ -267,19 +267,19 @@ flowchart TD
 
 ### 3.1. Componentes afectados
 
-| Capa | Elemento | Responsabilidad |
-|------|----------|-----------------|
-| Frontend | `ProfileListComponent` | Listado, filtros, paginación, orden, exportación y orquestación de vistas. |
-| Frontend | `ProfileFormComponent` | Alta, edición y detalle de un perfil. |
-| Frontend | `ProfileService` | Llamadas CRUD y carga de referencias de acciones asociadas. |
-| Frontend | `TpDataTableComponent` | Tabla reutilizable para ordenación, paginación y selección. |
-| Frontend | `TpSelectedActionsComponent` | Selección multi-acción del perfil en el formulario. |
-| Frontend | `AuthService` | Comprobación de permisos del usuario antes de acceder al módulo. |
-| Backend | `ProfileController` | Exposición de endpoints CRUD y de referencias de perfiles. |
-| Backend | `ProfileService` | Lógica de negocio, validaciones y persistencia del perfil. |
-| Domain | `Profile` | Entidad principal del rol de usuario y asociación con acciones. |
-| Domain | `Action` | Entidad de permisos que se vincula al perfil mediante relación muchos a muchos. |
-| Security | `SecurityConfig` | Reglas de autorización y protección de rutas del módulo de perfiles. |
+| Capa     | Elemento                     | Responsabilidad                                                                 |
+|----------|------------------------------|---------------------------------------------------------------------------------|
+| Frontend | `ProfileListComponent`       | Listado, filtros, paginación, orden, exportación y orquestación de vistas.      |
+| Frontend | `ProfileFormComponent`       | Alta, edición y detalle de un perfil.                                           |
+| Frontend | `ProfileService`             | Llamadas CRUD y carga de referencias de acciones asociadas.                     |
+| Frontend | `TpDataTableComponent`       | Tabla reutilizable para ordenación, paginación y selección.                     |
+| Frontend | `TpSelectedActionsComponent` | Selección multi-acción del perfil en el formulario.                             |
+| Frontend | `AuthService`                | Comprobación de permisos del usuario antes de acceder al módulo.                |
+| Backend  | `ProfileController`          | Exposición de endpoints CRUD y de referencias de perfiles.                      |
+| Backend  | `ProfileService`             | Lógica de negocio, validaciones y persistencia del perfil.                      |
+| Domain   | `Profile`                    | Entidad principal del rol de usuario y asociación con acciones.                 |
+| Domain   | `Action`                     | Entidad de permisos que se vincula al perfil mediante relación muchos a muchos. |
+| Security | `SecurityConfig`             | Reglas de autorización y protección de rutas del módulo de perfiles.            |
 
 ### 3.2. Modelos de datos
 
@@ -343,15 +343,15 @@ public class Profile extends BaseEntity {
 
 Ruta base: `/api/v1/administration/security/profiles`.
 
-| Método y ruta | Descripción | Respuesta |
-|---------------|-------------|-----------|
-| `GET /references` | Lista ligera de perfiles para selectores (`id`, `name`) | 200 OK con lista de referencias |
-| `GET /` | Listado paginado con filtros (`name`) y `Pageable` | 200 OK con página de perfiles |
-| `GET /count` | Número de perfiles que cumplen los filtros | 200 OK con el total |
-| `GET /{id}` | Perfil por identificador | 200 OK con el perfil |
-| `POST /` | Alta de perfil (`id` nulo) | 201 Created con el perfil creado |
-| `PUT /{id}` | Actualización de perfil | 200 OK con el perfil actualizado |
-| `DELETE /{id}` | Eliminación de perfil | 204 No Content |
+| Método y ruta     | Descripción                                             | Respuesta                        |
+|-------------------|---------------------------------------------------------|----------------------------------|
+| `GET /references` | Lista ligera de perfiles para selectores (`id`, `name`) | 200 OK con lista de referencias  |
+| `GET /`           | Listado paginado con filtros (`name`) y `Pageable`      | 200 OK con página de perfiles    |
+| `GET /count`      | Número de perfiles que cumplen los filtros              | 200 OK con el total              |
+| `GET /{id}`       | Perfil por identificador                                | 200 OK con el perfil             |
+| `POST /`          | Alta de perfil (`id` nulo)                              | 201 Created con el perfil creado |
+| `PUT /{id}`       | Actualización de perfil                                 | 200 OK con el perfil actualizado |
+| `DELETE /{id}`    | Eliminación de perfil                                   | 204 No Content                   |
 
 Datos de referencia consumidos por el formulario:
 
@@ -402,33 +402,33 @@ Datos de referencia consumidos por el formulario:
 
 La suite actual incluye pruebas del servicio y del controlador que cubren el CRUD, validaciones de negocio y la relación con las acciones asignadas:
 
-| Ubicación | Alcance |
-|-----------|---------|
-| `template/core/src/test/java/org/myorganization/template/core/service/ProfileServiceTest.java` | Alta, consulta, búsqueda por criterios, actualización, borrado, validación de acciones duplicadas y gestión de perfiles en uso |
-| `template/webapp/src/test/java/org/myorganization/template/webapp/controller/ProfileControllerTest.java` | Respuestas HTTP de los endpoints, filtros y propagación de excepciones del servicio |
+| Ubicación                                                                                                | Alcance                                                                                                                        |
+|----------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
+| `template/core/src/test/java/org/myorganization/template/core/service/ProfileServiceTest.java`           | Alta, consulta, búsqueda por criterios, actualización, borrado, validación de acciones duplicadas y gestión de perfiles en uso |
+| `template/webapp/src/test/java/org/myorganization/template/webapp/controller/ProfileControllerTest.java` | Respuestas HTTP de los endpoints, filtros y propagación de excepciones del servicio                                            |
 
 Estas pruebas cubren la lógica principal del módulo y complementan la validación E2E del frontend.
 
 ### 4.2. Cobertura unitaria (frontend)
 
-| Ubicación | Alcance |
-|-----------|---------|
+| Ubicación                        | Alcance                                           |
+|----------------------------------|---------------------------------------------------|
 | `profile-list.component.spec.ts` | Estado de listado, filtros, paginación y acciones |
-| `profile-form.component.spec.ts` | Modos del formulario y emisión de eventos |
-| `profile.service.spec.ts` | Construcción de peticiones CRUD y parámetros |
+| `profile-form.component.spec.ts` | Modos del formulario y emisión de eventos         |
+| `profile.service.spec.ts`        | Construcción de peticiones CRUD y parámetros      |
 
 ### 4.3. Cobertura E2E (Playwright)
 
 Ubicación: `dashboard/e2e/tests/administration/profiles.spec.ts` (Page Object en `dashboard/e2e/pages/profiles.page.ts`).
 
-| Caso | Descripción | Resultado esperado |
-|------|-------------|--------------------|
-| Listar perfiles | Acceder a la pantalla tras iniciar sesión | La tabla es visible, hay al menos una fila y se muestran filtros y el botón de crear |
+| Caso              | Descripción                                           | Resultado esperado                                                                   |
+|-------------------|-------------------------------------------------------|--------------------------------------------------------------------------------------|
+| Listar perfiles   | Acceder a la pantalla tras iniciar sesión             | La tabla es visible, hay al menos una fila y se muestran filtros y el botón de crear |
 | Buscar por nombre | Filtrar por un nombre existente y por uno inexistente | El listado muestra la fila coincidente; con un término sin coincidencias queda vacío |
-| Crear perfil | Alta desde el formulario con datos válidos | El backend responde 201, se vuelve al listado y el nuevo perfil aparece al buscarlo |
-| Editar perfil | Seleccionar un perfil y modificar sus datos | El backend responde 200 y el cambio se refleja en el listado |
-| Eliminar perfil | Seleccionar un perfil y confirmar el borrado | El backend responde 204 y el perfil deja de aparecer al buscarlo |
-| Exportar CSV | Pulsar el botón de exportar | El navegador descarga el fichero `profiles_YYYY-MM-DD.csv` |
+| Crear perfil      | Alta desde el formulario con datos válidos            | El backend responde 201, se vuelve al listado y el nuevo perfil aparece al buscarlo  |
+| Editar perfil     | Seleccionar un perfil y modificar sus datos           | El backend responde 200 y el cambio se refleja en el listado                         |
+| Eliminar perfil   | Seleccionar un perfil y confirmar el borrado          | El backend responde 204 y el perfil deja de aparecer al buscarlo                     |
+| Exportar CSV      | Pulsar el botón de exportar                           | El navegador descarga el fichero `profiles_YYYY-MM-DD.csv`                           |
 
 - Cada test inicia sesión con un usuario administrador (acciones `PROFILE_READ` y `PROFILE_WRITE`) y navega directamente a `/administration/security/profiles`.
 - Los casos de creación y edición insertan un registro en el backend por ejecución; el caso de eliminación borra el perfil que él mismo crea.
@@ -456,10 +456,10 @@ Precondición del ciclo: usuario con `PROFILE_READ` y `PROFILE_WRITE`. Datos de 
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
+| # | Acción                                                       | Resultado esperado                                                                   |
+|---|--------------------------------------------------------------|--------------------------------------------------------------------------------------|
 | 1 | Navegar a `{{BASE_URL_UI}}/administration/security/profiles` | `profiles-table` visible con nombre, descripción, nº de acciones y fecha de creación |
-| 2 | Ordenar por una columna y paginar | La ordenación y la paginación funcionan |
+| 2 | Ordenar por una columna y paginar                            | La ordenación y la paginación funcionan                                              |
 
 #### TC-PRO-02 · Búsqueda por nombre
 
@@ -467,11 +467,11 @@ Precondición del ciclo: usuario con `PROFILE_READ` y `PROFILE_WRITE`. Datos de 
 - **Setup:** login con `{{ADMIN_USER}}`; existe el perfil semilla `ADMIN`.
 - **Teardown:** logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
+| # | Acción                                     | Resultado esperado                                        |
+|---|--------------------------------------------|-----------------------------------------------------------|
 | 1 | Escribir `ADMIN` en `filter-name` y buscar | Muestra la fila del perfil `ADMIN` y vuelve a la página 1 |
-| 2 | Escribir `zzz_inexistente` y buscar | Listado vacío |
-| 3 | Limpiar | Recarga el listado completo |
+| 2 | Escribir `zzz_inexistente` y buscar        | Listado vacío                                             |
+| 3 | Limpiar                                    | Recarga el listado completo                               |
 
 #### TC-PRO-03 · Alta de perfil con acciones
 
@@ -479,11 +479,11 @@ Precondición del ciclo: usuario con `PROFILE_READ` y `PROFILE_WRITE`. Datos de 
 - **Setup:** login con `{{ADMIN_USER}}`; catálogo de acciones disponible.
 - **Teardown:** eliminar el perfil `e2e_profile_{{UNIQUE}}`.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | Pulsar `btn-create`, informar nombre `e2e_profile_{{UNIQUE}}`, descripción y seleccionar 2 acciones distintas | Formulario válido |
-| 2 | Guardar | El backend responde 201; el perfil aparece al buscarlo |
-| 3 | Comprobar la integridad | El perfil no admite acciones duplicadas (el backend rechaza duplicados) |
+| # | Acción                                                                                                        | Resultado esperado                                                      |
+|---|---------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------|
+| 1 | Pulsar `btn-create`, informar nombre `e2e_profile_{{UNIQUE}}`, descripción y seleccionar 2 acciones distintas | Formulario válido                                                       |
+| 2 | Guardar                                                                                                       | El backend responde 201; el perfil aparece al buscarlo                  |
+| 3 | Comprobar la integridad                                                                                       | El perfil no admite acciones duplicadas (el backend rechaza duplicados) |
 
 #### TC-PRO-04 · Edición de perfil (reemplazo de acciones)
 
@@ -491,9 +491,9 @@ Precondición del ciclo: usuario con `PROFILE_READ` y `PROFILE_WRITE`. Datos de 
 - **Setup:** login con `{{ADMIN_USER}}`; crear previamente `e2e_profile_{{UNIQUE}}`.
 - **Teardown:** eliminar `e2e_profile_{{UNIQUE}}`.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | Seleccionar `e2e_profile_{{UNIQUE}}` y pulsar `btn-edit` | Formulario en modo edición |
+| # | Acción                                                                              | Resultado esperado                                                                                      |
+|---|-------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------|
+| 1 | Seleccionar `e2e_profile_{{UNIQUE}}` y pulsar `btn-edit`                            | Formulario en modo edición                                                                              |
 | 2 | Cambiar la descripción y reemplazar la lista de acciones por otra distinta, guardar | 200 OK; la lista de acciones se reemplaza completa (no se fusiona) y el cambio se refleja en el listado |
 
 #### TC-PRO-05 · Eliminación con confirmación
@@ -502,10 +502,10 @@ Precondición del ciclo: usuario con `PROFILE_READ` y `PROFILE_WRITE`. Datos de 
 - **Setup:** login con `{{ADMIN_USER}}`; crear `e2e_profile_{{UNIQUE}}` sin usuarios asociados.
 - **Teardown:** si queda tras un fallo, eliminarlo por API.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | Seleccionar `e2e_profile_{{UNIQUE}}` y pulsar `btn-delete` → cancelar | No se elimina |
-| 2 | Repetir y confirmar | 204; el perfil desaparece al buscarlo |
+| # | Acción                                                                | Resultado esperado                    |
+|---|-----------------------------------------------------------------------|---------------------------------------|
+| 1 | Seleccionar `e2e_profile_{{UNIQUE}}` y pulsar `btn-delete` → cancelar | No se elimina                         |
+| 2 | Repetir y confirmar                                                   | 204; el perfil desaparece al buscarlo |
 
 #### TC-PRO-06 · Eliminación de perfil en uso
 
@@ -513,8 +513,8 @@ Precondición del ciclo: usuario con `PROFILE_READ` y `PROFILE_WRITE`. Datos de 
 - **Setup:** login con `{{ADMIN_USER}}`; identificar un perfil asignado a al menos un usuario (`ADMIN`).
 - **Teardown:** logout (no se elimina nada).
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
+| # | Acción                                                            | Resultado esperado                                                                        |
+|---|-------------------------------------------------------------------|-------------------------------------------------------------------------------------------|
 | 1 | Seleccionar el perfil `ADMIN` (en uso) y confirmar su eliminación | El backend devuelve `EntityInUseException`; la operación se rechaza y el perfil permanece |
 
 #### TC-PRO-07 · Detalle de perfil
@@ -523,8 +523,8 @@ Precondición del ciclo: usuario con `PROFILE_READ` y `PROFILE_WRITE`. Datos de 
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
+| # | Acción                             | Resultado esperado                                                                                |
+|---|------------------------------------|---------------------------------------------------------------------------------------------------|
 | 1 | Doble clic sobre el perfil `ADMIN` | Detalle en solo lectura con datos generales, acciones asignadas y fechas de creación/modificación |
 
 #### TC-PRO-08 · Exportación CSV
@@ -533,10 +533,10 @@ Precondición del ciclo: usuario con `PROFILE_READ` y `PROFILE_WRITE`. Datos de 
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** eliminar el fichero descargado; logout.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | Sin filtros, pulsar `btn-export` | Descarga `profiles_{{TODAY}}.csv` con todos los registros filtrados |
-| 2 | Filtrar por `zzz_inexistente` y exportar | Notifica que no hay datos; sin descarga |
+| # | Acción                                   | Resultado esperado                                                  |
+|---|------------------------------------------|---------------------------------------------------------------------|
+| 1 | Sin filtros, pulsar `btn-export`         | Descarga `profiles_{{TODAY}}.csv` con todos los registros filtrados |
+| 2 | Filtrar por `zzz_inexistente` y exportar | Notifica que no hay datos; sin descarga                             |
 
 #### TC-PRO-09 · Autorización y endpoint de referencias
 
@@ -544,11 +544,11 @@ Precondición del ciclo: usuario con `PROFILE_READ` y `PROFILE_WRITE`. Datos de 
 - **Setup:** vía API. Preparar: (a) token sin `PROFILE_READ`; (b) token con `PROFILE_READ` sin `PROFILE_WRITE`; (c) token con `USER_READ`.
 - **Teardown:** eliminar usuarios/perfiles de prueba.
 
-| # | Acción | Resultado esperado |
-|---|--------|--------------------|
-| 1 | Con token sin `PROFILE_READ`, `GET /api/v1/administration/security/profiles` | 403 Forbidden |
-| 2 | Con token `PROFILE_READ` sin `PROFILE_WRITE`, abrir el listado en UI y luego `POST /profiles` | Botones crear/editar/eliminar ocultos; el POST responde 403 |
-| 3 | Con token `USER_READ`, `GET /api/v1/administration/security/profiles/references` | 200 OK (el endpoint de referencias se permite al consumidor del listado de usuarios) |
+| # | Acción                                                                                        | Resultado esperado                                                                   |
+|---|-----------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------|
+| 1 | Con token sin `PROFILE_READ`, `GET /api/v1/administration/security/profiles`                  | 403 Forbidden                                                                        |
+| 2 | Con token `PROFILE_READ` sin `PROFILE_WRITE`, abrir el listado en UI y luego `POST /profiles` | Botones crear/editar/eliminar ocultos; el POST responde 403                          |
+| 3 | Con token `USER_READ`, `GET /api/v1/administration/security/profiles/references`              | 200 OK (el endpoint de referencias se permite al consumidor del listado de usuarios) |
 
 ---
 

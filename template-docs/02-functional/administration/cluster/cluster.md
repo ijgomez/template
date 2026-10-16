@@ -11,12 +11,12 @@ El módulo de Cluster se apoya en tareas clusterizadas y un servicio de locks a 
 
 ## Conceptos clave
 
-| Concepto | Descripción |
-|-----------|---------|
-| Nodo | Instancia de la aplicación registrada en el cluster con estado operacional, métricas y rol de maestro. |
-| Tarea | Definición de una operación ejecutable en cluster y su política de concurrencia. |
-| Lock | Exclusión mutua asociada a una tarea para evitar ejecución concurrente entre hilos o instancias. |
-| Heartbeat | Señal periódica que mantiene la salud del nodo y permite detectar caídas o inactividad. |
+| Concepto  | Descripción                                                                                            |
+|-----------|--------------------------------------------------------------------------------------------------------|
+| Nodo      | Instancia de la aplicación registrada en el cluster con estado operacional, métricas y rol de maestro. |
+| Tarea     | Definición de una operación ejecutable en cluster y su política de concurrencia.                       |
+| Lock      | Exclusión mutua asociada a una tarea para evitar ejecución concurrente entre hilos o instancias.       |
+| Heartbeat | Señal periódica que mantiene la salud del nodo y permite detectar caídas o inactividad.                |
 
 
 
@@ -94,10 +94,10 @@ Administración > Cluster > Bloqueos del Cluster
 
 ## Pantallas
 
-| Pantalla | Tipo | Descripción |
-|---------------|-------------|-----------|
-| [Nodos del Cluster](./cluster-nodes.md) | Pagina |  |
-| [Bloqueos del Cluster](./cluster-blocks.md) | Pagina |  |
+| Pantalla                                    | Tipo   | Descripción |
+|---------------------------------------------|--------|-------------|
+| [Nodos del Cluster](./cluster-nodes.md)     | Pagina |             |
+| [Bloqueos del Cluster](./cluster-blocks.md) | Pagina |             |
 
 ## Referencias
 
