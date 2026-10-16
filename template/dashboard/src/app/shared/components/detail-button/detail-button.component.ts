@@ -16,7 +16,7 @@ import { TranslatePipe } from '@ngx-translate/core';
   template: `
     <button
       type="button"
-      class="btn btn-primary btn-sm"
+      class="btn btn-outline-secondary btn-sm"
       [disabled]="disabled()"
       [attr.data-testid]="testId()"
       (click)="detail.emit()">

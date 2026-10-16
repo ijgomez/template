@@ -110,31 +110,33 @@
       <nav [attr.aria-label]="'common.pagination.nav' | translate">
         <ul class="pagination pagination-sm mb-0">
           <li class="page-item" [class.disabled]="currentPage === 0">
-            <a class="page-link"
-               href="javascript:void(0)"
+            <button type="button"
+               class="page-link"
+               [disabled]="currentPage === 0"
                (click)="goToPage(currentPage - 1)"
                [attr.aria-label]="'common.pagination.previous' | translate"
                data-testid="pagination-prev">
               <i class="bi bi-chevron-left" aria-hidden="true"></i>
-            </a>
+            </button>
           </li>
           @for (p of visiblePages; track p) {
             <li class="page-item"
                 [class.active]="p === currentPage"
                 [attr.aria-current]="p === currentPage ? 'page' : null">
-              <a class="page-link" href="javascript:void(0)" (click)="goToPage(p)">
+              <button type="button" class="page-link" role="link" (click)="goToPage(p)">
                 {{ p + 1 }}
-              </a>
+              </button>
             </li>
           }
           <li class="page-item" [class.disabled]="currentPage >= totalPages - 1">
-            <a class="page-link"
-               href="javascript:void(0)"
+            <button type="button"
+               class="page-link"
+               [disabled]="currentPage >= totalPages - 1"
                (click)="goToPage(currentPage + 1)"
                [attr.aria-label]="'common.pagination.next' | translate"
                data-testid="pagination-next">
               <i class="bi bi-chevron-right" aria-hidden="true"></i>
-            </a>
+            </button>
           </li>
         </ul>
       </nav>

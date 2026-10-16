@@ -45,7 +45,7 @@
       testId="btn-detail"
       (detail)="viewSelectedAction()" />
     @if (canEdit()) {
-      <button type="button" class="btn btn-warning btn-sm text-white" [disabled]="!selectedRow()" (click)="editSelectedAction()" data-testid="btn-edit">
+      <button type="button" class="btn btn-outline-secondary btn-sm" [disabled]="!selectedRow()" (click)="editSelectedAction()" data-testid="btn-edit">
         <i class="bi bi-pencil me-1" aria-hidden="true"></i> {{ 'button.edit' | translate }}
       </button>
     }

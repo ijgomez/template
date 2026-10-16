@@ -321,8 +321,12 @@ export class LayoutComponent implements OnInit {
     this.mobileMenuOpen.set(false);
   }
 
-  /** Toggle an expandable section open/closed. */
+  /** Toggle an expandable section open/closed. If sidebar is collapsed, automatically expand it. */
   toggleSection(labelKey: string): void {
+    if (this.sidebarCollapsed()) {
+      this.sidebarCollapsed.set(false);
+      localStorage.setItem(LayoutComponent.STORAGE_KEY, 'false');
+    }
     this.expandedSections.update((sections) => {
       const updated = new Set(sections);
       if (updated.has(labelKey)) {

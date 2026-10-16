@@ -48,7 +48,7 @@
       <button type="button" class="btn btn-primary btn-sm" (click)="openCreate()" data-testid="btn-create">
         <i class="bi bi-plus-lg me-1" aria-hidden="true"></i> {{ 'button.create' | translate }}
       </button>
-      <button type="button" class="btn btn-warning btn-sm text-white" [disabled]="!selectedRow()" (click)="editSelectedParameter()" data-testid="btn-edit">
+      <button type="button" class="btn btn-outline-secondary btn-sm" [disabled]="!selectedRow()" (click)="editSelectedParameter()" data-testid="btn-edit">
         <i class="bi bi-pencil me-1" aria-hidden="true"></i> {{ 'button.edit' | translate }}
       </button>
       <button type="button" class="btn btn-danger btn-sm" [disabled]="!selectedRow()" (click)="deleteSelectedParameter()" data-testid="btn-delete">

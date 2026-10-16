@@ -119,15 +119,15 @@
           @if (!$first) {
             <span> | </span>
           }
-          <a
-            href="javascript:void(0)"
-            class="text-decoration-none"
+          <button
+            type="button"
+            class="btn btn-link btn-sm text-decoration-none p-0 align-baseline"
             [class.fw-bold]="currentLanguage() === lang"
             (click)="switchLanguage(lang)"
             [attr.aria-label]="lang"
             [attr.data-testid]="'btn-lang-' + lang">
             {{ lang | uppercase }}
-          </a>
+          </button>
         }
       </small>
     </div>

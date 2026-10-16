@@ -191,25 +191,27 @@
         <nav [attr.aria-label]="'reports.pagination.label' | translate">
           <ul class="pagination pagination-sm mb-0">
             <li class="page-item" [class.disabled]="resultPage() === 0">
-              <a class="page-link"
-                 href="javascript:void(0)"
+              <button type="button"
+                 class="page-link"
+                 [disabled]="resultPage() === 0"
                  (click)="goToResultPage(resultPage() - 1)"
                  [attr.aria-label]="'common.pagination.previous' | translate">
                 <i class="bi bi-chevron-left" aria-hidden="true"></i>
-              </a>
+              </button>
             </li>
             @for (p of getPageNumbers(); track p) {
               <li class="page-item" [class.active]="p === resultPage()" [attr.aria-current]="p === resultPage() ? 'page' : null">
-                <a class="page-link" href="javascript:void(0)" (click)="goToResultPage(p)">{{ p + 1 }}</a>
+                <button type="button" class="page-link" (click)="goToResultPage(p)">{{ p + 1 }}</button>
               </li>
             }
             <li class="page-item" [class.disabled]="resultPage() >= resultTotalPages() - 1">
-              <a class="page-link"
-                 href="javascript:void(0)"
+              <button type="button"
+                 class="page-link"
+                 [disabled]="resultPage() >= resultTotalPages() - 1"
                  (click)="goToResultPage(resultPage() + 1)"
                  [attr.aria-label]="'common.pagination.next' | translate">
                 <i class="bi bi-chevron-right" aria-hidden="true"></i>
-              </a>
+              </button>
             </li>
           </ul>
         </nav>

@@ -2,7 +2,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  min-height: 100vh; /* fallback */
+  min-height: 100dvh;
   background: linear-gradient(135deg, #1a1d21 0%, #2b2f35 100%);
   padding: var(--tp-space-3);
 }
@@ -12,8 +13,8 @@
   max-width: 420px;
   padding: 2.5rem;
   background-color: var(--tp-color-background);
-  border-radius: 0.75rem;
-  box-shadow: var(--tp-shadow-lg);
+  border-radius: var(--tp-border-radius);
+  border: 1px solid var(--tp-color-border);
 }
 
 .tp-login-icon {

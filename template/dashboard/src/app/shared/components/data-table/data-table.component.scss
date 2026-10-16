@@ -17,7 +17,7 @@
   }
 
   &:focus-visible {
-    outline: 2px solid var(--bs-primary, #0d6efd);
+    outline: 2px solid var(--tp-color-primary);
     outline-offset: -2px;
   }
 }
@@ -55,7 +55,7 @@
 th[aria-sort='ascending'] .tp-table__sort-icon,
 th[aria-sort='descending'] .tp-table__sort-icon {
   opacity: 1;
-  color: var(--bs-primary, #0d6efd);
+  color: var(--tp-color-primary);
 }
 
 // ─── Resizable header ────────────────────────────────────────
@@ -78,7 +78,7 @@ th[aria-sort='descending'] .tp-table__sort-icon {
 
   &:hover,
   &:active {
-    background-color: var(--bs-primary, #0d6efd);
+    background-color: var(--tp-color-primary);
   }
 }
 
@@ -104,5 +104,5 @@ th[aria-sort='descending'] .tp-table__sort-icon {
 
 // Drop target indicator
 .tp-table__th--drag-over {
-  border-left: 3px solid var(--bs-primary, #0d6efd);
+  border-left: 3px solid var(--tp-color-primary);
 }

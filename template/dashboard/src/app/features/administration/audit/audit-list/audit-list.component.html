@@ -64,7 +64,7 @@
       </div>
       @if (hasInvalidDateRange()) {
         <div class="col-12">
-          <small class="text-danger d-block">La fecha desde no puede ser posterior a la fecha hasta.</small>
+          <small class="text-danger d-block">{{ 'validation.dateRangeInvalid' | translate }}</small>
         </div>
       }
       <div class="col-12 d-flex justify-content-end gap-2 mt-2">
@@ -156,10 +156,14 @@
             <label class="form-label fw-bold">{{ 'audit.fields.operationType' | translate }}</label>
             <p class="form-control-plaintext">
               <span class="badge"
-                    [class.bg-success]="log.operationType === 'CREATE'"
-                    [class.bg-info]="log.operationType === 'UPDATE'"
-                    [class.bg-danger]="log.operationType === 'DELETE'"
-                    [class.bg-warning]="log.operationType === 'EXECUTE'">
+                    [class.bg-success-subtle]="log.operationType === 'CREATE'"
+                    [class.text-success]="log.operationType === 'CREATE'"
+                    [class.bg-primary-subtle]="log.operationType === 'UPDATE'"
+                    [class.text-primary]="log.operationType === 'UPDATE'"
+                    [class.bg-danger-subtle]="log.operationType === 'DELETE'"
+                    [class.text-danger]="log.operationType === 'DELETE'"
+                    [class.bg-info-subtle]="log.operationType === 'EXECUTE'"
+                    [class.text-info]="log.operationType === 'EXECUTE'">
                 {{ log.operationType }}
               </span>
             </p>

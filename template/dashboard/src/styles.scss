@@ -99,7 +99,8 @@ body {
 }
 
 // Form field that spans all columns
-.tp-form-field-full {
+.tp-form-field-full,
+.form-field-full {
   grid-column: 1 / -1;
 }
 
@@ -119,7 +120,7 @@ body {
       top: 0;
       bottom: 0;
       width: 2rem;
-      background: linear-gradient(to left, rgba(248, 249, 250, 0.9), transparent);
+      background: linear-gradient(to left, var(--tp-color-surface, rgba(248, 249, 250, 0.9)), transparent);
       pointer-events: none;
     }
   }
@@ -195,7 +196,7 @@ body {
   }
 
   tbody tr:hover {
-    background-color: rgba(241, 245, 249, 0.7);
+    background-color: var(--tp-color-border-subtle, rgba(241, 245, 249, 0.7));
   }
 }
 
@@ -230,7 +231,17 @@ body {
   border-radius: var(--tp-border-radius);
   font-size: 0.8125rem;
   font-weight: 500;
-  transition: all 120ms ease-in-out;
+  transition: background-color 120ms ease-out, border-color 120ms ease-out, color 120ms ease-out, box-shadow 120ms ease-out;
+
+  &:active {
+    transform: translateY(1px);
+  }
+}
+
+// ─── Universal Focus Ring ─────────────────────────────────────
+:focus-visible {
+  outline: 2px solid var(--tp-color-primary) !important;
+  outline-offset: 2px !important;
 }
 
 .form-control,

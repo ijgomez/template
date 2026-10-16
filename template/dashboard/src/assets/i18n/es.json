@@ -3,6 +3,7 @@
     "title": "Template Dashboard"
   },
   "layout": {
+    "skipToContent": "Saltar al contenido principal",
     "sidebar": {
       "expand": "Expandir menú",
       "collapse": "Colapsar menú",
@@ -103,7 +104,8 @@
     "required": "Este campo es obligatorio",
     "email": "Dirección de email inválida",
     "minLength": "La longitud mínima es {{min}} caracteres",
-    "maxLength": "La longitud máxima es {{max}} caracteres"
+    "maxLength": "La longitud máxima es {{max}} caracteres",
+    "dateRangeInvalid": "La fecha desde no puede ser posterior a la fecha hasta."
   },
   "error": {
     "title": "Error",

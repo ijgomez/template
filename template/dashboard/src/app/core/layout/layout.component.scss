@@ -3,7 +3,8 @@
 
 :host {
   display: block;
-  height: 100vh;
+  height: 100vh; /* fallback */
+  height: 100dvh;
 }
 
 // ─── Variables ───────────────────────────────────────────────
@@ -16,7 +17,8 @@ $transition-easing: ease-in-out;
 // ─── Wrapper ─────────────────────────────────────────────────
 .tp-wrapper {
   display: flex;
-  min-height: 100vh;
+  min-height: 100vh; /* fallback */
+  min-height: 100dvh;
 
   // Disable transitions during resize drag for instant feedback
   &.sidebar-resizing {
@@ -237,7 +239,7 @@ $transition-easing: ease-in-out;
 // ─── Header ──────────────────────────────────────────────────
 .tp-header {
   height: $header-height;
-  background: #ffffff;
+  background: var(--tp-color-surface);
   border-bottom: 1px solid var(--tp-color-border);
   display: flex;
   align-items: center;
@@ -308,7 +310,7 @@ $transition-easing: ease-in-out;
     transition: all 120ms ease-in-out;
 
     &:focus {
-      background: #ffffff;
+      background: var(--tp-color-surface);
       border-color: var(--tp-color-primary);
       box-shadow: 0 0 0 3px var(--tp-color-primary-light);
     }

@@ -2,5 +2,6 @@
 // Layout styles are handled by LayoutComponent
 :host {
   display: block;
-  height: 100vh;
+  height: 100vh; /* fallback */
+  height: 100dvh;
 }

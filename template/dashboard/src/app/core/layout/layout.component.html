@@ -1,3 +1,6 @@
+<a href="#tp-main-content" class="visually-hidden-focusable btn btn-primary position-absolute top-0 start-0 m-2 z-3">
+  {{ 'layout.skipToContent' | translate }}
+</a>
 <div class="tp-wrapper" [class.sidebar-collapsed]="sidebarCollapsed()" [class.mobile-menu-open]="mobileMenuOpen()" [class.sidebar-resizing]="resizing()">
   <!-- Sidebar -->
   <aside
@@ -24,6 +27,8 @@
                   (click)="toggleSection(item.labelKey)"
                   [attr.aria-expanded]="isSectionExpanded(item.labelKey)"
                   [attr.data-testid]="'nav-toggle-' + item.labelKey"
+                  [attr.title]="sidebarCollapsed() ? (item.labelKey | translate) : null"
+                  [attr.aria-label]="item.labelKey | translate"
                 >
                   <i class="bi bi-{{ item.icon }}" aria-hidden="true"></i>
                   <span class="nav-label">{{ item.labelKey | translate }}</span>
@@ -47,6 +52,8 @@
                               (click)="toggleSection(child.labelKey)"
                               [attr.aria-expanded]="isSectionExpanded(child.labelKey)"
                               [attr.data-testid]="'nav-toggle-' + child.labelKey"
+                              [attr.title]="sidebarCollapsed() ? (child.isRawLabel ? child.labelKey : (child.labelKey | translate)) : null"
+                              [attr.aria-label]="child.isRawLabel ? child.labelKey : (child.labelKey | translate)"
                             >
                               <i class="bi bi-{{ child.icon }}" aria-hidden="true"></i>
                               <span class="nav-label">{{ child.isRawLabel ? child.labelKey : (child.labelKey | translate) }}</span>
@@ -69,6 +76,8 @@
                                         routerLinkActive="active"
                                         (click)="closeMobileMenu()"
                                         [attr.data-testid]="'nav-' + grandchild.labelKey"
+                                        [attr.title]="sidebarCollapsed() ? (grandchild.isRawLabel ? grandchild.labelKey : (grandchild.labelKey | translate)) : null"
+                                        [attr.aria-label]="grandchild.isRawLabel ? grandchild.labelKey : (grandchild.labelKey | translate)"
                                       >
                                         <i class="bi bi-{{ grandchild.icon }}" aria-hidden="true"></i>
                                         <span class="nav-label">{{ grandchild.isRawLabel ? grandchild.labelKey : (grandchild.labelKey | translate) }}</span>
@@ -85,6 +94,8 @@
                               routerLinkActive="active"
                               (click)="closeMobileMenu()"
                               [attr.data-testid]="'nav-' + child.labelKey"
+                              [attr.title]="sidebarCollapsed() ? (child.isRawLabel ? child.labelKey : (child.labelKey | translate)) : null"
+                              [attr.aria-label]="child.isRawLabel ? child.labelKey : (child.labelKey | translate)"
                             >
                               <i class="bi bi-{{ child.icon }}" aria-hidden="true"></i>
                               <span class="nav-label">{{ child.isRawLabel ? child.labelKey : (child.labelKey | translate) }}</span>
@@ -102,6 +113,8 @@
                   routerLinkActive="active"
                   (click)="closeMobileMenu()"
                   [attr.data-testid]="'nav-' + item.labelKey"
+                  [attr.title]="sidebarCollapsed() ? (item.labelKey | translate) : null"
+                  [attr.aria-label]="item.labelKey | translate"
                 >
                   <i class="bi bi-{{ item.icon }}" aria-hidden="true"></i>
                   <span class="nav-label">{{ item.labelKey | translate }}</span>
@@ -204,7 +217,7 @@
             data-testid="btn-user-menu"
           >
             <div class="user-avatar" aria-hidden="true">{{ userInitials() }}</div>
-            <span class="text-dark fw-medium d-none d-md-inline">{{ fullName() }}</span>
+            <span class="text-body fw-medium d-none d-md-inline">{{ fullName() }}</span>
             <i class="bi bi-chevron-down text-muted" aria-hidden="true"></i>
           </button>
           <ul class="dropdown-menu dropdown-menu-end">
@@ -256,7 +269,7 @@
     }
 
     <!-- Content area -->
-    <div class="tp-content" role="main">
+    <div id="tp-main-content" class="tp-content" role="main" tabindex="-1">
       <router-outlet />
     </div>
 

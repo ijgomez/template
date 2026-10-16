@@ -8,14 +8,19 @@
   align-items: center;
   justify-content: space-between;
   padding: var(--tp-space-2) var(--tp-space-3);
-  background-color: var(--tp-color-info);
-  color: var(--tp-color-text);
-  box-shadow: var(--tp-shadow);
+  background-color: #0f172a;
+  color: #f8fafc;
+  border-top: 1px solid #1e293b;
+  box-shadow: var(--tp-shadow-lg);
 
   &__content {
     display: flex;
     align-items: center;
     gap: var(--tp-space-2);
+
+    i {
+      color: #60a5fa;
+    }
   }
 
   &__message {
