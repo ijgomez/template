@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter, Router } from '@angular/router';
 import { provideTranslateService } from '@ngx-translate/core';
 import { of, throwError } from 'rxjs';
 
@@ -35,6 +36,7 @@ describe('ParameterListComponent', () => {
   let parameterService: {
     findByCriteria: ReturnType<typeof vi.fn>;
     findAllByCriteria: ReturnType<typeof vi.fn>;
+    findByCode: ReturnType<typeof vi.fn>;
     create: ReturnType<typeof vi.fn>;
     update: ReturnType<typeof vi.fn>;
     delete: ReturnType<typeof vi.fn>;
@@ -54,6 +56,7 @@ describe('ParameterListComponent', () => {
     parameterService = {
       findByCriteria: vi.fn().mockReturnValue(of(listPage)),
       findAllByCriteria: vi.fn().mockReturnValue(of(listPage.content)),
+      findByCode: vi.fn().mockReturnValue(of(parameter('A'))),
       create: vi.fn().mockReturnValue(of(parameter('A'))),
       update: vi.fn().mockReturnValue(of(parameter('A'))),
       delete: vi.fn().mockReturnValue(of(void 0)),
@@ -70,6 +73,7 @@ describe('ParameterListComponent', () => {
     await TestBed.configureTestingModule({
       imports: [ParameterListComponent],
       providers: [
+        provideRouter([]),
         provideTranslateService({ lang: 'en', fallbackLang: 'en' }),
         { provide: ParameterService, useValue: parameterService },
         { provide: AuthService, useValue: { hasAction: authHasAction } },
@@ -369,6 +373,30 @@ describe('ParameterListComponent', () => {
       expect(parameterService.findAllByCriteria).toHaveBeenCalledWith(
         { code: 'COD', type: 'DATE' }, ''
       );
+    });
+  });
+
+  // ─── Deep linking ───────────────────────────────────────────
+
+  describe('deep linking (URL sub-view state)', () => {
+    it('viewDetail should sync the URL with view=detail and the parameter code', () => {
+      const spy = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+      component.viewDetail(parameter('A'));
+      expect(component.viewMode()).toBe('detail');
+      expect(spy).toHaveBeenCalledWith([], expect.objectContaining({ queryParams: { view: 'detail', code: 'A' } }));
+    });
+
+    it('openCreate should sync the URL with view=create', () => {
+      const spy = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+      component.openCreate();
+      expect(spy).toHaveBeenCalledWith([], expect.objectContaining({ queryParams: { view: 'create' } }));
+    });
+
+    it('backToList should clear the sub-view query params', () => {
+      const spy = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+      component.backToList();
+      expect(component.viewMode()).toBe('list');
+      expect(spy).toHaveBeenCalledWith([], expect.objectContaining({ queryParams: {} }));
     });
   });
 });

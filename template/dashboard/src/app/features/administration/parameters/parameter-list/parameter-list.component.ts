@@ -1,7 +1,8 @@
-import { Component, ChangeDetectionStrategy, inject, signal, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit, DestroyRef } from '@angular/core';
 import { toObservable, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { debounceTime, distinctUntilChanged, skip } from 'rxjs';
 import { FormsModule } from '@angular/forms';
+import { Router, ActivatedRoute, Params } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { AuthService } from '../../../../core/services/auth.service';
@@ -27,12 +28,15 @@ type ViewMode = 'list' | 'detail' | 'create' | 'edit';
   templateUrl: './parameter-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ParameterListComponent {
+export class ParameterListComponent implements OnInit {
   private readonly parameterService = inject(ParameterService);
   private readonly authService = inject(AuthService);
   private readonly notificationService = inject(NotificationService);
   private readonly translateService = inject(TranslateService);
   private readonly csvExportService = inject(CsvExportService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly destroyRef = inject(DestroyRef);
 
   // ─── View State ──────────────────────────────────────────────
 
@@ -105,6 +109,49 @@ export class ParameterListComponent {
         takeUntilDestroyed(),
       )
       .subscribe(() => this.applyFilters());
+  }
+
+  ngOnInit(): void {
+    this.route.queryParams
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => this.restoreViewFromParams(params));
+  }
+
+  /**
+   * Restores the view from URL query params (deep links, back/forward, reload):
+   * `?view=create`, `?view=detail&code=<code>`, `?view=edit&code=<code>`, or list.
+   * Parameters are identified by their unique `code`.
+   */
+  private restoreViewFromParams(params: Params): void {
+    const view = params['view'] as ViewMode | undefined;
+    const code = params['code'] ? String(params['code']) : null;
+
+    if (view === 'create') {
+      if (this.viewMode() !== 'create') {
+        this.formData.set(this.emptyParameter());
+        this.viewMode.set('create');
+      }
+      return;
+    }
+
+    if ((view === 'detail' || view === 'edit') && code !== null) {
+      const known = this.parameters().find((p) => p.code === code) ?? (this.formData().code === code ? this.formData() : null);
+      const apply = (parameter: Parameter) => {
+        this.formData.set({ ...parameter });
+        this.viewMode.set(view === 'edit' ? 'edit' : 'detail');
+      };
+      if (known) {
+        apply(known);
+      } else {
+        this.parameterService.findByCode(code).subscribe({
+          next: (parameter) => apply(parameter),
+          error: () => this.goToListUrl(),
+        });
+      }
+      return;
+    }
+
+    this.viewMode.set('list');
   }
 
   // ─── List Actions ────────────────────────────────────────────
@@ -193,22 +240,37 @@ export class ParameterListComponent {
   viewDetail(parameter: Parameter): void {
     this.formData.set({ ...parameter });
     this.viewMode.set('detail');
+    this.navigateToView('detail', parameter.code);
   }
 
   openCreate(): void {
     this.formData.set(this.emptyParameter());
     this.viewMode.set('create');
+    this.navigateToView('create', null);
   }
 
   openEdit(parameter: Parameter): void {
     this.formData.set({ ...parameter });
     this.viewMode.set('edit');
+    this.navigateToView('edit', parameter.code);
   }
 
   backToList(): void {
     this.viewMode.set('list');
     this.showDeleteConfirm.set(false);
     this.deleteTarget.set(null);
+    this.goToListUrl();
+  }
+
+  /** Reflects the current sub-view in the URL query params for deep linking. */
+  private navigateToView(view: Exclude<ViewMode, 'list'>, code: string | null): void {
+    const queryParams: Params = code ? { view, code } : { view };
+    this.router.navigate([], { relativeTo: this.route, queryParams, queryParamsHandling: '' });
+  }
+
+  /** Navigates back to the plain list URL (clears the sub-view query params). */
+  private goToListUrl(): void {
+    this.router.navigate([], { relativeTo: this.route, queryParams: {} });
   }
 
   // ─── Save (delegated from form child) ───────────────────────

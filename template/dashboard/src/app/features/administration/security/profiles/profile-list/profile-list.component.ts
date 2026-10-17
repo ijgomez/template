@@ -1,8 +1,9 @@
-import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit, DestroyRef } from '@angular/core';
 import { toObservable, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { debounceTime, distinctUntilChanged, skip } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router, ActivatedRoute, Params } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { AuthService } from '../../../../../core/services/auth.service';
@@ -38,6 +39,9 @@ export class ProfileListComponent implements OnInit {
   private readonly csvExportService = inject(CsvExportService);
   private readonly translateService = inject(TranslateService);
   private readonly dateService = inject(DateService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly destroyRef = inject(DestroyRef);
 
   // View state
   readonly viewMode = signal<ViewMode>('list');
@@ -89,6 +93,49 @@ export class ProfileListComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadProfiles();
+    this.route.queryParams
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => this.restoreViewFromParams(params));
+  }
+
+  /**
+   * Restores the view from URL query params (deep links, back/forward, reload):
+   * `?view=create`, `?view=detail&id=<id>`, `?view=edit&id=<id>`, or list.
+   */
+  private restoreViewFromParams(params: Params): void {
+    const view = params['view'] as ViewMode | undefined;
+    const id = params['id'] ? Number(params['id']) : null;
+
+    if (view === 'create') {
+      if (this.viewMode() !== 'create') {
+        this.formProfile.set({ id: null, name: '', description: '', actions: [] });
+        this.formActionIds.set([]);
+        this.formMode.set('create');
+        this.viewMode.set('create');
+      }
+      return;
+    }
+
+    if ((view === 'detail' || view === 'edit') && id !== null) {
+      const known = this.profiles().find((p) => p.id === id) ?? (this.formProfile().id === id ? this.formProfile() : null);
+      const apply = (profile: Profile) => {
+        this.formProfile.set({ ...profile });
+        this.formActionIds.set(profile.actionIds ?? profile.actions?.map((a) => a.id) ?? []);
+        this.formMode.set(view === 'edit' ? 'edit' : 'view');
+        this.viewMode.set(view === 'edit' ? 'edit' : 'detail');
+      };
+      if (known) {
+        apply(known);
+      } else {
+        this.profileService.findById(id).subscribe({
+          next: (profile) => apply(profile),
+          error: () => this.goToListUrl(),
+        });
+      }
+      return;
+    }
+
+    this.viewMode.set('list');
   }
 
   // ─── List Actions ──────────────────────────────────────────
@@ -247,6 +294,7 @@ export class ProfileListComponent implements OnInit {
     this.formActionIds.set(ids);
     this.formMode.set('view');
     this.viewMode.set('detail');
+    this.navigateToView('detail', profile.id);
   }
 
   showCreateForm(): void {
@@ -254,6 +302,7 @@ export class ProfileListComponent implements OnInit {
     this.formActionIds.set([]);
     this.formMode.set('create');
     this.viewMode.set('create');
+    this.navigateToView('create', null);
   }
 
   showEditForm(profile: Profile): void {
@@ -262,11 +311,24 @@ export class ProfileListComponent implements OnInit {
     this.formActionIds.set(ids);
     this.formMode.set('edit');
     this.viewMode.set('edit');
+    this.navigateToView('edit', profile.id);
   }
 
   backToList(): void {
     this.viewMode.set('list');
+    this.goToListUrl();
     this.loadProfiles();
+  }
+
+  /** Reflects the current sub-view in the URL query params for deep linking. */
+  private navigateToView(view: Exclude<ViewMode, 'list'>, id: number | null | undefined): void {
+    const queryParams: Params = id != null ? { view, id } : { view };
+    this.router.navigate([], { relativeTo: this.route, queryParams, queryParamsHandling: '' });
+  }
+
+  /** Navigates back to the plain list URL (clears the sub-view query params). */
+  private goToListUrl(): void {
+    this.router.navigate([], { relativeTo: this.route, queryParams: {} });
   }
 
   // ─── CRUD Actions ──────────────────────────────────────────

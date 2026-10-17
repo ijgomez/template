@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter, Router } from '@angular/router';
 import { provideTranslateService } from '@ngx-translate/core';
 import { of, throwError } from 'rxjs';
 
@@ -35,6 +36,7 @@ describe('ProfileListComponent', () => {
     findByCriteria: ReturnType<typeof vi.fn>;
     findAllByCriteria: ReturnType<typeof vi.fn>;
     findAllActions: ReturnType<typeof vi.fn>;
+    findById: ReturnType<typeof vi.fn>;
     create: ReturnType<typeof vi.fn>;
     update: ReturnType<typeof vi.fn>;
     delete: ReturnType<typeof vi.fn>;
@@ -56,6 +58,7 @@ describe('ProfileListComponent', () => {
       findByCriteria: vi.fn().mockReturnValue(of(listPage)),
       findAllByCriteria: vi.fn().mockReturnValue(of(listPage.content)),
       findAllActions: vi.fn().mockReturnValue(of(pageOf([]))),
+      findById: vi.fn().mockReturnValue(of(profile(1))),
       create: vi.fn().mockReturnValue(of(profile(9))),
       update: vi.fn().mockReturnValue(of(profile(1))),
       delete: vi.fn().mockReturnValue(of(void 0)),
@@ -73,6 +76,7 @@ describe('ProfileListComponent', () => {
     await TestBed.configureTestingModule({
       imports: [ProfileListComponent],
       providers: [
+        provideRouter([]),
         provideTranslateService({ lang: 'en', fallbackLang: 'en' }),
         { provide: ProfileService, useValue: profileService },
         { provide: AuthService, useValue: { hasAction: authHasAction } },
@@ -368,6 +372,30 @@ describe('ProfileListComponent', () => {
       component.filterName.set('admin');
       component.exportCsv();
       expect(profileService.findAllByCriteria).toHaveBeenCalledWith({ name: 'admin' }, '');
+    });
+  });
+
+  // ─── Deep linking ───────────────────────────────────────────
+
+  describe('deep linking (URL sub-view state)', () => {
+    it('showDetail should sync the URL with view=detail and the profile id', () => {
+      const spy = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+      component.showDetail(profile(1));
+      expect(component.viewMode()).toBe('detail');
+      expect(spy).toHaveBeenCalledWith([], expect.objectContaining({ queryParams: { view: 'detail', id: 1 } }));
+    });
+
+    it('showCreateForm should sync the URL with view=create', () => {
+      const spy = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+      component.showCreateForm();
+      expect(spy).toHaveBeenCalledWith([], expect.objectContaining({ queryParams: { view: 'create' } }));
+    });
+
+    it('backToList should clear the sub-view query params', () => {
+      const spy = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+      component.backToList();
+      expect(component.viewMode()).toBe('list');
+      expect(spy).toHaveBeenCalledWith([], expect.objectContaining({ queryParams: {} }));
     });
   });
 });
