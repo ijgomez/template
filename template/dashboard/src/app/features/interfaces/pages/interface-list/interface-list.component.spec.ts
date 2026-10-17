@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { provideRouter, Router } from '@angular/router';
 import { provideTranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 
@@ -34,6 +35,7 @@ describe('InterfaceListComponent', () => {
     await TestBed.configureTestingModule({
       imports: [InterfaceListComponent],
       providers: [
+        provideRouter([]),
         provideTranslateService({ lang: 'en', fallbackLang: 'en' }),
         { provide: InterfaceService, useValue: interfaceService },
         { provide: NotificationService, useValue: notificationService },
@@ -99,6 +101,24 @@ describe('InterfaceListComponent', () => {
       // Assert
       expect(component.hasInvalidDateRange()).toBe(true);
       expect(component.currentPage()).toBe(3);
+    });
+  });
+
+  describe('deep linking (URL sub-view state)', () => {
+    const log = { id: 7, interfaceName: 'Gateway', status: 'SUCCESS' } as unknown as Parameters<InterfaceListComponent['viewDetail']>[0];
+
+    it('viewDetail should switch to detail mode and sync the URL with view=detail and the log id', () => {
+      const spy = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+      component.viewDetail(log);
+      expect(component.viewMode()).toBe('detail');
+      expect(spy).toHaveBeenCalledWith([], expect.objectContaining({ queryParams: { view: 'detail', id: 7 } }));
+    });
+
+    it('backToList should clear the sub-view query params', () => {
+      const spy = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+      component.backToList();
+      expect(component.viewMode()).toBe('list');
+      expect(spy).toHaveBeenCalledWith([], expect.objectContaining({ queryParams: {} }));
     });
   });
 });

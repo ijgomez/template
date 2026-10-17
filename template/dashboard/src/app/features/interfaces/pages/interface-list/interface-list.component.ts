@@ -1,7 +1,8 @@
-import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit, DestroyRef } from '@angular/core';
 import { toObservable, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { debounceTime, distinctUntilChanged, skip } from 'rxjs';
 import { FormsModule } from '@angular/forms';
+import { Router, ActivatedRoute, Params } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { InterfaceService } from '../../../../core/services/interface.service';
@@ -45,6 +46,9 @@ export class InterfaceListComponent implements OnInit {
   private readonly notificationService = inject(NotificationService);
   private readonly translateService = inject(TranslateService);
   private readonly dateService = inject(DateService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly destroyRef = inject(DestroyRef);
 
   // View state
   readonly viewMode = signal<'list' | 'detail'>('list');
@@ -125,6 +129,33 @@ export class InterfaceListComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadLogs();
+    this.route.queryParams
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => this.restoreViewFromParams(params));
+  }
+
+  /**
+   * Restores the view from URL query params (deep links, back/forward, reload):
+   * `?view=detail&id=<id>` opens the log detail if it is in the loaded page;
+   * otherwise the list. Logs are server-paginated, so a deep link to a log
+   * outside the current page falls back to the list.
+   */
+  private restoreViewFromParams(params: Params): void {
+    const view = params['view'];
+    const id = params['id'] ? Number(params['id']) : null;
+
+    if (view === 'detail' && id !== null) {
+      const log = this.logs().find((l) => l.id === id) ?? (this.selectedLog()?.id === id ? this.selectedLog() : null);
+      if (log) {
+        this.selectedLog.set(log);
+        this.viewMode.set('detail');
+      } else {
+        this.goToListUrl();
+      }
+      return;
+    }
+
+    this.viewMode.set('list');
   }
 
   /**
@@ -199,6 +230,7 @@ export class InterfaceListComponent implements OnInit {
   viewDetail(log: InterfaceLog): void {
     this.selectedLog.set(log);
     this.viewMode.set('detail');
+    this.router.navigate([], { relativeTo: this.route, queryParams: { view: 'detail', id: log.id }, queryParamsHandling: '' });
   }
 
   /**
@@ -227,6 +259,12 @@ export class InterfaceListComponent implements OnInit {
   backToList(): void {
     this.viewMode.set('list');
     this.selectedLog.set(null);
+    this.goToListUrl();
+  }
+
+  /** Navigates back to the plain list URL (clears the sub-view query params). */
+  private goToListUrl(): void {
+    this.router.navigate([], { relativeTo: this.route, queryParams: {} });
   }
 
   /**

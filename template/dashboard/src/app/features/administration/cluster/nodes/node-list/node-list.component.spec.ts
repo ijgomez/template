@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter, Router } from '@angular/router';
 import { provideTranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 
@@ -48,6 +49,7 @@ describe('NodeListComponent', () => {
     TestBed.configureTestingModule({
       imports: [NodeListComponent],
       providers: [
+        provideRouter([]),
         provideTranslateService({ lang: 'en', fallbackLang: 'en' }),
         { provide: ClusterService, useValue: clusterService },
         { provide: NotificationService, useValue: notificationService },
@@ -92,6 +94,24 @@ describe('NodeListComponent', () => {
       setup([buildNode({ status: 'INACTIVE', master: false })]);
       const icon = fixture.nativeElement.querySelector('.badge .bi.bi-x-circle-fill');
       expect(icon).toBeTruthy();
+    });
+  });
+
+  describe('deep linking (URL sub-view state)', () => {
+    it('openForm should switch to form mode and sync the URL with view=form and the node id', () => {
+      setup([buildNode({ id: 5 })]);
+      const spy = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+      component.openForm(buildNode({ id: 5 }));
+      expect(component.viewMode()).toBe('form');
+      expect(spy).toHaveBeenCalledWith([], expect.objectContaining({ queryParams: { view: 'form', id: 5 } }));
+    });
+
+    it('backToList should clear the sub-view query params', () => {
+      setup();
+      const spy = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+      component.backToList();
+      expect(component.viewMode()).toBe('list');
+      expect(spy).toHaveBeenCalledWith([], expect.objectContaining({ queryParams: {} }));
     });
   });
 });

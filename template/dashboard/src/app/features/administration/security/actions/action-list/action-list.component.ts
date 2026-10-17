@@ -1,7 +1,8 @@
-import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit, DestroyRef } from '@angular/core';
 import { toObservable, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { debounceTime, distinctUntilChanged, skip } from 'rxjs';
 import { FormsModule } from '@angular/forms';
+import { Router, ActivatedRoute, Params } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { ActionService } from '../../../../../core/services/action.service';
@@ -34,6 +35,9 @@ export class ActionListComponent implements OnInit {
   private readonly notificationService = inject(NotificationService);
   private readonly csvExportService = inject(CsvExportService);
   private readonly translateService = inject(TranslateService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly destroyRef = inject(DestroyRef);
 
   // View state
   readonly viewMode = signal<ViewMode>('list');
@@ -93,6 +97,37 @@ export class ActionListComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadActions();
+    this.route.queryParams
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => this.restoreViewFromParams(params));
+  }
+
+  /**
+   * Restores the view from URL query params (deep links, back/forward, reload):
+   * `?view=detail&id=<id>`, `?view=edit&id=<id>`, or list. (No create mode.)
+   */
+  private restoreViewFromParams(params: Params): void {
+    const view = params['view'] as ViewMode | undefined;
+    const id = params['id'] ? Number(params['id']) : null;
+
+    if ((view === 'detail' || view === 'edit') && id !== null) {
+      const known = this.actions().find((a) => a.id === id) ?? (this.selectedAction()?.id === id ? this.selectedAction() : null);
+      const apply = (action: Action) => {
+        this.selectedAction.set(action);
+        this.viewMode.set(view === 'edit' ? 'edit' : 'detail');
+      };
+      if (known) {
+        apply(known);
+      } else {
+        this.actionService.findById(id).subscribe({
+          next: (action) => apply(action),
+          error: () => this.goToListUrl(),
+        });
+      }
+      return;
+    }
+
+    this.viewMode.set('list');
   }
 
   // ─── List Actions ──────────────────────────────────────────
@@ -238,6 +273,7 @@ export class ActionListComponent implements OnInit {
   showDetail(action: Action): void {
     this.selectedAction.set(action);
     this.viewMode.set('detail');
+    this.navigateToView('detail', action.id);
   }
 
   /**
@@ -246,6 +282,7 @@ export class ActionListComponent implements OnInit {
   showEditForm(action: Action): void {
     this.selectedAction.set(action);
     this.viewMode.set('edit');
+    this.navigateToView('edit', action.id);
   }
 
   /**
@@ -255,6 +292,17 @@ export class ActionListComponent implements OnInit {
     this.viewMode.set('list');
     this.selectedAction.set(null);
     this.selectedRow.set(null);
+    this.goToListUrl();
+  }
+
+  /** Reflects the current sub-view in the URL query params for deep linking. */
+  private navigateToView(view: Exclude<ViewMode, 'list'>, id: number): void {
+    this.router.navigate([], { relativeTo: this.route, queryParams: { view, id }, queryParamsHandling: '' });
+  }
+
+  /** Navigates back to the plain list URL (clears the sub-view query params). */
+  private goToListUrl(): void {
+    this.router.navigate([], { relativeTo: this.route, queryParams: {} });
   }
 
   // ─── CRUD Actions ──────────────────────────────────────────

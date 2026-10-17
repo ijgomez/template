@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { provideRouter, Router } from '@angular/router';
 import { provideTranslateService } from '@ngx-translate/core';
 import { of, throwError } from 'rxjs';
 
@@ -44,6 +45,7 @@ describe('ConfigurationListComponent', () => {
 
   const interfaceService = {
     findAllConfigurations: (..._a: unknown[]) => of([config, otherConfig]),
+    findConfigurationById: (..._a: unknown[]) => of(config),
   };
   const notificationService = {
     showProgress: (..._a: unknown[]) => 'ntf-1',
@@ -58,6 +60,7 @@ describe('ConfigurationListComponent', () => {
     await TestBed.configureTestingModule({
       imports: [ConfigurationListComponent],
       providers: [
+        provideRouter([]),
         provideTranslateService({ lang: 'en', fallbackLang: 'en' }),
         { provide: InterfaceService, useValue: interfaceService },
         { provide: NotificationService, useValue: notificationService },
@@ -235,6 +238,22 @@ describe('ConfigurationListComponent', () => {
 
       expect(called).toBe(false);
       csvExportService.export = () => undefined;
+    });
+  });
+
+  describe('deep linking (URL sub-view state)', () => {
+    it('viewDetail should sync the URL with view=detail and the config id', () => {
+      const spy = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+      component.viewDetail(config);
+      expect(component.viewMode()).toBe('detail');
+      expect(spy).toHaveBeenCalledWith([], expect.objectContaining({ queryParams: { view: 'detail', id: 1 } }));
+    });
+
+    it('backToList should clear the sub-view query params', () => {
+      const spy = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+      component.backToList();
+      expect(component.viewMode()).toBe('list');
+      expect(spy).toHaveBeenCalledWith([], expect.objectContaining({ queryParams: {} }));
     });
   });
 });

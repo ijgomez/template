@@ -1,6 +1,8 @@
-import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router, ActivatedRoute, Params } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { ClusterService } from '../../../../../core/services/cluster.service';
@@ -37,6 +39,9 @@ export class NodeListComponent implements OnInit {
   private readonly translateService = inject(TranslateService);
   private readonly dateService = inject(DateService);
   private readonly csvExportService = inject(CsvExportService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly destroyRef = inject(DestroyRef);
 
   // Data state
   readonly allNodes = signal<ClusterNode[]>([]);
@@ -129,6 +134,33 @@ export class NodeListComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadNodes();
+    this.route.queryParams
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => this.restoreViewFromParams(params));
+  }
+
+  /**
+   * Restores the view from URL query params (deep links, back/forward, reload):
+   * `?view=form&id=<id>` opens the node form; otherwise the list. Nodes are loaded
+   * client-side, so a deep link resolves once the list has loaded.
+   */
+  private restoreViewFromParams(params: Params): void {
+    const view = params['view'];
+    const id = params['id'] ? Number(params['id']) : null;
+
+    if (view === 'form' && id !== null) {
+      const node = this.allNodes().find((n) => n.id === id) ?? (this.selectedNode()?.id === id ? this.selectedNode() : null);
+      if (node) {
+        this.selectedNode.set(node);
+        this.viewMode.set('form');
+      } else {
+        // Not loaded yet or unknown id: fall back to the list URL.
+        this.goToListUrl();
+      }
+      return;
+    }
+
+    this.viewMode.set('list');
   }
 
   /**
@@ -164,6 +196,12 @@ export class NodeListComponent implements OnInit {
   openForm(node: ClusterNode): void {
     this.selectedNode.set(node);
     this.viewMode.set('form');
+    this.router.navigate([], { relativeTo: this.route, queryParams: { view: 'form', id: node.id }, queryParamsHandling: '' });
+  }
+
+  /** Navigates back to the plain list URL (clears the sub-view query params). */
+  private goToListUrl(): void {
+    this.router.navigate([], { relativeTo: this.route, queryParams: {} });
   }
 
   /**
@@ -192,6 +230,7 @@ export class NodeListComponent implements OnInit {
   backToList(): void {
     this.selectedNode.set(null);
     this.viewMode.set('list');
+    this.goToListUrl();
   }
 
   /**

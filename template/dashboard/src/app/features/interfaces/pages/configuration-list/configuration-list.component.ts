@@ -1,5 +1,7 @@
-import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
+import { Router, ActivatedRoute, Params } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { InterfaceService } from '../../../../core/services/interface.service';
@@ -32,6 +34,9 @@ export class ConfigurationListComponent implements OnInit {
   private readonly translateService = inject(TranslateService);
   private readonly dateService = inject(DateService);
   private readonly csvExportService = inject(CsvExportService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly destroyRef = inject(DestroyRef);
 
   // View state
   readonly viewMode = signal<'list' | 'detail'>('list');
@@ -112,6 +117,37 @@ export class ConfigurationListComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadConfigurations();
+    this.route.queryParams
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => this.restoreViewFromParams(params));
+  }
+
+  /**
+   * Restores the view from URL query params (deep links, back/forward, reload):
+   * `?view=detail&id=<id>` or list.
+   */
+  private restoreViewFromParams(params: Params): void {
+    const view = params['view'];
+    const id = params['id'] ? Number(params['id']) : null;
+
+    if (view === 'detail' && id !== null) {
+      const known = this.configurations().find((c) => c.id === id) ?? (this.selectedConfig()?.id === id ? this.selectedConfig() : null);
+      if (known) {
+        this.selectedConfig.set(known);
+        this.viewMode.set('detail');
+      } else {
+        this.interfaceService.findConfigurationById(id).subscribe({
+          next: (config) => {
+            this.selectedConfig.set(config);
+            this.viewMode.set('detail');
+          },
+          error: () => this.goToListUrl(),
+        });
+      }
+      return;
+    }
+
+    this.viewMode.set('list');
   }
 
   /**
@@ -202,6 +238,7 @@ export class ConfigurationListComponent implements OnInit {
   viewDetail(config: InterfaceConfig): void {
     this.selectedConfig.set(config);
     this.viewMode.set('detail');
+    this.navigateToDetail(config.id);
   }
 
   /**
@@ -210,6 +247,17 @@ export class ConfigurationListComponent implements OnInit {
   backToList(): void {
     this.viewMode.set('list');
     this.selectedConfig.set(null);
+    this.goToListUrl();
+  }
+
+  /** Reflects the detail sub-view in the URL query params for deep linking. */
+  private navigateToDetail(id: number): void {
+    this.router.navigate([], { relativeTo: this.route, queryParams: { view: 'detail', id }, queryParamsHandling: '' });
+  }
+
+  /** Navigates back to the plain list URL (clears the sub-view query params). */
+  private goToListUrl(): void {
+    this.router.navigate([], { relativeTo: this.route, queryParams: {} });
   }
 
   /**
