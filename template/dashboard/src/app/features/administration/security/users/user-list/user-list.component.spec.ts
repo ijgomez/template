@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { provideRouter, Router } from '@angular/router';
 import { provideTranslateService } from '@ngx-translate/core';
 import { of, throwError } from 'rxjs';
 
@@ -62,6 +63,7 @@ describe('UserListComponent', () => {
     await TestBed.configureTestingModule({
       imports: [UserListComponent],
       providers: [
+        provideRouter([]),
         provideTranslateService({ lang: 'en', fallbackLang: 'en' }),
         { provide: UserService, useValue: userService },
         { provide: AuthService, useValue: authService },
@@ -353,6 +355,40 @@ describe('UserListComponent', () => {
       expect(key).toBe('notification.export.error');
       userService.findAllByCriteria = () => of([user]);
       notificationService.updateToError = () => undefined;
+    });
+  });
+
+  describe('deep linking (URL sub-view state)', () => {
+    it('showDetail should sync the URL with view=detail and the user id', () => {
+      const router = TestBed.inject(Router);
+      const spy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+
+      component.showDetail(user);
+
+      expect(component.viewMode()).toBe('detail');
+      expect(spy).toHaveBeenCalledWith([], expect.objectContaining({
+        queryParams: { view: 'detail', id: 1 },
+      }));
+    });
+
+    it('showCreateForm should sync the URL with view=create and no id', () => {
+      const router = TestBed.inject(Router);
+      const spy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+
+      component.showCreateForm();
+
+      expect(component.viewMode()).toBe('create');
+      expect(spy).toHaveBeenCalledWith([], expect.objectContaining({ queryParams: { view: 'create' } }));
+    });
+
+    it('backToList should clear the sub-view query params', () => {
+      const router = TestBed.inject(Router);
+      const spy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+
+      component.backToList();
+
+      expect(component.viewMode()).toBe('list');
+      expect(spy).toHaveBeenCalledWith([], expect.objectContaining({ queryParams: {} }));
     });
   });
 });

@@ -1,8 +1,9 @@
-import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit, DestroyRef } from '@angular/core';
 import { toObservable, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { debounceTime, distinctUntilChanged, skip } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router, ActivatedRoute, Params } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { UserService } from '../../../../../core/services/user.service';
@@ -34,6 +35,9 @@ export class UserListComponent implements OnInit {
   private readonly csvExportService = inject(CsvExportService);
   private readonly translateService = inject(TranslateService);
   private readonly dateService = inject(DateService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly destroyRef = inject(DestroyRef);
 
   // View state
   readonly viewMode = signal<ViewMode>('list');
@@ -99,6 +103,55 @@ export class UserListComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadUsers();
+    // React to query-param changes (deep links, browser back/forward, reload).
+    this.route.queryParams
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => this.restoreViewFromParams(params));
+  }
+
+  /**
+   * Restores the view (list / detail / create / edit) from the URL query params,
+   * enabling deep linking, shareable URLs and working browser back/forward.
+   * - `?view=create`         → create form
+   * - `?view=detail&id=<id>` → read-only detail of that user
+   * - `?view=edit&id=<id>`   → edit form of that user
+   * - (none)                 → list
+   */
+  private restoreViewFromParams(params: Params): void {
+    const view = params['view'] as ViewMode | undefined;
+    const id = params['id'] ? Number(params['id']) : null;
+
+    if (view === 'create') {
+      // No id needed for creation.
+      if (this.viewMode() !== 'create') {
+        this.formUser.set(this.emptyUser());
+        this.formMode.set('create');
+        this.viewMode.set('create');
+      }
+      return;
+    }
+
+    if ((view === 'detail' || view === 'edit') && id !== null) {
+      // Reuse the row if already loaded; otherwise fetch it (deep link / reload).
+      const known = this.users().find((u) => u.id === id) ?? (this.formUser().id === id ? this.formUser() : null);
+      const apply = (user: UserDTO) => {
+        this.formUser.set({ ...user });
+        this.formMode.set(view === 'edit' ? 'edit' : 'view');
+        this.viewMode.set(view === 'edit' ? 'edit' : 'detail');
+      };
+      if (known) {
+        apply(known);
+      } else {
+        this.userService.findById(id).subscribe({
+          next: (user) => apply(user),
+          error: () => this.goToListUrl(),
+        });
+      }
+      return;
+    }
+
+    // Default: list view.
+    this.viewMode.set('list');
   }
 
   // ─── List Actions ──────────────────────────────────────────
@@ -250,22 +303,41 @@ export class UserListComponent implements OnInit {
     this.formUser.set({ ...user });
     this.formMode.set('view');
     this.viewMode.set('detail');
+    this.navigateToView('detail', user.id);
   }
 
   showCreateForm(): void {
     this.formUser.set(this.emptyUser());
     this.formMode.set('create');
     this.viewMode.set('create');
+    this.navigateToView('create', null);
   }
 
   showEditForm(user: UserDTO): void {
     this.formUser.set({ ...user });
     this.formMode.set('edit');
     this.viewMode.set('edit');
+    this.navigateToView('edit', user.id);
   }
 
   backToList(): void {
     this.viewMode.set('list');
+    this.goToListUrl();
+  }
+
+  /**
+   * Updates the URL query params to reflect the current sub-view, so the state is
+   * deep-linkable and the browser back/forward buttons work. The actual view state
+   * is applied by the queryParams subscription (single source of truth).
+   */
+  private navigateToView(view: Exclude<ViewMode, 'list'>, id: number | null | undefined): void {
+    const queryParams: Params = id != null ? { view, id } : { view };
+    this.router.navigate([], { relativeTo: this.route, queryParams, queryParamsHandling: '' });
+  }
+
+  /** Navigates back to the plain list URL (clears the sub-view query params). */
+  private goToListUrl(): void {
+    this.router.navigate([], { relativeTo: this.route, queryParams: {} });
   }
 
   // ─── CRUD Actions ──────────────────────────────────────────
