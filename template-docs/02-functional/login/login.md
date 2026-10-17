@@ -311,7 +311,7 @@ Catálogo de test cases derivado de los requisitos funcionales de login (`RF-LOG
 
 #### TC-LOG-01 · Render del formulario de login
 
-- **Prioridad:** Media · **Tipo:** UI · **Traza:** RF-LOG-2 · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Media · **Tipo:** UI · **Traza:** RF-LOG-2 · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** navegador sin sesión activa (sin cookie de refresh). Si hubiera sesión, ejecutar logout o abrir ventana privada.
 - **Teardown:** No aplica (no modifica estado).
 
@@ -323,7 +323,7 @@ Catálogo de test cases derivado de los requisitos funcionales de login (`RF-LOG
 
 #### TC-LOG-02 · Login con credenciales válidas
 
-- **Prioridad:** Alta · **Tipo:** Funcional, E2E · **Traza:** RF-LOG-1 (AC1.1–AC1.3), RF-AUT-1 · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Funcional, E2E · **Traza:** RF-LOG-1 (AC1.1–AC1.3), RF-AUT-1 · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** usuario `{{ADMIN_USER}}` existe en el entorno (dato semilla). Navegador sin sesión.
 - **Teardown:** ejecutar logout para no dejar sesión abierta.
 
@@ -336,7 +336,7 @@ Catálogo de test cases derivado de los requisitos funcionales de login (`RF-LOG
 
 #### TC-LOG-03 · Login con credenciales inválidas
 
-- **Prioridad:** Alta · **Tipo:** Negativo · **Traza:** RF-LOG-3 (AC3.1–AC3.3), RF-AUT-1 (AC1.2) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Negativo · **Traza:** RF-LOG-3 (AC3.1–AC3.3), RF-AUT-1 (AC1.2) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** navegador sin sesión.
 - **Teardown:** No aplica.
 
@@ -349,7 +349,7 @@ Catálogo de test cases derivado de los requisitos funcionales de login (`RF-LOG
 
 #### TC-LOG-04 · Validación de campos obligatorios
 
-- **Prioridad:** Media · **Tipo:** Negativo · **Traza:** RF-LOG-2 (AC2.1–AC2.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Media · **Tipo:** Negativo · **Traza:** RF-LOG-2 (AC2.1–AC2.3) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** navegador sin sesión.
 - **Teardown:** No aplica.
 
@@ -361,7 +361,7 @@ Catálogo de test cases derivado de los requisitos funcionales de login (`RF-LOG
 
 #### TC-LOG-05 · Mostrar / ocultar contraseña
 
-- **Prioridad:** Baja · **Tipo:** UI · **Traza:** RF-LOG-5 (AC5.1–AC5.2) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Baja · **Tipo:** UI · **Traza:** RF-LOG-5 (AC5.1–AC5.2) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** navegador sin sesión.
 - **Teardown:** No aplica.
 
@@ -373,7 +373,7 @@ Catálogo de test cases derivado de los requisitos funcionales de login (`RF-LOG
 
 #### TC-LOG-06 · Control de envío (evitar duplicados)
 
-- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-LOG-4 (AC4.1–AC4.2) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-LOG-4 (AC4.1–AC4.2) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** navegador sin sesión; usuario `{{ADMIN_USER}}` válido.
 - **Teardown:** si el login llega a completarse, ejecutar logout.
 
@@ -384,7 +384,7 @@ Catálogo de test cases derivado de los requisitos funcionales de login (`RF-LOG
 
 #### TC-LOG-07 · Selección de idioma en login
 
-- **Prioridad:** Baja · **Tipo:** UI · **Traza:** RF-LOG-6 (AC6.1–AC6.2) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Baja · **Tipo:** UI · **Traza:** RF-LOG-6 (AC6.1–AC6.2) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** navegador sin sesión.
 - **Teardown:** restablecer idioma a ES (pulsar `btn-lang-es`) para dejar el estado por defecto.
 
@@ -396,7 +396,7 @@ Catálogo de test cases derivado de los requisitos funcionales de login (`RF-LOG
 
 #### TC-LOG-08 · Persistencia de sesión tras recarga
 
-- **Prioridad:** Alta · **Tipo:** Funcional · **Traza:** RF-AUT-2 (AC2.1, AC2.4, AC2.5) · **Independiente:** Sí · **Dependencias:** ninguna (incluye su propio login)
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Funcional · **Traza:** RF-AUT-2 (AC2.1, AC2.4, AC2.5) · **Independiente:** Sí · **Dependencias:** ninguna (incluye su propio login)
 - **Setup:** navegador sin sesión; usuario `{{ADMIN_USER}}` válido.
 - **Teardown:** ejecutar logout.
 
@@ -408,7 +408,7 @@ Catálogo de test cases derivado de los requisitos funcionales de login (`RF-LOG
 
 #### TC-LOG-09 · Renovación automática del access token
 
-- **Prioridad:** Alta · **Tipo:** Funcional · **Traza:** RF-AUT-3 (AC3.1–AC3.4), RNF-AUT-6 · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Funcional · **Traza:** RF-AUT-3 (AC3.1–AC3.4), RNF-AUT-6 · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** sesión iniciada; conviene reducir `jwt.access-token-expiration` y/o ajustar `tokenRefreshMargin` en el entorno de prueba para observar la renovación en un tiempo razonable.
 - **Teardown:** ejecutar logout.
 
@@ -420,7 +420,7 @@ Catálogo de test cases derivado de los requisitos funcionales de login (`RF-LOG
 
 #### TC-LOG-10 · Logout invalida la sesión en cliente y servidor
 
-- **Prioridad:** Alta · **Tipo:** Seguridad · **Traza:** RF-AUT-4 (AC4.1–AC4.6) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Seguridad · **Traza:** RF-AUT-4 (AC4.1–AC4.6) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** sesión iniciada con `{{ADMIN_USER}}`.
 - **Teardown:** No aplica (el propio caso deja la sesión cerrada).
 
@@ -433,7 +433,7 @@ Catálogo de test cases derivado de los requisitos funcionales de login (`RF-LOG
 
 #### TC-LOG-11 · Reutilización de refresh token revocado (detección de robo)
 
-- **Prioridad:** Alta · **Tipo:** Seguridad · **Traza:** RF-AUT-5 (AC5.4), RF-AUT-3 (AC3.5) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Seguridad · **Traza:** RF-AUT-5 (AC5.4), RF-AUT-3 (AC3.5) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** vía API. Hacer login y capturar la cookie de refresh inicial (`RT0`).
 - **Teardown:** ejecutar logout para revocar cualquier token vivo.
 

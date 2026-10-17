@@ -417,7 +417,7 @@ Precondición del ciclo: usuario con `INTERFACES_READ`; al menos una interfaz re
 
 #### TC-CFG-01 · Listado paginado con indicadores de estado
 
-- **Prioridad:** Alta · **Tipo:** Funcional · **Traza:** RF-CFG-1 (AC1.1–AC1.4) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Funcional · **Traza:** RF-CFG-1 (AC1.1–AC1.4) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** logout.
 
@@ -428,7 +428,7 @@ Precondición del ciclo: usuario con `INTERFACES_READ`; al menos una interfaz re
 
 #### TC-CFG-02 · Filtrado por nombre, protocolo y estado
 
-- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-CFG-2 (AC2.1–AC2.5) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-CFG-2 (AC2.1–AC2.5) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** logout.
 
@@ -439,7 +439,7 @@ Precondición del ciclo: usuario con `INTERFACES_READ`; al menos una interfaz re
 
 #### TC-CFG-03 · Detalle de interfaz
 
-- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-CFG-3 (AC3.1–AC3.4) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-CFG-3 (AC3.1–AC3.4) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`; al menos una fila.
 - **Teardown:** logout.
 
@@ -450,7 +450,7 @@ Precondición del ciclo: usuario con `INTERFACES_READ`; al menos una interfaz re
 
 #### TC-CFG-04 · Exportación CSV
 
-- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-CFG-4 (AC4.1–AC4.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-CFG-4 (AC4.1–AC4.3) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** eliminar el fichero descargado; logout.
 
@@ -461,7 +461,7 @@ Precondición del ciclo: usuario con `INTERFACES_READ`; al menos una interfaz re
 
 #### TC-CFG-05 · Pantalla de solo lectura
 
-- **Prioridad:** Alta · **Tipo:** Negativo, Seguridad · **Traza:** RF-CFG-5 (AC5.1–AC5.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Negativo, Seguridad · **Traza:** RF-CFG-5 (AC5.1–AC5.3) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** logout.
 
@@ -472,7 +472,7 @@ Precondición del ciclo: usuario con `INTERFACES_READ`; al menos una interfaz re
 
 #### TC-CFG-06 · Acceso sin autorización
 
-- **Prioridad:** Alta · **Tipo:** Seguridad · **Traza:** RNF-CFG-1 · **Independiente:** Sí · **Dependencias:** requiere token/usuario sin `INTERFACES_READ`
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Seguridad · **Traza:** RNF-CFG-1 · **Independiente:** Sí · **Dependencias:** requiere token/usuario sin `INTERFACES_READ`
 - **Setup:** preparar un usuario sin `INTERFACES_READ`.
 - **Teardown:** eliminar el usuario/perfil de prueba.
 

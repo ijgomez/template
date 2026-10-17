@@ -485,7 +485,7 @@ Precondición del ciclo: usuario administrador `{{ADMIN_USER}}` con `USER_READ` 
 
 #### TC-USR-01 · Listado paginado y ordenable
 
-- **Prioridad:** Alta · **Tipo:** Funcional, E2E · **Traza:** RF-USR-1 (AC1.1–AC1.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Funcional, E2E · **Traza:** RF-USR-1 (AC1.1–AC1.3) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** logout.
 
@@ -497,7 +497,7 @@ Precondición del ciclo: usuario administrador `{{ADMIN_USER}}` con `USER_READ` 
 
 #### TC-USR-02 · Búsqueda y filtrado
 
-- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-USR-2 (AC2.1–AC2.4) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-USR-2 (AC2.1–AC2.4) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}` (el propio `admin` sirve como fila existente a buscar).
 - **Teardown:** logout.
 
@@ -509,7 +509,7 @@ Precondición del ciclo: usuario administrador `{{ADMIN_USER}}` con `USER_READ` 
 
 #### TC-USR-03 · Alta de usuario válida
 
-- **Prioridad:** Alta · **Tipo:** Funcional, E2E · **Traza:** RF-USR-3 (AC3.1–AC3.4) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Funcional, E2E · **Traza:** RF-USR-3 (AC3.1–AC3.4) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`; existe al menos un perfil seleccionable.
 - **Teardown:** eliminar el usuario `e2e_user_{{UNIQUE}}` (vía UI o `DELETE /api/v1/administration/security/users/{id}`).
 
@@ -522,7 +522,7 @@ Precondición del ciclo: usuario administrador `{{ADMIN_USER}}` con `USER_READ` 
 
 #### TC-USR-04 · Alta con email con formato inválido
 
-- **Prioridad:** Media · **Tipo:** Negativo · **Traza:** RF-USR-3 (AC3.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Media · **Tipo:** Negativo · **Traza:** RF-USR-3 (AC3.3) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** cancelar el formulario (no se crea nada); logout.
 
@@ -533,7 +533,7 @@ Precondición del ciclo: usuario administrador `{{ADMIN_USER}}` con `USER_READ` 
 
 #### TC-USR-05 · Edición de usuario (usuario inmutable)
 
-- **Prioridad:** Alta · **Tipo:** Funcional, E2E · **Traza:** RF-USR-4 (AC4.1–AC4.3) · **Independiente:** Sí (crea su propio usuario) · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Funcional, E2E · **Traza:** RF-USR-4 (AC4.1–AC4.3) · **Independiente:** Sí (crea su propio usuario) · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`; crear previamente el usuario `e2e_user_{{UNIQUE}}` (vía `POST /api/v1/administration/security/users` o repitiendo TC-USR-03) para editar un registro aislado.
 - **Teardown:** eliminar `e2e_user_{{UNIQUE}}`.
 
@@ -545,7 +545,7 @@ Precondición del ciclo: usuario administrador `{{ADMIN_USER}}` con `USER_READ` 
 
 #### TC-USR-06 · Eliminación con confirmación
 
-- **Prioridad:** Alta · **Tipo:** Funcional, E2E · **Traza:** RF-USR-5 (AC5.1–AC5.3) · **Independiente:** Sí (crea su propio usuario) · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Funcional, E2E · **Traza:** RF-USR-5 (AC5.1–AC5.3) · **Independiente:** Sí (crea su propio usuario) · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`; crear previamente `e2e_user_{{UNIQUE}}`.
 - **Teardown:** si tras el caso el usuario sigue existiendo (fallo), eliminarlo por API.
 
@@ -557,7 +557,7 @@ Precondición del ciclo: usuario administrador `{{ADMIN_USER}}` con `USER_READ` 
 
 #### TC-USR-07 · Detalle con doble clic y auditoría
 
-- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-USR-6 (AC6.1–AC6.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-USR-6 (AC6.1–AC6.3) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** logout.
 
@@ -568,7 +568,7 @@ Precondición del ciclo: usuario administrador `{{ADMIN_USER}}` con `USER_READ` 
 
 #### TC-USR-08 · Autoservicio del perfil propio (/me)
 
-- **Prioridad:** Media · **Tipo:** Funcional, API · **Traza:** RF-USR-6 (AC6.4) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Media · **Tipo:** Funcional, API · **Traza:** RF-USR-6 (AC6.4) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** vía API. Login con `{{ADMIN_USER}}` y obtener token.
 - **Teardown:** restaurar los valores originales del usuario (`PUT /me` con los datos previos) para no dejar el perfil alterado.
 
@@ -579,7 +579,7 @@ Precondición del ciclo: usuario administrador `{{ADMIN_USER}}` con `USER_READ` 
 
 #### TC-USR-09 · Exportación CSV filtrada
 
-- **Prioridad:** Media · **Tipo:** Funcional, E2E · **Traza:** RF-USR-7 (AC7.1–AC7.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Media · **Tipo:** Funcional, E2E · **Traza:** RF-USR-7 (AC7.1–AC7.3) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** eliminar el fichero descargado; logout.
 
@@ -590,7 +590,7 @@ Precondición del ciclo: usuario administrador `{{ADMIN_USER}}` con `USER_READ` 
 
 #### TC-USR-10 · Autorización y visibilidad de acciones
 
-- **Prioridad:** Alta · **Tipo:** Seguridad, API · **Traza:** RNF-USR-1, RNF-USR-2 · **Independiente:** Sí · **Dependencias:** requiere un usuario con `USER_READ` pero sin `USER_WRITE`
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Seguridad, API · **Traza:** RNF-USR-1, RNF-USR-2 · **Independiente:** Sí · **Dependencias:** requiere un usuario con `USER_READ` pero sin `USER_WRITE`
 - **Setup:** vía API/UI. Preparar un usuario de solo lectura (perfil con `USER_READ` sin `USER_WRITE`) y obtener su token.
 - **Teardown:** eliminar el usuario/perfil de prueba creados.
 

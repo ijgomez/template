@@ -378,7 +378,7 @@ Precondición del ciclo: usuario con `CLUSTER_LOCK_READ`; backend con al menos u
 
 #### TC-CLB-01 · Listado de bloqueos con métricas
 
-- **Prioridad:** Alta · **Tipo:** Funcional · **Traza:** RF-CLB-1 (AC1.1–AC1.4) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Funcional · **Traza:** RF-CLB-1 (AC1.1–AC1.4) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`; el backend ha generado al menos un bloqueo.
 - **Teardown:** logout.
 
@@ -389,7 +389,7 @@ Precondición del ciclo: usuario con `CLUSTER_LOCK_READ`; backend con al menos u
 
 #### TC-CLB-02 · Filtrado por nombre de tarea
 
-- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-CLB-2 (AC2.1–AC2.2) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-CLB-2 (AC2.1–AC2.2) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`; identificar el nombre de un bloqueo existente (p. ej. `NODOS`).
 - **Teardown:** logout.
 
@@ -399,7 +399,7 @@ Precondición del ciclo: usuario con `CLUSTER_LOCK_READ`; backend con al menos u
 
 #### TC-CLB-03 · Métricas visibles en el listado (sin pantalla de detalle)
 
-- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-CLB-3 (AC3.1–AC3.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-CLB-3 (AC3.1–AC3.3) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`; al menos una fila.
 - **Teardown:** logout.
 
@@ -410,7 +410,7 @@ Precondición del ciclo: usuario con `CLUSTER_LOCK_READ`; backend con al menos u
 
 #### TC-CLB-04 · Exportación CSV
 
-- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-CLB-4 (AC4.1–AC4.4) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-CLB-4 (AC4.1–AC4.4) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** eliminar el fichero descargado; logout.
 
@@ -421,7 +421,7 @@ Precondición del ciclo: usuario con `CLUSTER_LOCK_READ`; backend con al menos u
 
 #### TC-CLB-05 · Gestión controlada por el sistema
 
-- **Prioridad:** Alta · **Tipo:** Negativo, Seguridad, API · **Traza:** RF-CLB-5 (AC5.1–AC5.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Negativo, Seguridad, API · **Traza:** RF-CLB-5 (AC5.1–AC5.3) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** vía API con token de `{{ADMIN_USER}}`.
 - **Teardown:** No aplica.
 

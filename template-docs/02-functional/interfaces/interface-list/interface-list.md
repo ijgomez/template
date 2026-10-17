@@ -423,7 +423,7 @@ Precondición del ciclo: usuario con `INTERFACES_READ`; tabla `interface_log` co
 
 #### TC-IFM-01 · Listado paginado de solo lectura
 
-- **Prioridad:** Alta · **Tipo:** Funcional · **Traza:** RF-IFM-1 (AC1.1–AC1.5) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Funcional · **Traza:** RF-IFM-1 (AC1.1–AC1.5) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** logout.
 
@@ -434,7 +434,7 @@ Precondición del ciclo: usuario con `INTERFACES_READ`; tabla `interface_log` co
 
 #### TC-IFM-02 · Filtrado por tipo y estado
 
-- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-IFM-2 (AC2.2, AC2.4–AC2.6) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-IFM-2 (AC2.2, AC2.4–AC2.6) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** logout.
 
@@ -445,7 +445,7 @@ Precondición del ciclo: usuario con `INTERFACES_READ`; tabla `interface_log` co
 
 #### TC-IFM-03 · Filtrado por interfaz
 
-- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-IFM-2 (AC2.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-IFM-2 (AC2.3) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`; el desplegable de interfaz se puebla desde `GET /api/v1/interfaces/configuration`.
 - **Teardown:** logout.
 
@@ -455,7 +455,7 @@ Precondición del ciclo: usuario con `INTERFACES_READ`; tabla `interface_log` co
 
 #### TC-IFM-04 · Detalle desde la barra de acciones
 
-- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-IFM-3 (AC3.1–AC3.4) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-IFM-3 (AC3.1–AC3.4) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`; al menos una fila en el listado.
 - **Teardown:** logout.
 
@@ -466,7 +466,7 @@ Precondición del ciclo: usuario con `INTERFACES_READ`; tabla `interface_log` co
 
 #### TC-IFM-05 · Detalle por doble clic
 
-- **Prioridad:** Baja · **Tipo:** UI · **Traza:** RF-IFM-3 (AC3.1) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Baja · **Tipo:** UI · **Traza:** RF-IFM-3 (AC3.1) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** logout.
 
@@ -477,7 +477,7 @@ Precondición del ciclo: usuario con `INTERFACES_READ`; tabla `interface_log` co
 
 #### TC-IFM-06 · Exportación CSV completa
 
-- **Prioridad:** Alta · **Tipo:** Funcional · **Traza:** RF-IFM-4 (AC4.1, AC4.3–AC4.5) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Funcional · **Traza:** RF-IFM-4 (AC4.1, AC4.3–AC4.5) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** eliminar el fichero descargado; logout.
 
@@ -487,7 +487,7 @@ Precondición del ciclo: usuario con `INTERFACES_READ`; tabla `interface_log` co
 
 #### TC-IFM-07 · Exportación sin coincidencias
 
-- **Prioridad:** Baja · **Tipo:** Negativo · **Traza:** RF-IFM-4 (AC4.2) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Baja · **Tipo:** Negativo · **Traza:** RF-IFM-4 (AC4.2) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** logout.
 
@@ -497,7 +497,7 @@ Precondición del ciclo: usuario con `INTERFACES_READ`; tabla `interface_log` co
 
 #### TC-IFM-08 · Acceso sin autorización y bloqueo de escritura
 
-- **Prioridad:** Alta · **Tipo:** Seguridad, Negativo, API · **Traza:** RNF-IFM-1 · **Independiente:** Sí · **Dependencias:** requiere token sin `INTERFACES_READ`
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Seguridad, Negativo, API · **Traza:** RNF-IFM-1 · **Independiente:** Sí · **Dependencias:** requiere token sin `INTERFACES_READ`
 - **Setup:** preparar un usuario sin `INTERFACES_READ` y su token; también un token de `{{ADMIN_USER}}` para el bloqueo de escritura.
 - **Teardown:** eliminar el usuario/perfil de prueba.
 

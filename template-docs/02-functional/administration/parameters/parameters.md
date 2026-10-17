@@ -471,7 +471,7 @@ Precondición del ciclo: usuario con `SYSTEM_PARAMETER_READ` / `SYSTEM_PARAMETER
 
 #### TC-PAR-01 · Listado paginado y ordenable
 
-- **Prioridad:** Alta · **Tipo:** Funcional · **Traza:** RF-PAR-1 (AC1.1–AC1.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Funcional · **Traza:** RF-PAR-1 (AC1.1–AC1.3) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** logout.
 
@@ -482,7 +482,7 @@ Precondición del ciclo: usuario con `SYSTEM_PARAMETER_READ` / `SYSTEM_PARAMETER
 
 #### TC-PAR-02 · Filtrado por código, descripción y tipo
 
-- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-PAR-2 (AC2.1–AC2.5) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-PAR-2 (AC2.1–AC2.5) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** logout.
 
@@ -493,7 +493,7 @@ Precondición del ciclo: usuario con `SYSTEM_PARAMETER_READ` / `SYSTEM_PARAMETER
 
 #### TC-PAR-03 · Alta de parámetro válida
 
-- **Prioridad:** Alta · **Tipo:** Funcional, E2E · **Traza:** RF-PAR-3 (AC3.1–AC3.5) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Funcional, E2E · **Traza:** RF-PAR-3 (AC3.1–AC3.5) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** eliminar `E2E_PARAM_{{UNIQUE}}`.
 
@@ -505,7 +505,7 @@ Precondición del ciclo: usuario con `SYSTEM_PARAMETER_READ` / `SYSTEM_PARAMETER
 
 #### TC-PAR-04 · Alta con código duplicado
 
-- **Prioridad:** Alta · **Tipo:** Negativo · **Traza:** RF-PAR-3 (AC3.3), RNF-PAR-3 · **Independiente:** Sí (crea y luego duplica) · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Negativo · **Traza:** RF-PAR-3 (AC3.3), RNF-PAR-3 · **Independiente:** Sí (crea y luego duplica) · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`; crear `E2E_PARAM_{{UNIQUE}}` como primer parámetro.
 - **Teardown:** eliminar `E2E_PARAM_{{UNIQUE}}`.
 
@@ -515,7 +515,7 @@ Precondición del ciclo: usuario con `SYSTEM_PARAMETER_READ` / `SYSTEM_PARAMETER
 
 #### TC-PAR-05 · Edición (código inmutable)
 
-- **Prioridad:** Alta · **Tipo:** Funcional, E2E · **Traza:** RF-PAR-4 (AC4.1–AC4.4) · **Independiente:** Sí (crea su propio parámetro) · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Funcional, E2E · **Traza:** RF-PAR-4 (AC4.1–AC4.4) · **Independiente:** Sí (crea su propio parámetro) · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`; crear `E2E_PARAM_{{UNIQUE}}`.
 - **Teardown:** eliminar `E2E_PARAM_{{UNIQUE}}`.
 
@@ -526,7 +526,7 @@ Precondición del ciclo: usuario con `SYSTEM_PARAMETER_READ` / `SYSTEM_PARAMETER
 
 #### TC-PAR-06 · Eliminación con confirmación
 
-- **Prioridad:** Media · **Tipo:** Funcional, E2E · **Traza:** RF-PAR-5 (AC5.1–AC5.3) · **Independiente:** Sí (crea su propio parámetro) · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Media · **Tipo:** Funcional, E2E · **Traza:** RF-PAR-5 (AC5.1–AC5.3) · **Independiente:** Sí (crea su propio parámetro) · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`; crear `E2E_PARAM_{{UNIQUE}}`.
 - **Teardown:** si queda tras un fallo, eliminarlo por API.
 
@@ -537,7 +537,7 @@ Precondición del ciclo: usuario con `SYSTEM_PARAMETER_READ` / `SYSTEM_PARAMETER
 
 #### TC-PAR-07 · Detalle de parámetro
 
-- **Prioridad:** Baja · **Tipo:** Funcional · **Traza:** RF-PAR-6 (AC6.1–AC6.3) · **Independiente:** Sí (crea su propio parámetro) · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Baja · **Tipo:** Funcional · **Traza:** RF-PAR-6 (AC6.1–AC6.3) · **Independiente:** Sí (crea su propio parámetro) · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`; crear `E2E_PARAM_{{UNIQUE}}`.
 - **Teardown:** eliminar `E2E_PARAM_{{UNIQUE}}`.
 
@@ -547,7 +547,7 @@ Precondición del ciclo: usuario con `SYSTEM_PARAMETER_READ` / `SYSTEM_PARAMETER
 
 #### TC-PAR-08 · Validación de compatibilidad tipo/valor
 
-- **Prioridad:** Alta · **Tipo:** Negativo · **Traza:** RF-PAR-7 (AC7.1–AC7.4), RNF-PAR-4 · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Negativo · **Traza:** RF-PAR-7 (AC7.1–AC7.4), RNF-PAR-4 · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`; usar el formulario de alta (cancelar al final de cada subcaso).
 - **Teardown:** eliminar los parámetros que se lleguen a crear.
 
@@ -560,7 +560,7 @@ Precondición del ciclo: usuario con `SYSTEM_PARAMETER_READ` / `SYSTEM_PARAMETER
 
 #### TC-PAR-09 · Autorización y visibilidad
 
-- **Prioridad:** Alta · **Tipo:** Seguridad, API · **Traza:** RNF-PAR-1, RNF-PAR-2 · **Independiente:** Sí · **Dependencias:** requiere token con `SYSTEM_PARAMETER_READ` sin `SYSTEM_PARAMETER_WRITE`
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Seguridad, API · **Traza:** RNF-PAR-1, RNF-PAR-2 · **Independiente:** Sí · **Dependencias:** requiere token con `SYSTEM_PARAMETER_READ` sin `SYSTEM_PARAMETER_WRITE`
 - **Setup:** preparar un usuario de solo lectura de parámetros y su token.
 - **Teardown:** eliminar el usuario/perfil de prueba.
 

@@ -452,7 +452,7 @@ Precondición del ciclo: usuario con `PROFILE_READ` y `PROFILE_WRITE`. Datos de 
 
 #### TC-PRO-01 · Listado paginado y ordenable
 
-- **Prioridad:** Alta · **Tipo:** Funcional · **Traza:** RF-PRO-1 (AC1.1–AC1.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Funcional · **Traza:** RF-PRO-1 (AC1.1–AC1.3) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** logout.
 
@@ -463,7 +463,7 @@ Precondición del ciclo: usuario con `PROFILE_READ` y `PROFILE_WRITE`. Datos de 
 
 #### TC-PRO-02 · Búsqueda por nombre
 
-- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-PRO-2 (AC2.1–AC2.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-PRO-2 (AC2.1–AC2.3) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`; existe el perfil semilla `ADMIN`.
 - **Teardown:** logout.
 
@@ -475,7 +475,7 @@ Precondición del ciclo: usuario con `PROFILE_READ` y `PROFILE_WRITE`. Datos de 
 
 #### TC-PRO-03 · Alta de perfil con acciones
 
-- **Prioridad:** Alta · **Tipo:** Funcional, E2E · **Traza:** RF-PRO-3 (AC3.1–AC3.4), RNF-PRO-3 · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Funcional, E2E · **Traza:** RF-PRO-3 (AC3.1–AC3.4), RNF-PRO-3 · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`; catálogo de acciones disponible.
 - **Teardown:** eliminar el perfil `e2e_profile_{{UNIQUE}}`.
 
@@ -487,7 +487,7 @@ Precondición del ciclo: usuario con `PROFILE_READ` y `PROFILE_WRITE`. Datos de 
 
 #### TC-PRO-04 · Edición de perfil (reemplazo de acciones)
 
-- **Prioridad:** Alta · **Tipo:** Funcional, E2E · **Traza:** RF-PRO-4 (AC4.1–AC4.3) · **Independiente:** Sí (crea su propio perfil) · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Funcional, E2E · **Traza:** RF-PRO-4 (AC4.1–AC4.3) · **Independiente:** Sí (crea su propio perfil) · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`; crear previamente `e2e_profile_{{UNIQUE}}`.
 - **Teardown:** eliminar `e2e_profile_{{UNIQUE}}`.
 
@@ -498,7 +498,7 @@ Precondición del ciclo: usuario con `PROFILE_READ` y `PROFILE_WRITE`. Datos de 
 
 #### TC-PRO-05 · Eliminación con confirmación
 
-- **Prioridad:** Alta · **Tipo:** Funcional, E2E · **Traza:** RF-PRO-5 (AC5.1–AC5.3) · **Independiente:** Sí (crea su propio perfil) · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Funcional, E2E · **Traza:** RF-PRO-5 (AC5.1–AC5.3) · **Independiente:** Sí (crea su propio perfil) · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`; crear `e2e_profile_{{UNIQUE}}` sin usuarios asociados.
 - **Teardown:** si queda tras un fallo, eliminarlo por API.
 
@@ -509,7 +509,7 @@ Precondición del ciclo: usuario con `PROFILE_READ` y `PROFILE_WRITE`. Datos de 
 
 #### TC-PRO-06 · Eliminación de perfil en uso
 
-- **Prioridad:** Alta · **Tipo:** Negativo · **Traza:** RF-PRO-5 (AC5.4) · **Independiente:** Sí · **Dependencias:** ninguna (usa un perfil semilla asignado a usuarios, p. ej. `ADMIN`)
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Negativo · **Traza:** RF-PRO-5 (AC5.4) · **Independiente:** Sí · **Dependencias:** ninguna (usa un perfil semilla asignado a usuarios, p. ej. `ADMIN`)
 - **Setup:** login con `{{ADMIN_USER}}`; identificar un perfil asignado a al menos un usuario (`ADMIN`).
 - **Teardown:** logout (no se elimina nada).
 
@@ -519,7 +519,7 @@ Precondición del ciclo: usuario con `PROFILE_READ` y `PROFILE_WRITE`. Datos de 
 
 #### TC-PRO-07 · Detalle de perfil
 
-- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-PRO-6 (AC6.1–AC6.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-PRO-6 (AC6.1–AC6.3) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** logout.
 
@@ -529,7 +529,7 @@ Precondición del ciclo: usuario con `PROFILE_READ` y `PROFILE_WRITE`. Datos de 
 
 #### TC-PRO-08 · Exportación CSV
 
-- **Prioridad:** Media · **Tipo:** Funcional, E2E · **Traza:** RF-PRO-7 (AC7.1–AC7.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Media · **Tipo:** Funcional, E2E · **Traza:** RF-PRO-7 (AC7.1–AC7.3) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** eliminar el fichero descargado; logout.
 
@@ -540,7 +540,7 @@ Precondición del ciclo: usuario con `PROFILE_READ` y `PROFILE_WRITE`. Datos de 
 
 #### TC-PRO-09 · Autorización y endpoint de referencias
 
-- **Prioridad:** Alta · **Tipo:** Seguridad, API · **Traza:** RNF-PRO-1, RNF-PRO-2 · **Independiente:** Sí · **Dependencias:** requiere tokens con distintos permisos
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Seguridad, API · **Traza:** RNF-PRO-1, RNF-PRO-2 · **Independiente:** Sí · **Dependencias:** requiere tokens con distintos permisos
 - **Setup:** vía API. Preparar: (a) token sin `PROFILE_READ`; (b) token con `PROFILE_READ` sin `PROFILE_WRITE`; (c) token con `USER_READ`.
 - **Teardown:** eliminar usuarios/perfiles de prueba.
 

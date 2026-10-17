@@ -18,7 +18,7 @@ Cada test case en su módulo funcional:
 
 Cada test case se estructura en cuatro bloques fijos para que un ejecutor automático o humano pueda parsearlo e interpretarlo:
 
-1. **Metadatos:** prioridad, tipo, trazabilidad, independencia y dependencias.
+1. **Metadatos:** versión, prioridad, tipo, trazabilidad, independencia y dependencias. Cada caso declara **Versión:** (por defecto `1.0`). **Obligatorio:** cualquier cambio en un test case debe incrementar su versión.
 2. **Precondición / Setup:** estado que debe existir antes de empezar. Si el caso lo crea él mismo, se indica como *autoabastecido*.
 3. **Pasos:** tabla `# | Acción | Resultado esperado`. Cada acción es inequívoca: una URL a navegar, un `data-testid` a pulsar, o una petición HTTP con método, ruta y cuerpo. Cada resultado esperado es una aserción verificable (texto visible, estado HTTP, URL destino).
 4. **Teardown:** limpieza para dejar el sistema como estaba (borrar lo creado, cerrar sesión). Si no genera residuos, se indica *No aplica*.
@@ -84,6 +84,14 @@ A continuación se indexan todos los ciclos de prueba del sistema con enlace dir
 - **Independiente:** el caso se ejecuta por sí solo (login propio incluido) sin requerir que otro caso se haya ejecutado antes. Es la norma general.
 - **Depende de:** se lista el ID del caso del que depende y por qué. Un ejecutor automático debe programar primero la dependencia.
 - Dentro de un mismo ciclo, cada caso hace su **propio login** y su **propia limpieza**, por lo que el orden de ejecución no importa salvo donde se declare lo contrario.
+
+### Convención de versión
+
+- Cada caso declara **Versión:** en los metadatos. Un caso nuevo parte de `1.0`.
+- **Cada vez que se cambie un test case, hay que aumentar su versión.** Es obligatorio, no opcional.
+- Aplica a cualquier modificación del caso: título, metadatos, setup, pasos, resultados esperados, teardown, estado o dependencias.
+- Incremento habitual: `1.0` → `1.1` → `1.2`. Si el caso se reescribe de forma que deja de ser comparable con la versión anterior, pasar a `2.0`.
+- No incrementar la versión por cambios ajenos al propio caso (texto introductorio del ciclo, otras secciones del documento, o correcciones de formato que no alteren el contenido del caso).
 
 ### Convención de estado
 

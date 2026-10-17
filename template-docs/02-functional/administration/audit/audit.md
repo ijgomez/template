@@ -416,7 +416,7 @@ Precondición del ciclo: usuario con `SYSTEM_LOG_READ`; tabla `audit_log` con da
 
 #### TC-AUD-01 · Listado de solo lectura paginado
 
-- **Prioridad:** Alta · **Tipo:** Funcional · **Traza:** RF-AUD-1 (AC1.1–AC1.3), RF-AUD-5 (AC5.2) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Funcional · **Traza:** RF-AUD-1 (AC1.1–AC1.3), RF-AUD-5 (AC5.2) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}` (genera un registro de auditoría conocido).
 - **Teardown:** logout.
 
@@ -427,7 +427,7 @@ Precondición del ciclo: usuario con `SYSTEM_LOG_READ`; tabla `audit_log` con da
 
 #### TC-AUD-02 · Filtrado por usuario, operación y sección
 
-- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-AUD-2 (AC2.1–AC2.5) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-AUD-2 (AC2.1–AC2.5) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** logout.
 
@@ -439,7 +439,7 @@ Precondición del ciclo: usuario con `SYSTEM_LOG_READ`; tabla `audit_log` con da
 #### TC-AUD-03 · Filtrado por rango de fechas
 
 - **Estado:** 🔴 **BLOQUEADO** — pendiente de revisión funcional y técnica. No ejecutar hasta desbloquear.
-- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-AUD-2 (AC2.4) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-AUD-2 (AC2.4) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Motivo del bloqueo:** la sección 3.4 del documento funcional (`audit.md`) declara una **discrepancia abierta** en el contrato de filtros de fecha: el frontend envía `dateFrom`/`dateTo` (controles HTML `date`) y el backend espera `fromDate`/`toDate` (`OffsetDateTime`). El filtrado por fecha no está alineado de extremo a extremo. Esta parte está pendiente de revisión funcional y técnica.
 - **Condición para desbloquear:** alinear el contrato de fechas entre `AuditService` (frontend) y `AuditController` (backend), verificar el comportamiento de extremo a extremo y actualizar la sección 3.4 de `audit.md`. Una vez hecho, retirar el estado BLOQUEADO y validar los pasos.
 - **Setup:** login con `{{ADMIN_USER}}`.
@@ -451,7 +451,7 @@ Precondición del ciclo: usuario con `SYSTEM_LOG_READ`; tabla `audit_log` con da
 
 #### TC-AUD-04 · Consulta de detalle
 
-- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-AUD-3 (AC3.1–AC3.4) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-AUD-3 (AC3.1–AC3.4) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`; al menos un registro en el listado.
 - **Teardown:** logout.
 
@@ -462,7 +462,7 @@ Precondición del ciclo: usuario con `SYSTEM_LOG_READ`; tabla `audit_log` con da
 
 #### TC-AUD-05 · Exportación CSV filtrada
 
-- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-AUD-4 (AC4.1–AC4.4) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-AUD-4 (AC4.1–AC4.4) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** eliminar el fichero descargado; logout.
 
@@ -473,7 +473,7 @@ Precondición del ciclo: usuario con `SYSTEM_LOG_READ`; tabla `audit_log` con da
 
 #### TC-AUD-06 · Inmutabilidad del registro (API)
 
-- **Prioridad:** Alta · **Tipo:** Seguridad, Negativo, API · **Traza:** RF-AUD-5 (AC5.1), RNF-AUD-3 · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Seguridad, Negativo, API · **Traza:** RF-AUD-5 (AC5.1), RNF-AUD-3 · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** vía API con token de `{{ADMIN_USER}}`.
 - **Teardown:** No aplica.
 
@@ -484,7 +484,7 @@ Precondición del ciclo: usuario con `SYSTEM_LOG_READ`; tabla `audit_log` con da
 
 #### TC-AUD-07 · Registro automático de operación auditable
 
-- **Prioridad:** Alta · **Tipo:** Funcional · **Traza:** RF-AUD-5 (AC5.3), RNF-AUD-4 · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Funcional · **Traza:** RF-AUD-5 (AC5.3), RNF-AUD-4 · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** vía API/UI. Partir sin sesión.
 - **Teardown:** logout.
 

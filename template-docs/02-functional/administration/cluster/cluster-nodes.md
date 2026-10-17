@@ -420,7 +420,7 @@ Precondición del ciclo: usuario con `CLUSTER_NODE_READ` (y `CLUSTER_NODE_WRITE`
 
 #### TC-CLN-01 · Listado de nodos
 
-- **Prioridad:** Alta · **Tipo:** Funcional · **Traza:** RF-CLN-1 (AC1.1–AC1.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Funcional · **Traza:** RF-CLN-1 (AC1.1–AC1.3) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** logout.
 
@@ -431,7 +431,7 @@ Precondición del ciclo: usuario con `CLUSTER_NODE_READ` (y `CLUSTER_NODE_WRITE`
 
 #### TC-CLN-02 · Filtrado por hostname, estado y maestro
 
-- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-CLN-2 (AC2.1–AC2.4) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-CLN-2 (AC2.1–AC2.4) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`; identificar el hostname de un nodo existente.
 - **Teardown:** logout.
 
@@ -442,7 +442,7 @@ Precondición del ciclo: usuario con `CLUSTER_NODE_READ` (y `CLUSTER_NODE_WRITE`
 
 #### TC-CLN-03 · Detalle de nodo
 
-- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-CLN-3 (AC3.1–AC3.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-CLN-3 (AC3.1–AC3.3) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** logout.
 
@@ -453,7 +453,7 @@ Precondición del ciclo: usuario con `CLUSTER_NODE_READ` (y `CLUSTER_NODE_WRITE`
 
 #### TC-CLN-04 · Designación de nodo maestro
 
-- **Prioridad:** Alta · **Tipo:** Funcional · **Traza:** RF-CLN-4 (AC4.1–AC4.5), RNF-CLN-2 · **Independiente:** Condicional · **Dependencias:** requiere al menos **dos** nodos activos (uno no maestro) para validarse de forma aislada; modifica estado compartido
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Funcional · **Traza:** RF-CLN-4 (AC4.1–AC4.5), RNF-CLN-2 · **Independiente:** Condicional · **Dependencias:** requiere al menos **dos** nodos activos (uno no maestro) para validarse de forma aislada; modifica estado compartido
 - **Setup:** login con `{{ADMIN_USER}}` (con `CLUSTER_NODE_WRITE`); entorno con ≥2 nodos activos. Anotar quién es el maestro actual.
 - **Teardown:** restaurar el maestro original designándolo de nuevo (`PATCH /{idOriginal}` con `{ "master": true }`), para dejar el cluster como estaba.
 
@@ -464,7 +464,7 @@ Precondición del ciclo: usuario con `CLUSTER_NODE_READ` (y `CLUSTER_NODE_WRITE`
 
 #### TC-CLN-05 · Botón de maestro deshabilitado por reglas
 
-- **Prioridad:** Media · **Tipo:** Negativo · **Traza:** RF-CLN-4 (AC4.2) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Media · **Tipo:** Negativo · **Traza:** RF-CLN-4 (AC4.2) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** logout.
 
@@ -474,7 +474,7 @@ Precondición del ciclo: usuario con `CLUSTER_NODE_READ` (y `CLUSTER_NODE_WRITE`
 
 #### TC-CLN-06 · Exportación CSV
 
-- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-CLN-5 (AC5.1–AC5.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-CLN-5 (AC5.1–AC5.3) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** eliminar el fichero descargado; logout.
 
@@ -484,7 +484,7 @@ Precondición del ciclo: usuario con `CLUSTER_NODE_READ` (y `CLUSTER_NODE_WRITE`
 
 #### TC-CLN-07 · Registro y eliminación controlados por el sistema
 
-- **Prioridad:** Alta · **Tipo:** Negativo, Seguridad, API · **Traza:** RF-CLN-6 (AC6.1–AC6.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Negativo, Seguridad, API · **Traza:** RF-CLN-6 (AC6.1–AC6.3) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** vía API con token de `{{ADMIN_USER}}`.
 - **Teardown:** No aplica.
 

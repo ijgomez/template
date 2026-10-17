@@ -66,7 +66,8 @@ Directrices para revisar y mantener la documentación al trabajar en bugfixes, i
 1. **Antes de implementar cambios**, revisar si las pantallas o funcionalidades afectadas están documentadas en `template-docs/`.
 2. **Si existe documentación relevante**, leerla para entender el comportamiento esperado y el contexto funcional antes de hacer cambios.
 3. **Si el cambio altera el comportamiento documentado**, actualizar la documentación correspondiente como parte del mismo cambio (mismo commit o PR).
-4. **Si no existe documentación** para la funcionalidad afectada, valorar si es necesario crearla.
+4. **Si se modifica un test case** en la sección de casos de prueba detallados, incrementar su campo **Versión:** (un caso nuevo parte de `1.0`). La regla completa está en el [Plan Maestro de Pruebas](../../specification/test-case.md#convención-de-versión).
+5. **Si no existe documentación** para la funcionalidad afectada, valorar si es necesario crearla.
 
 ### Ubicaciones de documentación a consultar
 

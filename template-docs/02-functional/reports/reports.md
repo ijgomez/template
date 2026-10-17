@@ -382,7 +382,7 @@ Precondición del ciclo: usuario con `REPORT_EXECUTE` y al menos un informe asig
 
 #### TC-RPT-01 · Carga de metadatos y filtros sin ejecución automática
 
-- **Prioridad:** Alta · **Tipo:** Funcional · **Traza:** RF-RPT-1 (AC1.1–AC1.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Funcional · **Traza:** RF-RPT-1 (AC1.1–AC1.3) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`; el usuario tiene asignado el informe `1`.
 - **Teardown:** logout.
 
@@ -394,7 +394,7 @@ Precondición del ciclo: usuario con `REPORT_EXECUTE` y al menos un informe asig
 
 #### TC-RPT-02 · Informe no asignado al usuario
 
-- **Prioridad:** Media · **Tipo:** Negativo, Seguridad · **Traza:** RF-RPT-1 (AC1.4), RNF-RPT-1 · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Media · **Tipo:** Negativo, Seguridad · **Traza:** RF-RPT-1 (AC1.4), RNF-RPT-1 · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`; identificar un `id` de informe **no** asignado al usuario (p. ej. uno inexistente o no relacionado en `user2report`).
 - **Teardown:** logout.
 
@@ -404,7 +404,7 @@ Precondición del ciclo: usuario con `REPORT_EXECUTE` y al menos un informe asig
 
 #### TC-RPT-03 · Validación de filtros obligatorios
 
-- **Prioridad:** Alta · **Tipo:** Negativo · **Traza:** RF-RPT-2 (AC2.2, AC2.4), RNF-RPT-2 · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Negativo · **Traza:** RF-RPT-2 (AC2.2, AC2.4), RNF-RPT-2 · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`; informe `1` con al menos un filtro `required=true`.
 - **Teardown:** logout.
 
@@ -415,7 +415,7 @@ Precondición del ciclo: usuario con `REPORT_EXECUTE` y al menos un informe asig
 
 #### TC-RPT-04 · Limpiar filtros
 
-- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-RPT-2 (AC2.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-RPT-2 (AC2.3) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** logout.
 
@@ -426,7 +426,7 @@ Precondición del ciclo: usuario con `REPORT_EXECUTE` y al menos un informe asig
 
 #### TC-RPT-05 · Ejecución con paginación en servidor
 
-- **Prioridad:** Alta · **Tipo:** Funcional, E2E · **Traza:** RF-RPT-3 (AC3.1–AC3.5) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Funcional, E2E · **Traza:** RF-RPT-3 (AC3.1–AC3.5) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`; informe `1` con datos.
 - **Teardown:** logout.
 
@@ -438,7 +438,7 @@ Precondición del ciclo: usuario con `REPORT_EXECUTE` y al menos un informe asig
 
 #### TC-RPT-06 · Cambio de página y tamaño re-ejecuta
 
-- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-RPT-3 (AC3.6) · **Independiente:** No del todo · **Dependencias:** reutiliza el flujo de TC-RPT-05 (ejecución previa dentro del mismo caso)
+- **Versión:** 1.0 · **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-RPT-3 (AC3.6) · **Independiente:** No del todo · **Dependencias:** reutiliza el flujo de TC-RPT-05 (ejecución previa dentro del mismo caso)
 - **Setup:** login con `{{ADMIN_USER}}`; ejecutar primero el informe (pasos de TC-RPT-05) para tener resultados paginables. El caso incluye esa ejecución en el paso 1, por lo que sigue siendo autoejecutable.
 - **Teardown:** logout.
 
@@ -450,7 +450,7 @@ Precondición del ciclo: usuario con `REPORT_EXECUTE` y al menos un informe asig
 
 #### TC-RPT-07 · Exportación CSV / TXT
 
-- **Prioridad:** Alta · **Tipo:** Funcional, E2E · **Traza:** RF-RPT-4 (AC4.1–AC4.6), RNF-RPT-7 · **Independiente:** Sí (incluye la ejecución previa) · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Funcional, E2E · **Traza:** RF-RPT-4 (AC4.1–AC4.6), RNF-RPT-7 · **Independiente:** Sí (incluye la ejecución previa) · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** logout; eliminar los ficheros descargados del directorio de descargas.
 
@@ -462,7 +462,7 @@ Precondición del ciclo: usuario con `REPORT_EXECUTE` y al menos un informe asig
 
 #### TC-RPT-08 · Exportación PDF / XLSX no implementada
 
-- **Prioridad:** Baja · **Tipo:** Negativo · **Traza:** RF-RPT-4 (AC4.5) · **Independiente:** Sí (incluye la ejecución previa) · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Baja · **Tipo:** Negativo · **Traza:** RF-RPT-4 (AC4.5) · **Independiente:** Sí (incluye la ejecución previa) · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** logout.
 
@@ -472,7 +472,7 @@ Precondición del ciclo: usuario con `REPORT_EXECUTE` y al menos un informe asig
 
 #### TC-RPT-09 · Acceso sin autoridad REPORT_EXECUTE
 
-- **Prioridad:** Alta · **Tipo:** Seguridad, API · **Traza:** RNF-RPT-1 · **Independiente:** Sí · **Dependencias:** requiere disponer de un token de un usuario **sin** `REPORT_EXECUTE`
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Seguridad, API · **Traza:** RNF-RPT-1 · **Independiente:** Sí · **Dependencias:** requiere disponer de un token de un usuario **sin** `REPORT_EXECUTE`
 - **Setup:** vía API. Obtener un access token de un usuario sin la autoridad `REPORT_EXECUTE` (crear uno con un perfil sin esa acción, o usar uno existente del entorno).
 - **Teardown:** si se creó un usuario para la prueba, eliminarlo.
 
@@ -483,7 +483,7 @@ Precondición del ciclo: usuario con `REPORT_EXECUTE` y al menos un informe asig
 
 #### TC-RPT-10 · Componente de selección múltiple de informes (CVA)
 
-- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-RPT-5 (AC5.1–AC5.7) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-RPT-5 (AC5.1–AC5.7) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`; navegar al formulario de alta de usuario donde se integra `<tp-selected-reports>` (`{{BASE_URL_UI}}/administration/security/users` → *Crear*).
 - **Teardown:** cancelar el formulario sin guardar; logout.
 

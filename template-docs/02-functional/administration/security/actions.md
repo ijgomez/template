@@ -436,7 +436,7 @@ Precondición del ciclo: usuario con `ACTION_READ`; catálogo semilla cargado (p
 
 #### TC-ACC-01 · Listado paginado y ordenable
 
-- **Prioridad:** Alta · **Tipo:** Funcional · **Traza:** RF-ACC-1 (AC1.1–AC1.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Funcional · **Traza:** RF-ACC-1 (AC1.1–AC1.3) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** logout.
 
@@ -447,7 +447,7 @@ Precondición del ciclo: usuario con `ACTION_READ`; catálogo semilla cargado (p
 
 #### TC-ACC-02 · Filtrado por código y tipo
 
-- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-ACC-2 (AC2.1–AC2.4) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-ACC-2 (AC2.1–AC2.4) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** logout.
 
@@ -458,7 +458,7 @@ Precondición del ciclo: usuario con `ACTION_READ`; catálogo semilla cargado (p
 
 #### TC-ACC-03 · Detalle de acción
 
-- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-ACC-3 (AC3.1–AC3.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-ACC-3 (AC3.1–AC3.3) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** logout.
 
@@ -468,7 +468,7 @@ Precondición del ciclo: usuario con `ACTION_READ`; catálogo semilla cargado (p
 
 #### TC-ACC-04 · Edición de metadatos (código inmutable)
 
-- **Prioridad:** Alta · **Tipo:** Funcional, E2E · **Traza:** RF-ACC-4 (AC4.1–AC4.5) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Funcional, E2E · **Traza:** RF-ACC-4 (AC4.1–AC4.5) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`. Nota: edita un registro semilla; anotar el valor original para restaurarlo.
 - **Teardown:** restaurar el nombre/descripcion/tipo originales de la acción editada.
 
@@ -480,7 +480,7 @@ Precondición del ciclo: usuario con `ACTION_READ`; catálogo semilla cargado (p
 
 #### TC-ACC-05 · Exportación CSV
 
-- **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-ACC-5 (AC5.1–AC5.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-ACC-5 (AC5.1–AC5.3) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** eliminar el fichero descargado; logout.
 
@@ -491,7 +491,7 @@ Precondición del ciclo: usuario con `ACTION_READ`; catálogo semilla cargado (p
 
 #### TC-ACC-06 · Alta y borrado prohibidos (catálogo semilla)
 
-- **Prioridad:** Alta · **Tipo:** Negativo, Seguridad, API · **Traza:** RF-ACC-6 (AC6.1–AC6.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Negativo, Seguridad, API · **Traza:** RF-ACC-6 (AC6.1–AC6.3) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** vía API con token de `{{ADMIN_USER}}`.
 - **Teardown:** No aplica.
 
@@ -503,7 +503,7 @@ Precondición del ciclo: usuario con `ACTION_READ`; catálogo semilla cargado (p
 
 #### TC-ACC-07 · Integridad del catálogo de tipos
 
-- **Prioridad:** Media · **Tipo:** Negativo, API · **Traza:** RNF-ACC-3 · **Independiente:** Sí · **Dependencias:** ninguna
+- **Versión:** 1.0 · **Prioridad:** Media · **Tipo:** Negativo, API · **Traza:** RNF-ACC-3 · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** vía API con token de `{{ADMIN_USER}}`; identificar el `id` de la acción `USER_READ`.
 - **Teardown:** si el valor cambiara, restaurarlo.
 
