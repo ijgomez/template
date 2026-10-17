@@ -4,14 +4,6 @@ import { TranslatePipe } from '@ngx-translate/core';
 
 import { ClusterService } from '../../core/services/cluster.service';
 
-interface ActivityEntry {
-  date: string;
-  user: string;
-  operation: string;
-  badgeClass: string;
-  section: string;
-}
-
 /**
  * Dashboard component.
  * Displays system overview: stats cards, recent activity, system status, and quick links.
@@ -43,14 +35,6 @@ export class DashboardComponent implements OnInit {
   readonly inactiveNodes = computed(() => this.totalNodes() - this.activeNodes());
   /** Whether every registered node is active. */
   readonly allNodesOperational = computed(() => this.totalNodes() > 0 && this.inactiveNodes() === 0);
-
-  readonly recentActivity: ActivityEntry[] = [
-    { date: '04/08/2026 19:14', user: 'admin', operation: 'CREATE', badgeClass: 'bg-success-subtle text-success', section: 'SECURITY' },
-    { date: '04/08/2026 19:10', user: 'admin', operation: 'UPDATE', badgeClass: 'bg-primary-subtle text-primary', section: 'SYSTEM' },
-    { date: '04/08/2026 18:55', user: 'admin', operation: 'DELETE', badgeClass: 'bg-danger-subtle text-danger', section: 'SECURITY' },
-    { date: '04/08/2026 18:42', user: 'admin', operation: 'EXECUTE', badgeClass: 'bg-info-subtle text-info', section: 'REPORTS' },
-    { date: '04/08/2026 18:30', user: 'system', operation: 'UPDATE', badgeClass: 'bg-primary-subtle text-primary', section: 'CLUSTER' },
-  ];
 
   ngOnInit(): void {
     this.loadClusterNodes();

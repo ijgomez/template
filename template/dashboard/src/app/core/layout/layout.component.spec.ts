@@ -75,6 +75,43 @@ describe('LayoutComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  describe('hasActiveChild (collapsed branch indicator)', () => {
+    const branch = {
+      labelKey: 'menu.administration',
+      icon: 'shield-lock',
+      children: [
+        {
+          labelKey: 'menu.administration.security',
+          icon: 'people',
+          children: [
+            { labelKey: 'menu.administration.security.users', icon: 'person', route: '/administration/security/users' },
+          ],
+        },
+        { labelKey: 'menu.administration.audit', icon: 'journal-text', route: '/administration/audit' },
+      ],
+    };
+
+    it('should return true when a deep descendant route matches the current URL', () => {
+      component.currentUrl.set('/administration/security/users');
+      expect(component.hasActiveChild(branch)).toBe(true);
+    });
+
+    it('should match a child route prefix (detail/sub-route)', () => {
+      component.currentUrl.set('/administration/audit/123');
+      expect(component.hasActiveChild(branch)).toBe(true);
+    });
+
+    it('should return false when no descendant route matches', () => {
+      component.currentUrl.set('/dashboard');
+      expect(component.hasActiveChild(branch)).toBe(false);
+    });
+
+    it('should return false for a leaf item without children', () => {
+      component.currentUrl.set('/dashboard');
+      expect(component.hasActiveChild({ labelKey: 'menu.dashboard', icon: 'x', route: '/dashboard' })).toBe(false);
+    });
+  });
+
   it('should display the username from AuthService', () => {
     expect(component.username()).toBe('testuser');
   });

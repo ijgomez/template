@@ -54,17 +54,6 @@ describe('DashboardComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should expose a fixed set of recent activity entries', () => {
-    httpMock.expectOne(nodesUrl).flush([]);
-    expect(component.recentActivity.length).toBe(5);
-    for (const entry of component.recentActivity) {
-      expect(entry.user).toBeTruthy();
-      expect(entry.operation).toBeTruthy();
-      expect(entry.section).toBeTruthy();
-      expect(entry.badgeClass).toContain('bg-');
-    }
-  });
-
   it('should expose a last access value', () => {
     httpMock.expectOne(nodesUrl).flush([]);
     expect(component.lastAccess).toBeTruthy();

@@ -283,6 +283,7 @@ export class LayoutComponent implements OnInit {
 
   private updateBreadcrumbs(): void {
     const url = this.router.url.split('?')[0];
+    this.currentUrl.set(url);
     const segments = url.split('/').filter((s) => s.length > 0);
     const crumbs: BreadcrumbSegment[] = [];
     let path = '';
@@ -341,6 +342,29 @@ export class LayoutComponent implements OnInit {
   /** Check if a section is expanded. */
   isSectionExpanded(labelKey: string): boolean {
     return this.expandedSections().has(labelKey);
+  }
+
+  /** URL of the currently active route (without query string), tracked for the collapsed-branch indicator. */
+  readonly currentUrl = signal<string>('');
+
+  /**
+   * Whether the given nav item has a descendant (at any depth) whose route
+   * matches the current URL. Used to mark the parent branch when the sidebar is
+   * collapsed and only icons are visible, so the active section is still
+   * discoverable.
+   */
+  hasActiveChild(item: NavItem): boolean {
+    const url = this.currentUrl();
+    if (!url || !item.children) {
+      return false;
+    }
+    const matches = (nav: NavItem): boolean => {
+      if (nav.route && (url === nav.route || url.startsWith(nav.route + '/'))) {
+        return true;
+      }
+      return (nav.children ?? []).some(matches);
+    };
+    return item.children.some(matches);
   }
 
   /** Check if a nav item is visible based on user actions. */

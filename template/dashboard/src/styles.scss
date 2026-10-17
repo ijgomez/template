@@ -25,6 +25,20 @@
   --tp-color-border: #e2e8f0;
   --tp-color-border-subtle: #f1f5f9;
 
+  // Sidebar tokens (dark navy in light theme; overridden in .tp-dark).
+  --tp-sidebar-bg: #0f172a;
+  --tp-sidebar-border: #1e293b;
+  --tp-sidebar-text: #e2e8f0;
+  --tp-sidebar-text-strong: #f8fafc;
+  --tp-sidebar-link: #94a3b8;
+  --tp-sidebar-link-hover: #f8fafc;
+  --tp-sidebar-link-active: #ffffff;
+  --tp-sidebar-icon: #64748b;
+  --tp-sidebar-icon-hover: #94a3b8;
+  --tp-sidebar-icon-active: #60a5fa;
+  --tp-sidebar-hover-bg: rgba(255, 255, 255, 0.04);
+  --tp-sidebar-active-bg: rgba(29, 78, 216, 0.2);
+
   --tp-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   --tp-font-family-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   --tp-font-size-base: 0.875rem;
@@ -66,6 +80,20 @@
   --tp-color-text-muted: #9ca3af;
   --tp-color-border: #1f2937;
   --tp-color-border-subtle: #172033;
+
+  // Sidebar in dark theme: slightly darker than the surface for separation.
+  --tp-sidebar-bg: #060a12;
+  --tp-sidebar-border: #1f2937;
+  --tp-sidebar-text: #e5e7eb;
+  --tp-sidebar-text-strong: #f9fafb;
+  --tp-sidebar-link: #9ca3af;
+  --tp-sidebar-link-hover: #f9fafb;
+  --tp-sidebar-link-active: #ffffff;
+  --tp-sidebar-icon: #6b7280;
+  --tp-sidebar-icon-hover: #9ca3af;
+  --tp-sidebar-icon-active: #60a5fa;
+  --tp-sidebar-hover-bg: rgba(255, 255, 255, 0.05);
+  --tp-sidebar-active-bg: rgba(29, 78, 216, 0.28);
 }
 
 body {
@@ -167,6 +195,14 @@ body {
     min-height: 44px;
     min-width: 44px;
   }
+}
+
+// ─── Section Label ───────────────────────────────────────────
+// Small uppercase heading used for form sections (reemplaza el estilo inline
+// repetido en los formularios: font-size 0.75rem + letter-spacing 0.05em).
+.tp-section-label {
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
 }
 
 // ─── Filter Bar ──────────────────────────────────────────────

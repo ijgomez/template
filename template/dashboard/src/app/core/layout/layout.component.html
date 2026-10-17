@@ -24,6 +24,7 @@
                 <button
                   class="nav-link nav-link-toggle"
                   type="button"
+                  [class.has-active-child]="hasActiveChild(item)"
                   (click)="toggleSection(item.labelKey)"
                   [attr.aria-expanded]="isSectionExpanded(item.labelKey)"
                   [attr.data-testid]="'nav-toggle-' + item.labelKey"
@@ -49,6 +50,7 @@
                             <button
                               class="nav-link nav-link-toggle nav-link-nested"
                               type="button"
+                              [class.has-active-child]="hasActiveChild(child)"
                               (click)="toggleSection(child.labelKey)"
                               [attr.aria-expanded]="isSectionExpanded(child.labelKey)"
                               [attr.data-testid]="'nav-toggle-' + child.labelKey"

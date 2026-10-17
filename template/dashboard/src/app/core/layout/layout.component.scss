@@ -66,9 +66,9 @@ $transition-easing: ease-in-out;
 // ─── Sidebar ─────────────────────────────────────────────────
 .tp-sidebar {
   width: $sidebar-width;
-  background: #0f172a;
-  color: #e2e8f0;
-  border-right: 1px solid #1e293b;
+  background: var(--tp-sidebar-bg);
+  color: var(--tp-sidebar-text);
+  border-right: 1px solid var(--tp-sidebar-border);
   position: fixed;
   top: 0;
   left: 0;
@@ -83,7 +83,7 @@ $transition-easing: ease-in-out;
 .sidebar-brand {
   height: $header-height;
   padding: 0 1.25rem;
-  border-bottom: 1px solid #1e293b;
+  border-bottom: 1px solid var(--tp-sidebar-border);
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -109,7 +109,7 @@ $transition-easing: ease-in-out;
   font-weight: 600;
   font-size: 1rem;
   letter-spacing: -0.01em;
-  color: #f8fafc;
+  color: var(--tp-sidebar-text-strong);
   white-space: nowrap;
   overflow: hidden;
 }
@@ -126,7 +126,7 @@ $transition-easing: ease-in-out;
   align-items: center;
   gap: 0.75rem;
   padding: 0.5rem 1.25rem;
-  color: #94a3b8;
+  color: var(--tp-sidebar-link);
   font-size: 0.84rem;
   font-weight: 500;
   text-decoration: none;
@@ -144,27 +144,27 @@ $transition-easing: ease-in-out;
     width: 1.5rem;
     text-align: center;
     flex-shrink: 0;
-    color: #64748b;
+    color: var(--tp-sidebar-icon);
     transition: color 120ms ease-in-out;
   }
 
   &:hover {
-    color: #f8fafc;
-    background: rgba(255, 255, 255, 0.04);
+    color: var(--tp-sidebar-link-hover);
+    background: var(--tp-sidebar-hover-bg);
 
     i {
-      color: #94a3b8;
+      color: var(--tp-sidebar-icon-hover);
     }
   }
 
   &.active {
-    color: #ffffff;
-    background: rgba(29, 78, 216, 0.2);
+    color: var(--tp-sidebar-link-active);
+    background: var(--tp-sidebar-active-bg);
     border-left-color: var(--tp-color-primary);
     font-weight: 600;
 
     i {
-      color: #60a5fa;
+      color: var(--tp-sidebar-icon-active);
     }
   }
 
@@ -176,6 +176,26 @@ $transition-easing: ease-in-out;
 
 .nav-link-toggle {
   cursor: pointer;
+}
+
+// ─── Collapsed branch indicator ──────────────────────────────
+// When the sidebar is collapsed only icons are visible, so a parent section
+// whose active child is hidden gets a small dot over its icon to keep the
+// active branch discoverable.
+.sidebar-collapsed .nav-link-toggle.has-active-child {
+  position: relative;
+
+  i:first-child::after {
+    content: '';
+    position: absolute;
+    top: 0.35rem;
+    right: 0.55rem;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--tp-sidebar-icon-active);
+    border: 1.5px solid var(--tp-sidebar-bg);
+  }
 }
 
 .nav-chevron {

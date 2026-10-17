@@ -7,6 +7,30 @@
   table-layout: fixed;
 }
 
+// ─── Horizontal scroll hint (CSS-only "scrolling shadows") ───
+// Shows a subtle shadow on the right/left edge only when there is more table
+// content to scroll towards, at any breakpoint. The two outer layers are solid
+// "cover" gradients pinned to the viewport (background-attachment: scroll); the
+// two inner layers are the shadows pinned to the content (local). When scrolled
+// to an edge, the cover hides the shadow on that side. Pure CSS, no JS.
+// Ref: Lea Verou / CSS-Tricks scrolling shadows technique.
+.table-responsive {
+  background:
+    // Left cover (over the surface)
+    linear-gradient(to right, var(--tp-color-surface, #fff) 30%, rgba(255, 255, 255, 0)) left center,
+    // Right cover
+    linear-gradient(to left, var(--tp-color-surface, #fff) 30%, rgba(255, 255, 255, 0)) right center,
+    // Left shadow (revealed when scrolled right)
+    radial-gradient(farthest-side at 0 50%, rgba(15, 23, 42, 0.12), rgba(0, 0, 0, 0)) left center,
+    // Right shadow (revealed when there is content to the right)
+    radial-gradient(farthest-side at 100% 50%, rgba(15, 23, 42, 0.12), rgba(0, 0, 0, 0)) right center;
+  background-repeat: no-repeat;
+  background-size: 2.5rem 100%, 2.5rem 100%, 1rem 100%, 1rem 100%;
+  // Covers move with the content (local) and hide the shadow at each edge;
+  // shadows are pinned to the scroll container (scroll).
+  background-attachment: local, local, scroll, scroll;
+}
+
 // ─── Sortable header ─────────────────────────────────────────
 .tp-table__th--sortable {
   cursor: pointer;

@@ -508,14 +508,6 @@
       "thisMonth": "This month",
       "vsLastMonth": "{{percent}}% vs last month"
     },
-    "recentActivity": {
-      "title": "Recent activity",
-      "viewAll": "View all",
-      "date": "Date",
-      "user": "User",
-      "operation": "Operation",
-      "section": "Section"
-    },
     "systemStatus": {
       "title": "System status",
       "version": "Version",
