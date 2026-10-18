@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { provideTranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import * as fc from 'fast-check';
@@ -54,6 +55,7 @@ describe('ParameterListComponent - Property 1: Bug Condition - Form Styling Matc
     TestBed.configureTestingModule({
       imports: [ParameterListComponent],
       providers: [
+        provideRouter([]),
         provideTranslateService({ lang: 'en', fallbackLang: 'en' }),
         { provide: ParameterService, useValue: parameterServiceMock },
         { provide: AuthService, useValue: authServiceMock },
@@ -64,7 +66,10 @@ describe('ParameterListComponent - Property 1: Bug Condition - Form Styling Matc
     const fixture = TestBed.createComponent(ParameterListComponent);
     const component = fixture.componentInstance;
 
-    // Set the form mode
+    // Initialize first (ngOnInit subscribes to queryParams), then enter form mode,
+    // mirroring the real user flow (list renders, then the user opens the form).
+    fixture.detectChanges();
+
     if (viewMode === 'create') {
       component.openCreate();
     } else {

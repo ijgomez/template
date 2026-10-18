@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { provideTranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import * as fc from 'fast-check';
@@ -63,6 +64,7 @@ describe('ParameterListComponent - Property 2: Preservation - List and Detail Vi
     TestBed.configureTestingModule({
       imports: [ParameterListComponent],
       providers: [
+        provideRouter([]),
         provideTranslateService({ lang: 'en', fallbackLang: 'en' }),
         { provide: ParameterService, useValue: parameterServiceMock },
         { provide: AuthService, useValue: authServiceMock },
