@@ -1,6 +1,6 @@
 ---
 name: testing-verification
-description: Encourages the smallest real verification for business and code changes, with emphasis on test quality and regression prevention.
+description: Runs the smallest real test for a change and verifies behavior before marking it done (mvn test -pl <modulo> -am for backend domain/core/ws, ng test for the Angular dashboard). Use when writing tests, running tests, verifying a fix or feature, checking a bug is resolved, validating API contracts, or preventing regressions.
 ---
 
 # Skill: testing-verification

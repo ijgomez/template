@@ -1,6 +1,6 @@
 ---
 name: testing-verification
-description: Guides unit, integration, and E2E testing strategies with emphasis on test quality, regression prevention, and minimal scope verification.
+description: Runs the smallest real test for a change and verifies behavior before marking it done (mvn test -pl <modulo> -am for backend domain/core/ws, ng test for the Angular dashboard). Use when writing tests, running tests, verifying a fix or feature, checking a bug is resolved, validating API contracts, or preventing regressions.
 ---
 
 # Skill: testing-verification
@@ -9,7 +9,7 @@ Aplica al cambiar comportamiento funcional, resolver un bug o ajustar un contrat
 
 ## Principio
 
-Valida el cambio con la prueba más cercana que capture el comportamiento real afectado. No des por resuelto un cambio solo por intuición o asunción.
+Valida el cambio con la prueba más cercana que capture el comportamiento real afectado. No des por resuelto un cambio solo por intuición.
 
 ## Específico de testing
 
@@ -34,5 +34,5 @@ ng test
 
 ## Referencias
 
-- Estrategia de testing: `template-docs/04-development/coding-guidelines/testing.md`
-- Guía de build y ejecución: `template-docs/04-development/build.md`
+- Estrategia y herramientas de test: `template-docs/04-development/coding-guidelines/testing.md`
+- Construcción y build integrado: `template-docs/04-development/build.md`
