@@ -56,7 +56,7 @@
 
   <!-- List content -->
   @if (!loading) {
-    <div class="tp-data-list__list-wrapper">
+    <div class="tp-data-list__list-wrapper" animate.enter="tp-enter-fade">
       @if (data.length === 0) {
         <div class="tp-data-list__empty" [attr.data-testid]="testId + '-empty'">
           @if (filterText) {

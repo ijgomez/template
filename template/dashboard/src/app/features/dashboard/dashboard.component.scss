@@ -6,8 +6,16 @@
   box-shadow: var(--tp-shadow-sm);
   transition: box-shadow 120ms ease-in-out;
 
-  &:hover {
-    box-shadow: var(--tp-shadow);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      box-shadow: var(--tp-shadow);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tp-stat-card {
+    transition: none;
   }
 }
 

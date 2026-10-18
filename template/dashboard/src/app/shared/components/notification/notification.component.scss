@@ -6,16 +6,42 @@
   min-width: 300px;
   max-width: 400px;
   margin-bottom: 0.5rem;
-  animation: slideIn 0.3s ease-out;
+  opacity: 1;
+  transform: translateX(0);
+  transition:
+    transform var(--tp-duration-drawer) var(--tp-ease-out),
+    opacity var(--tp-duration-drawer) var(--tp-ease-out);
 }
 
-@keyframes slideIn {
-  from {
-    transform: translateX(100%);
+/* Estado inicial del toast que entra (solo CSS, sin JS) */
+@starting-style {
+  .toast {
     opacity: 0;
+    transform: translateX(100%);
   }
-  to {
-    transform: translateX(0);
-    opacity: 1;
+}
+
+/* Aplicado por el animate.leave de Angular mientras se elimina el toast */
+.toast--leave {
+  opacity: 0;
+  transform: translateX(100%);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    transition: opacity var(--tp-duration-medium) linear;
+  }
+
+  @starting-style {
+    .toast {
+      transform: none;
+      opacity: 0;
+    }
+  }
+
+  .toast--leave {
+    transform: none;
+    opacity: 0;
   }
 }

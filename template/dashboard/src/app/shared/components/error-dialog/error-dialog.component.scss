@@ -16,23 +16,61 @@
   z-index: 1091;
 }
 
-.modal-dialog {
-  animation: fadeIn 200ms ease-out;
+.error-dialog-backdrop {
+  opacity: 1;
+  transition: opacity var(--tp-duration-medium) var(--tp-ease-out);
 }
 
-@keyframes fadeIn {
-  from {
+@starting-style {
+  .error-dialog-backdrop {
+    opacity: 0;
+  }
+}
+
+.error-dialog-backdrop--leave {
+  opacity: 0;
+}
+
+.modal-dialog {
+  opacity: 1;
+  transform: scale(1);
+  /* el origen centrado es correcto para un modal — no cambiar */
+  transform-origin: center;
+  transition:
+    opacity var(--tp-duration-medium) var(--tp-ease-out),
+    transform var(--tp-duration-medium) var(--tp-ease-out);
+}
+
+@starting-style {
+  .modal-dialog {
     opacity: 0;
     transform: scale(0.95);
   }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+}
+
+.modal-dialog--leave {
+  opacity: 0;
+  transform: scale(0.95);
 }
 
 @media (prefers-reduced-motion: reduce) {
   .modal-dialog {
-    animation: none;
+    transition: opacity var(--tp-duration-medium) linear;
+  }
+
+  @starting-style {
+    .modal-dialog {
+      transform: none;
+      opacity: 0;
+    }
+  }
+
+  .modal-dialog--leave {
+    transform: none;
+    opacity: 0;
+  }
+
+  .error-dialog-backdrop {
+    transition: none;
   }
 }

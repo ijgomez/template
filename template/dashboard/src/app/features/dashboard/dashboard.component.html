@@ -41,7 +41,8 @@
             {{ 'dashboard.stats.nodesLoadError' | translate }}
           </small>
         } @else {
-          <div class="stat-value" data-testid="stat-cluster-nodes-value">
+          <div class="stat-value tp-enter-fade" animate.enter="tp-enter-fade"
+               data-testid="stat-cluster-nodes-value">
             {{ activeNodes() }} <small class="text-muted fs-6">/ {{ totalNodes() }}</small>
           </div>
           @if (allNodesOperational()) {

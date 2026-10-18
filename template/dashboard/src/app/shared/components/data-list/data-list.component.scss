@@ -54,12 +54,7 @@
   }
 
   &__filter {
-    width: 8rem;
-    transition: width 0.2s ease;
-
-    &:focus {
-      width: 12rem;
-    }
+    width: 10rem;
   }
 
   &__btn-add {
@@ -189,10 +184,6 @@
       width: 100%;
       order: 1;
       margin-top: var(--tp-space-2);
-
-      &:focus {
-        width: 100%;
-      }
     }
 
     &__actions {

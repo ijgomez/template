@@ -363,16 +363,26 @@ Todo componente interactivo debe contemplar los siguientes estados:
 
 # Animaciones y transiciones
 
-| Tipo              | Duración     | Easing                 |
-|-------------------|--------------|------------------------|
-| Hover / Focus     | `150ms`      | `ease-in-out`          |
-| Apertura modal    | `200ms`      | `ease-out`             |
-| Cierre modal      | `150ms`      | `ease-in`              |
-| Toast entrada     | `300ms`      | `ease-out`             |
-| Toast salida      | `200ms`      | `ease-in`              |
-| Collapse/Expand   | `250ms`      | `ease-in-out`          |
+| Tipo               | Duración     | Easing                            |
+|--------------------|--------------|-----------------------------------|
+| Hover / Focus      | `120ms`      | `ease`                            |
+| Pulsación (active) | `160ms`      | `ease-out`                        |
+| Dropdown / menú    | `150ms`      | `ease-out`                        |
+| Apertura modal     | `200ms`      | `ease-out`                        |
+| Cierre modal       | `200ms`      | `ease-out`                        |
+| Toast entrada      | `300ms`      | `ease-out`                        |
+| Toast salida       | `300ms`      | `ease-out`                        |
+| Collapse/Expand    | `250ms`      | `ease-in-out`                     |
+| Drawer móvil       | `300ms`      | `cubic-bezier(0.32, 0.72, 0, 1)`  |
 
 Regla general: no utilizar animaciones mayores a `400ms`. Respetar `prefers-reduced-motion`.
+
+Los valores se exponen como tokens en `src/styles.scss` y deben usarse siempre en lugar de
+valores literales: `--tp-ease-out`, `--tp-ease-in-out`, `--tp-ease-drawer`, `--tp-ease`,
+`--tp-duration-fast|base|medium|slow|drawer`.
+
+Las salidas (modal, toast) usan `ease-out`, no `ease-in`: un `ease-in` retrasa justo el
+arranque del movimiento que el usuario está observando.
 
 ---
 

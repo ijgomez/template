@@ -69,6 +69,17 @@
   --tp-shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
   --tp-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.08), 0 1px 2px -1px rgba(15, 23, 42, 0.08);
   --tp-shadow-lg: 0 4px 6px -1px rgba(15, 23, 42, 0.07), 0 2px 4px -2px rgba(15, 23, 42, 0.07);
+
+  // Motion tokens — see template-docs/03-technical/frontend/design-system.md#animaciones-y-transiciones
+  --tp-ease-out: cubic-bezier(0.23, 1, 0.32, 1);     /* entering / exiting UI */
+  --tp-ease-in-out: cubic-bezier(0.77, 0, 0.175, 1); /* on-screen movement */
+  --tp-ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);  /* off-canvas panels */
+  --tp-ease: ease;                                    /* hover / colour change */
+  --tp-duration-fast: 120ms;   /* hover, colour */
+  --tp-duration-base: 160ms;   /* press feedback */
+  --tp-duration-medium: 200ms; /* popovers, dialogs */
+  --tp-duration-slow: 250ms;   /* collapse / expand */
+  --tp-duration-drawer: 300ms; /* off-canvas drawer */
 }
 
 // Dark theme tokens
@@ -270,10 +281,15 @@ body {
   border-radius: var(--tp-border-radius);
   font-size: 0.8125rem;
   font-weight: 500;
-  transition: background-color 120ms ease-out, border-color 120ms ease-out, color 120ms ease-out, box-shadow 120ms ease-out;
+  transition:
+    background-color var(--tp-duration-fast) var(--tp-ease),
+    border-color var(--tp-duration-fast) var(--tp-ease),
+    color var(--tp-duration-fast) var(--tp-ease),
+    box-shadow var(--tp-duration-fast) var(--tp-ease),
+    transform var(--tp-duration-base) var(--tp-ease-out);
 
   &:active {
-    transform: translateY(1px);
+    transform: scale(0.97);
   }
 }
 
@@ -303,5 +319,23 @@ body.tp-sidebar-resizing {
 
   * {
     cursor: col-resize !important;
+  }
+}
+
+// ─── Transiciones de entrada ─────────────────────────────────
+// Se aplica con animate.enter de Angular; Angular elimina la clase cuando
+// termina la animación, por lo que nunca queda en el elemento.
+.tp-enter-fade {
+  animation: tpFadeIn var(--tp-duration-base) var(--tp-ease-out);
+}
+
+@keyframes tpFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tp-enter-fade {
+    animation: none;
   }
 }
