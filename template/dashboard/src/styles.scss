@@ -25,6 +25,12 @@
   --tp-color-border: #e2e8f0;
   --tp-color-border-subtle: #f1f5f9;
 
+  // Login backdrop gradient stops (always-dark navy scene behind the card,
+  // independent of theme). Tokenized so the one sanctioned gradient has a
+  // single source of truth instead of literals in the component.
+  --tp-login-backdrop-from: #1a1d21;
+  --tp-login-backdrop-to: #2b2f35;
+
   // Sidebar tokens (dark navy in light theme; overridden in .tp-dark).
   --tp-sidebar-bg: #0f172a;
   --tp-sidebar-border: #1e293b;

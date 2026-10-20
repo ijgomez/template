@@ -4,7 +4,11 @@
   align-items: center;
   min-height: 100vh; /* fallback */
   min-height: 100dvh;
-  background: linear-gradient(135deg, #1a1d21 0%, #2b2f35 100%);
+  background: linear-gradient(
+    135deg,
+    var(--tp-login-backdrop-from) 0%,
+    var(--tp-login-backdrop-to) 100%
+  );
   padding: var(--tp-space-3);
 }
 
@@ -12,7 +16,11 @@
   width: 100%;
   max-width: 420px;
   padding: 2.5rem;
-  background-color: var(--tp-color-background);
+  // Pinned to the light surface, not --tp-color-background: the backdrop is
+  // always the dark navy scene, so the card must stay a readable light card
+  // even if .tp-dark is active on the root (where background would invert).
+  background-color: var(--tp-color-surface);
+  color: var(--tp-color-text);
   border-radius: var(--tp-border-radius);
   border: 1px solid var(--tp-color-border);
 }
@@ -20,5 +28,17 @@
 .tp-login-icon {
   width: 56px;
   height: 56px;
+  // Match the 6px badge language used by the sidebar/header badges
+  // (Shape Consistency Lock), not Bootstrap's rounded-3 (0.5rem).
+  border-radius: var(--tp-border-radius);
   background-color: var(--tp-color-primary);
+}
+
+// Language switcher: Bootstrap's .btn resets the outline on focus, so the
+// global :focus-visible ring never lands on these link-buttons. Restore a
+// visible 2px Signal Blue ring to match every other interactive control.
+.tp-lang-btn:focus-visible {
+  outline: 2px solid var(--tp-color-primary);
+  outline-offset: 2px;
+  border-radius: var(--tp-border-radius-sm);
 }
