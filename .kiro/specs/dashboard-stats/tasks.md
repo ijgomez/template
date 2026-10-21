@@ -1,13 +1,21 @@
-# Estadísticas del Dashboard — Tareas
+﻿# Implementation Plan
 
 > Estado: Borrador (pendiente de implementar)
 > Feature: `dashboard-stats`
 > Cada tarea referencia los requisitos (RF/RNF) y el diseño (§) que cubre.
 
-## Orden recomendado (impacto / coste)
+## Overview
 
-Los puntos 1–3 son todos frontend de bajo coste y cubren la mayor parte del
-valor; el backend (Fase 5) es una optimización, no un bloqueo. Ver §7 de diseño.
+Este plan de implementación aborda la retirada de los datos falsos del dashboard
+y su sustitución progresiva por datos reales del backend o de `environment.ts`,
+siguiendo como patrón de referencia la tarjeta de nodos del cluster (estados de
+carga/error y color con significado).
+
+El trabajo se organiza en fases incrementales priorizadas por impacto y coste:
+los puntos 1–3 son todos frontend de bajo coste y cubren la mayor parte del
+valor; el backend (Fase 1) es una optimización, no un bloqueo. Ver §7 de diseño.
+
+Orden recomendado (impacto / coste):
 
 1. Retirar los datos falsos (Fase 0).
 2. Conectar datos ya disponibles (Fases 3/4 con fuentes reales).
@@ -15,9 +23,9 @@ valor; el backend (Fase 5) es una optimización, no un bloqueo. Ver §7 de dise�
 4. Reorganizar jerarquía (Fase 8).
 5. Endpoint de resumen (Fase 1/2).
 
----
+## Tasks
 
-## Fase 0 — Frenar el daño: retirar datos falsos (frontend, bajo coste, alto impacto)
+### Fase 0 — Frenar el daño: retirar datos falsos (frontend, bajo coste, alto impacto)
 
 - [ ] 0.1 Eliminar del template los valores hardcodeados que simulan datos reales:
       "1 con error" de interfaces, `148`/`+12%` de usuarios, `56` de informes.
@@ -28,7 +36,7 @@ valor; el backend (Fase 5) es una optimización, no un bloqueo. Ver §7 de dise�
 - [ ] 0.4 Sustituir provisionalmente por estado de carga/placeholder honesto hasta
       conectar el dato real (no dejar cifras inventadas). (RF-4)
 
-## Fase 1 — Backend: endpoint de resumen (opción recomendada)
+### Fase 1 — Backend: endpoint de resumen (opción recomendada)
 
 - [ ] 1.1 Definir `DashboardStatsDTO` (users, interfaces, reports, system,
       generatedAt) con campos/bloques opcionales y `trend`/`period`. (Diseño §3.1)
@@ -42,7 +50,7 @@ valor; el backend (Fase 5) es una optimización, no un bloqueo. Ver §7 de dise�
 - [ ] 1.5 Tests backend: unitario del servicio de agregación y de controlador
       (MockMvc) con y sin permisos. (coding-testing)
 
-## Fase 2 — Frontend: servicio y modelo
+### Fase 2 — Frontend: servicio y modelo
 
 - [ ] 2.1 `DashboardStats` (modelo) en `core/models`, con bloque `system` y
       `generatedAt`. (Diseño §3.3)
@@ -50,7 +58,7 @@ valor; el backend (Fase 5) es una optimización, no un bloqueo. Ver §7 de dise�
       con `catchError`. (RF-4)
 - [ ] 2.3 Tests del servicio (`HttpTestingController`). (coding-angular)
 
-## Fase 3 — Frontend: consumo de stat-cards
+### Fase 3 — Frontend: consumo de stat-cards
 
 - [ ] 3.1 Refactor de `DashboardComponent`: signals por bloque
       (loading/error/valor) replicando el patrón de la tarjeta de nodos. (RF-4)
@@ -66,7 +74,7 @@ valor; el backend (Fase 5) es una optimización, no un bloqueo. Ver §7 de dise�
 - [ ] 3.7 Actualizar/crear tests de `DashboardComponent` para los bloques
       (carga/error/dato) sin datos hardcodeados. (coding-angular)
 
-## Fase 4 — Alternativa (si no se aborda el backend de inmediato)
+### Fase 4 — Alternativa (si no se aborda el backend de inmediato)
 
 - [ ] 4.1 En su lugar, `DashboardComponent` reutiliza las lecturas existentes en
       paralelo (`forkJoin`): `UserService.countByCriteria`,
@@ -76,7 +84,7 @@ valor; el backend (Fase 5) es una optimización, no un bloqueo. Ver §7 de dise�
       hasta que exista `generatedAt`. (RF-8)
 - [ ] 4.3 Marcar en el código que es un puente hasta el endpoint `/dashboard/stats`.
 
-## Fase 5 — Panel "Estado del sistema" con datos reales
+### Fase 5 — Panel "Estado del sistema" con datos reales
 
 - [ ] 5.1 Entorno desde `environment.ts` (`profile`). (RF-6)
 - [ ] 5.2 Nodo máster desde `ClusterService.findAllNodes()` (nodo `master===true`). (RF-6)
@@ -84,7 +92,7 @@ valor; el backend (Fase 5) es una optimización, no un bloqueo. Ver §7 de dise�
 - [ ] 5.4 Versión solo si hay fuente real; si no, retirar o marcar no disponible. (RF-6)
 - [ ] 5.5 Tests del panel (estados y datos derivados). (coding-angular)
 
-## Fase 6 — Excepciones accionables y navegables
+### Fase 6 — Excepciones accionables y navegables
 
 - [ ] 6.1 Tarjeta de interfaces en error → enlace a `/interfaces` (prefiltro
       `status=ERROR` si hay soporte de query param). (RF-7)
@@ -94,7 +102,7 @@ valor; el backend (Fase 5) es una optimización, no un bloqueo. Ver §7 de dise�
       configuraciones de interfaces para el prefiltro del drill-down. (RF-7, Diseño §8)
 - [ ] 6.4 Tests de navegación/enlaces. (coding-angular)
 
-## Fase 7 — Frescura y recarga
+### Fase 7 — Frescura y recarga
 
 - [ ] 7.1 Indicador "actualizado hace X" basado en `generatedAt` (o instante de
       respuesta en la alternativa). (RF-8)
@@ -102,7 +110,7 @@ valor; el backend (Fase 5) es una optimización, no un bloqueo. Ver §7 de dise�
 - [ ] 7.3 "Último acceso" real desde sesión/perfil o retirado de la cabecera. (RF-10)
 - [ ] 7.4 Tests de frescura/recarga. (coding-angular)
 
-## Fase 8 — Jerarquía y reorganización del layout
+### Fase 8 — Jerarquía y reorganización del layout
 
 - [ ] 8.1 Zona primaria "Salud del sistema" (nodos + interfaces en error) con
       mayor contraste, superior-izquierda. (RF-9, Diseño §6)
@@ -114,7 +122,7 @@ valor; el backend (Fase 5) es una optimización, no un bloqueo. Ver §7 de dise�
 - [ ] 8.5 Verificación visual/responsive con el MCP de Playwright
       (desktop + móvil). (coding-angular)
 
-## Fase 9 — (Opcional, coste alto) Histórico de ejecuciones de informes
+### Fase 9 — (Opcional, coste alto) Histórico de ejecuciones de informes
 
 > Solo si "informes generados" se confirma como requisito de negocio
 > (incertidumbre 2 de requirements). Fuera de alcance de esta spec salvo decisión
@@ -126,27 +134,79 @@ valor; el backend (Fase 5) es una optimización, no un bloqueo. Ver §7 de dise�
 - [ ] 9.3 Integrar en `DashboardStatsDTO` el bloque `reports` real. (RF-3)
 - [ ] 9.4 Tests backend y frontend. (coding-testing, coding-angular)
 
-## Criterios de aceptación
+### Criterios de aceptación
 
-- [ ] CA-1: Ninguna cifra del dashboard está hardcodeada en el template/componente;
+- CA-1: Ninguna cifra del dashboard está hardcodeada en el template/componente;
       todo valor procede del backend o de `environment.ts`. (RF-1..RF-3, RF-6, RF-10)
-- [ ] CA-2: Cada bloque con datos del backend gestiona los tres estados
+- CA-2: Cada bloque con datos del backend gestiona los tres estados
       (cargando / error con `-` + mensaje / dato), igual que la tarjeta de nodos. (RF-4)
-- [ ] CA-3: No se muestra ninguna tendencia/porcentaje sin dato de comparación
+- CA-3: No se muestra ninguna tendencia/porcentaje sin dato de comparación
       real. (RF-1)
-- [ ] CA-4: Toda señal de excepción (interfaz en error, nodo degradado) enlaza a
+- CA-4: Toda señal de excepción (interfaz en error, nodo degradado) enlaza a
       su detalle y permite actuar sin búsqueda manual. (RF-7)
-- [ ] CA-5: El dashboard indica la frescura de los datos y permite recargar. (RF-8)
-- [ ] CA-6: La zona superior prioriza la salud del sistema; con todo sano no hay
+- CA-5: El dashboard indica la frescura de los datos y permite recargar. (RF-8)
+- CA-6: La zona superior prioriza la salud del sistema; con todo sano no hay
       colores de alarma; la excepción destaca por contraste. (RF-9)
-- [ ] CA-7: Los textos nuevos tienen claves i18n simétricas en `es.json`/`en.json`
+- CA-7: Los textos nuevos tienen claves i18n simétricas en `es.json`/`en.json`
       (verificable con `translation-completeness.property.spec.ts`). (RNF-3)
-- [ ] CA-8: Sin dependencias nuevas; se respeta la arquitectura (sin lógica de
+- CA-8: Sin dependencias nuevas; se respeta la arquitectura (sin lógica de
       negocio en `webapp`, agregados en `core` si se hace el endpoint). (RNF-4)
-- [ ] CA-9: Ninguna métrica mostrada depende de datos inexistentes en backend; si
+- CA-9: Ninguna métrica mostrada depende de datos inexistentes en backend; si
       "informes generados" se conserva, existe su modelo de ejecuciones. (RF-3)
 
-## Dependencias y notas
+## Task Dependency Graph
+
+El grafo refleja las dependencias entre fases. La Fase 0 (retirar datos falsos)
+no bloquea a las demás, pero debe hacerse primero por impacto. Las fases backend
+(1, 9) habilitan versiones completas de las fases frontend, que tienen una
+alternativa de bajo coste (Fase 4) cuando el backend no está disponible.
+
+Olas de ejecución (cada ola depende de las anteriores):
+
+```json
+{
+  "waves": [
+    { "wave": 1, "tasks": ["Fase 0", "Fase 9"], "dependsOn": [] },
+    { "wave": 2, "tasks": ["Fase 1", "Fase 4", "Fase 5"], "dependsOn": ["Fase 0", "Fase 9"] },
+    { "wave": 3, "tasks": ["Fase 2"], "dependsOn": ["Fase 1"] },
+    { "wave": 4, "tasks": ["Fase 3"], "dependsOn": ["Fase 2", "Fase 4"] },
+    { "wave": 5, "tasks": ["Fase 6", "Fase 7"], "dependsOn": ["Fase 3"] },
+    { "wave": 6, "tasks": ["Fase 8"], "dependsOn": ["Fase 6", "Fase 7"] }
+  ]
+}
+```
+
+Representación visual del mismo grafo:
+
+```mermaid
+flowchart TD
+  F0["Fase 0<br/>Retirar datos falsos"]
+  F1["Fase 1<br/>Backend: endpoint resumen"]
+  F2["Fase 2<br/>Frontend: servicio y modelo"]
+  F3["Fase 3<br/>Frontend: stat-cards"]
+  F4["Fase 4<br/>Alternativa sin backend"]
+  F5["Fase 5<br/>Panel Estado del sistema"]
+  F6["Fase 6<br/>Excepciones accionables"]
+  F7["Fase 7<br/>Frescura y recarga"]
+  F8["Fase 8<br/>Jerarquia y layout"]
+  F9["Fase 9<br/>Historico de informes"]
+
+  F0 --> F3
+  F0 --> F4
+  F0 --> F5
+  F1 --> F2
+  F2 --> F3
+  F3 --> F6
+  F3 --> F7
+  F4 --> F3
+  F6 --> F8
+  F7 --> F8
+  F9 --> F1
+```
+
+## Notes
+
+### Dependencias y notas
 
 - La tarjeta de nodos del cluster ya consume datos reales y es el **patrón de
   referencia** para estados de carga/error y color con significado (icono+texto).
