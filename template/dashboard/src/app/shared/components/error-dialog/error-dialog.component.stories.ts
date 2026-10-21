@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/angular-vite';
 import { applicationConfig } from '@storybook/angular-vite';
 import { BehaviorSubject } from 'rxjs';
-import { expect, within, userEvent } from 'storybook/test';
+import { expect, within, userEvent, waitFor } from 'storybook/test';
 
 import { ErrorDialogComponent } from './error-dialog.component';
 import { NotificationService } from '../../../core/services/notification.service';
@@ -100,9 +100,11 @@ export const MultipleAndDismiss: Story = {
     const canvas = within(canvasElement);
     await expect(canvas.getByTestId('error-message-err-3')).toBeInTheDocument();
     await expect(canvas.getByTestId('error-message-err-4')).toBeInTheDocument();
-    // Aceptar descarta todos los errores y cierra el modal.
+    // Aceptar descarta todos los errores y cierra el modal (espera que termine la animación de salida).
     await userEvent.click(canvas.getByTestId('error-dialog-accept'));
-    await expect(canvas.queryByTestId('error-dialog')).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(canvas.queryByTestId('error-dialog')).not.toBeInTheDocument();
+    });
   },
 };
 

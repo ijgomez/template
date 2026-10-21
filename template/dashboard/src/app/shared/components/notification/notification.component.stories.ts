@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/angular-vite';
 import { applicationConfig } from '@storybook/angular-vite';
 import { BehaviorSubject } from 'rxjs';
-import { expect, within, userEvent } from 'storybook/test';
+import { expect, within, userEvent, waitFor } from 'storybook/test';
 
 import { NotificationComponent } from './notification.component';
 import { NotificationService } from '../../../core/services/notification.service';
@@ -104,9 +104,11 @@ export const MultipleAndDismiss: Story = {
     await expect(canvas.getByTestId('notification-container')).toBeInTheDocument();
     const dismissButtons = canvas.getAllByTestId('notification-dismiss');
     await expect(dismissButtons).toHaveLength(2);
-    // Descarta la primera notificación; debe quedar una sola.
+    // Descarta la primera notificación; debe quedar una sola (espera que termine la animación de salida).
     await userEvent.click(dismissButtons[0]);
-    await expect(canvas.getAllByTestId('notification-dismiss')).toHaveLength(1);
+    await waitFor(() => {
+      expect(canvas.getAllByTestId('notification-dismiss')).toHaveLength(1);
+    });
   },
 };
 
