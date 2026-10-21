@@ -319,16 +319,22 @@ Propiedades que la solución debe satisfacer para considerarse correcta:
 Ningún valor mostrado puede ser hardcodeado ni simulado; si un dato no tiene
 fuente real, el indicador se omite (RF-1, RF-3, §2, §9).
 
+**Validates: Requirements 1.1, 1.3** (RF-1, RF-3)
+
 ### Property 2: Respeto estricto de permisos
 
 Cada bloque del resumen se calcula y muestra solo si el usuario tiene el permiso
 de la entidad correspondiente; los bloques sin permiso se omiten o se devuelven
 como no disponibles (§3.2).
 
+**Validates: Requirements 1.5, 2.2** (RF-5, RNF-2)
+
 ### Property 3: Aislamiento de fallos entre bloques
 
 El error de un bloque no impide que los demás muestren sus datos (§5, Error
 Handling).
+
+**Validates: Requirements 1.4** (RF-4)
 
 ### Property 4: Frescura veraz
 
@@ -336,21 +342,29 @@ El indicador "actualizado hace X" refleja el instante real de la última carga
 (`generatedAt` del backend o el instante de respuesta en la alternativa
 frontend), y se recalcula en cada recarga (RF-8).
 
+**Validates: Requirements 1.8** (RF-8)
+
 ### Property 5: Navegabilidad de excepciones
 
 Cada señal de salud en estado de excepción enlaza a su detalle (interfaces en
 error → `/interfaces`; nodos → `/administration/cluster`) (RF-7).
+
+**Validates: Requirements 1.7, 1.9** (RF-7, RF-9)
 
 ### Property 6: Accesibilidad del estado
 
 El estado de cada bloque es perceptible sin depender solo del color (icono +
 texto) (RNF-5).
 
+**Validates: Requirements 2.5** (RNF-5)
+
 ### Property 7: Equivalencia de contrato
 
 La alternativa sin backend (§4) produce los mismos valores observables que el
 endpoint único (§3) para los bloques que comparten, de modo que migrar entre
 ambos no cambie lo mostrado.
+
+**Validates: Requirements 1.2, 1.6, 2.1** (RF-2, RF-6, RNF-1)
 
 ## Testing Strategy
 

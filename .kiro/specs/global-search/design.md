@@ -134,20 +134,48 @@ sequenceDiagram
 
 Propiedades que la implementación debe cumplir y que sirven de base para la verificación:
 
-- **Permisos respetados**: el facade solo consulta las entidades cuyo permiso
-  (`USER_READ`, `SYSTEM_PARAMETER_READ`, `INTERFACES_READ`) tiene el usuario. Un
-  usuario sin permiso sobre una entidad nunca recibe resultados de esa entidad.
-- **Mínimo de caracteres y debounce**: no se dispara ninguna búsqueda con menos de
-  2 caracteres ni antes de 300 ms de inactividad tras la última pulsación.
-- **Cancelación de peticiones obsoletas**: con `switchMap`, solo los resultados del
-  último término introducido llegan a la vista; las respuestas de términos previos
-  se descartan.
-- **Degradación elegante**: el fallo de una entidad (ver Error Handling) no impide
-  mostrar los resultados de las demás; el popup muestra los grupos que sí respondieron.
-- **Normalización coherente**: todo `SearchResultItem` expuesto a la vista tiene
-  `type`, `id`, `primary` y `route` definidos, con independencia de la entidad origen.
-- **Determinismo de agrupación**: cada resultado pertenece a exactamente un
-  `SearchResultGroup`, correspondiente a su `SearchEntityType`.
+### Property 1: Permisos respetados
+
+El facade solo consulta las entidades cuyo permiso (`USER_READ`,
+`SYSTEM_PARAMETER_READ`, `INTERFACES_READ`) tiene el usuario. Un usuario sin
+permiso sobre una entidad nunca recibe resultados de esa entidad.
+
+**Validates: Requirements 1.2, 2.3** (RF-2, RNF-3)
+
+### Property 2: Mínimo de caracteres y debounce
+
+No se dispara ninguna búsqueda con menos de 2 caracteres ni antes de 300 ms de
+inactividad tras la última pulsación.
+
+**Validates: Requirements 1.1, 2.2** (RF-1, RNF-2)
+
+### Property 3: Cancelación de peticiones obsoletas
+
+Con `switchMap`, solo los resultados del último término introducido llegan a la
+vista; las respuestas de términos previos se descartan.
+
+**Validates: Requirements 2.2** (RNF-2)
+
+### Property 4: Degradación elegante
+
+El fallo de una entidad (ver Error Handling) no impide mostrar los resultados de
+las demás; el popup muestra los grupos que sí respondieron.
+
+**Validates: Requirements 1.5** (RF-5)
+
+### Property 5: Normalización coherente
+
+Todo `SearchResultItem` expuesto a la vista tiene `type`, `id`, `primary` y
+`route` definidos, con independencia de la entidad origen.
+
+**Validates: Requirements 1.3** (RF-3)
+
+### Property 6: Determinismo de agrupación
+
+Cada resultado pertenece a exactamente un `SearchResultGroup`, correspondiente a
+su `SearchEntityType`.
+
+**Validates: Requirements 1.3** (RF-3)
 
 ## Error Handling
 
