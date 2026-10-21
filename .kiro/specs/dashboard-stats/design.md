@@ -3,6 +3,8 @@
 > Estado: Borrador (pendiente de implementar)
 > Feature: `dashboard-stats`
 
+## Overview
+
 ## 1. Resumen
 
 El rediseño reorienta el dashboard a su rol real: **overview de salud del sistema
@@ -38,6 +40,18 @@ backend nuevo.
 | Versión de la aplicación   | Depende          | Solo si hay fuente real; si no, retirar (no inventar)         |
 | "Informes generados / mes" | **No**           | `ReportService` es catálogo, no histórico de ejecuciones      |
 | Último acceso del usuario  | Depende          | Perfil/sesión (`AuthService`) o retirar de la cabecera        |
+
+## Architecture
+
+La arquitectura respeta la separación por capas del proyecto: la capa web
+(`webapp`) expone el endpoint y delega la agregación en servicios de negocio de
+`core`, que a su vez reutilizan los servicios/lecturas existentes (`UserService`,
+`InterfaceService`, `ClusterService`). El frontend consume un único endpoint de
+resumen a través de `DashboardStatsService` y renderiza por bloques con estados
+de carga/error independientes (patrón de la tarjeta de nodos del cluster). Las
+secciones §3 (opción recomendada: endpoint de resumen), §4 (alternativa sin
+backend nuevo), §6 (layout y jerarquía) y §8 (impacto) detallan la arquitectura
+de la solución.
 
 ## 3. Opción recomendada: endpoint de resumen
 
@@ -82,6 +96,23 @@ Respuesta (DTO `DashboardStatsDTO`):
   system/cluster → `CLUSTER_NODE_READ`); los bloques sin permiso se omiten o se
   devuelven como no disponibles.
 
+## Components and Interfaces
+
+Componentes e interfaces principales de la solución:
+
+- **Backend / `webapp`**: `DashboardController` expone `GET /dashboard/stats` y
+  delega en `core` sin lógica de negocio propia (§3.1).
+- **Backend / `core`**: servicio de negocio de resumen que agrega conteos y
+  metadatos de estado reutilizando `UserService`, `InterfaceService` y
+  `ClusterService`, respetando los permisos por entidad (§3.2).
+- **Frontend / servicio**: `DashboardStatsService.getStats(): Observable<DashboardStats>`
+  consume `GET /dashboard/stats` (§3.3).
+- **Frontend / componente**: `DashboardComponent` orquesta los bloques con
+  signals por bloque (`usersLoading/usersError/users`, `systemLoading/...`) y
+  gestiona recarga y frescura (§3.3, §5, §6).
+
+Las subsecciones §3.1, §3.3 y §4 detallan las firmas e interfaces concretas.
+
 ### 3.3 Frontend
 
 ```typescript
@@ -98,6 +129,23 @@ export interface DashboardStats {
 - `DashboardComponent` consume el servicio y expone signals por bloque
   (`usersLoading/usersError/users`, `systemLoading/...`, etc.), replicando el
   patrón que ya usa la tarjeta de nodos del cluster.
+
+## Data Models
+
+Los modelos de datos de la feature son el DTO de respuesta del backend y su
+interfaz equivalente en frontend:
+
+- **`DashboardStatsDTO`** (backend): estructura de respuesta de
+  `GET /dashboard/stats` con los bloques `users`, `interfaces`, `reports`,
+  `system` y la marca de frescura `generatedAt`. El ejemplo JSON completo y la
+  semántica de cada campo (incluidos los opcionales `trend` y `reports`) están en
+  §3.1.
+- **`DashboardStats`** (frontend): interfaz TypeScript espejo del DTO, con los
+  bloques marcados como opcionales para reflejar su posible ausencia por permisos
+  o por falta de fuente de datos; definición en §3.3.
+
+El inventario de datos de origen (disponible hoy vs. requiere backend nuevo) y
+sus fuentes está en §2.
 
 ## 4. Alternativa (primera iteración sin backend nuevo)
 
@@ -118,6 +166,27 @@ obtener los agregados reutilizando lo existente:
 - Inconveniente: varias peticiones y falta de dato de tendencia real (se omite).
 - Esta alternativa es un puente; la opción recomendada (endpoint único) es el
   objetivo final.
+
+## Error Handling
+
+El manejo de errores se basa en estados independientes por bloque, replicando el
+patrón de la tarjeta de nodos del cluster:
+
+- **Fallo de red o de permiso en un bloque**: ese bloque pasa a estado `Error`
+  (valor `-` + mensaje), sin degradar el resto del dashboard; los demás bloques
+  siguen mostrando sus datos.
+- **Bloque no autorizado**: el backend lo omite o lo devuelve como no disponible
+  según el permiso de la entidad (§3.2); el frontend no muestra la tarjeta
+  correspondiente en lugar de inventar un valor.
+- **Dato no calculable** (p. ej. informes sin histórico, tendencia sin
+  comparación real): se omite el indicador en vez de mostrar un valor
+  hardcodeado (RF-1, RF-3, §2, §9).
+- **Reintento**: desde estado `Error` se puede volver a `Cargando` mediante la
+  acción de recarga `[↻]` (§6).
+- **Indicadores accesibles**: el estado nunca depende solo del color; se refuerza
+  con icono + texto (RNF-5).
+
+El diagrama de estados y el detalle visual de cada bloque están en §5.
 
 ## 5. Estados de los bloques
 
@@ -240,3 +309,69 @@ Interacciones:
   hasta que exista modelo de ejecuciones (§2, RF-3).
 - **Cadencia desconocida**: decidir auto-refresh vs. recarga manual depende de la
   incertidumbre 1 de requirements.
+
+## Correctness Properties
+
+Propiedades que la solución debe satisfacer para considerarse correcta:
+
+### Property 1: Sin datos inventados
+
+Ningún valor mostrado puede ser hardcodeado ni simulado; si un dato no tiene
+fuente real, el indicador se omite (RF-1, RF-3, §2, §9).
+
+### Property 2: Respeto estricto de permisos
+
+Cada bloque del resumen se calcula y muestra solo si el usuario tiene el permiso
+de la entidad correspondiente; los bloques sin permiso se omiten o se devuelven
+como no disponibles (§3.2).
+
+### Property 3: Aislamiento de fallos entre bloques
+
+El error de un bloque no impide que los demás muestren sus datos (§5, Error
+Handling).
+
+### Property 4: Frescura veraz
+
+El indicador "actualizado hace X" refleja el instante real de la última carga
+(`generatedAt` del backend o el instante de respuesta en la alternativa
+frontend), y se recalcula en cada recarga (RF-8).
+
+### Property 5: Navegabilidad de excepciones
+
+Cada señal de salud en estado de excepción enlaza a su detalle (interfaces en
+error → `/interfaces`; nodos → `/administration/cluster`) (RF-7).
+
+### Property 6: Accesibilidad del estado
+
+El estado de cada bloque es perceptible sin depender solo del color (icono +
+texto) (RNF-5).
+
+### Property 7: Equivalencia de contrato
+
+La alternativa sin backend (§4) produce los mismos valores observables que el
+endpoint único (§3) para los bloques que comparten, de modo que migrar entre
+ambos no cambie lo mostrado.
+
+## Testing Strategy
+
+La validación sigue la guía de pruebas del proyecto y se centra en el
+comportamiento, no solo en la ausencia de errores de compilación:
+
+- **Backend (`core` / `webapp`)**: tests unitarios del servicio de agregación que
+  verifican que cada bloque se calcula a partir de los servicios reales y que los
+  bloques se omiten cuando falta el permiso de la entidad (§3.2); test del
+  controlador que verifica el contrato de `GET /dashboard/stats` (forma del DTO y
+  campos opcionales `trend`/`reports`). Ejecutar con
+  `mvn test -pl <modulo> -am` sobre los módulos afectados.
+- **Frontend (`dashboard`)**: tests de `DashboardStatsService` (mapeo de la
+  respuesta a `DashboardStats`) y de `DashboardComponent` (estados por bloque:
+  carga → disponible, carga → error, reintento; omisión de tarjetas sin dato;
+  recálculo de la marca de frescura en cada recarga). Ejecutar con `ng test`.
+- **Casos de borde**: respuesta con bloques ausentes por permisos, bloque en
+  error mientras el resto funciona, `trend`/`reports`/`version` nulos (no deben
+  renderizar indicador), y navegación de las excepciones a su detalle.
+- **No regresión**: la tarjeta de nodos del cluster (patrón de referencia) debe
+  seguir comportándose igual tras el refactor.
+- **Verificación visual**: comprobar en el navegador la jerarquía del layout
+  (§6), que la zona de salud queda silenciosa cuando todo está sano y que la
+  excepción destaca (RF-9).

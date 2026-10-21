@@ -1,8 +1,31 @@
-# Estadísticas del Dashboard — Requisitos
+# Requirements Document
 
 > Estado: Borrador (pendiente de implementar)
 > Feature: `dashboard-stats`
 > Ámbito: Frontend Angular (`template/dashboard`) + endpoints de backend
+
+## Introduction
+
+Estadísticas del Dashboard: convertir el dashboard, hoy lleno de datos
+hardcodeados, en un overview fiable del estado del sistema para el
+administrador/operador. Este documento recoge el contexto de la auditoría, el
+objetivo y los requisitos funcionales y no funcionales para que las tarjetas,
+el panel de estado y la cabecera muestren datos reales del backend o de
+configuración, con estados de carga/error consistentes, excepciones accionables,
+jerarquía de información e indicación de frescura.
+
+## Glossary
+
+| Término              | Definición                                                                                     |
+|----------------------|------------------------------------------------------------------------------------------------|
+| Stat-card            | Tarjeta de estadística del dashboard que muestra un KPI (usuarios, nodos, interfaces, informes).|
+| Dato hardcodeado     | Valor fijo escrito en el componente o el HTML que aparenta ser real sin proceder del backend.  |
+| Nodo máster          | Nodo del cluster con `master === true` (`ClusterService.findAllNodes`).                        |
+| Uptime               | Tiempo en servicio, derivado de `startedAt` del nodo máster.                                    |
+| Frescura             | Antigüedad de los datos mostrados ("actualizado hace X"), referida al estado del sistema.       |
+| Drill-down           | Navegación desde una señal (excepción) hacia su vista de detalle.                              |
+| Excepción accionable | Señal de error/degradación que enlaza a su detalle en lugar de mostrarse como texto inerte.     |
+| DASHBOARD_READ       | Permiso de lectura requerido para acceder a la ruta `/dashboard`.                               |
 
 ## Contexto
 
@@ -86,7 +109,9 @@ administrador/operador:
 Todo ello sin introducir dependencias nuevas en el frontend y respetando la
 arquitectura del proyecto.
 
-## Requisitos funcionales
+## Requirements
+
+### Requisitos funcionales
 
 ### RF-1 — Usuarios
 - La tarjeta muestra el número real de usuarios (y, si procede, cuántos activos).

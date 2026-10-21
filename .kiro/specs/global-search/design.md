@@ -3,6 +3,8 @@
 > Estado: Borrador (pendiente de implementar)
 > Feature: `global-search`
 
+## Overview
+
 ## 1. Resumen
 
 Se implementa un buscador global en el header que, al escribir, consulta en
@@ -13,6 +15,8 @@ popup agrupados por tipo de entidad, con navegación al detalle.
 La iteración inicial **no requiere un endpoint de backend nuevo**: orquesta las
 búsquedas desde el frontend. En el apartado 7 se describe la alternativa de un
 endpoint unificado para una evolución posterior.
+
+## Architecture
 
 ## 2. Arquitectura de componentes
 
@@ -26,6 +30,8 @@ flowchart TD
   Results --> Popup["Popup de resultados (listbox)"]
   Popup --> Nav["Router: navegacion al detalle"]
 ```
+
+## Components and Interfaces
 
 ### 2.1 Componentes a crear
 
@@ -46,6 +52,8 @@ bloque `.header-search` actual (el input `data-testid="input-global-search"`).
   permisos, lanza las peticiones en paralelo y normaliza los resultados.
 - Los **servicios de entidad existentes** no se modifican; se reutiliza su
   `findByCriteria`.
+
+## Data Models
 
 ## 3. Modelo de datos (frontend)
 
@@ -121,6 +129,57 @@ sequenceDiagram
 - Dentro del facade: `forkJoin` de las entidades permitidas, cada una con
   `catchError` que devuelve un grupo vacío marcado como "con error" para no
   tumbar el resto (degradación elegante, RF-5).
+
+## Correctness Properties
+
+Propiedades que la implementación debe cumplir y que sirven de base para la verificación:
+
+- **Permisos respetados**: el facade solo consulta las entidades cuyo permiso
+  (`USER_READ`, `SYSTEM_PARAMETER_READ`, `INTERFACES_READ`) tiene el usuario. Un
+  usuario sin permiso sobre una entidad nunca recibe resultados de esa entidad.
+- **Mínimo de caracteres y debounce**: no se dispara ninguna búsqueda con menos de
+  2 caracteres ni antes de 300 ms de inactividad tras la última pulsación.
+- **Cancelación de peticiones obsoletas**: con `switchMap`, solo los resultados del
+  último término introducido llegan a la vista; las respuestas de términos previos
+  se descartan.
+- **Degradación elegante**: el fallo de una entidad (ver Error Handling) no impide
+  mostrar los resultados de las demás; el popup muestra los grupos que sí respondieron.
+- **Normalización coherente**: todo `SearchResultItem` expuesto a la vista tiene
+  `type`, `id`, `primary` y `route` definidos, con independencia de la entidad origen.
+- **Determinismo de agrupación**: cada resultado pertenece a exactamente un
+  `SearchResultGroup`, correspondiente a su `SearchEntityType`.
+
+## Error Handling
+
+- **Error por entidad**: cada llamada `findByCriteria` del `forkJoin` se envuelve en
+  `catchError`, que devuelve un grupo vacío marcado como "con error" en lugar de
+  propagar el fallo. Así un error en una entidad no tumba el resto (RF-5).
+- **Indicación al usuario**: un grupo con error se muestra con la clave i18n
+  `globalSearch.groupError` ("No se pudo buscar en {{group}}"), diferenciándolo de
+  un grupo sin coincidencias.
+- **Sin resultados**: si todos los grupos vuelven vacíos (sin error), el popup
+  muestra `globalSearch.empty` ("Sin resultados para «{{term}}»").
+- **Estado de carga**: mientras las peticiones están en vuelo se muestra
+  `globalSearch.loading` en una región `aria-live="polite"`.
+- **Entrada inválida**: términos por debajo del mínimo (2 caracteres) no generan
+  petición ni mensaje de error; simplemente no se abre el popup.
+
+## Testing Strategy
+
+- **Unitarias del facade (`GlobalSearchService`)**: verifican el filtrado por
+  permisos, el lanzamiento en paralelo, la normalización a `SearchResultGroup` /
+  `SearchResultItem` y el comportamiento de `catchError` ante el fallo de una
+  entidad (degradación elegante).
+- **Unitarias del componente (`GlobalSearchComponent`)**: verifican debounce,
+  mínimo de caracteres, cancelación con `switchMap`, estados (carga/vacío/error) y
+  la navegación al seleccionar un resultado.
+- **Accesibilidad**: comprobación de atributos ARIA (`role="combobox"`,
+  `aria-expanded`, `aria-activedescendant`, `role="listbox"`, `role="option"`) y de
+  la navegación por teclado (↑/↓, Enter, Escape y devolución de foco).
+- **Integración ligera**: con servicios de entidad simulados (mocks), validar el
+  flujo completo término → grupos → popup.
+- **Comando de referencia**: `ng test` para el módulo `dashboard`, siguiendo la
+  guía de `testing-verification`.
 
 ## 6. Accesibilidad (combobox ARIA)
 

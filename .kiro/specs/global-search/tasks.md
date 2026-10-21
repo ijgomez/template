@@ -1,10 +1,20 @@
-# Buscador Global — Tareas
+# Implementation Plan
 
 > Estado: Borrador (pendiente de implementar)
 > Feature: `global-search`
 > Cada tarea referencia los requisitos (RF/RNF) que cubre.
 
-## Fase 1 — Modelo y servicio facade
+## Overview
+
+Buscador global en el header que consulta en paralelo las entidades permitidas
+(usuarios, parámetros, interfaces...) a través de un servicio facade, agrupa los
+resultados por tipo y permite navegar al detalle o al listado filtrado. El plan
+se organiza en cinco fases: modelo y servicio facade, componente de búsqueda,
+accesibilidad, integración e i18n, y E2E/cierre.
+
+## Tasks
+
+### Fase 1 — Modelo y servicio facade
 
 - [ ] 1.1 Crear `core/models/global-search.model.ts` con `SearchEntityType`,
       `SearchResultItem` y `SearchResultGroup`. (Diseño §3)
@@ -21,7 +31,7 @@
 - [ ] 1.3 Tests unitarios del servicio (`global-search.service.spec.ts`):
       permisos respetados, paralelismo, normalización, error parcial. (RNF-3, RF-5)
 
-## Fase 2 — Componente de búsqueda
+### Fase 2 — Componente de búsqueda
 
 - [ ] 2.1 Crear `GlobalSearchComponent` (standalone, OnPush) en
       `core/layout/global-search/`. (Diseño §2.1)
@@ -38,7 +48,7 @@
 - [ ] 2.8 Tests de componente (`.spec.ts`): debounce, render de grupos, estados,
       navegación, cierre. (coding-angular: obligatoriedad de tests)
 
-## Fase 3 — Accesibilidad
+### Fase 3 — Accesibilidad
 
 - [ ] 3.1 Patrón combobox ARIA en el campo: `role`, `aria-expanded`,
       `aria-controls`, `aria-autocomplete`, `aria-activedescendant`. (RNF-1)
@@ -48,7 +58,7 @@
       cerrar. (RNF-1)
 - [ ] 3.4 Región `aria-live="polite"` para el estado de carga. (RNF-1)
 
-## Fase 4 — Integración e i18n
+### Fase 4 — Integración e i18n
 
 - [ ] 4.1 Integrar `GlobalSearchComponent` en `layout.component.html`,
       reemplazando el bloque `.header-search` actual
@@ -59,7 +69,7 @@
 - [ ] 4.3 Verificar que la búsqueda respeta permisos con usuarios de distinto
       perfil (sin permiso → entidad no aparece). (RNF-3)
 
-## Fase 5 — E2E y cierre
+### Fase 5 — E2E y cierre
 
 - [ ] 5.1 Test E2E Playwright del flujo: escribir término, ver resultados
       agrupados, navegar a un detalle. (coding-testing)
@@ -68,7 +78,30 @@
 - [ ] 5.3 Actualizar documentación funcional/técnica del header si procede
       (`template-docs/`). (coding-docs)
 
-## Dependencias y notas
+## Task Dependency Graph
+
+```json
+{
+  "waves": [
+    { "wave": 1, "tasks": ["1.1", "1.2", "1.3"], "dependsOn": [] },
+    { "wave": 2, "tasks": ["2.1", "2.2", "2.3", "2.4", "2.5", "2.6", "2.7", "2.8"], "dependsOn": [1] },
+    { "wave": 3, "tasks": ["3.1", "3.2", "3.3", "3.4"], "dependsOn": [2] },
+    { "wave": 4, "tasks": ["4.1", "4.2", "4.3"], "dependsOn": [2, 3] },
+    { "wave": 5, "tasks": ["5.1", "5.2", "5.3"], "dependsOn": [4] }
+  ]
+}
+```
+
+```mermaid
+graph LR
+  F1[Fase 1: Modelo y servicio] --> F2[Fase 2: Componente]
+  F2 --> F3[Fase 3: Accesibilidad]
+  F2 --> F4[Fase 4: Integración e i18n]
+  F3 --> F4
+  F4 --> F5[Fase 5: E2E y cierre]
+```
+
+## Notes
 
 - **Depende de** la mejora #13 de la auditoría (deep-linking de detalle) para que
   la navegación lleve al detalle exacto en lugar del listado filtrado. Mientras no

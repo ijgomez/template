@@ -1,10 +1,12 @@
-# Buscador Global — Requisitos
+# Requirements Document
 
 > Estado: Borrador (pendiente de implementar)
 > Feature: `global-search`
 > Ámbito: Frontend Angular (`template/dashboard`) + endpoints de backend si son necesarios
 
-## Contexto
+## Introduction
+
+### Contexto
 
 El header del layout (`core/layout/layout.component.html`) ya incluye un campo de
 búsqueda (`data-testid="input-global-search"`) que **actualmente no tiene
@@ -15,13 +17,27 @@ Este documento define el comportamiento esperado del buscador global para
 abordarlo en una iteración futura. No introduce dependencias nuevas; se apoya en
 Angular 22, Bootstrap 5.3.8 y los servicios de entidad existentes.
 
-## Objetivo
+### Objetivo
 
 Permitir al usuario buscar de forma rápida y transversal sobre varias entidades
 del sistema desde un único campo en el header, mostrando los resultados en un
 popup organizados por tipo de entidad, y navegar al detalle con un clic.
 
-## Entidades buscables (alcance inicial)
+## Glossary
+
+| Término              | Definición                                                                                     |
+|----------------------|------------------------------------------------------------------------------------------------|
+| Buscador global      | Campo único en el header que busca de forma transversal sobre varias entidades del sistema.    |
+| Entidad buscable     | Tipo de dato consultable desde el buscador (Usuarios, Parámetros, Interfaces…).                |
+| Popup de resultados  | Dropdown anclado al campo que muestra las coincidencias agrupadas por tipo de entidad.         |
+| Debounce             | Retardo tras la última pulsación antes de lanzar la búsqueda, para evitar peticiones por tecla.|
+| `findByCriteria`     | Método existente de los servicios de entidad para consultar por criterios de filtrado.         |
+| Combobox (ARIA)      | Patrón de accesibilidad para un campo con lista desplegable de opciones.                        |
+| Degradación elegante | Mostrar los resultados disponibles aunque falle una de las entidades consultadas.              |
+
+## Requirements
+
+### Entidades buscables (alcance inicial)
 
 | Entidad     | Servicio existente              | Ruta de listado/detalle                         | Permiso de lectura        |
 |-------------|---------------------------------|-------------------------------------------------|---------------------------|
