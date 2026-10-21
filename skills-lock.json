@@ -1,11 +1,4 @@
 {
   "version": 1,
-  "skills": {
-    "token-optimization": {
-      "source": "bm629/agent-skills",
-      "sourceType": "github",
-      "skillPath": "skills/token-optimization/SKILL.md",
-      "computedHash": "3cf99d341bebb75f4f5f8ce349beaf23c22ecb4f669841f86d0d6d763a68fb6c"
-    }
-  }
+  "skills": {}
 }
