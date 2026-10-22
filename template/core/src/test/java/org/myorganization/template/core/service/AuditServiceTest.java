@@ -8,7 +8,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.myorganization.template.core.repository.AuditLogRepository;
@@ -37,9 +41,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -52,6 +54,27 @@ class AuditServiceTest {
 
     @Mock
     private ParameterService parameterService;
+
+    @Captor
+    private ArgumentCaptor<Specification<AuditLog>> specCaptor;
+
+    @Mock
+    private Root<AuditLog> root;
+
+    @Mock
+    private CriteriaQuery<?> criteriaQuery;
+
+    @Mock
+    private CriteriaBuilder criteriaBuilder;
+
+    @Mock
+    private Predicate criteriaPredicate;
+
+    @Mock
+    private Path<String> stringPath;
+
+    @Mock
+    private Expression<String> stringExpression;
 
     private AuditService auditService;
 
@@ -75,7 +98,7 @@ class AuditServiceTest {
         );
         Pageable pageable = PageRequest.of(0, 10);
 
-        when(auditLogRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(page);
+        when(auditLogRepository.findAll(ArgumentMatchers.<Specification<AuditLog>>any(), eq(pageable))).thenReturn(page);
 
         // Act
         Page<AuditLogDTO> result = auditService.findByCriteria(criteria, pageable);
@@ -98,7 +121,7 @@ class AuditServiceTest {
         AuditCriteria criteria = new AuditCriteria(null, null, null, null, null);
         Pageable pageable = PageRequest.of(0, 10);
 
-        when(auditLogRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(page);
+        when(auditLogRepository.findAll(ArgumentMatchers.<Specification<AuditLog>>any(), eq(pageable))).thenReturn(page);
 
         // Act
         Page<AuditLogDTO> result = auditService.findByCriteria(criteria, pageable);
@@ -113,7 +136,7 @@ class AuditServiceTest {
     void countByCriteria_returnsCount() {
         // Arrange
         AuditCriteria criteria = new AuditCriteria(null, null, "admin", null, null);
-        when(auditLogRepository.count(any(Specification.class))).thenReturn(15L);
+        when(auditLogRepository.count(ArgumentMatchers.<Specification<AuditLog>>any())).thenReturn(15L);
 
         // Act
         long count = auditService.countByCriteria(criteria);
@@ -180,8 +203,9 @@ class AuditServiceTest {
         verify(auditLogRepository).save(captor.capture());
 
         OffsetDateTime timestamp = captor.getValue().getTimestamp();
-        assertThat(timestamp).isAfterOrEqualTo(before);
-        assertThat(timestamp).isBeforeOrEqualTo(after);
+        assertThat(timestamp)
+                .isAfterOrEqualTo(before)
+                .isBeforeOrEqualTo(after);
     }
 
     @Test
@@ -233,12 +257,13 @@ class AuditServiceTest {
         verify(auditLogRepository).deleteByTimestampBefore(any(OffsetDateTime.class));
     }
 
-    @Test
-    @DisplayName("archiveIfRetentionExceeded: does nothing when retention days is zero")
-    void archiveIfRetentionExceeded_zeroDays_doesNothing() {
+    @ParameterizedTest
+    @ValueSource(strings = {"0", "-5", "  "})
+    @DisplayName("archiveIfRetentionExceeded: invalid or non-positive retention days does nothing")
+    void archiveIfRetentionExceeded_invalidOrNonPositiveDays_doesNothing(String retentionValue) {
         // Arrange
         ParameterDTO retentionParam = new ParameterDTO(
-                1L, "AUDIT_RETENTION_DAYS", "Retention period", "0", ParameterType.INTEGER, null, null
+                1L, "AUDIT_RETENTION_DAYS", "Retention period", retentionValue, ParameterType.INTEGER, null, null
         );
         when(parameterService.findByCode("AUDIT_RETENTION_DAYS")).thenReturn(retentionParam);
 
@@ -246,7 +271,6 @@ class AuditServiceTest {
         auditService.archiveIfRetentionExceeded();
 
         // Assert
-        
         verify(auditLogRepository, never()).deleteByTimestampBefore(any(OffsetDateTime.class));
     }
 
@@ -262,7 +286,7 @@ class AuditServiceTest {
         AuditCriteria criteria = new AuditCriteria(null, null, null, null, null);
         Pageable pageable = PageRequest.of(0, 10);
 
-        when(auditLogRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(page);
+        when(auditLogRepository.findAll(ArgumentMatchers.<Specification<AuditLog>>any(), eq(pageable))).thenReturn(page);
 
         // Act
         Page<AuditLogDTO> result = auditService.findByCriteria(criteria, pageable);
@@ -279,31 +303,7 @@ class AuditServiceTest {
         assertThat(dto.timestamp()).isNotNull();
     }
 
-    @Test
-    @DisplayName("archiveIfRetentionExceeded: negative retention days does nothing")
-    void archiveIfRetentionExceeded_negativeDays_doesNothing() {
-        ParameterDTO retentionParam = new ParameterDTO(
-                1L, "AUDIT_RETENTION_DAYS", "Retention period", "-5", ParameterType.INTEGER, null, null
-        );
-        when(parameterService.findByCode("AUDIT_RETENTION_DAYS")).thenReturn(retentionParam);
 
-        auditService.archiveIfRetentionExceeded();
-
-        verify(auditLogRepository, never()).deleteByTimestampBefore(any(OffsetDateTime.class));
-    }
-
-    @Test
-    @DisplayName("archiveIfRetentionExceeded: blank parameter value does nothing")
-    void archiveIfRetentionExceeded_blankValue_doesNothing() {
-        ParameterDTO retentionParam = new ParameterDTO(
-                1L, "AUDIT_RETENTION_DAYS", "Retention period", "  ", ParameterType.INTEGER, null, null
-        );
-        when(parameterService.findByCode("AUDIT_RETENTION_DAYS")).thenReturn(retentionParam);
-
-        auditService.archiveIfRetentionExceeded();
-
-        verify(auditLogRepository, never()).deleteByTimestampBefore(any(OffsetDateTime.class));
-    }
 
     @Test
     @DisplayName("buildSpecification: all filters build a full specification via captured spec")
@@ -318,7 +318,6 @@ class AuditServiceTest {
         Pageable pageable = PageRequest.of(0, 10);
         Page<AuditLog> page = new PageImpl<>(List.of(), pageable, 0);
 
-        ArgumentCaptor<Specification<AuditLog>> specCaptor = ArgumentCaptor.forClass(Specification.class);
         when(auditLogRepository.findAll(specCaptor.capture(), eq(pageable))).thenReturn(page);
 
         auditService.findByCriteria(criteria, pageable);
@@ -328,22 +327,16 @@ class AuditServiceTest {
     }
 
     private Predicate evaluateSpecification(Specification<AuditLog> spec) {
-        Root<AuditLog> root = mock(Root.class, RETURNS_DEEP_STUBS);
-        CriteriaQuery<?> query = mock(CriteriaQuery.class);
-        CriteriaBuilder cb = mock(CriteriaBuilder.class);
-        Predicate predicate = mock(Predicate.class);
-        Path<Object> path = mock(Path.class);
+        lenient().when(root.<String>get(anyString())).thenReturn(stringPath);
+        lenient().when(criteriaBuilder.conjunction()).thenReturn(criteriaPredicate);
+        lenient().when(criteriaBuilder.lower(any())).thenReturn(stringExpression);
+        lenient().when(criteriaBuilder.like(any(), anyString())).thenReturn(criteriaPredicate);
+        lenient().when(criteriaBuilder.equal(any(), any())).thenReturn(criteriaPredicate);
+        lenient().when(criteriaBuilder.greaterThanOrEqualTo(any(), any(OffsetDateTime.class))).thenReturn(criteriaPredicate);
+        lenient().when(criteriaBuilder.lessThanOrEqualTo(any(), any(OffsetDateTime.class))).thenReturn(criteriaPredicate);
+        lenient().when(criteriaBuilder.and(any(Predicate.class), any(Predicate.class))).thenReturn(criteriaPredicate);
 
-        lenient().when(root.get(anyString())).thenReturn((Path) path);
-        lenient().when(cb.conjunction()).thenReturn(predicate);
-        lenient().when(cb.lower(any())).thenReturn(mock(Expression.class));
-        lenient().when(cb.like(any(), anyString())).thenReturn(predicate);
-        lenient().when(cb.equal(any(), any())).thenReturn(predicate);
-        lenient().when(cb.greaterThanOrEqualTo(any(), any(OffsetDateTime.class))).thenReturn(predicate);
-        lenient().when(cb.lessThanOrEqualTo(any(), any(OffsetDateTime.class))).thenReturn(predicate);
-        lenient().when(cb.and(any(Predicate.class), any(Predicate.class))).thenReturn(predicate);
-
-        return spec.toPredicate(root, query, cb);
+        return spec.toPredicate(root, criteriaQuery, criteriaBuilder);
     }
 
     // --- Helper methods ---

@@ -15,7 +15,6 @@ import org.myorganization.template.domain.criteria.ClusterBlockCriteria;
 import org.myorganization.template.domain.dto.AuditLogEntry;
 import org.myorganization.template.domain.dto.ClusterBlockDTO;
 import org.myorganization.template.domain.dto.ClusterNodeDTO;
-import org.myorganization.template.domain.entity.ClusterBlock;
 import org.myorganization.template.domain.entity.ClusterNode;
 import org.myorganization.template.domain.enums.AuditSection;
 import org.myorganization.template.domain.enums.NodeStatus;
@@ -42,9 +41,10 @@ public class ClusterService implements HeartbeatClusterService {
     private static final Logger log = LoggerFactory.getLogger(ClusterService.class);
 
     private static final long DEAD_NODE_TIMEOUT_MINUTES = 5;
+    private static final String CLUSTER_NODE = "ClusterNode";
+    private static final String SYSTEM_USER = "SYSTEM";
 
     private final ClusterNodeRepository clusterNodeRepository;
-    private final ClusterBlockRepository clusterBlockRepository;
     private final ClusterBlockService clusterBlockService;
     private final AuditService auditService;
 
@@ -52,7 +52,6 @@ public class ClusterService implements HeartbeatClusterService {
                           ClusterBlockRepository clusterBlockRepository,
                           AuditService auditService) {
         this.clusterNodeRepository = clusterNodeRepository;
-        this.clusterBlockRepository = clusterBlockRepository;
         this.clusterBlockService = new ClusterBlockService(clusterBlockRepository);
         this.auditService = auditService;
     }
@@ -83,7 +82,7 @@ public class ClusterService implements HeartbeatClusterService {
     @Transactional(readOnly = true)
     public ClusterNodeDTO findNodeById(Long id) {
         ClusterNode node = clusterNodeRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("ClusterNode", id));
+                .orElseThrow(() -> new EntityNotFoundException(CLUSTER_NODE, id));
         return toNodeDTO(node);
     }
 
@@ -98,7 +97,7 @@ public class ClusterService implements HeartbeatClusterService {
     @Transactional
     public ClusterNodeDTO setMaster(Long id) {
         ClusterNode node = clusterNodeRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("ClusterNode", id));
+                .orElseThrow(() -> new EntityNotFoundException(CLUSTER_NODE, id));
 
         clusterNodeRepository.deactivateAllMasters();
         node.setMaster(true);
@@ -130,8 +129,8 @@ public class ClusterService implements HeartbeatClusterService {
                     clusterNodeRepository.save(existingNode);
                     log.info("Cluster node re-registered: hostname={}", hostname);
                     auditService.log(new AuditLogEntry(
-                            "SYSTEM", OperationType.UPDATE, AuditSection.CLUSTER,
-                            existingNode.getId().toString(), "ClusterNode",
+                            SYSTEM_USER, OperationType.UPDATE, AuditSection.CLUSTER,
+                            existingNode.getId().toString(), CLUSTER_NODE,
                             "Node re-registered: hostname=" + hostname + ", ip=" + ip));
                 },
                 () -> {
@@ -147,8 +146,8 @@ public class ClusterService implements HeartbeatClusterService {
                     ClusterNode saved = clusterNodeRepository.save(newNode);
                     log.info("Cluster node registered: hostname={}", hostname);
                     auditService.log(new AuditLogEntry(
-                            "SYSTEM", OperationType.CREATE, AuditSection.CLUSTER,
-                            saved.getId().toString(), "ClusterNode",
+                            SYSTEM_USER, OperationType.CREATE, AuditSection.CLUSTER,
+                            saved.getId().toString(), CLUSTER_NODE,
                             "Node registered: hostname=" + hostname + ", ip=" + ip));
                 }
         );
@@ -197,8 +196,8 @@ public class ClusterService implements HeartbeatClusterService {
             deadHostnames.add(node.getHostname());
             log.warn("Cluster node marked as DEAD: hostname={}, id={}", node.getHostname(), node.getId());
             auditService.log(new AuditLogEntry(
-                    "SYSTEM", OperationType.UPDATE, AuditSection.CLUSTER,
-                    node.getId().toString(), "ClusterNode",
+                    SYSTEM_USER, OperationType.UPDATE, AuditSection.CLUSTER,
+                    node.getId().toString(), CLUSTER_NODE,
                     "Node marked as INACTIVE: hostname=" + node.getHostname()));
         }
         return deadHostnames;
@@ -333,18 +332,6 @@ public class ClusterService implements HeartbeatClusterService {
                 node.getTotalMemory(),
                 node.getStartedAt(),
                 node.getLastModifiedAt()
-        );
-    }
-
-    private ClusterBlockDTO toBlockDTO(ClusterBlock block) {
-        return new ClusterBlockDTO(
-                block.getId(),
-                block.getName(),
-                block.getStartDate(),
-                block.getAvgTime(),
-                block.getMinTime(),
-                block.getMaxTime(),
-                block.getTotal()
         );
     }
 

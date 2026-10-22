@@ -12,7 +12,6 @@ import org.myorganization.template.core.security.TokenProvider;
 import org.myorganization.template.domain.dto.AuditLogEntry;
 import org.myorganization.template.domain.dto.LoginRequest;
 import org.myorganization.template.domain.dto.TokenResponse;
-import org.myorganization.template.domain.entity.Profile2Action;
 import org.myorganization.template.domain.entity.RefreshToken;
 import org.myorganization.template.domain.entity.User;
 import org.myorganization.template.domain.enums.AuditSection;
@@ -44,11 +43,11 @@ public class AuthService {
     private final long refreshTokenExpiration;
 
     public AuthService(UserRepository userRepository,
-                       RefreshTokenRepository refreshTokenRepository,
-                       PasswordEncoder passwordEncoder,
-                       TokenProvider tokenProvider,
-                       AuditService auditService,
-                       @Value("${jwt.refresh-token-expiration:604800000}") long refreshTokenExpiration) {
+            RefreshTokenRepository refreshTokenRepository,
+            PasswordEncoder passwordEncoder,
+            TokenProvider tokenProvider,
+            AuditService auditService,
+            @Value("${jwt.refresh-token-expiration:604800000}") long refreshTokenExpiration) {
         this.userRepository = userRepository;
         this.refreshTokenRepository = refreshTokenRepository;
         this.passwordEncoder = passwordEncoder;
@@ -102,8 +101,10 @@ public class AuthService {
      * new one is created. Updates the user's lastAccess timestamp.
      *
      * @param refreshTokenValue the opaque refresh token string
-     * @return a new TokenResponse containing a fresh access token and rotated refresh token
-     * @throws BadCredentialsException if the refresh token is invalid, expired or revoked
+     * @return a new TokenResponse containing a fresh access token and rotated
+     *         refresh token
+     * @throws BadCredentialsException if the refresh token is invalid, expired or
+     *                                 revoked
      */
     @Transactional
     public TokenResponse refreshToken(String refreshTokenValue) {
@@ -111,7 +112,8 @@ public class AuthService {
                 .orElseThrow(() -> new BadCredentialsException("Invalid or expired refresh token"));
 
         if (!storedToken.isValid()) {
-            // If a revoked token is reused, revoke ALL tokens for that user (possible theft)
+            // If a revoked token is reused, revoke ALL tokens for that user (possible
+            // theft)
             if (storedToken.isRevoked()) {
                 refreshTokenRepository.revokeAllByUser(storedToken.getUser());
             }
@@ -154,7 +156,8 @@ public class AuthService {
     }
 
     /**
-     * Generates a JWT access token for the given user with their current profile and actions.
+     * Generates a JWT access token for the given user with their current profile
+     * and actions.
      */
     private String generateAccessTokenForUser(User user) {
         String profileName = user.getProfile() != null ? user.getProfile().getName() : "";
@@ -184,8 +187,7 @@ public class AuthService {
             return Collections.emptyList();
         }
         return user.getProfile().getProfileActions().stream()
-                .map(Profile2Action::getAction)
-                .map(action -> action.getCode())
+                .map(pa -> pa.getAction().getCode())
                 .toList();
     }
 }

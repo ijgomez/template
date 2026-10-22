@@ -53,8 +53,7 @@ public class ReportService {
     public List<ReportDTO> findByUser(Long userId) {
         List<User2Report> associations = user2ReportRepository.findByIdUserId(userId);
         return associations.stream()
-                .map(User2Report::getReport)
-                .map(this::toDTO)
+                .map(a -> toDTO(a.getReport()))
                 .toList();
     }
 
@@ -129,7 +128,7 @@ public class ReportService {
         validateMandatoryFilters(reportId, filters);
 
         // Placeholder: return dummy paginated data
-        List<Map<String, Object>> content = generatePlaceholderData(report, pageable);
+        List<Map<String, Object>> content = generatePlaceholderData(report);
         return new PageImpl<>(content, pageable, content.size());
     }
 
@@ -191,9 +190,11 @@ public class ReportService {
     void validateMandatoryFilters(Long reportId, Map<String, Object> filters) {
         List<ReportFilterDTO> filterDefs = getFilters(reportId);
         List<String> missingFilters = filterDefs.stream()
-                .filter(ReportFilterDTO::required)
-                .map(ReportFilterDTO::name)
-                .filter(name -> filters == null || !filters.containsKey(name) || filters.get(name) == null)
+                .<String>mapMulti((def, consumer) -> {
+                    if (def.required() && (filters == null || !filters.containsKey(def.name()) || filters.get(def.name()) == null)) {
+                        consumer.accept(def.name());
+                    }
+                })
                 .toList();
 
         if (!missingFilters.isEmpty()) {
@@ -227,7 +228,7 @@ public class ReportService {
         return value;
     }
 
-    private List<Map<String, Object>> generatePlaceholderData(Report report, Pageable pageable) {
+    private List<Map<String, Object>> generatePlaceholderData(Report report) {
         List<Map<String, Object>> data = new ArrayList<>();
         Map<String, Object> row = new HashMap<>();
         row.put("id", report.getId());

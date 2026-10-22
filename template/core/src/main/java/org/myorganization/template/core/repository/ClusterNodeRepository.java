@@ -9,12 +9,10 @@ import org.myorganization.template.domain.enums.NodeStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
 
 /**
  * Spring Data JPA repository for ClusterNode entity.
  */
-@Repository
 public interface ClusterNodeRepository extends JpaRepository<ClusterNode, Long> {
 
     Optional<ClusterNode> findByHostname(String hostname);

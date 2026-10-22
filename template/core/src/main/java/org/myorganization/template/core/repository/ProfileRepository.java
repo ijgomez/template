@@ -5,13 +5,11 @@ import java.util.Optional;
 import org.myorganization.template.domain.entity.Profile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.stereotype.Repository;
 
 /**
  * Spring Data JPA repository for Profile entity.
  * Supports Specification-based queries for criteria filtering.
  */
-@Repository
 public interface ProfileRepository extends JpaRepository<Profile, Long>, JpaSpecificationExecutor<Profile> {
 
     /**

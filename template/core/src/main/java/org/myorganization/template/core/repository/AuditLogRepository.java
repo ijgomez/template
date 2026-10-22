@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
 /**
  * Repository for audit log entries.
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Repository;
  * Supports standard CRUD for persistence (used internally by AuditAspect)
  * and specification-based queries for the audit consultation endpoint.
  */
-@Repository
 public interface AuditLogRepository extends JpaRepository<AuditLog, Long>, JpaSpecificationExecutor<AuditLog> {
 
     /**

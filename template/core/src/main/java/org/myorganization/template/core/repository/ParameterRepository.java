@@ -5,7 +5,6 @@ import java.util.Optional;
 import org.myorganization.template.domain.entity.Parameter;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.stereotype.Repository;
 
 /**
  * Spring Data JPA repository for Parameter entity.
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Repository;
  * Extends {@link JpaSpecificationExecutor} to support dynamic criteria-based
  * filtering using the Specification pattern.
  */
-@Repository
 public interface ParameterRepository extends JpaRepository<Parameter, Long>, JpaSpecificationExecutor<Parameter> {
 
     /**

@@ -5,8 +5,6 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
-
 import net.jqwik.api.Arbitraries;
 import net.jqwik.api.Arbitrary;
 import net.jqwik.api.Combinators;
@@ -14,7 +12,6 @@ import net.jqwik.api.ForAll;
 import net.jqwik.api.Property;
 import net.jqwik.api.Provide;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
 import org.myorganization.template.core.repository.AuditLogRepository;
 import org.myorganization.template.domain.dto.AuditLogEntry;
 import org.myorganization.template.domain.entity.AuditLog;
@@ -24,6 +21,7 @@ import org.myorganization.template.domain.exception.EntityNotFoundException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -63,11 +61,13 @@ class AuditServiceImmutabilityPropertyTest {
         Method[] publicMethods = AuditService.class.getDeclaredMethods();
 
         List<String> forbiddenMethods = Arrays.stream(publicMethods)
-                .filter(m -> Modifier.isPublic(m.getModifiers()))
-                .map(Method::getName)
-                .filter(name -> FORBIDDEN_METHOD_PREFIXES.stream()
-                        .anyMatch(prefix -> name.toLowerCase().startsWith(prefix)))
-                .collect(Collectors.toList());
+                .<String>mapMulti((m, consumer) -> {
+                    if (Modifier.isPublic(m.getModifiers())
+                            && FORBIDDEN_METHOD_PREFIXES.stream().anyMatch(prefix -> m.getName().toLowerCase().startsWith(prefix))) {
+                        consumer.accept(m.getName());
+                    }
+                })
+                .toList();
 
         // Assert: no public methods expose update/delete semantics
         assertThat(forbiddenMethods)
@@ -88,8 +88,8 @@ class AuditServiceImmutabilityPropertyTest {
             @ForAll("validAuditLogEntries") AuditLogEntry entry) {
 
         // Arrange: fresh mocks for each invocation
-        AuditLogRepository auditLogRepository = Mockito.mock(AuditLogRepository.class);
-        ParameterService parameterService = Mockito.mock(ParameterService.class);
+        AuditLogRepository auditLogRepository = mock(AuditLogRepository.class);
+        ParameterService parameterService = mock(ParameterService.class);
         AuditService auditService = new AuditService(auditLogRepository, parameterService);
 
         when(auditLogRepository.save(any(AuditLog.class))).thenAnswer(invocation -> {
@@ -140,15 +140,19 @@ class AuditServiceImmutabilityPropertyTest {
 
         // Get all public methods declared in AuditService (excluding inherited Object methods)
         List<String> publicMethodNames = Arrays.stream(AuditService.class.getDeclaredMethods())
-                .filter(m -> Modifier.isPublic(m.getModifiers()))
-                .map(Method::getName)
-                .collect(Collectors.toList());
+                .<String>mapMulti((m, consumer) -> {
+                    if (Modifier.isPublic(m.getModifiers())) {
+                        consumer.accept(m.getName());
+                    }
+                })
+                .toList();
 
         // Assert: every public method is in the allowed set
         assertThat(publicMethodNames)
                 .as("AuditService public API should only contain read and append methods, " +
                         "verifying immutability for entry: %s", entry)
-                .allMatch(name -> allowedMethods.contains(name),
+                .isNotEmpty()
+                .allMatch(allowedMethods::contains,
                         "Expected only read/append methods but found non-allowed method");
     }
 

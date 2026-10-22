@@ -9,6 +9,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.myorganization.template.core.repository.ActionRepository;
@@ -37,9 +39,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -49,6 +49,27 @@ class ActionServiceTest {
 
     @Mock
     private ActionRepository actionRepository;
+
+    @Captor
+    private ArgumentCaptor<Specification<Action>> specCaptor;
+
+    @Mock
+    private Root<Action> root;
+
+    @Mock
+    private CriteriaQuery<?> criteriaQuery;
+
+    @Mock
+    private CriteriaBuilder criteriaBuilder;
+
+    @Mock
+    private Predicate criteriaPredicate;
+
+    @Mock
+    private Path<String> stringPath;
+
+    @Mock
+    private Expression<String> stringExpression;
 
     private ActionService actionService;
 
@@ -92,7 +113,7 @@ class ActionServiceTest {
         ActionCriteria criteria = new ActionCriteria(null, null, null);
         Pageable pageable = PageRequest.of(0, 10);
 
-        when(actionRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(page);
+        when(actionRepository.findAll(ArgumentMatchers.<Specification<Action>>any(), eq(pageable))).thenReturn(page);
 
         Page<ActionDTO> result = actionService.findByCriteria(criteria, pageable);
 
@@ -106,7 +127,7 @@ class ActionServiceTest {
     void countByCriteria_returnsCount() {
         ActionCriteria criteria = new ActionCriteria("USER", null, null);
 
-        when(actionRepository.count(any(Specification.class))).thenReturn(5L);
+        when(actionRepository.count(ArgumentMatchers.<Specification<Action>>any())).thenReturn(5L);
 
         long count = actionService.countByCriteria(criteria);
 
@@ -182,7 +203,6 @@ class ActionServiceTest {
         Pageable pageable = PageRequest.of(0, 10);
         Page<Action> page = new PageImpl<>(List.of(), pageable, 0);
 
-        ArgumentCaptor<Specification<Action>> specCaptor = ArgumentCaptor.forClass(Specification.class);
         when(actionRepository.findAll(specCaptor.capture(), eq(pageable))).thenReturn(page);
 
         actionService.findByCriteria(criteria, pageable);
@@ -198,7 +218,6 @@ class ActionServiceTest {
         Pageable pageable = PageRequest.of(0, 10);
         Page<Action> page = new PageImpl<>(List.of(), pageable, 0);
 
-        ArgumentCaptor<Specification<Action>> specCaptor = ArgumentCaptor.forClass(Specification.class);
         when(actionRepository.findAll(specCaptor.capture(), eq(pageable))).thenReturn(page);
 
         actionService.findByCriteria(criteria, pageable);
@@ -212,20 +231,14 @@ class ActionServiceTest {
      * {@code buildSpecification} execute and their branches are covered.
      */
     private Predicate evaluateSpecification(Specification<Action> spec) {
-        Root<Action> root = mock(Root.class, RETURNS_DEEP_STUBS);
-        CriteriaQuery<?> query = mock(CriteriaQuery.class);
-        CriteriaBuilder cb = mock(CriteriaBuilder.class);
-        Predicate predicate = mock(Predicate.class);
-        Path<Object> path = mock(Path.class);
+        lenient().when(root.<String>get(anyString())).thenReturn(stringPath);
+        lenient().when(criteriaBuilder.conjunction()).thenReturn(criteriaPredicate);
+        lenient().when(criteriaBuilder.lower(any())).thenReturn(stringExpression);
+        lenient().when(criteriaBuilder.like(any(), anyString())).thenReturn(criteriaPredicate);
+        lenient().when(criteriaBuilder.equal(any(), any())).thenReturn(criteriaPredicate);
+        lenient().when(criteriaBuilder.and(any(Predicate.class), any(Predicate.class))).thenReturn(criteriaPredicate);
 
-        lenient().when(root.get(anyString())).thenReturn((Path) path);
-        lenient().when(cb.conjunction()).thenReturn(predicate);
-        lenient().when(cb.lower(any())).thenReturn(mock(Expression.class));
-        lenient().when(cb.like(any(), anyString())).thenReturn(predicate);
-        lenient().when(cb.equal(any(), any())).thenReturn(predicate);
-        lenient().when(cb.and(any(Predicate.class), any(Predicate.class))).thenReturn(predicate);
-
-        return spec.toPredicate(root, query, cb);
+        return spec.toPredicate(root, criteriaQuery, criteriaBuilder);
     }
 
     private Action createAction(Long id, String code, ActionType type, String name, String description) {

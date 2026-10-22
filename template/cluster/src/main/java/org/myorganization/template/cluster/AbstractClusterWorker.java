@@ -117,16 +117,17 @@ public abstract class AbstractClusterWorker {
     private boolean shouldCurrentNodeExecute(TaskInfo taskInfo, Long currentNodeId) {
         List<CandidateInfo> candidates = taskPort.findEnabledCandidatesForTask(taskInfo.taskId());
 
-        // Filter to only ALIVE nodes with enabled = true
-        List<CandidateInfo> aliveCandidates = candidates.stream()
-                .filter(CandidateInfo::nodeAlive)
-                .toList();
-
-        // Check if current node is within the top N priority positions
         int maxExecutors = taskInfo.nodes();
-        for (int i = 0; i < Math.min(maxExecutors, aliveCandidates.size()); i++) {
-            if (aliveCandidates.get(i).nodeId().equals(currentNodeId)) {
-                return true;
+        int aliveCount = 0;
+        for (CandidateInfo candidate : candidates) {
+            if (candidate.nodeAlive()) {
+                if (candidate.nodeId().equals(currentNodeId)) {
+                    return true;
+                }
+                aliveCount++;
+                if (aliveCount >= maxExecutors) {
+                    break;
+                }
             }
         }
 
