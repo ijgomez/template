@@ -8,6 +8,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.myorganization.template.core.repository.ClusterBlockRepository;
@@ -23,7 +24,6 @@ import org.springframework.data.jpa.domain.Specification;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
@@ -46,7 +46,8 @@ class ClusterBlockServiceTest {
         Page<ClusterBlock> page = new PageImpl<>(List.of(block), PageRequest.of(0, 10), 1);
         Pageable pageable = PageRequest.of(0, 10);
 
-        when(clusterBlockRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(page);
+        when(clusterBlockRepository.findAll(ArgumentMatchers.<Specification<ClusterBlock>>any(), eq(pageable)))
+                .thenReturn(page);
 
         Page<ClusterBlockDTO> result = clusterBlockService.findByCriteria(new ClusterBlockCriteria(null), pageable);
 
@@ -57,7 +58,7 @@ class ClusterBlockServiceTest {
 
     @Test
     void countByCriteria_returnsTotalMatching() {
-        when(clusterBlockRepository.count(any(Specification.class))).thenReturn(3L);
+        when(clusterBlockRepository.count(ArgumentMatchers.<Specification<ClusterBlock>>any())).thenReturn(3L);
 
         long count = clusterBlockService.countByCriteria(new ClusterBlockCriteria("HEART"));
 

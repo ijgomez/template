@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.myorganization.template.core.repository.ClusterBlockRepository;
@@ -284,7 +285,7 @@ class ClusterServiceTest {
             ClusterBlockCriteria criteria = new ClusterBlockCriteria(null);
             Pageable pageable = PageRequest.of(0, 10);
 
-            when(clusterBlockRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(page);
+            when(clusterBlockRepository.findAll(ArgumentMatchers.<Specification<ClusterBlock>>any(), eq(pageable))).thenReturn(page);
 
             Page<ClusterBlockDTO> result = clusterService.findBlocksByCriteria(criteria, pageable);
 
@@ -302,7 +303,7 @@ class ClusterServiceTest {
         @DisplayName("returns total count matching criteria")
         void returnsCount() {
             ClusterBlockCriteria criteria = new ClusterBlockCriteria("NODOS");
-            when(clusterBlockRepository.count(any(Specification.class))).thenReturn(3L);
+            when(clusterBlockRepository.count(ArgumentMatchers.<Specification<ClusterBlock>>any())).thenReturn(3L);
 
             long count = clusterService.countBlocksByCriteria(criteria);
 
