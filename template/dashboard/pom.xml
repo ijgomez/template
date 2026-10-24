@@ -101,6 +101,21 @@
                             <arguments>install</arguments>
                         </configuration>
                     </execution>
+                    <!--
+                        Vitest usa Playwright con Chromium para los tests de navegador.
+                        Descarga el binario tras instalar las dependencias para que
+                        'mvn clean install' funcione también en entornos nuevos.
+                    -->
+                    <execution>
+                        <id>install-playwright-chromium</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>exec -- playwright install chromium</arguments>
+                        </configuration>
+                    </execution>
                     <execution>
                         <id>npm-build</id>
                         <goals>
