@@ -17,10 +17,6 @@
     "user": {
       "profile": "Mi Perfil",
       "logout": "Cerrar sesión"
-    },
-    "footer": {
-      "version": "v0.0.0",
-      "environment": "Entorno: LOCAL"
     }
   },
   "pwa": {

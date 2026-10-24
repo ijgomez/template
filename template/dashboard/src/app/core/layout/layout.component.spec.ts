@@ -176,6 +176,22 @@ describe('LayoutComponent', () => {
     expect(footer).toBeTruthy();
   });
 
+  it('should render the version from package.json in the footer', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    const version = compiled.querySelector('[data-testid="footer-version"]');
+
+    expect(version?.textContent).toContain(`v${component.appVersion}`);
+  });
+
+  it('should render the configured environment and owner in the footer', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    const version = compiled.querySelector('[data-testid="footer-version"]');
+    const owner = compiled.querySelector('[data-testid="footer-owner"]');
+
+    expect(version?.textContent).toContain(component.environmentName);
+    expect(owner?.textContent).toContain(component.applicationOwner);
+  });
+
   it('should have data-testid on interactive elements', () => {
     const compiled = fixture.nativeElement as HTMLElement;
 

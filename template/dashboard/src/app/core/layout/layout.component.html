@@ -280,8 +280,8 @@
 
     <!-- Footer -->
     <footer class="tp-footer" role="contentinfo">
-      <span>{{ 'app.title' | translate }} {{ 'layout.footer.version' | translate }} &middot; {{ 'layout.footer.environment' | translate }}</span>
-      <span>&copy; {{ currentYear }} Javier Izquierdo G&oacute;mez</span>
+      <span data-testid="footer-version">{{ 'app.title' | translate }} v{{ appVersion }} &middot; {{ environmentName }}</span>
+      <span data-testid="footer-owner">&copy; {{ currentYear }} {{ applicationOwner }}</span>
     </footer>
   </main>
 </div>

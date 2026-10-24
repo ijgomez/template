@@ -4,6 +4,9 @@ import { Router, RouterOutlet, RouterLink, RouterLinkActive, NavigationEnd, Acti
 import { TranslatePipe } from '@ngx-translate/core';
 import { filter, fromEvent, Subject, takeUntil } from 'rxjs';
 
+import packageJson from '../../../../package.json';
+import { environment } from '../../../environments/environment';
+
 import { AuthService } from '../services/auth.service';
 import { ReportService } from '../services/report.service';
 import { Report } from '../models/report.model';
@@ -88,6 +91,15 @@ export class LayoutComponent implements OnInit {
 
   /** Current year for the footer copyright. */
   readonly currentYear = new Date().getFullYear();
+
+  /** Application version embedded from package.json at build time. */
+  readonly appVersion = packageJson.version;
+
+  /** Configured owner displayed in the footer. */
+  readonly applicationOwner = environment.applicationOwner;
+
+  /** Configured environment identifier displayed in the footer. */
+  readonly environmentName = environment.environmentName;
 
   /** Username for display in the header. */
   readonly username = computed(() => this.authService.getCurrentUser()?.username ?? '');
