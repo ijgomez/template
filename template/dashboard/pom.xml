@@ -90,6 +90,7 @@
                         </goals>
                         <configuration>
                             <nodeVersion>v24.22.1</nodeVersion>
+                            <npmVersion>12.0.1</npmVersion>
                         </configuration>
                     </execution>
                     <!-- Mantiene la versión visible en Angular alineada con la del reactor Maven. -->
