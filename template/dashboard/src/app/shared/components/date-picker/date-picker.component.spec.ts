@@ -75,7 +75,7 @@ describe('TpDatePickerComponent', () => {
     expect(input.name).toBe('birthDate');
     expect(input.required).toBe(true);
     expect(input.getAttribute('aria-label')).toBe('Fecha de nacimiento');
-    expect(input.getAttribute('data-testid')).toBe('birth-date');
+    expect(input.dataset['testid']).toBe('birth-date');
     expect(input.classList.contains('is-invalid')).toBe(true);
   });
 });

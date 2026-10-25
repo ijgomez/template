@@ -39,7 +39,7 @@ export class ParameterFormComponent implements OnInit {
   readonly save = output<Parameter>();
 
   /** Emitted when the user clicks cancel or back. */
-  readonly cancel = output<void>();
+  readonly cancelled = output<void>();
 
   /** Emitted when the user clicks the edit button (view mode). */
   readonly edit = output<Parameter>();
@@ -165,7 +165,7 @@ export class ParameterFormComponent implements OnInit {
   }
 
   onCancel(): void {
-    this.cancel.emit();
+    this.cancelled.emit();
   }
 
   onEdit(): void {

@@ -139,7 +139,7 @@
     [mode]="formMode()"
     [user]="formUser()"
     [canWrite]="canWrite()"
-    (cancel)="backToList()"
+    (cancelled)="backToList()"
     (edit)="showEditForm($event)"
     (delete)="confirmDelete($event)" />
 }
@@ -152,7 +152,7 @@
     [mode]="formMode()"
     [user]="formUser()"
     (save)="saveUser($event)"
-    (cancel)="backToList()" />
+    (cancelled)="backToList()" />
 }
 
 <!-- ═══════════════════════════════════════════════════════════════════════════

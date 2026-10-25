@@ -35,6 +35,52 @@ import jakarta.servlet.http.HttpServletResponse;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private static final String ALL_SUFFIX = "/**";
+
+    private static final String API_BASE_PATH = "/api/v1";
+    private static final String ADMIN_BASE_PATH = API_BASE_PATH + "/administration";
+
+    private static final String AUTH_PATH = API_BASE_PATH + "/auth" + ALL_SUFFIX;
+    private static final String REPORTS_ALL_PATH = API_BASE_PATH + "/reports" + ALL_SUFFIX;
+    private static final String API_ALL_PATH = API_BASE_PATH + ALL_SUFFIX;
+    private static final String INTERFACES_PATH = API_BASE_PATH + "/interfaces";
+    private static final String INTERFACES_ALL_PATH = INTERFACES_PATH + ALL_SUFFIX;
+
+    private static final String ACTIONS_PATH = ADMIN_BASE_PATH + "/security/actions";
+    private static final String ACTIONS_ALL_PATH = ACTIONS_PATH + ALL_SUFFIX;
+    private static final String PROFILES_PATH = ADMIN_BASE_PATH + "/security/profiles";
+    private static final String PROFILES_ALL_PATH = PROFILES_PATH + ALL_SUFFIX;
+    private static final String PROFILES_REFERENCES_PATH = PROFILES_PATH + "/references";
+    private static final String USERS_PATH = ADMIN_BASE_PATH + "/security/users";
+    private static final String USERS_ALL_PATH = USERS_PATH + ALL_SUFFIX;
+    private static final String USERS_ME_PATH = USERS_PATH + "/me";
+
+    private static final String PARAMETERS_ALL_PATH = ADMIN_BASE_PATH + "/parameters" + ALL_SUFFIX;
+    private static final String AUDIT_PATH = ADMIN_BASE_PATH + "/audit";
+    private static final String AUDIT_ALL_PATH = AUDIT_PATH + ALL_SUFFIX;
+
+    private static final String CLUSTER_NODES_PATH = ADMIN_BASE_PATH + "/cluster/nodes";
+    private static final String CLUSTER_NODES_ALL_PATH = CLUSTER_NODES_PATH + ALL_SUFFIX;
+    private static final String CLUSTER_NODE_JOBS_PATH = CLUSTER_NODES_PATH + "/*/jobs";
+    private static final String CLUSTER_NODE_JOBS_ALL_PATH = CLUSTER_NODE_JOBS_PATH + ALL_SUFFIX;
+    private static final String CLUSTER_BLOCKS_PATH = ADMIN_BASE_PATH + "/cluster/blocks";
+    private static final String CLUSTER_BLOCKS_ALL_PATH = CLUSTER_BLOCKS_PATH + ALL_SUFFIX;
+    private static final String CLUSTER_TASKS_PATH = ADMIN_BASE_PATH + "/cluster/tasks";
+
+    private static final String AUTHORITY_CLUSTER_NODE_READ = "CLUSTER_NODE_READ";
+    private static final String AUTHORITY_CLUSTER_NODE_WRITE = "CLUSTER_NODE_WRITE";
+    private static final String AUTHORITY_CLUSTER_LOCK_READ = "CLUSTER_LOCK_READ";
+    private static final String AUTHORITY_USER_READ = "USER_READ";
+    private static final String AUTHORITY_USER_WRITE = "USER_WRITE";
+    private static final String AUTHORITY_PROFILE_READ = "PROFILE_READ";
+    private static final String AUTHORITY_PROFILE_WRITE = "PROFILE_WRITE";
+    private static final String AUTHORITY_ACTION_READ = "ACTION_READ";
+    private static final String AUTHORITY_SYSTEM_PARAMETER_READ = "SYSTEM_PARAMETER_READ";
+    private static final String AUTHORITY_SYSTEM_PARAMETER_WRITE = "SYSTEM_PARAMETER_WRITE";
+    private static final String AUTHORITY_SYSTEM_LOG_READ = "SYSTEM_LOG_READ";
+    private static final String AUTHORITY_INTERFACES_READ = "INTERFACES_READ";
+    private static final String AUTHORITY_REPORT_EXECUTE = "REPORT_EXECUTE";
+
     @Value("${cors.allowed-origins:http://localhost:4200}")
     private List<String> allowedOrigins;
 
@@ -57,89 +103,93 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         // Public endpoints
-                        .requestMatchers("/api/v1/auth/**").permitAll()
+                        .requestMatchers(AUTH_PATH).permitAll()
 
                         // 405 Method Not Allowed: Actions create/delete
-                        .requestMatchers(HttpMethod.POST, "/api/v1/administration/security/actions").denyAll()
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/administration/security/actions/**").denyAll()
+                        .requestMatchers(HttpMethod.POST, ACTIONS_PATH).denyAll()
+                        .requestMatchers(HttpMethod.DELETE, ACTIONS_ALL_PATH).denyAll()
 
                         // Cluster node jobs: write operations (must precede the node denyAll rules below)
-                        .requestMatchers(HttpMethod.POST, "/api/v1/administration/cluster/nodes/*/jobs").hasAuthority("CLUSTER_NODE_WRITE")
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/administration/cluster/nodes/*/jobs/**").hasAuthority("CLUSTER_NODE_WRITE")
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/administration/cluster/nodes/*/jobs/**").hasAuthority("CLUSTER_NODE_WRITE")
+                        .requestMatchers(HttpMethod.POST, CLUSTER_NODE_JOBS_PATH).hasAuthority(AUTHORITY_CLUSTER_NODE_WRITE)
+                        .requestMatchers(HttpMethod.PUT, CLUSTER_NODE_JOBS_ALL_PATH).hasAuthority(AUTHORITY_CLUSTER_NODE_WRITE)
+                        .requestMatchers(HttpMethod.DELETE, CLUSTER_NODE_JOBS_ALL_PATH).hasAuthority(AUTHORITY_CLUSTER_NODE_WRITE)
 
                         // 405 Method Not Allowed: Cluster nodes create/delete
-                        .requestMatchers(HttpMethod.POST, "/api/v1/administration/cluster/nodes").denyAll()
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/administration/cluster/nodes/**").denyAll()
+                        .requestMatchers(HttpMethod.POST, CLUSTER_NODES_PATH).denyAll()
+                        .requestMatchers(HttpMethod.DELETE, CLUSTER_NODES_ALL_PATH).denyAll()
 
                         // 405 Method Not Allowed: Cluster blocks CUD
-                        .requestMatchers(HttpMethod.POST, "/api/v1/administration/cluster/blocks/**").denyAll()
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/administration/cluster/blocks/**").denyAll()
-                        .requestMatchers(HttpMethod.PATCH, "/api/v1/administration/cluster/blocks/**").denyAll()
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/administration/cluster/blocks/**").denyAll()
+                        .requestMatchers(HttpMethod.POST, CLUSTER_BLOCKS_ALL_PATH).denyAll()
+                        .requestMatchers(HttpMethod.PUT, CLUSTER_BLOCKS_ALL_PATH).denyAll()
+                        .requestMatchers(HttpMethod.PATCH, CLUSTER_BLOCKS_ALL_PATH).denyAll()
+                        .requestMatchers(HttpMethod.DELETE, CLUSTER_BLOCKS_ALL_PATH).denyAll()
 
                         // 405 Method Not Allowed: Audit CUD
-                        .requestMatchers(HttpMethod.POST, "/api/v1/administration/audit/**").denyAll()
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/administration/audit/**").denyAll()
-                        .requestMatchers(HttpMethod.PATCH, "/api/v1/administration/audit/**").denyAll()
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/administration/audit/**").denyAll()
+                        .requestMatchers(HttpMethod.POST, AUDIT_ALL_PATH).denyAll()
+                        .requestMatchers(HttpMethod.PUT, AUDIT_ALL_PATH).denyAll()
+                        .requestMatchers(HttpMethod.PATCH, AUDIT_ALL_PATH).denyAll()
+                        .requestMatchers(HttpMethod.DELETE, AUDIT_ALL_PATH).denyAll()
 
                         // 405 Method Not Allowed: Interfaces CUD
-                        .requestMatchers(HttpMethod.POST, "/api/v1/interfaces/**").denyAll()
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/interfaces/**").denyAll()
-                        .requestMatchers(HttpMethod.PATCH, "/api/v1/interfaces/**").denyAll()
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/interfaces/**").denyAll()
+                        .requestMatchers(HttpMethod.POST, INTERFACES_ALL_PATH).denyAll()
+                        .requestMatchers(HttpMethod.PUT, INTERFACES_ALL_PATH).denyAll()
+                        .requestMatchers(HttpMethod.PATCH, INTERFACES_ALL_PATH).denyAll()
+                        .requestMatchers(HttpMethod.DELETE, INTERFACES_ALL_PATH).denyAll()
 
                         // Users: /me endpoints accessible to any authenticated user
-                        .requestMatchers(HttpMethod.GET, "/api/v1/administration/security/users/me").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/administration/security/users/me").authenticated()
+                        .requestMatchers(HttpMethod.GET, USERS_ME_PATH).authenticated()
+                        .requestMatchers(HttpMethod.PUT, USERS_ME_PATH).authenticated()
 
                         // Users: read vs write
-                        .requestMatchers(HttpMethod.GET, "/api/v1/administration/security/users/**").hasAnyAuthority("USER_READ", "USER_WRITE")
-                        .requestMatchers(HttpMethod.POST, "/api/v1/administration/security/users/**").hasAuthority("USER_WRITE")
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/administration/security/users/**").hasAuthority("USER_WRITE")
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/administration/security/users/**").hasAuthority("USER_WRITE")
+                        .requestMatchers(HttpMethod.GET, USERS_ALL_PATH).hasAnyAuthority(AUTHORITY_USER_READ, AUTHORITY_USER_WRITE)
+                        .requestMatchers(HttpMethod.POST, USERS_ALL_PATH).hasAuthority(AUTHORITY_USER_WRITE)
+                        .requestMatchers(HttpMethod.PUT, USERS_ALL_PATH).hasAuthority(AUTHORITY_USER_WRITE)
+                        .requestMatchers(HttpMethod.DELETE, USERS_ALL_PATH).hasAuthority(AUTHORITY_USER_WRITE)
 
                         // Profiles: references endpoint accessible to users who can view users
-                        .requestMatchers(HttpMethod.GET, "/api/v1/administration/security/profiles/references").hasAnyAuthority("USER_READ", "USER_WRITE", "PROFILE_READ", "PROFILE_WRITE")
+                        .requestMatchers(HttpMethod.GET, PROFILES_REFERENCES_PATH)
+                        .hasAnyAuthority(AUTHORITY_USER_READ, AUTHORITY_USER_WRITE, AUTHORITY_PROFILE_READ, AUTHORITY_PROFILE_WRITE)
 
                         // Profiles: read vs write
-                        .requestMatchers(HttpMethod.GET, "/api/v1/administration/security/profiles/**").hasAnyAuthority("PROFILE_READ", "PROFILE_WRITE")
-                        .requestMatchers(HttpMethod.POST, "/api/v1/administration/security/profiles/**").hasAuthority("PROFILE_WRITE")
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/administration/security/profiles/**").hasAuthority("PROFILE_WRITE")
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/administration/security/profiles/**").hasAuthority("PROFILE_WRITE")
+                        .requestMatchers(HttpMethod.GET, PROFILES_ALL_PATH).hasAnyAuthority(AUTHORITY_PROFILE_READ, AUTHORITY_PROFILE_WRITE)
+                        .requestMatchers(HttpMethod.POST, PROFILES_ALL_PATH).hasAuthority(AUTHORITY_PROFILE_WRITE)
+                        .requestMatchers(HttpMethod.PUT, PROFILES_ALL_PATH).hasAuthority(AUTHORITY_PROFILE_WRITE)
+                        .requestMatchers(HttpMethod.DELETE, PROFILES_ALL_PATH).hasAuthority(AUTHORITY_PROFILE_WRITE)
 
                         // Actions: read + update only (create/delete already denied above)
-                        .requestMatchers(HttpMethod.GET, "/api/v1/administration/security/actions/**").hasAuthority("ACTION_READ")
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/administration/security/actions/**").hasAuthority("ACTION_READ")
+                        .requestMatchers(HttpMethod.GET, ACTIONS_ALL_PATH).hasAuthority(AUTHORITY_ACTION_READ)
+                        .requestMatchers(HttpMethod.PUT, ACTIONS_ALL_PATH).hasAuthority(AUTHORITY_ACTION_READ)
 
                         // Parameters: read vs write
-                        .requestMatchers(HttpMethod.GET, "/api/v1/administration/parameters/**").hasAnyAuthority("SYSTEM_PARAMETER_READ", "SYSTEM_PARAMETER_WRITE")
-                        .requestMatchers(HttpMethod.POST, "/api/v1/administration/parameters/**").hasAuthority("SYSTEM_PARAMETER_WRITE")
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/administration/parameters/**").hasAuthority("SYSTEM_PARAMETER_WRITE")
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/administration/parameters/**").hasAuthority("SYSTEM_PARAMETER_WRITE")
+                        .requestMatchers(HttpMethod.GET, PARAMETERS_ALL_PATH)
+                        .hasAnyAuthority(AUTHORITY_SYSTEM_PARAMETER_READ, AUTHORITY_SYSTEM_PARAMETER_WRITE)
+                        .requestMatchers(HttpMethod.POST, PARAMETERS_ALL_PATH).hasAuthority(AUTHORITY_SYSTEM_PARAMETER_WRITE)
+                        .requestMatchers(HttpMethod.PUT, PARAMETERS_ALL_PATH).hasAuthority(AUTHORITY_SYSTEM_PARAMETER_WRITE)
+                        .requestMatchers(HttpMethod.DELETE, PARAMETERS_ALL_PATH).hasAuthority(AUTHORITY_SYSTEM_PARAMETER_WRITE)
 
                         // Audit: read only (CUD already denied above)
-                        .requestMatchers(HttpMethod.GET, "/api/v1/administration/audit/**").hasAuthority("SYSTEM_LOG_READ")
+                        .requestMatchers(HttpMethod.GET, AUDIT_ALL_PATH).hasAuthority(AUTHORITY_SYSTEM_LOG_READ)
 
                         // Interfaces: read only (CUD already denied above)
-                        .requestMatchers(HttpMethod.GET, "/api/v1/interfaces/**").hasAuthority("INTERFACES_READ")
+                        .requestMatchers(HttpMethod.GET, INTERFACES_ALL_PATH).hasAuthority(AUTHORITY_INTERFACES_READ)
 
                         // Cluster nodes: read + write (PATCH for master toggle)
-                        .requestMatchers(HttpMethod.GET, "/api/v1/administration/cluster/nodes/**").hasAnyAuthority("CLUSTER_NODE_READ", "CLUSTER_NODE_WRITE")
-                        .requestMatchers(HttpMethod.PATCH, "/api/v1/administration/cluster/nodes/**").hasAuthority("CLUSTER_NODE_WRITE")
+                        .requestMatchers(HttpMethod.GET, CLUSTER_NODES_ALL_PATH)
+                        .hasAnyAuthority(AUTHORITY_CLUSTER_NODE_READ, AUTHORITY_CLUSTER_NODE_WRITE)
+                        .requestMatchers(HttpMethod.PATCH, CLUSTER_NODES_ALL_PATH).hasAuthority(AUTHORITY_CLUSTER_NODE_WRITE)
 
                         // Cluster tasks: read (catalog consumed by the node form)
-                        .requestMatchers(HttpMethod.GET, "/api/v1/administration/cluster/tasks").hasAnyAuthority("CLUSTER_NODE_READ", "CLUSTER_NODE_WRITE")
+                        .requestMatchers(HttpMethod.GET, CLUSTER_TASKS_PATH)
+                        .hasAnyAuthority(AUTHORITY_CLUSTER_NODE_READ, AUTHORITY_CLUSTER_NODE_WRITE)
 
                         // Cluster blocks: read only (CUD already denied above)
-                        .requestMatchers(HttpMethod.GET, "/api/v1/administration/cluster/blocks/**").hasAuthority("CLUSTER_LOCK_READ")
+                        .requestMatchers(HttpMethod.GET, CLUSTER_BLOCKS_ALL_PATH).hasAuthority(AUTHORITY_CLUSTER_LOCK_READ)
 
                         // Reports
-                        .requestMatchers("/api/v1/reports/**").hasAuthority("REPORT_EXECUTE")
+                        .requestMatchers(REPORTS_ALL_PATH).hasAuthority(AUTHORITY_REPORT_EXECUTE)
 
                         // Any other API request must be authenticated
-                        .requestMatchers("/api/**").authenticated()
+                        .requestMatchers(API_ALL_PATH).authenticated()
 
                         // Everything else (Angular SPA routes + static resources) is public;
                         // SpaWebMvcConfig forwards non-file navigation routes to index.html so the
@@ -161,7 +211,7 @@ public class SecurityConfig {
         configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
+        source.registerCorsConfiguration(ALL_SUFFIX, configuration);
         return source;
     }
 
@@ -192,48 +242,40 @@ public class SecurityConfig {
         String method = request.getMethod();
         String path = request.getRequestURI();
 
-        // Actions: POST create or DELETE
-        if (path.startsWith("/api/v1/administration/security/actions")) {
-            if ("POST".equals(method) && path.equals("/api/v1/administration/security/actions")) {
-                return true;
-            }
-            if ("DELETE".equals(method)) {
-                return true;
-            }
+        if (isActionsMethodNotAllowed(method, path) || isNodesMethodNotAllowed(method, path)) {
+            return true;
         }
 
-        // Cluster nodes: POST create or DELETE (but not job DELETE, which is allowed)
-        if (path.startsWith("/api/v1/administration/cluster/nodes")) {
-            if ("POST".equals(method) && path.equals("/api/v1/administration/cluster/nodes")) {
-                return true;
-            }
-            if ("DELETE".equals(method) && !path.contains("/jobs")) {
-                return true;
-            }
-        }
+        return isWriteMethod(method) && (path.startsWith(AUDIT_PATH)
+                || path.startsWith(INTERFACES_PATH)
+                || path.startsWith(CLUSTER_BLOCKS_PATH));
+    }
 
-        // Cluster blocks: any CUD
-        if (path.startsWith("/api/v1/administration/cluster/blocks")) {
-            if ("POST".equals(method) || "PUT".equals(method) || "PATCH".equals(method) || "DELETE".equals(method)) {
-                return true;
-            }
+    /** Actions: POST create or DELETE. */
+    private boolean isActionsMethodNotAllowed(String method, String path) {
+        if (!path.startsWith(ACTIONS_PATH)) {
+            return false;
         }
+        return HttpMethod.DELETE.matches(method)
+                || (HttpMethod.POST.matches(method) && path.equals(ACTIONS_PATH));
+    }
 
-        // Audit: any CUD
-        if (path.startsWith("/api/v1/administration/audit")) {
-            if ("POST".equals(method) || "PUT".equals(method) || "PATCH".equals(method) || "DELETE".equals(method)) {
-                return true;
-            }
+    /** Cluster nodes: POST create or DELETE (but not job DELETE, which is allowed). */
+    private boolean isNodesMethodNotAllowed(String method, String path) {
+        if (!path.startsWith(CLUSTER_NODES_PATH)) {
+            return false;
         }
-
-        // Interfaces: any CUD
-        if (path.startsWith("/api/v1/interfaces")) {
-            if ("POST".equals(method) || "PUT".equals(method) || "PATCH".equals(method) || "DELETE".equals(method)) {
-                return true;
-            }
+        if (HttpMethod.POST.matches(method)) {
+            return path.equals(CLUSTER_NODES_PATH);
         }
+        return HttpMethod.DELETE.matches(method) && !path.contains("/jobs");
+    }
 
-        return false;
+    private boolean isWriteMethod(String method) {
+        return HttpMethod.POST.matches(method)
+                || HttpMethod.PUT.matches(method)
+                || HttpMethod.PATCH.matches(method)
+                || HttpMethod.DELETE.matches(method);
     }
 
     private void writeErrorResponse(HttpServletResponse response, HttpStatus status, String error, String path) throws IOException {

@@ -93,12 +93,12 @@
         }
       </div>
       <div class="col-md-4">
-        <label for="actionType" class="form-label form-label-sm mb-1">
+        <label [attr.for]="isReadonly() ? 'actionTypeReadonly' : 'actionType'" class="form-label form-label-sm mb-1">
           {{ 'actions.fields.type' | translate }}
           @if (!isReadonly()) { <span class="text-danger">*</span> }
         </label>
         @if (isReadonly()) {
-          <input id="actionType"
+          <input id="actionTypeReadonly"
                  type="text"
                  class="form-control form-control-sm"
                  [value]="action().type"
@@ -131,11 +131,11 @@
         }
       </div>
       <div class="col-12">
-        <label for="actionDescription" class="form-label form-label-sm mb-1">
+        <label [attr.for]="isReadonly() ? 'actionDescriptionReadonly' : 'actionDescription'" class="form-label form-label-sm mb-1">
           {{ 'actions.fields.description' | translate }}
         </label>
         @if (isReadonly()) {
-          <input id="actionDescription"
+          <input id="actionDescriptionReadonly"
                  type="text"
                  class="form-control form-control-sm"
                  [value]="action().description ?? ''"

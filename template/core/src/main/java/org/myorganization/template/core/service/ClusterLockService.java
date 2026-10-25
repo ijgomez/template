@@ -48,11 +48,15 @@ public class ClusterLockService implements HeartbeatLockService {
      * <p>
      * On successful acquisition, records the start time in ClusterBlock using
      * database time to avoid clock drift.
+     * <p>
+     * The intra-instance lock is intentionally kept held on the success path and is
+     * released later by {@link #releaseLock(String)}, so this method does not unlock it.
      *
      * @param resourceName the name of the resource/task to lock
      */
     @Override
     @Transactional
+    @SuppressWarnings("java:S2222") // Lock released by releaseLock() once the guarded work completes
     public void acquireLock(String resourceName) {
         // 1. Intra-instance lock (thread-level within same JVM)
         ReentrantLock lock = intraInstanceLocks.computeIfAbsent(resourceName, k -> new ReentrantLock());

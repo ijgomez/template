@@ -79,7 +79,7 @@ describe('ProfileFormComponent', () => {
     fixture.componentRef.setInput('canWrite', true);
     fixture.detectChanges();
 
-    component.cancel.subscribe(cancelSpy);
+    component.cancelled.subscribe(cancelSpy);
     component.edit.subscribe(editSpy);
     component.delete.subscribe(deleteSpy);
 

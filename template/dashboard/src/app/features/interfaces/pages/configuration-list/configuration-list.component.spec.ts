@@ -10,6 +10,9 @@ import { CsvExportService } from '../../../../core/services/csv-export.service';
 import { DateService } from '../../../../core/services/date.service';
 import { InterfaceConfig } from '../../../../core/models/interface.model';
 
+/** Builds the error used to exercise the configuration load failure path. */
+const loadFailure = () => new Error('boom');
+
 /**
  * Unit tests for ConfigurationListComponent focused on component logic (state,
  * data load, filters, pagination, sorting, selection, detail navigation, export)
@@ -88,7 +91,7 @@ describe('ConfigurationListComponent', () => {
     });
 
     it('should stop loading on error', () => {
-      interfaceService.findAllConfigurations = () => throwError(() => new Error('boom'));
+      interfaceService.findAllConfigurations = () => throwError(loadFailure);
       component.ngOnInit();
       expect(component.isLoading()).toBe(false);
       interfaceService.findAllConfigurations = () => of([config, otherConfig]);

@@ -27,6 +27,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class ParameterService extends AbstractCriteriaService<Parameter, ParameterDTO, ParameterCriteria> {
 
+    private static final String ENTITY_NAME = "Parameter";
+
     private final ParameterRepository parameterRepository;
 
     public ParameterService(ParameterRepository parameterRepository) {
@@ -48,7 +50,7 @@ public class ParameterService extends AbstractCriteriaService<Parameter, Paramet
     public ParameterDTO create(ParameterDTO dto) {
         String normalizedCode = normalizeCode(dto.code());
         if (parameterRepository.existsByCode(normalizedCode)) {
-            throw new DuplicateEntityException("Parameter", "code", normalizedCode);
+            throw new DuplicateEntityException(ENTITY_NAME, "code", normalizedCode);
         }
 
         validateTypeValueCompatibility(dto.type(), dto.value());
@@ -73,7 +75,7 @@ public class ParameterService extends AbstractCriteriaService<Parameter, Paramet
     @Transactional(readOnly = true)
     public ParameterDTO findByCode(String code) {
         Parameter entity = parameterRepository.findByCode(code)
-                .orElseThrow(() -> new EntityNotFoundException("Parameter", code));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NAME, code));
         return toDTO(entity);
     }
 
@@ -91,11 +93,11 @@ public class ParameterService extends AbstractCriteriaService<Parameter, Paramet
      */
     public ParameterDTO update(String code, ParameterDTO dto) {
         Parameter entity = parameterRepository.findByCode(code)
-                .orElseThrow(() -> new EntityNotFoundException("Parameter", code));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NAME, code));
 
         String normalizedCode = normalizeCode(dto.code());
         if (!entity.getCode().equals(normalizedCode) && parameterRepository.existsByCode(normalizedCode)) {
-            throw new DuplicateEntityException("Parameter", "code", normalizedCode);
+            throw new DuplicateEntityException(ENTITY_NAME, "code", normalizedCode);
         }
 
         validateTypeValueCompatibility(dto.type(), dto.value());
@@ -117,7 +119,7 @@ public class ParameterService extends AbstractCriteriaService<Parameter, Paramet
      */
     public void delete(String code) {
         Parameter entity = parameterRepository.findByCode(code)
-                .orElseThrow(() -> new EntityNotFoundException("Parameter", code));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NAME, code));
         parameterRepository.delete(entity);
     }
 

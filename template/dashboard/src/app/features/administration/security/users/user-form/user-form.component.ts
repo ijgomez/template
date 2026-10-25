@@ -41,7 +41,7 @@ export class UserFormComponent {
   readonly save = output<UserDTO>();
 
   /** Emitted when the user clicks cancel or back. */
-  readonly cancel = output<void>();
+  readonly cancelled = output<void>();
 
   /** Emitted when the user clicks the edit button (view mode). */
   readonly edit = output<UserDTO>();
@@ -155,7 +155,7 @@ export class UserFormComponent {
   }
 
   onCancel(): void {
-    this.cancel.emit();
+    this.cancelled.emit();
   }
 
   onEdit(): void {

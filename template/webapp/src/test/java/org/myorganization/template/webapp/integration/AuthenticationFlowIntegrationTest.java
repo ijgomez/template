@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -18,6 +19,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import jakarta.servlet.http.Cookie;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -68,13 +70,30 @@ class AuthenticationFlowIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
     private static String accessToken;
     private static Cookie refreshTokenCookie;
 
     @Test
     @Order(1)
     void contextLoadsAndLiquibaseMigrationsApply() {
-        // If context loads without error, Liquibase migrations applied successfully
+        // If context loads without error, Liquibase migrations applied successfully.
+        // Verify the changelog was actually recorded and the test seed data exists.
+        Integer appliedChangesets = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM databasechangelog", Integer.class);
+
+        assertThat(appliedChangesets)
+                .as("Liquibase should have applied at least one changeset")
+                .isPositive();
+
+        Integer seededAdmins = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM users WHERE username = ?", Integer.class, "admin");
+
+        assertThat(seededAdmins)
+                .as("Test changelog should have seeded the admin user")
+                .isOne();
     }
 
     @Test

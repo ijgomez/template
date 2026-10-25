@@ -94,8 +94,8 @@ describe('Translation Key Completeness - Property 15', () => {
   });
 
   it('both locale files have the same set of keys', () => {
-    const enKeyStrings = enPaths.map(pathToString).sort();
-    const esKeyStrings = esPaths.map(pathToString).sort();
+    const enKeyStrings = enPaths.map(pathToString).sort((a, b) => a.localeCompare(b));
+    const esKeyStrings = esPaths.map(pathToString).sort((a, b) => a.localeCompare(b));
 
     const enSet = new Set(enKeyStrings);
     const esSet = new Set(esKeyStrings);

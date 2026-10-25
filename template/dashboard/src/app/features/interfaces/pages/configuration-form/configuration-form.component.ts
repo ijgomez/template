@@ -29,7 +29,7 @@ export class ConfigurationFormComponent {
   readonly config = input<InterfaceConfig | null>();
 
   /** Emitted when the user clicks back or cancel. */
-  readonly cancel = output<void>();
+  readonly cancelled = output<void>();
 
   /** Emitted when the user clicks the back button. */
   readonly back = output<void>();
@@ -49,6 +49,6 @@ export class ConfigurationFormComponent {
 
   onBack(): void {
     this.back.emit();
-    this.cancel.emit();
+    this.cancelled.emit();
   }
 }

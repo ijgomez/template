@@ -28,6 +28,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class ProfileService extends AbstractCriteriaService<Profile, ProfileDTO, ProfileCriteria> {
 
+    private static final String ENTITY_NAME = "Profile";
+
     private final ProfileRepository profileRepository;
     private final Profile2ActionRepository profile2ActionRepository;
     private final ActionRepository actionRepository;
@@ -54,7 +56,7 @@ public class ProfileService extends AbstractCriteriaService<Profile, ProfileDTO,
         validateNoDuplicateActions(dto.actionIds());
 
         if (profileRepository.existsByName(dto.name())) {
-            throw new DuplicateEntityException("Profile", "name", dto.name());
+            throw new DuplicateEntityException(ENTITY_NAME, "name", dto.name());
         }
 
         Profile profile = new Profile();
@@ -77,7 +79,7 @@ public class ProfileService extends AbstractCriteriaService<Profile, ProfileDTO,
     @Transactional(readOnly = true)
     public ProfileDTO findById(Long id) {
         Profile profile = profileRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Profile", id));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NAME, id));
 
         List<Long> actionIds = profile2ActionRepository.findByIdProfileId(id).stream()
                 .map(p2a -> p2a.getId().getActionId())
@@ -101,11 +103,11 @@ public class ProfileService extends AbstractCriteriaService<Profile, ProfileDTO,
         validateNoDuplicateActions(dto.actionIds());
 
         Profile profile = profileRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Profile", id));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NAME, id));
 
         // Check name uniqueness only if the name has changed
         if (!profile.getName().equals(dto.name()) && profileRepository.existsByName(dto.name())) {
-            throw new DuplicateEntityException("Profile", "name", dto.name());
+            throw new DuplicateEntityException(ENTITY_NAME, "name", dto.name());
         }
 
         profile.setName(dto.name());
@@ -131,10 +133,10 @@ public class ProfileService extends AbstractCriteriaService<Profile, ProfileDTO,
     @Transactional
     public void delete(Long id) {
         Profile profile = profileRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Profile", id));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NAME, id));
 
         if (profile.getUsers() != null && !profile.getUsers().isEmpty()) {
-            throw new EntityInUseException("Profile", id);
+            throw new EntityInUseException(ENTITY_NAME, id);
         }
 
         profile2ActionRepository.deleteByIdProfileId(id);

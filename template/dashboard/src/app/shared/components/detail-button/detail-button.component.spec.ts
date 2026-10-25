@@ -31,7 +31,7 @@ describe('TpDetailButtonComponent', () => {
   it('should render an enabled button with the default test id by default', async () => {
     await setup();
     expect(button().disabled).toBe(false);
-    expect(button().getAttribute('data-testid')).toBe('btn-detail');
+    expect(button().dataset['testid']).toBe('btn-detail');
   });
 
   it('should render the eye icon', async () => {
@@ -50,7 +50,7 @@ describe('TpDetailButtonComponent', () => {
     await setup();
     fixture.componentRef.setInput('testId', 'users-view-detail');
     fixture.detectChanges();
-    expect(button().getAttribute('data-testid')).toBe('users-view-detail');
+    expect(button().dataset['testid']).toBe('users-view-detail');
   });
 
   it('should emit detail on click', async () => {

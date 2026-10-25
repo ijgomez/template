@@ -98,7 +98,7 @@
     [profile]="formProfile()"
     [actionIds]="formActionIds()"
     [canWrite]="canWrite()"
-    (cancel)="backToList()"
+    (cancelled)="backToList()"
     (edit)="showEditForm($event)"
     (delete)="confirmDelete($event)" />
 }
@@ -112,7 +112,7 @@
     [profile]="formProfile()"
     [actionIds]="formActionIds()"
     (save)="saveProfile($event)"
-    (cancel)="backToList()" />
+    (cancelled)="backToList()" />
 }
 
 <!-- ═══════════════════════════════════════════════════════════════════════════

@@ -77,6 +77,15 @@ describe('ParameterListComponent - Property 2: Preservation - List and Detail Vi
     return fixture;
   }
 
+  /** Stubs the criteria query with the given parameter rows. */
+  function mockFindByCriteria(parameters: readonly unknown[]): void {
+    parameterServiceMock.findByCriteria = () =>
+      of({
+        content: parameters,
+        page: { totalElements: parameters.length, totalPages: 1, size: 10, number: 0 },
+      } as any);
+  }
+
   // ─── LIST VIEW PRESERVATION ─────────────────────────────────────────────────
 
   describe('List view preservation', () => {
@@ -96,11 +105,7 @@ describe('ParameterListComponent - Property 2: Preservation - List and Detail Vi
             { minLength: 0, maxLength: 5 },
           ),
           (parameters) => {
-            parameterServiceMock.findByCriteria = () =>
-              of({
-                content: parameters,
-                page: { totalElements: parameters.length, totalPages: 1, size: 10, number: 0 },
-              } as any);
+            mockFindByCriteria(parameters);
 
             const fixture = createFixture();
             const el = fixture.nativeElement as HTMLElement;

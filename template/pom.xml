@@ -417,6 +417,12 @@
                     'dashboard/coverage/dashboard/lcov.info' durante la fase 'test'.
                 -->
                 <sonar.javascript.lcov.reportPaths>${project.basedir}/dashboard/coverage/dashboard/lcov.info</sonar.javascript.lcov.reportPaths>
+                <!--
+                    Excluye artefactos generados del análisis de SonarQube: la cobertura
+                    HTML de Vitest y el resto de salidas de build contienen JS de terceros
+                    (block-navigation.js, sorter.js) que no forma parte del código fuente.
+                -->
+                <sonar.exclusions>**/coverage/**,**/target/**,**/node_modules/**,**/dist/**,**/storybook-static/**</sonar.exclusions>
             </properties>
             <build>
                 <plugins>

@@ -116,7 +116,7 @@ describe('ActionFormComponent', () => {
     it('onCancel should emit cancel', () => {
       setup('edit');
       const spy = vi.fn();
-      component.cancel.subscribe(spy);
+      component.cancelled.subscribe(spy);
       component.onCancel();
       expect(spy).toHaveBeenCalledTimes(1);
     });

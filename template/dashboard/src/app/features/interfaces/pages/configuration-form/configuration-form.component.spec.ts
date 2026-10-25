@@ -116,7 +116,7 @@ describe('ConfigurationFormComponent', () => {
       const backSpy = vi.fn();
       const cancelSpy = vi.fn();
       component.back.subscribe(backSpy);
-      component.cancel.subscribe(cancelSpy);
+      component.cancelled.subscribe(cancelSpy);
 
       component.onBack();
 

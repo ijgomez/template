@@ -53,6 +53,14 @@ describe('LayoutComponent - Property 6: Navigation visibility matches user actio
   }
 
   /**
+   * Checks whether the user holds at least one of the given actions.
+   * Items without required actions are considered visible.
+   */
+  function isGranted(actions: readonly string[] | undefined, userActionSet: Set<string>): boolean {
+    return actions?.some((action) => userActionSet.has(action)) ?? true;
+  }
+
+  /**
    * Recursively collects all visible items (at all levels) for a given action set.
    */
   function collectVisibleItems(
@@ -157,8 +165,8 @@ describe('LayoutComponent - Property 6: Navigation visibility matches user actio
 
         for (const item of component.computedNavItems()) {
           if (item.children && item.children.length > 0) {
-            const anyChildActionPresent = item.children.some(
-              (child) => child.actions?.some((a) => userActionSet.has(a)) ?? true,
+            const anyChildActionPresent = item.children.some((child) =>
+              isGranted(child.actions, userActionSet),
             );
 
             if (anyChildActionPresent) {

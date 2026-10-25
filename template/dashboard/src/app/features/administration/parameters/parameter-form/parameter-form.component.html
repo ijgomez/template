@@ -80,21 +80,23 @@
                [attr.aria-invalid]="(code.invalid && (code.dirty || code.touched)) || codeExistsError() ? 'true' : null"
                [attr.aria-describedby]="(code.invalid && (code.dirty || code.touched)) || codeExistsError() ? 'paramCode-error' : null"
                data-testid="input-code">
-        @if (!isReadonly() && code.invalid && (code.dirty || code.touched)) {
+        @if (!isReadonly() && ((code.invalid && (code.dirty || code.touched)) || codeExistsError())) {
           <div id="paramCode-error" class="invalid-feedback d-block" data-testid="error-code">
-            {{ 'validation.required' | translate }}
+            @if (code.invalid && (code.dirty || code.touched)) {
+              {{ 'validation.required' | translate }}
+            } @else {
+              {{ codeExistsError() }}
+            }
           </div>
-        } @else if (!isReadonly() && codeExistsError()) {
-          <div id="paramCode-error" class="invalid-feedback d-block" data-testid="error-code">{{ codeExistsError() }}</div>
         }
       </div>
       <div class="col-md-4">
-        <label for="paramType" class="form-label form-label-sm mb-1">
+        <label [attr.for]="isReadonly() ? 'paramTypeReadonly' : 'paramType'" class="form-label form-label-sm mb-1">
           {{ 'parameters.fields.type' | translate }}
           @if (!isReadonly()) { <span class="text-danger">*</span> }
         </label>
         @if (isReadonly()) {
-          <input id="paramType"
+          <input id="paramTypeReadonly"
                  type="text"
                  class="form-control form-control-sm"
                  [value]="formData().type"
@@ -146,12 +148,14 @@
                [attr.aria-invalid]="(!isReadonly() && (paramValue.invalid && (paramValue.dirty || paramValue.touched))) || (!isReadonly() && typeValueError()) ? 'true' : null"
                [attr.aria-describedby]="(!isReadonly() && (paramValue.invalid && (paramValue.dirty || paramValue.touched))) || (!isReadonly() && typeValueError()) ? 'paramValue-error' : null"
                data-testid="input-value">
-        @if (!isReadonly() && paramValue.invalid && (paramValue.dirty || paramValue.touched)) {
+        @if (!isReadonly() && ((paramValue.invalid && (paramValue.dirty || paramValue.touched)) || typeValueError())) {
           <div id="paramValue-error" class="invalid-feedback" data-testid="error-value">
-            {{ 'validation.required' | translate }}
+            @if (paramValue.invalid && (paramValue.dirty || paramValue.touched)) {
+              {{ 'validation.required' | translate }}
+            } @else {
+              {{ typeValueError() }}
+            }
           </div>
-        } @else if (!isReadonly() && typeValueError()) {
-          <div id="paramValue-error" class="invalid-feedback" data-testid="error-value">{{ typeValueError() }}</div>
         }
       </div>
       <div class="col-12">

@@ -37,7 +37,7 @@ export class ProfileFormComponent implements OnInit {
   readonly save = output<{ profile: Profile; actionIds: number[] }>();
 
   /** Emitted when the user clicks cancel or back. */
-  readonly cancel = output<void>();
+  readonly cancelled = output<void>();
 
   /** Emitted when the user clicks the edit button (view mode). */
   readonly edit = output<Profile>();
@@ -128,7 +128,7 @@ export class ProfileFormComponent implements OnInit {
   }
 
   onCancel(): void {
-    this.cancel.emit();
+    this.cancelled.emit();
   }
 
   onEdit(): void {

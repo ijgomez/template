@@ -36,7 +36,7 @@ export class ActionFormComponent implements OnInit {
   readonly save = output<Partial<Action>>();
 
   /** Emitted when the user clicks cancel or back. */
-  readonly cancel = output<void>();
+  readonly cancelled = output<void>();
 
   /** Emitted when the user clicks the edit button (view mode). */
   readonly edit = output<Action>();
@@ -113,7 +113,7 @@ export class ActionFormComponent implements OnInit {
   }
 
   onCancel(): void {
-    this.cancel.emit();
+    this.cancelled.emit();
   }
 
   onEdit(): void {

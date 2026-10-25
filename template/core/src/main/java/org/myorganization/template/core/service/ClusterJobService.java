@@ -34,6 +34,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class ClusterJobService {
 
+    private static final String ENTITY_NAME = "ClusterJob";
+
     private final ClusterNodeRepository clusterNodeRepository;
     private final ClusterTaskRepository clusterTaskRepository;
     private final ClusterJobRepository clusterJobRepository;
@@ -94,7 +96,7 @@ public class ClusterJobService {
                 .orElseThrow(() -> new EntityNotFoundException("ClusterTask", taskId));
 
         if (clusterJobRepository.existsById(new ClusterJobPK(nodeId, taskId))) {
-            throw new DuplicateEntityException("ClusterJob", "taskId", taskId);
+            throw new DuplicateEntityException(ENTITY_NAME, "taskId", taskId);
         }
 
         ClusterJob job = new ClusterJob();
@@ -138,7 +140,7 @@ public class ClusterJobService {
         validateEnabled(dto.enabled());
 
         ClusterJob job = clusterJobRepository.findById(new ClusterJobPK(nodeId, taskId))
-                .orElseThrow(() -> new EntityNotFoundException("ClusterJob", nodeId + ":" + taskId));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NAME, nodeId + ":" + taskId));
 
         job.setPriority(dto.priority());
         job.setEnabled(dto.enabled());
@@ -163,7 +165,7 @@ public class ClusterJobService {
     public void deleteJob(Long nodeId, Long taskId) {
         ClusterJobPK pk = new ClusterJobPK(nodeId, taskId);
         ClusterJob job = clusterJobRepository.findById(pk)
-                .orElseThrow(() -> new EntityNotFoundException("ClusterJob", nodeId + ":" + taskId));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NAME, nodeId + ":" + taskId));
 
         clusterJobRepository.delete(job);
 
@@ -212,7 +214,7 @@ public class ClusterJobService {
                 operationType,
                 AuditSection.CLUSTER,
                 nodeId + ":" + taskId,
-                "ClusterJob",
+                ENTITY_NAME,
                 detail));
     }
 
