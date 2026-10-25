@@ -107,7 +107,13 @@ public class JwtTokenProvider implements TokenProvider {
     @Override
     public List<String> extractActions(String token) {
         Claims claims = extractClaims(token);
-        return claims.get(CLAIM_ACTIONS, List.class);
+        List<?> actions = claims.get(CLAIM_ACTIONS, List.class);
+        if (actions == null) {
+            return null;
+        }
+        return actions.stream()
+                .map(action -> (String) action)
+                .toList();
     }
 
     /**

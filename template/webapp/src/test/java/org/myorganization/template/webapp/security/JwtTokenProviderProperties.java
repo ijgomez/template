@@ -15,7 +15,6 @@ class JwtTokenProviderProperties {
 
     private static final String SECRET = "test-secret-key-that-is-at-least-32-characters-long";
     private static final long ACCESS_TOKEN_EXPIRATION = 900_000L;
-    private static final long REFRESH_TOKEN_EXPIRATION = 604_800_000L;
 
     private static final List<String> ALL_ACTION_CODES = List.of(
             "DASHBOARD_READ",

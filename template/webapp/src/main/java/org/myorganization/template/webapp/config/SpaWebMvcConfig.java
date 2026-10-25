@@ -2,7 +2,6 @@ package org.myorganization.template.webapp.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
-import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.resource.PathResourceResolver;
@@ -26,7 +25,7 @@ public class SpaWebMvcConfig implements WebMvcConfigurer {
     private static final String STATIC_LOCATION = "classpath:/static/";
 
     @Override
-    public void addResourceHandlers(@NonNull ResourceHandlerRegistry registry) {
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/**")
                 .addResourceLocations(STATIC_LOCATION)
                 .resourceChain(true)
@@ -42,7 +41,7 @@ public class SpaWebMvcConfig implements WebMvcConfigurer {
         private final Resource index = new org.springframework.core.io.ClassPathResource("static/index.html");
 
         @Override
-        protected Resource getResource(@NonNull String resourcePath, @NonNull Resource location) throws java.io.IOException {
+        protected Resource getResource(String resourcePath, Resource location) throws java.io.IOException {
             Resource requested = super.getResource(resourcePath, location);
             if (requested != null) {
                 return requested;
