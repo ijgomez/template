@@ -145,15 +145,15 @@
       <div class="card-body">
         <div class="tp-form-grid">
           <div class="form-group">
-            <label class="form-label fw-bold">{{ 'audit.fields.timestamp' | translate }}</label>
+            <span class="form-label fw-bold d-block">{{ 'audit.fields.timestamp' | translate }}</span>
             <p class="form-control-plaintext">{{ log.timestamp | localDate }}</p>
           </div>
           <div class="form-group">
-            <label class="form-label fw-bold">{{ 'audit.fields.username' | translate }}</label>
+            <span class="form-label fw-bold d-block">{{ 'audit.fields.username' | translate }}</span>
             <p class="form-control-plaintext">{{ log.username }}</p>
           </div>
           <div class="form-group">
-            <label class="form-label fw-bold">{{ 'audit.fields.operationType' | translate }}</label>
+            <span class="form-label fw-bold d-block">{{ 'audit.fields.operationType' | translate }}</span>
             <p class="form-control-plaintext">
               <span class="badge"
                     [class.bg-success-subtle]="log.operationType === 'CREATE'"
@@ -169,21 +169,21 @@
             </p>
           </div>
           <div class="form-group">
-            <label class="form-label fw-bold">{{ 'audit.fields.section' | translate }}</label>
+            <span class="form-label fw-bold d-block">{{ 'audit.fields.section' | translate }}</span>
             <p class="form-control-plaintext">
               <span class="badge bg-secondary">{{ log.section }}</span>
             </p>
           </div>
           <div class="form-group">
-            <label class="form-label fw-bold">{{ 'audit.fields.entityId' | translate }}</label>
+            <span class="form-label fw-bold d-block">{{ 'audit.fields.entityId' | translate }}</span>
             <p class="form-control-plaintext">{{ log.entityId }}</p>
           </div>
           <div class="form-group">
-            <label class="form-label fw-bold">{{ 'audit.fields.entityName' | translate }}</label>
+            <span class="form-label fw-bold d-block">{{ 'audit.fields.entityName' | translate }}</span>
             <p class="form-control-plaintext">{{ log.entityName }}</p>
           </div>
           <div class="form-group form-field-full">
-            <label class="form-label fw-bold">{{ 'audit.fields.detail' | translate }}</label>
+            <span class="form-label fw-bold d-block">{{ 'audit.fields.detail' | translate }}</span>
             <p class="form-control-plaintext">{{ log.detail }}</p>
           </div>
         </div>

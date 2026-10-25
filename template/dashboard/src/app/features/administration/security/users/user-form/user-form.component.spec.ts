@@ -31,6 +31,22 @@ describe('UserFormComponent', () => {
   let component: UserFormComponent;
   let fixture: ComponentFixture<UserFormComponent>;
 
+  /**
+   * Marks the named control as touched + dirty through Angular's forms API
+   * (robust against one-way [ngModel] + signal rebinding) and refreshes the view.
+   * ngModel controls register asynchronously, so we await stabilization first.
+   */
+  async function touchControl(name: string) {
+    await fixture.whenStable();
+    fixture.detectChanges();
+    const form = fixture.debugElement.query(By.directive(NgForm)).injector.get(NgForm);
+    const control = form.controls[name];
+    control.markAsTouched();
+    control.markAsDirty();
+    control.updateValueAndValidity();
+    fixture.detectChanges();
+  }
+
   /** Configures the fixture with the given required inputs. */
   function setup(mode: 'create' | 'edit' | 'view', user: UserDTO = buildUser(), canWrite = false) {
     fixture = TestBed.createComponent(UserFormComponent);
@@ -156,22 +172,6 @@ describe('UserFormComponent', () => {
   });
 
   describe('inline validation errors (accessibility)', () => {
-    /**
-     * Marks the named control as touched + dirty through Angular's forms API
-     * (robust against one-way [ngModel] + signal rebinding) and refreshes the view.
-     * ngModel controls register asynchronously, so we await stabilization first.
-     */
-    async function touchControl(name: string) {
-      await fixture.whenStable();
-      fixture.detectChanges();
-      const form = fixture.debugElement.query(By.directive(NgForm)).injector.get(NgForm);
-      const control = form.controls[name];
-      control.markAsTouched();
-      control.markAsDirty();
-      control.updateValueAndValidity();
-      fixture.detectChanges();
-    }
-
     it('should show an inline error for a required empty username, linked via aria-describedby', async () => {
       setup('create', buildUser({ username: '' }));
       await touchControl('username');

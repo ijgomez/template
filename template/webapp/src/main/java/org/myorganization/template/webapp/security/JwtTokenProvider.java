@@ -109,7 +109,7 @@ public class JwtTokenProvider implements TokenProvider {
         Claims claims = extractClaims(token);
         List<?> actions = claims.get(CLAIM_ACTIONS, List.class);
         if (actions == null) {
-            return null;
+            return List.of();
         }
         return actions.stream()
                 .map(action -> (String) action)

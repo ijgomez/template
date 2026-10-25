@@ -148,8 +148,8 @@ function handleTokenRefresh(
       // Only logout when the refresh token is truly invalid (auth failure)
       if (error instanceof HttpErrorResponse && (error.status === 401 || error.status === 403)) {
         authService.logout().subscribe({
-          complete: () => router.navigate(['/login']),
-          error: () => router.navigate(['/login']),
+          complete: () => { void router.navigate(['/login']); },
+          error: () => { void router.navigate(['/login']); },
         });
         return throwError(() => error);
       }

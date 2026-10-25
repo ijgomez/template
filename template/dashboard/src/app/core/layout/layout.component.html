@@ -15,7 +15,7 @@
       <div class="brand-icon" aria-hidden="true">T</div>
       <span class="brand-name">Template</span>
     </div>
-    <nav class="sidebar-nav">
+    <nav class="sidebar-nav" [attr.aria-label]="'layout.sidebar.menu' | translate">
       <ul class="nav flex-column">
         @for (item of computedNavItems(); track item.labelKey) {
           @if (isItemVisible(item)) {

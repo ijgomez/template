@@ -10,6 +10,71 @@ import { AuthService } from '../../../../../core/services/auth.service';
 import { NotificationService } from '../../../../../core/services/notification.service';
 import { CsvExportService } from '../../../../../core/services/csv-export.service';
 
+/** Creates a ProfileListComponent fixture in create or edit form mode. */
+function createFixture(isEditing: boolean): ComponentFixture<ProfileListComponent> {
+  const profileServiceMock: Partial<ProfileService> = {
+    findByCriteria: () => of({ content: [], page: { totalElements: 0, totalPages: 0, size: 10, number: 0 } } as any),
+    findAllActions: () => of({ content: [], page: { totalElements: 0, totalPages: 0, size: 1000, number: 0 } } as any),
+  };
+
+  const authServiceMock: Partial<AuthService> = {
+    hasAction: () => true,
+    getCurrentUser: () => ({
+      username: 'testuser',
+      profile: 'ADMIN',
+      actions: ['PROFILE_READ', 'PROFILE_WRITE'],
+      exp: Math.floor(Date.now() / 1000) + 3600,
+      iat: Math.floor(Date.now() / 1000),
+    }),
+  };
+
+  const notificationServiceMock: Partial<NotificationService> = {
+    showSuccess: () => '',
+    showProgress: () => '',
+    updateToSuccess: () => {},
+    updateToError: () => {},
+    showError: () => '',
+  };
+
+  const csvExportServiceMock: Partial<CsvExportService> = {
+    export: () => {},
+  };
+
+  TestBed.resetTestingModule();
+  TestBed.configureTestingModule({
+    imports: [ProfileListComponent],
+    providers: [
+      provideRouter([]),
+      provideTranslateService({ lang: 'en', fallbackLang: 'en' }),
+      { provide: ProfileService, useValue: profileServiceMock },
+      { provide: AuthService, useValue: authServiceMock },
+      { provide: NotificationService, useValue: notificationServiceMock },
+      { provide: CsvExportService, useValue: csvExportServiceMock },
+    ],
+  });
+
+  const fixture = TestBed.createComponent(ProfileListComponent);
+  const component = fixture.componentInstance;
+
+  // Initialize first (ngOnInit subscribes to queryParams), then enter form mode,
+  // mirroring the real user flow (list renders, then the user opens the form).
+  fixture.detectChanges();
+
+  if (isEditing) {
+    component.showEditForm({
+      id: 1,
+      name: 'Test Profile',
+      description: 'Test description',
+      actions: [{ id: 1, code: 'TEST_READ', type: 'READ', name: 'Test Read' }],
+    });
+  } else {
+    component.showCreateForm();
+  }
+
+  fixture.detectChanges();
+  return fixture;
+}
+
 /**
  * Property-based test for bug condition exploration:
  * Form styling diverges from reference pattern in Profiles component.
@@ -28,70 +93,6 @@ describe('ProfileListComponent - Property 1: Bug Condition - Form Styling Matche
    * but the form can be in create or edit state.
    */
   const formEditingStateArb = fc.boolean();
-
-  function createFixture(isEditing: boolean): ComponentFixture<ProfileListComponent> {
-    const profileServiceMock: Partial<ProfileService> = {
-      findByCriteria: () => of({ content: [], page: { totalElements: 0, totalPages: 0, size: 10, number: 0 } } as any),
-      findAllActions: () => of({ content: [], page: { totalElements: 0, totalPages: 0, size: 1000, number: 0 } } as any),
-    };
-
-    const authServiceMock: Partial<AuthService> = {
-      hasAction: () => true,
-      getCurrentUser: () => ({
-        username: 'testuser',
-        profile: 'ADMIN',
-        actions: ['PROFILE_READ', 'PROFILE_WRITE'],
-        exp: Math.floor(Date.now() / 1000) + 3600,
-        iat: Math.floor(Date.now() / 1000),
-      }),
-    };
-
-    const notificationServiceMock: Partial<NotificationService> = {
-      showSuccess: () => '',
-      showProgress: () => '',
-      updateToSuccess: () => {},
-      updateToError: () => {},
-      showError: () => '',
-    };
-
-    const csvExportServiceMock: Partial<CsvExportService> = {
-      export: () => {},
-    };
-
-    TestBed.resetTestingModule();
-    TestBed.configureTestingModule({
-      imports: [ProfileListComponent],
-      providers: [
-        provideRouter([]),
-        provideTranslateService({ lang: 'en', fallbackLang: 'en' }),
-        { provide: ProfileService, useValue: profileServiceMock },
-        { provide: AuthService, useValue: authServiceMock },
-        { provide: NotificationService, useValue: notificationServiceMock },
-        { provide: CsvExportService, useValue: csvExportServiceMock },
-      ],
-    });
-
-    const fixture = TestBed.createComponent(ProfileListComponent);
-    const component = fixture.componentInstance;
-
-    // Initialize first (ngOnInit subscribes to queryParams), then enter form mode,
-    // mirroring the real user flow (list renders, then the user opens the form).
-    fixture.detectChanges();
-
-    if (isEditing) {
-      component.showEditForm({
-        id: 1,
-        name: 'Test Profile',
-        description: 'Test description',
-        actions: [{ id: 1, code: 'TEST_READ', type: 'READ', name: 'Test Read' }],
-      });
-    } else {
-      component.showCreateForm();
-    }
-
-    fixture.detectChanges();
-    return fixture;
-  }
 
   it('should have tp-filter-bar container wrapping the form', () => {
     fc.assert(

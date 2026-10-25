@@ -91,7 +91,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity http) {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
@@ -197,7 +197,11 @@ public class SecurityConfig {
                         .anyRequest().permitAll()
                 );
 
-        return http.build();
+        try {
+            return http.build();
+        } catch (Exception ex) {
+            throw new IllegalStateException("Failed to build the security filter chain", ex);
+        }
     }
 
     @Bean

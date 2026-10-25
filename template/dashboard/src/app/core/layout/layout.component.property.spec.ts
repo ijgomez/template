@@ -8,6 +8,73 @@ import { LayoutComponent, NavItem } from './layout.component';
 import { AuthService } from '../services/auth.service';
 
 /**
+ * Pure function that computes expected visibility for a NavItem given a set of user actions.
+ * A leaf item is visible if the user has at least one of its required actions.
+ * A parent section is visible if at least one of its actions is in the user's set
+ * (parent actions = union of children's actions by design).
+ */
+function expectedVisibility(item: NavItem, userActionSet: Set<string>): boolean {
+  if (!item.actions || item.actions.length === 0) {
+    return true;
+  }
+  return item.actions.some((action) => userActionSet.has(action));
+}
+
+/**
+ * Checks whether the user holds at least one of the given actions.
+ * Items without required actions are considered visible.
+ */
+function isGranted(actions: readonly string[] | undefined, userActionSet: Set<string>): boolean {
+  return actions?.some((action) => userActionSet.has(action)) ?? true;
+}
+
+/**
+ * Recursively collects all visible items (at all levels) for a given action set.
+ */
+function collectVisibleItems(items: NavItem[], userActionSet: Set<string>): NavItem[] {
+  const visible: NavItem[] = [];
+  for (const item of items) {
+    if (expectedVisibility(item, userActionSet)) {
+      visible.push(item);
+      if (item.children) {
+        visible.push(...collectVisibleItems(item.children, userActionSet));
+      }
+    }
+  }
+  return visible;
+}
+
+/** Creates a LayoutComponent instance configured with the given user actions. */
+function createComponent(userActions: string[]): LayoutComponent {
+  const userActionSet = new Set(userActions);
+
+  const authServiceMock: Partial<AuthService> = {
+    getCurrentUser: () => ({
+      username: 'propuser',
+      profile: 'TEST',
+      actions: userActions,
+      exp: Math.floor(Date.now() / 1000) + 3600,
+      iat: Math.floor(Date.now() / 1000),
+    }),
+    logout: () => of(undefined as unknown as void),
+    hasAction: (actionCode: string) => userActionSet.has(actionCode),
+  };
+
+  TestBed.resetTestingModule();
+  TestBed.configureTestingModule({
+    imports: [LayoutComponent],
+    providers: [
+      provideRouter([]),
+      provideTranslateService({ lang: 'en', fallbackLang: 'en' }),
+      { provide: AuthService, useValue: authServiceMock },
+    ],
+  });
+
+  const fixture = TestBed.createComponent(LayoutComponent);
+  return fixture.componentInstance;
+}
+
+/**
  * Property-based test for navigation visibility matching user actions.
  *
  * **Validates: Requirements 5.6, 7.2, 7.8, 7.9, 7.10, 7.11, 7.12**
@@ -38,75 +105,6 @@ describe('LayoutComponent - Property 6: Navigation visibility matches user actio
    * Arbitrary that generates any subset of ALL_ACTIONS (including empty set).
    */
   const userActionsArb = fc.subarray(ALL_ACTIONS, { minLength: 0, maxLength: ALL_ACTIONS.length });
-
-  /**
-   * Pure function that computes expected visibility for a NavItem given a set of user actions.
-   * A leaf item is visible if the user has at least one of its required actions.
-   * A parent section is visible if at least one of its actions is in the user's set
-   * (parent actions = union of children's actions by design).
-   */
-  function expectedVisibility(item: NavItem, userActionSet: Set<string>): boolean {
-    if (!item.actions || item.actions.length === 0) {
-      return true;
-    }
-    return item.actions.some((action) => userActionSet.has(action));
-  }
-
-  /**
-   * Checks whether the user holds at least one of the given actions.
-   * Items without required actions are considered visible.
-   */
-  function isGranted(actions: readonly string[] | undefined, userActionSet: Set<string>): boolean {
-    return actions?.some((action) => userActionSet.has(action)) ?? true;
-  }
-
-  /**
-   * Recursively collects all visible items (at all levels) for a given action set.
-   */
-  function collectVisibleItems(
-    items: NavItem[],
-    userActionSet: Set<string>,
-  ): NavItem[] {
-    const visible: NavItem[] = [];
-    for (const item of items) {
-      if (expectedVisibility(item, userActionSet)) {
-        visible.push(item);
-        if (item.children) {
-          visible.push(...collectVisibleItems(item.children, userActionSet));
-        }
-      }
-    }
-    return visible;
-  }
-
-  function createComponent(userActions: string[]): LayoutComponent {
-    const userActionSet = new Set(userActions);
-
-    const authServiceMock: Partial<AuthService> = {
-      getCurrentUser: () => ({
-        username: 'propuser',
-        profile: 'TEST',
-        actions: userActions,
-        exp: Math.floor(Date.now() / 1000) + 3600,
-        iat: Math.floor(Date.now() / 1000),
-      }),
-      logout: () => of(undefined as unknown as void),
-      hasAction: (actionCode: string) => userActionSet.has(actionCode),
-    };
-
-    TestBed.resetTestingModule();
-    TestBed.configureTestingModule({
-      imports: [LayoutComponent],
-      providers: [
-        provideRouter([]),
-        provideTranslateService({ lang: 'en', fallbackLang: 'en' }),
-        { provide: AuthService, useValue: authServiceMock },
-      ],
-    });
-
-    const fixture = TestBed.createComponent(LayoutComponent);
-    return fixture.componentInstance;
-  }
 
   it('should show exactly the items whose actions match the user action set', () => {
     fc.assert(

@@ -9,16 +9,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  opacity: 1;
+  transition: opacity var(--tp-duration-medium) var(--tp-ease-out);
 }
 
 .modal {
   position: relative;
   z-index: 1091;
-}
-
-.error-dialog-backdrop {
-  opacity: 1;
-  transition: opacity var(--tp-duration-medium) var(--tp-ease-out);
 }
 
 @starting-style {

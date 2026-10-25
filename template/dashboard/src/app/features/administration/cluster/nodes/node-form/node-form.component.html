@@ -16,8 +16,9 @@
   </h6>
   <div class="row g-2 mb-3">
     <div class="col-md-4">
-      <label class="form-label form-label-sm mb-1">{{ 'cluster.nodes.fields.hostname' | translate }}</label>
-      <input type="text"
+      <label class="form-label form-label-sm mb-1" for="node-hostname">{{ 'cluster.nodes.fields.hostname' | translate }}</label>
+      <input id="node-hostname"
+             type="text"
              class="form-control form-control-sm"
              [value]="node().hostname"
              readonly
@@ -25,8 +26,9 @@
              [attr.aria-label]="'cluster.nodes.fields.hostname' | translate">
     </div>
     <div class="col-md-4">
-      <label class="form-label form-label-sm mb-1">{{ 'cluster.nodes.fields.ip' | translate }}</label>
-      <input type="text"
+      <label class="form-label form-label-sm mb-1" for="node-ip">{{ 'cluster.nodes.fields.ip' | translate }}</label>
+      <input id="node-ip"
+             type="text"
              class="form-control form-control-sm"
              [value]="node().ip ?? '-'"
              readonly
@@ -45,7 +47,7 @@
       </select>
     </div>
     <div class="col-md-4">
-      <label class="form-label form-label-sm mb-1">{{ 'cluster.nodes.fields.master' | translate }}</label>
+      <span class="form-label form-label-sm mb-1 d-block">{{ 'cluster.nodes.fields.master' | translate }}</span>
       <div>
         @if (node().master) {
           <span class="badge bg-primary">MASTER</span>
@@ -55,8 +57,9 @@
       </div>
     </div>
     <div class="col-md-4">
-      <label class="form-label form-label-sm mb-1">{{ 'cluster.nodes.fields.startedAt' | translate }}</label>
-      <input type="text"
+      <label class="form-label form-label-sm mb-1" for="node-started-at">{{ 'cluster.nodes.fields.startedAt' | translate }}</label>
+      <input id="node-started-at"
+             type="text"
              class="form-control form-control-sm"
              [value]="(node().startedAt | localDate) ?? ''"
              readonly
@@ -64,8 +67,9 @@
              [attr.aria-label]="'cluster.nodes.fields.startedAt' | translate">
     </div>
     <div class="col-md-4">
-      <label class="form-label form-label-sm mb-1">{{ 'cluster.nodes.fields.lastModifiedAt' | translate }}</label>
-      <input type="text"
+      <label class="form-label form-label-sm mb-1" for="node-last-modified-at">{{ 'cluster.nodes.fields.lastModifiedAt' | translate }}</label>
+      <input id="node-last-modified-at"
+             type="text"
              class="form-control form-control-sm"
              [value]="(node().lastModifiedAt | localDate) ?? ''"
              readonly
@@ -73,8 +77,9 @@
              [attr.aria-label]="'cluster.nodes.fields.lastModifiedAt' | translate">
     </div>
     <div class="col-md-4">
-      <label class="form-label form-label-sm mb-1">{{ 'cluster.nodes.fields.usedMemoryGb' | translate }}</label>
-      <input type="text"
+      <label class="form-label form-label-sm mb-1" for="node-used-memory">{{ 'cluster.nodes.fields.usedMemoryGb' | translate }}</label>
+      <input id="node-used-memory"
+             type="text"
              class="form-control form-control-sm"
              [value]="(node().usedMemory / 1073741824 | number:'1.2-2') + ' GB'"
              readonly
@@ -82,8 +87,9 @@
              [attr.aria-label]="'cluster.nodes.fields.usedMemoryGb' | translate">
     </div>
     <div class="col-md-4">
-      <label class="form-label form-label-sm mb-1">{{ 'cluster.nodes.fields.totalMemoryGb' | translate }}</label>
-      <input type="text"
+      <label class="form-label form-label-sm mb-1" for="node-total-memory">{{ 'cluster.nodes.fields.totalMemoryGb' | translate }}</label>
+      <input id="node-total-memory"
+             type="text"
              class="form-control form-control-sm"
              [value]="(node().totalMemory / 1073741824 | number:'1.2-2') + ' GB'"
              readonly
@@ -91,8 +97,9 @@
              [attr.aria-label]="'cluster.nodes.fields.totalMemoryGb' | translate">
     </div>
     <div class="col-md-4">
-      <label class="form-label form-label-sm mb-1">{{ 'cluster.nodes.fields.freeMemoryPercent' | translate }}</label>
-      <input type="text"
+      <label class="form-label form-label-sm mb-1" for="node-free-memory">{{ 'cluster.nodes.fields.freeMemoryPercent' | translate }}</label>
+      <input id="node-free-memory"
+             type="text"
              class="form-control form-control-sm"
              [value]="((node().totalMemory > 0 ? ((node().totalMemory - node().usedMemory) / node().totalMemory * 100) : 0) | number:'1.1-1') + '%'"
              readonly

@@ -94,6 +94,7 @@
         </label>
         <input id="password"
                [type]="isReadonly() ? 'text' : 'password'"
+               autocomplete="new-password"
                class="form-control form-control-sm"
                [ngClass]="{ 'is-invalid': password.invalid && (password.dirty || password.touched) }"
                [ngModel]="isReadonly() ? '••••••••' : formUser().password"
@@ -209,10 +210,11 @@
       </h6>
       <div class="row g-2 mb-3">
         <div class="col-md-4">
-          <label class="form-label form-label-sm mb-1">
+          <label for="user-last-access" class="form-label form-label-sm mb-1">
             {{ 'users.fields.lastAccess' | translate }}
           </label>
-          <input type="text"
+          <input id="user-last-access"
+                 type="text"
                  class="form-control form-control-sm"
                  [value]="(formUser().lastAccess | localDate) ?? ''"
                  readonly
@@ -221,10 +223,11 @@
                  data-testid="input-last-access">
         </div>
         <div class="col-md-4">
-          <label class="form-label form-label-sm mb-1">
+          <label for="user-created-at" class="form-label form-label-sm mb-1">
             {{ 'users.fields.createdAt' | translate }}
           </label>
-          <input type="text"
+          <input id="user-created-at"
+                 type="text"
                  class="form-control form-control-sm"
                  [value]="(formUser().createdAt | localDate) ?? ''"
                  readonly
@@ -233,10 +236,11 @@
                  data-testid="input-created-at">
         </div>
         <div class="col-md-4">
-          <label class="form-label form-label-sm mb-1">
+          <label for="user-last-modified-at" class="form-label form-label-sm mb-1">
             {{ 'users.fields.lastModifiedAt' | translate }}
           </label>
-          <input type="text"
+          <input id="user-last-modified-at"
+                 type="text"
                  class="form-control form-control-sm"
                  [value]="(formUser().lastModifiedAt | localDate) ?? ''"
                  readonly

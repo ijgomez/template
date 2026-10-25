@@ -182,11 +182,11 @@
       <div class="card-body">
         <div class="row g-3">
           <div class="col-md-4">
-            <label class="form-label fw-bold">{{ 'interfaces.interfaceList.fields.timestamp' | translate }}</label>
+            <span class="form-label fw-bold d-block">{{ 'interfaces.interfaceList.fields.timestamp' | translate }}</span>
             <p class="form-control-plaintext">{{ log.timestamp | localDate }}</p>
           </div>
           <div class="col-md-4">
-            <label class="form-label fw-bold">{{ 'interfaces.interfaceList.fields.operationType' | translate }}</label>
+            <span class="form-label fw-bold d-block">{{ 'interfaces.interfaceList.fields.operationType' | translate }}</span>
             <p class="form-control-plaintext">
               <span class="badge bg-secondary-subtle text-secondary">
                 {{ log.operationType }}
@@ -194,11 +194,11 @@
             </p>
           </div>
           <div class="col-md-4">
-            <label class="form-label fw-bold">{{ 'interfaces.interfaceList.fields.interfaceName' | translate }}</label>
+            <span class="form-label fw-bold d-block">{{ 'interfaces.interfaceList.fields.interfaceName' | translate }}</span>
             <p class="form-control-plaintext">{{ log.interfaceName }}</p>
           </div>
           <div class="col-md-4">
-            <label class="form-label fw-bold">{{ 'interfaces.interfaceList.fields.status' | translate }}</label>
+            <span class="form-label fw-bold d-block">{{ 'interfaces.interfaceList.fields.status' | translate }}</span>
             <p class="form-control-plaintext">
               <span class="badge"
                     [class.bg-success-subtle]="log.status === 'SUCCESS'"
@@ -214,16 +214,16 @@
             </p>
           </div>
           <div class="col-12">
-            <label class="form-label fw-bold">{{ 'interfaces.interfaceList.fields.requestPayload' | translate }}</label>
+            <span class="form-label fw-bold d-block">{{ 'interfaces.interfaceList.fields.requestPayload' | translate }}</span>
             <pre class="bg-light p-2 rounded small">{{ log.requestPayload ?? '-' }}</pre>
           </div>
           <div class="col-12">
-            <label class="form-label fw-bold">{{ 'interfaces.interfaceList.fields.responsePayload' | translate }}</label>
+            <span class="form-label fw-bold d-block">{{ 'interfaces.interfaceList.fields.responsePayload' | translate }}</span>
             <pre class="bg-light p-2 rounded small">{{ log.responsePayload ?? '-' }}</pre>
           </div>
           @if (log.errorMessage) {
             <div class="col-12">
-              <label class="form-label fw-bold">{{ 'interfaces.interfaceList.fields.errorMessage' | translate }}</label>
+              <span class="form-label fw-bold d-block">{{ 'interfaces.interfaceList.fields.errorMessage' | translate }}</span>
               <p class="form-control-plaintext text-danger">{{ log.errorMessage }}</p>
             </div>
           }

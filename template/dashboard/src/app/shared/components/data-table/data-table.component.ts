@@ -209,9 +209,13 @@ export class TpDataTableComponent<T extends { id?: number | string | null }> imp
    * Returns the aria-sort value for a column header.
    */
   getAriaSort(col: ColumnDef): string {
-    if (!col.sortable) return 'none';
-    if (this.sortColumn !== col.key) return 'none';
-    return this.sortDirection === 'asc' ? 'ascending' : this.sortDirection === 'desc' ? 'descending' : 'none';
+    if (!col.sortable || this.sortColumn !== col.key) {
+      return 'none';
+    }
+    if (this.sortDirection === 'asc') {
+      return 'ascending';
+    }
+    return this.sortDirection === 'desc' ? 'descending' : 'none';
   }
 
   // ─── Resize Methods ────────────────────────────────────────
@@ -402,8 +406,8 @@ export class TpDataTableComponent<T extends { id?: number | string | null }> imp
   private initColumnWidths(): void {
     for (const col of this.columns) {
       if (col.width && col.width.endsWith('px')) {
-        const parsed = parseInt(col.width, 10);
-        if (!isNaN(parsed)) {
+        const parsed = Number.parseInt(col.width, 10);
+        if (!Number.isNaN(parsed)) {
           this.columnWidths[col.key] = parsed;
         }
       }

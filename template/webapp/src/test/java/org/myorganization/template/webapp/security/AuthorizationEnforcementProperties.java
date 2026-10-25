@@ -162,7 +162,7 @@ class AuthorizationEnforcementProperties {
             Set<String> forbidden = mapping.requiredActions();
             List<String> availableActions = ALL_ACTIONS.stream()
                     .filter(a -> !forbidden.contains(a))
-                    .collect(Collectors.toList());
+                    .toList();
             return Arbitraries.subsetOf(availableActions)
                     .map(subset -> new ActionSubsetAndEndpoint(new ArrayList<>(subset), mapping));
         });
@@ -176,7 +176,7 @@ class AuthorizationEnforcementProperties {
             return Arbitraries.of(requiredList).flatMap(guaranteedAction -> {
                 List<String> otherActions = ALL_ACTIONS.stream()
                         .filter(a -> !a.equals(guaranteedAction))
-                        .collect(Collectors.toList());
+                        .toList();
                 return Arbitraries.subsetOf(otherActions)
                         .map(subset -> {
                             List<String> actions = new ArrayList<>(subset);
@@ -193,7 +193,7 @@ class AuthorizationEnforcementProperties {
     Arbitrary<List<String>> actionsWithoutReportExecute() {
         List<String> available = ALL_ACTIONS.stream()
                 .filter(a -> !"REPORT_EXECUTE".equals(a))
-                .collect(Collectors.toList());
+                .toList();
         return Arbitraries.subsetOf(available).map(ArrayList::new);
     }
 

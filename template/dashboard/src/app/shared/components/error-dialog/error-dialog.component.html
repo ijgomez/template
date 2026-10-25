@@ -4,12 +4,12 @@
          role="presentation"
          animate.leave="error-dialog-backdrop--leave"
          data-testid="error-dialog-backdrop">
-      <div class="modal d-block"
-           tabindex="-1"
-           role="dialog"
-           aria-modal="true"
-           [attr.aria-labelledby]="'error-title-' + errors[0].id"
-           data-testid="error-dialog">
+      <dialog class="modal d-block"
+              tabindex="-1"
+              open
+              aria-modal="true"
+              [attr.aria-labelledby]="'error-title-' + errors[0].id"
+              data-testid="error-dialog">
         <div class="modal-dialog modal-dialog-centered"
              animate.leave="modal-dialog--leave">
           <div class="modal-content">
@@ -41,7 +41,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </dialog>
     </div>
   }
 }

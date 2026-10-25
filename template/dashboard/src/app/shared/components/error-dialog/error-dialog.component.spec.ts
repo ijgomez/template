@@ -48,7 +48,7 @@ describe('ErrorDialogComponent', () => {
     const dialog = fixture.nativeElement.querySelector('[data-testid="error-dialog"]');
     expect(dialog).toBeTruthy();
     expect(dialog.getAttribute('aria-modal')).toBe('true');
-    expect(dialog.getAttribute('role')).toBe('dialog');
+    expect(dialog.tagName).toBe('DIALOG');
   });
 
   it('should render the literal backend message when provided', () => {

@@ -142,29 +142,35 @@ public class ParameterService extends AbstractCriteriaService<Parameter, Paramet
         }
 
         switch (type) {
-            case INTEGER -> {
-                try {
-                    Integer.parseInt(value);
-                } catch (NumberFormatException e) {
-                    throw new ValidationException(
-                            "Value '" + value + "' is not a valid integer for type INTEGER");
-                }
-            }
-            case BOOLEAN -> {
-                if (!"true".equals(value) && !"false".equals(value)) {
-                    throw new ValidationException(
-                            "Value '" + value + "' is not valid for type BOOLEAN. Must be 'true' or 'false'");
-                }
-            }
-            case DATE -> {
-                if (!isValidIso8601Date(value)) {
-                    throw new ValidationException(
-                            "Value '" + value + "' is not a valid ISO 8601 date for type DATE");
-                }
-            }
+            case INTEGER -> validateIntegerValue(value);
+            case BOOLEAN -> validateBooleanValue(value);
+            case DATE -> validateDateValue(value);
             case STRING -> {
                 // Any value is valid for STRING type
             }
+        }
+    }
+
+    private static void validateIntegerValue(String value) {
+        try {
+            Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            throw new ValidationException(
+                    "Value '" + value + "' is not a valid integer for type INTEGER");
+        }
+    }
+
+    private static void validateBooleanValue(String value) {
+        if (!"true".equals(value) && !"false".equals(value)) {
+            throw new ValidationException(
+                    "Value '" + value + "' is not valid for type BOOLEAN. Must be 'true' or 'false'");
+        }
+    }
+
+    private void validateDateValue(String value) {
+        if (!isValidIso8601Date(value)) {
+            throw new ValidationException(
+                    "Value '" + value + "' is not a valid ISO 8601 date for type DATE");
         }
     }
 

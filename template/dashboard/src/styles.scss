@@ -345,3 +345,17 @@ body.tp-sidebar-resizing {
     animation: none;
   }
 }
+
+// ─── Native dialog-based modals ──────────────────────────────
+// Project modals use <dialog open> inside conditional blocks. Reset the
+// user-agent dialog styles so Bootstrap's .modal layout and the
+// .modal-content card remain the single source of visual styling.
+dialog.modal {
+  padding: 0;
+  border: 0;
+  margin: 0;
+  max-width: none;
+  max-height: none;
+  background: transparent;
+  color: inherit;
+}

@@ -9,6 +9,68 @@ import { ParameterService } from '../../../../core/services/parameter.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 
+/** Creates a ParameterListComponent fixture for the given form view mode. */
+function createFixture(viewMode: 'create' | 'edit'): ComponentFixture<ParameterListComponent> {
+  const parameterServiceMock: Partial<ParameterService> = {
+    findByCriteria: () => of({ content: [], page: { totalElements: 0, totalPages: 0, size: 10, number: 0 } } as any),
+  };
+
+  const authServiceMock: Partial<AuthService> = {
+    hasAction: () => true,
+    getCurrentUser: () => ({
+      username: 'testuser',
+      profile: 'ADMIN',
+      actions: ['SYSTEM_PARAMETER_READ', 'SYSTEM_PARAMETER_WRITE'],
+      exp: Math.floor(Date.now() / 1000) + 3600,
+      iat: Math.floor(Date.now() / 1000),
+    }),
+  };
+
+  const notificationServiceMock: Partial<NotificationService> = {
+    showSuccess: () => '',
+    showProgress: () => '',
+    updateToSuccess: () => {},
+    updateToError: () => {},
+    showError: () => '',
+  };
+
+  TestBed.resetTestingModule();
+  TestBed.configureTestingModule({
+    imports: [ParameterListComponent],
+    providers: [
+      provideRouter([]),
+      provideTranslateService({ lang: 'en', fallbackLang: 'en' }),
+      { provide: ParameterService, useValue: parameterServiceMock },
+      { provide: AuthService, useValue: authServiceMock },
+      { provide: NotificationService, useValue: notificationServiceMock },
+    ],
+  });
+
+  const fixture = TestBed.createComponent(ParameterListComponent);
+  const component = fixture.componentInstance;
+
+  // Initialize first (ngOnInit subscribes to queryParams), then enter form mode,
+  // mirroring the real user flow (list renders, then the user opens the form).
+  fixture.detectChanges();
+
+  if (viewMode === 'create') {
+    component.openCreate();
+  } else {
+    component.openEdit({
+      id: 1,
+      code: 'TEST_PARAM',
+      description: 'Test parameter',
+      value: 'test-value',
+      type: 'STRING',
+      createdAt: '2024-01-01',
+      lastModifiedAt: '2024-01-02',
+    });
+  }
+
+  fixture.detectChanges();
+  return fixture;
+}
+
 /**
  * Property-based test for bug condition exploration:
  * Form styling diverges from reference pattern in Parameters component.
@@ -26,67 +88,6 @@ describe('ParameterListComponent - Property 1: Bug Condition - Form Styling Matc
    * Arbitrary for form view modes in Parameters component.
    */
   const formViewModeArb = fc.constantFrom('create' as const, 'edit' as const);
-
-  function createFixture(viewMode: 'create' | 'edit'): ComponentFixture<ParameterListComponent> {
-    const parameterServiceMock: Partial<ParameterService> = {
-      findByCriteria: () => of({ content: [], page: { totalElements: 0, totalPages: 0, size: 10, number: 0 } } as any),
-    };
-
-    const authServiceMock: Partial<AuthService> = {
-      hasAction: () => true,
-      getCurrentUser: () => ({
-        username: 'testuser',
-        profile: 'ADMIN',
-        actions: ['SYSTEM_PARAMETER_READ', 'SYSTEM_PARAMETER_WRITE'],
-        exp: Math.floor(Date.now() / 1000) + 3600,
-        iat: Math.floor(Date.now() / 1000),
-      }),
-    };
-
-    const notificationServiceMock: Partial<NotificationService> = {
-      showSuccess: () => '',
-      showProgress: () => '',
-      updateToSuccess: () => {},
-      updateToError: () => {},
-      showError: () => '',
-    };
-
-    TestBed.resetTestingModule();
-    TestBed.configureTestingModule({
-      imports: [ParameterListComponent],
-      providers: [
-        provideRouter([]),
-        provideTranslateService({ lang: 'en', fallbackLang: 'en' }),
-        { provide: ParameterService, useValue: parameterServiceMock },
-        { provide: AuthService, useValue: authServiceMock },
-        { provide: NotificationService, useValue: notificationServiceMock },
-      ],
-    });
-
-    const fixture = TestBed.createComponent(ParameterListComponent);
-    const component = fixture.componentInstance;
-
-    // Initialize first (ngOnInit subscribes to queryParams), then enter form mode,
-    // mirroring the real user flow (list renders, then the user opens the form).
-    fixture.detectChanges();
-
-    if (viewMode === 'create') {
-      component.openCreate();
-    } else {
-      component.openEdit({
-        id: 1,
-        code: 'TEST_PARAM',
-        description: 'Test parameter',
-        value: 'test-value',
-        type: 'STRING',
-        createdAt: '2024-01-01',
-        lastModifiedAt: '2024-01-02',
-      });
-    }
-
-    fixture.detectChanges();
-    return fixture;
-  }
 
   it('should have tp-filter-bar container in form view (not card > card-body)', () => {
     fc.assert(

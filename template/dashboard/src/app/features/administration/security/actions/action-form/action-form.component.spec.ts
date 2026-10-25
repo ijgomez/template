@@ -24,6 +24,22 @@ describe('ActionFormComponent', () => {
   let component: ActionFormComponent;
   let fixture: ComponentFixture<ActionFormComponent>;
 
+  /**
+   * Marks the named control as touched + dirty through Angular's forms API
+   * (robust against one-way [ngModel] + signal rebinding) and refreshes the view.
+   * ngModel controls register asynchronously, so we await stabilization first.
+   */
+  async function touchControl(name: string) {
+    await fixture.whenStable();
+    fixture.detectChanges();
+    const form = fixture.debugElement.query(By.directive(NgForm)).injector.get(NgForm);
+    const control = form.controls[name];
+    control.markAsTouched();
+    control.markAsDirty();
+    control.updateValueAndValidity();
+    fixture.detectChanges();
+  }
+
   /** Configures the fixture with the given required inputs. */
   function setup(mode: 'edit' | 'view' = 'edit', action: Action = buildAction(), canEdit = false) {
     fixture = TestBed.createComponent(ActionFormComponent);
@@ -132,22 +148,6 @@ describe('ActionFormComponent', () => {
   });
 
   describe('inline validation errors (accessibility)', () => {
-    /**
-     * Marks the named control as touched + dirty through Angular's forms API
-     * (robust against one-way [ngModel] + signal rebinding) and refreshes the view.
-     * ngModel controls register asynchronously, so we await stabilization first.
-     */
-    async function touchControl(name: string) {
-      await fixture.whenStable();
-      fixture.detectChanges();
-      const form = fixture.debugElement.query(By.directive(NgForm)).injector.get(NgForm);
-      const control = form.controls[name];
-      control.markAsTouched();
-      control.markAsDirty();
-      control.updateValueAndValidity();
-      fixture.detectChanges();
-    }
-
     it('should show an inline required error for an empty name, linked via aria-describedby', async () => {
       setup('edit', buildAction({ name: '' }));
       await touchControl('actionName');

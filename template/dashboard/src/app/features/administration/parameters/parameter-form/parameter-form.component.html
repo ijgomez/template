@@ -182,10 +182,11 @@
       </h6>
       <div class="row g-2 mb-3">
         <div class="col-md-4">
-          <label class="form-label form-label-sm mb-1">
+          <label for="parameter-created-at" class="form-label form-label-sm mb-1">
             {{ 'parameters.fields.createdAt' | translate }}
           </label>
-          <input type="text"
+          <input id="parameter-created-at"
+                 type="text"
                  class="form-control form-control-sm"
                  [value]="(formData().createdAt | localDate) ?? ''"
                  readonly
@@ -194,10 +195,11 @@
                  data-testid="input-created-at">
         </div>
         <div class="col-md-4">
-          <label class="form-label form-label-sm mb-1">
+          <label for="parameter-last-modified-at" class="form-label form-label-sm mb-1">
             {{ 'parameters.fields.lastModifiedAt' | translate }}
           </label>
-          <input type="text"
+          <input id="parameter-last-modified-at"
+                 type="text"
                  class="form-control form-control-sm"
                  [value]="(formData().lastModifiedAt | localDate) ?? ''"
                  readonly

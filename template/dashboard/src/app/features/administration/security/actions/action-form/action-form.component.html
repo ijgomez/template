@@ -163,10 +163,11 @@
       </h6>
       <div class="row g-2 mb-3">
         <div class="col-md-4">
-          <label class="form-label form-label-sm mb-1">
+          <label for="action-created-at" class="form-label form-label-sm mb-1">
             {{ 'actions.fields.createdAt' | translate }}
           </label>
-          <input type="text"
+          <input id="action-created-at"
+                 type="text"
                  class="form-control form-control-sm"
                  [value]="(action().createdAt | localDate) ?? ''"
                  readonly
@@ -175,10 +176,11 @@
                  data-testid="input-created-at">
         </div>
         <div class="col-md-4">
-          <label class="form-label form-label-sm mb-1">
+          <label for="action-last-modified-at" class="form-label form-label-sm mb-1">
             {{ 'actions.fields.lastModifiedAt' | translate }}
           </label>
-          <input type="text"
+          <input id="action-last-modified-at"
+                 type="text"
                  class="form-control form-control-sm"
                  [value]="(action().lastModifiedAt | localDate) ?? ''"
                  readonly

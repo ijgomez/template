@@ -9,6 +9,17 @@ import { AccessTokenResponse, User } from '../models/auth.model';
 import { authInterceptor, resetRefreshState } from './auth.interceptor';
 import { environment } from '../../../environments/environment';
 
+/** Creates a mock User with configurable expiry offset from now. */
+function createUser(expOffsetSeconds: number): User {
+  return {
+    username: 'admin',
+    profile: 'Administrator',
+    actions: ['USER_READ', 'DASHBOARD_READ'],
+    exp: Math.floor(Date.now() / 1000) + expOffsetSeconds,
+    iat: Math.floor(Date.now() / 1000),
+  };
+}
+
 describe('authInterceptor', () => {
   let httpClient: HttpClient;
   let httpMock: HttpTestingController;
@@ -24,17 +35,6 @@ describe('authInterceptor', () => {
   let routerMock: { navigate: ReturnType<typeof vi.fn> };
 
   const apiUrl = environment.apiUrl;
-
-  /** Creates a mock User with configurable expiry offset from now. */
-  function createUser(expOffsetSeconds: number): User {
-    return {
-      username: 'admin',
-      profile: 'Administrator',
-      actions: ['USER_READ', 'DASHBOARD_READ'],
-      exp: Math.floor(Date.now() / 1000) + expOffsetSeconds,
-      iat: Math.floor(Date.now() / 1000),
-    };
-  }
 
   beforeEach(() => {
     resetRefreshState();

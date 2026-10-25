@@ -109,10 +109,11 @@
       </h6>
       <div class="row g-2 mb-3">
         <div class="col-md-4">
-          <label class="form-label form-label-sm mb-1">
+          <label for="profile-created-at" class="form-label form-label-sm mb-1">
             {{ 'profiles.fields.createdAt' | translate }}
           </label>
-          <input type="text"
+          <input id="profile-created-at"
+                 type="text"
                  class="form-control form-control-sm"
                  [value]="(formProfile().createdAt | localDate) ?? ''"
                  readonly
@@ -121,10 +122,11 @@
                  data-testid="input-created-at">
         </div>
         <div class="col-md-4">
-          <label class="form-label form-label-sm mb-1">
+          <label for="profile-last-modified-at" class="form-label form-label-sm mb-1">
             {{ 'profiles.fields.lastModifiedAt' | translate }}
           </label>
-          <input type="text"
+          <input id="profile-last-modified-at"
+                 type="text"
                  class="form-control form-control-sm"
                  [value]="(formProfile().lastModifiedAt | localDate) ?? ''"
                  readonly

@@ -5,6 +5,11 @@ import * as fc from 'fast-check';
 import { actionGuard } from './action.guard';
 import { AuthService } from '../services/auth.service';
 
+/** Builds a minimal route snapshot carrying the required action codes. */
+function createRouteWithActions(actions: string[]): ActivatedRouteSnapshot {
+  return { data: { actions } } as unknown as ActivatedRouteSnapshot;
+}
+
 /**
  * Property-based test for actionGuard redirect behavior.
  *
@@ -55,10 +60,6 @@ describe('actionGuard - Property 8: Action guard redirects unauthorized users', 
       return fc.constant([]);
     }
     return fc.subarray(available, { minLength: 0, maxLength: available.length });
-  }
-
-  function createRouteWithActions(actions: string[]): ActivatedRouteSnapshot {
-    return { data: { actions } } as unknown as ActivatedRouteSnapshot;
   }
 
   beforeEach(() => {

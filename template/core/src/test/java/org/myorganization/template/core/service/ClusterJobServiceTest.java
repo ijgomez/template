@@ -130,7 +130,9 @@ class ClusterJobServiceTest {
         void priorityNull() {
             when(clusterNodeRepository.findById(1L)).thenReturn(Optional.of(node(1L)));
 
-            assertThatThrownBy(() -> clusterJobService.assignJob(1L, new ClusterJobDTO(1L, 10L, null, true)))
+            ClusterJobDTO dto = new ClusterJobDTO(1L, 10L, null, true);
+
+            assertThatThrownBy(() -> clusterJobService.assignJob(1L, dto))
                     .isInstanceOf(ValidationException.class);
 
             verify(clusterJobRepository, never()).save(any());
@@ -142,7 +144,9 @@ class ClusterJobServiceTest {
         void enabledNull() {
             when(clusterNodeRepository.findById(1L)).thenReturn(Optional.of(node(1L)));
 
-            assertThatThrownBy(() -> clusterJobService.assignJob(1L, new ClusterJobDTO(1L, 10L, 1, null)))
+            ClusterJobDTO dto = new ClusterJobDTO(1L, 10L, 1, null);
+
+            assertThatThrownBy(() -> clusterJobService.assignJob(1L, dto))
                     .isInstanceOf(ValidationException.class);
 
             verify(clusterJobRepository, never()).save(any());
@@ -154,7 +158,9 @@ class ClusterJobServiceTest {
         void taskIdNull() {
             when(clusterNodeRepository.findById(1L)).thenReturn(Optional.of(node(1L)));
 
-            assertThatThrownBy(() -> clusterJobService.assignJob(1L, new ClusterJobDTO(1L, null, 1, true)))
+            ClusterJobDTO dto = new ClusterJobDTO(1L, null, 1, true);
+
+            assertThatThrownBy(() -> clusterJobService.assignJob(1L, dto))
                     .isInstanceOf(ValidationException.class);
 
             verify(clusterJobRepository, never()).save(any());
@@ -166,7 +172,9 @@ class ClusterJobServiceTest {
         void negativePriority() {
             when(clusterNodeRepository.findById(1L)).thenReturn(Optional.of(node(1L)));
 
-            assertThatThrownBy(() -> clusterJobService.assignJob(1L, new ClusterJobDTO(1L, 10L, -1, true)))
+            ClusterJobDTO dto = new ClusterJobDTO(1L, 10L, -1, true);
+
+            assertThatThrownBy(() -> clusterJobService.assignJob(1L, dto))
                     .isInstanceOf(ValidationException.class);
 
             verify(clusterJobRepository, never()).save(any());
@@ -178,7 +186,9 @@ class ClusterJobServiceTest {
             when(clusterNodeRepository.findById(1L)).thenReturn(Optional.of(node(1L)));
             when(clusterTaskRepository.findById(10L)).thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> clusterJobService.assignJob(1L, new ClusterJobDTO(1L, 10L, 1, true)))
+            ClusterJobDTO dto = new ClusterJobDTO(1L, 10L, 1, true);
+
+            assertThatThrownBy(() -> clusterJobService.assignJob(1L, dto))
                     .isInstanceOf(EntityNotFoundException.class)
                     .hasMessageContaining("ClusterTask");
         }
@@ -188,7 +198,9 @@ class ClusterJobServiceTest {
         void nodeNotFound() {
             when(clusterNodeRepository.findById(99L)).thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> clusterJobService.assignJob(99L, new ClusterJobDTO(99L, 10L, 1, true)))
+            ClusterJobDTO dto = new ClusterJobDTO(99L, 10L, 1, true);
+
+            assertThatThrownBy(() -> clusterJobService.assignJob(99L, dto))
                     .isInstanceOf(EntityNotFoundException.class)
                     .hasMessageContaining("ClusterNode");
         }
@@ -200,7 +212,9 @@ class ClusterJobServiceTest {
             when(clusterTaskRepository.findById(10L)).thenReturn(Optional.of(task(10L)));
             when(clusterJobRepository.existsById(new ClusterJobPK(1L, 10L))).thenReturn(true);
 
-            assertThatThrownBy(() -> clusterJobService.assignJob(1L, new ClusterJobDTO(1L, 10L, 1, true)))
+            ClusterJobDTO dto = new ClusterJobDTO(1L, 10L, 1, true);
+
+            assertThatThrownBy(() -> clusterJobService.assignJob(1L, dto))
                     .isInstanceOf(DuplicateEntityException.class);
 
             verify(clusterJobRepository, never()).save(any());
@@ -237,7 +251,9 @@ class ClusterJobServiceTest {
             when(clusterNodeRepository.findById(1L)).thenReturn(Optional.of(node(1L)));
             when(clusterJobRepository.findById(new ClusterJobPK(1L, 10L))).thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> clusterJobService.updateJob(1L, 10L, new ClusterJobDTO(null, null, 1, true)))
+            ClusterJobDTO dto = new ClusterJobDTO(null, null, 1, true);
+
+            assertThatThrownBy(() -> clusterJobService.updateJob(1L, 10L, dto))
                     .isInstanceOf(EntityNotFoundException.class)
                     .hasMessageContaining("ClusterJob");
         }
@@ -247,7 +263,9 @@ class ClusterJobServiceTest {
         void taskIdMismatch() {
             when(clusterNodeRepository.findById(1L)).thenReturn(Optional.of(node(1L)));
 
-            assertThatThrownBy(() -> clusterJobService.updateJob(1L, 10L, new ClusterJobDTO(null, 20L, 1, true)))
+            ClusterJobDTO dto = new ClusterJobDTO(null, 20L, 1, true);
+
+            assertThatThrownBy(() -> clusterJobService.updateJob(1L, 10L, dto))
                     .isInstanceOf(ValidationException.class);
 
             verify(clusterJobRepository, never()).save(any());
@@ -258,7 +276,9 @@ class ClusterJobServiceTest {
         void enabledNull() {
             when(clusterNodeRepository.findById(1L)).thenReturn(Optional.of(node(1L)));
 
-            assertThatThrownBy(() -> clusterJobService.updateJob(1L, 10L, new ClusterJobDTO(null, 10L, 1, null)))
+            ClusterJobDTO dto = new ClusterJobDTO(null, 10L, 1, null);
+
+            assertThatThrownBy(() -> clusterJobService.updateJob(1L, 10L, dto))
                     .isInstanceOf(ValidationException.class);
 
             verify(clusterJobRepository, never()).save(any());
@@ -269,7 +289,9 @@ class ClusterJobServiceTest {
         void negativePriority() {
             when(clusterNodeRepository.findById(1L)).thenReturn(Optional.of(node(1L)));
 
-            assertThatThrownBy(() -> clusterJobService.updateJob(1L, 10L, new ClusterJobDTO(null, 10L, -5, true)))
+            ClusterJobDTO dto = new ClusterJobDTO(null, 10L, -5, true);
+
+            assertThatThrownBy(() -> clusterJobService.updateJob(1L, 10L, dto))
                     .isInstanceOf(ValidationException.class);
 
             verify(clusterJobRepository, never()).save(any());
@@ -280,7 +302,9 @@ class ClusterJobServiceTest {
         void priorityNull() {
             when(clusterNodeRepository.findById(1L)).thenReturn(Optional.of(node(1L)));
 
-            assertThatThrownBy(() -> clusterJobService.updateJob(1L, 10L, new ClusterJobDTO(null, 10L, null, true)))
+            ClusterJobDTO dto = new ClusterJobDTO(null, 10L, null, true);
+
+            assertThatThrownBy(() -> clusterJobService.updateJob(1L, 10L, dto))
                     .isInstanceOf(ValidationException.class);
 
             verify(clusterJobRepository, never()).save(any());

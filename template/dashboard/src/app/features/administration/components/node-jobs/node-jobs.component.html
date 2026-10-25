@@ -70,7 +70,7 @@
      ASSIGN / EDIT MODAL
      ═══════════════════════════════════════════════════════════════════════════ -->
 @if (showModal()) {
-  <div class="modal d-block" tabindex="-1" role="dialog" data-testid="node-jobs-modal"
+  <dialog class="modal d-block" tabindex="-1" open data-testid="node-jobs-modal"
        [attr.aria-label]="(modalMode() === 'assign' ? 'cluster.nodes.jobs.form.assignTitle' : 'cluster.nodes.jobs.form.editTitle') | translate">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
@@ -143,7 +143,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </dialog>
   <div class="modal-backdrop fade show"></div>
 }
 
@@ -151,7 +151,7 @@
      DELETE CONFIRMATION
      ═══════════════════════════════════════════════════════════════════════════ -->
 @if (showConfirmDelete()) {
-  <div class="modal d-block" tabindex="-1" role="dialog" data-testid="node-jobs-confirm-dialog"
+  <dialog class="modal d-block" tabindex="-1" open data-testid="node-jobs-confirm-dialog"
        [attr.aria-label]="'cluster.nodes.jobs.confirmDelete.title' | translate">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
@@ -179,6 +179,6 @@
         </div>
       </div>
     </div>
-  </div>
+  </dialog>
   <div class="modal-backdrop fade show"></div>
 }

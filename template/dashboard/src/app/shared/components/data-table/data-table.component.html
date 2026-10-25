@@ -124,7 +124,7 @@
             <li class="page-item"
                 [class.active]="p === currentPage"
                 [attr.aria-current]="p === currentPage ? 'page' : null">
-              <button type="button" class="page-link" role="link" (click)="goToPage(p)">
+              <button type="button" class="page-link" (click)="goToPage(p)">
                 {{ p + 1 }}
               </button>
             </li>

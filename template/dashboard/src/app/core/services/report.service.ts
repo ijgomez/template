@@ -60,7 +60,7 @@ export class ReportService {
 
     return this.http.post<any>(`${this.baseUrl}/${reportId}/execute`, filters, { params }).pipe(
       map((res) => {
-        if (res && res.content && !res.rows) {
+        if (res?.content && !res.rows) {
           const rows = res.content as Record<string, any>[];
           const columns = rows.length > 0 ? Object.keys(rows[0]) : [];
           return {

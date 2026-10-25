@@ -34,6 +34,31 @@ describe('ParameterFormComponent', () => {
     fixture.detectChanges(); // ngOnInit -> copies parameter into formData
   }
 
+  /** Submits the form with the given type/value pair and reports emission and error. */
+  function submitWith(type: ParameterType, value: string): { emitted: boolean; error: string } {
+    setup('edit', buildParameter({ type, value }));
+    let emitted = false;
+    component.save.subscribe(() => (emitted = true));
+    component.onSubmit();
+    return { emitted, error: component.typeValueError() };
+  }
+
+  /**
+   * Marks the named control as touched + dirty through Angular's forms API
+   * (robust against one-way [ngModel] + signal rebinding) and refreshes the view.
+   * ngModel controls register asynchronously, so we await stabilization first.
+   */
+  async function touchControl(name: string) {
+    await fixture.whenStable();
+    fixture.detectChanges();
+    const form = fixture.debugElement.query(By.directive(NgForm)).injector.get(NgForm);
+    const control = form.controls[name];
+    control.markAsTouched();
+    control.markAsDirty();
+    control.updateValueAndValidity();
+    fixture.detectChanges();
+  }
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ParameterFormComponent],
@@ -130,14 +155,6 @@ describe('ParameterFormComponent', () => {
   });
 
   describe('type/value validation via onSubmit', () => {
-    function submitWith(type: ParameterType, value: string): { emitted: boolean; error: string } {
-      setup('edit', buildParameter({ type, value }));
-      let emitted = false;
-      component.save.subscribe(() => (emitted = true));
-      component.onSubmit();
-      return { emitted, error: component.typeValueError() };
-    }
-
     it('should accept a valid INTEGER and emit save', () => {
       const { emitted, error } = submitWith('INTEGER', '-123');
       expect(error).toBe('');
@@ -203,22 +220,6 @@ describe('ParameterFormComponent', () => {
   });
 
   describe('inline validation errors (accessibility)', () => {
-    /**
-     * Marks the named control as touched + dirty through Angular's forms API
-     * (robust against one-way [ngModel] + signal rebinding) and refreshes the view.
-     * ngModel controls register asynchronously, so we await stabilization first.
-     */
-    async function touchControl(name: string) {
-      await fixture.whenStable();
-      fixture.detectChanges();
-      const form = fixture.debugElement.query(By.directive(NgForm)).injector.get(NgForm);
-      const control = form.controls[name];
-      control.markAsTouched();
-      control.markAsDirty();
-      control.updateValueAndValidity();
-      fixture.detectChanges();
-    }
-
     it('should show an inline required error for an empty code, linked via aria-describedby', async () => {
       setup('create', buildParameter({ code: '' }));
       await touchControl('paramCode');

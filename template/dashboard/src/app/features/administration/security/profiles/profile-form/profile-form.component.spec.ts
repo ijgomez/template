@@ -18,6 +18,21 @@ describe('ProfileFormComponent', () => {
     ...overrides,
   });
 
+  /**
+   * Marks the named control as touched + dirty through Angular's forms API
+   * (robust against one-way [ngModel] + signal rebinding) and refreshes the view.
+   */
+  async function touchControl(name: string) {
+    await fixture.whenStable();
+    fixture.detectChanges();
+    const form = fixture.debugElement.query(By.directive(NgForm)).injector.get(NgForm);
+    const control = form.controls[name];
+    control.markAsTouched();
+    control.markAsDirty();
+    control.updateValueAndValidity();
+    fixture.detectChanges();
+  }
+
   async function setup(mode: 'create' | 'edit' | 'view' = 'create', profile: Profile = buildProfile(), actionIds: number[] = [1, 2]): Promise<void> {
     await TestBed.configureTestingModule({
       imports: [ProfileFormComponent],
@@ -114,21 +129,6 @@ describe('ProfileFormComponent', () => {
   });
 
   describe('inline validation errors (accessibility)', () => {
-    /**
-     * Marks the named control as touched + dirty through Angular's forms API
-     * (robust against one-way [ngModel] + signal rebinding) and refreshes the view.
-     */
-    async function touchControl(name: string) {
-      await fixture.whenStable();
-      fixture.detectChanges();
-      const form = fixture.debugElement.query(By.directive(NgForm)).injector.get(NgForm);
-      const control = form.controls[name];
-      control.markAsTouched();
-      control.markAsDirty();
-      control.updateValueAndValidity();
-      fixture.detectChanges();
-    }
-
     it('should show an inline required error for an empty name, linked via aria-describedby', async () => {
       await setup('create', buildProfile({ name: '' }), []);
       await touchControl('profileName');

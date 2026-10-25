@@ -251,8 +251,8 @@ export class LayoutComponent implements OnInit {
     // Restore persisted sidebar width
     const savedWidth = localStorage.getItem(LayoutComponent.WIDTH_STORAGE_KEY);
     if (savedWidth) {
-      const width = parseInt(savedWidth, 10);
-      if (!isNaN(width) && width >= LayoutComponent.MIN_WIDTH && width <= LayoutComponent.MAX_WIDTH) {
+      const width = Number.parseInt(savedWidth, 10);
+      if (!Number.isNaN(width) && width >= LayoutComponent.MIN_WIDTH && width <= LayoutComponent.MAX_WIDTH) {
         this.sidebarWidth.set(width);
       }
     }
@@ -390,8 +390,8 @@ export class LayoutComponent implements OnInit {
   /** Logout the current user and redirect to login. */
   logout(): void {
     this.authService.logout().subscribe({
-      next: () => this.router.navigate(['/login']),
-      error: () => this.router.navigate(['/login']),
+      next: () => { void this.router.navigate(['/login']); },
+      error: () => { void this.router.navigate(['/login']); },
     });
   }
 

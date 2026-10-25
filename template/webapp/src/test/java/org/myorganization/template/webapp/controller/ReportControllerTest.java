@@ -163,10 +163,11 @@ class ReportControllerTest {
         mockUserLookup("testuser", 1L);
 
         Pageable pageable = PageRequest.of(0, 10);
+        Map<String, Object> filters = Map.of();
         when(reportService.execute(eq(5L), eq(1L), any(), any()))
                 .thenThrow(new AccessDeniedException("User does not have access to report with id: 5"));
 
-        assertThatThrownBy(() -> reportController.execute(5L, Map.of(), pageable))
+        assertThatThrownBy(() -> reportController.execute(5L, filters, pageable))
                 .isInstanceOf(AccessDeniedException.class);
     }
 
@@ -177,10 +178,11 @@ class ReportControllerTest {
         mockUserLookup("testuser", 1L);
 
         Pageable pageable = PageRequest.of(0, 10);
+        Map<String, Object> filters = Map.of();
         when(reportService.execute(eq(1L), eq(1L), any(), any()))
                 .thenThrow(new ValidationException("Missing mandatory filters: startDate"));
 
-        assertThatThrownBy(() -> reportController.execute(1L, Map.of(), pageable))
+        assertThatThrownBy(() -> reportController.execute(1L, filters, pageable))
                 .isInstanceOf(ValidationException.class)
                 .hasMessageContaining("startDate");
     }
@@ -275,10 +277,11 @@ class ReportControllerTest {
         setAuthenticatedUser("testuser");
         mockUserLookup("testuser", 1L);
 
+        Map<String, Object> filters = Map.of();
         when(reportService.export(eq(5L), eq(1L), any(), any()))
                 .thenThrow(new AccessDeniedException("User does not have access to report with id: 5"));
 
-        assertThatThrownBy(() -> reportController.export(5L, ExportFormat.CSV, Map.of()))
+        assertThatThrownBy(() -> reportController.export(5L, ExportFormat.CSV, filters))
                 .isInstanceOf(AccessDeniedException.class);
     }
 

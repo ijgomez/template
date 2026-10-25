@@ -7,7 +7,8 @@
     "sidebar": {
       "expand": "Expand menu",
       "collapse": "Collapse menu",
-      "navigation": "Main navigation"
+      "navigation": "Main navigation",
+      "menu": "Main menu"
     },
     "header": {
       "search": "Search...",
