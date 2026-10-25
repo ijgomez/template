@@ -185,6 +185,7 @@ class ClusterJobSecurityIntegrationTest {
     // =====================================================================
 
     @Test
+    @SuppressWarnings("null") // Eclipse null analysis: ThrowingExtractor descriptor lacks nullability annotations
     void findByClusterNodeIdOrderByPriorityAsc_returnsJobsOrderedByPriority() {
         ClusterTask extraTask1 = clusterTaskRepository.save(newTask("ORDER-TASK-1"));
         ClusterTask extraTask2 = clusterTaskRepository.save(newTask("ORDER-TASK-2"));
@@ -196,7 +197,7 @@ class ClusterJobSecurityIntegrationTest {
         List<ClusterJob> jobs = clusterJobRepository.findByClusterNodeIdOrderByPriorityAsc(nodeId);
 
         assertThat(jobs).hasSize(3);
-        assertThat(jobs).extracting(job -> job.getPriority()).containsExactly(1, 2, 3);
+        assertThat(jobs).extracting(ClusterJob::getPriority).containsExactly(1, 2, 3);
     }
 
     private ClusterTask newTask(String name) {

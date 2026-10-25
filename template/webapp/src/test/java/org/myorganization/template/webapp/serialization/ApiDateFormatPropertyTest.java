@@ -127,8 +127,9 @@ class ApiDateFormatPropertyTest {
     }
 
     @Provide
+    @SuppressWarnings("null") // Eclipse null analysis: Function descriptor lacks nullability annotations
     Arbitrary<Instant> instants() {
-        return utcOffsetDateTimes().map(dateTime -> dateTime.toInstant());
+        return utcOffsetDateTimes().map(OffsetDateTime::toInstant);
     }
 
     // --- Helpers ---

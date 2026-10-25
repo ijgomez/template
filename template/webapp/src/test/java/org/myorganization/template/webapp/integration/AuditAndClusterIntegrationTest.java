@@ -142,6 +142,7 @@ class AuditAndClusterIntegrationTest {
     }
 
     @Test
+    @SuppressWarnings("null") // Eclipse null analysis: Predicate descriptor lacks nullability annotations
     void setMasterEnforcesSingleMasterInvariant() {
         List<ClusterNode> nodes = clusterNodeRepository.findAll();
         if (nodes.isEmpty()) {
@@ -152,7 +153,7 @@ class AuditAndClusterIntegrationTest {
         clusterService.setMaster(node.getId());
 
         List<ClusterNode> allNodes = clusterNodeRepository.findAll();
-        long masterCount = allNodes.stream().filter(n -> n.isMaster()).count();
+        long masterCount = allNodes.stream().filter(ClusterNode::isMaster).count();
         assertThat(masterCount).isLessThanOrEqualTo(1);
     }
 }

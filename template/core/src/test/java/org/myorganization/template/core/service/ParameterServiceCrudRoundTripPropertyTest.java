@@ -77,12 +77,13 @@ class ParameterServiceCrudRoundTripPropertyTest {
     }
 
     @Provide
+    @SuppressWarnings("null") // Eclipse null analysis: Function descriptor lacks nullability annotations
     Arbitrary<ParameterDTO> validParameterDTOs() {
         Arbitrary<String> codes = Arbitraries.strings()
                 .alpha()
                 .ofMinLength(3)
                 .ofMaxLength(30)
-                .map(code -> code.toUpperCase());
+                .map(String::toUpperCase);
 
         Arbitrary<String> descriptions = Arbitraries.strings()
                 .alpha()

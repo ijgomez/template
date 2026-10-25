@@ -31,6 +31,7 @@ import static org.mockito.Mockito.when;
 class ClusterSingleMasterPropertyTest {
 
     @Property(tries = 50)
+    @SuppressWarnings("null") // Eclipse null analysis: Predicate descriptor lacks nullability annotations
     void setMasterEnsuresSingleMaster(@ForAll("nodeCountAndTarget") int[] config) {
         int nodeCount = config[0];
         int targetIndex = config[1];
@@ -59,12 +60,13 @@ class ClusterSingleMasterPropertyTest {
 
         clusterService.setMaster(targetId);
 
-        long masterCount = nodes.stream().filter(node -> node.isMaster()).count();
+        long masterCount = nodes.stream().filter(ClusterNode::isMaster).count();
         assertThat(masterCount).as("Exactly one master after setMaster(%d)", targetId).isEqualTo(1);
         assertThat(targetNode.isMaster()).isTrue();
     }
 
     @Property(tries = 30)
+    @SuppressWarnings("null") // Eclipse null analysis: Predicate descriptor lacks nullability annotations
     void multipleSetMasterCallsMaintainInvariant(@ForAll("setMasterSequence") List<Integer> sequence) {
         int nodeCount = 5;
 
@@ -91,7 +93,7 @@ class ClusterSingleMasterPropertyTest {
             when(nodeRepository.findById(targetId)).thenReturn(Optional.of(nodes.get(targetIndex)));
             clusterService.setMaster(targetId);
 
-            long masterCount = nodes.stream().filter(node -> node.isMaster()).count();
+            long masterCount = nodes.stream().filter(ClusterNode::isMaster).count();
             assertThat(masterCount).as("Invariant after setMaster(%d)", targetId).isEqualTo(1);
         }
     }

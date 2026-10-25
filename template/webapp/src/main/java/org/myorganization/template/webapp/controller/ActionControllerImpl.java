@@ -9,7 +9,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -60,12 +63,14 @@ public class ActionControllerImpl implements ActionController {
     }
 
     @Override
+    @GetMapping("/{id}")
     public ResponseEntity<ActionDTO> findById(@PathVariable Long id) {
         ActionDTO action = actionService.findById(id);
         return ResponseEntity.ok(action);
     }
 
     @Override
+    @PutMapping("/{id}")
     public ResponseEntity<ActionDTO> update(@PathVariable Long id, @RequestBody ActionDTO dto) {
         ActionDTO updated = actionService.update(id, dto);
         return ResponseEntity.ok(updated);
@@ -79,6 +84,7 @@ public class ActionControllerImpl implements ActionController {
     }
 
     @Override
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         // Delegates to ActionService which throws MethodNotAllowedException
         actionService.delete(id);

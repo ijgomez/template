@@ -74,12 +74,13 @@ class ParameterServiceTypeValuePropertyTest {
     }
 
     @Provide
+    @SuppressWarnings("null") // Eclipse null analysis: Function descriptor lacks nullability annotations
     Arbitrary<ParameterDTO> invalidTypeValueDTOs() {
         Arbitrary<String> codes = Arbitraries.strings()
                 .alpha()
                 .ofMinLength(3)
                 .ofMaxLength(20)
-                .map(code -> code.toUpperCase());
+                .map(String::toUpperCase);
 
         Arbitrary<String> descriptions = Arbitraries.strings()
                 .alpha()
@@ -99,12 +100,13 @@ class ParameterServiceTypeValuePropertyTest {
     }
 
     @Provide
+    @SuppressWarnings("null") // Eclipse null analysis: Function descriptor lacks nullability annotations
     Arbitrary<ParameterDTO> validTypeValueDTOs() {
         Arbitrary<String> codes = Arbitraries.strings()
                 .alpha()
                 .ofMinLength(3)
                 .ofMaxLength(20)
-                .map(code -> code.toUpperCase());
+                .map(String::toUpperCase);
 
         Arbitrary<String> descriptions = Arbitraries.strings()
                 .alpha()
