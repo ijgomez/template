@@ -85,9 +85,9 @@ class PaginationMetadataConsistencyPropertyTest {
                 new UserCriteria(null, null, null, null, null),
                 PageRequest.of(scenario.pageNumber(), scenario.pageSize()));
 
-        assertThat(result.getContent().size())
+        assertThat(result.getContent())
                 .as("content.size() should not exceed pageSize=%d", scenario.pageSize())
-                .isLessThanOrEqualTo(scenario.pageSize());
+                .hasSizeLessThanOrEqualTo(scenario.pageSize());
 
         Mockito.reset(userRepository);
     }

@@ -50,15 +50,17 @@ describe('TpDataTableComponent', () => {
 
   describe('striped input', () => {
     it('should NOT apply table-striped by default', () => {
-      const table = fixture.nativeElement.querySelector('table.tp-table') as HTMLTableElement;
-      expect(table.classList.contains('table-striped')).toBe(false);
+      const el: HTMLElement = fixture.nativeElement;
+      const table = el.querySelector<HTMLTableElement>('table.tp-table');
+      expect(table?.classList.contains('table-striped')).toBe(false);
     });
 
     it('should apply table-striped when striped is true', () => {
       component.striped = true;
       fixture.detectChanges();
-      const table = fixture.nativeElement.querySelector('table.tp-table') as HTMLTableElement;
-      expect(table.classList.contains('table-striped')).toBe(true);
+      const el: HTMLElement = fixture.nativeElement;
+      const table = el.querySelector<HTMLTableElement>('table.tp-table');
+      expect(table?.classList.contains('table-striped')).toBe(true);
     });
   });
 
@@ -261,7 +263,7 @@ describe('TpDataTableComponent', () => {
       component.onDragStart(event, component.columns[0]);
 
       expect(component.dragColumnKey).toBe('id');
-      expect((event.dataTransfer as DataTransfer).setData).toHaveBeenCalledWith('text/plain', 'id');
+      expect(event.dataTransfer?.setData).toHaveBeenCalledWith('text/plain', 'id');
       expect(component.dragOverColumnKey).toBeNull();
     });
 
@@ -279,7 +281,7 @@ describe('TpDataTableComponent', () => {
 
       expect(event.preventDefault).toHaveBeenCalled();
       expect(component.dragOverColumnKey).toBe('name');
-      expect((event.dataTransfer as DataTransfer).dropEffect).toBe('move');
+      expect(event.dataTransfer?.dropEffect).toBe('move');
     });
 
     it('onDragLeave should clear the hover target state', () => {

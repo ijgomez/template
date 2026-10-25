@@ -10,14 +10,11 @@ describe('I18nService', () => {
   };
 
   function createService(options?: { savedLang?: string | null; browserLang?: string }): void {
-    if (options?.savedLang !== undefined) {
-      if (options.savedLang === null) {
-        localStorage.removeItem('app_language');
-      } else {
-        localStorage.setItem('app_language', options.savedLang);
-      }
-    } else {
+    const savedLang = options?.savedLang;
+    if (savedLang == null) {
       localStorage.removeItem('app_language');
+    } else {
+      localStorage.setItem('app_language', savedLang);
     }
 
     if (options?.browserLang) {

@@ -168,7 +168,7 @@ export class AuthService {
    * Decodes a base64url-encoded string to a UTF-8 string.
    */
   private base64UrlDecode(base64Url: string): string {
-    let base64 = base64Url.replaceAll(/-/g, '+').replaceAll(/_/g, '/');
+    let base64 = base64Url.replaceAll('-', '+').replaceAll('_', '/');
     const padding = base64.length % 4;
     if (padding) {
       base64 += '='.repeat(4 - padding);

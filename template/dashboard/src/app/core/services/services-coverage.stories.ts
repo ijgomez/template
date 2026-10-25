@@ -30,7 +30,7 @@ class HttpClientStoryMock {
     if (url.endsWith('/count')) return of(7);
     if (url.endsWith('/references')) return of([{ id: 2, name: 'Admin' }]);
     if (url.endsWith('/reports/all')) return of([{ id: 10, name: 'Usage report' }]);
-    if (url.match(/\/administration\/security\/users\/\d+$/)) return of(mockUser);
+    if (/\/administration\/security\/users\/\d+$/.exec(url)) return of(mockUser);
     return of({
       content: [mockUser],
       page: { size: 10, number: 0, totalElements: 1, totalPages: 1 },
@@ -38,7 +38,7 @@ class HttpClientStoryMock {
   }
 
   post(url: string, body: unknown): unknown {
-    if (url.match(/\/administration\/security\/users$/)) return of(body);
+    if (/\/administration\/security\/users$/.exec(url)) return of(body);
     return of({
       content: [mockUser],
       page: { size: 10, number: 0, totalElements: 1, totalPages: 1 },

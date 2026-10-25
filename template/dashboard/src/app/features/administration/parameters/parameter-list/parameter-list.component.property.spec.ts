@@ -215,10 +215,10 @@ describe('ParameterListComponent - Property 1: Bug Condition - Form Styling Matc
         const el = fixture.nativeElement as HTMLElement;
 
         // Find buttons inside the form (Save and Cancel)
-        const form = el.querySelector('form');
+        const form = el.querySelector<HTMLFormElement>('form');
         expect(form, `No <form> element found in '${viewMode}' mode`).not.toBeNull();
 
-        const buttons = form!.querySelectorAll('button.btn');
+        const buttons = form?.querySelectorAll('button.btn') ?? [];
         expect(buttons.length).toBeGreaterThan(0);
 
         buttons.forEach((btn) => {

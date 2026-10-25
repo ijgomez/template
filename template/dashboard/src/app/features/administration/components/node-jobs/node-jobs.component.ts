@@ -195,7 +195,7 @@ export class NodeJobsComponent implements OnInit {
 
     const form = this.formData();
     const taskId = form.clusterTaskId;
-    if (taskId === null) {
+    if (taskId === null || form.priority === null) {
       return;
     }
 
@@ -203,7 +203,7 @@ export class NodeJobsComponent implements OnInit {
     const job: ClusterJob = {
       clusterNodeId: nodeId,
       clusterTaskId: taskId,
-      priority: form.priority as number,
+      priority: form.priority,
       enabled: form.enabled,
     };
 

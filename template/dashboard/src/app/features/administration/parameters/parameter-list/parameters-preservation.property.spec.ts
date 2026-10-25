@@ -123,11 +123,11 @@ describe('ParameterListComponent - Property 2: Preservation - List and Detail Vi
       const fixture = createFixture();
       const el = fixture.nativeElement as HTMLElement;
 
-      const toolbar = el.querySelector('.tp-toolbar');
+      const toolbar = el.querySelector<HTMLElement>('.tp-toolbar');
       expect(toolbar).not.toBeNull();
-      expect(toolbar!.classList.contains('d-flex')).toBe(true);
-      expect(toolbar!.classList.contains('gap-2')).toBe(true);
-      expect(toolbar!.classList.contains('mb-3')).toBe(true);
+      expect(toolbar?.classList.contains('d-flex')).toBe(true);
+      expect(toolbar?.classList.contains('gap-2')).toBe(true);
+      expect(toolbar?.classList.contains('mb-3')).toBe(true);
     });
 
     it('should render tp-data-table element in list view', () => {
@@ -142,25 +142,25 @@ describe('ParameterListComponent - Property 2: Preservation - List and Detail Vi
       const fixture = createFixture();
       const el = fixture.nativeElement as HTMLElement;
 
-      const filterBar = el.querySelector('.tp-filter-bar');
+      const filterBar = el.querySelector<HTMLElement>('.tp-filter-bar');
       expect(filterBar).not.toBeNull();
 
-      const form = filterBar!.querySelector('form');
+      const form = filterBar?.querySelector<HTMLFormElement>('form');
       expect(form).not.toBeNull();
-      expect(form!.classList.contains('row')).toBe(true);
-      expect(form!.classList.contains('g-3')).toBe(true);
-      expect(form!.classList.contains('align-items-end')).toBe(true);
+      expect(form?.classList.contains('row')).toBe(true);
+      expect(form?.classList.contains('g-3')).toBe(true);
+      expect(form?.classList.contains('align-items-end')).toBe(true);
     });
 
     it('should have filter inputs with form-control-sm in list view', () => {
       const fixture = createFixture();
       const el = fixture.nativeElement as HTMLElement;
 
-      const filterBar = el.querySelector('.tp-filter-bar');
-      const inputs = filterBar!.querySelectorAll('input.form-control-sm');
+      const filterBar = el.querySelector<HTMLElement>('.tp-filter-bar');
+      const inputs = filterBar?.querySelectorAll('input.form-control-sm') ?? [];
       expect(inputs.length).toBeGreaterThan(0);
 
-      const selects = filterBar!.querySelectorAll('select.form-select-sm');
+      const selects = filterBar?.querySelectorAll('select.form-select-sm') ?? [];
       expect(selects.length).toBeGreaterThan(0);
     });
 
@@ -168,8 +168,8 @@ describe('ParameterListComponent - Property 2: Preservation - List and Detail Vi
       const fixture = createFixture();
       const el = fixture.nativeElement as HTMLElement;
 
-      const toolbar = el.querySelector('.tp-toolbar');
-      const buttons = toolbar!.querySelectorAll('button.btn');
+      const toolbar = el.querySelector<HTMLElement>('.tp-toolbar');
+      const buttons = toolbar?.querySelectorAll('button.btn') ?? [];
       expect(buttons.length).toBeGreaterThan(0);
 
       buttons.forEach((btn) => {
@@ -233,11 +233,11 @@ describe('ParameterListComponent - Property 2: Preservation - List and Detail Vi
       fixture.detectChanges();
 
       const el = fixture.nativeElement as HTMLElement;
-      const form = el.querySelector('[data-testid="parameter-form"]');
+      const form = el.querySelector<HTMLElement>('[data-testid="parameter-form"]');
       expect(form).not.toBeNull();
 
       // En modo detalle los campos se muestran de sólo lectura.
-      const readonlyInputs = form!.querySelectorAll('input.form-control-sm[readonly]');
+      const readonlyInputs = form?.querySelectorAll('input.form-control-sm[readonly]') ?? [];
       expect(readonlyInputs.length).toBeGreaterThan(0);
     });
 

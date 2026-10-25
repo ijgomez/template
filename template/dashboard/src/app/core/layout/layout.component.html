@@ -263,15 +263,14 @@
 
     <!-- Mobile overlay backdrop -->
     @if (mobileMenuOpen()) {
-      <div
+      <button
+        type="button"
         class="tp-sidebar-backdrop d-lg-none"
         animate.leave="tp-sidebar-backdrop--leave"
         (click)="closeMobileMenu()"
-        (keydown.enter)="closeMobileMenu()"
-        (keydown.space)="closeMobileMenu(); $event.preventDefault()"
-        tabindex="0"
+        [attr.aria-label]="'button.close' | translate"
         data-testid="sidebar-backdrop"
-      ></div>
+      ></button>
     }
 
     <!-- Content area -->

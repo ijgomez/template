@@ -331,7 +331,7 @@ export class UserListComponent implements OnInit {
    * is applied by the queryParams subscription (single source of truth).
    */
   private navigateToView(view: Exclude<ViewMode, 'list'>, id: number | null | undefined): void {
-    const queryParams: Params = id != null ? { view, id } : { view };
+    const queryParams: Params = id == null ? { view } : { view, id };
     this.router.navigate([], { relativeTo: this.route, queryParams, queryParamsHandling: '' });
   }
 
@@ -356,8 +356,11 @@ export class UserListComponent implements OnInit {
         },
       });
     } else {
+      if (user.id === null) {
+        return;
+      }
       const notifId = this.notificationService.showProgress('notification.update.progress');
-      this.userService.update(user.id!, user).subscribe({
+      this.userService.update(user.id, user).subscribe({
         next: () => {
           this.notificationService.updateToSuccess(notifId, 'notification.update.success');
           this.backToList();

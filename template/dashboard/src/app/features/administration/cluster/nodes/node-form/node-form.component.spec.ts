@@ -59,9 +59,9 @@ describe('NodeFormComponent', () => {
   it('renders the node attributes in read-only controls', () => {
     setup(buildNode({ hostname: 'node-alpha', ip: '10.0.0.5' }));
     const el: HTMLElement = fixture.nativeElement;
-    const card = el.querySelector('[data-testid="node-form-card"]')!;
+    const card = el.querySelector<HTMLElement>('[data-testid="node-form-card"]');
     expect(card).not.toBeNull();
-    const inputs = card.querySelectorAll('input');
+    const inputs = card?.querySelectorAll('input') ?? [];
     expect(inputs.length).toBeGreaterThan(0);
     // All node attribute inputs are read-only and disabled (Req 25.11).
     inputs.forEach((input) => {
@@ -80,19 +80,19 @@ describe('NodeFormComponent', () => {
     const select = el.querySelector<HTMLSelectElement>('[data-testid="node-form-status-select"]');
     expect(select).not.toBeNull();
     // Read-only mode: the select is present but disabled (Req 25.11).
-    expect(select!.hasAttribute('disabled')).toBe(true);
-    const options = Array.from(select!.querySelectorAll('option'));
+    expect(select?.hasAttribute('disabled')).toBe(true);
+    const options = Array.from(select?.querySelectorAll('option') ?? []);
     expect(options.map((o) => o.value)).toEqual(['ACTIVE', 'INACTIVE']);
-    const activeOption = options.find((o) => o.value === 'ACTIVE')!;
-    expect(activeOption.selected).toBe(true);
+    const activeOption = options.find((o) => o.value === 'ACTIVE');
+    expect(activeOption?.selected).toBe(true);
   });
 
   it('selects the inactive option when the node is inactive', () => {
     setup(buildNode({ status: 'INACTIVE' }));
     const el: HTMLElement = fixture.nativeElement;
     const select = el.querySelector<HTMLSelectElement>('[data-testid="node-form-status-select"]');
-    const inactiveOption = Array.from(select!.querySelectorAll('option')).find((o) => o.value === 'INACTIVE')!;
-    expect(inactiveOption.selected).toBe(true);
+    const inactiveOption = Array.from(select?.querySelectorAll('option') ?? []).find((o) => o.value === 'INACTIVE');
+    expect(inactiveOption?.selected).toBe(true);
   });
 
   it('exposes the back button with the preserved data-testid', () => {
@@ -115,7 +115,7 @@ describe('NodeFormComponent', () => {
     const el: HTMLElement = fixture.nativeElement;
     const h1 = el.querySelector('h1');
     expect(h1).not.toBeNull();
-    expect(h1!.textContent).toContain('cluster.nodes.form.title');
+    expect(h1?.textContent).toContain('cluster.nodes.form.title');
   });
 
   it('includes an app-node-jobs child with the node id', () => {
@@ -123,7 +123,7 @@ describe('NodeFormComponent', () => {
     setup(node);
     const jobs = fixture.debugElement.children.find((c) => c.componentInstance instanceof NodeJobsComponent);
     expect(jobs).toBeTruthy();
-    const jobsComponent = jobs!.componentInstance as NodeJobsComponent;
-    expect(jobsComponent.nodeId()).toBe(99);
+    const jobsComponent: NodeJobsComponent | undefined = jobs?.componentInstance;
+    expect(jobsComponent?.nodeId()).toBe(99);
   });
 });

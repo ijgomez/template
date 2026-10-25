@@ -114,10 +114,10 @@ export const Readonly: Story = {
   }),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const input = canvas.getByTestId('input-protocol') as HTMLInputElement;
+    const input = canvas.getByTestId('input-protocol');
     await expect(input).toHaveValue('LDAP');
     await expect(input).toBeDisabled();
-    await expect(input.readOnly).toBe(true);
+    await expect(input).toHaveAttribute('readonly');
   },
 };
 

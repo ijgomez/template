@@ -119,11 +119,11 @@ describe('ProfileListComponent - Property 1: Bug Condition - Form Styling Matche
         const el = fixture.nativeElement as HTMLElement;
         const mode = isEditing ? 'edit' : 'create';
 
-        const form = el.querySelector('form');
+        const form = el.querySelector<HTMLFormElement>('form');
         expect(form, `No <form> element found in '${mode}' form mode`).not.toBeNull();
 
         // Save button should be INSIDE the form, not in the header
-        const saveBtn = form!.querySelector('[data-testid="btn-save"]');
+        const saveBtn = form?.querySelector('[data-testid="btn-save"]');
         expect(
           saveBtn,
           `Save button should be inside the <form> element in '${mode}' mode, ` +
@@ -131,7 +131,7 @@ describe('ProfileListComponent - Property 1: Bug Condition - Form Styling Matche
         ).not.toBeNull();
 
         // Cancel button should be INSIDE the form, not in the header
-        const cancelBtn = form!.querySelector('[data-testid="btn-cancel"]');
+        const cancelBtn = form?.querySelector('[data-testid="btn-cancel"]');
         expect(
           cancelBtn,
           `Cancel button should be inside the <form> element in '${mode}' mode, ` +

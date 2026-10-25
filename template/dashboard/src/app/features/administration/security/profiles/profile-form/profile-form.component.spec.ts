@@ -133,20 +133,22 @@ describe('ProfileFormComponent', () => {
       await setup('create', buildProfile({ name: '' }), []);
       await touchControl('profileName');
 
-      const input = fixture.nativeElement.querySelector('[data-testid="input-name"]') as HTMLInputElement;
-      const error = fixture.nativeElement.querySelector('[data-testid="error-name"]') as HTMLElement;
+      const el: HTMLElement = fixture.nativeElement;
+      const input = el.querySelector<HTMLInputElement>('[data-testid="input-name"]');
+      const error = el.querySelector<HTMLElement>('[data-testid="error-name"]');
       expect(error).toBeTruthy();
-      expect(error.id).toBe('profileName-error');
-      expect(input.getAttribute('aria-describedby')).toBe('profileName-error');
-      expect(input.getAttribute('aria-invalid')).toBe('true');
+      expect(error?.id).toBe('profileName-error');
+      expect(input?.getAttribute('aria-describedby')).toBe('profileName-error');
+      expect(input?.getAttribute('aria-invalid')).toBe('true');
     });
 
     it('should NOT render an error nor aria-describedby when the name is valid', async () => {
       await setup('edit', buildProfile({ name: 'Operador' }));
-      const input = fixture.nativeElement.querySelector('[data-testid="input-name"]') as HTMLInputElement;
+      const el: HTMLElement = fixture.nativeElement;
+      const input = el.querySelector<HTMLInputElement>('[data-testid="input-name"]');
 
-      expect(fixture.nativeElement.querySelector('[data-testid="error-name"]')).toBeNull();
-      expect(input.getAttribute('aria-describedby')).toBeNull();
+      expect(el.querySelector('[data-testid="error-name"]')).toBeNull();
+      expect(input?.getAttribute('aria-describedby')).toBeNull();
     });
   });
 
@@ -163,13 +165,14 @@ describe('ProfileFormComponent', () => {
       await fixture.whenStable();
       fixture.detectChanges();
 
-      const summary = fixture.nativeElement.querySelector('[data-testid="error-summary"]') as HTMLElement;
+      const el: HTMLElement = fixture.nativeElement;
+      const summary = el.querySelector<HTMLElement>('[data-testid="error-summary"]');
       expect(summary).toBeTruthy();
-      expect(summary.getAttribute('role')).toBe('alert');
-      expect(summary.getAttribute('tabindex')).toBe('-1');
+      expect(summary?.getAttribute('role')).toBe('alert');
+      expect(summary?.getAttribute('tabindex')).toBe('-1');
 
-      const link = summary.querySelector('a.alert-link') as HTMLAnchorElement;
-      expect(link.getAttribute('href')).toBe('#profileName');
+      const link = summary?.querySelector<HTMLAnchorElement>('a.alert-link');
+      expect(link?.getAttribute('href')).toBe('#profileName');
 
       expect(summary).toBe(document.activeElement);
     });

@@ -404,6 +404,9 @@ $transition-easing: var(--tp-ease-in-out); // was: ease-in-out
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 1035;
   opacity: 1;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
   transition: opacity var(--tp-duration-medium) var(--tp-ease-out);
 }
 

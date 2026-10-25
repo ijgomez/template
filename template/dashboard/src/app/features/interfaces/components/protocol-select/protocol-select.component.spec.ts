@@ -117,21 +117,23 @@ describe('ProtocolSelectComponent', () => {
       fixture.componentRef.setInput('testId', 'filter-protocol');
       fixture.detectChanges();
 
-      const select = fixture.nativeElement.querySelector('[data-testid="filter-protocol"]') as HTMLSelectElement;
+      const el: HTMLElement = fixture.nativeElement;
+      const select = el.querySelector<HTMLSelectElement>('[data-testid="filter-protocol"]');
       expect(select).toBeTruthy();
-      expect(select.tagName).toBe('SELECT');
+      expect(select?.tagName).toBe('SELECT');
       // Empty option + one per protocol.
-      expect(select.querySelectorAll('option').length).toBe(INTERFACE_PROTOCOLS.length + 1);
+      expect(select?.querySelectorAll('option').length).toBe(INTERFACE_PROTOCOLS.length + 1);
 
-      const emptyOption = select.querySelector('option[value=""]') as HTMLOptionElement;
-      expect(emptyOption.disabled).toBe(false);
+      const emptyOption = select?.querySelector<HTMLOptionElement>('option[value=""]');
+      expect(emptyOption?.disabled).toBe(false);
     });
 
     it('should reflect the written value in the select', () => {
       component.writeValue('SOAP');
       fixture.detectChanges();
-      const select = fixture.nativeElement.querySelector('select') as HTMLSelectElement;
-      expect(select.value).toBe('SOAP');
+      const el: HTMLElement = fixture.nativeElement;
+      const select = el.querySelector<HTMLSelectElement>('select');
+      expect(select?.value).toBe('SOAP');
     });
   });
 
@@ -142,12 +144,13 @@ describe('ProtocolSelectComponent', () => {
       component.writeValue('REST');
       fixture.detectChanges();
 
-      const input = fixture.nativeElement.querySelector('[data-testid="input-protocol"]') as HTMLInputElement;
+      const el: HTMLElement = fixture.nativeElement;
+      const input = el.querySelector<HTMLInputElement>('[data-testid="input-protocol"]');
       expect(input).toBeTruthy();
-      expect(input.tagName).toBe('INPUT');
-      expect(input.readOnly).toBe(true);
-      expect(input.disabled).toBe(true);
-      expect(input.value).toBe('REST');
+      expect(input?.tagName).toBe('INPUT');
+      expect(input?.readOnly).toBe(true);
+      expect(input?.disabled).toBe(true);
+      expect(input?.value).toBe('REST');
     });
   });
 });

@@ -42,7 +42,7 @@ class PaginationMetadataPropertyTest {
 
         Page<Integer> page = createPage(input);
 
-        assertThat(page.getContent().size()).isLessThanOrEqualTo(input.pageSize());
+        assertThat(page.getContent()).hasSizeLessThanOrEqualTo(input.pageSize());
     }
 
     @Property
@@ -63,7 +63,7 @@ class PaginationMetadataPropertyTest {
 
         int remainder = input.totalElements() % input.pageSize();
         int expectedSize = (remainder == 0) ? input.pageSize() : remainder;
-        assertThat(page.getContent().size()).isEqualTo(expectedSize);
+        assertThat(page.getContent()).hasSize(expectedSize);
     }
 
     // --- Helpers ---

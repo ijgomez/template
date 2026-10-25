@@ -69,9 +69,9 @@ class PaginationMetadataPropertyTest {
 
         Page<Integer> page = createSimulatedPage(totalElements, 0, pageSize);
 
-        assertThat(page.getContent().size())
+        assertThat(page.getContent())
                 .as("content size should never exceed pageSize (%d)", pageSize)
-                .isLessThanOrEqualTo(pageSize);
+                .hasSizeLessThanOrEqualTo(pageSize);
     }
 
     // =========================================================================
@@ -83,10 +83,10 @@ class PaginationMetadataPropertyTest {
 
         Page<Integer> page = createSimulatedPage(input.totalElements(), input.pageNumber(), input.pageSize());
 
-        assertThat(page.getContent().size())
+        assertThat(page.getContent())
                 .as("non-last page %d should have exactly %d elements (totalElements=%d, pageSize=%d)",
                         input.pageNumber(), input.pageSize(), input.totalElements(), input.pageSize())
-                .isEqualTo(input.pageSize());
+                .hasSize(input.pageSize());
     }
 
     @Provide
@@ -120,10 +120,10 @@ class PaginationMetadataPropertyTest {
         int remainder = totalElements % pageSize;
         int expectedLastPageSize = (remainder == 0) ? pageSize : remainder;
 
-        assertThat(page.getContent().size())
+        assertThat(page.getContent())
                 .as("last page (page %d) should have %d elements (totalElements=%d, pageSize=%d)",
                         lastPageNumber, expectedLastPageSize, totalElements, pageSize)
-                .isEqualTo(expectedLastPageSize);
+                .hasSize(expectedLastPageSize);
     }
 
     // =========================================================================
@@ -139,7 +139,7 @@ class PaginationMetadataPropertyTest {
         // Spring Data returns 0 totalPages for empty result (with PageImpl)
         assertThat(page.getTotalPages())
                 .as("totalPages should be 0 when totalElements is 0")
-                .isEqualTo(0);
+                .isZero();
 
         assertThat(page.getContent())
                 .as("content should be empty when totalElements is 0")
@@ -147,6 +147,6 @@ class PaginationMetadataPropertyTest {
 
         assertThat(page.getTotalElements())
                 .as("totalElements should be 0")
-                .isEqualTo(0);
+                .isZero();
     }
 }

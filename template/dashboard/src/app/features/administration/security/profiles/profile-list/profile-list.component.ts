@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit, DestroyRef } from '@angular/core';
 import { toObservable, takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { debounceTime, distinctUntilChanged, skip } from 'rxjs';
+import { debounceTime, distinctUntilChanged, skip, Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, Params } from '@angular/router';
@@ -322,7 +322,7 @@ export class ProfileListComponent implements OnInit {
 
   /** Reflects the current sub-view in the URL query params for deep linking. */
   private navigateToView(view: Exclude<ViewMode, 'list'>, id: number | null | undefined): void {
-    const queryParams: Params = id != null ? { view, id } : { view };
+    const queryParams: Params = id == null ? { view } : { view, id };
     this.router.navigate([], { relativeTo: this.route, queryParams, queryParamsHandling: '' });
   }
 
@@ -344,13 +344,21 @@ export class ProfileListComponent implements OnInit {
     };
 
     const isEdit = this.formMode() === 'edit';
+
+    let operation: Observable<Profile>;
+    if (isEdit) {
+      const profileId = profile.id;
+      if (profileId === null) {
+        return;
+      }
+      operation = this.profileService.update(profileId, payload as any);
+    } else {
+      operation = this.profileService.create(payload as any);
+    }
+
     const progressId = this.notificationService.showProgress(
       isEdit ? 'notification.update.progress' : 'notification.create.progress'
     );
-
-    const operation = isEdit
-      ? this.profileService.update(profile.id!, payload as any)
-      : this.profileService.create(payload as any);
 
     operation.subscribe({
       next: () => {

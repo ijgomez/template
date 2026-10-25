@@ -84,10 +84,10 @@ class ClusterLockServiceTest {
             verify(clusterBlockRepository).save(captor.capture());
             ClusterBlock saved = captor.getValue();
             assertThat(saved.getName()).isEqualTo(resourceName);
-            assertThat(saved.getAvgTime()).isEqualTo(0L);
-            assertThat(saved.getMinTime()).isEqualTo(0L);
-            assertThat(saved.getMaxTime()).isEqualTo(0L);
-            assertThat(saved.getTotal()).isEqualTo(0L);
+            assertThat(saved.getAvgTime()).isZero();
+            assertThat(saved.getMinTime()).isZero();
+            assertThat(saved.getMaxTime()).isZero();
+            assertThat(saved.getTotal()).isZero();
 
             // Cleanup
             when(clusterBlockRepository.findByName(resourceName)).thenReturn(Optional.of(createBlock(resourceName)));

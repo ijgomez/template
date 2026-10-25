@@ -185,9 +185,7 @@ export class TpDataTableComponent<T extends { id?: number | string | null }> imp
 
     let direction: SortDirection;
 
-    if (this.sortColumn !== col.key) {
-      direction = 'asc';
-    } else {
+    if (this.sortColumn === col.key) {
       switch (this.sortDirection) {
         case 'asc':
           direction = 'desc';
@@ -198,6 +196,8 @@ export class TpDataTableComponent<T extends { id?: number | string | null }> imp
         default:
           direction = 'asc';
       }
+    } else {
+      direction = 'asc';
     }
 
     this.sortColumn = direction ? col.key : '';

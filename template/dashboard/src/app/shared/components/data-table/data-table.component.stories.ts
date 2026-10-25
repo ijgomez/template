@@ -225,10 +225,11 @@ export const AdvancedInteractions: Story = {
     props: {
       ...args,
       triggerResize: (table: TpDataTableComponent<DemoUser>) => {
-        const th = document.querySelector('[data-testid="advanced-table-th-name"]') as HTMLElement;
-        if (th) {
-          Object.defineProperty(th, 'offsetWidth', { value: 120, configurable: true });
+        const th = document.querySelector<HTMLElement>('[data-testid="advanced-table-th-name"]');
+        if (!th) {
+          throw new Error('Expected the advanced table name header to exist');
         }
+        Object.defineProperty(th, 'offsetWidth', { value: 120, configurable: true });
         const startEvent = {
           clientX: 100,
           preventDefault: () => undefined,

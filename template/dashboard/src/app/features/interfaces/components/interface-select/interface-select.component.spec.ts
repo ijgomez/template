@@ -185,16 +185,15 @@ describe('TpInterfaceSelectComponent', () => {
       fixture.componentRef.setInput('testId', 'interface-list-filter-interface');
       fixture.detectChanges();
 
-      const select = fixture.nativeElement.querySelector(
-        '[data-testid="interface-list-filter-interface"]',
-      ) as HTMLSelectElement;
+      const el: HTMLElement = fixture.nativeElement;
+      const select = el.querySelector<HTMLSelectElement>('[data-testid="interface-list-filter-interface"]');
       expect(select).toBeTruthy();
-      expect(select.tagName).toBe('SELECT');
+      expect(select?.tagName).toBe('SELECT');
       // Empty option + one per interface.
-      expect(select.querySelectorAll('option').length).toBe(interfaces.length + 1);
+      expect(select?.querySelectorAll('option').length).toBe(interfaces.length + 1);
 
-      const emptyOption = select.querySelector('option[value=""]') as HTMLOptionElement;
-      expect(emptyOption.disabled).toBe(false);
+      const emptyOption = select?.querySelector<HTMLOptionElement>('option[value=""]');
+      expect(emptyOption?.disabled).toBe(false);
     });
   });
 });

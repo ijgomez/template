@@ -154,8 +154,8 @@ class PaginationMetadataConsistencyTest {
 
             assertThat(response.getBody()).isNotNull();
             assertPaginationMetadata(response.getBody(), size);
-            assertThat(response.getBody().getTotalPages()).isEqualTo(0);
-            assertThat(response.getBody().getTotalElements()).isEqualTo(0);
+            assertThat(response.getBody().getTotalPages()).isZero();
+            assertThat(response.getBody().getTotalElements()).isZero();
         }
 
         @Test
@@ -408,7 +408,7 @@ class PaginationMetadataConsistencyTest {
 
             assertThat(response.getBody()).isNotNull();
             assertPaginationMetadata(response.getBody(), size);
-            assertThat(response.getBody().getTotalPages()).isEqualTo(0);
+            assertThat(response.getBody().getTotalPages()).isZero();
         }
 
         private List<ClusterBlockDTO> createBlocks(int count) {
@@ -467,9 +467,9 @@ class PaginationMetadataConsistencyTest {
             assertThat(paramPage.getTotalPages()).isEqualTo(expectedTotalPages);
 
             // All should have consistent content sizes
-            assertThat(userPage.getContent().size()).isLessThanOrEqualTo(size);
-            assertThat(profilePage.getContent().size()).isLessThanOrEqualTo(size);
-            assertThat(paramPage.getContent().size()).isLessThanOrEqualTo(size);
+            assertThat(userPage.getContent()).hasSizeLessThanOrEqualTo(size);
+            assertThat(profilePage.getContent()).hasSizeLessThanOrEqualTo(size);
+            assertThat(paramPage.getContent()).hasSizeLessThanOrEqualTo(size);
         }
 
         @Test
