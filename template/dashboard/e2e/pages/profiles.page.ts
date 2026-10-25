@@ -1,4 +1,4 @@
-import { type Locator, type Page } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
 
 /**
  * Page Object de la pantalla de gestión de perfiles.
@@ -58,7 +58,17 @@ export class ProfilesPage {
   }
 
   async selectRowByName(name: string): Promise<void> {
-    await this.rowByName(name).first().click();
+    const row = this.rowByName(name).first();
+    // La tabla puede repintarse justo después de una búsqueda; se reintenta el
+    // click hasta confirmar que la fila quedó seleccionada. Sin esta garantía,
+    // los botones de acción (editar/eliminar) siguen deshabilitados y el test
+    // falla más tarde con un timeout poco descriptivo.
+    await expect(async () => {
+      if ((await row.getAttribute('aria-selected')) !== 'true') {
+        await row.click();
+      }
+      await expect(row).toHaveAttribute('aria-selected', 'true');
+    }).toPass({ timeout: 10_000 });
   }
 
   async goto(): Promise<void> {

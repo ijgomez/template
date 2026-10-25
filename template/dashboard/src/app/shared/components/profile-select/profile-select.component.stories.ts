@@ -1,6 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/angular-vite';
-import { applicationConfig } from '@storybook/angular-vite';
-import { moduleMetadata } from '@storybook/angular-vite';
+import { applicationConfig, moduleMetadata, type Meta, type StoryObj } from '@storybook/angular-vite';
 import { FormsModule } from '@angular/forms';
 import { of } from 'rxjs';
 import { expect, userEvent, within } from 'storybook/test';

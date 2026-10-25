@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { provideTranslateService } from '@ngx-translate/core';
-import { of, throwError } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 
 import { UserListComponent } from './user-list.component';
 import { UserService } from '../../../../../core/services/user.service';
@@ -11,6 +11,14 @@ import { CsvExportService } from '../../../../../core/services/csv-export.servic
 import { DateService } from '../../../../../core/services/date.service';
 import { UserDTO } from '../../../../../core/models/user.model';
 import { Page } from '../../../../../core/models/page.model';
+
+/**
+ * Observable that always fails, used to simulate backend errors without nesting
+ * extra arrow functions inside each test.
+ */
+function backendFailure(): Observable<never> {
+  return throwError(() => new Error('boom'));
+}
 
 /**
  * Unit tests for UserListComponent focused on component logic (state, CRUD flow,
@@ -53,7 +61,7 @@ describe('UserListComponent', () => {
   const notificationService = {
     showProgress: (..._a: unknown[]) => 'ntf-1',
     updateToSuccess: (..._a: unknown[]) => undefined,
-    updateToError: (..._a: unknown[]) => undefined,
+    updateToError: (_notificationId: string, _messageKey: string) => undefined,
     dismiss: (..._a: unknown[]) => undefined,
   };
   const csvExportService = { export: (..._a: unknown[]) => undefined };
@@ -93,7 +101,7 @@ describe('UserListComponent', () => {
     });
 
     it('should stop loading on error', () => {
-      userService.findByCriteria = () => throwError(() => new Error('boom'));
+      userService.findByCriteria = backendFailure;
       component.ngOnInit();
       expect(component.isLoading()).toBe(false);
       userService.findByCriteria = () => of(page);
@@ -298,9 +306,9 @@ describe('UserListComponent', () => {
 
     it('executeDelete should surface an error notification and clear the target', () => {
       let errorMessage = '';
-      userService.delete = () => throwError(() => new Error('boom'));
-      notificationService.updateToError = (..._a: unknown[]) => {
-        errorMessage = String(_a[1]);
+      userService.delete = backendFailure;
+      notificationService.updateToError = (_notificationId: string, messageKey: string) => {
+        errorMessage = messageKey;
       };
       component.confirmDelete(user);
 
@@ -323,9 +331,9 @@ describe('UserListComponent', () => {
       component.exportCsv();
 
       expect(exported).toBeTruthy();
-      expect(exported!.name).toBe('users');
-      expect(exported!.rows.length).toBe(1);
-      expect(exported!.rows[0][0]).toBe('jdoe');
+      expect(exported?.name).toBe('users');
+      expect(exported?.rows.length).toBe(1);
+      expect(exported?.rows[0][0]).toBe('jdoe');
       csvExportService.export = () => undefined;
     });
 
@@ -345,9 +353,9 @@ describe('UserListComponent', () => {
 
     it('should notify an export error when the backend call fails', () => {
       let key = '';
-      userService.findAllByCriteria = () => throwError(() => new Error('boom'));
-      notificationService.updateToError = (..._a: unknown[]) => {
-        key = String(_a[1]);
+      userService.findAllByCriteria = backendFailure;
+      notificationService.updateToError = (_notificationId: string, messageKey: string) => {
+        key = messageKey;
       };
 
       component.exportCsv();

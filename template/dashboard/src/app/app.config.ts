@@ -1,4 +1,4 @@
-import { APP_INITIALIZER, ApplicationConfig, provideBrowserGlobalErrorListeners, isDevMode } from '@angular/core';
+import { ApplicationConfig, inject, isDevMode, provideAppInitializer, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideServiceWorker } from '@angular/service-worker';
@@ -15,8 +15,9 @@ import { AuthService } from './core/services/auth.service';
  * If a valid refresh token cookie exists, a new access token is obtained silently.
  * This prevents forcing the user to re-login after page reload or browser restart.
  */
-function initializeAuth(authService: AuthService): () => Promise<void> {
-  return () => lastValueFrom(authService.tryRestoreSession()).then(() => undefined);
+function initializeAuth(): Promise<void> {
+  const authService = inject(AuthService);
+  return lastValueFrom(authService.tryRestoreSession()).then(() => undefined);
 }
 
 export const appConfig: ApplicationConfig = {
@@ -36,11 +37,6 @@ export const appConfig: ApplicationConfig = {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000',
     }),
-    {
-      provide: APP_INITIALIZER,
-      useFactory: initializeAuth,
-      deps: [AuthService],
-      multi: true,
-    },
+    provideAppInitializer(initializeAuth),
   ],
 };

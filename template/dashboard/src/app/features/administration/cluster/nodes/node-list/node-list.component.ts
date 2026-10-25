@@ -18,6 +18,9 @@ import { TpDetailButtonComponent } from '../../../../../shared/components/detail
 
 type ViewMode = 'list' | 'form';
 
+/** Primitive values that can be compared as text without object stringification. */
+type SortableValue = string | number | boolean | null | undefined;
+
 /**
  * Cluster nodes component.
  * Displays all cluster nodes with status and master indicators.
@@ -91,8 +94,8 @@ export class NodeListComponent implements OnInit {
     const dir = this.sortDirection();
     if (col && dir) {
       nodes = [...nodes].sort((a, b) => {
-        const aVal = (a as unknown as Record<string, unknown>)[col];
-        const bVal = (b as unknown as Record<string, unknown>)[col];
+        const aVal = (a as unknown as Record<string, SortableValue>)[col];
+        const bVal = (b as unknown as Record<string, SortableValue>)[col];
         const comparison = String(aVal ?? '').localeCompare(String(bVal ?? ''), undefined, { numeric: true, sensitivity: 'base' });
         return dir === 'asc' ? comparison : -comparison;
       });
@@ -218,10 +221,7 @@ export class NodeListComponent implements OnInit {
    * Opens the form view for the currently selected row.
    */
   editSelected(): void {
-    const node = this.selectedRow();
-    if (node) {
-      this.openForm(node);
-    }
+    this.viewSelected();
   }
 
   /**

@@ -1,23 +1,22 @@
 import { TestBed } from '@angular/core/testing';
-import { Router } from '@angular/router';
-import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
 
 import { actionGuard } from './action.guard';
 import { AuthService } from '../services/auth.service';
+
+function createRouteWithActions(actions: string[]): ActivatedRouteSnapshot {
+  return { data: { actions } } as unknown as ActivatedRouteSnapshot;
+}
+
+function createRouteWithoutActions(): ActivatedRouteSnapshot {
+  return { data: {} } as unknown as ActivatedRouteSnapshot;
+}
 
 describe('actionGuard', () => {
   let authServiceMock: { hasAction: ReturnType<typeof vi.fn> };
   let routerMock: { navigate: ReturnType<typeof vi.fn> };
 
   const mockState = {} as RouterStateSnapshot;
-
-  function createRouteWithActions(actions: string[]): ActivatedRouteSnapshot {
-    return { data: { actions } } as unknown as ActivatedRouteSnapshot;
-  }
-
-  function createRouteWithoutActions(): ActivatedRouteSnapshot {
-    return { data: {} } as unknown as ActivatedRouteSnapshot;
-  }
 
   beforeEach(() => {
     authServiceMock = {

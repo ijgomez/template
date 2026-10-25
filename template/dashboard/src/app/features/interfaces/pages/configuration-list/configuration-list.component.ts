@@ -15,6 +15,9 @@ import { ConfigurationFormComponent } from '../configuration-form/configuration-
 import { ProtocolSelectComponent } from '../../components/protocol-select';
 import { TpDetailButtonComponent } from '../../../../shared/components/detail-button';
 
+/** Primitive values that can be compared as text without object stringification. */
+type SortableValue = string | number | boolean | null | undefined;
+
 /**
  * Interface configuration list component.
  * Displays all interface configurations with status indicators (read-only).
@@ -95,8 +98,8 @@ export class ConfigurationListComponent implements OnInit {
     const dir = this.sortDirection();
     if (col && dir) {
       configs = [...configs].sort((a, b) => {
-        const aVal = (a as unknown as Record<string, unknown>)[col];
-        const bVal = (b as unknown as Record<string, unknown>)[col];
+        const aVal = (a as unknown as Record<string, SortableValue>)[col];
+        const bVal = (b as unknown as Record<string, SortableValue>)[col];
         const comparison = String(aVal ?? '').localeCompare(String(bVal ?? ''), undefined, { numeric: true, sensitivity: 'base' });
         return dir === 'asc' ? comparison : -comparison;
       });
