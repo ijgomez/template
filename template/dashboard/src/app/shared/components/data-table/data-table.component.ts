@@ -405,7 +405,7 @@ export class TpDataTableComponent<T extends { id?: number | string | null }> imp
    */
   private initColumnWidths(): void {
     for (const col of this.columns) {
-      if (col.width && col.width.endsWith('px')) {
+      if (col.width?.endsWith('px')) {
         const parsed = Number.parseInt(col.width, 10);
         if (!Number.isNaN(parsed)) {
           this.columnWidths[col.key] = parsed;

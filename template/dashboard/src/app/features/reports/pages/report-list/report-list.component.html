@@ -9,9 +9,9 @@
 <!-- Filter Section -->
 @if (isLoadingFilters()) {
   <div class="text-center py-4">
-    <div class="spinner-border spinner-border-sm" role="status">
+    <output class="spinner-border spinner-border-sm">
       <span class="visually-hidden">{{ 'common.loading' | translate }}</span>
-    </div>
+    </output>
   </div>
 } @else {
   <div class="tp-filter-bar">
@@ -136,9 +136,9 @@
 <!-- Loading state -->
 @if (isExecuting()) {
   <div class="text-center py-4">
-    <div class="spinner-border" role="status">
+    <output class="spinner-border">
       <span class="visually-hidden">{{ 'common.loading' | translate }}</span>
-    </div>
+    </output>
   </div>
 }
 

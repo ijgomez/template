@@ -119,8 +119,8 @@
      DELETE CONFIRMATION MODAL
      ═══════════════════════════════════════════════════════════════════════════ -->
 @if (showDeleteConfirm()) {
-  <div class="modal d-block" tabindex="-1" role="dialog" aria-modal="true"
-       [attr.aria-label]="'profiles.delete.confirmTitle' | translate">
+  <dialog class="modal d-block" tabindex="-1" open aria-modal="true"
+          [attr.aria-label]="'profiles.delete.confirmTitle' | translate">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
@@ -141,6 +141,6 @@
         </div>
       </div>
     </div>
-  </div>
+  </dialog>
   <div class="modal-backdrop show"></div>
 }

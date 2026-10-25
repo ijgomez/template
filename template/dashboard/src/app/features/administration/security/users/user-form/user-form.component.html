@@ -93,6 +93,7 @@
           @if (mode() === 'create') { <span class="text-danger">*</span> }
         </label>
         <input id="password"
+               type="password"
                [type]="isReadonly() ? 'text' : 'password'"
                autocomplete="new-password"
                class="form-control form-control-sm"

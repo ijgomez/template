@@ -47,6 +47,7 @@
             <i class="bi bi-lock"></i>
           </span>
           <input
+            type="password"
             [type]="showPassword() ? 'text' : 'password'"
             class="form-control"
             id="password"
@@ -95,7 +96,7 @@
         [disabled]="isLoading()"
         data-testid="btn-login-submit">
         @if (isLoading()) {
-          <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+          <output class="spinner-border spinner-border-sm me-2" aria-hidden="true"></output>
         } @else {
           <i class="bi bi-box-arrow-in-right me-2" aria-hidden="true"></i>
         }

@@ -191,9 +191,9 @@ public class SecurityConfig {
                         // Any other API request must be authenticated
                         .requestMatchers(API_ALL_PATH).authenticated()
 
-                        // Everything else (Angular SPA routes + static resources) is public;
-                        // SpaWebMvcConfig forwards non-file navigation routes to index.html so the
-                        // Angular router can resolve them client-side.
+                        // Everything else (Angular SPA routes and static resources) is public.
+                        // SpaWebMvcConfig forwards non-file navigation routes to index.html,
+                        // letting the Angular router resolve them client-side.
                         .anyRequest().permitAll()
                 );
 

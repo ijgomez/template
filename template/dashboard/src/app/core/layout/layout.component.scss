@@ -256,6 +256,8 @@ $transition-easing: var(--tp-ease-in-out); // was: ease-in-out
   right: 0;
   bottom: 0;
   width: 4px;
+  margin: 0;
+  border: 0;
   cursor: col-resize;
   background: transparent;
   transition: background-color 150ms var(--tp-ease);

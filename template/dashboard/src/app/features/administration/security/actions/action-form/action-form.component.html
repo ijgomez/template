@@ -205,7 +205,7 @@
                 [disabled]="saving()"
                 data-testid="btn-save">
           @if (saving()) {
-            <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+            <output class="spinner-border spinner-border-sm me-1" aria-hidden="true"></output>
           }
           <i class="bi bi-check-lg me-1" aria-hidden="true"></i> {{ 'button.save' | translate }}
         </button>

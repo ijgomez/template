@@ -158,15 +158,15 @@ describe('LayoutComponent', () => {
     expect(header).toBeTruthy();
   });
 
-  it('should render the sidebar with navigation role', () => {
+  it('should render the sidebar as a navigation landmark', () => {
     const compiled = fixture.nativeElement as HTMLElement;
-    const sidebar = compiled.querySelector('[role="navigation"]');
+    const sidebar = compiled.querySelector('nav.tp-sidebar');
     expect(sidebar).toBeTruthy();
   });
 
   it('should render the main content area', () => {
     const compiled = fixture.nativeElement as HTMLElement;
-    const mainContent = compiled.querySelector('[role="main"]');
+    const mainContent = compiled.querySelector('main#tp-main-content');
     expect(mainContent).toBeTruthy();
   });
 

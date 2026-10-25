@@ -1,7 +1,6 @@
 @if (errorNotifications$ | async; as errors) {
   @if (errors.length > 0) {
     <div class="error-dialog-backdrop"
-         role="presentation"
          animate.leave="error-dialog-backdrop--leave"
          data-testid="error-dialog-backdrop">
       <dialog class="modal d-block"

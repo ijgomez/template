@@ -31,9 +31,9 @@
 
         @if (nodesLoading()) {
           <div class="stat-value" aria-hidden="true">
-            <span class="spinner-border spinner-border-sm text-muted" role="status"></span>
+            <output class="spinner-border spinner-border-sm text-muted"></output>
           </div>
-          <small class="text-muted" role="status">{{ 'common.loading' | translate }}</small>
+          <output class="small text-muted">{{ 'common.loading' | translate }}</output>
         } @else if (nodesError()) {
           <div class="stat-value text-muted" aria-label="Not available">-</div>
           <small class="text-danger">

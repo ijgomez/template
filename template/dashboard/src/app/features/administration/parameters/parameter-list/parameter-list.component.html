@@ -127,8 +127,8 @@
      ═══════════════════════════════════════════════════════════════════════════ -->
 @if (showDeleteConfirm()) {
   <div class="modal-backdrop fade show"></div>
-  <div class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true"
-       [attr.aria-labelledby]="'deleteModalTitle'">
+  <dialog class="modal fade show d-block" tabindex="-1" open aria-modal="true"
+          [attr.aria-labelledby]="'deleteModalTitle'">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
@@ -148,5 +148,5 @@
         </div>
       </div>
     </div>
-  </div>
+  </dialog>
 }

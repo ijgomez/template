@@ -47,9 +47,8 @@
   <!-- Loading state -->
   @if (loading) {
     <div class="tp-data-list__loading" [attr.data-testid]="testId + '-loading'">
-      <span class="spinner-border spinner-border-sm text-secondary me-2"
-            role="status"
-            aria-hidden="true"></span>
+      <output class="spinner-border spinner-border-sm text-secondary me-2"
+              aria-hidden="true"></output>
       <span class="text-muted">{{ 'common.loading' | translate }}</span>
     </div>
   }
@@ -66,13 +65,11 @@
           }
         </div>
       } @else {
-        <div class="list-group list-group-flush"
-             role="list"
-             [attr.aria-label]="ariaLabel">
+        <ul class="list-group list-group-flush"
+            [attr.aria-label]="ariaLabel">
           @for (item of data; track $index) {
-            <div class="list-group-item d-flex justify-content-between align-items-center py-1 px-3"
-                 role="listitem"
-                 [attr.data-testid]="testId + '-item-' + $index">
+            <li class="list-group-item d-flex justify-content-between align-items-center py-1 px-3"
+                [attr.data-testid]="testId + '-item-' + $index">
               <div class="tp-data-list__item-content">
                 @if (itemTemplate) {
                   <ng-container *ngTemplateOutlet="itemTemplate.templateRef; context: { $implicit: item }"></ng-container>
@@ -89,9 +86,9 @@
                   [attr.data-testid]="testId + '-btn-remove-' + $index">
                 </button>
               }
-            </div>
+            </li>
           }
-        </div>
+        </ul>
       }
     </div>
   }

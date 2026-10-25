@@ -1,9 +1,9 @@
 <div>
   @if (loading()) {
     <div class="d-flex justify-content-center py-5" data-testid="profile-loading">
-      <div class="spinner-border text-primary" role="status">
+      <output class="spinner-border text-primary">
         <span class="visually-hidden">{{ 'common.loading' | translate }}</span>
-      </div>
+      </output>
     </div>
   } @else {
     <app-user-form

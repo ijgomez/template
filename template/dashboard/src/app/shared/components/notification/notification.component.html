@@ -11,9 +11,9 @@
              [attr.data-testid]="'notification-' + notification.type">
           <div class="toast-body d-flex align-items-center gap-2">
             @if (notification.type === 'progress') {
-              <div class="spinner-border spinner-border-sm text-primary" role="status" data-testid="notification-spinner">
+              <output class="spinner-border spinner-border-sm text-primary" data-testid="notification-spinner">
                 <span class="visually-hidden">{{ 'notification.progress' | translate }}</span>
-              </div>
+              </output>
             } @else {
               <i [class]="getIconClass(notification)" aria-hidden="true"></i>
             }

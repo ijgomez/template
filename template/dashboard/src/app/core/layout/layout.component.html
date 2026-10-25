@@ -3,12 +3,11 @@
 </a>
 <div class="tp-wrapper" [class.sidebar-collapsed]="sidebarCollapsed()" [class.mobile-menu-open]="mobileMenuOpen()" [class.sidebar-resizing]="resizing()">
   <!-- Sidebar -->
-  <aside
+  <nav
     class="tp-sidebar"
     [class.collapsed]="sidebarCollapsed()"
     [class.mobile-open]="mobileMenuOpen()"
     [style.width.px]="sidebarCollapsed() ? null : sidebarWidth()"
-    role="navigation"
     [attr.aria-label]="'layout.sidebar.navigation' | translate"
   >
     <div class="sidebar-brand">
@@ -127,19 +126,18 @@
     </nav>
 
     <!-- Resize handle (desktop only) -->
-    <div
+    <hr
       class="sidebar-resize-handle d-none d-lg-block"
       (mousedown)="onSidebarResizeStart($event)"
       (dblclick)="onSidebarResizeReset()"
       [attr.aria-label]="'layout.sidebar.resize' | translate"
-      role="separator"
       aria-orientation="vertical"
       data-testid="sidebar-resize-handle"
-    ></div>
-  </aside>
+    />
+  </nav>
 
   <!-- Main -->
-  <main class="tp-main" [style.margin-left.px]="sidebarCollapsed() ? null : sidebarWidth()">
+  <div class="tp-main" [style.margin-left.px]="sidebarCollapsed() ? null : sidebarWidth()">
     <!-- Header -->
     <header class="tp-header" role="banner">
       <div class="header-left">
@@ -274,14 +272,14 @@
     }
 
     <!-- Content area -->
-    <div id="tp-main-content" class="tp-content" role="main" tabindex="-1">
+    <main id="tp-main-content" class="tp-content" tabindex="-1">
       <router-outlet />
-    </div>
+    </main>
 
     <!-- Footer -->
     <footer class="tp-footer" role="contentinfo">
       <span data-testid="footer-version">{{ 'app.title' | translate }} v{{ appVersion }} &middot; {{ environmentName }}</span>
       <span data-testid="footer-owner">&copy; {{ currentYear }} {{ applicationOwner }}</span>
     </footer>
-  </main>
+  </div>
 </div>
