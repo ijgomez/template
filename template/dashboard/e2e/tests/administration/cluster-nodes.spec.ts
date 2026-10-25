@@ -40,10 +40,13 @@ test.describe('Cluster nodes', () => {
 
     const hostname = (await nodesPage.rows.first().locator('td').first().textContent())?.trim();
     expect(hostname).toBeTruthy();
+    if (!hostname) {
+      throw new Error('Expected the first node row to have a hostname');
+    }
 
-    await nodesPage.filterByHostname(hostname!);
+    await nodesPage.filterByHostname(hostname);
     await expect(nodesPage.rows).toHaveCount(1);
-    await expect(nodesPage.rows.first()).toContainText(hostname!);
+    await expect(nodesPage.rows.first()).toContainText(hostname);
 
     await nodesPage.clearFilters();
     await expect(nodesPage.rows.first()).toBeVisible();

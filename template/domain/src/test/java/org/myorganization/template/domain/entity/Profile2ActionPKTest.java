@@ -17,8 +17,7 @@ class Profile2ActionPKTest {
         Profile2ActionPK a = new Profile2ActionPK(1L, 2L);
         Profile2ActionPK b = new Profile2ActionPK(1L, 2L);
 
-        assertThat(a).isEqualTo(b);
-        assertThat(a).hasSameHashCodeAs(b);
+        assertThat(a).isEqualTo(b).hasSameHashCodeAs(b);
     }
 
     @Test
@@ -26,8 +25,8 @@ class Profile2ActionPKTest {
     void notEqualWhenComponentsDiffer() {
         Profile2ActionPK base = new Profile2ActionPK(1L, 2L);
 
-        assertThat(base).isNotEqualTo(new Profile2ActionPK(9L, 2L));
-        assertThat(base).isNotEqualTo(new Profile2ActionPK(1L, 9L));
+        assertThat(base).isNotEqualTo(new Profile2ActionPK(9L, 2L))
+                .isNotEqualTo(new Profile2ActionPK(1L, 9L));
     }
 
     @Test
@@ -35,9 +34,7 @@ class Profile2ActionPKTest {
     void equalsContractEdgeCases() {
         Profile2ActionPK key = new Profile2ActionPK(1L, 2L);
 
-        assertThat(key).isEqualTo(key);
-        assertThat(key).isNotEqualTo(null);
-        assertThat(key).isNotEqualTo("not-a-key");
+        assertThat(key).isEqualTo(key).isNotEqualTo(null).isNotEqualTo("not-a-key");
     }
 
     @Test

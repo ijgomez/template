@@ -61,10 +61,8 @@ class ClusterServiceSingleMasterPropertyTest {
         }).when(clusterNodeRepository).deactivateAllMasters();
 
         // Mock save to update the node in the list (identity-based, already in list)
-        when(clusterNodeRepository.save(any(ClusterNode.class))).thenAnswer(invocation -> {
-            ClusterNode saved = invocation.getArgument(0);
-            return saved;
-        });
+        when(clusterNodeRepository.save(any(ClusterNode.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
         // Execute setMaster operations and verify invariant after each
         for (Integer index : masterSequence) {

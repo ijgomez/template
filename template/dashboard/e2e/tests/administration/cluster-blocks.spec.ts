@@ -46,11 +46,14 @@ test.describe('Cluster blocks', () => {
     const firstRow = blocksPage.rows.first();
     const name = (await firstRow.locator('td').first().textContent())?.trim();
     expect(name).toBeTruthy();
+    if (!name) {
+      throw new Error('Expected the first block row to have a name');
+    }
 
-    await blocksPage.filterByName(name!);
+    await blocksPage.filterByName(name);
     await expect(blocksPage.rows.first()).toBeVisible();
     for (const row of await blocksPage.rows.all()) {
-      await expect(row.locator('td').first()).toContainText(name!);
+      await expect(row.locator('td').first()).toContainText(name);
     }
 
     await blocksPage.clearFilters();

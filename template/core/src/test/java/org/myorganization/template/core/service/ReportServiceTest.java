@@ -184,8 +184,7 @@ class ReportServiceTest {
 
         assertThat(result).isNotNull();
         String csv = new String(result);
-        assertThat(csv).contains("id,name,description");
-        assertThat(csv).contains("Sales Report");
+        assertThat(csv).contains("id,name,description").contains("Sales Report");
     }
 
     @Test
@@ -208,8 +207,7 @@ class ReportServiceTest {
 
         assertThat(result).isNotNull();
         String txt = new String(result);
-        assertThat(txt).contains("Report: Sales Report");
-        assertThat(txt).contains("Description: Monthly sales");
+        assertThat(txt).contains("Report: Sales Report").contains("Description: Monthly sales");
     }
 
     @Test

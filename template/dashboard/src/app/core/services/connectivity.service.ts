@@ -15,12 +15,12 @@ export class ConnectivityService implements OnDestroy {
   private readonly offlineHandler = (): void => this.isOnline.set(false);
 
   constructor() {
-    window.addEventListener('online', this.onlineHandler);
-    window.addEventListener('offline', this.offlineHandler);
+    globalThis.addEventListener('online', this.onlineHandler);
+    globalThis.addEventListener('offline', this.offlineHandler);
   }
 
   ngOnDestroy(): void {
-    window.removeEventListener('online', this.onlineHandler);
-    window.removeEventListener('offline', this.offlineHandler);
+    globalThis.removeEventListener('online', this.onlineHandler);
+    globalThis.removeEventListener('offline', this.offlineHandler);
   }
 }

@@ -17,8 +17,7 @@ class User2ReportPKTest {
         User2ReportPK a = new User2ReportPK(1L, 2L);
         User2ReportPK b = new User2ReportPK(1L, 2L);
 
-        assertThat(a).isEqualTo(b);
-        assertThat(a).hasSameHashCodeAs(b);
+        assertThat(a).isEqualTo(b).hasSameHashCodeAs(b);
     }
 
     @Test
@@ -26,8 +25,8 @@ class User2ReportPKTest {
     void notEqualWhenComponentsDiffer() {
         User2ReportPK base = new User2ReportPK(1L, 2L);
 
-        assertThat(base).isNotEqualTo(new User2ReportPK(9L, 2L));
-        assertThat(base).isNotEqualTo(new User2ReportPK(1L, 9L));
+        assertThat(base).isNotEqualTo(new User2ReportPK(9L, 2L))
+                .isNotEqualTo(new User2ReportPK(1L, 9L));
     }
 
     @Test
@@ -35,9 +34,7 @@ class User2ReportPKTest {
     void equalsContractEdgeCases() {
         User2ReportPK key = new User2ReportPK(1L, 2L);
 
-        assertThat(key).isEqualTo(key);
-        assertThat(key).isNotEqualTo(null);
-        assertThat(key).isNotEqualTo("not-a-key");
+        assertThat(key).isEqualTo(key).isNotEqualTo(null).isNotEqualTo("not-a-key");
     }
 
     @Test

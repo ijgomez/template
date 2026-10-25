@@ -112,7 +112,7 @@ public class JwtTokenProvider implements TokenProvider {
             return List.of();
         }
         return actions.stream()
-                .map(action -> (String) action)
+                .map(String.class::cast)
                 .toList();
     }
 

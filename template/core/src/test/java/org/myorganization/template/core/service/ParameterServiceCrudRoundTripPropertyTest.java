@@ -82,7 +82,7 @@ class ParameterServiceCrudRoundTripPropertyTest {
                 .alpha()
                 .ofMinLength(3)
                 .ofMaxLength(30)
-                .map(code -> code.toUpperCase());
+                .map(String::toUpperCase);
 
         Arbitrary<String> descriptions = Arbitraries.strings()
                 .alpha()
@@ -92,14 +92,12 @@ class ParameterServiceCrudRoundTripPropertyTest {
         Arbitrary<ParameterType> types = Arbitraries.of(ParameterType.class);
 
         // Generate type-compatible values
-        Arbitrary<ParameterDTO> dtos = types.flatMap(type -> {
+        return types.flatMap(type -> {
             Arbitrary<String> values = generateValidValueForType(type);
             return Combinators.combine(codes, descriptions, values)
                     .as((code, description, value) ->
                             new ParameterDTO(null, code, description, value, type, null, null));
         });
-
-        return dtos;
     }
 
     private Arbitrary<String> generateValidValueForType(ParameterType type) {

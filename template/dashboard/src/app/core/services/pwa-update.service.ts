@@ -18,8 +18,8 @@ export class PwaUpdateService {
   readonly hasUpdate$: Observable<boolean> = this.updateAvailable$.asObservable();
 
   private readonly reloadPage = (): void => {
-    if (typeof window !== 'undefined' && window.location) {
-      window.location.reload();
+    if (typeof globalThis.location !== 'undefined') {
+      globalThis.location.reload();
     }
   };
 

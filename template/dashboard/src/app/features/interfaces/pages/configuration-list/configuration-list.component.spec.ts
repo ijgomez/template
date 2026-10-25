@@ -224,9 +224,9 @@ describe('ConfigurationListComponent', () => {
       component.exportCsv();
 
       expect(exported).toBeTruthy();
-      expect(exported!.name).toBe('interface-configurations');
-      expect(exported!.rows.length).toBe(2);
-      expect(exported!.rows[0][0]).toBe('Payment Gateway');
+      expect(exported?.name).toBe('interface-configurations');
+      expect(exported?.rows.length).toBe(2);
+      expect(exported?.rows[0][0]).toBe('Payment Gateway');
       csvExportService.export = () => undefined;
     });
 

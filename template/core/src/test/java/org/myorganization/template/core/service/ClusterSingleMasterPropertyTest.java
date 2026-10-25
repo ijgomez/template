@@ -59,7 +59,7 @@ class ClusterSingleMasterPropertyTest {
 
         clusterService.setMaster(targetId);
 
-        long masterCount = nodes.stream().filter(node -> node.isMaster()).count();
+        long masterCount = nodes.stream().filter(ClusterNode::isMaster).count();
         assertThat(masterCount).as("Exactly one master after setMaster(%d)", targetId).isEqualTo(1);
         assertThat(targetNode.isMaster()).isTrue();
     }
@@ -91,7 +91,7 @@ class ClusterSingleMasterPropertyTest {
             when(nodeRepository.findById(targetId)).thenReturn(Optional.of(nodes.get(targetIndex)));
             clusterService.setMaster(targetId);
 
-            long masterCount = nodes.stream().filter(node -> node.isMaster()).count();
+            long masterCount = nodes.stream().filter(ClusterNode::isMaster).count();
             assertThat(masterCount).as("Invariant after setMaster(%d)", targetId).isEqualTo(1);
         }
     }

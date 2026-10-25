@@ -149,10 +149,9 @@ public class AuthService {
             return;
         }
 
-        refreshTokenRepository.findByToken(refreshTokenValue).ifPresent(token -> {
-            // Revoke all tokens for this user to ensure full logout
-            refreshTokenRepository.revokeAllByUser(token.getUser());
-        });
+        // Revoke all tokens for this user to ensure full logout
+        refreshTokenRepository.findByToken(refreshTokenValue)
+                .ifPresent(token -> refreshTokenRepository.revokeAllByUser(token.getUser()));
     }
 
     /**

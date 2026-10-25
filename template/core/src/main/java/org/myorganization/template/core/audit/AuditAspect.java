@@ -108,8 +108,8 @@ public class AuditAspect {
             if (firstArg instanceof Long || firstArg instanceof Integer) {
                 return firstArg.toString();
             }
-            if (firstArg instanceof String) {
-                return (String) firstArg;
+            if (firstArg instanceof String string) {
+                return string;
             }
         }
 

@@ -70,8 +70,7 @@ class ReportControllerTest {
         ResponseEntity<List<ReportDTO>> response = reportController.findByUser();
 
         assertThat(response.getStatusCode().value()).isEqualTo(200);
-        assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody()).hasSize(2);
+        assertThat(response.getBody()).isNotNull().hasSize(2);
         assertThat(response.getBody().get(0).name()).isEqualTo("Sales Report");
         verify(reportService).findByUser(1L);
     }
@@ -86,8 +85,7 @@ class ReportControllerTest {
         ResponseEntity<List<ReportDTO>> response = reportController.findByUser();
 
         assertThat(response.getStatusCode().value()).isEqualTo(200);
-        assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody()).isEmpty();
+        assertThat(response.getBody()).isNotNull().isEmpty();
     }
 
     @Test
@@ -102,8 +100,7 @@ class ReportControllerTest {
         ResponseEntity<List<ReportFilterDTO>> response = reportController.getFilters(1L);
 
         assertThat(response.getStatusCode().value()).isEqualTo(200);
-        assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody()).hasSize(2);
+        assertThat(response.getBody()).isNotNull().hasSize(2);
         assertThat(response.getBody().get(0).name()).isEqualTo("startDate");
         assertThat(response.getBody().get(0).required()).isTrue();
     }
@@ -130,7 +127,7 @@ class ReportControllerTest {
                 Map.of("id", 2, "name", "Item B")
         );
         Page<Map<String, Object>> page = new PageImpl<>(content, pageable, 2);
-        when(reportService.execute(eq(1L), eq(1L), eq(filters), eq(pageable))).thenReturn(page);
+        when(reportService.execute(1L, 1L, filters, pageable)).thenReturn(page);
 
         ResponseEntity<Page<Map<String, Object>>> response = reportController.execute(1L, filters, pageable);
 
@@ -148,7 +145,7 @@ class ReportControllerTest {
 
         Pageable pageable = PageRequest.of(0, 10);
         Page<Map<String, Object>> page = new PageImpl<>(List.of(), pageable, 0);
-        when(reportService.execute(eq(1L), eq(1L), eq(Map.of()), eq(pageable))).thenReturn(page);
+        when(reportService.execute(1L, 1L, Map.of(), pageable)).thenReturn(page);
 
         ResponseEntity<Page<Map<String, Object>>> response = reportController.execute(1L, null, pageable);
 
@@ -194,7 +191,7 @@ class ReportControllerTest {
         mockUserLookup("testuser", 1L);
 
         byte[] csvContent = "id,name\n1,Test\n".getBytes();
-        when(reportService.export(eq(1L), eq(1L), eq(Map.of()), eq(ExportFormat.CSV))).thenReturn(csvContent);
+        when(reportService.export(1L, 1L, Map.of(), ExportFormat.CSV)).thenReturn(csvContent);
 
         ResponseEntity<byte[]> response = reportController.export(1L, ExportFormat.CSV, Map.of());
 
@@ -211,7 +208,7 @@ class ReportControllerTest {
         mockUserLookup("testuser", 1L);
 
         byte[] txtContent = "Report: Test\n".getBytes();
-        when(reportService.export(eq(1L), eq(1L), eq(Map.of()), eq(ExportFormat.TXT))).thenReturn(txtContent);
+        when(reportService.export(1L, 1L, Map.of(), ExportFormat.TXT)).thenReturn(txtContent);
 
         ResponseEntity<byte[]> response = reportController.export(1L, ExportFormat.TXT, Map.of());
 
@@ -228,7 +225,7 @@ class ReportControllerTest {
         mockUserLookup("testuser", 1L);
 
         byte[] pdfContent = new byte[]{0x25, 0x50, 0x44, 0x46}; // %PDF
-        when(reportService.export(eq(1L), eq(1L), eq(Map.of()), eq(ExportFormat.PDF))).thenReturn(pdfContent);
+        when(reportService.export(1L, 1L, Map.of(), ExportFormat.PDF)).thenReturn(pdfContent);
 
         ResponseEntity<byte[]> response = reportController.export(1L, ExportFormat.PDF, Map.of());
 
@@ -245,7 +242,7 @@ class ReportControllerTest {
         mockUserLookup("testuser", 1L);
 
         byte[] xlsxContent = new byte[]{0x50, 0x4B, 0x03, 0x04}; // PK zip header
-        when(reportService.export(eq(1L), eq(1L), eq(Map.of()), eq(ExportFormat.XLSX))).thenReturn(xlsxContent);
+        when(reportService.export(1L, 1L, Map.of(), ExportFormat.XLSX)).thenReturn(xlsxContent);
 
         ResponseEntity<byte[]> response = reportController.export(1L, ExportFormat.XLSX, Map.of());
 
@@ -263,7 +260,7 @@ class ReportControllerTest {
         mockUserLookup("testuser", 1L);
 
         byte[] content = "data".getBytes();
-        when(reportService.export(eq(1L), eq(1L), eq(Map.of()), eq(ExportFormat.TXT))).thenReturn(content);
+        when(reportService.export(1L, 1L, Map.of(), ExportFormat.TXT)).thenReturn(content);
 
         ResponseEntity<byte[]> response = reportController.export(1L, ExportFormat.TXT, null);
 
@@ -292,7 +289,7 @@ class ReportControllerTest {
         mockUserLookup("testuser", 1L);
 
         byte[] content = "data".getBytes();
-        when(reportService.export(eq(2L), eq(1L), eq(Map.of()), eq(ExportFormat.CSV))).thenReturn(content);
+        when(reportService.export(2L, 1L, Map.of(), ExportFormat.CSV)).thenReturn(content);
 
         ResponseEntity<byte[]> response = reportController.export(2L, ExportFormat.CSV, Map.of());
 

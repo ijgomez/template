@@ -79,7 +79,10 @@
                   [style.cursor]="selectable ? 'pointer' : 'default'"
                   [attr.aria-selected]="isSelected(item)"
                   role="row"
+                  [attr.tabindex]="selectable ? 0 : null"
                   (click)="onRowClick(item)"
+                  (keydown.enter)="onRowClick(item)"
+                  (keydown.space)="onRowClick(item); $event.preventDefault()"
                   (dblclick)="onRowDoubleClick(item)">
                 @for (col of columns; track col.key) {
                   <td [ngClass]="col.cssClass ?? ''" [ngStyle]="getColumnStyle(col)">

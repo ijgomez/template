@@ -140,7 +140,7 @@ describe('LayoutComponent - Property 6: Navigation visibility matches user actio
               const childVisible = component.isItemVisible(child);
               if (childVisible) {
                 // If child is visible but parent is not, this violates the design invariant
-                const parentShouldBeVisible = item.actions!.some((a) => userActionSet.has(a));
+                const parentShouldBeVisible = (item.actions ?? []).some((a) => userActionSet.has(a));
                 expect(
                   parentShouldBeVisible,
                   `Child "${child.labelKey}" is visible but parent "${item.labelKey}" is not. ` +

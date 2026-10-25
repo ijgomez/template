@@ -47,7 +47,7 @@ export class CsvExportService {
   private escapeCsvField(field: string): string {
     const value = field == null ? '' : String(field);
     if (value.includes(',') || value.includes('"') || value.includes('\n')) {
-      return `"${value.replace(/"/g, '""')}"`;
+      return `"${value.replaceAll(/"/g, '""')}"`;
     }
     return value;
   }

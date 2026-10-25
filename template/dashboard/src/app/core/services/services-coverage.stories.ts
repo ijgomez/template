@@ -135,8 +135,8 @@ class ConnectivityServiceCoverageHarnessComponent {
   readonly connectivityService = inject(ConnectivityService);
 
   run(): void {
-    window.dispatchEvent(new Event('offline'));
-    window.dispatchEvent(new Event('online'));
+    globalThis.dispatchEvent(new Event('offline'));
+    globalThis.dispatchEvent(new Event('online'));
     this.connectivityService.ngOnDestroy();
   }
 }

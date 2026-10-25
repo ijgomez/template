@@ -1,5 +1,8 @@
 import { type Locator, type Page } from '@playwright/test';
 
+/** Tipos de parámetro admitidos por el backend. */
+type ParameterType = 'STRING' | 'INTEGER' | 'BOOLEAN' | 'DATE';
+
 /**
  * Page Object de la pantalla de gestión de parámetros.
  *
@@ -86,7 +89,7 @@ export class ParametersPage {
     await response;
   }
 
-  async applyTypeFilter(type: 'STRING' | 'INTEGER' | 'BOOLEAN' | 'DATE'): Promise<void> {
+  async applyTypeFilter(type: ParameterType): Promise<void> {
     const response = this.waitForParametersQuery({ type });
     await this.filterType.selectOption(type);
     await this.searchButton.click();
@@ -141,7 +144,7 @@ export class ParametersPage {
     code: string;
     value: string;
     description?: string;
-    type?: 'STRING' | 'INTEGER' | 'BOOLEAN' | 'DATE';
+    type?: ParameterType;
   }): Promise<void> {
     await this.inputCode.fill(data.code);
     if (data.type) {
@@ -172,7 +175,7 @@ export class ParametersPage {
   async saveEdit(data: {
     value?: string;
     description?: string;
-    type?: 'STRING' | 'INTEGER' | 'BOOLEAN' | 'DATE';
+    type?: ParameterType;
   }): Promise<void> {
     if (data.type !== undefined) {
       await this.selectType.selectOption(data.type);

@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideRouter, Router } from '@angular/router';
+import { provideRouter } from '@angular/router';
 import { provideTranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 
@@ -350,13 +350,13 @@ describe('LayoutComponent', () => {
     const admin = component.computedNavItems()[3];
     expect(admin.children?.length).toBe(4); // Security, Parameters, Audit, Cluster
 
-    const security = admin.children![0];
-    expect(security.labelKey).toBe('menu.administration.security');
-    expect(security.children?.length).toBe(3); // Users, Profiles, Actions
+    const security = admin.children?.[0];
+    expect(security?.labelKey).toBe('menu.administration.security');
+    expect(security?.children?.length).toBe(3); // Users, Profiles, Actions
 
-    const cluster = admin.children![3];
-    expect(cluster.labelKey).toBe('menu.administration.cluster');
-    expect(cluster.children?.length).toBe(2); // Nodes, Blocks
+    const cluster = admin.children?.[3];
+    expect(cluster?.labelKey).toBe('menu.administration.cluster');
+    expect(cluster?.children?.length).toBe(2); // Nodes, Blocks
   });
 
   it('should hide menu items when the user lacks the required actions', () => {

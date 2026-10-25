@@ -83,12 +83,16 @@
                   @for (report of modalReports(); track report.id) {
                     <tr [class.table-active]="isModalReportSelected(report.id)"
                         (click)="toggleModalReport(report.id)"
+                        (keydown.enter)="toggleModalReport(report.id)"
+                        (keydown.space)="toggleModalReport(report.id); $event.preventDefault()"
+                        tabindex="0"
                         style="cursor: pointer;"
                         [attr.data-testid]="testId + '-modal-row-' + report.id">
                       <td>
                         <input type="checkbox" class="form-check-input"
                                [checked]="isModalReportSelected(report.id)"
                                (click)="$event.stopPropagation()"
+                               (keydown)="$event.stopPropagation()"
                                (change)="toggleModalReport(report.id)"
                                [attr.aria-label]="'selected-reports.modal.selectReport' | translate">
                       </td>

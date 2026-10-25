@@ -19,22 +19,22 @@ describe('ConnectivityService', () => {
   });
 
   it('should set isOnline to false when an offline event fires', () => {
-    window.dispatchEvent(new Event('offline'));
+    globalThis.dispatchEvent(new Event('offline'));
     expect(service.isOnline()).toBe(false);
   });
 
   it('should set isOnline to true when an online event fires', () => {
-    window.dispatchEvent(new Event('offline'));
+    globalThis.dispatchEvent(new Event('offline'));
     expect(service.isOnline()).toBe(false);
 
-    window.dispatchEvent(new Event('online'));
+    globalThis.dispatchEvent(new Event('online'));
     expect(service.isOnline()).toBe(true);
   });
 
   it('should stop reacting to events after destroy', () => {
     service.ngOnDestroy();
 
-    window.dispatchEvent(new Event('offline'));
+    globalThis.dispatchEvent(new Event('offline'));
     // Listeners removed on destroy, so the signal keeps its last value.
     expect(service.isOnline()).toBe(navigator.onLine);
   });

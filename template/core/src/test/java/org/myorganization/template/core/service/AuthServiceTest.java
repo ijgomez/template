@@ -31,7 +31,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -85,7 +84,7 @@ class AuthServiceTest {
         when(userRepository.findByUsernameWithProfileActions("admin")).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("secret", "$2a$12$hashedpassword")).thenReturn(true);
         when(userRepository.save(any(User.class))).thenReturn(user);
-        when(tokenProvider.generateAccessToken(eq("admin"), eq("ADMIN"), eq(List.of("USER_READ"))))
+        when(tokenProvider.generateAccessToken("admin", "ADMIN", List.of("USER_READ")))
                 .thenReturn("access-token");
         when(refreshTokenRepository.save(any(RefreshToken.class))).thenAnswer(inv -> inv.getArgument(0));
 
@@ -154,7 +153,7 @@ class AuthServiceTest {
         when(userRepository.findByUsernameWithProfileActions("basic")).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("pass", "$2a$12$hashed")).thenReturn(true);
         when(userRepository.save(any(User.class))).thenReturn(user);
-        when(tokenProvider.generateAccessToken(eq("basic"), eq(""), eq(Collections.emptyList())))
+        when(tokenProvider.generateAccessToken("basic", "", Collections.emptyList()))
                 .thenReturn("access");
         when(refreshTokenRepository.save(any(RefreshToken.class))).thenAnswer(inv -> inv.getArgument(0));
 
@@ -187,7 +186,7 @@ class AuthServiceTest {
         when(refreshTokenRepository.findByToken("valid-refresh")).thenReturn(Optional.of(storedToken));
         when(refreshTokenRepository.save(any(RefreshToken.class))).thenAnswer(inv -> inv.getArgument(0));
         when(userRepository.findByUsernameWithProfileActions("admin")).thenReturn(Optional.of(user));
-        when(tokenProvider.generateAccessToken(eq("admin"), eq("ADMIN"), eq(Collections.emptyList())))
+        when(tokenProvider.generateAccessToken("admin", "ADMIN", Collections.emptyList()))
                 .thenReturn("new-access");
 
         TokenResponse response = authService.refreshToken("valid-refresh");
@@ -271,7 +270,7 @@ class AuthServiceTest {
         when(refreshTokenRepository.findByToken("old-token")).thenReturn(Optional.of(storedToken));
         when(refreshTokenRepository.save(any(RefreshToken.class))).thenAnswer(inv -> inv.getArgument(0));
         when(userRepository.findByUsernameWithProfileActions("user1")).thenReturn(Optional.of(user));
-        when(tokenProvider.generateAccessToken(eq("user1"), eq("USER"), eq(Collections.emptyList())))
+        when(tokenProvider.generateAccessToken("user1", "USER", Collections.emptyList()))
                 .thenReturn("new-access");
 
         TokenResponse response = authService.refreshToken("old-token");

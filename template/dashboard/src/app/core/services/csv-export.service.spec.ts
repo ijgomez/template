@@ -47,10 +47,18 @@ describe('CsvExportService', () => {
     return text.startsWith('\uFEFF') ? text.slice(1) : text;
   }
 
+  /** Returns the captured blob or fails when the export did not create one. */
+  function requireCapturedBlob(): Blob {
+    if (!capturedBlob) {
+      throw new Error('Expected the export to create a Blob');
+    }
+    return capturedBlob;
+  }
+
   it('should prepend a UTF-8 BOM to the generated file (byte-level)', async () => {
     service.export(['A'], [['1']], 'bom');
 
-    const bytes = new Uint8Array(await capturedBlob!.arrayBuffer());
+    const bytes = new Uint8Array(await requireCapturedBlob().arrayBuffer());
     // UTF-8 encoding of U+FEFF is EF BB BF.
     expect(bytes[0]).toBe(0xef);
     expect(bytes[1]).toBe(0xbb);
@@ -63,34 +71,34 @@ describe('CsvExportService', () => {
     expect(URL.createObjectURL).toHaveBeenCalledTimes(1);
     expect(clickCount).toBe(1);
     expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:mock-url');
-    expect(capturedBlob).toBeInstanceOf(Blob);
-    expect(capturedBlob!.type).toContain('text/csv');
+    expect(requireCapturedBlob()).toBeInstanceOf(Blob);
+    expect(requireCapturedBlob().type).toContain('text/csv');
 
-    expect(await blobBody(capturedBlob!)).toBe('Name,Age\nAlice,30\nBob,25');
+    expect(await blobBody(requireCapturedBlob())).toBe('Name,Age\nAlice,30\nBob,25');
   });
 
   it('should quote fields containing commas', async () => {
     service.export(['City'], [['Paris, France']], 'cities');
 
-    expect(await blobBody(capturedBlob!)).toBe('City\n"Paris, France"');
+    expect(await blobBody(requireCapturedBlob())).toBe('City\n"Paris, France"');
   });
 
   it('should escape embedded double quotes by doubling them', async () => {
     service.export(['Quote'], [['She said "hi"']], 'quotes');
 
-    expect(await blobBody(capturedBlob!)).toBe('Quote\n"She said ""hi"""');
+    expect(await blobBody(requireCapturedBlob())).toBe('Quote\n"She said ""hi"""');
   });
 
   it('should quote fields containing newlines', async () => {
     service.export(['Note'], [['line1\nline2']], 'notes');
 
-    expect(await blobBody(capturedBlob!)).toBe('Note\n"line1\nline2"');
+    expect(await blobBody(requireCapturedBlob())).toBe('Note\n"line1\nline2"');
   });
 
   it('should produce only the header row when there are no data rows', async () => {
     service.export(['A', 'B'], [], 'empty');
 
-    expect(await blobBody(capturedBlob!)).toBe('A,B');
+    expect(await blobBody(requireCapturedBlob())).toBe('A,B');
   });
 
   it('should set the download filename with a date-stamped .csv extension', () => {

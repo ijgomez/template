@@ -54,12 +54,12 @@ class AuthControllerTest {
 
         // Verify Set-Cookie header
         String setCookie = response.getHeaders().getFirst(HttpHeaders.SET_COOKIE);
-        assertThat(setCookie).isNotNull();
-        assertThat(setCookie).contains(COOKIE_NAME + "=opaque-refresh-token");
-        assertThat(setCookie).contains("HttpOnly");
-        assertThat(setCookie).contains("Path=" + COOKIE_PATH);
-        assertThat(setCookie).contains("Max-Age=" + COOKIE_MAX_AGE);
-        assertThat(setCookie).contains("SameSite=" + COOKIE_SAME_SITE);
+        assertThat(setCookie).isNotNull()
+                .contains(COOKIE_NAME + "=opaque-refresh-token")
+                .contains("HttpOnly")
+                .contains("Path=" + COOKIE_PATH)
+                .contains("Max-Age=" + COOKIE_MAX_AGE)
+                .contains("SameSite=" + COOKIE_SAME_SITE);
 
         verify(authService).authenticate(loginRequest);
     }
@@ -91,8 +91,8 @@ class AuthControllerTest {
 
         // Verify rotated cookie
         String setCookie = response.getHeaders().getFirst(HttpHeaders.SET_COOKIE);
-        assertThat(setCookie).contains(COOKIE_NAME + "=rotated-refresh-token");
-        assertThat(setCookie).contains("HttpOnly");
+        assertThat(setCookie).contains(COOKIE_NAME + "=rotated-refresh-token")
+                .contains("HttpOnly");
 
         verify(authService).refreshToken("valid-refresh-token");
     }
@@ -134,8 +134,7 @@ class AuthControllerTest {
 
         // Verify cookie is cleared (maxAge=0)
         String setCookie = response.getHeaders().getFirst(HttpHeaders.SET_COOKIE);
-        assertThat(setCookie).isNotNull();
-        assertThat(setCookie).contains("Max-Age=0");
+        assertThat(setCookie).isNotNull().contains("Max-Age=0");
 
         verify(authService).logout("refresh-token-to-invalidate");
     }
@@ -151,8 +150,7 @@ class AuthControllerTest {
 
         // Cookie should still be cleared
         String setCookie = response.getHeaders().getFirst(HttpHeaders.SET_COOKIE);
-        assertThat(setCookie).isNotNull();
-        assertThat(setCookie).contains("Max-Age=0");
+        assertThat(setCookie).isNotNull().contains("Max-Age=0");
     }
 
     @Test

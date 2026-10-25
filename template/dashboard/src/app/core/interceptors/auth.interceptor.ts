@@ -127,7 +127,7 @@ function handleTokenRefresh(
     return refreshSubject$.pipe(
       filter((token) => token !== null),
       take(1),
-      switchMap((token) => next(addAuthHeader(req, token!))),
+      switchMap((token) => next(addAuthHeader(req, token))),
       catchError((error) => handleHttpError(error, notificationService)),
     );
   }

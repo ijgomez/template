@@ -196,7 +196,7 @@ class ClusterJobSecurityIntegrationTest {
         List<ClusterJob> jobs = clusterJobRepository.findByClusterNodeIdOrderByPriorityAsc(nodeId);
 
         assertThat(jobs).hasSize(3);
-        assertThat(jobs).extracting(job -> job.getPriority()).containsExactly(1, 2, 3);
+        assertThat(jobs).extracting(ClusterJob::getPriority).containsExactly(1, 2, 3);
     }
 
     private ClusterTask newTask(String name) {

@@ -75,9 +75,9 @@ describe('AuthService', () => {
 
       const user = service.getCurrentUser();
       expect(user).not.toBeNull();
-      expect(user!.username).toBe('admin');
-      expect(user!.profile).toBe('Administrator');
-      expect(user!.actions).toEqual(['USER_READ', 'USER_WRITE', 'DASHBOARD_READ']);
+      expect(user?.username).toBe('admin');
+      expect(user?.profile).toBe('Administrator');
+      expect(user?.actions).toEqual(['USER_READ', 'USER_WRITE', 'DASHBOARD_READ']);
     });
   });
 
@@ -221,8 +221,8 @@ describe('AuthService', () => {
 
       const user = service.getCurrentUser();
       expect(user).not.toBeNull();
-      expect(user!.username).toBe('admin');
-      expect(user!.profile).toBe('Administrator');
+      expect(user?.username).toBe('admin');
+      expect(user?.profile).toBe('Administrator');
     });
   });
 
@@ -292,7 +292,7 @@ describe('AuthService', () => {
 
       const user = service.getCurrentUser();
       expect(user).not.toBeNull();
-      expect(user!.username).toBe('user+special/chars');
+      expect(user?.username).toBe('user+special/chars');
     });
 
     it('should return null user for an invalid token format', () => {
@@ -317,7 +317,7 @@ describe('AuthService', () => {
 
       const user = service.getCurrentUser();
       expect(user).not.toBeNull();
-      expect(user!.actions).toEqual([]);
+      expect(user?.actions).toEqual([]);
     });
   });
 });

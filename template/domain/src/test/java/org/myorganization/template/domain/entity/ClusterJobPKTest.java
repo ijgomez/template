@@ -17,8 +17,7 @@ class ClusterJobPKTest {
         ClusterJobPK a = new ClusterJobPK(1L, 2L);
         ClusterJobPK b = new ClusterJobPK(1L, 2L);
 
-        assertThat(a).isEqualTo(b);
-        assertThat(a).hasSameHashCodeAs(b);
+        assertThat(a).isEqualTo(b).hasSameHashCodeAs(b);
     }
 
     @Test
@@ -26,8 +25,8 @@ class ClusterJobPKTest {
     void notEqualWhenComponentsDiffer() {
         ClusterJobPK base = new ClusterJobPK(1L, 2L);
 
-        assertThat(base).isNotEqualTo(new ClusterJobPK(9L, 2L));
-        assertThat(base).isNotEqualTo(new ClusterJobPK(1L, 9L));
+        assertThat(base).isNotEqualTo(new ClusterJobPK(9L, 2L))
+                .isNotEqualTo(new ClusterJobPK(1L, 9L));
     }
 
     @Test
@@ -35,9 +34,7 @@ class ClusterJobPKTest {
     void equalsContractEdgeCases() {
         ClusterJobPK key = new ClusterJobPK(1L, 2L);
 
-        assertThat(key).isEqualTo(key);
-        assertThat(key).isNotEqualTo(null);
-        assertThat(key).isNotEqualTo("not-a-key");
+        assertThat(key).isEqualTo(key).isNotEqualTo(null).isNotEqualTo("not-a-key");
     }
 
     @Test

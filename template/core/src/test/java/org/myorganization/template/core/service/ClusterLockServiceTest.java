@@ -20,7 +20,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -124,7 +123,7 @@ class ClusterLockServiceTest {
 
             clusterLockService.acquireLock(resourceName);
 
-            verify(clusterBlockRepository).acquireAdvisoryLock(eq("NODOS".hashCode()));
+            verify(clusterBlockRepository).acquireAdvisoryLock("NODOS".hashCode());
 
             // Cleanup
             when(clusterBlockRepository.findByName(resourceName)).thenReturn(Optional.of(createBlock(resourceName)));
