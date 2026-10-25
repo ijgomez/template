@@ -152,7 +152,7 @@ class AuditAndClusterIntegrationTest {
         clusterService.setMaster(node.getId());
 
         List<ClusterNode> allNodes = clusterNodeRepository.findAll();
-        long masterCount = allNodes.stream().filter(ClusterNode::isMaster).count();
+        long masterCount = allNodes.stream().filter(n -> n.isMaster()).count();
         assertThat(masterCount).isLessThanOrEqualTo(1);
     }
 }

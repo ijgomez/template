@@ -128,7 +128,7 @@ class ApiDateFormatPropertyTest {
 
     @Provide
     Arbitrary<Instant> instants() {
-        return utcOffsetDateTimes().map(OffsetDateTime::toInstant);
+        return utcOffsetDateTimes().map(dateTime -> dateTime.toInstant());
     }
 
     // --- Helpers ---

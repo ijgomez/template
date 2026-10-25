@@ -82,7 +82,7 @@ class ParameterServiceCrudRoundTripPropertyTest {
                 .alpha()
                 .ofMinLength(3)
                 .ofMaxLength(30)
-                .map(String::toUpperCase);
+                .map(code -> code.toUpperCase());
 
         Arbitrary<String> descriptions = Arbitraries.strings()
                 .alpha()
