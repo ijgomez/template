@@ -483,7 +483,6 @@ class UserServiceTest {
      * Runs the given {@link Specification} against a mocked JPA Criteria API. This forces the
      * lambdas inside {@code buildSpecification} to execute so their branches are covered.
      */
-    @SuppressWarnings({"unchecked"})
     private Predicate evaluateSpecification(Specification<User> spec) {
         Root<User> root = mock(Root.class, RETURNS_DEEP_STUBS);
         CriteriaQuery<?> query = mock(CriteriaQuery.class);

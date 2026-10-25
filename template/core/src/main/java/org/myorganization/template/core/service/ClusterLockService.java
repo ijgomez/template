@@ -56,7 +56,6 @@ public class ClusterLockService implements HeartbeatLockService {
      */
     @Override
     @Transactional
-    @SuppressWarnings("java:S2222") // Lock released by releaseLock() once the guarded work completes
     public void acquireLock(String resourceName) {
         // 1. Intra-instance lock (thread-level within same JVM)
         ReentrantLock lock = intraInstanceLocks.computeIfAbsent(resourceName, k -> new ReentrantLock());

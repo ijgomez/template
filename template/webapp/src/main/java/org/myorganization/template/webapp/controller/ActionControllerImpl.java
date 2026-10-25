@@ -25,10 +25,6 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/api/v1/administration/security/actions")
-// S6856: the request mappings and @PathVariable binding are declared on the
-// ActionController interface; Spring 7 does not surface parameter annotations
-// from interface methods, so Sonar cannot resolve them here.
-@SuppressWarnings("java:S6856")
 public class ActionControllerImpl implements ActionController {
 
     private final ActionService actionService;

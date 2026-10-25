@@ -6,7 +6,6 @@ import { Router, ActivatedRoute, Params } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { InterfaceService } from '../../../../core/services/interface.service';
-import { AuthService } from '../../../../core/services/auth.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { DateService } from '../../../../core/services/date.service';
 import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
@@ -42,7 +41,6 @@ import {
 })
 export class InterfaceListComponent implements OnInit {
   private readonly interfaceService = inject(InterfaceService);
-  private readonly authService = inject(AuthService);
   private readonly notificationService = inject(NotificationService);
   private readonly translateService = inject(TranslateService);
   private readonly dateService = inject(DateService);

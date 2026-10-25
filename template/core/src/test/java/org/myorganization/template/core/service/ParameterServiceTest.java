@@ -524,7 +524,6 @@ class ParameterServiceTest {
             assertThat(predicate).isNotNull();
         }
 
-        @SuppressWarnings({"unchecked"})
         private Predicate evaluateSpecification(Specification<Parameter> spec) {
             Root<Parameter> root = mock(Root.class, RETURNS_DEEP_STUBS);
             CriteriaQuery<?> query = mock(CriteriaQuery.class);
