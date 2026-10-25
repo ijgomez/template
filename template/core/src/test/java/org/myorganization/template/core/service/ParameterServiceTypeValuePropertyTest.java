@@ -79,7 +79,7 @@ class ParameterServiceTypeValuePropertyTest {
                 .alpha()
                 .ofMinLength(3)
                 .ofMaxLength(20)
-                .map(String::toUpperCase);
+                .map(code -> code.toUpperCase());
 
         Arbitrary<String> descriptions = Arbitraries.strings()
                 .alpha()
@@ -104,7 +104,7 @@ class ParameterServiceTypeValuePropertyTest {
                 .alpha()
                 .ofMinLength(3)
                 .ofMaxLength(20)
-                .map(String::toUpperCase);
+                .map(code -> code.toUpperCase());
 
         Arbitrary<String> descriptions = Arbitraries.strings()
                 .alpha()

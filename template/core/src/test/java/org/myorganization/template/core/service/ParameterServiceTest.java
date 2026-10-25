@@ -499,7 +499,7 @@ class ParameterServiceTest {
             Pageable pageable = PageRequest.of(0, 10);
             Page<Parameter> page = new PageImpl<>(List.of(), pageable, 0);
 
-            ArgumentCaptor<Specification<Parameter>> specCaptor = ArgumentCaptor.forClass(Specification.class);
+            ArgumentCaptor<Specification<Parameter>> specCaptor = ArgumentCaptor.captor();
             when(parameterRepository.findAll(specCaptor.capture(), any(Pageable.class))).thenReturn(page);
 
             parameterService.findByCriteria(criteria, pageable);
@@ -515,7 +515,7 @@ class ParameterServiceTest {
             Pageable pageable = PageRequest.of(0, 10);
             Page<Parameter> page = new PageImpl<>(List.of(), pageable, 0);
 
-            ArgumentCaptor<Specification<Parameter>> specCaptor = ArgumentCaptor.forClass(Specification.class);
+            ArgumentCaptor<Specification<Parameter>> specCaptor = ArgumentCaptor.captor();
             when(parameterRepository.findAll(specCaptor.capture(), any(Pageable.class))).thenReturn(page);
 
             parameterService.findByCriteria(criteria, pageable);
@@ -524,6 +524,7 @@ class ParameterServiceTest {
             assertThat(predicate).isNotNull();
         }
 
+        @SuppressWarnings({"unchecked"})
         private Predicate evaluateSpecification(Specification<Parameter> spec) {
             Root<Parameter> root = mock(Root.class, RETURNS_DEEP_STUBS);
             CriteriaQuery<?> query = mock(CriteriaQuery.class);
@@ -531,7 +532,7 @@ class ParameterServiceTest {
             Predicate predicate = mock(Predicate.class);
             Path<Object> path = mock(Path.class);
 
-            lenient().when(root.get(anyString())).thenReturn((Path) path);
+            lenient().when(root.get(anyString())).thenReturn(path);
             lenient().when(cb.conjunction()).thenReturn(predicate);
             lenient().when(cb.lower(any())).thenReturn(mock(Expression.class));
             lenient().when(cb.like(any(), anyString())).thenReturn(predicate);

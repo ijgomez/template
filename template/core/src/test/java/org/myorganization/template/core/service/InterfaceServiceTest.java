@@ -10,6 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.myorganization.template.core.repository.InterfaceLogRepository;
@@ -167,7 +168,8 @@ class InterfaceServiceTest {
         InterfaceLogCriteria criteria = new InterfaceLogCriteria(null, null, null, null, null);
         Pageable pageable = PageRequest.of(0, 10);
 
-        when(interfaceLogRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(page);
+        when(interfaceLogRepository.findAll(ArgumentMatchers.<Specification<InterfaceLog>>any(), eq(pageable)))
+                .thenReturn(page);
 
         Page<InterfaceLogDTO> result = interfaceService.findLogsByCriteria(criteria, pageable);
 
@@ -187,7 +189,8 @@ class InterfaceServiceTest {
         Pageable pageable = PageRequest.of(0, 10);
         Page<InterfaceLog> emptyPage = new PageImpl<>(List.of(), pageable, 0);
 
-        when(interfaceLogRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(emptyPage);
+        when(interfaceLogRepository.findAll(ArgumentMatchers.<Specification<InterfaceLog>>any(), eq(pageable)))
+                .thenReturn(emptyPage);
 
         Page<InterfaceLogDTO> result = interfaceService.findLogsByCriteria(criteria, pageable);
 
@@ -203,7 +206,7 @@ class InterfaceServiceTest {
         InterfaceLogCriteria criteria = new InterfaceLogCriteria(null, null,
                 InterfaceOperationType.POST, null, InterfaceLogStatus.SUCCESS);
 
-        when(interfaceLogRepository.count(any(Specification.class))).thenReturn(42L);
+        when(interfaceLogRepository.count(ArgumentMatchers.<Specification<InterfaceLog>>any())).thenReturn(42L);
 
         long count = interfaceService.countLogsByCriteria(criteria);
 

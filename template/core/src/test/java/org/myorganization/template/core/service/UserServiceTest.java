@@ -9,6 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.myorganization.template.core.repository.ProfileRepository;
@@ -194,7 +195,8 @@ class UserServiceTest {
         User user = createUserEntity(1L, "john", "John", "Doe", null, null);
         Page<User> page = new PageImpl<>(List.of(user), pageable, 1);
 
-        when(userRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(page);
+        when(userRepository.findAll(ArgumentMatchers.<Specification<User>>any(), any(Pageable.class)))
+                .thenReturn(page);
 
         Page<UserDTO> result = userService.findByCriteria(criteria, pageable);
 
@@ -208,7 +210,7 @@ class UserServiceTest {
     @DisplayName("countByCriteria: returns count of matching users")
     void countByCriteria_returnsCount() {
         UserCriteria criteria = new UserCriteria(null, null, null, null, null);
-        when(userRepository.count(any(Specification.class))).thenReturn(5L);
+        when(userRepository.count(ArgumentMatchers.<Specification<User>>any())).thenReturn(5L);
 
         long count = userService.countByCriteria(criteria);
 
@@ -446,7 +448,7 @@ class UserServiceTest {
         User user = createUserEntity(1L, "john", "John", "Doe", "john@test.com", null);
         Page<User> page = new PageImpl<>(List.of(user), pageable, 1);
 
-        ArgumentCaptor<Specification<User>> specCaptor = ArgumentCaptor.forClass(Specification.class);
+        ArgumentCaptor<Specification<User>> specCaptor = ArgumentCaptor.captor();
         when(userRepository.findAll(specCaptor.capture(), any(Pageable.class))).thenReturn(page);
 
         Page<UserDTO> result = userService.findByCriteria(criteria, pageable);
@@ -466,7 +468,7 @@ class UserServiceTest {
         Pageable pageable = PageRequest.of(0, 10);
         Page<User> page = new PageImpl<>(List.of(), pageable, 0);
 
-        ArgumentCaptor<Specification<User>> specCaptor = ArgumentCaptor.forClass(Specification.class);
+        ArgumentCaptor<Specification<User>> specCaptor = ArgumentCaptor.captor();
         when(userRepository.findAll(specCaptor.capture(), any(Pageable.class))).thenReturn(page);
 
         userService.findByCriteria(criteria, pageable);
@@ -481,6 +483,7 @@ class UserServiceTest {
      * Runs the given {@link Specification} against a mocked JPA Criteria API. This forces the
      * lambdas inside {@code buildSpecification} to execute so their branches are covered.
      */
+    @SuppressWarnings({"unchecked"})
     private Predicate evaluateSpecification(Specification<User> spec) {
         Root<User> root = mock(Root.class, RETURNS_DEEP_STUBS);
         CriteriaQuery<?> query = mock(CriteriaQuery.class);
@@ -488,7 +491,7 @@ class UserServiceTest {
         Predicate predicate = mock(Predicate.class);
         Path<Object> path = mock(Path.class);
 
-        lenient().when(root.get(anyString())).thenReturn((Path) path);
+        lenient().when(root.get(anyString())).thenReturn(path);
         lenient().when(path.get(anyString())).thenReturn(path);
         lenient().when(cb.conjunction()).thenReturn(predicate);
         lenient().when(cb.lower(any())).thenReturn(mock(jakarta.persistence.criteria.Expression.class));

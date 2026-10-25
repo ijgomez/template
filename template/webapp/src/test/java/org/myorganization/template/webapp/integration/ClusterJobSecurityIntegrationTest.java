@@ -48,6 +48,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ClusterJobSecurityIntegrationTest {
 
     @Container
+    @SuppressWarnings("resource") // closed by the Testcontainers extension via @Container
     static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:18-alpine")
             .withDatabaseName("template_test")
             .withUsername("test")
@@ -195,7 +196,7 @@ class ClusterJobSecurityIntegrationTest {
         List<ClusterJob> jobs = clusterJobRepository.findByClusterNodeIdOrderByPriorityAsc(nodeId);
 
         assertThat(jobs).hasSize(3);
-        assertThat(jobs).extracting(ClusterJob::getPriority).containsExactly(1, 2, 3);
+        assertThat(jobs).extracting(job -> job.getPriority()).containsExactly(1, 2, 3);
     }
 
     private ClusterTask newTask(String name) {

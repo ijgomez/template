@@ -95,7 +95,9 @@ class ProfileServiceCrudRoundTripPropertyTest {
         assertThat(retrieved.actionIds()).containsExactlyInAnyOrderElementsOf(created.actionIds());
 
         // Reset mocks for next iteration
-        Mockito.reset(profileRepository, profile2ActionRepository, actionRepository);
+        Mockito.reset(profileRepository);
+        Mockito.reset(profile2ActionRepository);
+        Mockito.reset(actionRepository);
     }
 
     @Provide

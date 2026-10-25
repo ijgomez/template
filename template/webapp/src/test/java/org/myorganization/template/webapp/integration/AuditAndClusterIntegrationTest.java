@@ -11,7 +11,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import org.myorganization.template.core.repository.AuditLogRepository;
 import org.myorganization.template.core.repository.ClusterNodeRepository;
-import org.myorganization.template.core.repository.ClusterBlockRepository;
 import org.myorganization.template.core.service.UserService;
 import org.myorganization.template.core.service.ClusterService;
 import org.myorganization.template.domain.dto.UserDTO;
@@ -41,6 +40,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class AuditAndClusterIntegrationTest {
 
     @Container
+    @SuppressWarnings("resource") // closed by the Testcontainers extension via @Container
     static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:18-alpine")
             .withDatabaseName("template_test")
             .withUsername("test")
@@ -71,9 +71,6 @@ class AuditAndClusterIntegrationTest {
 
     @Autowired
     private ClusterNodeRepository clusterNodeRepository;
-
-    @Autowired
-    private ClusterBlockRepository clusterBlockRepository;
 
     // ─── Audit AOP Tests ─────────────────────────────────────────
 
@@ -155,7 +152,7 @@ class AuditAndClusterIntegrationTest {
         clusterService.setMaster(node.getId());
 
         List<ClusterNode> allNodes = clusterNodeRepository.findAll();
-        long masterCount = allNodes.stream().filter(ClusterNode::isMaster).count();
+        long masterCount = allNodes.stream().filter(clusterNode -> clusterNode.isMaster()).count();
         assertThat(masterCount).isLessThanOrEqualTo(1);
     }
 }

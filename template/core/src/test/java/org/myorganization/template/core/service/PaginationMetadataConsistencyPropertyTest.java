@@ -160,7 +160,7 @@ class PaginationMetadataConsistencyPropertyTest {
         Pageable pageable = PageRequest.of(scenario.pageNumber(), scenario.pageSize());
         Page<User> mockPage = new PageImpl<>(users, pageable, scenario.totalElements());
 
-        when(userRepository.findAll(any(Specification.class), any(Pageable.class)))
+        when(userRepository.findAll(Mockito.<Specification<User>>any(), any(Pageable.class)))
                 .thenReturn(mockPage);
     }
 

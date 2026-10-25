@@ -9,6 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.myorganization.template.core.repository.ActionRepository;
@@ -188,7 +189,8 @@ class ProfileServiceTest {
         Pageable pageable = PageRequest.of(0, 10);
         Page<Profile> page = new PageImpl<>(List.of(profile), pageable, 1);
 
-        when(profileRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(page);
+        when(profileRepository.findAll(ArgumentMatchers.<Specification<Profile>>any(), any(Pageable.class)))
+                .thenReturn(page);
         when(profile2ActionRepository.findByIdProfileId(1L)).thenReturn(Collections.emptyList());
 
         ProfileCriteria criteria = new ProfileCriteria("ADMIN");
@@ -203,7 +205,7 @@ class ProfileServiceTest {
     @Test
     @DisplayName("countByCriteria: returns count of matching profiles")
     void countByCriteria_returnsCount() {
-        when(profileRepository.count(any(Specification.class))).thenReturn(5L);
+        when(profileRepository.count(ArgumentMatchers.<Specification<Profile>>any())).thenReturn(5L);
 
         ProfileCriteria criteria = new ProfileCriteria("test");
         long count = profileService.countByCriteria(criteria);
@@ -352,7 +354,7 @@ class ProfileServiceTest {
         Pageable pageable = PageRequest.of(0, 10);
         Page<Profile> page = new PageImpl<>(Collections.emptyList(), pageable, 0);
 
-        ArgumentCaptor<Specification<Profile>> specCaptor = ArgumentCaptor.forClass(Specification.class);
+        ArgumentCaptor<Specification<Profile>> specCaptor = ArgumentCaptor.captor();
         when(profileRepository.findAll(specCaptor.capture(), any(Pageable.class))).thenReturn(page);
 
         profileService.findByCriteria(new ProfileCriteria("ADMIN"), pageable);
@@ -367,7 +369,7 @@ class ProfileServiceTest {
         Pageable pageable = PageRequest.of(0, 10);
         Page<Profile> page = new PageImpl<>(Collections.emptyList(), pageable, 0);
 
-        ArgumentCaptor<Specification<Profile>> specCaptor = ArgumentCaptor.forClass(Specification.class);
+        ArgumentCaptor<Specification<Profile>> specCaptor = ArgumentCaptor.captor();
         when(profileRepository.findAll(specCaptor.capture(), any(Pageable.class))).thenReturn(page);
 
         profileService.findByCriteria(new ProfileCriteria(null), pageable);
@@ -382,6 +384,7 @@ class ProfileServiceTest {
      * Runs the given {@link Specification} against a mocked JPA Criteria API so the lambdas inside
      * {@code buildSpecification} execute and their branches are covered.
      */
+    @SuppressWarnings({"unchecked"})
     private Predicate evaluateSpecification(Specification<Profile> spec) {
         Root<Profile> root = mock(Root.class, RETURNS_DEEP_STUBS);
         CriteriaQuery<?> query = mock(CriteriaQuery.class);
@@ -389,7 +392,7 @@ class ProfileServiceTest {
         Predicate predicate = mock(Predicate.class);
         Path<Object> path = mock(Path.class);
 
-        lenient().when(root.get(anyString())).thenReturn((Path) path);
+        lenient().when(root.get(anyString())).thenReturn(path);
         lenient().when(cb.conjunction()).thenReturn(predicate);
         lenient().when(cb.lower(any())).thenReturn(mock(Expression.class));
         lenient().when(cb.like(any(), anyString())).thenReturn(predicate);
