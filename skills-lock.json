@@ -1,4 +1,11 @@
 {
   "version": 1,
-  "skills": {}
+  "skills": {
+    "review-security": {
+      "source": "alizharb/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/review-security/SKILL.md",
+      "computedHash": "b0b1bd44398f81f391273016b1e9748665da0eea2fbd6ba3ba4dc29daecada10"
+    }
+  }
 }
