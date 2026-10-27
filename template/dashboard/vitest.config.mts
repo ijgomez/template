@@ -39,6 +39,12 @@ export default defineConfig({
     // Proyecto dedicado a ejecutar las historias de Storybook como tests de
     // componente. El builder de Angular ignora este bloque; solo lo usa el
     // addon de Storybook (UI) y el script `test-storybook`.
+    //
+    // OJO: no repetir aquí `browser.instances`. Este proyecto hereda el bloque
+    // `test.browser` de la raíz (extiende este mismo fichero de config) y
+    // Vitest fusiona los arrays concatenándolos, por lo que declarar de nuevo
+    // una instancia chromium generaría dos proyectos anidados con el mismo
+    // nombre (`storybook:<configDir> (chromium)`) y fallaría el arranque.
     projects: [
       {
         plugins: [
@@ -55,12 +61,6 @@ export default defineConfig({
         ],
         test: {
           name: 'storybook',
-          browser: {
-            enabled: true,
-            headless: true,
-            provider: playwright(),
-            instances: [{ browser: 'chromium' }],
-          },
         },
       },
     ],

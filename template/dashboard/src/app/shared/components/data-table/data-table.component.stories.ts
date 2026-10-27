@@ -144,7 +144,9 @@ export const WithSelection: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const alanRow = canvas.getByRole('row', { name: /alan turing/i });
+    // findBy* espera a que Angular vuelque la fila antes de comprobar; con
+    // getBy* (síncrono) la aserción podía fallar esporádicamente por timing.
+    const alanRow = await canvas.findByRole('row', { name: /alan turing/i });
     await expect(alanRow).toHaveAttribute('aria-selected', 'true');
   },
 };
@@ -164,7 +166,9 @@ export const Paginated: Story = {
     await expect(canvas.getByTestId('pagination-prev')).toBeInTheDocument();
     await expect(canvas.getByTestId('pagination-next')).toBeInTheDocument();
     await userEvent.click(canvas.getByTestId('pagination-prev'));
-    await userEvent.click(canvas.getByRole('link', { name: '3' }));
+    // Los números de página se renderizan como <button class="page-link">, por
+    // lo que su rol accesible es "button", no "link".
+    await userEvent.click(canvas.getByRole('button', { name: '3' }));
     await userEvent.click(canvas.getByTestId('pagination-next'));
   },
 };
