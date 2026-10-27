@@ -75,6 +75,22 @@
         <!-- Encoding -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <!--
+            SEC-04: valor por defecto SEGURO cuando no se activa ningún perfil Maven.
+            Un 'mvn package' sin '-P' usa la configuración de distribución ('dist')
+            en lugar de la de desarrollo ('local'). Los perfiles 'local'/'test'
+            sobreescriben esta propiedad.
+        -->
+        <spring.profiles.active>dist</spring.profiles.active>
+        <!--
+            Perfil de Spring Boot usado por 'mvn spring-boot:run'. A diferencia del
+            empaquetado (que por defecto es 'dist' por SEC-04), el arranque en local
+            debe usar 'local' sin necesidad de '-P', para no exigir variables de
+            entorno de distribución (DB_URL, JWT_SECRET...) en la máquina de
+            desarrollo. Cada perfil Maven ('local', 'dist', 'test') lo sobreescribe.
+        -->
+        <spring-boot.run.profiles>local</spring-boot.run.profiles>
     </properties>
 
     <!--
@@ -383,14 +399,18 @@
 
     <!-- Profiles -->
     <profiles>
-        <!-- Local: development environment -->
+        <!-- Local: development environment (debe activarse explícitamente con -Plocal) -->
+        <!--
+            SEC-04: el perfil 'local' NO se activa por defecto. Sin '-P' el build usa
+            el perfil seguro 'dist' (ver <properties>), de modo que nunca se genera un
+            artefacto con configuración de desarrollo (H2, secreto local, cookies sin
+            Secure y semillas locales).
+        -->
         <profile>
             <id>local</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <properties>
                 <spring.profiles.active>local</spring.profiles.active>
+                <spring-boot.run.profiles>local</spring-boot.run.profiles>
                 <angular.configuration>local</angular.configuration>
             </properties>
         </profile>
@@ -400,6 +420,7 @@
             <id>dist</id>
             <properties>
                 <spring.profiles.active>dist</spring.profiles.active>
+                <spring-boot.run.profiles>dist</spring-boot.run.profiles>
                 <angular.configuration>dist</angular.configuration>
             </properties>
         </profile>
@@ -409,6 +430,7 @@
             <id>test</id>
             <properties>
                 <spring.profiles.active>test</spring.profiles.active>
+                <spring-boot.run.profiles>test</spring-boot.run.profiles>
                 <angular.configuration>test</angular.configuration>
                 <!--
                     Ruta del informe de cobertura de Angular (Vitest, reporter 'lcovonly')

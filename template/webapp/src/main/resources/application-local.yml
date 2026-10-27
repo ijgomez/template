@@ -17,6 +17,11 @@ spring:
     driver-class-name: org.h2.Driver
 
   liquibase:
+    # SEC-01: changelog específico de desarrollo local. Incluye el esquema y las
+    # semillas comunes (db.changelog-master.xml) más las semillas locales
+    # ('seed-local-*'), que no forman parte del master y por tanto nunca se
+    # aplican en entornos desplegados.
+    change-log: classpath:db/changelog/db.changelog-local.xml
     contexts: local
 
   jpa:

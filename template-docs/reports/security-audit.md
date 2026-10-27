@@ -95,6 +95,7 @@ No se afirma que la aplicación sea segura: hay controles correctos, pero los ha
 - **Condiciones:** build sin especificar perfil de distribución.
 - **Recomendación:** eliminar `activeByDefault` y hacer obligatorio el perfil de despliegue (`-Pdist`), o hacer que el perfil por defecto sea seguro.
 - **Verificación:** inspeccionar `application.yml` empaquetado tras `mvn package` sin perfil y comprobar que `spring.profiles.active` no es `local`.
+- **Resolución (2026-10-27):** eliminado `<activeByDefault>` del perfil `local` y fijado `<spring.profiles.active>dist</spring.profiles.active>` como propiedad por defecto, por lo que el WAR empaquetado sin perfil declara `dist`. Para no penalizar el arranque en desarrollo, se fijó además `spring-boot.run.profiles` (propiedad del `spring-boot-maven-plugin`, solo afecta al goal `run`): `local` por defecto y `dist`/`test` en sus perfiles. Resultado: `mvn spring-boot:run` sin `-P` arranca en `local`; `mvn package`/`install` sin `-P` produce artefacto `dist`.
 
 ---
 
@@ -328,16 +329,16 @@ No se afirma que la aplicación sea segura: hay controles correctos, pero los ha
 
 ## 9. Seguimiento de aplicación de correcciones
 
-Progreso: **0 / 21 hallazgos aplicados**.
+Progreso: **2 / 21 hallazgos aplicados**.
 
 Estados posibles: `Pendiente` · `En curso` · `Aplicado` · `Descartado` (indicar motivo en Notas).
 
 | ID | Hallazgo | Severidad | Estado | Fecha | Notas / referencia |
 |---|---|---|---|---|---|
-| SEC-01 | Semillas locales aplicables en entornos desplegados | Crítica | Pendiente | | |
+| SEC-01 | Semillas locales aplicables en entornos desplegados | Crítica | Aplicado | 2026-10-27 | Semillas `seed-local-*` fuera del master; nuevo `db.changelog-local.xml` usado solo por perfil `local`; `spring.liquibase.contexts: ${LIQUIBASE_CONTEXTS:dist}` en `application-dist.yml`; test `DistributionSeedingIntegrationTest`. |
 | SEC-02 | `PUT` sobre acciones autorizado con `ACTION_READ` | Alta | Pendiente | | |
 | SEC-03 | `jwt.secret` con valor por defecto utilizable | Alta | Pendiente | | |
-| SEC-04 | Perfil Maven `local` activo por defecto | Alta | Pendiente | | |
+| SEC-04 | Perfil Maven `local` activo por defecto | Alta | Aplicado | 2026-10-27 | Eliminado `<activeByDefault>` del perfil `local`; default seguro `spring.profiles.active=dist` en `<properties>` raíz. Se añadió `spring-boot.run.profiles=local` por defecto (y `dist`/`test` en sus perfiles) para que `mvn spring-boot:run` sin `-P` siga arrancando en local sin exigir variables de distribución, manteniendo el empaquetado seguro. |
 | SEC-05 | Sin validación de entrada / *mass assignment* | Media | Pendiente | | |
 | SEC-06 | Sin limitación de intentos en el login | Media | Pendiente | | |
 | SEC-07 | Escalada de privilegios en el módulo de administración | Media | Pendiente | | |

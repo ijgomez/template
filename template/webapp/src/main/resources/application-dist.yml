@@ -13,6 +13,11 @@ spring:
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
+  liquibase:
+    # SEC-01: contexto seguro por defecto; excluye las semillas de desarrollo
+    # (changesets con context='local'). Sobreescribible con LIQUIBASE_CONTEXTS.
+    contexts: ${LIQUIBASE_CONTEXTS:dist}
+
   jpa:
     show-sql: false
     properties:
