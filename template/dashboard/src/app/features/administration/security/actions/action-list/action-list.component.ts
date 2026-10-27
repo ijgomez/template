@@ -74,7 +74,7 @@ export class ActionListComponent implements OnInit {
   readonly actionTypes = ['READ', 'WRITE', 'EXECUTE'];
 
   /** Whether the current user can edit actions */
-  readonly canEdit = computed(() => this.authService.hasAction('ACTION_READ'));
+  readonly canEdit = computed(() => this.authService.hasAction('ACTION_WRITE'));
 
   /** Snapshot of the active filter values. Drives automatic (debounced) search. */
   private readonly filterState = computed(() => ({

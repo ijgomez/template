@@ -48,6 +48,9 @@
     <!-- Semilla común (sin contexto: se aplica en todos los entornos) -->
     <include file="data/v1.0.0/20250115-seed-actions.xml" relativeToChangelogFile="true"/>
 
+    <!-- v2.0.0 - Seed data -->
+    <include file="data/v2.0.0/20261027-seed-action-write.xml" relativeToChangelogFile="true"/>
+
     <!--
         Las semillas de desarrollo local (data/v1.0.0/202501*-seed-local-*.xml) NO
         se incluyen aquí a propósito: solo se incluyen desde db.changelog-local.xml,

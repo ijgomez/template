@@ -110,7 +110,7 @@ classDiagram
 
 Permisos principales del módulo:
 
-- **Seguridad:** `USER_READ`, `USER_WRITE`, `PROFILE_READ`, `PROFILE_WRITE`, `ACTION_READ`.
+- **Seguridad:** `USER_READ`, `USER_WRITE`, `PROFILE_READ`, `PROFILE_WRITE`, `ACTION_READ`, `ACTION_WRITE`.
 - **Parámetros:** `SYSTEM_PARAMETER_READ`, `SYSTEM_PARAMETER_WRITE`.
 - **Auditoría:** `SYSTEM_LOG_READ`.
 - **Cluster:** `CLUSTER_NODE_READ`, `CLUSTER_NODE_WRITE`, `CLUSTER_LOCK_READ`.

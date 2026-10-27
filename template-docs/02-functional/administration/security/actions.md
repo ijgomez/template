@@ -5,7 +5,7 @@ Documentación funcional y técnica de la pantalla de gestión de permisos, dent
 - **Ruta frontend:** `/administration/security/actions`
 - **Componentes:** `ActionListComponent` (listado) y `ActionFormComponent` (detalle / edición)
 - **Endpoint backend base:** `/api/v1/administration/security/actions` (`ActionController`)
-- **Acceso:** requiere sesión y la acción `ACTION_READ`; la edición usa el mismo permiso `ACTION_READ`
+- **Acceso:** requiere sesión y la acción `ACTION_READ`; la edición requiere la acción `ACTION_WRITE`
 - **Restricción de negocio:** no está permitido crear ni eliminar acciones; el catálogo es semilla de base de datos y solo se actualiza su nombre, descripción y tipo
 
 ---
@@ -190,7 +190,7 @@ La diferencia frente a usuarios y perfiles es que acciones no tiene alta ni borr
 | Acción       | Condición de disponibilidad                    | `data-testid` |
 |--------------|------------------------------------------------|---------------|
 | Detalle      | Requiere una fila seleccionada                 | `btn-detail`  |
-| Editar       | Requiere `ACTION_READ` y una fila seleccionada | `btn-edit`    |
+| Editar       | Requiere `ACTION_WRITE` y una fila seleccionada | `btn-edit`    |
 | Exportar CSV | Siempre disponible                             | `btn-export`  |
 
 - La selección de una fila alterna (seleccionar / deseleccionar).
@@ -367,8 +367,8 @@ Ruta base: `/api/v1/administration/security/actions`.
 
 ### 3.7. Seguridad y permisos
 
-- La ruta está protegida por `SecurityConfig` con `hasAuthority("ACTION_READ")` para `GET` y `PUT` sobre `/api/v1/administration/security/actions/**`.
-- La pantalla se muestra dentro del módulo de administración con la acción `ACTION_READ`, y la edición se habilita bajo ese mismo permiso; no existe `ACTION_WRITE` para este módulo.
+- La ruta está protegida por `SecurityConfig`: `GET` sobre `/api/v1/administration/security/actions/**` exige `ACTION_READ` o `ACTION_WRITE`, y `PUT` exige `ACTION_WRITE`.
+- La pantalla se muestra dentro del módulo de administración con la acción `ACTION_READ`, y la edición se habilita con la acción `ACTION_WRITE`.
 - La operación de creación y borrado está bloqueada tanto a nivel de configuración (`denyAll()` en POST y DELETE) como de servicio (`MethodNotAllowedException`) para evitar inconsistencias en el catálogo.
 
 ### 3.8. Reglas de comportamiento relevantes
@@ -391,6 +391,7 @@ La suite actual incluye pruebas del servicio y del controlador que cubren la ló
 |---------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
 | `template/core/src/test/java/org/myorganization/template/core/service/ActionServiceTest.java`           | Validaciones de negocio, listado, filtro, detalle, actualización del nombre/descripcion/tipo y bloqueo de operaciones no permitidas |
 | `template/webapp/src/test/java/org/myorganization/template/webapp/controller/ActionControllerTest.java` | Respuestas HTTP de los endpoints, parámetros de consulta y gestión de errores del controlador                                       |
+| `template/webapp/src/test/java/org/myorganization/template/webapp/integration/ActionSecurityIntegrationTest.java` | Autorización real: `PUT` exige `ACTION_WRITE` (403 con solo `ACTION_READ`) y persiste el cambio; `GET` permitido con `ACTION_READ`/`ACTION_WRITE` |
 
 Estas pruebas cubren el comportamiento principal del módulo y complementan la validación E2E del flujo de usuario.
 

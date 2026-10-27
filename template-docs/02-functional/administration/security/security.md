@@ -67,6 +67,7 @@ Permisos principales del módulo:
 - `PROFILE_READ`: consulta de perfiles y su composición.
 - `PROFILE_WRITE`: creación, edición y eliminación de perfiles y su relación con acciones.
 - `ACTION_READ`: consulta del catálogo de acciones del sistema.
+- `ACTION_WRITE`: edición del catálogo de acciones del sistema.
 
 Estos permisos se usan para ocultar o mostrar rutas, menús y acciones en la capa frontend y para validar el acceso en la API con Spring Security. El acceso a perfiles y usuarios se realiza siempre sobre la identidad autenticada del usuario actual y el conjunto de acciones derivadas de sus perfiles.
 

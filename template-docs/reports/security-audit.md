@@ -329,14 +329,14 @@ No se afirma que la aplicación sea segura: hay controles correctos, pero los ha
 
 ## 9. Seguimiento de aplicación de correcciones
 
-Progreso: **2 / 21 hallazgos aplicados**.
+Progreso: **3 / 21 hallazgos aplicados**.
 
 Estados posibles: `Pendiente` · `En curso` · `Aplicado` · `Descartado` (indicar motivo en Notas).
 
 | ID | Hallazgo | Severidad | Estado | Fecha | Notas / referencia |
 |---|---|---|---|---|---|
 | SEC-01 | Semillas locales aplicables en entornos desplegados | Crítica | Aplicado | 2026-10-27 | Semillas `seed-local-*` fuera del master; nuevo `db.changelog-local.xml` usado solo por perfil `local`; `spring.liquibase.contexts: ${LIQUIBASE_CONTEXTS:dist}` en `application-dist.yml`; test `DistributionSeedingIntegrationTest`. |
-| SEC-02 | `PUT` sobre acciones autorizado con `ACTION_READ` | Alta | Pendiente | | |
+| SEC-02 | `PUT` sobre acciones autorizado con `ACTION_READ` | Alta | Aplicado | 2026-10-27 | Nueva acción `ACTION_WRITE` (changeset `20261027-seed-action-write`); `PUT` exige `ACTION_WRITE` y `GET` admite `ACTION_READ`/`ACTION_WRITE` en `SecurityConfig`; frontend `canEdit → ACTION_WRITE`; test `ActionSecurityIntegrationTest`. |
 | SEC-03 | `jwt.secret` con valor por defecto utilizable | Alta | Pendiente | | |
 | SEC-04 | Perfil Maven `local` activo por defecto | Alta | Aplicado | 2026-10-27 | Eliminado `<activeByDefault>` del perfil `local`; default seguro `spring.profiles.active=dist` en `<properties>` raíz. Se añadió `spring-boot.run.profiles=local` por defecto (y `dist`/`test` en sus perfiles) para que `mvn spring-boot:run` sin `-P` siga arrancando en local sin exigir variables de distribución, manteniendo el empaquetado seguro. |
 | SEC-05 | Sin validación de entrada / *mass assignment* | Media | Pendiente | | |

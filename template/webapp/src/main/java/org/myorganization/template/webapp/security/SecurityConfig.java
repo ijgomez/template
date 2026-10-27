@@ -75,6 +75,7 @@ public class SecurityConfig {
     private static final String AUTHORITY_PROFILE_READ = "PROFILE_READ";
     private static final String AUTHORITY_PROFILE_WRITE = "PROFILE_WRITE";
     private static final String AUTHORITY_ACTION_READ = "ACTION_READ";
+    private static final String AUTHORITY_ACTION_WRITE = "ACTION_WRITE";
     private static final String AUTHORITY_SYSTEM_PARAMETER_READ = "SYSTEM_PARAMETER_READ";
     private static final String AUTHORITY_SYSTEM_PARAMETER_WRITE = "SYSTEM_PARAMETER_WRITE";
     private static final String AUTHORITY_SYSTEM_LOG_READ = "SYSTEM_LOG_READ";
@@ -156,9 +157,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, PROFILES_ALL_PATH).hasAuthority(AUTHORITY_PROFILE_WRITE)
                         .requestMatchers(HttpMethod.DELETE, PROFILES_ALL_PATH).hasAuthority(AUTHORITY_PROFILE_WRITE)
 
-                        // Actions: read + update only (create/delete already denied above)
-                        .requestMatchers(HttpMethod.GET, ACTIONS_ALL_PATH).hasAuthority(AUTHORITY_ACTION_READ)
-                        .requestMatchers(HttpMethod.PUT, ACTIONS_ALL_PATH).hasAuthority(AUTHORITY_ACTION_READ)
+                        // Actions: read + write (create/delete already denied above)
+                        .requestMatchers(HttpMethod.GET, ACTIONS_ALL_PATH).hasAnyAuthority(AUTHORITY_ACTION_READ, AUTHORITY_ACTION_WRITE)
+                        .requestMatchers(HttpMethod.PUT, ACTIONS_ALL_PATH).hasAuthority(AUTHORITY_ACTION_WRITE)
 
                         // Parameters: read vs write
                         .requestMatchers(HttpMethod.GET, PARAMETERS_ALL_PATH)

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!--
+        SEC-02: nueva acción de escritura para el catálogo de acciones del sistema.
+        Hasta ahora la edición (PUT) se protegía con ACTION_READ, de modo que un
+        perfil de solo lectura podía modificar el catálogo de permisos. Se añade
+        ACTION_WRITE y el PUT pasa a exigirla (ver SecurityConfig).
+
+        Es un changeset NUEVO (no se modifica '20250115-seed-actions') porque ese
+        ya está aplicado en las bases de datos existentes y su checksum es
+        inmutable. Los perfiles semilla (local/test) reciben todas las acciones
+        mediante 'INSERT INTO profile2action SELECT ... FROM action', por lo que
+        obtienen ACTION_WRITE automáticamente.
+    -->
+
+    <changeSet id="20261027-seed-action-write" author="template" labels="v2.0.0">
+
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="action"/>
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM action WHERE code = 'ACTION_WRITE'</sqlCheck>
+        </preConditions>
+
+        <comment>Acción ACTION_WRITE para editar el catálogo de acciones (SEC-02)</comment>
+
+        <insert tableName="action">
+            <column name="id" valueNumeric="15"/>
+            <column name="code" value="ACTION_WRITE"/>
+            <column name="type" value="WRITE"/>
+            <column name="name" value="Editar acciones del sistema"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="action">
+                <where>code = 'ACTION_WRITE'</where>
+            </delete>
+        </rollback>
+
+    </changeSet>
+
+</databaseChangeLog>

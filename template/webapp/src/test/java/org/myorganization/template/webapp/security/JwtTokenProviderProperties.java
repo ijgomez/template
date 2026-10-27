@@ -25,6 +25,7 @@ class JwtTokenProviderProperties {
             "PROFILE_READ",
             "PROFILE_WRITE",
             "ACTION_READ",
+            "ACTION_WRITE",
             "SYSTEM_PARAMETER_READ",
             "SYSTEM_PARAMETER_WRITE",
             "SYSTEM_LOG_READ",

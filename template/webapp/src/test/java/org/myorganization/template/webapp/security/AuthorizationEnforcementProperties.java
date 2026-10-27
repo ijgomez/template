@@ -48,7 +48,7 @@ class AuthorizationEnforcementProperties {
     private static final List<String> ALL_ACTIONS = List.of(
             "DASHBOARD_READ", "REPORT_EXECUTE", "INTERFACES_READ",
             "USER_READ", "USER_WRITE", "PROFILE_READ", "PROFILE_WRITE",
-            "ACTION_READ", "SYSTEM_PARAMETER_READ", "SYSTEM_PARAMETER_WRITE",
+            "ACTION_READ", "ACTION_WRITE", "SYSTEM_PARAMETER_READ", "SYSTEM_PARAMETER_WRITE",
             "SYSTEM_LOG_READ", "CLUSTER_NODE_READ", "CLUSTER_NODE_WRITE",
             "CLUSTER_LOCK_READ"
     );
@@ -59,7 +59,7 @@ class AuthorizationEnforcementProperties {
             new EndpointActionMapping("/api/v1/administration/security/profiles", "GET",
                     Set.of("PROFILE_READ", "PROFILE_WRITE")),
             new EndpointActionMapping("/api/v1/administration/security/actions", "GET",
-                    Set.of("ACTION_READ")),
+                    Set.of("ACTION_READ", "ACTION_WRITE")),
             new EndpointActionMapping("/api/v1/administration/parameters", "GET",
                     Set.of("SYSTEM_PARAMETER_READ", "SYSTEM_PARAMETER_WRITE")),
             new EndpointActionMapping("/api/v1/administration/audit", "GET",
@@ -75,7 +75,7 @@ class AuthorizationEnforcementProperties {
     private static final Map<String, Set<String>> PATH_TO_REQUIRED_ACTIONS = Map.of(
             "/api/v1/administration/security/users", Set.of("USER_READ", "USER_WRITE"),
             "/api/v1/administration/security/profiles", Set.of("PROFILE_READ", "PROFILE_WRITE"),
-            "/api/v1/administration/security/actions", Set.of("ACTION_READ"),
+            "/api/v1/administration/security/actions", Set.of("ACTION_READ", "ACTION_WRITE"),
             "/api/v1/administration/parameters", Set.of("SYSTEM_PARAMETER_READ", "SYSTEM_PARAMETER_WRITE"),
             "/api/v1/administration/audit", Set.of("SYSTEM_LOG_READ"),
             "/api/v1/administration/cluster/nodes", Set.of("CLUSTER_NODE_READ", "CLUSTER_NODE_WRITE"),
