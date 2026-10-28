@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20261028-add-user-login-lock-fields" author="template" labels="v2.0.0">
+
+        <comment>Añade el estado de bloqueo por intentos fallidos de login (SEC-06)</comment>
+
+        <addColumn tableName="users">
+            <column name="failed_login_attempts" type="INT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <addColumn tableName="users">
+            <column name="locked_until" type="TIMESTAMP WITH TIME ZONE"/>
+        </addColumn>
+
+        <rollback>
+            <dropColumn tableName="users" columnName="failed_login_attempts"/>
+            <dropColumn tableName="users" columnName="locked_until"/>
+        </rollback>
+
+    </changeSet>
+
+</databaseChangeLog>

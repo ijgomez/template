@@ -112,6 +112,14 @@
       </div>
     }
 
+    <!-- Account temporarily locked alert (too many failed attempts) -->
+    @if (accountLockedError()) {
+      <div class="alert alert-warning mt-3 d-flex align-items-center" role="alert" data-testid="login-locked-alert">
+        <i class="bi bi-shield-lock-fill me-2" aria-hidden="true"></i>
+        <span>{{ 'login.locked' | translate }}</span>
+      </div>
+    }
+
     <!-- Language switcher -->
     <div class="text-center mt-4">
       <small class="text-muted">

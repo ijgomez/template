@@ -16,11 +16,14 @@ import org.myorganization.template.domain.entity.RefreshToken;
 import org.myorganization.template.domain.entity.User;
 import org.myorganization.template.domain.enums.AuditSection;
 import org.myorganization.template.domain.enums.OperationType;
+import org.myorganization.template.domain.exception.AccountLockedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.authentication.LockedException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,20 +40,23 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final LoginAttemptService loginAttemptService;
     private final TokenProvider tokenProvider;
     private final AuditService auditService;
     private final long refreshTokenExpiration;
 
     public AuthService(UserRepository userRepository,
             RefreshTokenRepository refreshTokenRepository,
-            PasswordEncoder passwordEncoder,
+            AuthenticationManager authenticationManager,
+            LoginAttemptService loginAttemptService,
             TokenProvider tokenProvider,
             AuditService auditService,
             @Value("${jwt.refresh-token-expiration:604800000}") long refreshTokenExpiration) {
         this.userRepository = userRepository;
         this.refreshTokenRepository = refreshTokenRepository;
-        this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+        this.loginAttemptService = loginAttemptService;
         this.tokenProvider = tokenProvider;
         this.auditService = auditService;
         this.refreshTokenExpiration = refreshTokenExpiration;
@@ -59,24 +65,40 @@ public class AuthService {
     /**
      * Authenticates a user with the provided credentials.
      * <p>
-     * Validates username and password, updates the user's lastAccess timestamp,
-     * generates a JWT access token and creates a persistent opaque refresh token.
+     * Delegates credential verification to Spring Security. Consecutive failures are
+     * counted per account and, once the configured threshold is reached, the account is
+     * locked for a configurable window: further attempts fail fast with
+     * {@link AccountLockedException} (HTTP 429) even if the password is correct.
      *
      * @param loginRequest the login credentials
      * @return a TokenResponse containing the access token and opaque refresh token
      * @throws BadCredentialsException if the credentials are invalid
+     * @throws AccountLockedException  if the account is temporarily locked
      */
     @Transactional
     public TokenResponse authenticate(LoginRequest loginRequest) {
-        User user = userRepository.findByUsernameWithProfileActions(loginRequest.username())
-                .orElseThrow(() -> new BadCredentialsException("Invalid username or password"));
+        String username = loginRequest.username();
 
-        if (!passwordEncoder.matches(loginRequest.password(), user.getPassword())) {
-            throw new BadCredentialsException("Invalid username or password");
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(username, loginRequest.password()));
+        } catch (LockedException ex) {
+            throw new AccountLockedException(
+                    "Account is temporarily locked due to repeated failed login attempts",
+                    Math.max(1L, loginAttemptService.remainingLockSeconds(username)));
+        } catch (BadCredentialsException ex) {
+            loginAttemptService.registerFailure(username);
+            throw ex;
         }
 
-        user.setLastAccess(OffsetDateTime.now(ZoneOffset.UTC));
-        userRepository.save(user);
+        User user = userRepository.findByUsernameWithProfileActions(username)
+                .orElseThrow(() -> new BadCredentialsException("Invalid username or password"));
+
+        // Clear the failure counter (committed in its own transaction) BEFORE touching the
+        // user row: a full entity save here would rewrite the login-lock columns with the
+        // stale values read by this transaction and undo the reset.
+        loginAttemptService.resetFailures(username);
+        userRepository.updateLastAccess(username, OffsetDateTime.now(ZoneOffset.UTC));
 
         String accessToken = generateAccessTokenForUser(user);
         String refreshToken = createRefreshToken(user);

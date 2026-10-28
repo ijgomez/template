@@ -119,6 +119,7 @@ No se afirma que la aplicación sea segura: hay controles correctos, pero los ha
 - **Escenario/impacto:** fuerza bruta/credential stuffing contra `/api/v1/auth/login`.
 - **Recomendación:** limitación de tasa por IP/usuario (Bucket4j, filtro propio o WAF), backoff progresivo y bloqueo temporal. Documentar si ya existe control en infraestructura.
 - **Verificación:** test de carga que verifique respuestas 429 tras N intentos fallidos.
+- **Resolución (2026-10-28):** bloqueo temporal de cuenta contabilizando los intentos fallidos por usuario y persistido en PostgreSQL (estado compartido por todos los nodos del clúster, a diferencia de un contador en memoria). Nuevos campos `users.failed_login_attempts` y `users.locked_until` (changeset `20261028-add-user-login-lock-fields.xml`) y `User.isLocked()`. `LoginAttemptService` (core) gestiona el contador y la ventana de bloqueo (`auth.login-attempts.max-attempts`, por defecto 5; `auth.login-attempts.lockout-minutes`, por defecto 15); un bloqueo expirado reinicia el contador, y los métodos de escritura usan `@Transactional(propagation = REQUIRES_NEW)` para que el intento se confirme aunque la transacción de login haga *rollback*. La verificación de credenciales se delega a Spring Security: nuevo `TemplateUserDetailsService` + `TemplateUserDetails` (donde `isAccountNonLocked()` refleja el estado de bloqueo) y beans `DaoAuthenticationProvider`/`AuthenticationManager` en `SecurityConfig`, de modo que una cuenta bloqueada provoca `LockedException` antes de comprobar la contraseña. `AuthService.authenticate` traduce esa excepción a `AccountLockedException`, que `GlobalExceptionHandler` mapea a **429 Too Many Requests** con cabecera `Retry-After` (segundos restantes); el login correcto limpia el contador. `lastAccess` se actualiza con una consulta dirigida (`UserRepository.updateLastAccess`) para no reescribir las columnas de bloqueo con valores obsoletos. Frontend Angular: el componente de login distingue el 429 y muestra un aviso de bloqueo temporal (`login.locked` en `es`/`en`). Verificado con `LoginAttemptServiceTest` (8 tests), `AuthServiceTest` (16 tests), `LoginLockoutIntegrationTest` (Testcontainers + PostgreSQL: umbral, bloqueo, `Retry-After` y reinicio tras login correcto) y `login.component.spec.ts`; `mvn -pl webapp -am test` en verde (197 tests en `webapp`) y `ng test` en verde (743 tests).
 
 #### SEC-07 — Escalada de privilegios dentro del módulo de administración (sin segregación de funciones)
 
@@ -273,7 +274,7 @@ No se afirma que la aplicación sea segura: hay controles correctos, pero los ha
 ## 5. Comprobaciones pendientes
 
 - **SEC-01 / SEC-04:** confirmar en el pipeline real cómo se externaliza la configuración (`template-properties`) y si se invoca `-Pdist` y `LIQUIBASE_CONTEXTS`. La ruta de código está confirmada; el efecto en runtime depende del despliegue.
-- **SEC-06:** comprobar si existe limitación de tasa a nivel de infraestructura (WildFly/nginx/WAF); no hay control en la aplicación.
+- **SEC-06:** el bloqueo temporal por usuario ya está implementado en la aplicación (SEC-06 aplicado); queda por confirmar si además existe limitación de tasa por IP a nivel de infraestructura (WildFly/nginx/WAF).
 - **SEC-09:** verificar en runtime la exposición efectiva de Actuator (`/template/actuator/*`).
 - **Dependencias Maven:** no se ha ejecutado escaneo de CVE (requiere NVD); recomendado OWASP `dependency-check`.
 - **CORS en producción:** verificar que `CORS_ALLOWED_ORIGINS` no incluye orígenes comodín ni de desarrollo.
@@ -322,15 +323,15 @@ No se afirma que la aplicación sea segura: hay controles correctos, pero los ha
 
 | Estado | Hallazgos |
 |---|---|
-| **Vulnerabilidades confirmadas** | SEC-01 (Crítica), SEC-02, SEC-03, SEC-04, SEC-05, SEC-07, SEC-08, SEC-10, SEC-11, SEC-12, SEC-13, SEC-14, SEC-15, SEC-16, SEC-19, SEC-20 |
-| **Posibles problemas pendientes de verificación** | SEC-06 (¿existe rate limiting en infraestructura?), SEC-09 (exposición real de Actuator en runtime), efecto en runtime de SEC-01/SEC-04 según pipeline, CVE de dependencias Maven (sin escanear), CORS real en producción |
+| **Vulnerabilidades confirmadas** | SEC-01 (Crítica), SEC-02, SEC-03, SEC-04, SEC-05, SEC-06, SEC-07, SEC-08, SEC-10, SEC-11, SEC-12, SEC-13, SEC-14, SEC-15, SEC-16, SEC-19, SEC-20 |
+| **Posibles problemas pendientes de verificación** | SEC-09 (exposición real de Actuator en runtime), rate limiting por IP en infraestructura (complementa a SEC-06), efecto en runtime de SEC-01/SEC-04 según pipeline, CVE de dependencias Maven (sin escanear), CORS real en producción |
 | **Mejoras preventivas** | SEC-17 (iss/aud/algoritmo JWT), SEC-18 (cabeceras de seguridad/CSP), SEC-21 (actualizar `@angular/build`), escaneo de secretos y de dependencias en CI, segregación de funciones |
 
 ---
 
 ## 9. Seguimiento de aplicación de correcciones
 
-Progreso: **5 / 21 hallazgos aplicados**.
+Progreso: **6 / 21 hallazgos aplicados**.
 
 Estados posibles: `Pendiente` · `En curso` · `Aplicado` · `Descartado` (indicar motivo en Notas).
 
@@ -341,7 +342,7 @@ Estados posibles: `Pendiente` · `En curso` · `Aplicado` · `Descartado` (indic
 | SEC-03 | `jwt.secret` con valor por defecto utilizable | Alta | Aplicado | 2026-10-27 | Eliminado el secreto por defecto del repositorio: `application.yml` pasa a `jwt.secret: ${JWT_SECRET}` (obligatorio). `JwtTokenProvider` valida la clave al arrancar y falla con `IllegalStateException` si está vacía, es el valor por defecto histórico o mide menos de 32 bytes (HS256). Tests de validación en `JwtTokenProviderTest` (13 tests); `mvn -pl webapp -am test` en verde (187 tests). |
 | SEC-04 | Perfil Maven `local` activo por defecto | Alta | Aplicado | 2026-10-27 | Eliminado `<activeByDefault>` del perfil `local`; default seguro `spring.profiles.active=dist` en `<properties>` raíz. Se añadió `spring-boot.run.profiles=local` por defecto (y `dist`/`test` en sus perfiles) para que `mvn spring-boot:run` sin `-P` siga arrancando en local sin exigir variables de distribución, manteniendo el empaquetado seguro. |
 | SEC-05 | Sin validación de entrada / *mass assignment* | Media | Aplicado | 2026-10-28 | `spring-boot-starter-validation` en `webapp` (antes `@Valid` era un no-op); constraints en `UserDTO`/`ProfileDTO`/`ParameterDTO`/`ActionDTO`; `@Valid` en `UserController.update`/`updateMyProfile` y `ActionControllerImpl.update`; grupo `ValidationGroups.Create` para credenciales obligatorias solo en alta; `MethodArgumentNotValidException` → 400 en `GlobalExceptionHandler`; guard en `UserService.create`; test `InputValidationIntegrationTest` (Testcontainers). |
-| SEC-06 | Sin limitación de intentos en el login | Media | Pendiente | | |
+| SEC-06 | Sin limitación de intentos en el login | Media | Aplicado | 2026-10-28 | Bloqueo temporal de cuenta con contador persistido en PostgreSQL (`users.failed_login_attempts`/`locked_until`, changeset `20261028-add-user-login-lock-fields`); `LoginAttemptService` (core, `REQUIRES_NEW`) y verificación vía Spring Security (`TemplateUserDetails.isAccountNonLocked()` → `DaoAuthenticationProvider` → `LockedException` → `AccountLockedException` → 429 + `Retry-After`). Frontend con aviso de bloqueo temporal. Tests: `LoginAttemptServiceTest`, `AuthServiceTest`, `LoginLockoutIntegrationTest`, `login.component.spec.ts`. |
 | SEC-07 | Escalada de privilegios en el módulo de administración | Media | Pendiente | | |
 | SEC-08 | Sin control de acceso por usuario en endpoints de informes | Media | Pendiente | | |
 | SEC-09 | Actuator en el WAR y accesible públicamente | Media | Pendiente | | |
@@ -363,7 +364,7 @@ Estados posibles: `Pendiente` · `En curso` · `Aplicado` · `Descartado` (indic
 | ID | Tarea | Estado | Fecha | Notas / referencia |
 |---|---|---|---|---|
 | CHK-01 | Confirmar `LIQUIBASE_CONTEXTS` y uso de `-Pdist` en el pipeline | Pendiente | | Afecta a SEC-01/SEC-04 |
-| CHK-02 | Verificar rate limiting a nivel de infraestructura (WildFly/nginx/WAF) | Pendiente | | Afecta a SEC-06 |
+| CHK-02 | Verificar rate limiting por IP a nivel de infraestructura (WildFly/nginx/WAF) | Pendiente | | Complementa a SEC-06 (bloqueo por cuenta ya aplicado en la aplicación) |
 | CHK-03 | Verificar exposición real de Actuator en runtime | Pendiente | | Afecta a SEC-09 |
 | CHK-04 | Escaneo de CVE en dependencias Maven (OWASP dependency-check) | Pendiente | | |
 | CHK-05 | Verificar `CORS_ALLOWED_ORIGINS` en producción | Pendiente | | |

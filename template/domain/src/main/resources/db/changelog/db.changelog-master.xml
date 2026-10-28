@@ -44,6 +44,7 @@
 
     <!-- v2.0.0 - Schema migrations -->
     <include file="migrations/v2.0.0/20260817-users-nullable-optional-fields.xml" relativeToChangelogFile="true"/>
+    <include file="migrations/v2.0.0/20261028-add-user-login-lock-fields.xml" relativeToChangelogFile="true"/>
 
     <!-- Semilla común (sin contexto: se aplica en todos los entornos) -->
     <include file="data/v1.0.0/20250115-seed-actions.xml" relativeToChangelogFile="true"/>

@@ -72,7 +72,8 @@
     "password.hide": "Ocultar contraseña",
     "remember": "Recordarme",
     "submit": "Iniciar sesión",
-    "error": "Credenciales incorrectas. Inténtalo de nuevo."
+    "error": "Credenciales incorrectas. Inténtalo de nuevo.",
+    "locked": "Cuenta bloqueada temporalmente por demasiados intentos fallidos. Inténtalo de nuevo más tarde."
   },
   "notification": {
     "progress": "Procesando...",

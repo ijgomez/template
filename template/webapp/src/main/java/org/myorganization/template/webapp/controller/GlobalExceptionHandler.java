@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.stream.Collectors;
 
 import org.myorganization.template.domain.dto.ErrorResponse;
+import org.myorganization.template.domain.exception.AccountLockedException;
 import org.myorganization.template.domain.exception.AccessDeniedException;
 import org.myorganization.template.domain.exception.AuthenticationException;
 import org.myorganization.template.domain.exception.DuplicateEntityException;
@@ -14,6 +15,7 @@ import org.myorganization.template.domain.exception.ReportExportException;
 import org.myorganization.template.domain.exception.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -141,6 +143,20 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Handles temporarily locked accounts (too many failed login attempts).
+     *
+     * @param ex      the exception
+     * @param request the HTTP request
+     * @return 429 Too Many Requests with a {@code Retry-After} header
+     */
+    @ExceptionHandler(AccountLockedException.class)
+    public ResponseEntity<ErrorResponse> handleAccountLocked(AccountLockedException ex, HttpServletRequest request) {
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                .header(HttpHeaders.RETRY_AFTER, Long.toString(ex.getRetryAfterSeconds()))
+                .body(buildErrorResponse(HttpStatus.TOO_MANY_REQUESTS, ex.getMessage(), request));
+    }
+
+    /**
      * Handles method not allowed exceptions (disallowed operations).
      *
      * @param ex      the exception
@@ -166,14 +182,17 @@ public class GlobalExceptionHandler {
     }
 
     private ResponseEntity<ErrorResponse> buildResponse(HttpStatus status, String message, HttpServletRequest request) {
-        ErrorResponse errorResponse = new ErrorResponse(
+        return ResponseEntity.status(status).body(buildErrorResponse(status, message, request));
+    }
+
+    private ErrorResponse buildErrorResponse(HttpStatus status, String message, HttpServletRequest request) {
+        return new ErrorResponse(
                 Instant.now(),
                 status.value(),
                 status.getReasonPhrase(),
                 message,
                 request.getRequestURI()
         );
-        return ResponseEntity.status(status).body(errorResponse);
     }
 
 }

@@ -23,14 +23,20 @@ import org.myorganization.template.domain.entity.Profile;
 import org.myorganization.template.domain.entity.Profile2Action;
 import org.myorganization.template.domain.entity.RefreshToken;
 import org.myorganization.template.domain.entity.User;
+import org.myorganization.template.domain.exception.AccountLockedException;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.authentication.LockedException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -45,7 +51,10 @@ class AuthServiceTest {
     private RefreshTokenRepository refreshTokenRepository;
 
     @Mock
-    private PasswordEncoder passwordEncoder;
+    private AuthenticationManager authenticationManager;
+
+    @Mock
+    private LoginAttemptService loginAttemptService;
 
     @Mock
     private TokenProvider tokenProvider;
@@ -60,7 +69,8 @@ class AuthServiceTest {
     @BeforeEach
     void setUp() {
         authService = new AuthService(userRepository, refreshTokenRepository,
-                passwordEncoder, tokenProvider, auditService, REFRESH_TOKEN_EXPIRATION);
+                authenticationManager, loginAttemptService, tokenProvider, auditService,
+                REFRESH_TOKEN_EXPIRATION);
     }
 
     // ========== authenticate ==========
@@ -81,9 +91,9 @@ class AuthServiceTest {
         user.setPassword("$2a$12$hashedpassword");
         user.setProfile(profile);
 
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                .thenReturn(new UsernamePasswordAuthenticationToken("admin", null, List.of()));
         when(userRepository.findByUsernameWithProfileActions("admin")).thenReturn(Optional.of(user));
-        when(passwordEncoder.matches("secret", "$2a$12$hashedpassword")).thenReturn(true);
-        when(userRepository.save(any(User.class))).thenReturn(user);
         when(tokenProvider.generateAccessToken("admin", "ADMIN", List.of("USER_READ")))
                 .thenReturn("access-token");
         when(refreshTokenRepository.save(any(RefreshToken.class))).thenAnswer(inv -> inv.getArgument(0));
@@ -93,8 +103,12 @@ class AuthServiceTest {
 
         assertThat(response.accessToken()).isEqualTo("access-token");
         assertThat(response.refreshToken()).isNotNull().isNotEmpty();
-        assertThat(user.getLastAccess()).isNotNull();
-        verify(userRepository).save(user);
+
+        // A successful login clears any previous failure counter and touches last access
+        // with a targeted update (never a full save, which would clobber the lock columns)
+        verify(loginAttemptService).resetFailures("admin");
+        verify(userRepository).updateLastAccess(eq("admin"), any(OffsetDateTime.class));
+        verify(userRepository, never()).save(any());
 
         // Verify refresh token was persisted
         ArgumentCaptor<RefreshToken> captor = ArgumentCaptor.forClass(RefreshToken.class);
@@ -107,29 +121,10 @@ class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("authenticate: invalid username throws BadCredentialsException")
-    void authenticate_invalidUsername_throwsBadCredentials() {
-        when(userRepository.findByUsernameWithProfileActions("unknown")).thenReturn(Optional.empty());
-
-        LoginRequest request = new LoginRequest("unknown", "password");
-
-        assertThatThrownBy(() -> authService.authenticate(request))
-                .isInstanceOf(BadCredentialsException.class)
-                .hasMessage("Invalid username or password");
-
-        verify(tokenProvider, never()).generateAccessToken(anyString(), anyString(), anyList());
-        verify(refreshTokenRepository, never()).save(any());
-    }
-
-    @Test
-    @DisplayName("authenticate: invalid password throws BadCredentialsException")
-    void authenticate_invalidPassword_throwsBadCredentials() {
-        User user = new User();
-        user.setUsername("admin");
-        user.setPassword("$2a$12$hashedpassword");
-
-        when(userRepository.findByUsernameWithProfileActions("admin")).thenReturn(Optional.of(user));
-        when(passwordEncoder.matches("wrong", "$2a$12$hashedpassword")).thenReturn(false);
+    @DisplayName("authenticate: invalid credentials throws BadCredentialsException and registers the failure")
+    void authenticate_invalidCredentials_throwsBadCredentialsAndRegistersFailure() {
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                .thenThrow(new BadCredentialsException("Invalid username or password"));
 
         LoginRequest request = new LoginRequest("admin", "wrong");
 
@@ -137,9 +132,47 @@ class AuthServiceTest {
                 .isInstanceOf(BadCredentialsException.class)
                 .hasMessage("Invalid username or password");
 
+        verify(loginAttemptService).registerFailure("admin");
+        verify(loginAttemptService, never()).resetFailures(anyString());
         verify(userRepository, never()).save(any());
         verify(tokenProvider, never()).generateAccessToken(anyString(), anyString(), anyList());
         verify(refreshTokenRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("authenticate: locked account throws AccountLockedException with retry-after seconds")
+    void authenticate_lockedAccount_throwsAccountLockedWithRetryAfter() {
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                .thenThrow(new LockedException("User account is locked"));
+        when(loginAttemptService.remainingLockSeconds("admin")).thenReturn(540L);
+
+        LoginRequest request = new LoginRequest("admin", "correct-password");
+
+        AccountLockedException ex = catchThrowableOfType(
+                () -> authService.authenticate(request), AccountLockedException.class);
+
+        assertThat(ex).isNotNull();
+        assertThat(ex.getRetryAfterSeconds()).isEqualTo(540L);
+        // A locked account does not count as a new failure nor resets the counter
+        verify(loginAttemptService, never()).registerFailure(anyString());
+        verify(loginAttemptService, never()).resetFailures(anyString());
+        verify(refreshTokenRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("authenticate: locked account with expired/lost lock reports at least one second")
+    void authenticate_lockedAccountWithoutRemainingTime_reportsMinimumRetryAfter() {
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                .thenThrow(new LockedException("User account is locked"));
+        when(loginAttemptService.remainingLockSeconds("admin")).thenReturn(0L);
+
+        LoginRequest request = new LoginRequest("admin", "secret");
+
+        AccountLockedException ex = catchThrowableOfType(
+                () -> authService.authenticate(request), AccountLockedException.class);
+
+        assertThat(ex).isNotNull();
+        assertThat(ex.getRetryAfterSeconds()).isEqualTo(1L);
     }
 
     @Test
@@ -150,9 +183,9 @@ class AuthServiceTest {
         user.setPassword("$2a$12$hashed");
         user.setProfile(null);
 
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                .thenReturn(new UsernamePasswordAuthenticationToken("basic", null, List.of()));
         when(userRepository.findByUsernameWithProfileActions("basic")).thenReturn(Optional.of(user));
-        when(passwordEncoder.matches("pass", "$2a$12$hashed")).thenReturn(true);
-        when(userRepository.save(any(User.class))).thenReturn(user);
         when(tokenProvider.generateAccessToken("basic", "", Collections.emptyList()))
                 .thenReturn("access");
         when(refreshTokenRepository.save(any(RefreshToken.class))).thenAnswer(inv -> inv.getArgument(0));
@@ -162,6 +195,22 @@ class AuthServiceTest {
 
         assertThat(response.accessToken()).isEqualTo("access");
         assertThat(response.refreshToken()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("authenticate: authentication success but missing user row throws BadCredentialsException")
+    void authenticate_authenticatedButUserMissing_throwsBadCredentials() {
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                .thenReturn(new UsernamePasswordAuthenticationToken("ghost", null, List.of()));
+        when(userRepository.findByUsernameWithProfileActions("ghost")).thenReturn(Optional.empty());
+
+        LoginRequest request = new LoginRequest("ghost", "secret");
+
+        assertThatThrownBy(() -> authService.authenticate(request))
+                .isInstanceOf(BadCredentialsException.class)
+                .hasMessage("Invalid username or password");
+
+        verify(refreshTokenRepository, never()).save(any());
     }
 
     // ========== refreshToken ==========
@@ -349,9 +398,10 @@ class AuthServiceTest {
         user.setPassword("$2a$12$hashed");
         user.setProfile(profile);
 
+        Authentication authentication = new UsernamePasswordAuthenticationToken("admin", null, List.of());
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                .thenReturn(authentication);
         when(userRepository.findByUsernameWithProfileActions("admin")).thenReturn(Optional.of(user));
-        when(passwordEncoder.matches("pass", "$2a$12$hashed")).thenReturn(true);
-        when(userRepository.save(any(User.class))).thenReturn(user);
         when(tokenProvider.generateAccessToken(anyString(), anyString(), anyList())).thenReturn("token");
         when(refreshTokenRepository.save(any(RefreshToken.class))).thenAnswer(inv -> inv.getArgument(0));
 

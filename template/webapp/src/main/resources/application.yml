@@ -50,6 +50,11 @@ auth:
     max-age-seconds: ${AUTH_COOKIE_MAX_AGE:604800}
     secure: ${AUTH_COOKIE_SECURE:true}
     same-site: ${AUTH_COOKIE_SAME_SITE:Strict}
+  # SEC-06: account lockout after consecutive failed logins. The state is stored in
+  # the users table, so every cluster node shares the same counter and lock window.
+  login-attempts:
+    max-attempts: ${AUTH_LOGIN_MAX_ATTEMPTS:5}
+    lockout-minutes: ${AUTH_LOGIN_LOCKOUT_MINUTES:15}
 
 # CORS configuration
 cors:

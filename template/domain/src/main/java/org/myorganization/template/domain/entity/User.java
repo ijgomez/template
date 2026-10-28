@@ -1,6 +1,7 @@
 package org.myorganization.template.domain.entity;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +37,12 @@ public class User extends BaseEntity {
 
     @Column(name = "last_access")
     private OffsetDateTime lastAccess;
+
+    @Column(name = "failed_login_attempts", nullable = false)
+    private int failedLoginAttempts;
+
+    @Column(name = "locked_until")
+    private OffsetDateTime lockedUntil;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_id")
@@ -90,6 +97,34 @@ public class User extends BaseEntity {
 
     public void setLastAccess(OffsetDateTime lastAccess) {
         this.lastAccess = lastAccess;
+    }
+
+    public int getFailedLoginAttempts() {
+        return failedLoginAttempts;
+    }
+
+    public void setFailedLoginAttempts(int failedLoginAttempts) {
+        this.failedLoginAttempts = failedLoginAttempts;
+    }
+
+    public OffsetDateTime getLockedUntil() {
+        return lockedUntil;
+    }
+
+    public void setLockedUntil(OffsetDateTime lockedUntil) {
+        this.lockedUntil = lockedUntil;
+    }
+
+    /**
+     * Indicates whether the account is currently locked due to repeated failed logins.
+     * <p>
+     * An elapsed lock is treated as not locked, so the account becomes usable again
+     * automatically once the lock window expires.
+     *
+     * @return true if the account is locked at this moment
+     */
+    public boolean isLocked() {
+        return lockedUntil != null && lockedUntil.isAfter(OffsetDateTime.now(ZoneOffset.UTC));
     }
 
     public Profile getProfile() {

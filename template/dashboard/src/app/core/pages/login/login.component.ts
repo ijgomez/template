@@ -1,4 +1,5 @@
 import { Component, ChangeDetectionStrategy, inject, signal, computed } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -42,6 +43,7 @@ export class LoginComponent {
 
   readonly isLoading = signal(false);
   readonly loginError = signal(false);
+  readonly accountLockedError = signal(false);
   readonly showPassword = signal(false);
 
   readonly supportedLanguages = this.i18nService.getSupportedLanguages();
@@ -63,6 +65,7 @@ export class LoginComponent {
 
     this.isLoading.set(true);
     this.loginError.set(false);
+    this.accountLockedError.set(false);
 
     const { username, password } = this.loginForm.getRawValue();
 
@@ -71,9 +74,15 @@ export class LoginComponent {
         this.isLoading.set(false);
         this.router.navigate(['/dashboard']);
       },
-      error: () => {
+      error: (error: HttpErrorResponse) => {
         this.isLoading.set(false);
-        this.loginError.set(true);
+        // 429 Too Many Requests: the account is temporarily locked after too many
+        // failed attempts (SEC-06); 401 means the credentials are simply wrong.
+        if (error.status === 429) {
+          this.accountLockedError.set(true);
+        } else {
+          this.loginError.set(true);
+        }
       },
     });
   }

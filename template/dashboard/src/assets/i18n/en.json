@@ -72,7 +72,8 @@
     "password.hide": "Hide password",
     "remember": "Remember me",
     "submit": "Sign In",
-    "error": "Invalid credentials. Please try again."
+    "error": "Invalid credentials. Please try again.",
+    "locked": "Account temporarily locked due to too many failed attempts. Please try again later."
   },
   "notification": {
     "progress": "Processing...",
