@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Unit tests for {@link JwtTokenProvider}.
@@ -13,6 +14,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 class JwtTokenProviderTest {
 
     private static final String SECRET = "test-secret-key-that-is-at-least-32-characters-long";
+    private static final String INSECURE_DEFAULT_SECRET =
+            "default-secret-key-for-development-only-change-in-production-min-32-chars";
     private static final long ACCESS_TOKEN_EXPIRATION = 900_000L;
 
     private JwtTokenProvider jwtTokenProvider;
@@ -20,6 +23,29 @@ class JwtTokenProviderTest {
     @BeforeEach
     void setUp() {
         jwtTokenProvider = new JwtTokenProvider(SECRET, ACCESS_TOKEN_EXPIRATION);
+    }
+
+    @Test
+    void constructor_shouldFailFastWhenSecretIsBlank() {
+        // SEC-03: sin JWT_SECRET el arranque debe fallar, no firmar con una clave vacía
+        assertThatThrownBy(() -> new JwtTokenProvider("   ", ACCESS_TOKEN_EXPIRATION))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("jwt.secret");
+    }
+
+    @Test
+    void constructor_shouldFailFastWhenSecretIsTheRepositoryDefault() {
+        // SEC-03: el secreto por defecto del repositorio es público y no debe ser utilizable
+        assertThatThrownBy(() -> new JwtTokenProvider(INSECURE_DEFAULT_SECRET, ACCESS_TOKEN_EXPIRATION))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("jwt.secret");
+    }
+
+    @Test
+    void constructor_shouldFailFastWhenSecretIsShorterThan256Bits() {
+        assertThatThrownBy(() -> new JwtTokenProvider("short-secret", ACCESS_TOKEN_EXPIRATION))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("jwt.secret");
     }
 
     @Test

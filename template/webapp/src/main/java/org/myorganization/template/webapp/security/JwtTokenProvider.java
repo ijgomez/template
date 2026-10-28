@@ -1,5 +1,6 @@
 package org.myorganization.template.webapp.security;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
@@ -34,14 +35,47 @@ public class JwtTokenProvider implements TokenProvider {
     private static final String TOKEN_TYPE_ACCESS = "access";
     private static final String TOKEN_TYPE_REFRESH = "refresh";
 
+    /**
+     * Default signing secret shipped by previous revisions of the repository. It is public
+     * knowledge, so anyone could forge valid tokens with it; using it is therefore rejected.
+     */
+    private static final String INSECURE_DEFAULT_SECRET =
+            "default-secret-key-for-development-only-change-in-production-min-32-chars";
+
+    /** HS256 requires an HMAC key of at least 256 bits. */
+    private static final int MIN_SECRET_BYTES = 32;
+
     private final SecretKey secretKey;
     private final long accessTokenExpiration;
 
     public JwtTokenProvider(
             @Value("${jwt.secret}") String secret,
             @Value("${jwt.access-token-expiration:900000}") long accessTokenExpiration) {
-        this.secretKey = Keys.hmacShaKeyFor(secret.getBytes());
+        this.secretKey = Keys.hmacShaKeyFor(validateSecret(secret));
         this.accessTokenExpiration = accessTokenExpiration;
+    }
+
+    /**
+     * Validates the configured signing secret, so the application fails fast at startup
+     * instead of silently signing tokens with an insecure key.
+     *
+     * @param secret raw value read from the {@code jwt.secret} property
+     * @return the secret bytes to use as HMAC key
+     * @throws IllegalStateException if the secret is missing, too short or the known default
+     */
+    private static byte[] validateSecret(String secret) {
+        if (secret == null || secret.isBlank() || INSECURE_DEFAULT_SECRET.equals(secret)) {
+            throw new IllegalStateException(
+                    "Insecure 'jwt.secret': provide your own value through the JWT_SECRET environment variable. "
+                            + "The default secret shipped in the repository is not allowed.");
+        }
+        byte[] secretBytes = secret.getBytes(StandardCharsets.UTF_8);
+        if (secretBytes.length < MIN_SECRET_BYTES) {
+            throw new IllegalStateException(
+                    "Invalid 'jwt.secret': it must be at least " + MIN_SECRET_BYTES
+                            + " bytes long to be usable as an HS256 key.");
+        }
+        return secretBytes;
     }
 
     /**

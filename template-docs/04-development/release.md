@@ -138,7 +138,7 @@ El perfil `dist` externaliza toda la configuración sensible mediante variables 
 | `DB_URL`                       | URL JDBC de conexión a PostgreSQL | Sí             |
 | `DB_USERNAME`                  | Usuario de base de datos          | Sí             |
 | `DB_PASSWORD`                  | Contraseña de base de datos       | Sí             |
-| `JWT_SECRET`                   | Clave para firmar tokens JWT      | Sí             |
+| `JWT_SECRET`                   | Clave para firmar tokens JWT (mín. 32 caracteres) | Sí             |
 | `JWT_ACCESS_TOKEN_EXPIRATION`  | Expiración del access token (ms)  | No (900000)    |
 | `JWT_REFRESH_TOKEN_EXPIRATION` | Expiración del refresh token (ms) | No (604800000) |
 | `CORS_ALLOWED_ORIGINS`         | Orígenes CORS permitidos          | Sí             |
