@@ -1,6 +1,7 @@
 package org.myorganization.template.webapp.controller;
 
 import java.time.Instant;
+import java.util.stream.Collectors;
 
 import org.myorganization.template.domain.dto.ErrorResponse;
 import org.myorganization.template.domain.exception.AccessDeniedException;
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -78,6 +80,28 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<ErrorResponse> handleValidation(ValidationException ex, HttpServletRequest request) {
         return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
+    }
+
+    /**
+     * Handles bean validation failures on request bodies ({@code @Valid}).
+     * <p>
+     * Aggregates the field errors into a single message so invalid payloads
+     * consistently return 400 Bad Request instead of surfacing as 500 errors.
+     *
+     * @param ex      the exception
+     * @param request the HTTP request
+     * @return 400 Bad Request
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+                                                                     HttpServletRequest request) {
+        String message = ex.getBindingResult().getFieldErrors().stream()
+                .map(fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage())
+                .collect(Collectors.joining("; "));
+        if (message.isBlank()) {
+            message = "Invalid request payload";
+        }
+        return buildResponse(HttpStatus.BAD_REQUEST, message, request);
     }
 
     /**

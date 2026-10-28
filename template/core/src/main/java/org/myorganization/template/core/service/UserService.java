@@ -68,6 +68,7 @@ public class UserService extends AbstractCriteriaService<User, UserDTO, UserCrit
     @Transactional
     @Auditable(operationType = OperationType.CREATE, section = AuditSection.SECURITY, entityName = "User")
     public UserDTO create(UserDTO dto) {
+        validateRequiredCredentials(dto);
         validateNoDuplicateReports(dto.reportIds());
 
         if (userRepository.existsByUsername(dto.username())) {
@@ -203,6 +204,25 @@ public class UserService extends AbstractCriteriaService<User, UserDTO, UserCrit
     }
 
     // --- Private helpers ---
+
+    /**
+     * Defense-in-depth check for the credentials required on creation.
+     * <p>
+     * The controller enforces this via Bean Validation, but services are also
+     * called from other code paths; guarding here avoids a
+     * {@link NullPointerException}/500 when the username or password is missing.
+     *
+     * @param dto the user data
+     * @throws ValidationException if username or password is missing
+     */
+    private void validateRequiredCredentials(UserDTO dto) {
+        if (dto.username() == null) {
+            throw new ValidationException("username is required");
+        }
+        if (dto.password() == null) {
+            throw new ValidationException("password is required");
+        }
+    }
 
     private void validateNoDuplicateReports(List<Long> reportIds) {
         if (reportIds == null || reportIds.isEmpty()) {

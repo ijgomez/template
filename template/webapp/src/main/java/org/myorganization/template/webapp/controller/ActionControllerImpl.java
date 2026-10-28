@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
+
 /**
  * REST controller implementation for action (permission) management.
  * <p>
@@ -71,7 +73,7 @@ public class ActionControllerImpl implements ActionController {
 
     @Override
     @PutMapping("/{id}")
-    public ResponseEntity<ActionDTO> update(@PathVariable Long id, @RequestBody ActionDTO dto) {
+    public ResponseEntity<ActionDTO> update(@PathVariable Long id, @Valid @RequestBody ActionDTO dto) {
         ActionDTO updated = actionService.update(id, dto);
         return ResponseEntity.ok(updated);
     }

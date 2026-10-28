@@ -3,6 +3,7 @@ package org.myorganization.template.webapp.controller;
 import org.myorganization.template.core.service.UserService;
 import org.myorganization.template.domain.criteria.UserCriteria;
 import org.myorganization.template.domain.dto.UserDTO;
+import org.myorganization.template.domain.validation.ValidationGroups;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +21,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import jakarta.validation.Valid;
+import jakarta.validation.groups.Default;
 
 /**
  * REST controller for user management operations.
@@ -91,7 +96,8 @@ public class UserController {
      * @return 201 Created with the created user
      */
     @PostMapping
-    public ResponseEntity<UserDTO> create(@RequestBody UserDTO dto) {
+    public ResponseEntity<UserDTO> create(
+            @Validated({Default.class, ValidationGroups.Create.class}) @RequestBody UserDTO dto) {
         UserDTO created = userService.create(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
@@ -116,7 +122,7 @@ public class UserController {
      * @return 200 OK with the updated user
      */
     @PutMapping("/{id}")
-    public ResponseEntity<UserDTO> update(@PathVariable Long id, @RequestBody UserDTO dto) {
+    public ResponseEntity<UserDTO> update(@PathVariable Long id, @Valid @RequestBody UserDTO dto) {
         UserDTO updated = userService.update(id, dto);
         return ResponseEntity.ok(updated);
     }
@@ -152,7 +158,7 @@ public class UserController {
      * @return 200 OK with the updated user data
      */
     @PutMapping("/me")
-    public ResponseEntity<UserDTO> updateMyProfile(@RequestBody UserDTO dto) {
+    public ResponseEntity<UserDTO> updateMyProfile(@Valid @RequestBody UserDTO dto) {
         String username = getAuthenticatedUsername();
         UserDTO currentUser = userService.findByUsername(username);
         UserDTO updated = userService.updateProfile(currentUser.id(), dto);
