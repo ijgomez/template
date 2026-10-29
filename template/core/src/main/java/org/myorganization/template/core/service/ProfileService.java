@@ -35,8 +35,8 @@ public class ProfileService extends AbstractCriteriaService<Profile, ProfileDTO,
     private final ActionRepository actionRepository;
 
     public ProfileService(ProfileRepository profileRepository,
-                          Profile2ActionRepository profile2ActionRepository,
-                          ActionRepository actionRepository) {
+            Profile2ActionRepository profile2ActionRepository,
+            ActionRepository actionRepository) {
         super(profileRepository);
         this.profileRepository = profileRepository;
         this.profile2ActionRepository = profile2ActionRepository;
@@ -48,7 +48,8 @@ public class ProfileService extends AbstractCriteriaService<Profile, ProfileDTO,
      *
      * @param dto the profile data (id must be null)
      * @return the created ProfileDTO with generated id
-     * @throws DuplicateEntityException if a profile with the same name already exists
+     * @throws DuplicateEntityException if a profile with the same name already
+     *                                  exists
      * @throws ValidationException      if the action list contains duplicates
      */
     @Transactional
@@ -95,7 +96,8 @@ public class ProfileService extends AbstractCriteriaService<Profile, ProfileDTO,
      * @param dto the updated profile data
      * @return the updated ProfileDTO
      * @throws EntityNotFoundException  if the profile is not found
-     * @throws DuplicateEntityException if the new name conflicts with another profile
+     * @throws DuplicateEntityException if the new name conflicts with another
+     *                                  profile
      * @throws ValidationException      if the action list contains duplicates
      */
     @Transactional
@@ -144,15 +146,17 @@ public class ProfileService extends AbstractCriteriaService<Profile, ProfileDTO,
     }
 
     /**
-     * Returns a lightweight list of all profiles (id and name only), sorted by name.
+     * Returns a lightweight list of all profiles (id and name only), sorted by
+     * name.
      * <p>
-     * Intended for dropdown/selector usage where the full profile details are not needed.
+     * Intended for dropdown/selector usage where the full profile details are not
+     * needed.
      *
      * @return list of profile references
      */
     @Transactional(readOnly = true)
     public List<ProfileRefDTO> findAllReferences() {
-        return profileRepository.findAll(Sort.by("name")).stream()
+        return profileRepository.findAll(Sort.by(Sort.Direction.ASC, "name")).stream()
                 .map(profile -> new ProfileRefDTO(profile.getId(), profile.getName()))
                 .toList();
     }
@@ -185,8 +189,8 @@ public class ProfileService extends AbstractCriteriaService<Profile, ProfileDTO,
     protected Specification<Profile> buildSpecification(ProfileCriteria criteria) {
         Specification<Profile> spec = (root, query, cb) -> cb.conjunction();
         if (criteria != null && criteria.name() != null && !criteria.name().isBlank()) {
-            spec = spec.and((root, query, cb) ->
-                    cb.like(cb.lower(root.get("name")), "%" + criteria.name().toLowerCase() + "%"));
+            spec = spec.and((root, query, cb) -> cb.like(cb.lower(root.get("name")),
+                    "%" + criteria.name().toLowerCase() + "%"));
         }
         return spec;
     }
@@ -213,7 +217,6 @@ public class ProfileService extends AbstractCriteriaService<Profile, ProfileDTO,
                 profile.getDescription(),
                 actionIds != null ? actionIds : List.of(),
                 profile.getCreatedAt(),
-                profile.getLastModifiedAt()
-        );
+                profile.getLastModifiedAt());
     }
 }

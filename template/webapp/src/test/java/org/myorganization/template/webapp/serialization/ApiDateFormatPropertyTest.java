@@ -17,15 +17,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Property-based tests for API date format compliance.
  * <p>
- * Verifies that Jackson serialization produces ISO 8601 timestamps with Z suffix
+ * Verifies that Jackson serialization produces ISO 8601 timestamps with Z
+ * suffix
  * for all temporal fields in API responses.
  * <p>
  * Validates: Requirements 27.2
  */
 class ApiDateFormatPropertyTest {
 
-    private static final Pattern ISO_8601_Z_PATTERN =
-            Pattern.compile("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,9})?Z$");
+    private static final Pattern ISO_8601_Z_PATTERN = Pattern
+            .compile("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,9})?Z$");
 
     private final ObjectMapper objectMapper;
 
@@ -36,7 +37,8 @@ class ApiDateFormatPropertyTest {
         objectMapper.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
-    record TimestampDTO(OffsetDateTime createdAt, Instant updatedAt) {}
+    record TimestampDTO(OffsetDateTime createdAt, Instant updatedAt) {
+    }
 
     /**
      * Property 14: OffsetDateTime serializes to ISO 8601 with Z suffix.
@@ -114,20 +116,18 @@ class ApiDateFormatPropertyTest {
     @Provide
     Arbitrary<OffsetDateTime> utcOffsetDateTimes() {
         return Combinators.combine(
-                Arbitraries.integers().between(2000, 2099),  // year
-                Arbitraries.integers().between(1, 12),       // month
-                Arbitraries.integers().between(1, 28),       // day (safe for all months)
-                Arbitraries.integers().between(0, 23),       // hour
-                Arbitraries.integers().between(0, 59),       // minute
-                Arbitraries.integers().between(0, 59),       // second
-                Arbitraries.integers().between(0, 999)       // millis
-        ).as((year, month, day, hour, minute, second, millis) ->
-                OffsetDateTime.of(year, month, day, hour, minute, second, millis * 1_000_000, ZoneOffset.UTC)
-        );
+                Arbitraries.integers().between(2000, 2099), // year
+                Arbitraries.integers().between(1, 12), // month
+                Arbitraries.integers().between(1, 28), // day (safe for all months)
+                Arbitraries.integers().between(0, 23), // hour
+                Arbitraries.integers().between(0, 59), // minute
+                Arbitraries.integers().between(0, 59), // second
+                Arbitraries.integers().between(0, 999) // millis
+        ).as((year, month, day, hour, minute, second, millis) -> OffsetDateTime.of(year, month, day, hour, minute,
+                second, millis * 1_000_000, ZoneOffset.UTC));
     }
 
     @Provide
-    @SuppressWarnings("null") // Eclipse null analysis: Function descriptor lacks nullability annotations
     Arbitrary<Instant> instants() {
         return utcOffsetDateTimes().map(OffsetDateTime::toInstant);
     }

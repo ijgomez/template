@@ -26,15 +26,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Integration tests for Audit AOP and Cluster operations.
  *
- * <p>Verifies:
+ * <p>
+ * Verifies:
  * <ul>
- *   <li>AuditAspect captures operations end-to-end without contaminating business code</li>
- *   <li>Cluster node auto-registration, heartbeat, dead node detection, master election</li>
- *   <li>ClusterLockService acquire/release with ClusterBlock metric update</li>
- *   <li>AbstractClusterWorker full governance flow</li>
+ * <li>AuditAspect captures operations end-to-end without contaminating business
+ * code</li>
+ * <li>Cluster node auto-registration, heartbeat, dead node detection, master
+ * election</li>
+ * <li>ClusterLockService acquire/release with ClusterBlock metric update</li>
+ * <li>AbstractClusterWorker full governance flow</li>
  * </ul>
  *
- * <p><b>Validates: Requirements 21.1, 30.1, 30.7, 30.8, 39.2, 38.1</b></p>
+ * <p>
+ * <b>Validates: Requirements 21.1, 30.1, 30.7, 30.8, 39.2, 38.1</b>
+ * </p>
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
@@ -42,7 +47,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 class AuditAndClusterIntegrationTest {
 
     @Container
-    @SuppressWarnings("resource") // closed by the Testcontainers extension via @Container
     static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:18-alpine")
             .withDatabaseName("template_test")
             .withUsername("test")
@@ -53,8 +57,10 @@ class AuditAndClusterIntegrationTest {
         registry.add("spring.datasource.url", postgres::getJdbcUrl);
         registry.add("spring.datasource.username", postgres::getUsername);
         registry.add("spring.datasource.password", postgres::getPassword);
-        // This test manages its own container and supplies a plain jdbc:postgresql:// URL,
-        // so override the Testcontainers JDBC-URL driver configured in application-test.yml
+        // This test manages its own container and supplies a plain jdbc:postgresql://
+        // URL,
+        // so override the Testcontainers JDBC-URL driver configured in
+        // application-test.yml
         // with the standard PostgreSQL driver to match the URL.
         registry.add("spring.datasource.driver-class-name", () -> "org.postgresql.Driver");
         registry.add("spring.liquibase.enabled", () -> "true");
@@ -119,7 +125,8 @@ class AuditAndClusterIntegrationTest {
 
     @Test
     void clusterNodeAutoRegistersOnStartup() {
-        // Manually register a node (HeartbeatWorker scheduled task does this in production)
+        // Manually register a node (HeartbeatWorker scheduled task does this in
+        // production)
         clusterService.registerNode();
 
         List<ClusterNode> nodes = clusterNodeRepository.findAll();
@@ -144,7 +151,6 @@ class AuditAndClusterIntegrationTest {
     }
 
     @Test
-    @SuppressWarnings("null") // Eclipse null analysis: Predicate descriptor lacks nullability annotations
     void setMasterEnforcesSingleMasterInvariant() {
         List<ClusterNode> nodes = clusterNodeRepository.findAll();
         if (nodes.isEmpty()) {

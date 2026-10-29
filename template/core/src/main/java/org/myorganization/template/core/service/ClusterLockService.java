@@ -16,11 +16,13 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * Centralized cluster lock service providing mutual exclusion at two levels:
  * <ul>
- *   <li><b>Intra-instance</b>: Java ReentrantLock per resource name (thread-level)</li>
- *   <li><b>Inter-instance</b>: PostgreSQL advisory lock (node-level)</li>
+ * <li><b>Intra-instance</b>: Java ReentrantLock per resource name
+ * (thread-level)</li>
+ * <li><b>Inter-instance</b>: PostgreSQL advisory lock (node-level)</li>
  * </ul>
  * <p>
- * On acquire, records the start time in ClusterBlock using database time (not JVM time)
+ * On acquire, records the start time in ClusterBlock using database time (not
+ * JVM time)
  * to avoid clock drift between nodes.
  * <p>
  * On release, calculates the duration and updates ClusterBlock metrics:
@@ -50,13 +52,13 @@ public class ClusterLockService implements HeartbeatLockService {
      * database time to avoid clock drift.
      * <p>
      * The intra-instance lock is intentionally kept held on the success path and is
-     * released later by {@link #releaseLock(String)}, so this method does not unlock it.
+     * released later by {@link #releaseLock(String)}, so this method does not
+     * unlock it.
      *
      * @param resourceName the name of the resource/task to lock
      */
     @Override
     @Transactional
-    @SuppressWarnings("java:S2222") // Released by releaseLock(String): the lock is held across the job lifecycle
     public void acquireLock(String resourceName) {
         // 1. Intra-instance lock (thread-level within same JVM)
         ReentrantLock lock = intraInstanceLocks.computeIfAbsent(resourceName, k -> new ReentrantLock());
@@ -88,10 +90,10 @@ public class ClusterLockService implements HeartbeatLockService {
      * <p>
      * Calculates the duration since acquisition (using database time) and updates:
      * <ul>
-     *   <li>total = total + 1</li>
-     *   <li>avg = ((avg * (total-1)) + duration) / total (running average)</li>
-     *   <li>min = Math.min(existing min, duration)</li>
-     *   <li>max = Math.max(existing max, duration)</li>
+     * <li>total = total + 1</li>
+     * <li>avg = ((avg * (total-1)) + duration) / total (running average)</li>
+     * <li>min = Math.min(existing min, duration)</li>
+     * <li>max = Math.max(existing max, duration)</li>
      * </ul>
      *
      * @param resourceName the name of the resource/task to unlock
@@ -124,7 +126,8 @@ public class ClusterLockService implements HeartbeatLockService {
     }
 
     /**
-     * Checks if a resource currently has an active lock held by any thread in this instance.
+     * Checks if a resource currently has an active lock held by any thread in this
+     * instance.
      *
      * @param resourceName the name of the resource to check
      * @return true if the resource has an active lock, false otherwise
@@ -139,7 +142,8 @@ public class ClusterLockService implements HeartbeatLockService {
     // =====================================================================
 
     /**
-     * Computes an integer lock key from the resource name for use with PostgreSQL advisory locks.
+     * Computes an integer lock key from the resource name for use with PostgreSQL
+     * advisory locks.
      * Uses the hashCode of the resource name.
      *
      * @param resourceName the resource name

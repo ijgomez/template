@@ -27,12 +27,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Integration test for the action catalog endpoints against the real
  * {@code SecurityConfig}.
  *
- * <p>SEC-02: verifies that editing an action ({@code PUT}) requires the
+ * <p>
+ * SEC-02: verifies that editing an action ({@code PUT}) requires the
  * dedicated {@code ACTION_WRITE} authority. A profile with only
  * {@code ACTION_READ} (read-only) must not be able to modify the permission
- * catalog, while reads ({@code GET}) remain allowed for both.</p>
+ * catalog, while reads ({@code GET}) remain allowed for both.
+ * </p>
  *
- * <p>Uses a real PostgreSQL database via Testcontainers.</p>
+ * <p>
+ * Uses a real PostgreSQL database via Testcontainers.
+ * </p>
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
@@ -55,8 +59,10 @@ class ActionSecurityIntegrationTest {
         registry.add("spring.datasource.url", postgres::getJdbcUrl);
         registry.add("spring.datasource.username", postgres::getUsername);
         registry.add("spring.datasource.password", postgres::getPassword);
-        // This test manages its own container and supplies a plain jdbc:postgresql:// URL,
-        // so override the Testcontainers JDBC-URL driver configured in application-test.yml
+        // This test manages its own container and supplies a plain jdbc:postgresql://
+        // URL,
+        // so override the Testcontainers JDBC-URL driver configured in
+        // application-test.yml
         // with the standard PostgreSQL driver to match the URL.
         registry.add("spring.datasource.driver-class-name", () -> "org.postgresql.Driver");
         registry.add("spring.liquibase.enabled", () -> "true");
@@ -80,14 +86,14 @@ class ActionSecurityIntegrationTest {
     @Test
     void getActions_withActionRead_returns200() throws Exception {
         mockMvc.perform(get("/api/v1/administration/security/actions")
-                        .header("Authorization", "Bearer " + token("ACTION_READ")))
+                .header("Authorization", "Bearer " + token("ACTION_READ")))
                 .andExpect(status().isOk());
     }
 
     @Test
     void getActionById_withActionWrite_returns200() throws Exception {
         mockMvc.perform(get("/api/v1/administration/security/actions/" + ACTION_ID)
-                        .header("Authorization", "Bearer " + token("ACTION_WRITE")))
+                .header("Authorization", "Bearer " + token("ACTION_WRITE")))
                 .andExpect(status().isOk());
     }
 
@@ -96,9 +102,9 @@ class ActionSecurityIntegrationTest {
         String nameBefore = actionRepository.findById(ACTION_ID).orElseThrow().getName();
 
         mockMvc.perform(put("/api/v1/administration/security/actions/" + ACTION_ID)
-                        .header("Authorization", "Bearer " + token("ACTION_READ"))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"code\":\"ACTION_READ\",\"type\":\"READ\",\"name\":\"Read-only attempt\"}"))
+                .header("Authorization", "Bearer " + token("ACTION_READ"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"code\":\"ACTION_READ\",\"type\":\"READ\",\"name\":\"Read-only attempt\"}"))
                 .andExpect(status().isForbidden());
 
         // The catalog must remain unchanged.
@@ -109,9 +115,9 @@ class ActionSecurityIntegrationTest {
     @Test
     void putAction_withActionWrite_returns200AndPersistsChange() throws Exception {
         mockMvc.perform(put("/api/v1/administration/security/actions/" + ACTION_ID)
-                        .header("Authorization", "Bearer " + token("ACTION_WRITE"))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"code\":\"ACTION_READ\",\"type\":\"READ\",\"name\":\"Edited by ACTION_WRITE\"}"))
+                .header("Authorization", "Bearer " + token("ACTION_WRITE"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"code\":\"ACTION_READ\",\"type\":\"READ\",\"name\":\"Edited by ACTION_WRITE\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Edited by ACTION_WRITE"));
 

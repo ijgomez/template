@@ -16,11 +16,14 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * Tracks failed login attempts and temporarily locks user accounts.
  * <p>
- * The counter and the lock timestamp live in the {@code users} table, so the state
+ * The counter and the lock timestamp live in the {@code users} table, so the
+ * state
  * is shared by every node of the cluster (unlike an in-memory counter).
  * <p>
- * The write operations run in a new transaction ({@link Propagation#REQUIRES_NEW}) on
- * purpose: authentication failures roll back the surrounding transaction, so the
+ * The write operations run in a new transaction
+ * ({@link Propagation#REQUIRES_NEW}) on
+ * purpose: authentication failures roll back the surrounding transaction, so
+ * the
  * attempt must be committed independently to be remembered.
  */
 @Service
@@ -33,8 +36,8 @@ public class LoginAttemptService {
     private final long lockoutMinutes;
 
     public LoginAttemptService(UserRepository userRepository,
-                               @Value("${auth.login-attempts.max-attempts:5}") int maxAttempts,
-                               @Value("${auth.login-attempts.lockout-minutes:15}") long lockoutMinutes) {
+            @Value("${auth.login-attempts.max-attempts:5}") int maxAttempts,
+            @Value("${auth.login-attempts.lockout-minutes:15}") long lockoutMinutes) {
         this.userRepository = userRepository;
         this.maxAttempts = maxAttempts;
         this.lockoutMinutes = lockoutMinutes;

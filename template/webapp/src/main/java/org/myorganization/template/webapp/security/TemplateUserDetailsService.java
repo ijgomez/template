@@ -10,7 +10,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
  * <p>
  * Authorities are derived from the action codes granted to the user's profile.
  */
-@Component
+@Service
 public class TemplateUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;

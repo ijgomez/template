@@ -35,6 +35,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
@@ -48,6 +49,7 @@ import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -131,7 +133,7 @@ class UserServiceTest {
 
         userService.create(dto);
 
-        verify(user2ReportRepository, org.mockito.Mockito.times(2)).save(any(User2Report.class));
+        verify(user2ReportRepository, times(2)).save(any(User2Report.class));
     }
 
     @Test
@@ -456,7 +458,8 @@ class UserServiceTest {
         assertThat(result.getContent()).hasSize(1);
 
         // Execute the captured specification against a mocked Criteria API so all
-        // buildSpecification branches (username, firstName, lastName, email, profileId) run.
+        // buildSpecification branches (username, firstName, lastName, email, profileId)
+        // run.
         Predicate predicate = evaluateSpecification(specCaptor.getValue());
         assertThat(predicate).isNotNull();
     }
@@ -480,8 +483,10 @@ class UserServiceTest {
     // --- Helper methods ---
 
     /**
-     * Runs the given {@link Specification} against a mocked JPA Criteria API. This forces the
-     * lambdas inside {@code buildSpecification} to execute so their branches are covered.
+     * Runs the given {@link Specification} against a mocked JPA Criteria API. This
+     * forces the
+     * lambdas inside {@code buildSpecification} to execute so their branches are
+     * covered.
      */
     private Predicate evaluateSpecification(Specification<User> spec) {
         Root<User> root = mock(Root.class, RETURNS_DEEP_STUBS);
@@ -489,11 +494,12 @@ class UserServiceTest {
         CriteriaBuilder cb = mock(CriteriaBuilder.class);
         Predicate predicate = mock(Predicate.class);
         Path<Object> path = mock(Path.class);
+        Expression<String> expression = mock(Expression.class);
 
         lenient().when(root.get(anyString())).thenReturn(path);
         lenient().when(path.get(anyString())).thenReturn(path);
         lenient().when(cb.conjunction()).thenReturn(predicate);
-        lenient().when(cb.lower(any())).thenReturn(mock(jakarta.persistence.criteria.Expression.class));
+        lenient().when(cb.lower(any())).thenReturn(expression);
         lenient().when(cb.like(any(), anyString())).thenReturn(predicate);
         lenient().when(cb.equal(any(), any())).thenReturn(predicate);
         lenient().when(cb.and(any(Predicate.class), any(Predicate.class))).thenReturn(predicate);
@@ -502,7 +508,7 @@ class UserServiceTest {
     }
 
     private User createUserEntity(Long id, String username, String firstName, String lastName,
-                                  String email, Profile profile) {
+            String email, Profile profile) {
         User user = new User();
         user.setId(id);
         user.setUsername(username);

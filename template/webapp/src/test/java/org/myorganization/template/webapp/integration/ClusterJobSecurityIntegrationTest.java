@@ -35,13 +35,19 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Integration test for cluster job endpoints against the real {@code SecurityConfig}.
+ * Integration test for cluster job endpoints against the real
+ * {@code SecurityConfig}.
  *
- * <p>Verifies action-based authorization for the task catalog and the job write
- * operations, and that job DELETE is allowed (204) rather than blocked as a node
- * delete (405). Also asserts the repository ordering of jobs by priority.</p>
+ * <p>
+ * Verifies action-based authorization for the task catalog and the job write
+ * operations, and that job DELETE is allowed (204) rather than blocked as a
+ * node
+ * delete (405). Also asserts the repository ordering of jobs by priority.
+ * </p>
  *
- * <p>Uses a real PostgreSQL database via Testcontainers.</p>
+ * <p>
+ * Uses a real PostgreSQL database via Testcontainers.
+ * </p>
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
@@ -61,8 +67,10 @@ class ClusterJobSecurityIntegrationTest {
         registry.add("spring.datasource.url", postgres::getJdbcUrl);
         registry.add("spring.datasource.username", postgres::getUsername);
         registry.add("spring.datasource.password", postgres::getPassword);
-        // This test manages its own container and supplies a plain jdbc:postgresql:// URL,
-        // so override the Testcontainers JDBC-URL driver configured in application-test.yml
+        // This test manages its own container and supplies a plain jdbc:postgresql://
+        // URL,
+        // so override the Testcontainers JDBC-URL driver configured in
+        // application-test.yml
         // with the standard PostgreSQL driver to match the URL.
         registry.add("spring.datasource.driver-class-name", () -> "org.postgresql.Driver");
         registry.add("spring.liquibase.enabled", () -> "true");
@@ -124,14 +132,14 @@ class ClusterJobSecurityIntegrationTest {
     @Test
     void getTasks_withoutClusterAuthority_returns403() throws Exception {
         mockMvc.perform(get("/api/v1/administration/cluster/tasks")
-                        .header("Authorization", "Bearer " + token("USER_READ")))
+                .header("Authorization", "Bearer " + token("USER_READ")))
                 .andExpect(status().isForbidden());
     }
 
     @Test
     void getTasks_withClusterRead_returns200() throws Exception {
         mockMvc.perform(get("/api/v1/administration/cluster/tasks")
-                        .header("Authorization", "Bearer " + token("CLUSTER_NODE_READ")))
+                .header("Authorization", "Bearer " + token("CLUSTER_NODE_READ")))
                 .andExpect(status().isOk());
     }
 
@@ -142,25 +150,25 @@ class ClusterJobSecurityIntegrationTest {
     @Test
     void postJob_withoutClusterWrite_returns403() throws Exception {
         mockMvc.perform(post("/api/v1/administration/cluster/nodes/" + nodeId + "/jobs")
-                        .header("Authorization", "Bearer " + token("CLUSTER_NODE_READ"))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"clusterTaskId\":" + taskId + ",\"priority\":1,\"enabled\":true}"))
+                .header("Authorization", "Bearer " + token("CLUSTER_NODE_READ"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"clusterTaskId\":" + taskId + ",\"priority\":1,\"enabled\":true}"))
                 .andExpect(status().isForbidden());
     }
 
     @Test
     void putJob_withoutClusterWrite_returns403() throws Exception {
         mockMvc.perform(put("/api/v1/administration/cluster/nodes/" + nodeId + "/jobs/" + taskId)
-                        .header("Authorization", "Bearer " + token("CLUSTER_NODE_READ"))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"priority\":2,\"enabled\":false}"))
+                .header("Authorization", "Bearer " + token("CLUSTER_NODE_READ"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"priority\":2,\"enabled\":false}"))
                 .andExpect(status().isForbidden());
     }
 
     @Test
     void deleteJob_withoutClusterWrite_returns403() throws Exception {
         mockMvc.perform(delete("/api/v1/administration/cluster/nodes/" + nodeId + "/jobs/" + taskId)
-                        .header("Authorization", "Bearer " + token("CLUSTER_NODE_READ")))
+                .header("Authorization", "Bearer " + token("CLUSTER_NODE_READ")))
                 .andExpect(status().isForbidden());
     }
 
@@ -176,7 +184,7 @@ class ClusterJobSecurityIntegrationTest {
         clusterJobRepository.save(job);
 
         mockMvc.perform(delete("/api/v1/administration/cluster/nodes/" + nodeId + "/jobs/" + taskId)
-                        .header("Authorization", "Bearer " + token("CLUSTER_NODE_WRITE")))
+                .header("Authorization", "Bearer " + token("CLUSTER_NODE_WRITE")))
                 .andExpect(status().isNoContent());
 
         assertThat(clusterJobRepository.existsById(new ClusterJobPK(nodeId, taskId))).isFalse();
@@ -187,7 +195,6 @@ class ClusterJobSecurityIntegrationTest {
     // =====================================================================
 
     @Test
-    @SuppressWarnings("null") // Eclipse null analysis: ThrowingExtractor descriptor lacks nullability annotations
     void findByClusterNodeIdOrderByPriorityAsc_returnsJobsOrderedByPriority() {
         ClusterTask extraTask1 = clusterTaskRepository.save(newTask("ORDER-TASK-1"));
         ClusterTask extraTask2 = clusterTaskRepository.save(newTask("ORDER-TASK-2"));

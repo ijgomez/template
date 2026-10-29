@@ -78,10 +78,12 @@ class ParameterServiceTest {
         @Test
         @DisplayName("valid parameter is created successfully")
         void create_validParameter_returnsCreatedDTO() {
-            ParameterDTO dto = new ParameterDTO(null, "APP_NAME", "Application name", "MyApp", ParameterType.STRING, null, null);
+            ParameterDTO dto = new ParameterDTO(null, "APP_NAME", "Application name", "MyApp", ParameterType.STRING,
+                    null, null);
 
             when(parameterRepository.existsByCode("APP_NAME")).thenReturn(false);
-            Parameter savedEntity = createParameterEntity("APP_NAME", "Application name", "MyApp", ParameterType.STRING);
+            Parameter savedEntity = createParameterEntity("APP_NAME", "Application name", "MyApp",
+                    ParameterType.STRING);
             when(parameterRepository.save(any(Parameter.class))).thenReturn(savedEntity);
 
             ParameterDTO result = parameterService.create(dto);
@@ -100,7 +102,8 @@ class ParameterServiceTest {
         @Test
         @DisplayName("duplicate code throws DuplicateEntityException")
         void create_duplicateCode_throwsDuplicateEntityException() {
-            ParameterDTO dto = new ParameterDTO(null, "APP_NAME", "Duplicate", "value", ParameterType.STRING, null, null);
+            ParameterDTO dto = new ParameterDTO(null, "APP_NAME", "Duplicate", "value", ParameterType.STRING, null,
+                    null);
 
             when(parameterRepository.existsByCode("APP_NAME")).thenReturn(true);
 
@@ -128,7 +131,8 @@ class ParameterServiceTest {
         @Test
         @DisplayName("invalid INTEGER value throws ValidationException")
         void create_invalidIntegerValue_throwsValidationException() {
-            ParameterDTO dto = new ParameterDTO(null, "MAX_RETRIES", "Max retries", "abc", ParameterType.INTEGER, null, null);
+            ParameterDTO dto = new ParameterDTO(null, "MAX_RETRIES", "Max retries", "abc", ParameterType.INTEGER, null,
+                    null);
 
             when(parameterRepository.existsByCode("MAX_RETRIES")).thenReturn(false);
 
@@ -142,7 +146,8 @@ class ParameterServiceTest {
         @Test
         @DisplayName("valid INTEGER value is accepted")
         void create_validIntegerValue_succeeds() {
-            ParameterDTO dto = new ParameterDTO(null, "MAX_RETRIES", "Max retries", "5", ParameterType.INTEGER, null, null);
+            ParameterDTO dto = new ParameterDTO(null, "MAX_RETRIES", "Max retries", "5", ParameterType.INTEGER, null,
+                    null);
 
             when(parameterRepository.existsByCode("MAX_RETRIES")).thenReturn(false);
             Parameter savedEntity = createParameterEntity("MAX_RETRIES", "Max retries", "5", ParameterType.INTEGER);
@@ -157,7 +162,8 @@ class ParameterServiceTest {
         @Test
         @DisplayName("invalid BOOLEAN value throws ValidationException")
         void create_invalidBooleanValue_throwsValidationException() {
-            ParameterDTO dto = new ParameterDTO(null, "ENABLED", "Feature flag", "yes", ParameterType.BOOLEAN, null, null);
+            ParameterDTO dto = new ParameterDTO(null, "ENABLED", "Feature flag", "yes", ParameterType.BOOLEAN, null,
+                    null);
 
             when(parameterRepository.existsByCode("ENABLED")).thenReturn(false);
 
@@ -171,7 +177,8 @@ class ParameterServiceTest {
         @Test
         @DisplayName("valid BOOLEAN 'true' is accepted")
         void create_validBooleanTrue_succeeds() {
-            ParameterDTO dto = new ParameterDTO(null, "ENABLED", "Feature flag", "true", ParameterType.BOOLEAN, null, null);
+            ParameterDTO dto = new ParameterDTO(null, "ENABLED", "Feature flag", "true", ParameterType.BOOLEAN, null,
+                    null);
 
             when(parameterRepository.existsByCode("ENABLED")).thenReturn(false);
             Parameter savedEntity = createParameterEntity("ENABLED", "Feature flag", "true", ParameterType.BOOLEAN);
@@ -185,7 +192,8 @@ class ParameterServiceTest {
         @Test
         @DisplayName("valid BOOLEAN 'false' is accepted")
         void create_validBooleanFalse_succeeds() {
-            ParameterDTO dto = new ParameterDTO(null, "ENABLED", "Feature flag", "false", ParameterType.BOOLEAN, null, null);
+            ParameterDTO dto = new ParameterDTO(null, "ENABLED", "Feature flag", "false", ParameterType.BOOLEAN, null,
+                    null);
 
             when(parameterRepository.existsByCode("ENABLED")).thenReturn(false);
             Parameter savedEntity = createParameterEntity("ENABLED", "Feature flag", "false", ParameterType.BOOLEAN);
@@ -199,7 +207,8 @@ class ParameterServiceTest {
         @Test
         @DisplayName("invalid DATE value throws ValidationException")
         void create_invalidDateValue_throwsValidationException() {
-            ParameterDTO dto = new ParameterDTO(null, "START_DATE", "Start date", "not-a-date", ParameterType.DATE, null, null);
+            ParameterDTO dto = new ParameterDTO(null, "START_DATE", "Start date", "not-a-date", ParameterType.DATE,
+                    null, null);
 
             when(parameterRepository.existsByCode("START_DATE")).thenReturn(false);
 
@@ -213,10 +222,12 @@ class ParameterServiceTest {
         @Test
         @DisplayName("valid DATE with offset is accepted")
         void create_validDateWithOffset_succeeds() {
-            ParameterDTO dto = new ParameterDTO(null, "START_DATE", "Start date", "2024-01-15T10:30:00Z", ParameterType.DATE, null, null);
+            ParameterDTO dto = new ParameterDTO(null, "START_DATE", "Start date", "2024-01-15T10:30:00Z",
+                    ParameterType.DATE, null, null);
 
             when(parameterRepository.existsByCode("START_DATE")).thenReturn(false);
-            Parameter savedEntity = createParameterEntity("START_DATE", "Start date", "2024-01-15T10:30:00Z", ParameterType.DATE);
+            Parameter savedEntity = createParameterEntity("START_DATE", "Start date", "2024-01-15T10:30:00Z",
+                    ParameterType.DATE);
             when(parameterRepository.save(any(Parameter.class))).thenReturn(savedEntity);
 
             ParameterDTO result = parameterService.create(dto);
@@ -227,10 +238,12 @@ class ParameterServiceTest {
         @Test
         @DisplayName("valid DATE (date only) is accepted")
         void create_validDateOnly_succeeds() {
-            ParameterDTO dto = new ParameterDTO(null, "CUTOFF_DATE", "Cutoff date", "2024-01-15", ParameterType.DATE, null, null);
+            ParameterDTO dto = new ParameterDTO(null, "CUTOFF_DATE", "Cutoff date", "2024-01-15", ParameterType.DATE,
+                    null, null);
 
             when(parameterRepository.existsByCode("CUTOFF_DATE")).thenReturn(false);
-            Parameter savedEntity = createParameterEntity("CUTOFF_DATE", "Cutoff date", "2024-01-15", ParameterType.DATE);
+            Parameter savedEntity = createParameterEntity("CUTOFF_DATE", "Cutoff date", "2024-01-15",
+                    ParameterType.DATE);
             when(parameterRepository.save(any(Parameter.class))).thenReturn(savedEntity);
 
             ParameterDTO result = parameterService.create(dto);
@@ -295,7 +308,8 @@ class ParameterServiceTest {
             Parameter entity = createParameterEntity("APP_NAME", "Application name", "MyApp", ParameterType.STRING);
             Page<Parameter> page = new PageImpl<>(List.of(entity), pageable, 1);
 
-            when(parameterRepository.findAll(ArgumentMatchers.<Specification<Parameter>>any(), any(Pageable.class))).thenReturn(page);
+            when(parameterRepository.findAll(ArgumentMatchers.<Specification<Parameter>>any(), any(Pageable.class)))
+                    .thenReturn(page);
 
             Page<ParameterDTO> result = parameterService.findByCriteria(criteria, pageable);
 
@@ -333,7 +347,8 @@ class ParameterServiceTest {
             when(parameterRepository.findByCode("APP_NAME")).thenReturn(Optional.of(entity));
             when(parameterRepository.save(any(Parameter.class))).thenReturn(entity);
 
-            ParameterDTO dto = new ParameterDTO(1L, "APP_NAME", "New desc", "NewValue", ParameterType.STRING, null, null);
+            ParameterDTO dto = new ParameterDTO(1L, "APP_NAME", "New desc", "NewValue", ParameterType.STRING, null,
+                    null);
             ParameterDTO result = parameterService.update("APP_NAME", dto);
 
             assertThat(result.description()).isEqualTo("New desc");
@@ -360,7 +375,8 @@ class ParameterServiceTest {
             Parameter entity = createParameterEntity("MAX_RETRIES", "Max retries", "5", ParameterType.INTEGER);
             when(parameterRepository.findByCode("MAX_RETRIES")).thenReturn(Optional.of(entity));
 
-            ParameterDTO dto = new ParameterDTO(1L, "MAX_RETRIES", "Max retries", "notanumber", ParameterType.INTEGER, null, null);
+            ParameterDTO dto = new ParameterDTO(1L, "MAX_RETRIES", "Max retries", "notanumber", ParameterType.INTEGER,
+                    null, null);
 
             assertThatThrownBy(() -> parameterService.update("MAX_RETRIES", dto))
                     .isInstanceOf(ValidationException.class)
@@ -376,7 +392,8 @@ class ParameterServiceTest {
             when(parameterRepository.findByCode("FEATURE")).thenReturn(Optional.of(entity));
             when(parameterRepository.save(any(Parameter.class))).thenReturn(entity);
 
-            ParameterDTO dto = new ParameterDTO(1L, "FEATURE", "Feature flag", "true", ParameterType.BOOLEAN, null, null);
+            ParameterDTO dto = new ParameterDTO(1L, "FEATURE", "Feature flag", "true", ParameterType.BOOLEAN, null,
+                    null);
             parameterService.update("FEATURE", dto);
 
             assertThat(entity.getType()).isEqualTo(ParameterType.BOOLEAN);
@@ -432,16 +449,14 @@ class ParameterServiceTest {
         @Test
         @DisplayName("INTEGER: decimal value throws exception")
         void integerDecimalThrows() {
-            assertThatThrownBy(() ->
-                    parameterService.validateTypeValueCompatibility(ParameterType.INTEGER, "3.14"))
+            assertThatThrownBy(() -> parameterService.validateTypeValueCompatibility(ParameterType.INTEGER, "3.14"))
                     .isInstanceOf(ValidationException.class);
         }
 
         @Test
         @DisplayName("BOOLEAN: 'True' (uppercase T) throws exception")
         void booleanUppercaseTrueThrows() {
-            assertThatThrownBy(() ->
-                    parameterService.validateTypeValueCompatibility(ParameterType.BOOLEAN, "True"))
+            assertThatThrownBy(() -> parameterService.validateTypeValueCompatibility(ParameterType.BOOLEAN, "True"))
                     .isInstanceOf(ValidationException.class);
         }
 
@@ -530,10 +545,11 @@ class ParameterServiceTest {
             CriteriaBuilder cb = mock(CriteriaBuilder.class);
             Predicate predicate = mock(Predicate.class);
             Path<Object> path = mock(Path.class);
+            Expression<String> expression = mock(Expression.class);
 
             lenient().when(root.get(anyString())).thenReturn(path);
             lenient().when(cb.conjunction()).thenReturn(predicate);
-            lenient().when(cb.lower(any())).thenReturn(mock(Expression.class));
+            lenient().when(cb.lower(any())).thenReturn(expression);
             lenient().when(cb.like(any(), anyString())).thenReturn(predicate);
             lenient().when(cb.equal(any(), any())).thenReturn(predicate);
             lenient().when(cb.and(any(Predicate.class), any(Predicate.class))).thenReturn(predicate);

@@ -38,6 +38,7 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -149,7 +150,7 @@ class AuthServiceTest {
         LoginRequest request = new LoginRequest("admin", "correct-password");
 
         AccountLockedException ex = catchThrowableOfType(
-                () -> authService.authenticate(request), AccountLockedException.class);
+                AccountLockedException.class, () -> authService.authenticate(request));
 
         assertThat(ex).isNotNull();
         assertThat(ex.getRetryAfterSeconds()).isEqualTo(540L);
@@ -169,7 +170,7 @@ class AuthServiceTest {
         LoginRequest request = new LoginRequest("admin", "secret");
 
         AccountLockedException ex = catchThrowableOfType(
-                () -> authService.authenticate(request), AccountLockedException.class);
+                AccountLockedException.class, () -> authService.authenticate(request));
 
         assertThat(ex).isNotNull();
         assertThat(ex.getRetryAfterSeconds()).isEqualTo(1L);
@@ -326,7 +327,7 @@ class AuthServiceTest {
 
         // Verify two saves: one for revoking old, one for creating new
         ArgumentCaptor<RefreshToken> captor = ArgumentCaptor.forClass(RefreshToken.class);
-        verify(refreshTokenRepository, org.mockito.Mockito.times(2)).save(captor.capture());
+        verify(refreshTokenRepository, times(2)).save(captor.capture());
 
         List<RefreshToken> savedTokens = captor.getAllValues();
         // First save: revoked old token

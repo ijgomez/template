@@ -9,7 +9,6 @@ import net.jqwik.api.Arbitrary;
 import net.jqwik.api.ForAll;
 import net.jqwik.api.Property;
 import net.jqwik.api.Provide;
-import org.mockito.Mockito;
 import org.myorganization.template.core.repository.ClusterBlockRepository;
 import org.myorganization.template.core.repository.ClusterNodeRepository;
 import org.myorganization.template.domain.entity.ClusterNode;
@@ -19,26 +18,31 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.mock;
 
 /**
  * Property-based test for the single master node invariant.
  *
- * <p><b>Validates: Requirements 23.4, 29.4</b></p>
+ * <p>
+ * <b>Validates: Requirements 23.4, 29.4</b>
+ * </p>
  *
- * <p>Property 11: For any sequence of setMaster operations,
- * at most one node has master=true at any time.</p>
+ * <p>
+ * Property 11: For any sequence of setMaster operations,
+ * at most one node has master=true at any time.
+ * </p>
  */
 class ClusterSingleMasterPropertyTest {
 
     @Property(tries = 50)
-    @SuppressWarnings("null") // Eclipse null analysis: Predicate descriptor lacks nullability annotations
     void setMasterEnsuresSingleMaster(@ForAll("nodeCountAndTarget") int[] config) {
         int nodeCount = config[0];
         int targetIndex = config[1];
 
-        ClusterNodeRepository nodeRepository = Mockito.mock(ClusterNodeRepository.class);
-        ClusterBlockRepository blockRepository = Mockito.mock(ClusterBlockRepository.class);
-        ClusterService clusterService = new ClusterService(nodeRepository, blockRepository, Mockito.mock(org.myorganization.template.core.service.AuditService.class));
+        ClusterNodeRepository nodeRepository = mock(ClusterNodeRepository.class);
+        ClusterBlockRepository blockRepository = mock(ClusterBlockRepository.class);
+        ClusterService clusterService = new ClusterService(nodeRepository, blockRepository,
+                mock(org.myorganization.template.core.service.AuditService.class));
 
         List<ClusterNode> nodes = new ArrayList<>();
         for (int i = 0; i < nodeCount; i++) {
@@ -54,7 +58,10 @@ class ClusterSingleMasterPropertyTest {
         ClusterNode targetNode = nodes.get(targetIndex);
 
         when(nodeRepository.findById(targetId)).thenReturn(Optional.of(targetNode));
-        doAnswer(inv -> { nodes.forEach(n -> n.setMaster(false)); return null; })
+        doAnswer(inv -> {
+            nodes.forEach(n -> n.setMaster(false));
+            return null;
+        })
                 .when(nodeRepository).deactivateAllMasters();
         when(nodeRepository.save(any(ClusterNode.class))).thenAnswer(inv -> inv.getArgument(0));
 
@@ -66,13 +73,13 @@ class ClusterSingleMasterPropertyTest {
     }
 
     @Property(tries = 30)
-    @SuppressWarnings("null") // Eclipse null analysis: Predicate descriptor lacks nullability annotations
     void multipleSetMasterCallsMaintainInvariant(@ForAll("setMasterSequence") List<Integer> sequence) {
         int nodeCount = 5;
 
-        ClusterNodeRepository nodeRepository = Mockito.mock(ClusterNodeRepository.class);
-        ClusterBlockRepository blockRepository = Mockito.mock(ClusterBlockRepository.class);
-        ClusterService clusterService = new ClusterService(nodeRepository, blockRepository, Mockito.mock(org.myorganization.template.core.service.AuditService.class));
+        ClusterNodeRepository nodeRepository = mock(ClusterNodeRepository.class);
+        ClusterBlockRepository blockRepository = mock(ClusterBlockRepository.class);
+        ClusterService clusterService = new ClusterService(nodeRepository, blockRepository,
+                mock(org.myorganization.template.core.service.AuditService.class));
 
         List<ClusterNode> nodes = new ArrayList<>();
         for (int i = 0; i < nodeCount; i++) {
@@ -84,7 +91,10 @@ class ClusterSingleMasterPropertyTest {
             nodes.add(node);
         }
 
-        doAnswer(inv -> { nodes.forEach(n -> n.setMaster(false)); return null; })
+        doAnswer(inv -> {
+            nodes.forEach(n -> n.setMaster(false));
+            return null;
+        })
                 .when(nodeRepository).deactivateAllMasters();
         when(nodeRepository.save(any(ClusterNode.class))).thenAnswer(inv -> inv.getArgument(0));
 
@@ -100,8 +110,8 @@ class ClusterSingleMasterPropertyTest {
 
     @Provide
     Arbitrary<int[]> nodeCountAndTarget() {
-        return Arbitraries.integers().between(2, 10).flatMap(count ->
-                Arbitraries.integers().between(0, count - 1).map(target -> new int[]{count, target}));
+        return Arbitraries.integers().between(2, 10).flatMap(
+                count -> Arbitraries.integers().between(0, count - 1).map(target -> new int[] { count, target }));
     }
 
     @Provide

@@ -47,6 +47,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -108,7 +109,7 @@ class ProfileServiceTest {
 
         assertThat(result.id()).isEqualTo(2L);
         assertThat(result.actionIds()).containsExactly(10L, 20L);
-        verify(profile2ActionRepository, org.mockito.Mockito.times(2)).save(any(Profile2Action.class));
+        verify(profile2ActionRepository, times(2)).save(any(Profile2Action.class));
     }
 
     @Test
@@ -381,7 +382,8 @@ class ProfileServiceTest {
     // --- Helper methods ---
 
     /**
-     * Runs the given {@link Specification} against a mocked JPA Criteria API so the lambdas inside
+     * Runs the given {@link Specification} against a mocked JPA Criteria API so the
+     * lambdas inside
      * {@code buildSpecification} execute and their branches are covered.
      */
     private Predicate evaluateSpecification(Specification<Profile> spec) {
@@ -390,10 +392,11 @@ class ProfileServiceTest {
         CriteriaBuilder cb = mock(CriteriaBuilder.class);
         Predicate predicate = mock(Predicate.class);
         Path<Object> path = mock(Path.class);
+        Expression<String> expression = mock(Expression.class);
 
         lenient().when(root.get(anyString())).thenReturn(path);
         lenient().when(cb.conjunction()).thenReturn(predicate);
-        lenient().when(cb.lower(any())).thenReturn(mock(Expression.class));
+        lenient().when(cb.lower(any())).thenReturn(expression);
         lenient().when(cb.like(any(), anyString())).thenReturn(predicate);
         lenient().when(cb.and(any(Predicate.class), any(Predicate.class))).thenReturn(predicate);
 
