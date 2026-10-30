@@ -51,6 +51,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class AuthenticationFlowIntegrationTest {
 
         @Container
+        @SuppressWarnings("resource") // Testcontainers manages the container lifecycle via @Container/@Testcontainers
         static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:18-alpine")
                         .withDatabaseName("template_test")
                         .withUsername("test")
