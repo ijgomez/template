@@ -39,7 +39,7 @@ services:
 
   openproject:
     build:
-      context: ./openproyect
+      context: ./openproject
       dockerfile: Dockerfile
     container_name: template-openproject
     restart: unless-stopped

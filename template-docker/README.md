@@ -78,7 +78,7 @@ template-docker/
 ├── docker-compose.yml      ← Orquestación de servicios
 ├── compose.sh              ← Script de arranque/parada/reset
 ├── .env.example            ← Variables de entorno de ejemplo
-├── openproyect/
+├── openproject/
 │   └── Dockerfile          ← Imagen de OpenProject personalizada
 ├── postgres/
 │   ├── Dockerfile          ← Imagen de PostgreSQL personalizada
@@ -116,7 +116,7 @@ template-docker/
 
 ### OpenProject
 
-- Build local desde `openproyect/Dockerfile` (base `openproject/openproject:17`)
+- Build local desde `openproject/Dockerfile` (base `openproject/openproject:17`)
 - Puerto HTTP: configurable via `OPENPROJECT_PORT` (por defecto 8088 mapeado al 80 interno)
 - Utiliza el servicio PostgreSQL (`postgres`) compartido mediante la base de datos `openproject`
 - Los archivos adjuntos y datos de usuario se persisten en el volumen `openproject-assets`
