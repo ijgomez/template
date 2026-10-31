@@ -131,7 +131,7 @@ template-docker/
 
 ### WildFly
 
-- Dos instancias (`wildfly-1` y `wildfly-2`) construidas desde la misma imagen (`wildfly/Dockerfile`, base `quay.io/wildfly/wildfly:latest-jdk21`)
+- Dos instancias (`wildfly-1` y `wildfly-2`) construidas desde la misma imagen (`template-wildfly:latest`, generada con `wildfly/Dockerfile`, base `quay.io/wildfly/wildfly:latest-jdk21`)
 - Nodo 1:
   - Puerto HTTP: configurable via `WILDFLY_HTTP_PORT` (por defecto 8080)
   - Puerto de gestión: configurable via `WILDFLY_MANAGEMENT_PORT` (por defecto 9990)

@@ -4,6 +4,7 @@ services:
     build:
       context: ./postgres
       dockerfile: Dockerfile
+    image: template-postgres:latest
     container_name: template-postgres
     restart: unless-stopped
     ports:
@@ -25,6 +26,7 @@ services:
     build:
       context: ./wildfly
       dockerfile: Dockerfile
+    image: template-wildfly:latest
     container_name: template-wildfly-1
     hostname: template-wildfly-1
     restart: unless-stopped
@@ -42,6 +44,7 @@ services:
     build:
       context: ./wildfly
       dockerfile: Dockerfile
+    image: template-wildfly:latest
     container_name: template-wildfly-2
     hostname: template-wildfly-2
     restart: unless-stopped
@@ -59,6 +62,7 @@ services:
     build:
       context: ./apache
       dockerfile: Dockerfile
+    image: template-apache:latest
     container_name: template-apache
     restart: unless-stopped
     depends_on:
@@ -71,6 +75,7 @@ services:
     build:
       context: ./openproject
       dockerfile: Dockerfile
+    image: template-openproject:latest
     container_name: template-openproject
     restart: unless-stopped
     depends_on:
@@ -91,6 +96,7 @@ services:
     build:
       context: ./mail
       dockerfile: Dockerfile
+    image: template-mail:latest
     container_name: template-mail
     restart: unless-stopped
     ports:
