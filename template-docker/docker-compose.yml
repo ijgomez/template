@@ -21,11 +21,12 @@ services:
       timeout: 5s
       retries: 5
 
-  wildfly:
+  wildfly-1:
     build:
       context: ./wildfly
       dockerfile: Dockerfile
-    container_name: template-wildfly
+    container_name: template-wildfly-1
+    hostname: template-wildfly-1
     restart: unless-stopped
     depends_on:
       postgres:
@@ -36,6 +37,35 @@ services:
     environment:
       WILDFLY_ADMIN_USER: ${WILDFLY_ADMIN_USER:-admin}
       WILDFLY_ADMIN_PASSWORD: ${WILDFLY_ADMIN_PASSWORD:-admin}
+
+  wildfly-2:
+    build:
+      context: ./wildfly
+      dockerfile: Dockerfile
+    container_name: template-wildfly-2
+    hostname: template-wildfly-2
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "${WILDFLY2_HTTP_PORT:-8081}:8080"
+      - "${WILDFLY2_MANAGEMENT_PORT:-9991}:9990"
+    environment:
+      WILDFLY_ADMIN_USER: ${WILDFLY_ADMIN_USER:-admin}
+      WILDFLY_ADMIN_PASSWORD: ${WILDFLY_ADMIN_PASSWORD:-admin}
+
+  apache:
+    build:
+      context: ./apache
+      dockerfile: Dockerfile
+    container_name: template-apache
+    restart: unless-stopped
+    depends_on:
+      - wildfly-1
+      - wildfly-2
+    ports:
+      - "${APACHE_HTTP_PORT:-8090}:80"
 
   openproject:
     build:
