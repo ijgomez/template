@@ -12,7 +12,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Service for managing audit log entries (read-only from API).
@@ -25,7 +25,7 @@ import lombok.extern.log4j.Log4j2;
  * Implements retention archival: when a configured retention period is exceeded,
  * old records are archived (deleted from the active table).
  */
-@Log4j2
+@Slf4j
 @Service
 @Transactional
 public class AuditService extends AbstractCriteriaService<AuditLog, AuditLogDTO, AuditCriteria> {

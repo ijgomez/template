@@ -11,7 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * AOP aspect that intercepts service methods annotated with {@link Auditable}
@@ -22,7 +22,7 @@ import lombok.extern.log4j.Log4j2;
  * <p>
  * This aspect is independent of entity created_at/last_modified_at fields.
  */
-@Log4j2
+@Slf4j
 @Aspect
 @Component
 @RequiredArgsConstructor

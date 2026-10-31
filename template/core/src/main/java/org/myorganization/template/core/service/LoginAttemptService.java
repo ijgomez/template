@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Tracks failed login attempts and temporarily locks user accounts.
@@ -27,7 +27,7 @@ import lombok.extern.log4j.Log4j2;
  * the
  * attempt must be committed independently to be remembered.
  */
-@Log4j2
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class LoginAttemptService {

@@ -18,11 +18,12 @@ Directrices de codificación para el backend Java 21 con Spring Boot 4.1.1.
 
 ## Logging
 
-- Usar **Log4j2** como framework de logging. Excluir `spring-boot-starter-logging` (Logback) y añadir `spring-boot-starter-log4j2`.
-- Declarar el logger con Lombok usando `@Log4j2` en lugar de instanciarlo manualmente:
+- Usar **SLF4J** como API de logging en el código y declarar el logger con Lombok mediante `@Slf4j`. El backend queda desacoplado: cambiar de Logback a Log4j2 (o viceversa) solo requiere ajustar dependencias y configuración, no el código.
+- **Log4j2** es el backend recomendado: excluir `spring-boot-starter-logging` (Logback) y añadir `spring-boot-starter-log4j2` cuando se quiera usar ese backend.
+- Ejemplo de declaración del logger:
 
 ```java
-@Log4j2
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {

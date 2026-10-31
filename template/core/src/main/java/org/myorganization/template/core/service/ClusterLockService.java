@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Centralized cluster lock service providing mutual exclusion at two levels:
@@ -29,7 +29,7 @@ import lombok.extern.log4j.Log4j2;
  * On release, calculates the duration and updates ClusterBlock metrics:
  * total, avg, min, max.
  */
-@Log4j2
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ClusterLockService implements HeartbeatLockService {

@@ -26,7 +26,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Service for cluster node and block management.
@@ -35,7 +35,7 @@ import lombok.extern.log4j.Log4j2;
  * Only the master flag is editable via the API.
  * Blocks are read-only from the API perspective.
  */
-@Log4j2
+@Slf4j
 @Service
 public class ClusterService implements HeartbeatClusterService {
 
