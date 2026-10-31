@@ -8,11 +8,16 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Join table entity representing the many-to-many relationship between User and Report.
  */
 @Entity
 @Table(name = "user2report")
+@Getter
+@Setter
 public class User2Report {
 
     @EmbeddedId
@@ -35,29 +40,5 @@ public class User2Report {
         this.user = user;
         this.report = report;
         this.id = new User2ReportPK(user.getId(), report.getId());
-    }
-
-    public User2ReportPK getId() {
-        return id;
-    }
-
-    public void setId(User2ReportPK id) {
-        this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Report getReport() {
-        return report;
-    }
-
-    public void setReport(Report report) {
-        this.report = report;
     }
 }

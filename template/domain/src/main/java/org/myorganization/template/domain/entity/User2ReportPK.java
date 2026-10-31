@@ -1,15 +1,21 @@
 package org.myorganization.template.domain.entity;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Composite primary key for User2Report (user_id + report_id).
  */
 @Embeddable
+@Getter
+@Setter
+@EqualsAndHashCode
 public class User2ReportPK implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -26,35 +32,5 @@ public class User2ReportPK implements Serializable {
     public User2ReportPK(Long userId, Long reportId) {
         this.userId = userId;
         this.reportId = reportId;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public Long getReportId() {
-        return reportId;
-    }
-
-    public void setReportId(Long reportId) {
-        this.reportId = reportId;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User2ReportPK that = (User2ReportPK) o;
-        return Objects.equals(userId, that.userId)
-                && Objects.equals(reportId, that.reportId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(userId, reportId);
     }
 }

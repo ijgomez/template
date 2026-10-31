@@ -6,11 +6,12 @@ import org.myorganization.template.domain.enums.OperationType;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 /**
  * AOP aspect that intercepts service methods annotated with {@link Auditable}
@@ -21,17 +22,13 @@ import org.springframework.stereotype.Component;
  * <p>
  * This aspect is independent of entity created_at/last_modified_at fields.
  */
+@Log4j2
 @Aspect
 @Component
+@RequiredArgsConstructor
 public class AuditAspect {
 
-    private static final Logger log = LoggerFactory.getLogger(AuditAspect.class);
-
     private final AuditService auditService;
-
-    public AuditAspect(AuditService auditService) {
-        this.auditService = auditService;
-    }
 
     /**
      * Intercepts methods annotated with {@link Auditable} after they return successfully

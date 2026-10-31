@@ -8,11 +8,16 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Represents a configurable system parameter with typed values.
  */
 @Entity
 @Table(name = "parameter")
+@Getter
+@Setter
 public class Parameter extends BaseEntity {
 
     @Column(name = "code", nullable = false, unique = true)
@@ -27,36 +32,4 @@ public class Parameter extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
     private ParameterType type;
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    public ParameterType getType() {
-        return type;
-    }
-
-    public void setType(ParameterType type) {
-        this.type = type;
-    }
 }

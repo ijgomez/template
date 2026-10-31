@@ -1,6 +1,8 @@
 {
     "java.compile.nullAnalysis.mode": "automatic",
     "java.configuration.updateBuildConfiguration": "automatic",
+    "java.jdt.ls.lombokSupport.enabled": true,
+    "java.symbols.includeGeneratedCode": true,
     "js/ts.tsdk.path": "template/dashboard/node_modules/typescript/lib",
     "js/ts.tsdk.promptToUseWorkspaceVersion": true,
     "maven.terminal.favorites": [

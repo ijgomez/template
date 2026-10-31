@@ -19,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * Service for interface monitoring (read-only) and automatic operation logging.
  * <p>
@@ -27,16 +29,11 @@ import java.util.List;
  * Interface logs are append-only and immutable.
  */
 @Service
+@RequiredArgsConstructor
 public class InterfaceService {
 
     private final InterfaceRepository interfaceRepository;
     private final InterfaceLogRepository interfaceLogRepository;
-
-    public InterfaceService(InterfaceRepository interfaceRepository,
-                            InterfaceLogRepository interfaceLogRepository) {
-        this.interfaceRepository = interfaceRepository;
-        this.interfaceLogRepository = interfaceLogRepository;
-    }
 
     // ─── Interface (configuration) ───────────────────────────────────────────────
 

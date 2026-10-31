@@ -22,6 +22,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * Service for managing the assignment of cluster tasks to cluster nodes (ClusterJob).
  * <p>
@@ -32,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
  * composite {@code nodeId:taskId}.
  */
 @Service
+@RequiredArgsConstructor
 public class ClusterJobService {
 
     private static final String ENTITY_NAME = "ClusterJob";
@@ -40,16 +43,6 @@ public class ClusterJobService {
     private final ClusterTaskRepository clusterTaskRepository;
     private final ClusterJobRepository clusterJobRepository;
     private final AuditService auditService;
-
-    public ClusterJobService(ClusterNodeRepository clusterNodeRepository,
-                             ClusterTaskRepository clusterTaskRepository,
-                             ClusterJobRepository clusterJobRepository,
-                             AuditService auditService) {
-        this.clusterNodeRepository = clusterNodeRepository;
-        this.clusterTaskRepository = clusterTaskRepository;
-        this.clusterJobRepository = clusterJobRepository;
-        this.auditService = auditService;
-    }
 
     /**
      * Lists all jobs assigned to a node, ordered by priority ascending.

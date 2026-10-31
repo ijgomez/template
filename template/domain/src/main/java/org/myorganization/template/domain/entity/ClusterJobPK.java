@@ -1,15 +1,21 @@
 package org.myorganization.template.domain.entity;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Composite primary key for ClusterJob (cluster_node_id + cluster_task_id).
  */
 @Embeddable
+@Getter
+@Setter
+@EqualsAndHashCode
 public class ClusterJobPK implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -26,35 +32,5 @@ public class ClusterJobPK implements Serializable {
     public ClusterJobPK(Long clusterNodeId, Long clusterTaskId) {
         this.clusterNodeId = clusterNodeId;
         this.clusterTaskId = clusterTaskId;
-    }
-
-    public Long getClusterNodeId() {
-        return clusterNodeId;
-    }
-
-    public void setClusterNodeId(Long clusterNodeId) {
-        this.clusterNodeId = clusterNodeId;
-    }
-
-    public Long getClusterTaskId() {
-        return clusterTaskId;
-    }
-
-    public void setClusterTaskId(Long clusterTaskId) {
-        this.clusterTaskId = clusterTaskId;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ClusterJobPK that = (ClusterJobPK) o;
-        return Objects.equals(clusterNodeId, that.clusterNodeId)
-                && Objects.equals(clusterTaskId, that.clusterTaskId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(clusterNodeId, clusterTaskId);
     }
 }

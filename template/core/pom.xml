@@ -24,6 +24,13 @@
             <artifactId>template-domain</artifactId>
         </dependency>
 
+        <!-- Lombok: compile-time boilerplate reduction (constructor and logger generation) -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- Spring Data JPA -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

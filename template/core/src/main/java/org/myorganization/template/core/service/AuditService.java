@@ -8,11 +8,11 @@ import org.myorganization.template.domain.criteria.AuditCriteria;
 import org.myorganization.template.domain.dto.AuditLogDTO;
 import org.myorganization.template.domain.dto.AuditLogEntry;
 import org.myorganization.template.domain.entity.AuditLog;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import lombok.extern.log4j.Log4j2;
 
 /**
  * Service for managing audit log entries (read-only from API).
@@ -25,11 +25,10 @@ import org.springframework.transaction.annotation.Transactional;
  * Implements retention archival: when a configured retention period is exceeded,
  * old records are archived (deleted from the active table).
  */
+@Log4j2
 @Service
 @Transactional
 public class AuditService extends AbstractCriteriaService<AuditLog, AuditLogDTO, AuditCriteria> {
-
-    private static final Logger log = LoggerFactory.getLogger(AuditService.class);
 
     private final AuditLogRepository auditLogRepository;
     private final ParameterService parameterService;

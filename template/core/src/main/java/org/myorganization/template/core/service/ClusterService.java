@@ -21,12 +21,12 @@ import org.myorganization.template.domain.enums.NodeStatus;
 import org.myorganization.template.domain.enums.OperationType;
 import org.myorganization.template.domain.exception.EntityNotFoundException;
 import org.myorganization.template.domain.exception.MethodNotAllowedException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import lombok.extern.log4j.Log4j2;
 
 /**
  * Service for cluster node and block management.
@@ -35,10 +35,9 @@ import org.springframework.transaction.annotation.Transactional;
  * Only the master flag is editable via the API.
  * Blocks are read-only from the API perspective.
  */
+@Log4j2
 @Service
 public class ClusterService implements HeartbeatClusterService {
-
-    private static final Logger log = LoggerFactory.getLogger(ClusterService.class);
 
     private static final long DEAD_NODE_TIMEOUT_MINUTES = 5;
     private static final String CLUSTER_NODE = "ClusterNode";

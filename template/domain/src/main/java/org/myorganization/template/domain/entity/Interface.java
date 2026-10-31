@@ -8,11 +8,16 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Represents an external interface (API endpoint) monitored by the system.
  */
 @Entity
 @Table(name = "interface")
+@Getter
+@Setter
 public class Interface extends BaseEntity {
 
     @Column(name = "name", nullable = false)
@@ -33,52 +38,4 @@ public class Interface extends BaseEntity {
 
     @Column(name = "check_frequency")
     private Integer checkFrequency;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getProtocol() {
-        return protocol;
-    }
-
-    public void setProtocol(String protocol) {
-        this.protocol = protocol;
-    }
-
-    public InterfaceStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(InterfaceStatus status) {
-        this.status = status;
-    }
-
-    public Integer getCheckFrequency() {
-        return checkFrequency;
-    }
-
-    public void setCheckFrequency(Integer checkFrequency) {
-        this.checkFrequency = checkFrequency;
-    }
 }

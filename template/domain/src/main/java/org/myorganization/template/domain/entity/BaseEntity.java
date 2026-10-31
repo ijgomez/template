@@ -11,12 +11,17 @@ import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Base entity with common fields: id, createdAt, lastModifiedAt.
  * Uses JPA lifecycle callbacks for automatic timestamp management.
  * All timestamps are stored in UTC.
  */
 @MappedSuperclass
+@Getter
+@Setter
 public abstract class BaseEntity {
 
     @Id
@@ -40,29 +45,5 @@ public abstract class BaseEntity {
     @PreUpdate
     protected void onUpdate() {
         this.lastModifiedAt = OffsetDateTime.now(ZoneOffset.UTC);
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public OffsetDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(OffsetDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public OffsetDateTime getLastModifiedAt() {
-        return lastModifiedAt;
-    }
-
-    public void setLastModifiedAt(OffsetDateTime lastModifiedAt) {
-        this.lastModifiedAt = lastModifiedAt;
     }
 }

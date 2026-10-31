@@ -23,6 +23,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * Service for managing report execution and export.
  * <p>
@@ -34,15 +36,11 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class ReportService {
 
     private final ReportRepository reportRepository;
     private final User2ReportRepository user2ReportRepository;
-
-    public ReportService(ReportRepository reportRepository, User2ReportRepository user2ReportRepository) {
-        this.reportRepository = reportRepository;
-        this.user2ReportRepository = user2ReportRepository;
-    }
 
     /**
      * Lists all reports assigned to a given user via the user2report table.

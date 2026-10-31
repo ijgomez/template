@@ -6,12 +6,13 @@ import java.time.ZoneOffset;
 
 import org.myorganization.template.core.repository.UserRepository;
 import org.myorganization.template.domain.entity.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 /**
  * Tracks failed login attempts and temporarily locks user accounts.
@@ -26,22 +27,18 @@ import org.springframework.transaction.annotation.Transactional;
  * the
  * attempt must be committed independently to be remembered.
  */
+@Log4j2
 @Service
+@RequiredArgsConstructor
 public class LoginAttemptService {
 
-    private static final Logger log = LoggerFactory.getLogger(LoginAttemptService.class);
-
     private final UserRepository userRepository;
-    private final int maxAttempts;
-    private final long lockoutMinutes;
 
-    public LoginAttemptService(UserRepository userRepository,
-            @Value("${auth.login-attempts.max-attempts:5}") int maxAttempts,
-            @Value("${auth.login-attempts.lockout-minutes:15}") long lockoutMinutes) {
-        this.userRepository = userRepository;
-        this.maxAttempts = maxAttempts;
-        this.lockoutMinutes = lockoutMinutes;
-    }
+    @Value("${auth.login-attempts.max-attempts:5}")
+    private final int maxAttempts;
+
+    @Value("${auth.login-attempts.lockout-minutes:15}")
+    private final long lockoutMinutes;
 
     /**
      * Indicates whether the given account is locked at this moment.

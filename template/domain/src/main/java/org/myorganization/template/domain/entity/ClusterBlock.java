@@ -12,12 +12,17 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Represents a cluster block (lock record) with execution metrics.
  * No timestamp audit fields (created_at/last_modified_at).
  */
 @Entity
 @Table(name = "cluster_block")
+@Getter
+@Setter
 public class ClusterBlock {
 
     @Id
@@ -46,68 +51,4 @@ public class ClusterBlock {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "name", referencedColumnName = "name", insertable = false, updatable = false)
     private ClusterTask clusterTask;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public OffsetDateTime getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(OffsetDateTime startDate) {
-        this.startDate = startDate;
-    }
-
-    public Long getAvgTime() {
-        return avgTime;
-    }
-
-    public void setAvgTime(Long avgTime) {
-        this.avgTime = avgTime;
-    }
-
-    public Long getMinTime() {
-        return minTime;
-    }
-
-    public void setMinTime(Long minTime) {
-        this.minTime = minTime;
-    }
-
-    public Long getMaxTime() {
-        return maxTime;
-    }
-
-    public void setMaxTime(Long maxTime) {
-        this.maxTime = maxTime;
-    }
-
-    public Long getTotal() {
-        return total;
-    }
-
-    public void setTotal(Long total) {
-        this.total = total;
-    }
-
-    public ClusterTask getClusterTask() {
-        return clusterTask;
-    }
-
-    public void setClusterTask(ClusterTask clusterTask) {
-        this.clusterTask = clusterTask;
-    }
 }

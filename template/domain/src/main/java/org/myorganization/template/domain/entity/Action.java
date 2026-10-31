@@ -12,11 +12,16 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Represents a security action (permission) that can be assigned to profiles.
  */
 @Entity
 @Table(name = "action")
+@Getter
+@Setter
 public class Action extends BaseEntity {
 
     @Column(name = "code", nullable = false, unique = true)
@@ -34,44 +39,4 @@ public class Action extends BaseEntity {
 
     @OneToMany(mappedBy = "action")
     private List<Profile2Action> profileActions = new ArrayList<>();
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public ActionType getType() {
-        return type;
-    }
-
-    public void setType(ActionType type) {
-        this.type = type;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public List<Profile2Action> getProfileActions() {
-        return profileActions;
-    }
-
-    public void setProfileActions(List<Profile2Action> profileActions) {
-        this.profileActions = profileActions;
-    }
 }

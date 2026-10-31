@@ -8,10 +8,11 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.myorganization.template.cluster.HeartbeatLockService;
 import org.myorganization.template.core.repository.ClusterBlockRepository;
 import org.myorganization.template.domain.entity.ClusterBlock;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 /**
  * Centralized cluster lock service providing mutual exclusion at two levels:
@@ -28,19 +29,15 @@ import org.springframework.transaction.annotation.Transactional;
  * On release, calculates the duration and updates ClusterBlock metrics:
  * total, avg, min, max.
  */
+@Log4j2
 @Service
+@RequiredArgsConstructor
 public class ClusterLockService implements HeartbeatLockService {
-
-    private static final Logger log = LoggerFactory.getLogger(ClusterLockService.class);
 
     private final ConcurrentHashMap<String, ReentrantLock> intraInstanceLocks = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, Instant> lockStartTimes = new ConcurrentHashMap<>();
 
     private final ClusterBlockRepository clusterBlockRepository;
-
-    public ClusterLockService(ClusterBlockRepository clusterBlockRepository) {
-        this.clusterBlockRepository = clusterBlockRepository;
-    }
 
     /**
      * Acquires a lock identified by resource name, providing both intra-instance

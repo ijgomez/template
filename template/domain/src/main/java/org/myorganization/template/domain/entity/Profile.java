@@ -8,11 +8,16 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Represents a security profile that groups actions.
  */
 @Entity
 @Table(name = "profile")
+@Getter
+@Setter
 public class Profile extends BaseEntity {
 
     @Column(name = "name", nullable = false, unique = true)
@@ -26,36 +31,4 @@ public class Profile extends BaseEntity {
 
     @OneToMany(mappedBy = "profile")
     private List<User> users = new ArrayList<>();
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public List<Profile2Action> getProfileActions() {
-        return profileActions;
-    }
-
-    public void setProfileActions(List<Profile2Action> profileActions) {
-        this.profileActions = profileActions;
-    }
-
-    public List<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<User> users) {
-        this.users = users;
-    }
 }

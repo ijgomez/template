@@ -16,6 +16,9 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Represents a node in the application cluster.
  * Has started_at and last_modified_at but no created_at.
@@ -23,6 +26,8 @@ import jakarta.persistence.Table;
  */
 @Entity
 @Table(name = "cluster_node")
+@Getter
+@Setter
 public class ClusterNode {
 
     @Id
@@ -64,42 +69,6 @@ public class ClusterNode {
         this.lastModifiedAt = OffsetDateTime.now(ZoneOffset.UTC);
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public NodeStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(NodeStatus status) {
-        this.status = status;
-    }
-
-    public String getHostname() {
-        return hostname;
-    }
-
-    public void setHostname(String hostname) {
-        this.hostname = hostname;
-    }
-
-    public String getIp() {
-        return ip;
-    }
-
-    public void setIp(String ip) {
-        this.ip = ip;
-    }
-
-    public Boolean getMaster() {
-        return master;
-    }
-
     /**
      * Convenience method for boolean checks (e.g. stream filters).
      *
@@ -107,49 +76,5 @@ public class ClusterNode {
      */
     public boolean isMaster() {
         return Boolean.TRUE.equals(master);
-    }
-
-    public void setMaster(Boolean master) {
-        this.master = master;
-    }
-
-    public Long getUsedMemory() {
-        return usedMemory;
-    }
-
-    public void setUsedMemory(Long usedMemory) {
-        this.usedMemory = usedMemory;
-    }
-
-    public Long getFreeMemory() {
-        return freeMemory;
-    }
-
-    public void setFreeMemory(Long freeMemory) {
-        this.freeMemory = freeMemory;
-    }
-
-    public Long getTotalMemory() {
-        return totalMemory;
-    }
-
-    public void setTotalMemory(Long totalMemory) {
-        this.totalMemory = totalMemory;
-    }
-
-    public OffsetDateTime getStartedAt() {
-        return startedAt;
-    }
-
-    public void setStartedAt(OffsetDateTime startedAt) {
-        this.startedAt = startedAt;
-    }
-
-    public OffsetDateTime getLastModifiedAt() {
-        return lastModifiedAt;
-    }
-
-    public void setLastModifiedAt(OffsetDateTime lastModifiedAt) {
-        this.lastModifiedAt = lastModifiedAt;
     }
 }

@@ -17,8 +17,6 @@ import org.myorganization.template.domain.entity.User;
 import org.myorganization.template.domain.enums.AuditSection;
 import org.myorganization.template.domain.enums.OperationType;
 import org.myorganization.template.domain.exception.AccountLockedException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -27,16 +25,19 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+
 /**
  * Service handling authentication operations: login, token refresh and logout.
  * <p>
  * Refresh tokens are opaque UUID strings persisted in the database, supporting
  * server-side revocation and rotation. Access tokens remain as JWTs.
  */
+@Log4j2
 @Service
+@RequiredArgsConstructor
 public class AuthService {
-
-    private static final Logger log = LoggerFactory.getLogger(AuthService.class);
 
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -44,23 +45,9 @@ public class AuthService {
     private final LoginAttemptService loginAttemptService;
     private final TokenProvider tokenProvider;
     private final AuditService auditService;
-    private final long refreshTokenExpiration;
 
-    public AuthService(UserRepository userRepository,
-            RefreshTokenRepository refreshTokenRepository,
-            AuthenticationManager authenticationManager,
-            LoginAttemptService loginAttemptService,
-            TokenProvider tokenProvider,
-            AuditService auditService,
-            @Value("${jwt.refresh-token-expiration:604800000}") long refreshTokenExpiration) {
-        this.userRepository = userRepository;
-        this.refreshTokenRepository = refreshTokenRepository;
-        this.authenticationManager = authenticationManager;
-        this.loginAttemptService = loginAttemptService;
-        this.tokenProvider = tokenProvider;
-        this.auditService = auditService;
-        this.refreshTokenExpiration = refreshTokenExpiration;
-    }
+    @Value("${jwt.refresh-token-expiration:604800000}")
+    private final long refreshTokenExpiration;
 
     /**
      * Authenticates a user with the provided credentials.

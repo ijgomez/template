@@ -9,6 +9,13 @@ Directrices de codificación para el backend Java 21 con Spring Boot 4.1.1.
 - Todo el código debe estar en inglés (nombres de clases, métodos, variables y comentarios técnicos).
 - Usar **Lombok** para reducir código repetitivo (getters, setters, constructores, builders, etc.).
 
+### Lombok en entidades JPA
+
+- En clases `@Entity` usar únicamente `@Getter`/`@Setter` para eliminar el boilerplate de acceso.
+- No usar `@Data`, `@EqualsAndHashCode` ni `@ToString` sobre entidades con asociaciones LAZY: pueden provocar `LazyInitializationException`, recursión entre entidades y problemas de identidad JPA.
+- En claves compuestas (`@Embeddable`) sí se permite `@Getter`/`@Setter`/`@EqualsAndHashCode`, ya que todos sus campos forman la clave.
+- Mantener siempre el constructor sin argumentos que exige JPA y los callbacks `@PrePersist`/`@PreUpdate`.
+
 ## Logging
 
 - Usar **Log4j2** como framework de logging. Excluir `spring-boot-starter-logging` (Logback) y añadir `spring-boot-starter-log4j2`.
@@ -17,7 +24,7 @@ Directrices de codificación para el backend Java 21 con Spring Boot 4.1.1.
 ```java
 @Log4j2
 @Service
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 public class UserService {
 
     public UserDTO findById(Long id) {
@@ -27,6 +34,8 @@ public class UserService {
 }
 ```
 
+- `@RequiredArgsConstructor` genera el constructor de inyección para los campos `final`; con un único constructor Spring no necesita `@Autowired`. Los campos anotados con `@Value` conservan la anotación en el parámetro del constructor gracias a `lombok.config` (`lombok.copyableAnnotations`).
+- Si el servicio extiende una clase base que requiere argumentos en `super(...)`, mantener el constructor explícito: Lombok no puede generar la llamada al constructor del padre.
 - Configurar Log4j2 mediante `log4j2.xml` (o `log4j2-spring.xml` para integración con perfiles de Spring) en `src/main/resources`.
 - Niveles por entorno: `DEBUG` en desarrollo, `INFO` en preproducción, `WARN`/`ERROR` en producción.
 - No loguear datos sensibles (contraseñas, tokens, datos personales).
@@ -131,7 +140,7 @@ Todo `@Repository` asociado a una entidad debe exponer `findByCriteria` y `count
 
 ## Buenas Prácticas
 
-- Inyección de dependencias siempre por constructor con `@RequiredArgsConstructor(onConstructor = @__(@Autowired))`.
+- Inyección de dependencias siempre por constructor con `@RequiredArgsConstructor` (sin `@Autowired` cuando solo hay un constructor).
 - Usar `Optional<T>` en lugar de retornar `null`.
 - Validar entradas con Bean Validation (`@Valid`, `@NotNull`, `@Size`, etc.).
 - No capturar excepciones genéricas salvo en el manejador global.

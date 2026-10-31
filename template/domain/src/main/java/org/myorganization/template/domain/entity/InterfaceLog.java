@@ -16,11 +16,16 @@ import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Represents an immutable interface operation log entry. Append-only — no updates or deletes.
  */
 @Entity
 @Table(name = "interface_log")
+@Getter
+@Setter
 public class InterfaceLog {
 
     @Id
@@ -53,61 +58,5 @@ public class InterfaceLog {
         if (this.timestamp == null) {
             this.timestamp = OffsetDateTime.now(ZoneOffset.UTC);
         }
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public OffsetDateTime getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(OffsetDateTime timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public InterfaceOperationType getOperationType() {
-        return operationType;
-    }
-
-    public void setOperationType(InterfaceOperationType operationType) {
-        this.operationType = operationType;
-    }
-
-    public String getInterfaceName() {
-        return interfaceName;
-    }
-
-    public void setInterfaceName(String interfaceName) {
-        this.interfaceName = interfaceName;
-    }
-
-    public String getRequestPayload() {
-        return requestPayload;
-    }
-
-    public void setRequestPayload(String requestPayload) {
-        this.requestPayload = requestPayload;
-    }
-
-    public String getResponsePayload() {
-        return responsePayload;
-    }
-
-    public void setResponsePayload(String responsePayload) {
-        this.responsePayload = responsePayload;
-    }
-
-    public InterfaceLogStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(InterfaceLogStatus status) {
-        this.status = status;
     }
 }
