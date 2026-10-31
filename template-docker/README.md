@@ -37,6 +37,8 @@ Esto levantará:
 | WildFly 2  | 8081   | HTTP del servidor de aplicaciones (nodo 2) |
 | WildFly 2 Management | 9991 | Consola de administración de WildFly (nodo 2) |
 | OpenProject | 8088   | Gestión de proyectos           |
+| Mail (SMTP) | 1025   | Servidor SMTP de pruebas (Mailpit) |
+| Mail (UI)   | 8025   | Interfaz web para consultar los correos capturados |
 
 `./compose.sh start` fuerza reconstrucción de imágenes (`docker compose up -d --build`) para que cambios en Dockerfile y scripts se apliquen automáticamente.
 
@@ -62,6 +64,7 @@ docker compose logs -f apache
 docker compose logs -f wildfly-1
 docker compose logs -f wildfly-2
 docker compose logs -f openproject
+docker compose logs -f mail
 ```
 
 ### Detener todos los servicios
@@ -86,6 +89,8 @@ template-docker/
 ├── apache/
 │   ├── Dockerfile          ← Imagen de Apache HTTP Server
 │   └── httpd.conf          ← Configuración del balanceador (mod_proxy_balancer)
+├── mail/
+│   └── Dockerfile          ← Imagen de Mailpit (servidor SMTP de pruebas)
 ├── openproject/
 │   └── Dockerfile          ← Imagen de OpenProject personalizada
 ├── postgres/
@@ -151,6 +156,15 @@ template-docker/
 - Configuración de host y HTTPS configurable mediante `OPENPROJECT_HOST_NAME` y `OPENPROJECT_HTTPS`
 - Espera a que PostgreSQL esté saludable antes de arrancar
 
+### Mail (Mailpit)
+
+- Build local desde `mail/Dockerfile` (base `axllent/mailpit`)
+- Servidor SMTP de pruebas: captura los correos enviados sin entregarlos a ningún destinatario real
+- Puerto SMTP: configurable via `MAIL_SMTP_PORT` (por defecto 1025)
+- Interfaz web: configurable via `MAIL_UI_PORT` (por defecto 8025), accesible en `http://localhost:8025`
+- Acepta cualquier usuario/contraseña y conexiones sin TLS (`MP_SMTP_AUTH_ACCEPT_ANY` y `MP_SMTP_AUTH_ALLOW_INSECURE`); solo apto para desarrollo
+- Desde otros contenedores el servidor SMTP es `mail:1025`; desde el host, `localhost:1025`
+
 ## Variables de entorno
 
 Archivo de referencia: `.env.example`
@@ -175,5 +189,8 @@ Archivo de referencia: `.env.example`
   - `OPENPROJECT_DB`
   - `OPENPROJECT_SECRET_KEY_BASE`
   - `OPENPROJECT_HTTPS`
+- Mail
+  - `MAIL_SMTP_PORT`
+  - `MAIL_UI_PORT`
 
 
