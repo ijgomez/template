@@ -2,10 +2,12 @@ package org.myorganization.template.core.service;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,6 +35,10 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -82,6 +88,11 @@ class UserServiceTest {
     void setUp() {
         userService = new UserService(userRepository, profileRepository, reportRepository,
                 user2ReportRepository, refreshTokenRepository, passwordEncoder);
+    }
+
+    @AfterEach
+    void clearSecurityContext() {
+        SecurityContextHolder.clearContext();
     }
 
     // --- create ---
@@ -566,6 +577,80 @@ class UserServiceTest {
         assertThat(evaluateSpecification(specCaptor.getValue())).isNotNull();
     }
 
+    // --- SEC-07: segregation of duties (USER_GRANT) ---
+
+    @Test
+    @DisplayName("create: assigning a profile without USER_GRANT throws AccessDeniedException")
+    void create_withProfileWithoutGrantAuthority_throwsAccessDenied() {
+        authenticateWith("USER_WRITE");
+        UserDTO dto = new UserDTO(null, "john", "secret", "John", "Doe",
+                "john@test.com", null, 1L, null, Collections.emptyList(), null, null, null);
+
+        assertThatThrownBy(() -> userService.create(dto))
+                .isInstanceOf(AccessDeniedException.class)
+                .hasMessageContaining("USER_GRANT");
+
+        verify(userRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("create: assigning a profile with USER_GRANT succeeds")
+    void create_withProfileWithGrantAuthority_succeeds() {
+        authenticateWith("USER_WRITE", "USER_GRANT");
+        UserDTO dto = new UserDTO(null, "john", "secret", "John", "Doe",
+                "john@test.com", null, 1L, null, Collections.emptyList(), null, null, null);
+
+        Profile profile = new Profile();
+        profile.setId(1L);
+        profile.setName("ADMIN");
+        User savedUser = createUserEntity(1L, "john", "John", "Doe", "john@test.com", profile);
+
+        when(userRepository.existsByUsername("john")).thenReturn(false);
+        when(passwordEncoder.encode("secret")).thenReturn("$2a$12$encoded");
+        when(profileRepository.findById(1L)).thenReturn(Optional.of(profile));
+        when(userRepository.save(any(User.class))).thenReturn(savedUser);
+
+        UserDTO result = userService.create(dto);
+
+        assertThat(result.profileId()).isEqualTo(1L);
+    }
+
+    @Test
+    @DisplayName("update: changing the profile without USER_GRANT throws AccessDeniedException")
+    void update_changingProfileWithoutGrantAuthority_throwsAccessDenied() {
+        authenticateWith("USER_WRITE");
+        User existingUser = createUserEntity(1L, "john", "John", "Doe", "john@test.com", null);
+        UserDTO dto = new UserDTO(1L, "john", null, "John", "Doe", "john@test.com", null, 2L, null,
+                Collections.emptyList(), null, null, null);
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(existingUser));
+
+        assertThatThrownBy(() -> userService.update(1L, dto))
+                .isInstanceOf(AccessDeniedException.class)
+                .hasMessageContaining("USER_GRANT");
+    }
+
+    @Test
+    @DisplayName("update: keeping the same profile requires no USER_GRANT")
+    void update_sameProfileWithoutGrantAuthority_succeeds() {
+        authenticateWith("USER_WRITE");
+        Profile profile = new Profile();
+        profile.setId(2L);
+        profile.setName("USER");
+        User existingUser = createUserEntity(1L, "john", "John", "Doe", "john@test.com", profile);
+        UserDTO dto = new UserDTO(1L, "john", null, "Johnny", "Updated", "new@test.com", null, 2L, null,
+                Collections.emptyList(), null, null, null);
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(existingUser));
+        when(profileRepository.findById(2L)).thenReturn(Optional.of(profile));
+        when(userRepository.save(any(User.class))).thenAnswer(i -> i.getArgument(0));
+
+        UserDTO result = userService.update(1L, dto);
+
+        assertThat(result.firstName()).isEqualTo("Johnny");
+        assertThat(result.profileId()).isEqualTo(2L);
+    }
+
     // --- Helper methods ---
 
     /**
@@ -608,5 +693,17 @@ class UserServiceTest {
         user.setProfile(profile);
         user.setUserReports(Collections.emptyList());
         return user;
+    }
+
+    /**
+     * Sets a programmatic authentication so {@link org.myorganization.template.core.security.GrantAuthorityChecker}
+     * evaluates the given authorities (SEC-07).
+     */
+    private void authenticateWith(String... authorities) {
+        List<SimpleGrantedAuthority> granted = Arrays.stream(authorities)
+                .map(SimpleGrantedAuthority::new)
+                .toList();
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken("admin", "n/a", granted));
     }
 }

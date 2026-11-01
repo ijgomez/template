@@ -104,14 +104,25 @@ Identificadores locales de este documento: `RF-USR-*` (requisitos funcionales) y
 - AC9.6: Al desbloquear una cuenta se limpian también el bloqueo temporal vigente (`locked_until`) y el contador de intentos fallidos (`failed_login_attempts`).
 - AC9.7: La exportación CSV incluye una columna con el estado de bloqueo de cada usuario.
 
+#### RF-USR-10: Segregación de funciones en la asignación de perfil
+
+**Descripción:** asignar un perfil a un usuario equivale a concederle los permisos de ese perfil. Por ello, la asignación de perfil debe estar segregada de la mera administración del usuario: un usuario con `USER_WRITE` pero sin `USER_GRANT` no debe poder asignar ni cambiar el perfil de un usuario.
+
+**Criterios de aceptación:**
+- AC10.1: Un alta (`POST`) con `profileId` informado exige `USER_GRANT` además de `USER_WRITE`.
+- AC10.2: Una edición (`PUT`) que cambia el perfil del usuario exige `USER_GRANT` además de `USER_WRITE`.
+- AC10.3: Una edición que no altera el perfil (mismo `profileId` o sin informarlo) no requiere `USER_GRANT`.
+- AC10.4: Cuando falta la autoridad de concesión, el backend responde 403 Forbidden y no persiste ningún cambio.
+
 ### 1.2. Requisitos no funcionales
 
-- **RNF-USR-1 (Autorización):** el acceso requiere sesión y la acción `USER_READ`; las operaciones de escritura requieren `USER_WRITE`.
+- **RNF-USR-1 (Autorización):** el acceso requiere sesión y la acción `USER_READ`; las operaciones de escritura requieren `USER_WRITE` y la asignación de perfil requiere además `USER_GRANT`.
 - **RNF-USR-2 (Visibilidad de acciones):** los botones de crear, editar y eliminar solo se muestran a usuarios con `USER_WRITE`.
 - **RNF-USR-3 (Seguridad de credenciales):** la contraseña nunca se muestra en claro ni se devuelve en las respuestas del backend.
 - **RNF-USR-4 (Idioma):** todos los textos de la pantalla son traducibles (ES / EN) mediante el grupo i18n `users.*`.
 - **RNF-USR-5 (Feedback):** toda operación (crear, editar, eliminar, exportar, paginar) informa al usuario mediante notificaciones de progreso, éxito o error.
 - **RNF-USR-6 (Persistencia del bloqueo):** el estado de bloqueo se persiste en base de datos (`users.locked`, `users.locked_until`, `users.failed_login_attempts`) para que sea consistente y efectivo en todos los nodos del clúster.
+- **RNF-USR-7 (Concesión segregada):** asignar o cambiar el perfil de un usuario requiere `USER_GRANT`, verificado en la capa de servicio, evitando la elevación de privilegios por parte de un administrador con `USER_WRITE`.
 
 ---
 
@@ -497,6 +508,7 @@ Datos de referencia consumidos por el formulario y los filtros:
 ### 3.7. Seguridad y permisos
 
 - El acceso a la administración de usuarios se protege en `SecurityConfig` mediante `GET /api/v1/administration/security/users/**` con `hasAnyAuthority("USER_READ", "USER_WRITE")`, y `POST/PUT/DELETE` con `hasAuthority("USER_WRITE")`.
+- Además de `USER_WRITE`, la asignación de perfil exige `USER_GRANT` (segregación de funciones, SEC-07). La comprobación se realiza en `UserService` mediante `GrantAuthorityChecker` y solo se exige cuando se concede un perfil: en el alta si `profileId` está informado y en la edición si el perfil solicitado difiere del actual. Si falta la autoridad se lanza `AccessDeniedException`, que el manejador global traduce a 403 Forbidden.
 - Los endpoints `/me` no dependen de una acción de seguridad concreta: requieren autenticación con `authenticated()`.
 - Las acciones de crear, editar y eliminar solo se muestran si el usuario posee la acción `USER_WRITE` (`canWrite`).
 - El campo `usuario` es inmutable una vez creado (solo editable en alta).
@@ -523,9 +535,11 @@ La suite actual incluye pruebas específicas del servicio y del controlador que 
 
 | Ubicación                                                                                             | Alcance                                                                                                                                              |
 |-------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `template/core/src/test/java/org/myorganization/template/core/service/UserServiceTest.java`           | Validaciones de negocio, creación, consulta por ID y username, filtrado por criterios (incluido el estado de bloqueo), actualización (bloquear/desbloquear), borrado y asociaciones con perfiles e informes |
+| `template/core/src/test/java/org/myorganization/template/core/service/UserServiceTest.java`           | Validaciones de negocio, creación, consulta por ID y username, filtrado por criterios (incluido el estado de bloqueo), actualización (bloquear/desbloquear), borrado, asociaciones con perfiles e informes y segregación de funciones (`USER_GRANT`) |
+| `template/core/src/test/java/org/myorganization/template/core/security/GrantAuthorityCheckerTest.java` | Comportamiento del verificador de autoridad de concesión (`GrantAuthorityChecker`)                                                                   |
 | `template/webapp/src/test/java/org/myorganization/template/webapp/controller/UserControllerTest.java` | Respuestas HTTP del endpoint, parámetros de consulta (incluido `locked`), autenticación del usuario actual y propagación de excepciones del servicio     |
 | `template/webapp/src/test/java/org/myorganization/template/webapp/integration/LoginLockoutIntegrationTest.java` | Bloqueo temporal de la cuenta tras intentos fallidos (429 + `Retry-After`) en un contexto Spring completo con PostgreSQL |
+| `template/webapp/src/test/java/org/myorganization/template/webapp/integration/GrantSecurityIntegrationTest.java` | Integración: 403 al asignar un perfil sin `USER_GRANT` y 201 con la autoridad (SEC-07)                                                               |
 
 Estas pruebas cubren el flujo principal de usuarios y complementan la cobertura E2E del frontend, sin reemplazar la validación funcional end-to-end del comportamiento completo de la pantalla.
 
@@ -552,8 +566,10 @@ Ubicación: `dashboard/e2e/tests/administration/users.spec.ts` (Page Object en `
 | Asignar informes   | Crear un usuario asignándole dos informes              | El backend responde 201 y al editar el usuario se muestran los dos informes asignados             |
 | Bloquear/desbloquear | Marcar y desmarcar el check *Bloqueada* en la edición  | El estado se refleja en el badge del listado y en el filtro por estado de bloqueo                 |
 | Bloqueo temporal   | Provocar `N` intentos fallidos consecutivos de login   | El acceso responde 429 con `Retry-After` y el listado muestra la cuenta como bloqueada            |
+| Segregación (`USER_GRANT`) | Con un token con `USER_WRITE` pero sin `USER_GRANT`, asignar o cambiar el perfil de un usuario | El alta y el cambio de perfil responden 403; editar sin tocar el perfil responde 200; con `USER_GRANT` el alta responde 201 |
 
 - Cada test inicia sesión con un usuario administrador (acciones `USER_READ` y `USER_WRITE`) y navega directamente a `/administration/security/users`.
+- Las suites de autorización y segregación de funciones (`TC-USR-10`, `TC-USR-14`) trabajan por API con tokens de distintos perfiles (con y sin la autoridad de concesión) en lugar de la UI de administración.
 - La suite se ejecuta en modo `serial` para evitar contención en el backend al compartir el usuario administrador entre casos.
 - Los casos de crear, editar y eliminar generan un `username` único por ejecución para poder reejecutarse sin colisiones; los de editar y eliminar crean previamente su propio usuario para trabajar de forma aislada.
 
@@ -732,6 +748,19 @@ Precondición del ciclo: usuario administrador `{{ADMIN_USER}}` con `USER_READ` 
 | 2 | Realizar un login por API con la contraseña **correcta**                                                            | Responde 429 Too Many Requests con cabecera `Retry-After`                                     |
 | 3 | Iniciar sesión en la UI con `{{ADMIN_USER}}`, buscar `e2e_user_{{UNIQUE}}` y observar la columna *Bloqueada*        | El badge (`user-locked-badge`) muestra la cuenta como bloqueada                               |
 | 4 | En el filtro de estado (`filter-locked`) seleccionar *Bloqueadas* y buscar                                          | El listado incluye la fila de `e2e_user_{{UNIQUE}}`                                           |
+
+#### TC-USR-14 · Segregación de funciones en la asignación de perfil (`USER_GRANT`)
+
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Seguridad, API · **Traza:** RF-USR-10 (AC10.1–AC10.4), RNF-USR-7 · **Independiente:** Sí · **Dependencias:** requiere tokens con distintos permisos
+- **Setup:** vía API. Preparar: (a) token con `USER_WRITE` sin `USER_GRANT`; (b) token con `USER_WRITE` y `USER_GRANT`. Obtener el id de un perfil de referencia (`GET /api/v1/administration/security/profiles/references`).
+- **Teardown:** eliminar el usuario creado en el paso 4 (`DELETE /api/v1/administration/security/users/{id}`).
+
+| # | Acción                                                                                                                            | Resultado esperado                                                       |
+|---|-----------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------|
+| 1 | Con token (a), `POST /api/v1/administration/security/users` con usuario nuevo y `profileId` informado                             | 403 Forbidden; no se crea el usuario                                     |
+| 2 | Con token (a), `PUT /api/v1/administration/security/users/{id}` cambiando `profileId` a uno distinto del actual                   | 403 Forbidden; el perfil del usuario no cambia                           |
+| 3 | Con token (a), `PUT /api/v1/administration/security/users/{id}` sin alterar el perfil (mismo `profileId`)                          | 200 OK (editar sin tocar el perfil no requiere `USER_GRANT`)             |
+| 4 | Con token (b), `POST /api/v1/administration/security/users` con usuario nuevo y `profileId` informado                             | 201 Created; el usuario se crea con el perfil indicado                   |
 
 ---
 

@@ -63,13 +63,24 @@ classDiagram
 Permisos principales del módulo:
 
 - `USER_READ`: consulta de usuarios y su estado.
-- `USER_WRITE`: creación, edición y baja de usuarios, así como gestión de perfiles asociados.
+- `USER_WRITE`: creación, edición y baja de usuarios.
+- `USER_GRANT`: asignación o cambio del perfil de un usuario (concesión de permisos).
 - `PROFILE_READ`: consulta de perfiles y su composición.
-- `PROFILE_WRITE`: creación, edición y eliminación de perfiles y su relación con acciones.
+- `PROFILE_WRITE`: creación, edición y eliminación de perfiles.
+- `PROFILE_GRANT`: concesión o revocación de las acciones asignadas a un perfil.
 - `ACTION_READ`: consulta del catálogo de acciones del sistema.
 - `ACTION_WRITE`: edición del catálogo de acciones del sistema.
 
 Estos permisos se usan para ocultar o mostrar rutas, menús y acciones en la capa frontend y para validar el acceso en la API con Spring Security. El acceso a perfiles y usuarios se realiza siempre sobre la identidad autenticada del usuario actual y el conjunto de acciones derivadas de sus perfiles.
+
+### Segregación de funciones (concesión de permisos)
+
+Administrar usuarios o perfiles está separado de **conceder permisos**:
+
+- `USER_GRANT` es necesario, además de `USER_WRITE`, para asignar un perfil a un usuario (alta o cambio de perfil).
+- `PROFILE_GRANT` es necesario, además de `PROFILE_WRITE`, para modificar las acciones de un perfil (alta con acciones o cambio del conjunto de acciones).
+
+El objetivo es evitar que un administrador con permiso de escritura pueda elevar privilegios por sí mismo (por ejemplo, asignarse el perfil de administrador o añadir acciones a su propio perfil). La comprobación se realiza en la capa de servicio y solo se exige cuando la petición **modifica realmente** los permisos: editar el nombre, la descripción o el email no requiere la autoridad de concesión. Una petición sin autoridad de concesión se rechaza con 403 Forbidden.
 
 ## Navegación
 

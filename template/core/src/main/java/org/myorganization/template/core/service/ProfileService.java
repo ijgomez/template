@@ -3,10 +3,12 @@ package org.myorganization.template.core.service;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.myorganization.template.core.repository.ActionRepository;
 import org.myorganization.template.core.repository.Profile2ActionRepository;
 import org.myorganization.template.core.repository.ProfileRepository;
+import org.myorganization.template.core.security.GrantAuthorityChecker;
 import org.myorganization.template.domain.criteria.ProfileCriteria;
 import org.myorganization.template.domain.dto.ProfileDTO;
 import org.myorganization.template.domain.dto.ProfileRefDTO;
@@ -55,6 +57,7 @@ public class ProfileService extends AbstractCriteriaService<Profile, ProfileDTO,
     @Transactional
     public ProfileDTO create(ProfileDTO dto) {
         validateNoDuplicateActions(dto.actionIds());
+        requireGrantWhenGranting(dto.actionIds());
 
         if (profileRepository.existsByName(dto.name())) {
             throw new DuplicateEntityException(ENTITY_NAME, "name", dto.name());
@@ -106,6 +109,8 @@ public class ProfileService extends AbstractCriteriaService<Profile, ProfileDTO,
 
         Profile profile = profileRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(ENTITY_NAME, id));
+
+        requireGrantIfActionsChange(id, dto.actionIds());
 
         // Check name uniqueness only if the name has changed
         if (!profile.getName().equals(dto.name()) && profileRepository.existsByName(dto.name())) {
@@ -171,6 +176,35 @@ public class ProfileService extends AbstractCriteriaService<Profile, ProfileDTO,
         if (uniqueIds.size() != actionIds.size()) {
             throw new ValidationException("The action list contains duplicates");
         }
+    }
+
+    /**
+     * Conceder permisos a un perfil está segregado de administrar perfiles
+     * (SEC-07): crear un perfil con acciones exige {@code PROFILE_GRANT}.
+     */
+    private void requireGrantWhenGranting(List<Long> actionIds) {
+        if (actionIds != null && !actionIds.isEmpty()) {
+            GrantAuthorityChecker.checkGrant(GrantAuthorityChecker.PROFILE_GRANT);
+        }
+    }
+
+    /**
+     * Conceder o revocar acciones de un perfil exige la autoridad
+     * {@code PROFILE_GRANT} (SEC-07). Solo se comprueba cuando el conjunto
+     * solicitado difiere del actual, de modo que editar nombre o descripción no
+     * requiere el permiso.
+     */
+    private void requireGrantIfActionsChange(Long profileId, List<Long> actionIds) {
+        Set<Long> requested = actionIds == null ? Set.of() : new HashSet<>(actionIds);
+        if (!requested.equals(currentActionIds(profileId))) {
+            GrantAuthorityChecker.checkGrant(GrantAuthorityChecker.PROFILE_GRANT);
+        }
+    }
+
+    private Set<Long> currentActionIds(Long profileId) {
+        return profile2ActionRepository.findByIdProfileId(profileId).stream()
+                .map(p2a -> p2a.getId().getActionId())
+                .collect(Collectors.toSet());
     }
 
     private void saveProfileActions(Profile profile, List<Long> actionIds) {

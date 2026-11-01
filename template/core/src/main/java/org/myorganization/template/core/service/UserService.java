@@ -4,6 +4,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.myorganization.template.core.audit.Auditable;
@@ -12,6 +13,7 @@ import org.myorganization.template.core.repository.RefreshTokenRepository;
 import org.myorganization.template.core.repository.ReportRepository;
 import org.myorganization.template.core.repository.User2ReportRepository;
 import org.myorganization.template.core.repository.UserRepository;
+import org.myorganization.template.core.security.GrantAuthorityChecker;
 import org.myorganization.template.domain.criteria.UserCriteria;
 import org.myorganization.template.domain.dto.UserDTO;
 import org.myorganization.template.domain.entity.Profile;
@@ -74,6 +76,7 @@ public class UserService extends AbstractCriteriaService<User, UserDTO, UserCrit
     public UserDTO create(UserDTO dto) {
         validateRequiredCredentials(dto);
         validateNoDuplicateReports(dto.reportIds());
+        requireGrantWhenAssigningProfile(dto.profileId());
 
         if (userRepository.existsByUsername(dto.username())) {
             throw new DuplicateEntityException("User", "username", dto.username());
@@ -134,6 +137,8 @@ public class UserService extends AbstractCriteriaService<User, UserDTO, UserCrit
 
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User", id));
+
+        requireGrantIfProfileChange(user, dto.profileId());
 
         user.setFirstName(dto.firstName());
         user.setLastName(dto.lastName());
@@ -212,6 +217,34 @@ public class UserService extends AbstractCriteriaService<User, UserDTO, UserCrit
     }
 
     // --- Private helpers ---
+
+    /**
+     * Segregación de funciones (SEC-07): asignar un perfil a un usuario equivale a
+     * concederle los permisos de ese perfil, por lo que exige la autoridad
+     * {@link GrantAuthorityChecker#USER_GRANT} además de {@code USER_WRITE}.
+     *
+     * @param profileId el perfil solicitado; {@code null} no concede nada
+     */
+    private void requireGrantWhenAssigningProfile(Long profileId) {
+        if (profileId != null) {
+            GrantAuthorityChecker.checkGrant(GrantAuthorityChecker.USER_GRANT);
+        }
+    }
+
+    /**
+     * Segregación de funciones (SEC-07): solo exige la autoridad
+     * {@link GrantAuthorityChecker#USER_GRANT} si el perfil efectivamente cambia,
+     * de modo que editar otros datos del usuario no requiere privilegios de concesión.
+     *
+     * @param user      el usuario actual
+     * @param profileId el perfil solicitado
+     */
+    private void requireGrantIfProfileChange(User user, Long profileId) {
+        Long currentProfileId = user.getProfile() != null ? user.getProfile().getId() : null;
+        if (!Objects.equals(currentProfileId, profileId)) {
+            GrantAuthorityChecker.checkGrant(GrantAuthorityChecker.USER_GRANT);
+        }
+    }
 
     /**
      * Defense-in-depth check for the credentials required on creation.

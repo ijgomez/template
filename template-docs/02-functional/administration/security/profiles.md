@@ -5,7 +5,7 @@ Documentación funcional y técnica de la pantalla de gestión de perfiles, dent
 - **Ruta frontend:** `/administration/security/profiles`
 - **Componentes:** `ProfileListComponent` (listado) y `ProfileFormComponent` (detalle / alta / edición)
 - **Endpoint backend base:** `/api/v1/administration/security/profiles` (`ProfileController`)
-- **Acceso:** el módulo exige `PROFILE_READ` y la escritura requiere `PROFILE_WRITE`; además `GET /references` se permite a usuarios con cualquiera de `USER_READ`, `USER_WRITE`, `PROFILE_READ` o `PROFILE_WRITE`
+- **Acceso:** el módulo exige `PROFILE_READ` y la escritura requiere `PROFILE_WRITE`; además, conceder o modificar las acciones de un perfil requiere `PROFILE_GRANT`, y `GET /references` se permite a usuarios con cualquiera de `USER_READ`, `USER_WRITE`, `PROFILE_READ` o `PROFILE_WRITE`
 
 ---
 
@@ -80,6 +80,16 @@ Identificadores locales de este documento: `RF-PRO-*` (requisitos funcionales) y
 - AC7.2: El fichero descargado sigue el patrón `profiles_YYYY-MM-DD.csv`.
 - AC7.3: Si no hay filas que cumplan los filtros, se notifica que no hay datos que exportar.
 
+#### RF-PRO-8: Segregación de funciones en la concesión de acciones
+
+**Descripción:** conceder o modificar las acciones asociadas a un perfil debe estar segregado de la mera administración del perfil. Un usuario con `PROFILE_WRITE` pero sin `PROFILE_GRANT` no debe poder crear un perfil con acciones ni alterar el conjunto de acciones de un perfil existente.
+
+**Criterios de aceptación:**
+- AC8.1: Un alta (`POST`) con una lista de acciones no vacía exige `PROFILE_GRANT` además de `PROFILE_WRITE`.
+- AC8.2: Una edición (`PUT`) que cambia el conjunto de acciones del perfil exige `PROFILE_GRANT` además de `PROFILE_WRITE`.
+- AC8.3: Una edición que solo modifica el nombre o la descripción (sin alterar el conjunto de acciones) no requiere `PROFILE_GRANT`.
+- AC8.4: Cuando falta la autoridad de concesión, el backend responde 403 Forbidden y no persiste ningún cambio.
+
 ### 1.2. Requisitos no funcionales
 
 - **RNF-PRO-1 (Autorización):** el acceso requiere sesión y la acción `PROFILE_READ`; las operaciones de escritura requieren `PROFILE_WRITE`.
@@ -87,6 +97,7 @@ Identificadores locales de este documento: `RF-PRO-*` (requisitos funcionales) y
 - **RNF-PRO-3 (Integridad de permisos):** un perfil no puede contener acciones duplicadas y cada acción debe existir en el catálogo.
 - **RNF-PRO-4 (Idioma):** todos los textos de la pantalla son traducibles (ES / EN) mediante el grupo i18n `profiles.*`.
 - **RNF-PRO-5 (Feedback):** toda operación (crear, editar, eliminar, exportar, paginar) informa al usuario mediante notificaciones de progreso, éxito o error.
+- **RNF-PRO-6 (Concesión segregada):** conceder o modificar las acciones de un perfil requiere `PROFILE_GRANT`, verificado en la capa de servicio, evitando la elevación de privilegios por parte de un administrador con `PROFILE_WRITE`.
 
 ---
 
@@ -380,6 +391,7 @@ Datos de referencia consumidos por el formulario:
 ### 3.7. Seguridad y permisos
 
 - El acceso a la administración de perfiles se protege en `SecurityConfig` con `GET /api/v1/administration/security/profiles/**` usando `hasAnyAuthority("PROFILE_READ", "PROFILE_WRITE")`, y `POST/PUT/DELETE` con `hasAuthority("PROFILE_WRITE")`.
+- Además de `PROFILE_WRITE`, la concesión de acciones exige `PROFILE_GRANT` (segregación de funciones, SEC-07). La comprobación se realiza en `ProfileService` mediante `GrantAuthorityChecker` y solo se exige cuando se conceden acciones: en el alta si la lista de acciones no está vacía y en la edición si el conjunto solicitado difiere del actual. Si falta la autoridad se lanza `AccessDeniedException`, que el manejador global traduce a 403 Forbidden.
 - El endpoint `GET /references` se habilita con cualquiera de `USER_READ`, `USER_WRITE`, `PROFILE_READ` o `PROFILE_WRITE`, porque se usa como catálogo de selección para formularios y filtros.
 - Las acciones de crear, editar y eliminar solo se muestran si el usuario posee la acción `PROFILE_WRITE` (`canWrite`).
 - Cuando se intenta borrar un perfil con usuarios asociados, el backend lanza una excepción de tipo `EntityInUseException` y la operación se rechaza.
@@ -404,8 +416,10 @@ La suite actual incluye pruebas del servicio y del controlador que cubren el CRU
 
 | Ubicación                                                                                                | Alcance                                                                                                                        |
 |----------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
-| `template/core/src/test/java/org/myorganization/template/core/service/ProfileServiceTest.java`           | Alta, consulta, búsqueda por criterios, actualización, borrado, validación de acciones duplicadas y gestión de perfiles en uso |
-| `template/webapp/src/test/java/org/myorganization/template/webapp/controller/ProfileControllerTest.java` | Respuestas HTTP de los endpoints, filtros y propagación de excepciones del servicio                                            |
+| `template/core/src/test/java/org/myorganization/template/core/service/ProfileServiceTest.java`           | Alta, consulta, búsqueda por criterios, actualización, borrado, validación de acciones duplicadas, gestión de perfiles en uso y segregación de funciones (`PROFILE_GRANT`) |
+| `template/core/src/test/java/org/myorganization/template/core/security/GrantAuthorityCheckerTest.java`   | Comportamiento del verificador de autoridad de concesión (`GrantAuthorityChecker`)                                                                             |
+| `template/webapp/src/test/java/org/myorganization/template/webapp/controller/ProfileControllerTest.java` | Respuestas HTTP de los endpoints, filtros y propagación de excepciones del servicio                                                                            |
+| `template/webapp/src/test/java/org/myorganization/template/webapp/integration/GrantSecurityIntegrationTest.java` | Integración: 403 al conceder acciones sin `PROFILE_GRANT` y 201 con la autoridad (SEC-07)                                                               |
 
 Estas pruebas cubren la lógica principal del módulo y complementan la validación E2E del frontend.
 
@@ -429,8 +443,10 @@ Ubicación: `dashboard/e2e/tests/administration/profiles.spec.ts` (Page Object e
 | Editar perfil     | Seleccionar un perfil y modificar sus datos           | El backend responde 200 y el cambio se refleja en el listado                         |
 | Eliminar perfil   | Seleccionar un perfil y confirmar el borrado          | El backend responde 204 y el perfil deja de aparecer al buscarlo                     |
 | Exportar CSV      | Pulsar el botón de exportar                           | El navegador descarga el fichero `profiles_YYYY-MM-DD.csv`                           |
+| Segregación (`PROFILE_GRANT`) | Con un token con `PROFILE_WRITE` pero sin `PROFILE_GRANT`, conceder o modificar las acciones de un perfil | El alta con acciones y el cambio de acciones responden 403; editar sin tocar las acciones responde 200; con `PROFILE_GRANT` el alta responde 201 |
 
 - Cada test inicia sesión con un usuario administrador (acciones `PROFILE_READ` y `PROFILE_WRITE`) y navega directamente a `/administration/security/profiles`.
+- La suite de segregación de funciones (`TC-PRO-10`) trabaja por API con tokens de distintos perfiles (con y sin la autoridad `PROFILE_GRANT`) en lugar de la UI de administración.
 - Los casos de creación y edición insertan un registro en el backend por ejecución; el caso de eliminación borra el perfil que él mismo crea.
 - La exportación a CSV depende de que existan filas que cumplan los filtros activos; en caso contrario se notifica que no hay datos que exportar.
 
@@ -549,6 +565,19 @@ Precondición del ciclo: usuario con `PROFILE_READ` y `PROFILE_WRITE`. Datos de 
 | 1 | Con token sin `PROFILE_READ`, `GET /api/v1/administration/security/profiles`                  | 403 Forbidden                                                                        |
 | 2 | Con token `PROFILE_READ` sin `PROFILE_WRITE`, abrir el listado en UI y luego `POST /profiles` | Botones crear/editar/eliminar ocultos; el POST responde 403                          |
 | 3 | Con token `USER_READ`, `GET /api/v1/administration/security/profiles/references`              | 200 OK (el endpoint de referencias se permite al consumidor del listado de usuarios) |
+
+#### TC-PRO-10 · Segregación de funciones en la concesión de acciones (`PROFILE_GRANT`)
+
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Seguridad, API · **Traza:** RF-PRO-8 (AC8.1–AC8.4), RNF-PRO-6 · **Independiente:** Sí · **Dependencias:** requiere tokens con distintos permisos
+- **Setup:** vía API. Preparar: (a) token con `PROFILE_WRITE` sin `PROFILE_GRANT`; (b) token con `PROFILE_WRITE` y `PROFILE_GRANT`. Obtener el id de cualquier acción del catálogo y el id de un perfil existente (`ADMIN`).
+- **Teardown:** eliminar el perfil creado en el paso 4 (`DELETE /api/v1/administration/security/profiles/{id}`).
+
+| # | Acción                                                                                                                   | Resultado esperado                                                          |
+|---|--------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------|
+| 1 | Con token (a), `POST /api/v1/administration/security/profiles` con nombre nuevo y `actionIds` con una acción              | 403 Forbidden; no se crea el perfil                                         |
+| 2 | Con token (a), `PUT /api/v1/administration/security/profiles/{ADMIN}` cambiando `actionIds`                              | 403 Forbidden; las acciones del perfil no cambian                           |
+| 3 | Con token (a), `PUT /api/v1/administration/security/profiles/{ADMIN}` cambiando solo la descripción (mismos `actionIds`)  | 200 OK (editar sin tocar permisos no requiere `PROFILE_GRANT`)              |
+| 4 | Con token (b), `POST /api/v1/administration/security/profiles` con nombre nuevo y `actionIds` con una acción              | 201 Created; el perfil se crea con la acción indicada                       |
 
 ---
 

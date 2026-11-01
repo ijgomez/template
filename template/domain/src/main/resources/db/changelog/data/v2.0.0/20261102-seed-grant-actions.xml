@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!--
+        SEC-07: segregación de funciones en el módulo de administración.
+
+        Hasta ahora un perfil con *_WRITE podía conceder cualquier permiso:
+        PROFILE_WRITE permitía reemplazar las acciones de un perfil (incluido el
+        propio) y USER_WRITE permitía asignar el perfil administrador a cualquier
+        cuenta. Se añaden dos acciones dedicadas a la CONCESIÓN de permisos,
+        exigidas además de la correspondiente *_WRITE (ver GrantAuthorityChecker):
+
+        - PROFILE_GRANT: conceder o revocar acciones de un perfil.
+        - USER_GRANT:    asignar o cambiar el perfil (permisos) de un usuario.
+
+        Es un changeset NUEVO (no se modifica '20250115-seed-actions' porque ese
+        ya está aplicado en las bases de datos existentes y su checksum es
+        inmutable). Las semillas de perfil (local/test) reciben todas las acciones
+        mediante 'INSERT INTO profile2action SELECT ... FROM action', por lo que
+        obtienen ambas acciones automáticamente.
+    -->
+
+    <changeSet id="20261102-seed-grant-actions" author="template" labels="v2.0.0">
+
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="action"/>
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM action WHERE code = 'PROFILE_GRANT'</sqlCheck>
+        </preConditions>
+
+        <comment>Acciones de concesión de permisos PROFILE_GRANT y USER_GRANT (SEC-07)</comment>
+
+        <insert tableName="action">
+            <column name="id" valueNumeric="16"/>
+            <column name="code" value="PROFILE_GRANT"/>
+            <column name="type" value="WRITE"/>
+            <column name="name" value="Conceder o revocar acciones de un perfil"/>
+        </insert>
+
+        <insert tableName="action">
+            <column name="id" valueNumeric="17"/>
+            <column name="code" value="USER_GRANT"/>
+            <column name="type" value="WRITE"/>
+            <column name="name" value="Asignar o cambiar el perfil de un usuario"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="action">
+                <where>code IN ('PROFILE_GRANT', 'USER_GRANT')</where>
+            </delete>
+        </rollback>
+
+    </changeSet>
+
+</databaseChangeLog>

@@ -20,7 +20,7 @@ import { UsersPage } from '../../pages/users.page';
  * Tests E2E de la pantalla de gestión de usuarios
  * (`/administration/security/users`).
  *
- * Cubren el catálogo TC-USR-01..13 de
+ * Cubren el catálogo TC-USR-01..14 de
  * `template-docs/02-functional/administration/security/users.md` (sección 4.6).
  * Cada título lleva el identificador del caso para facilitar la trazabilidad.
  *
@@ -501,5 +501,143 @@ test.describe.serial('Users authorization', () => {
 
     // Assert
     expect(response.status()).toBe(403);
+  });
+});
+
+test.describe.serial('Users segregation of duties', () => {
+  const suffix = Date.now().toString().slice(-8);
+  const password = 'Test1234!';
+  // Perfil con permiso de escritura pero SIN USER_GRANT: puede administrar
+  // usuarios, pero no debe poder conceder permisos (asignar un perfil).
+  const writerUser = `e2e_writer_${suffix}`;
+  const targetUser = `e2e_target_${suffix}`;
+  const grantedUser = `e2e_granted_${suffix}`;
+  const profileIds: number[] = [];
+
+  let adminToken: string;
+  let writerToken: string;
+  let writerProfileId: number;
+  let secondProfileId: number;
+  let targetUserId: number;
+
+  test.beforeAll(async ({ playwright }) => {
+    // Setup: un perfil de escritura sin USER_GRANT, un segundo perfil de destino
+    // y dos usuarios creados por el administrador (que sí tiene USER_GRANT).
+    const request = await playwright.request.newContext();
+    adminToken = await apiLogin(request, testUsers.valid.username, testUsers.valid.password);
+
+    writerProfileId = await apiCreateProfile(request, adminToken, `e2e_writer_${suffix}`, [
+      'USER_READ',
+      'USER_WRITE',
+    ]);
+    secondProfileId = await apiCreateProfile(request, adminToken, `e2e_second_${suffix}`, ['USER_READ']);
+    profileIds.push(writerProfileId, secondProfileId);
+
+    await apiCreateUser(request, adminToken, { username: writerUser, password, profileId: writerProfileId });
+    targetUserId = (
+      await apiCreateUser(request, adminToken, { username: targetUser, password, profileId: writerProfileId })
+    ).id;
+
+    writerToken = await apiLogin(request, writerUser, password);
+    await request.dispose();
+  });
+
+  test.afterAll(async ({ playwright }) => {
+    // Teardown: eliminar usuarios y perfiles de prueba
+    const request = await playwright.request.newContext();
+    for (const username of [writerUser, targetUser, grantedUser]) {
+      await apiDeleteUserByUsername(request, adminToken, username);
+    }
+    for (const profileId of profileIds) {
+      await apiDeleteProfile(request, adminToken, profileId);
+    }
+    await request.dispose();
+  });
+
+  test('TC-USR-14 should forbid assigning a profile on creation without USER_GRANT', async ({ request }) => {
+    // Arrange: token con USER_WRITE pero sin USER_GRANT (paso 1)
+    // Act
+    const response = await request.post(`${API_URL}${USERS_PATH}`, {
+      headers: authHeaders(writerToken),
+      data: {
+        id: null,
+        username: `e2e_denied_${suffix}`,
+        password,
+        firstName: 'E2E',
+        lastName: 'Denied',
+        email: `e2e_denied_${suffix}@example.com`,
+        profileId: secondProfileId,
+        reportIds: [],
+      },
+    });
+
+    // Assert
+    expect(response.status()).toBe(403);
+  });
+
+  test('TC-USR-14 should forbid changing the profile without USER_GRANT', async ({ request }) => {
+    // Arrange: el usuario objetivo tiene writerProfileId; se intenta cambiarlo (paso 2)
+    // Act
+    const response = await request.put(`${API_URL}${USERS_PATH}/${targetUserId}`, {
+      headers: authHeaders(writerToken),
+      data: {
+        id: targetUserId,
+        username: targetUser,
+        firstName: 'E2E',
+        lastName: 'Changed',
+        email: `${targetUser}@example.com`,
+        profileId: secondProfileId,
+        reportIds: [],
+      },
+    });
+
+    // Assert
+    expect(response.status()).toBe(403);
+  });
+
+  test('TC-USR-14 should allow editing a user without changing the profile', async ({ request }) => {
+    // Arrange: mismo perfil actual, sin concesión alguna (paso 3)
+    // Act
+    const response = await request.put(`${API_URL}${USERS_PATH}/${targetUserId}`, {
+      headers: authHeaders(writerToken),
+      data: {
+        id: targetUserId,
+        username: targetUser,
+        firstName: 'E2E',
+        lastName: 'Edited',
+        email: `${targetUser}@example.com`,
+        profileId: writerProfileId,
+        reportIds: [],
+      },
+    });
+
+    // Assert
+    expect(response.status()).toBe(200);
+    const updated = (await response.json()) as { lastName: string; profileId: number };
+    expect(updated.lastName).toBe('Edited');
+    expect(updated.profileId).toBe(writerProfileId);
+  });
+
+  test('TC-USR-14 should allow assigning a profile when USER_GRANT is present', async ({ request }) => {
+    // Arrange: el administrador sí tiene USER_GRANT (paso 4)
+    // Act
+    const response = await request.post(`${API_URL}${USERS_PATH}`, {
+      headers: authHeaders(adminToken),
+      data: {
+        id: null,
+        username: grantedUser,
+        password,
+        firstName: 'E2E',
+        lastName: 'Granted',
+        email: `${grantedUser}@example.com`,
+        profileId: secondProfileId,
+        reportIds: [],
+      },
+    });
+
+    // Assert
+    expect(response.status()).toBe(201);
+    const created = (await response.json()) as { profileId: number };
+    expect(created.profileId).toBe(secondProfileId);
   });
 });

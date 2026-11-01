@@ -21,6 +21,13 @@ export interface ApiUser {
   profileId: number | null;
 }
 
+export interface ApiProfile {
+  id: number;
+  name: string;
+  description: string | null;
+  actionIds: number[];
+}
+
 /**
  * Autentica contra la API y devuelve el access token.
  */
@@ -122,14 +129,13 @@ export async function apiDeleteUserByUsername(
 }
 
 /**
- * Crea un perfil con las acciones (por código) indicadas y devuelve su id.
+ * Resuelve los identificadores de las acciones a partir de sus códigos.
  */
-export async function apiCreateProfile(
+export async function apiFindActionIds(
   request: APIRequestContext,
   token: string,
-  name: string,
   actionCodes: string[],
-): Promise<number> {
+): Promise<number[]> {
   const actionIds: number[] = [];
   for (const code of actionCodes) {
     const actions = await request.get(`${API_URL}${ACTIONS_PATH}`, {
@@ -142,6 +148,19 @@ export async function apiCreateProfile(
     expect(action, `acción ${code} existente`).toBeTruthy();
     actionIds.push(action!.id);
   }
+  return actionIds;
+}
+
+/**
+ * Crea un perfil con las acciones (por código) indicadas y devuelve su id.
+ */
+export async function apiCreateProfile(
+  request: APIRequestContext,
+  token: string,
+  name: string,
+  actionCodes: string[],
+): Promise<number> {
+  const actionIds = await apiFindActionIds(request, token, actionCodes);
 
   const response = await request.post(`${API_URL}${PROFILES_PATH}`, {
     headers: authHeaders(token),
@@ -149,6 +168,21 @@ export async function apiCreateProfile(
   });
   expect(response.status(), `alta de perfil ${name}`).toBe(201);
   return ((await response.json()) as { id: number }).id;
+}
+
+/**
+ * Devuelve el detalle de un perfil, incluidos los identificadores de sus acciones.
+ */
+export async function apiGetProfile(
+  request: APIRequestContext,
+  token: string,
+  profileId: number,
+): Promise<ApiProfile> {
+  const response = await request.get(`${API_URL}${PROFILES_PATH}/${profileId}`, {
+    headers: authHeaders(token),
+  });
+  expect(response.status(), `detalle del perfil ${profileId}`).toBe(200);
+  return (await response.json()) as ApiProfile;
 }
 
 export async function apiDeleteProfile(
@@ -159,4 +193,4 @@ export async function apiDeleteProfile(
   await request.delete(`${API_URL}${PROFILES_PATH}/${profileId}`, { headers: authHeaders(token) });
 }
 
-export { USERS_PATH };
+export { USERS_PATH, PROFILES_PATH };

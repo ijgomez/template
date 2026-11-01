@@ -52,6 +52,7 @@
 
     <!-- v2.0.0 - Seed data -->
     <include file="data/v2.0.0/20261027-seed-action-write.xml" relativeToChangelogFile="true"/>
+    <include file="data/v2.0.0/20261102-seed-grant-actions.xml" relativeToChangelogFile="true"/>
 
     <!--
         Las semillas de desarrollo local (data/v1.0.0/202501*-seed-local-*.xml) NO

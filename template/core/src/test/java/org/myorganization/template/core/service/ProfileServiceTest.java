@@ -1,9 +1,11 @@
 package org.myorganization.template.core.service;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,6 +39,10 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -68,6 +74,11 @@ class ProfileServiceTest {
     @BeforeEach
     void setUp() {
         profileService = new ProfileService(profileRepository, profile2ActionRepository, actionRepository);
+    }
+
+    @AfterEach
+    void clearSecurityContext() {
+        SecurityContextHolder.clearContext();
     }
 
     // --- create ---
@@ -379,6 +390,70 @@ class ProfileServiceTest {
         assertThat(predicate).isNotNull();
     }
 
+    // --- SEC-07: segregation of duties (PROFILE_GRANT) ---
+
+    @Test
+    @DisplayName("create: granting actions without PROFILE_GRANT throws AccessDeniedException")
+    void create_withActionsWithoutGrantAuthority_throwsAccessDenied() {
+        authenticateWith("PROFILE_WRITE");
+        ProfileDTO dto = new ProfileDTO(null, "EDITOR", "desc", List.of(10L), null, null);
+
+        assertThatThrownBy(() -> profileService.create(dto))
+                .isInstanceOf(AccessDeniedException.class)
+                .hasMessageContaining("PROFILE_GRANT");
+
+        verify(profileRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("create: granting actions with PROFILE_GRANT succeeds")
+    void create_withActionsWithGrantAuthority_succeeds() {
+        authenticateWith("PROFILE_WRITE", "PROFILE_GRANT");
+        ProfileDTO dto = new ProfileDTO(null, "EDITOR", "desc", List.of(10L), null, null);
+
+        when(profileRepository.existsByName("EDITOR")).thenReturn(false);
+        Profile savedProfile = createProfileEntity(2L, "EDITOR", "desc");
+        when(profileRepository.save(any(Profile.class))).thenReturn(savedProfile);
+        when(actionRepository.findById(10L)).thenReturn(Optional.of(createActionEntity(10L)));
+        when(profile2ActionRepository.save(any(Profile2Action.class))).thenReturn(new Profile2Action());
+
+        ProfileDTO result = profileService.create(dto);
+
+        assertThat(result.actionIds()).containsExactly(10L);
+    }
+
+    @Test
+    @DisplayName("update: changing actions without PROFILE_GRANT throws AccessDeniedException")
+    void update_changingActionsWithoutGrantAuthority_throwsAccessDenied() {
+        authenticateWith("PROFILE_WRITE");
+        Profile profile = createProfileEntity(1L, "OLD_NAME", "desc");
+        when(profileRepository.findById(1L)).thenReturn(Optional.of(profile));
+        when(profile2ActionRepository.findByIdProfileId(1L)).thenReturn(Collections.emptyList());
+
+        ProfileDTO dto = new ProfileDTO(1L, "OLD_NAME", "desc", List.of(10L), null, null);
+
+        assertThatThrownBy(() -> profileService.update(1L, dto))
+                .isInstanceOf(AccessDeniedException.class)
+                .hasMessageContaining("PROFILE_GRANT");
+    }
+
+    @Test
+    @DisplayName("update: editing name/description without touching actions requires no PROFILE_GRANT")
+    void update_sameActionsWithoutGrantAuthority_succeeds() {
+        authenticateWith("PROFILE_WRITE");
+        Profile profile = createProfileEntity(1L, "OLD_NAME", "desc");
+        when(profileRepository.findById(1L)).thenReturn(Optional.of(profile));
+        when(profile2ActionRepository.findByIdProfileId(1L)).thenReturn(Collections.emptyList());
+        when(profileRepository.save(any(Profile.class))).thenReturn(profile);
+        doNothing().when(profile2ActionRepository).deleteByIdProfileId(1L);
+
+        ProfileDTO dto = new ProfileDTO(1L, "OLD_NAME", "new desc", List.of(), null, null);
+
+        ProfileDTO result = profileService.update(1L, dto);
+
+        assertThat(result.description()).isEqualTo("new desc");
+    }
+
     // --- Helper methods ---
 
     /**
@@ -417,5 +492,17 @@ class ProfileServiceTest {
         action.setId(id);
         action.setCode("ACTION_" + id);
         return action;
+    }
+
+    /**
+     * Sets a programmatic authentication so {@link org.myorganization.template.core.security.GrantAuthorityChecker}
+     * evaluates the given authorities (SEC-07).
+     */
+    private void authenticateWith(String... authorities) {
+        List<SimpleGrantedAuthority> granted = Arrays.stream(authorities)
+                .map(SimpleGrantedAuthority::new)
+                .toList();
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken("admin", "n/a", granted));
     }
 }

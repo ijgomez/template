@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!--
+        Solo perfil 'local' (se incluye desde db.changelog-local.xml).
+
+        Las acciones añadidas después de la creación del perfil Administrador
+        (ACTION_WRITE en SEC-02, PROFILE_GRANT/USER_GRANT en SEC-07) no llegan a
+        un entorno local ya migrado, porque la semilla que concede "todas las
+        acciones" (INSERT INTO profile2action SELECT ... FROM action) solo se
+        ejecuta la primera vez. Este changeset idempotente completa las
+        concesiones que falten para el perfil Administrador (id 1), de modo que
+        un desarrollador con una base de datos local antigua no se quede sin
+        poder administrar permisos.
+    -->
+
+    <changeSet id="20261102-seed-local-grant-actions" author="template" labels="v2.0.0" context="local">
+
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="profile"/>
+            <tableExists tableName="profile2action"/>
+            <sqlCheck expectedResult="1">SELECT COUNT(*) FROM profile WHERE id = 1</sqlCheck>
+        </preConditions>
+
+        <comment>Completa en el perfil Administrador local las acciones de escritura/concesión (SEC-02 y SEC-07)</comment>
+
+        <sql>
+            INSERT INTO profile2action (profile_id, action_id)
+            SELECT 1, a.id FROM action a
+            WHERE a.code IN ('ACTION_WRITE', 'PROFILE_GRANT', 'USER_GRANT')
+              AND NOT EXISTS (
+                  SELECT 1 FROM profile2action p
+                  WHERE p.profile_id = 1 AND p.action_id = a.id
+              );
+        </sql>
+
+        <rollback>
+            <delete tableName="profile2action">
+                <where>profile_id = 1 AND action_id IN (SELECT id FROM action WHERE code IN ('PROFILE_GRANT', 'USER_GRANT'))</where>
+            </delete>
+        </rollback>
+
+    </changeSet>
+
+</databaseChangeLog>
