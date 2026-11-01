@@ -1,5 +1,7 @@
 package org.myorganization.template.core.service;
 
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -88,7 +90,7 @@ class UserServiceTest {
     @DisplayName("create: valid user without reports returns created user DTO")
     void create_validUserNoReports_returnsDTO() {
         UserDTO dto = new UserDTO(null, "john", "secret", "John", "Doe",
-                "john@test.com", null, 1L, null, Collections.emptyList(), null, null);
+                "john@test.com", null, 1L, null, Collections.emptyList(), null, null, null);
 
         Profile profile = new Profile();
         profile.setId(1L);
@@ -115,7 +117,7 @@ class UserServiceTest {
     @DisplayName("create: valid user with reports persists user2report associations")
     void create_validUserWithReports_persistsAssociations() {
         UserDTO dto = new UserDTO(null, "jane", "pass", "Jane", "Smith",
-                "jane@test.com", null, null, null, List.of(10L, 20L), null, null);
+                "jane@test.com", null, null, null, List.of(10L, 20L), null, null, null);
 
         User savedUser = createUserEntity(2L, "jane", "Jane", "Smith", "jane@test.com", null);
 
@@ -140,7 +142,7 @@ class UserServiceTest {
     @DisplayName("create: duplicate username throws DuplicateEntityException")
     void create_duplicateUsername_throwsDuplicateEntityException() {
         UserDTO dto = new UserDTO(null, "existing", "pass", null, null,
-                null, null, null, null, Collections.emptyList(), null, null);
+                null, null, null, null, Collections.emptyList(), null, null, null);
 
         when(userRepository.existsByUsername("existing")).thenReturn(true);
 
@@ -155,7 +157,7 @@ class UserServiceTest {
     @DisplayName("create: duplicate reports throws ValidationException")
     void create_duplicateReports_throwsValidationException() {
         UserDTO dto = new UserDTO(null, "user1", "pass", null, null,
-                null, null, null, null, List.of(1L, 2L, 1L), null, null);
+                null, null, null, null, List.of(1L, 2L, 1L), null, null, null);
 
         assertThatThrownBy(() -> userService.create(dto))
                 .isInstanceOf(ValidationException.class)
@@ -192,7 +194,7 @@ class UserServiceTest {
     @Test
     @DisplayName("findByCriteria: returns paginated results")
     void findByCriteria_returnsPaginatedResults() {
-        UserCriteria criteria = new UserCriteria("john", null, null, null, null);
+        UserCriteria criteria = new UserCriteria("john", null, null, null, null, null);
         Pageable pageable = PageRequest.of(0, 10);
         User user = createUserEntity(1L, "john", "John", "Doe", null, null);
         Page<User> page = new PageImpl<>(List.of(user), pageable, 1);
@@ -211,7 +213,7 @@ class UserServiceTest {
     @Test
     @DisplayName("countByCriteria: returns count of matching users")
     void countByCriteria_returnsCount() {
-        UserCriteria criteria = new UserCriteria(null, null, null, null, null);
+        UserCriteria criteria = new UserCriteria(null, null, null, null, null, null);
         when(userRepository.count(ArgumentMatchers.<Specification<User>>any())).thenReturn(5L);
 
         long count = userService.countByCriteria(criteria);
@@ -231,7 +233,7 @@ class UserServiceTest {
         User existingUser = createUserEntity(1L, "john", "John", "Doe", "john@test.com", null);
 
         UserDTO dto = new UserDTO(1L, "john", null, "Johnny", "Updated",
-                "new@test.com", null, 2L, null, Collections.emptyList(), null, null);
+                "new@test.com", null, 2L, null, Collections.emptyList(), null, null, null);
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(existingUser));
         when(profileRepository.findById(2L)).thenReturn(Optional.of(profile));
@@ -253,7 +255,7 @@ class UserServiceTest {
     @DisplayName("update: non-existing user throws EntityNotFoundException")
     void update_nonExisting_throwsEntityNotFoundException() {
         UserDTO dto = new UserDTO(99L, "user", null, null, null, null, null, null, null,
-                Collections.emptyList(), null, null);
+                Collections.emptyList(), null, null, null);
 
         when(userRepository.findById(99L)).thenReturn(Optional.empty());
 
@@ -265,11 +267,65 @@ class UserServiceTest {
     @DisplayName("update: duplicate reports throws ValidationException")
     void update_duplicateReports_throwsValidationException() {
         UserDTO dto = new UserDTO(1L, "user", null, null, null, null, null, null, null,
-                List.of(5L, 5L), null, null);
+                List.of(5L, 5L), null, null, null);
 
         assertThatThrownBy(() -> userService.update(1L, dto))
                 .isInstanceOf(ValidationException.class)
                 .hasMessageContaining("duplicates");
+    }
+
+    @Test
+    @DisplayName("update: locked=true blocks the account administratively")
+    void update_lockedTrue_blocksAccount() {
+        User existingUser = createUserEntity(1L, "john", "John", "Doe", null, null);
+        UserDTO dto = new UserDTO(1L, "john", null, "John", "Doe", null, null, null, null,
+                Collections.emptyList(), null, null, true);
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(existingUser));
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        UserDTO result = userService.update(1L, dto);
+
+        assertThat(existingUser.isLocked()).isTrue();
+        assertThat(result.locked()).isTrue();
+    }
+
+    @Test
+    @DisplayName("update: locked=false unblocks and clears temporary lock and failed attempts")
+    void update_lockedFalse_unblocksAndClearsTemporaryState() {
+        User existingUser = createUserEntity(1L, "john", "John", "Doe", null, null);
+        existingUser.setLocked(true);
+        existingUser.setLockedUntil(OffsetDateTime.now(ZoneOffset.UTC).plusMinutes(15));
+        existingUser.setFailedLoginAttempts(5);
+        UserDTO dto = new UserDTO(1L, "john", null, "John", "Doe", null, null, null, null,
+                Collections.emptyList(), null, null, false);
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(existingUser));
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        UserDTO result = userService.update(1L, dto);
+
+        assertThat(existingUser.isLocked()).isFalse();
+        assertThat(existingUser.getLockedUntil()).isNull();
+        assertThat(existingUser.getFailedLoginAttempts()).isZero();
+        assertThat(result.locked()).isFalse();
+    }
+
+    @Test
+    @DisplayName("update: locked=null leaves the current lock state untouched")
+    void update_lockedNull_leavesLockStateUntouched() {
+        User existingUser = createUserEntity(1L, "john", "John", "Doe", null, null);
+        existingUser.setLocked(true);
+        UserDTO dto = new UserDTO(1L, "john", null, "John", "Doe", null, null, null, null,
+                Collections.emptyList(), null, null, null);
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(existingUser));
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        UserDTO result = userService.update(1L, dto);
+
+        assertThat(existingUser.isLocked()).isTrue();
+        assertThat(result.locked()).isTrue();
     }
 
     // --- delete ---
@@ -309,7 +365,7 @@ class UserServiceTest {
         User user = createUserEntity(1L, "john", "John", "Doe", "old@test.com", profile);
 
         UserDTO dto = new UserDTO(1L, "john", null, "Johnny", "NewLastName",
-                "new@test.com", null, 99L, null, List.of(1L, 2L), null, null);
+                "new@test.com", null, 99L, null, List.of(1L, 2L), null, null, null);
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(userRepository.save(any(User.class))).thenAnswer(i -> i.getArgument(0));
@@ -328,7 +384,7 @@ class UserServiceTest {
     @DisplayName("updateProfile: non-existing user throws EntityNotFoundException")
     void updateProfile_nonExisting_throwsEntityNotFoundException() {
         UserDTO dto = new UserDTO(99L, "user", null, "Name", null, null, null, null, null,
-                null, null, null);
+                null, null, null, null);
 
         when(userRepository.findById(99L)).thenReturn(Optional.empty());
 
@@ -342,7 +398,7 @@ class UserServiceTest {
     @DisplayName("create: report id not found throws EntityNotFoundException")
     void create_reportNotFound_throwsEntityNotFoundException() {
         UserDTO dto = new UserDTO(null, "jane", "pass", "Jane", "Smith",
-                "jane@test.com", null, null, null, List.of(10L), null, null);
+                "jane@test.com", null, null, null, List.of(10L), null, null, null);
 
         User savedUser = createUserEntity(2L, "jane", "Jane", "Smith", "jane@test.com", null);
 
@@ -362,7 +418,7 @@ class UserServiceTest {
     @DisplayName("create: profile id not found throws EntityNotFoundException")
     void create_profileNotFound_throwsEntityNotFoundException() {
         UserDTO dto = new UserDTO(null, "jane", "pass", "Jane", "Smith",
-                "jane@test.com", null, 99L, null, Collections.emptyList(), null, null);
+                "jane@test.com", null, 99L, null, Collections.emptyList(), null, null, null);
 
         when(userRepository.existsByUsername("jane")).thenReturn(false);
         when(passwordEncoder.encode("pass")).thenReturn("$2a$12$encoded");
@@ -383,7 +439,7 @@ class UserServiceTest {
         User existingUser = createUserEntity(1L, "john", "John", "Doe", "john@test.com", null);
 
         UserDTO dto = new UserDTO(1L, "john", null, "Johnny", "Updated",
-                "new@test.com", null, 99L, null, Collections.emptyList(), null, null);
+                "new@test.com", null, 99L, null, Collections.emptyList(), null, null, null);
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(existingUser));
         when(profileRepository.findById(99L)).thenReturn(Optional.empty());
@@ -405,7 +461,7 @@ class UserServiceTest {
         User existingUser = createUserEntity(1L, "john", "John", "Doe", "john@test.com", profile);
 
         UserDTO dto = new UserDTO(1L, "john", null, "Johnny", "Updated",
-                "new@test.com", null, null, null, Collections.emptyList(), null, null);
+                "new@test.com", null, null, null, Collections.emptyList(), null, null, null);
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(existingUser));
         when(userRepository.save(any(User.class))).thenAnswer(i -> i.getArgument(0));
@@ -445,7 +501,7 @@ class UserServiceTest {
     @Test
     @DisplayName("findByCriteria: all criteria fields build a full specification")
     void findByCriteria_allFilters_buildsSpecification() {
-        UserCriteria criteria = new UserCriteria("john", "John", "Doe", "john@test.com", 3L);
+        UserCriteria criteria = new UserCriteria("john", "John", "Doe", "john@test.com", 3L, null);
         Pageable pageable = PageRequest.of(0, 10);
         User user = createUserEntity(1L, "john", "John", "Doe", "john@test.com", null);
         Page<User> page = new PageImpl<>(List.of(user), pageable, 1);
@@ -467,7 +523,7 @@ class UserServiceTest {
     @Test
     @DisplayName("findByCriteria: blank criteria produce an empty specification (conjunction only)")
     void findByCriteria_blankCriteria_buildsEmptySpecification() {
-        UserCriteria criteria = new UserCriteria("  ", "", "  ", "", null);
+        UserCriteria criteria = new UserCriteria("  ", "", "  ", "", null, null);
         Pageable pageable = PageRequest.of(0, 10);
         Page<User> page = new PageImpl<>(List.of(), pageable, 0);
 
@@ -478,6 +534,36 @@ class UserServiceTest {
 
         Predicate predicate = evaluateSpecification(specCaptor.getValue());
         assertThat(predicate).isNotNull();
+    }
+
+    @Test
+    @DisplayName("findByCriteria: locked=true filter builds a specification")
+    void findByCriteria_lockedTrue_buildsSpecification() {
+        UserCriteria criteria = new UserCriteria(null, null, null, null, null, true);
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<User> page = new PageImpl<>(List.of(), pageable, 0);
+
+        ArgumentCaptor<Specification<User>> specCaptor = ArgumentCaptor.captor();
+        when(userRepository.findAll(specCaptor.capture(), any(Pageable.class))).thenReturn(page);
+
+        userService.findByCriteria(criteria, pageable);
+
+        assertThat(evaluateSpecification(specCaptor.getValue())).isNotNull();
+    }
+
+    @Test
+    @DisplayName("findByCriteria: locked=false filter builds a specification")
+    void findByCriteria_lockedFalse_buildsSpecification() {
+        UserCriteria criteria = new UserCriteria(null, null, null, null, null, false);
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<User> page = new PageImpl<>(List.of(), pageable, 0);
+
+        ArgumentCaptor<Specification<User>> specCaptor = ArgumentCaptor.captor();
+        when(userRepository.findAll(specCaptor.capture(), any(Pageable.class))).thenReturn(page);
+
+        userService.findByCriteria(criteria, pageable);
+
+        assertThat(evaluateSpecification(specCaptor.getValue())).isNotNull();
     }
 
     // --- Helper methods ---
@@ -503,6 +589,10 @@ class UserServiceTest {
         lenient().when(cb.like(any(), anyString())).thenReturn(predicate);
         lenient().when(cb.equal(any(), any())).thenReturn(predicate);
         lenient().when(cb.and(any(Predicate.class), any(Predicate.class))).thenReturn(predicate);
+        lenient().when(cb.or(any(Predicate.class), any(Predicate.class))).thenReturn(predicate);
+        lenient().when(cb.isTrue(any())).thenReturn(predicate);
+        lenient().when(cb.isFalse(any())).thenReturn(predicate);
+        lenient().when(cb.isNull(any())).thenReturn(predicate);
 
         return spec.toPredicate(root, query, cb);
     }

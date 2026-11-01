@@ -23,6 +23,7 @@ function buildUser(overrides: Partial<UserDTO> = {}): UserDTO {
     lastAccess: null,
     createdAt: null,
     lastModifiedAt: null,
+    locked: false,
     ...overrides,
   };
 }
@@ -137,6 +138,61 @@ describe('UserFormComponent', () => {
       const before = component.formUser().firstName;
       component.updateField('firstName', 'Changed');
       expect(component.formUser().firstName).toBe(before);
+    });
+  });
+
+  describe('locked checkbox', () => {
+    /** Returns the native lock checkbox, if rendered. */
+    function lockCheckbox(): HTMLInputElement {
+      return fixture.nativeElement.querySelector('[data-testid="input-locked"]') as HTMLInputElement;
+    }
+
+    it('should render the checkbox checked when the account is blocked', async () => {
+      setup('view', buildUser({ locked: true }));
+      await fixture.whenStable();
+      fixture.detectChanges();
+      expect(lockCheckbox()).toBeTruthy();
+      expect(lockCheckbox().checked).toBe(true);
+    });
+
+    it('should render the checkbox unchecked when the account is not blocked', () => {
+      setup('edit', buildUser({ locked: false }));
+      expect(lockCheckbox().checked).toBe(false);
+    });
+
+    it('should disable the checkbox in view mode', async () => {
+      setup('view', buildUser({ locked: false }));
+      await fixture.whenStable();
+      fixture.detectChanges();
+      expect(lockCheckbox().disabled).toBe(true);
+    });
+
+    it('should allow blocking the account in edit mode', () => {
+      setup('edit', buildUser({ locked: false }));
+      component.updateField('locked', true);
+      expect(component.formUser().locked).toBe(true);
+    });
+
+    it('should allow unblocking the account in edit mode', () => {
+      setup('edit', buildUser({ locked: true }));
+      component.updateField('locked', false);
+      expect(component.formUser().locked).toBe(false);
+    });
+
+    it('should NOT change the lock state in view mode', () => {
+      setup('view', buildUser({ locked: true }));
+      component.updateField('locked', false);
+      expect(component.formUser().locked).toBe(true);
+    });
+
+    it('should include the lock state when emitting save', () => {
+      setup('edit', buildUser({ locked: false }));
+      const spy = vi.fn();
+      component.save.subscribe(spy);
+      component.updateField('locked', true);
+      component.onSubmit();
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy.mock.calls[0][0].locked).toBe(true);
     });
   });
 

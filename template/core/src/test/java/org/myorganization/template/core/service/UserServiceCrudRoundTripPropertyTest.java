@@ -145,6 +145,6 @@ class UserServiceCrudRoundTripPropertyTest {
         return Combinators.combine(usernames, passwords, firstNames, lastNames, emails, profileIds)
                 .as((username, password, firstName, lastName, email, profileId) ->
                         new UserDTO(null, username, password, firstName, lastName, email,
-                                null, profileId, null, Collections.emptyList(), null, null));
+                                null, profileId, null, Collections.emptyList(), null, null, null));
     }
 }

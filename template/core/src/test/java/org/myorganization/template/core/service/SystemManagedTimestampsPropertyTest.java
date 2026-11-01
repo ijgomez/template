@@ -247,6 +247,6 @@ class SystemManagedTimestampsPropertyTest {
                 .as((username, password, firstName, lastName, email, createdAt, lastModifiedAt) ->
                         new UserDTO(null, username, password, firstName, lastName, email,
                                 null, null, null, Collections.emptyList(),
-                                createdAt, lastModifiedAt));
+                                createdAt, lastModifiedAt, null));
     }
 }

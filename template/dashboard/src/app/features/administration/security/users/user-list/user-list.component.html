@@ -47,6 +47,19 @@
           testId="filter-profile">
         </tp-profile-select>
       </div>
+      <div class="col-md-3">
+        <label for="filterLocked" class="form-label">{{ 'users.fields.locked' | translate }}</label>
+        <select id="filterLocked"
+                class="form-select form-select-sm"
+                [ngModel]="filterLocked()"
+                (ngModelChange)="filterLocked.set($event)"
+                name="filterLocked"
+                data-testid="filter-locked">
+          <option [ngValue]="null">{{ 'users.filters.allLocked' | translate }}</option>
+          <option [ngValue]="true">{{ 'users.filters.locked' | translate }}</option>
+          <option [ngValue]="false">{{ 'users.filters.unlocked' | translate }}</option>
+        </select>
+      </div>
       <div class="col-12 d-flex justify-content-end gap-2 mt-2">
         <button type="submit"
                 class="btn btn-primary btn-sm"
@@ -122,6 +135,15 @@
       @if (user.profileName) {
         <span class="badge bg-primary-subtle text-primary">{{ user.profileName }}</span>
       }
+    </ng-template>
+
+    <!-- Custom column: locked (badge) -->
+    <ng-template tpColumn="locked" let-user>
+      <span class="badge"
+            [ngClass]="user.locked ? 'bg-danger' : 'bg-success-subtle text-success'"
+            data-testid="user-locked-badge">
+        {{ (user.locked ? 'users.fields.locked' : 'users.fields.unlocked') | translate }}
+      </span>
     </ng-template>
 
     <!-- Custom column: lastAccess (localDate pipe) -->

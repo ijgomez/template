@@ -49,6 +49,7 @@ public class UserController {
      * @param lastName  filter by last name (partial match)
      * @param email     filter by email (partial match)
      * @param profileId filter by profile identifier
+     * @param locked    filter by lock state (true: locked only, false: unlocked only)
      * @param pageable  pagination parameters (page, size, sort)
      * @return 200 OK with paginated user list
      */
@@ -59,9 +60,10 @@ public class UserController {
             @RequestParam(required = false) String lastName,
             @RequestParam(required = false) String email,
             @RequestParam(required = false) Long profileId,
+            @RequestParam(required = false) Boolean locked,
             Pageable pageable) {
 
-        UserCriteria criteria = new UserCriteria(username, firstName, lastName, email, profileId);
+        UserCriteria criteria = new UserCriteria(username, firstName, lastName, email, profileId, locked);
         Page<UserDTO> page = userService.findByCriteria(criteria, pageable);
         return ResponseEntity.ok(page);
     }
@@ -74,6 +76,7 @@ public class UserController {
      * @param lastName  filter by last name (partial match)
      * @param email     filter by email (partial match)
      * @param profileId filter by profile identifier
+     * @param locked    filter by lock state (true: locked only, false: unlocked only)
      * @return 200 OK with the total count
      */
     @GetMapping("/count")
@@ -82,9 +85,10 @@ public class UserController {
             @RequestParam(required = false) String firstName,
             @RequestParam(required = false) String lastName,
             @RequestParam(required = false) String email,
-            @RequestParam(required = false) Long profileId) {
+            @RequestParam(required = false) Long profileId,
+            @RequestParam(required = false) Boolean locked) {
 
-        UserCriteria criteria = new UserCriteria(username, firstName, lastName, email, profileId);
+        UserCriteria criteria = new UserCriteria(username, firstName, lastName, email, profileId, locked);
         long count = userService.countByCriteria(criteria);
         return ResponseEntity.ok(count);
     }

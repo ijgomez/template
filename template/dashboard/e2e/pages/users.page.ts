@@ -21,6 +21,7 @@ export class UsersPage {
   readonly filterUsername: Locator;
   readonly filterFirstName: Locator;
   readonly filterProfile: Locator;
+  readonly filterLocked: Locator;
   readonly searchButton: Locator;
   readonly clearButton: Locator;
 
@@ -38,6 +39,7 @@ export class UsersPage {
   readonly inputFirstName: Locator;
   readonly inputLastName: Locator;
   readonly selectProfile: Locator;
+  readonly lockCheckbox: Locator;
   readonly selectedReports: Locator;
   readonly selectedReportsAddButton: Locator;
   readonly selectedReportsModal: Locator;
@@ -75,6 +77,7 @@ export class UsersPage {
     this.filterUsername = page.getByTestId('filter-username');
     this.filterFirstName = page.getByTestId('filter-firstName');
     this.filterProfile = page.getByTestId('filter-profile');
+    this.filterLocked = page.getByTestId('filter-locked');
     this.searchButton = page.getByTestId('btn-filter-search');
     this.clearButton = page.getByTestId('btn-filter-clear');
 
@@ -90,6 +93,7 @@ export class UsersPage {
     this.inputFirstName = page.getByTestId('input-first-name');
     this.inputLastName = page.getByTestId('input-last-name');
     this.selectProfile = page.getByTestId('select-profile');
+    this.lockCheckbox = page.getByTestId('input-locked');
     this.selectedReports = page.getByTestId('user-reports');
     this.selectedReportsAddButton = page.getByTestId('user-reports-btn-add');
     this.selectedReportsModal = page.getByTestId('user-reports-modal');
@@ -181,6 +185,15 @@ export class UsersPage {
   }
 
   /**
+   * Devuelve el badge de estado de bloqueo (`user-locked-badge`) de la fila del
+   * usuario indicado. Bloqueada usa la clase `bg-danger` y desbloqueada
+   * `bg-success-subtle`.
+   */
+  lockedBadgeIn(username: string): Locator {
+    return this.rowByUsername(username).first().getByTestId('user-locked-badge');
+  }
+
+  /**
    * Selecciona en el listado la fila del usuario indicado (click sobre la fila).
    */
   async selectRowByUsername(username: string): Promise<void> {
@@ -236,6 +249,32 @@ export class UsersPage {
     await this.clearButton.click();
     await response;
     await this.rows.first().waitFor({ state: 'visible' });
+  }
+
+  /**
+   * Aplica el filtro por estado de bloqueo y espera la consulta del listado con
+   * el parámetro `locked` correspondiente. Las opciones del `<select>` están en
+   * el orden: todas (0), bloqueadas (1), desbloqueadas (2).
+   */
+  async filterByLockState(state: 'all' | 'locked' | 'unlocked'): Promise<void> {
+    const index = { all: 0, locked: 1, unlocked: 2 }[state];
+    const expected = state === 'all' ? null : String(state === 'locked');
+    const response = this.page.waitForResponse((res) => {
+      const url = res.url();
+      if (
+        res.request().method() !== 'GET' ||
+        !url.includes('/administration/security/users') ||
+        url.includes('/count') ||
+        res.status() !== 200
+      ) {
+        return false;
+      }
+      const locked = new URL(url).searchParams.get('locked');
+      return expected === null ? locked === null : locked === expected;
+    });
+    await this.filterLocked.selectOption({ index });
+    await this.searchButton.click();
+    await response;
   }
 
   /**
@@ -348,8 +387,14 @@ export class UsersPage {
   /**
    * Modifica campos editables del formulario y guarda, esperando la
    * confirmación del backend (PUT 200) antes de continuar.
+   * `locked` marca/desmarca el check de bloqueo administrativo (bidireccional).
    */
-  async saveEdit(data: { firstName?: string; lastName?: string; email?: string }): Promise<void> {
+  async saveEdit(data: {
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    locked?: boolean;
+  }): Promise<void> {
     if (data.firstName !== undefined) {
       await this.inputFirstName.fill(data.firstName);
     }
@@ -358,6 +403,9 @@ export class UsersPage {
     }
     if (data.email !== undefined) {
       await this.inputEmail.fill(data.email);
+    }
+    if (data.locked !== undefined) {
+      await this.lockCheckbox.setChecked(data.locked);
     }
 
     const updateResponse = this.page.waitForResponse(

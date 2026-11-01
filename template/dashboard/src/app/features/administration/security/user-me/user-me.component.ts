@@ -120,6 +120,7 @@ export class UserMeComponent implements OnInit {
       lastAccess: profile.lastAccess,
       createdAt: null,
       lastModifiedAt: null,
+      locked: false,
     };
   }
 
@@ -137,6 +138,7 @@ export class UserMeComponent implements OnInit {
       lastAccess: null,
       createdAt: null,
       lastModifiedAt: null,
+      locked: false,
     };
   }
 }

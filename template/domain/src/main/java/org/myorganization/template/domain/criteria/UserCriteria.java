@@ -8,12 +8,15 @@ package org.myorganization.template.domain.criteria;
  * @param lastName  filter by last name (partial match)
  * @param email     filter by email (partial match)
  * @param profileId filter by profile identifier
+ * @param locked    filter by lock state: {@code true} only locked accounts,
+ *                  {@code false} only unlocked accounts, {@code null} no filter
  */
 public record UserCriteria(
         String username,
         String firstName,
         String lastName,
         String email,
-        Long profileId
+        Long profileId,
+        Boolean locked
 ) {
 }

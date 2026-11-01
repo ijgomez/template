@@ -49,6 +49,9 @@ public class User extends BaseEntity {
     @Column(name = "locked_until")
     private OffsetDateTime lockedUntil;
 
+    @Column(name = "locked", nullable = false)
+    private boolean locked;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_id")
     private Profile profile;
@@ -57,14 +60,32 @@ public class User extends BaseEntity {
     private List<User2Report> userReports = new ArrayList<>();
 
     /**
-     * Indicates whether the account is currently locked due to repeated failed logins.
+     * Indicates whether the account has been blocked by an administrator.
      * <p>
-     * An elapsed lock is treated as not locked, so the account becomes usable again
-     * automatically once the lock window expires.
+     * This is an indefinite lock (until an administrator unblocks the account) and is
+     * independent from the temporary lock caused by repeated failed logins.
      *
-     * @return true if the account is locked at this moment
+     * @return true if an administrator has blocked the account
      */
     public boolean isLocked() {
-        return lockedUntil != null && lockedUntil.isAfter(OffsetDateTime.now(ZoneOffset.UTC));
+        return locked;
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
+    }
+
+    /**
+     * Indicates whether the account is effectively locked at this moment, either because
+     * an administrator blocked it or because it is within the temporary lock window
+     * caused by repeated failed logins.
+     * <p>
+     * An elapsed temporary lock is treated as not locked, so the account becomes usable
+     * again automatically once the lock window expires.
+     *
+     * @return true if the account cannot be used to authenticate right now
+     */
+    public boolean isCurrentlyLocked() {
+        return locked || (lockedUntil != null && lockedUntil.isAfter(OffsetDateTime.now(ZoneOffset.UTC)));
     }
 }

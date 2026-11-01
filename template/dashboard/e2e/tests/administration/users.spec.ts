@@ -8,6 +8,7 @@ import {
   apiDeleteProfile,
   apiDeleteUserByUsername,
   apiLogin,
+  apiLoginAttempt,
   authHeaders,
   firstProfileId,
 } from '../../fixtures/api-client';
@@ -19,7 +20,7 @@ import { UsersPage } from '../../pages/users.page';
  * Tests E2E de la pantalla de gestión de usuarios
  * (`/administration/security/users`).
  *
- * Cubren el catálogo TC-USR-01..10 de
+ * Cubren el catálogo TC-USR-01..13 de
  * `template-docs/02-functional/administration/security/users.md` (sección 4.6).
  * Cada título lleva el identificador del caso para facilitar la trazabilidad.
  *
@@ -303,6 +304,78 @@ test.describe.serial('Users management', () => {
     await expect(reportItems).toHaveCount(2);
     await expect(reportItems.first()).toBeVisible();
     await expect(reportItems.nth(1)).toBeVisible();
+  });
+
+  test('TC-USR-12 should lock and unlock a user account', async ({ page, request }) => {
+    // Arrange: crear un usuario propio para operar sobre un registro aislado
+    const newUser = await seedUser(request);
+    const usersPage = await openUsersPage(page);
+
+    // 1. El badge de estado muestra la cuenta como desbloqueada
+    await usersPage.searchByUsername(newUser.username);
+    await expect(usersPage.lockedBadgeIn(newUser.username)).toHaveClass(/bg-success-subtle/);
+
+    // 2. Marcar el check de bloqueo administrativo y guardar (el page object espera el 200)
+    await usersPage.openEditForm(newUser.username);
+    await expect(usersPage.lockCheckbox).not.toBeChecked();
+    await usersPage.saveEdit({ locked: true });
+    await expect(usersPage.filterForm).toBeVisible();
+
+    // 3. El badge muestra la cuenta como bloqueada
+    await usersPage.searchByUsername(newUser.username);
+    await expect(usersPage.lockedBadgeIn(newUser.username)).toHaveClass(/bg-danger/);
+
+    // 4. El filtro *Bloqueadas* incluye la fila
+    await usersPage.filterByLockState('locked');
+    await expect(usersPage.rowByUsername(newUser.username).first()).toBeVisible();
+
+    // 5. El filtro *Desbloqueadas* no incluye la fila
+    await usersPage.filterByLockState('unlocked');
+    await expect(usersPage.rowByUsername(newUser.username)).toHaveCount(0);
+
+    // 6. Desmarcar el check y guardar para desbloquear la cuenta
+    await usersPage.filterByLockState('all');
+    await usersPage.searchByUsername(newUser.username);
+    await usersPage.openEditForm(newUser.username);
+    await expect(usersPage.lockCheckbox).toBeChecked();
+    await usersPage.saveEdit({ locked: false });
+    await expect(usersPage.filterForm).toBeVisible();
+
+    // 7. El badge vuelve a desbloqueada y el check queda deshabilitado en el detalle
+    await usersPage.searchByUsername(newUser.username);
+    await expect(usersPage.lockedBadgeIn(newUser.username)).toHaveClass(/bg-success-subtle/);
+    await usersPage.openDetailByDoubleClick(newUser.username);
+    await expect(usersPage.lockCheckbox).toBeDisabled();
+    await expect(usersPage.lockCheckbox).not.toBeChecked();
+  });
+
+  test('TC-USR-13 should lock an account temporarily after failed login attempts', async ({
+    page,
+    request,
+  }) => {
+    // Arrange: usuario propio con credenciales conocidas y umbral de bloqueo
+    const newUser = await seedUser(request);
+    const maxAttempts = Number(process.env['E2E_LOGIN_MAX_ATTEMPTS'] ?? 5);
+
+    // 1. N intentos de login fallidos responden 401
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      const failed = await apiLoginAttempt(request, newUser.username, 'WrongPassword!');
+      expect(failed.status(), `intento fallido ${attempt}`).toBe(401);
+    }
+
+    // 2. Con la contraseña correcta la cuenta está bloqueada: 429 + Retry-After
+    const locked = await apiLoginAttempt(request, newUser.username, newUser.password);
+    expect(locked.status()).toBe(429);
+    expect(locked.headers()['retry-after']).toBeTruthy();
+
+    // 3. La UI de administración muestra la cuenta como bloqueada
+    const usersPage = await openUsersPage(page);
+    await usersPage.searchByUsername(newUser.username);
+    await expect(usersPage.lockedBadgeIn(newUser.username)).toHaveClass(/bg-danger/);
+
+    // 4. El filtro *Bloqueadas* incluye la fila
+    await usersPage.filterByLockState('locked');
+    await expect(usersPage.rowByUsername(newUser.username).first()).toBeVisible();
   });
 });
 

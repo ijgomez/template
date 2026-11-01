@@ -1,4 +1,4 @@
-import { expect, type APIRequestContext } from '@playwright/test';
+import { expect, type APIRequestContext, type APIResponse } from '@playwright/test';
 
 /**
  * Cliente mínimo del backend para el setup/teardown y los tests de API de los E2E.
@@ -35,6 +35,19 @@ export async function apiLogin(
   expect(response.status(), `login de ${username}`).toBe(200);
   const body = (await response.json()) as { accessToken: string };
   return body.accessToken;
+}
+
+/**
+ * Realiza un intento de login por API sin exigir un 200, devolviendo la
+ * respuesta para poder comprobar errores: 401 (credenciales inválidas) o
+ * 429 con cabecera `Retry-After` (cuenta temporalmente bloqueada).
+ */
+export async function apiLoginAttempt(
+  request: APIRequestContext,
+  username: string,
+  password: string,
+): Promise<APIResponse> {
+  return request.post(`${API_URL}/auth/login`, { data: { username, password } });
 }
 
 export function authHeaders(token: string): Record<string, string> {

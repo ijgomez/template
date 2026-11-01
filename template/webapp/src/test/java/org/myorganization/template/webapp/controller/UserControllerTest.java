@@ -56,7 +56,7 @@ class UserControllerTest {
         Page<UserDTO> page = new PageImpl<>(List.of(dto), pageable, 1);
         when(userService.findByCriteria(any(UserCriteria.class), eq(pageable))).thenReturn(page);
 
-        ResponseEntity<Page<UserDTO>> response = userController.findAll(null, null, null, null, null, pageable);
+        ResponseEntity<Page<UserDTO>> response = userController.findAll(null, null, null, null, null, null, pageable);
 
         assertThat(response.getStatusCode().value()).isEqualTo(200);
         assertThat(response.getBody()).isNotNull();
@@ -70,7 +70,7 @@ class UserControllerTest {
         Page<UserDTO> page = new PageImpl<>(List.of(), pageable, 0);
         when(userService.findByCriteria(any(UserCriteria.class), eq(pageable))).thenReturn(page);
 
-        ResponseEntity<Page<UserDTO>> response = userController.findAll("admin", "John", "Doe", "john@mail.com", 1L, pageable);
+        ResponseEntity<Page<UserDTO>> response = userController.findAll("admin", "John", "Doe", "john@mail.com", 1L, true, pageable);
 
         assertThat(response.getStatusCode().value()).isEqualTo(200);
         verify(userService).findByCriteria(any(UserCriteria.class), eq(pageable));
@@ -80,7 +80,7 @@ class UserControllerTest {
     void count_shouldReturnTotalCount() {
         when(userService.countByCriteria(any(UserCriteria.class))).thenReturn(10L);
 
-        ResponseEntity<Long> response = userController.count(null, null, null, null, null);
+        ResponseEntity<Long> response = userController.count(null, null, null, null, null, null);
 
         assertThat(response.getStatusCode().value()).isEqualTo(200);
         assertThat(response.getBody()).isEqualTo(10L);
@@ -90,7 +90,7 @@ class UserControllerTest {
     void count_withFilters_shouldPassCriteriaToService() {
         when(userService.countByCriteria(any(UserCriteria.class))).thenReturn(3L);
 
-        ResponseEntity<Long> response = userController.count("admin", null, null, null, 2L);
+        ResponseEntity<Long> response = userController.count("admin", null, null, null, 2L, false);
 
         assertThat(response.getStatusCode().value()).isEqualTo(200);
         assertThat(response.getBody()).isEqualTo(3L);
@@ -99,9 +99,9 @@ class UserControllerTest {
     @Test
     void create_shouldReturn201WithCreatedUser() {
         UserDTO input = new UserDTO(null, "newuser", "password", "New", "User", "new@mail.com",
-                null, 1L, null, List.of(1L, 2L), null, null);
+                null, 1L, null, List.of(1L, 2L), null, null, null);
         UserDTO created = new UserDTO(1L, "newuser", null, "New", "User", "new@mail.com",
-                null, 1L, "Admin", List.of(1L, 2L), OffsetDateTime.now(), OffsetDateTime.now());
+                null, 1L, "Admin", List.of(1L, 2L), OffsetDateTime.now(), OffsetDateTime.now(), null);
         when(userService.create(input)).thenReturn(created);
 
         ResponseEntity<UserDTO> response = userController.create(input);
@@ -116,7 +116,7 @@ class UserControllerTest {
     @Test
     void create_withDuplicateUsername_shouldThrowDuplicateEntityException() {
         UserDTO input = new UserDTO(null, "admin", "password", "A", "B", null,
-                null, null, null, List.of(), null, null);
+                null, null, null, List.of(), null, null, null);
         when(userService.create(input)).thenThrow(new DuplicateEntityException("User", "username", "admin"));
 
         assertThatThrownBy(() -> userController.create(input))
@@ -126,7 +126,7 @@ class UserControllerTest {
     @Test
     void create_withDuplicateReports_shouldThrowValidationException() {
         UserDTO input = new UserDTO(null, "user1", "pass", "A", "B", null,
-                null, null, null, List.of(1L, 1L), null, null);
+                null, null, null, List.of(1L, 1L), null, null, null);
         when(userService.create(input))
                 .thenThrow(new ValidationException("Report list contains duplicates"));
 
@@ -159,9 +159,9 @@ class UserControllerTest {
     @Test
     void update_shouldReturnUpdatedUser() {
         UserDTO input = new UserDTO(1L, "admin", null, "Updated", "Name", "updated@mail.com",
-                null, 2L, null, List.of(3L), null, null);
+                null, 2L, null, List.of(3L), null, null, null);
         UserDTO updated = new UserDTO(1L, "admin", null, "Updated", "Name", "updated@mail.com",
-                null, 2L, "Editor", List.of(3L), OffsetDateTime.now(), OffsetDateTime.now());
+                null, 2L, "Editor", List.of(3L), OffsetDateTime.now(), OffsetDateTime.now(), null);
         when(userService.update(1L, input)).thenReturn(updated);
 
         ResponseEntity<UserDTO> response = userController.update(1L, input);
@@ -175,7 +175,7 @@ class UserControllerTest {
     @Test
     void update_notFound_shouldThrowEntityNotFoundException() {
         UserDTO input = new UserDTO(99L, "ghost", null, "A", "B", null,
-                null, null, null, List.of(), null, null);
+                null, null, null, List.of(), null, null, null);
         when(userService.update(99L, input)).thenThrow(new EntityNotFoundException("User", 99L));
 
         assertThatThrownBy(() -> userController.update(99L, input))
@@ -221,9 +221,9 @@ class UserControllerTest {
         when(userService.findByUsername("admin")).thenReturn(currentUser);
 
         UserDTO input = new UserDTO(null, null, null, "NewFirst", "NewLast", "new@mail.com",
-                null, null, null, null, null, null);
+                null, null, null, null, null, null, null);
         UserDTO updated = new UserDTO(1L, "admin", null, "NewFirst", "NewLast", "new@mail.com",
-                null, 1L, "Admin", List.of(1L), OffsetDateTime.now(), OffsetDateTime.now());
+                null, 1L, "Admin", List.of(1L), OffsetDateTime.now(), OffsetDateTime.now(), null);
         when(userService.updateProfile(1L, input)).thenReturn(updated);
 
         ResponseEntity<UserDTO> response = userController.updateMyProfile(input);
@@ -245,7 +245,7 @@ class UserControllerTest {
 
     private UserDTO sampleUser(Long id) {
         return new UserDTO(id, "admin", null, "Admin", "User", "admin@mail.com",
-                OffsetDateTime.now(), 1L, "Admin", List.of(1L), OffsetDateTime.now(), OffsetDateTime.now());
+                OffsetDateTime.now(), 1L, "Admin", List.of(1L), OffsetDateTime.now(), OffsetDateTime.now(), null);
     }
 
 }

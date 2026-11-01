@@ -24,6 +24,10 @@ import jakarta.validation.constraints.Size;
  * @param reportIds       list of associated report identifiers
  * @param createdAt       creation timestamp
  * @param lastModifiedAt  last modification timestamp
+ * @param locked          whether the account is currently blocked (administrator block or
+ *                        active temporary lock). On update, {@code true} blocks the account
+ *                        indefinitely and {@code false} unblocks it; {@code null} leaves the
+ *                        current state untouched.
  */
 public record UserDTO(
         Long id,
@@ -45,6 +49,7 @@ public record UserDTO(
         String profileName,
         List<Long> reportIds,
         OffsetDateTime createdAt,
-        OffsetDateTime lastModifiedAt
+        OffsetDateTime lastModifiedAt,
+        Boolean locked
 ) {
 }

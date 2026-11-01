@@ -202,6 +202,25 @@
           </tp-profile-select>
         }
       </div>
+      <div class="col-md-4">
+        <div class="form-check mt-md-4 pt-md-1">
+          <input id="locked"
+                 type="checkbox"
+                 class="form-check-input"
+                 [ngModel]="formUser().locked"
+                 (ngModelChange)="updateField('locked', $event)"
+                 name="locked"
+                 [disabled]="isReadonly()"
+                 [attr.aria-describedby]="!isReadonly() ? 'locked-hint' : null"
+                 data-testid="input-locked">
+          <label for="locked" class="form-check-label form-label-sm">
+            {{ 'users.fields.locked' | translate }}
+          </label>
+          @if (!isReadonly()) {
+            <div id="locked-hint" class="form-text">{{ 'users.form.lockedHint' | translate }}</div>
+          }
+        </div>
+      </div>
     </div>
 
     <!-- Información de auditoría (solo en modo view) -->

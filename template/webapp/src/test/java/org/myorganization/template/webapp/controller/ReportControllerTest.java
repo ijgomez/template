@@ -305,7 +305,7 @@ class ReportControllerTest {
 
     private void mockUserLookup(String username, Long userId) {
         UserDTO user = new UserDTO(userId, username, null, "Test", "User", "test@mail.com",
-                null, 1L, "Admin", List.of(), OffsetDateTime.now(), OffsetDateTime.now());
+                null, 1L, "Admin", List.of(), OffsetDateTime.now(), OffsetDateTime.now(), null);
         when(userService.findByUsername(username)).thenReturn(user);
     }
 

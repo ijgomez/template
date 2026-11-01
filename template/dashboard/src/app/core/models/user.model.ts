@@ -14,6 +14,8 @@ export interface UserDTO {
   lastAccess: string | null;
   createdAt: string | null;
   lastModifiedAt: string | null;
+  /** Whether the account is currently blocked (administrator block or active temporary lock). */
+  locked: boolean;
 }
 
 /**
@@ -25,6 +27,8 @@ export interface UserCriteria {
   lastName?: string;
   email?: string;
   profileId?: number;
+  /** Filter by lock state: true (locked only), false (unlocked only), undefined (all). */
+  locked?: boolean;
 }
 
 

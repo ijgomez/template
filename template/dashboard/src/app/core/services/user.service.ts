@@ -48,6 +48,9 @@ export class UserService {
     if (criteria.profileId) {
       params = params.set('profileId', criteria.profileId.toString());
     }
+    if (criteria.locked !== undefined && criteria.locked !== null) {
+      params = params.set('locked', criteria.locked.toString());
+    }
 
     return this.http.get<Page<UserDTO>>(this.baseUrl, { params });
   }
@@ -80,6 +83,9 @@ export class UserService {
     }
     if (criteria.profileId) {
       params = params.set('profileId', criteria.profileId.toString());
+    }
+    if (criteria.locked !== undefined && criteria.locked !== null) {
+      params = params.set('locked', criteria.locked.toString());
     }
 
     return this.http.get<number>(`${this.baseUrl}/count`, { params });

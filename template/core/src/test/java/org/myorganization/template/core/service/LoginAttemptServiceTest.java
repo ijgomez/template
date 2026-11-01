@@ -67,7 +67,7 @@ class LoginAttemptServiceTest {
         assertThat(user.getFailedLoginAttempts()).isEqualTo(MAX_ATTEMPTS);
         assertThat(user.getLockedUntil()).isNotNull();
         assertThat(user.getLockedUntil()).isAfter(OffsetDateTime.now(ZoneOffset.UTC));
-        assertThat(user.isLocked()).isTrue();
+        assertThat(user.isCurrentlyLocked()).isTrue();
     }
 
     @Test

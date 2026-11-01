@@ -62,7 +62,7 @@ class PaginationMetadataConsistencyPropertyTest {
         configureMock(scenario);
 
         Page<UserDTO> result = userService.findByCriteria(
-                new UserCriteria(null, null, null, null, null),
+                new UserCriteria(null, null, null, null, null, null),
                 PageRequest.of(scenario.pageNumber(), scenario.pageSize()));
 
         int expectedTotalPages = (int) Math.ceil((double) scenario.totalElements() / scenario.pageSize());
@@ -82,7 +82,7 @@ class PaginationMetadataConsistencyPropertyTest {
         configureMock(scenario);
 
         Page<UserDTO> result = userService.findByCriteria(
-                new UserCriteria(null, null, null, null, null),
+                new UserCriteria(null, null, null, null, null, null),
                 PageRequest.of(scenario.pageNumber(), scenario.pageSize()));
 
         assertThat(result.getContent())
@@ -100,7 +100,7 @@ class PaginationMetadataConsistencyPropertyTest {
         configureMock(scenario);
 
         Page<UserDTO> result = userService.findByCriteria(
-                new UserCriteria(null, null, null, null, null),
+                new UserCriteria(null, null, null, null, null, null),
                 PageRequest.of(scenario.pageNumber(), scenario.pageSize()));
 
         assertThat(result.getContent())
@@ -120,7 +120,7 @@ class PaginationMetadataConsistencyPropertyTest {
         configureMock(scenario);
 
         Page<UserDTO> result = userService.findByCriteria(
-                new UserCriteria(null, null, null, null, null),
+                new UserCriteria(null, null, null, null, null, null),
                 PageRequest.of(scenario.pageNumber(), scenario.pageSize()));
 
         assertThat(result.getTotalElements())

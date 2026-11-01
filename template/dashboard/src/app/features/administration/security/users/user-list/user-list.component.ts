@@ -57,6 +57,7 @@ export class UserListComponent implements OnInit {
     { key: 'lastName', header: 'users.fields.lastName', sortable: true, resizable: true, reorderable: true },
     { key: 'email', header: 'users.fields.email', sortable: true, resizable: true, reorderable: true },
     { key: 'profileName', header: 'users.fields.profile', sortable: true, resizable: true, reorderable: true },
+    { key: 'locked', header: 'users.fields.locked', resizable: true, reorderable: true },
     { key: 'lastAccess', header: 'users.fields.lastAccess', sortable: true, resizable: true, reorderable: true },
   ];
 
@@ -68,6 +69,8 @@ export class UserListComponent implements OnInit {
   readonly filterUsername = signal('');
   readonly filterFirstName = signal('');
   readonly filterProfileId = signal<number | null>(null);
+  /** Lock-state filter: null (all), true (locked only), false (unlocked only). */
+  readonly filterLocked = signal<boolean | null>(null);
 
   // Detail / Form state
   readonly selectedRow = signal<UserDTO | null>(null);
@@ -86,6 +89,7 @@ export class UserListComponent implements OnInit {
     username: this.filterUsername(),
     firstName: this.filterFirstName(),
     profileId: this.filterProfileId(),
+    locked: this.filterLocked(),
   }));
 
   constructor() {
@@ -95,7 +99,9 @@ export class UserListComponent implements OnInit {
       .pipe(
         skip(1),
         debounceTime(300),
-        distinctUntilChanged((a, b) => a.username === b.username && a.firstName === b.firstName && a.profileId === b.profileId),
+        distinctUntilChanged((a, b) =>
+          a.username === b.username && a.firstName === b.firstName
+          && a.profileId === b.profileId && a.locked === b.locked),
         takeUntilDestroyed(),
       )
       .subscribe(() => this.applyFilters());
@@ -198,6 +204,7 @@ export class UserListComponent implements OnInit {
       username: this.filterUsername() || undefined,
       firstName: this.filterFirstName() || undefined,
       profileId: this.filterProfileId() ?? undefined,
+      locked: this.filterLocked() ?? undefined,
     });
     this.currentPage.set(0);
     this.loadUsersWithProgress();
@@ -207,6 +214,7 @@ export class UserListComponent implements OnInit {
     this.filterUsername.set('');
     this.filterFirstName.set('');
     this.filterProfileId.set(null);
+    this.filterLocked.set(null);
     this.criteria.set({});
     this.currentPage.set(0);
     this.loadUsersWithProgress();
@@ -276,6 +284,7 @@ export class UserListComponent implements OnInit {
           this.translateService.instant('users.fields.lastName'),
           this.translateService.instant('users.fields.email'),
           this.translateService.instant('users.fields.profile'),
+          this.translateService.instant('users.fields.locked'),
           this.translateService.instant('users.fields.lastAccess'),
         ];
 
@@ -285,6 +294,7 @@ export class UserListComponent implements OnInit {
           u.lastName ?? '',
           u.email ?? '',
           u.profileName ?? '',
+          this.translateService.instant(u.locked ? 'common.yes' : 'common.no'),
           u.lastAccess ? this.dateService.toLocalString(u.lastAccess) : '',
         ]);
 
@@ -423,6 +433,7 @@ export class UserListComponent implements OnInit {
       lastAccess: null,
       createdAt: null,
       lastModifiedAt: null,
+      locked: false,
     };
   }
 }

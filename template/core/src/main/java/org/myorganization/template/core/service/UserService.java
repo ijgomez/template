@@ -1,5 +1,7 @@
 package org.myorganization.template.core.service;
 
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -25,6 +27,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import jakarta.persistence.criteria.Expression;
 
 /**
  * Service handling user management operations: CRUD, criteria-based search, and self-service profile update.
@@ -112,7 +116,10 @@ public class UserService extends AbstractCriteriaService<User, UserDTO, UserCrit
     /**
      * Updates an existing user's data.
      * <p>
-     * Updates: nombre, apellidos, email, perfil, reportes (no duplicates).
+     * Updates: nombre, apellidos, email, perfil, reportes (no duplicates) and the lock
+     * state. When {@code dto.locked()} is {@code true} the account is blocked indefinitely;
+     * when it is {@code false} the account is unblocked, clearing both the administrator
+     * block and any pending temporary lock.
      * Does NOT update: username, password, lastAccess.
      *
      * @param id  the user identifier
@@ -131,6 +138,7 @@ public class UserService extends AbstractCriteriaService<User, UserDTO, UserCrit
         user.setFirstName(dto.firstName());
         user.setLastName(dto.lastName());
         user.setEmail(dto.email());
+        applyLockState(user, dto.locked());
 
         if (dto.profileId() != null) {
             Profile profile = profileRepository.findById(dto.profileId())
@@ -224,6 +232,28 @@ public class UserService extends AbstractCriteriaService<User, UserDTO, UserCrit
         }
     }
 
+    /**
+     * Applies the requested lock state to the account.
+     * <p>
+     * Blocking sets the administrator flag, which has no expiry. Unblocking clears both
+     * that flag and any pending temporary lock, so a user locked after too many failed
+     * logins can be released immediately. A {@code null} value (callers that do not manage
+     * the lock state) leaves the account untouched.
+     *
+     * @param user   the user to update
+     * @param locked the requested lock state, or {@code null} to leave it unchanged
+     */
+    private void applyLockState(User user, Boolean locked) {
+        if (locked == null) {
+            return;
+        }
+        user.setLocked(locked);
+        if (!locked) {
+            user.setLockedUntil(null);
+            user.setFailedLoginAttempts(0);
+        }
+    }
+
     private void validateNoDuplicateReports(List<Long> reportIds) {
         if (reportIds == null || reportIds.isEmpty()) {
             return;
@@ -275,6 +305,24 @@ public class UserService extends AbstractCriteriaService<User, UserDTO, UserCrit
                     cb.equal(root.get("profile").get("id"), criteria.profileId()));
         }
 
+        if (criteria.locked() != null) {
+            spec = spec.and((root, query, cb) -> {
+                OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
+                Expression<Boolean> administratorLock = root.get("locked");
+                Expression<OffsetDateTime> lockedUntil = root.get("lockedUntil");
+
+                if (Boolean.TRUE.equals(criteria.locked())) {
+                    return cb.or(
+                            cb.isTrue(administratorLock),
+                            cb.greaterThan(lockedUntil, now));
+                }
+                // Unlocked: no administrator lock and no active temporary lock window.
+                return cb.and(
+                        cb.isFalse(administratorLock),
+                        cb.or(cb.isNull(lockedUntil), cb.lessThanOrEqualTo(lockedUntil, now)));
+            });
+        }
+
         return spec;
     }
 
@@ -299,7 +347,8 @@ public class UserService extends AbstractCriteriaService<User, UserDTO, UserCrit
                 profileName,
                 reportIds,
                 user.getCreatedAt(),
-                user.getLastModifiedAt()
+                user.getLastModifiedAt(),
+                user.isCurrentlyLocked()
         );
     }
 }

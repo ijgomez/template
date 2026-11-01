@@ -79,7 +79,7 @@ class UserServiceDuplicateReportsPropertyTest {
                 reportRepository, user2ReportRepository, refreshTokenRepository, passwordEncoder);
 
         UserDTO dto = new UserDTO(null, "testuser", "password", "First", "Last",
-                "test@example.com", null, null, null, duplicateReportIds, null, null);
+                "test@example.com", null, null, null, duplicateReportIds, null, null, null);
 
         assertThatThrownBy(() -> userService.create(dto))
                 .isInstanceOf(ValidationException.class)
@@ -94,7 +94,7 @@ class UserServiceDuplicateReportsPropertyTest {
                 reportRepository, user2ReportRepository, refreshTokenRepository, passwordEncoder);
 
         UserDTO dto = new UserDTO(1L, "testuser", null, "First", "Last",
-                "test@example.com", null, null, null, duplicateReportIds, null, null);
+                "test@example.com", null, null, null, duplicateReportIds, null, null, null);
 
         assertThatThrownBy(() -> userService.update(1L, dto))
                 .isInstanceOf(ValidationException.class)

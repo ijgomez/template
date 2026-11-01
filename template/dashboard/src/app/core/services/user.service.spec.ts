@@ -27,6 +27,7 @@ describe('UserService', () => {
     lastAccess: '2026-01-01T10:00:00Z',
     createdAt: '2025-12-01T10:00:00Z',
     lastModifiedAt: '2026-01-01T10:00:00Z',
+    locked: false,
   };
 
   const mockPage: Page<UserDTO> = {

@@ -40,6 +40,7 @@ describe('UserListComponent', () => {
     lastAccess: '2026-01-01T10:00:00Z',
     createdAt: null,
     lastModifiedAt: null,
+    locked: false,
   };
 
   const page: Page<UserDTO> = {
@@ -150,6 +151,31 @@ describe('UserListComponent', () => {
       expect(component.filterProfileId()).toBeNull();
       expect(component.criteria()).toEqual({});
       expect(component.currentPage()).toBe(0);
+    });
+
+    it('applyFilters should include the lock-state filter when set', () => {
+      component.filterLocked.set(true);
+
+      component.applyFilters();
+
+      expect(component.criteria().locked).toBe(true);
+    });
+
+    it('applyFilters should omit the lock-state filter when null (all)', () => {
+      component.filterLocked.set(null);
+
+      component.applyFilters();
+
+      expect(component.criteria().locked).toBeUndefined();
+    });
+
+    it('clearFilters should reset the lock-state filter', () => {
+      component.filterLocked.set(false);
+
+      component.clearFilters();
+
+      expect(component.filterLocked()).toBeNull();
+      expect(component.criteria().locked).toBeUndefined();
     });
   });
 
@@ -334,6 +360,21 @@ describe('UserListComponent', () => {
       expect(exported?.name).toBe('users');
       expect(exported?.rows.length).toBe(1);
       expect(exported?.rows[0][0]).toBe('jdoe');
+      csvExportService.export = () => undefined;
+    });
+
+    it('should include the lock-state column with a Yes/No value', () => {
+      let exported: { headers: string[]; rows: string[][] } | undefined;
+      csvExportService.export = (...args: unknown[]) => {
+        exported = { headers: args[0] as string[], rows: args[1] as string[][] };
+      };
+
+      component.exportCsv();
+
+      const lockIndex = exported!.headers.indexOf('users.fields.locked');
+      expect(lockIndex).toBeGreaterThan(-1);
+      // The stubbed translate service returns the raw key.
+      expect(exported!.rows[0][lockIndex]).toBe(user.locked ? 'common.yes' : 'common.no');
       csvExportService.export = () => undefined;
     });
 

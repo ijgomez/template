@@ -22,6 +22,7 @@ const mockUser: UserDTO = {
   lastAccess: null,
   createdAt: null,
   lastModifiedAt: null,
+  locked: false,
 };
 
 @Injectable()

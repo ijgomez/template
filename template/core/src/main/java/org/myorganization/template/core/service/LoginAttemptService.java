@@ -41,7 +41,8 @@ public class LoginAttemptService {
     private final long lockoutMinutes;
 
     /**
-     * Indicates whether the given account is locked at this moment.
+     * Indicates whether the given account is locked at this moment, either by an
+     * administrator or by the temporary lock caused by repeated failed logins.
      *
      * @param username the account username
      * @return true if the account is locked
@@ -49,21 +50,26 @@ public class LoginAttemptService {
     @Transactional(readOnly = true)
     public boolean isLocked(String username) {
         return userRepository.findByUsername(username)
-                .map(User::isLocked)
+                .map(User::isCurrentlyLocked)
                 .orElse(false);
     }
 
     /**
-     * Returns the seconds remaining until the account lock expires.
+     * Returns the seconds remaining until the temporary account lock expires.
+     * <p>
+     * A permanent block set by an administrator has no expiry, so it reports 0: there is
+     * no window to wait for, the account must be unblocked from the administration.
      *
      * @param username the account username
-     * @return remaining seconds, or 0 if the account is not locked
+     * @return remaining seconds, or 0 if the account is not locked or has no expiry
      */
     @Transactional(readOnly = true)
     public long remainingLockSeconds(String username) {
         return userRepository.findByUsername(username)
-                .filter(User::isLocked)
-                .map(user -> Duration.between(OffsetDateTime.now(ZoneOffset.UTC), user.getLockedUntil()).toSeconds())
+                .filter(User::isCurrentlyLocked)
+                .map(User::getLockedUntil)
+                .filter(lockedUntil -> lockedUntil.isAfter(OffsetDateTime.now(ZoneOffset.UTC)))
+                .map(lockedUntil -> Duration.between(OffsetDateTime.now(ZoneOffset.UTC), lockedUntil).toSeconds())
                 .orElse(0L);
     }
 

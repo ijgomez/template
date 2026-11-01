@@ -159,7 +159,9 @@
       "reports": "Informes",
       "lastAccess": "Último acceso",
       "createdAt": "Fecha de creación",
-      "lastModifiedAt": "Última modificación"
+      "lastModifiedAt": "Última modificación",
+      "locked": "Bloqueada",
+      "unlocked": "Desbloqueada"
     },
     "errors": {
       "usernameRequired": "El usuario es obligatorio",
@@ -169,6 +171,9 @@
     },
     "filters": {
       "allProfiles": "Todos los perfiles",
+      "allLocked": "Todos los estados",
+      "locked": "Bloqueadas",
+      "unlocked": "Desbloqueadas",
       "clear": "Limpiar"
     },
     "detail": {
@@ -181,6 +186,7 @@
       "selectProfile": "Seleccione un perfil...",
       "sectionGeneral": "Datos generales",
       "sectionReports": "Informes asignados",
+      "lockedHint": "Bloquea el acceso de la cuenta de forma indefinida hasta que se desmarque.",
       "filterReports": "Filtrar...",
       "addReport": "Añadir informe",
       "removeReport": "Eliminar informe",

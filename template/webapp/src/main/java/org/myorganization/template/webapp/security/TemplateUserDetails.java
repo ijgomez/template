@@ -11,9 +11,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 /**
  * Adapts the {@link User} entity to Spring Security's {@link UserDetails} contract.
  * <p>
- * Account status is derived from the entity: an account temporarily locked after too
- * many failed logins reports {@link #isAccountNonLocked()} as {@code false}, which makes
- * Spring Security reject the authentication with a {@code LockedException}.
+ * Account status is derived from the entity: an account locked by an administrator or
+ * temporarily locked after too many failed logins reports {@link #isAccountNonLocked()}
+ * as {@code false}, which makes Spring Security reject the authentication with a
+ * {@code LockedException}.
  */
 public class TemplateUserDetails implements UserDetails {
 
@@ -59,7 +60,7 @@ public class TemplateUserDetails implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return !user.isLocked();
+        return !user.isCurrentlyLocked();
     }
 
     @Override

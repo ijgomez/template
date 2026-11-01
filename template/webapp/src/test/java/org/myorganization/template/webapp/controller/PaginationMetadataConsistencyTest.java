@@ -119,7 +119,7 @@ class PaginationMetadataConsistencyTest {
             Page<UserDTO> page = new PageImpl<>(users, pageable, 10);
             when(userService.findByCriteria(any(UserCriteria.class), eq(pageable))).thenReturn(page);
 
-            ResponseEntity<Page<UserDTO>> response = userController.findAll(null, null, null, null, null, pageable);
+            ResponseEntity<Page<UserDTO>> response = userController.findAll(null, null, null, null, null, null, pageable);
 
             assertThat(response.getBody()).isNotNull();
             assertPaginationMetadata(response.getBody(), size);
@@ -134,7 +134,7 @@ class PaginationMetadataConsistencyTest {
             Page<UserDTO> page = new PageImpl<>(lastPageContent, pageable, 25);
             when(userService.findByCriteria(any(UserCriteria.class), eq(pageable))).thenReturn(page);
 
-            ResponseEntity<Page<UserDTO>> response = userController.findAll(null, null, null, null, null, pageable);
+            ResponseEntity<Page<UserDTO>> response = userController.findAll(null, null, null, null, null, null, pageable);
 
             assertThat(response.getBody()).isNotNull();
             assertPaginationMetadata(response.getBody(), size);
@@ -150,7 +150,7 @@ class PaginationMetadataConsistencyTest {
             Page<UserDTO> page = new PageImpl<>(List.of(), pageable, 0);
             when(userService.findByCriteria(any(UserCriteria.class), eq(pageable))).thenReturn(page);
 
-            ResponseEntity<Page<UserDTO>> response = userController.findAll(null, null, null, null, null, pageable);
+            ResponseEntity<Page<UserDTO>> response = userController.findAll(null, null, null, null, null, null, pageable);
 
             assertThat(response.getBody()).isNotNull();
             assertPaginationMetadata(response.getBody(), size);
@@ -167,7 +167,7 @@ class PaginationMetadataConsistencyTest {
             Page<UserDTO> page = new PageImpl<>(users, pageable, 1);
             when(userService.findByCriteria(any(UserCriteria.class), eq(pageable))).thenReturn(page);
 
-            ResponseEntity<Page<UserDTO>> response = userController.findAll(null, null, null, null, null, pageable);
+            ResponseEntity<Page<UserDTO>> response = userController.findAll(null, null, null, null, null, null, pageable);
 
             assertThat(response.getBody()).isNotNull();
             assertPaginationMetadata(response.getBody(), size);
@@ -178,7 +178,7 @@ class PaginationMetadataConsistencyTest {
             List<UserDTO> users = new ArrayList<>();
             for (int i = 0; i < count; i++) {
                 users.add(new UserDTO((long) (i + 1), "user" + i, null, "First" + i, "Last" + i,
-                        "user" + i + "@mail.com", null, 1L, "Admin", List.of(), OffsetDateTime.now(), OffsetDateTime.now()));
+                        "user" + i + "@mail.com", null, 1L, "Admin", List.of(), OffsetDateTime.now(), OffsetDateTime.now(), null));
             }
             return users;
         }
@@ -443,7 +443,7 @@ class PaginationMetadataConsistencyTest {
             Page<UserDTO> userPage = new PageImpl<>(
                     IntStream.range(0, size)
                             .mapToObj(i -> new UserDTO((long) i, "u" + i, null, "F", "L", null,
-                                    null, 1L, null, List.of(), null, null))
+                                    null, 1L, null, List.of(), null, null, null))
                             .toList(),
                     pageable, totalElements);
 
@@ -484,7 +484,7 @@ class PaginationMetadataConsistencyTest {
             Page<UserDTO> page = new PageImpl<>(
                     IntStream.range(0, size)
                             .mapToObj(i -> new UserDTO((long) i, "u" + i, null, null, null, null,
-                                    null, null, null, List.of(), null, null))
+                                    null, null, null, List.of(), null, null, null))
                             .toList(),
                     pageable, totalElements);
 
@@ -502,7 +502,7 @@ class PaginationMetadataConsistencyTest {
             Pageable pageable = PageRequest.of(0, size);
 
             Page<UserDTO> page = new PageImpl<>(
-                    List.of(new UserDTO(1L, "u1", null, null, null, null, null, null, null, List.of(), null, null)),
+                    List.of(new UserDTO(1L, "u1", null, null, null, null, null, null, null, List.of(), null, null, null)),
                     pageable, totalElements);
 
             assertThat(page.getTotalPages()).isEqualTo((int) totalElements);

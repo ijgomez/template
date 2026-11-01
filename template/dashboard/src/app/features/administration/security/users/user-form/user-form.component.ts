@@ -120,6 +120,7 @@ export class UserFormComponent {
     lastAccess: null,
     createdAt: null,
     lastModifiedAt: null,
+    locked: false,
   });
 
   constructor() {

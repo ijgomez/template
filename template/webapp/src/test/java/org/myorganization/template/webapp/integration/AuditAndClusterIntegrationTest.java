@@ -92,7 +92,7 @@ class AuditAndClusterIntegrationTest {
                 null, "auditTestUser", "Password123!",
                 "Audit", "Test", "audit@test.com",
                 null, 1000L, null, Collections.emptyList(),
-                null, null);
+                null, null, null);
 
         // Act - this should trigger the audit aspect
         userService.create(dto);
@@ -115,7 +115,7 @@ class AuditAndClusterIntegrationTest {
                 null, "auditSafeUser", "Password123!",
                 "Safe", "User", "safe@test.com",
                 null, 1000L, null, Collections.emptyList(),
-                null, null);
+                null, null, null);
 
         UserDTO created = userService.create(dto);
         assertThat(created.id()).isNotNull();

@@ -64,7 +64,8 @@ class UserServiceUniquenessPropertyTest {
                 null,           // profileName
                 Collections.emptyList(), // reportIds
                 null,           // createdAt
-                null            // lastModifiedAt
+                null,           // lastModifiedAt
+                null            // locked
         );
 
         // Act & Assert: creation must always throw DuplicateEntityException

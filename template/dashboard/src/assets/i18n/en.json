@@ -159,7 +159,9 @@
       "reports": "Reports",
       "lastAccess": "Last Access",
       "createdAt": "Created At",
-      "lastModifiedAt": "Last Modified At"
+      "lastModifiedAt": "Last Modified At",
+      "locked": "Locked",
+      "unlocked": "Unlocked"
     },
     "errors": {
       "usernameRequired": "Username is required",
@@ -169,6 +171,9 @@
     },
     "filters": {
       "allProfiles": "All profiles",
+      "allLocked": "All states",
+      "locked": "Locked",
+      "unlocked": "Unlocked",
       "clear": "Clear"
     },
     "detail": {
@@ -181,6 +186,7 @@
       "selectProfile": "Select a profile...",
       "sectionGeneral": "General data",
       "sectionReports": "Assigned reports",
+      "lockedHint": "Blocks access to the account indefinitely until it is unchecked.",
       "filterReports": "Filter...",
       "addReport": "Add report",
       "removeReport": "Remove report",

@@ -91,6 +91,19 @@ Identificadores locales de este documento: `RF-USR-*` (requisitos funcionales) y
 - AC8.3: Al abrir el usuario en edición se muestran exactamente los informes asignados.
 - AC8.4: Los identificadores de informe inexistentes se rechazan en el backend.
 
+#### RF-USR-9: Estado de bloqueo de la cuenta
+
+**Descripción:** el sistema debe gestionar y exponer el estado de bloqueo de las cuentas, distinguiendo entre el **bloqueo temporal automático** (por intentos fallidos de inicio de sesión) y el **bloqueo administrativo indefinido** (aplicado manualmente desde esta pantalla).
+
+**Criterios de aceptación:**
+- AC9.1: Tras `N` intentos de inicio de sesión fallidos consecutivos se activa el bloqueo temporal de la cuenta durante `M` minutos; mientras esté vigente, cualquier intento de acceso (incluso con la contraseña correcta) responde 429 con la cabecera `Retry-After` y el mensaje de cuenta bloqueada temporalmente.
+- AC9.2: El estado de bloqueo efectivo de una cuenta es la unión del bloqueo administrativo y del bloqueo temporal vigente, y se evalúa mediante un único criterio (`locked` o `locked_until` futuro).
+- AC9.3: El listado muestra la columna *Bloqueada* con un badge de estado (bloqueada / desbloqueada) para cada usuario.
+- AC9.4: El listado permite filtrar por estado de bloqueo (todas / bloqueadas / desbloqueadas), considerando bloqueada toda cuenta con bloqueo administrativo o temporal vigente.
+- AC9.5: El formulario de usuario ofrece un check *Bloqueada* bidireccional: marcarlo bloquea la cuenta de forma indefinida hasta desmarcarlo; desmarcarlo la desbloquea. En modo detalle el check aparece deshabilitado.
+- AC9.6: Al desbloquear una cuenta se limpian también el bloqueo temporal vigente (`locked_until`) y el contador de intentos fallidos (`failed_login_attempts`).
+- AC9.7: La exportación CSV incluye una columna con el estado de bloqueo de cada usuario.
+
 ### 1.2. Requisitos no funcionales
 
 - **RNF-USR-1 (Autorización):** el acceso requiere sesión y la acción `USER_READ`; las operaciones de escritura requieren `USER_WRITE`.
@@ -98,6 +111,7 @@ Identificadores locales de este documento: `RF-USR-*` (requisitos funcionales) y
 - **RNF-USR-3 (Seguridad de credenciales):** la contraseña nunca se muestra en claro ni se devuelve en las respuestas del backend.
 - **RNF-USR-4 (Idioma):** todos los textos de la pantalla son traducibles (ES / EN) mediante el grupo i18n `users.*`.
 - **RNF-USR-5 (Feedback):** toda operación (crear, editar, eliminar, exportar, paginar) informa al usuario mediante notificaciones de progreso, éxito o error.
+- **RNF-USR-6 (Persistencia del bloqueo):** el estado de bloqueo se persiste en base de datos (`users.locked`, `users.locked_until`, `users.failed_login_attempts`) para que sea consistente y efectivo en todos los nodos del clúster.
 
 ---
 
@@ -112,6 +126,7 @@ Ofrecer a los administradores una pantalla completa para administrar los usuario
 - Consultar y actualizar el propio perfil del usuario autenticado mediante `/me`.
 - Crear, editar y eliminar usuarios.
 - Asignar un perfil y una lista de informes a cada usuario.
+- Bloquear y desbloquear cuentas, y consultar su estado de bloqueo (temporal o administrativo).
 - Exportar el listado filtrado a CSV.
 
 ### 2.2. Vistas de la pantalla
@@ -142,12 +157,12 @@ La estructura visual base de esta pantalla se define en [layout.md](../../../03-
 | Usuarios                                                            |
 | [Crear] [Exportar]                                                  |
 +---------------------------------------------------------------------+
-| Filtro usuario | Filtro nombre | Filtro perfil | [Buscar] [Limpiar] |
+| Filtro usuario | Filtro nombre | Filtro perfil | Filtro estado | [Buscar] [Limpiar] |
 +---------------------------------------------------------------------+
-| Usuario | Nombre | Apellidos | Email | Perfil | Último acceso       |
-|-------- |--------|-----------|-------|--------|---------------------|
-| admin   | Admin  | User      | ...   | ADMIN  | 2026-09-29          |
-| tester  | Test   | User      | ...   | USER   | 2026-09-28          |
+| Usuario | Nombre | Apellidos | Email | Perfil | Bloqueada | Último acceso |
+|-------- |--------|-----------|-------|--------|-----------|---------------|
+| admin   | Admin  | User      | ...   | ADMIN  | No        | 2026-09-29    |
+| tester  | Test   | User      | ...   | USER   | Sí        | 2026-09-28    |
 +---------------------------------------------------------------------+
 | < 1 2 3 > | Registros por página: 10                                |
 +---------------------------------------------------------------------+
@@ -162,6 +177,7 @@ La estructura visual base de esta pantalla se define en [layout.md](../../../03-
 | Usuario * | [texto]          | Perfil * | [select]               |
 | Contraseña | [texto]        | Email    | [texto]                 |
 | Nombre    | [texto]         | Apellidos| [texto]                 |
+| [ ] Bloqueada | [check bidireccional]                              |
 | Informes asignados | [multiselect]                               |
 +------------------------------------------------------------------+
 | [Guardar] [Cancelar]                                             |
@@ -179,6 +195,7 @@ La estructura visual base de esta pantalla se define en [layout.md](../../../03-
 | Nombre  | [Admin]                                                |
 | Email   | [admin@domain.com]                                     |
 | Perfil  | [ADMIN]                                                |
+| Bloqueada | [check deshabilitado]                                |
 | Informes asignados | [3]                                         |
 | Auditoría: Creado 2026-09-01 | Última modificación 2026-09-15    |
 +------------------------------------------------------------------+
@@ -188,24 +205,26 @@ La pantalla de usuarios usa `List screen` para la consulta, `Form screen` para a
 
 ### 2.4. Listado
 
-**Columnas de la tabla** (todas ordenables y reordenables):
+**Columnas de la tabla** (ordenables y reordenables; la columna *Bloqueada* solo es reordenable y redimensionable):
 
-| Columna       | Clave i18n                | Notas                            |
-|---------------|---------------------------|----------------------------------|
-| Usuario       | `users.fields.username`   | —                                |
-| Nombre        | `users.fields.firstName`  | —                                |
-| Apellidos     | `users.fields.lastName`   | —                                |
-| Email         | `users.fields.email`      | —                                |
-| Perfil        | `users.fields.profile`    | Se muestra como etiqueta (badge) |
-| Último acceso | `users.fields.lastAccess` | Formateado con `localDate`       |
+| Columna       | Clave i18n                | Notas                                     |
+|---------------|---------------------------|-------------------------------------------|
+| Usuario       | `users.fields.username`   | —                                         |
+| Nombre        | `users.fields.firstName`  | —                                         |
+| Apellidos     | `users.fields.lastName`   | —                                         |
+| Email         | `users.fields.email`      | —                                         |
+| Perfil        | `users.fields.profile`    | Se muestra como etiqueta (badge)          |
+| Bloqueada     | `users.fields.locked`     | Badge de estado (bloqueada / desbloqueada) |
+| Último acceso | `users.fields.lastAccess` | Formateado con `localDate`                |
 
 **Filtros disponibles:**
 
-| Filtro  | Tipo                          | `data-testid`      |
-|---------|-------------------------------|--------------------|
-| Usuario | Texto (coincidencia parcial)  | `filter-username`  |
-| Nombre  | Texto (coincidencia parcial)  | `filter-firstName` |
-| Perfil  | Selección (todos por defecto) | `filter-profile`   |
+| Filtro             | Tipo                          | `data-testid`      |
+|--------------------|-------------------------------|--------------------|
+| Usuario            | Texto (coincidencia parcial)  | `filter-username`  |
+| Nombre             | Texto (coincidencia parcial)  | `filter-firstName` |
+| Perfil             | Selección (todos por defecto) | `filter-profile`   |
+| Estado de bloqueo  | Selección (todos por defecto) | `filter-locked`    |
 
 **Barra de acciones:**
 
@@ -229,7 +248,10 @@ La pantalla de usuarios usa `List screen` para la consulta, `Form screen` para a
 | Filtro de usuario     | `filter-username`   |
 | Filtro de nombre      | `filter-firstName`  |
 | Filtro de perfil      | `filter-profile`    |
+| Filtro de bloqueo     | `filter-locked`     |
 | Tabla de usuarios     | `users-table`       |
+| Badge de bloqueo      | `user-locked-badge` |
+| Check de bloqueo      | `input-locked`      |
 | Botón Detalle         | `btn-detail`        |
 | Botón Crear           | `btn-create`        |
 | Botón Editar          | `btn-edit`          |
@@ -240,26 +262,28 @@ La pantalla de usuarios usa `List screen` para la consulta, `Form screen` para a
 
 **Campos:**
 
-| Campo              | Obligatorio  | Notas                                   |
-|--------------------|--------------|-----------------------------------------|
-| Usuario            | Sí           | No editable en modo edición (solo alta) |
-| Contraseña         | Solo en alta | En modo detalle se muestra enmascarada  |
-| Email              | No           | Validación de formato email             |
-| Nombre             | No           | —                                       |
-| Apellidos          | No           | —                                       |
-| Perfil             | Sí           | Selección de un perfil existente        |
-| Informes asignados | No           | Multi-selección de informes             |
+| Campo              | Obligatorio  | Notas                                                              |
+|--------------------|--------------|--------------------------------------------------------------------|
+| Usuario            | Sí           | No editable en modo edición (solo alta)                            |
+| Contraseña         | Solo en alta | En modo detalle se muestra enmascarada                             |
+| Email              | No           | Validación de formato email                                        |
+| Nombre             | No           | —                                                                  |
+| Apellidos          | No           | —                                                                  |
+| Perfil             | Sí           | Selección de un perfil existente                                   |
+| Bloqueada          | No           | Check bidireccional de bloqueo administrativo; deshabilitado en detalle |
+| Informes asignados | No           | Multi-selección de informes                                        |
 
 **Información de auditoría** (solo en modo detalle, solo lectura): último acceso, fecha de creación y última modificación.
 
 ### 2.6. Validaciones funcionales
 
-| Campo      | Regla                                      |
-|------------|--------------------------------------------|
-| Usuario    | Obligatorio en alta; inmutable en edición  |
-| Contraseña | Obligatoria únicamente al crear un usuario |
-| Perfil     | Obligatorio                                |
-| Email      | Formato de email cuando se informa         |
+| Campo      | Regla                                                                                       |
+|------------|---------------------------------------------------------------------------------------------|
+| Usuario    | Obligatorio en alta; inmutable en edición                                                    |
+| Contraseña | Obligatoria únicamente al crear un usuario                                                   |
+| Perfil     | Obligatorio                                                                                  |
+| Email      | Formato de email cuando se informa                                                           |
+| Bloqueada  | Bidireccional: marcarlo bloquea la cuenta indefinidamente; desmarcarlo la desbloquea y limpia el bloqueo temporal y los intentos fallidos |
 
 ### 2.7. Diagramas
 
@@ -281,6 +305,28 @@ flowchart TD
   K -->|Si| L["Elimina y refresca el listado"]
   K -->|No| A
 ```
+
+#### 2.7.2. Estados de bloqueo de la cuenta
+
+```mermaid
+stateDiagram-v2
+  [*] --> Activa
+  Activa --> BloqueoTemporal: N intentos fallidos
+  BloqueoTemporal --> Activa: expira locked_until
+  BloqueoTemporal --> Activa: desbloqueo manual (check off)
+  Activa --> BloqueoAdministrativo: check Bloqueada marcado
+  BloqueoAdministrativo --> Activa: check Bloqueada desmarcado
+  note right of BloqueoTemporal
+    Acceso denegado con 429 + Retry-After
+    mientras locked_until esta vigente
+  end note
+  note right of BloqueoAdministrativo
+    Acceso denegado con 429 (Retry-After 1)
+    hasta desmarcar el check
+  end note
+```
+
+El estado mostrado en el listado agrega ambos bloqueos: una cuenta aparece como *Bloqueada* si tiene bloqueo administrativo o un bloqueo temporal vigente.
 
 ### 2.8. Mensajes y notificaciones
 
@@ -324,6 +370,8 @@ interface UserDTO {
   lastAccess: string | null;
   createdAt: string | null;
   lastModifiedAt: string | null;
+  /** Estado de bloqueo efectivo (administrativo o temporal vigente). */
+  locked: boolean;
 }
 
 interface UserCriteria {
@@ -332,6 +380,8 @@ interface UserCriteria {
   lastName?: string;
   email?: string;
   profileId?: number;
+  /** Filtro por estado de bloqueo: `true` solo bloqueadas, `false` solo desbloqueadas. */
+  locked?: boolean;
 }
 ```
 
@@ -350,7 +400,9 @@ public record UserDTO(
     String profileName,
     List<Long> reportIds,
     OffsetDateTime createdAt,
-    OffsetDateTime lastModifiedAt
+    OffsetDateTime lastModifiedAt,
+    // null en actualización = no modificar; true = bloquear; false = desbloquear
+    Boolean locked
 ) {}
 
 public record UserCriteria(
@@ -358,7 +410,8 @@ public record UserCriteria(
     String firstName,
     String lastName,
     String email,
-    Long profileId
+    Long profileId,
+    Boolean locked
 ) {}
 ```
 
@@ -378,8 +431,24 @@ public class User extends BaseEntity {
     @JoinColumn(name = "profile_id")
     private Profile profile;
 
+    /** Bloqueo administrativo indefinido. */
+    @Column(name = "locked", nullable = false)
+    private boolean locked;
+
+    /** Fin del bloqueo temporal por intentos fallidos. */
+    @Column(name = "locked_until")
+    private OffsetDateTime lockedUntil;
+
+    @Column(name = "failed_login_attempts", nullable = false)
+    private int failedLoginAttempts;
+
     @OneToMany(mappedBy = "user")
     private List<User2Report> userReports = new ArrayList<>();
+
+    /** Bloqueo efectivo: administrativo o temporal vigente. */
+    public boolean isCurrentlyLocked() {
+        return locked || (lockedUntil != null && lockedUntil.isAfter(OffsetDateTime.now(ZoneOffset.UTC)));
+    }
 }
 ```
 
@@ -389,8 +458,8 @@ Ruta base: `/api/v1/administration/security/users`.
 
 | Método y ruta  | Descripción                                                                                           | Respuesta                         |
 |----------------|-------------------------------------------------------------------------------------------------------|-----------------------------------|
-| `GET /`        | Listado paginado con filtros (`username`, `firstName`, `lastName`, `email`, `profileId`) y `Pageable` | 200 OK con página de usuarios     |
-| `GET /count`   | Número de usuarios que cumplen los filtros                                                            | 200 OK con el total               |
+| `GET /`        | Listado paginado con filtros (`username`, `firstName`, `lastName`, `email`, `profileId`, `locked`) y `Pageable` | 200 OK con página de usuarios     |
+| `GET /count`   | Número de usuarios que cumplen los filtros (incluido `locked`)                                        | 200 OK con el total               |
 | `GET /{id}`    | Usuario por identificador                                                                             | 200 OK con el usuario             |
 | `POST /`       | Alta de usuario (`id` nulo)                                                                           | 201 Created con el usuario creado |
 | `PUT /{id}`    | Actualización de usuario                                                                              | 200 OK con el usuario actualizado |
@@ -409,6 +478,8 @@ Datos de referencia consumidos por el formulario y los filtros:
 - La contraseña es obligatoria solo en creación; si el usuario no la modifica en edición, el backend conserva la existente.
 - El `email` se valida con formato de correo cuando se informa, y el `perfil` debe apuntar a una entidad existente en el catálogo.
 - Los informes asociados deben pertenecer a registros válidos del sistema; cualquier identificador inexistente se rechaza en backend.
+- El campo `locked` es opcional en la actualización: `null` no modifica el estado, `true` bloquea administrativamente la cuenta y `false` la desbloquea (limpiando `locked_until` y `failed_login_attempts`).
+- El estado de bloqueo efectivo se resuelve con `locked` o `locked_until` futuro; el filtro `locked` del listado agrega ambos bloqueos.
 
 ### 3.5. Exportación
 
@@ -416,6 +487,7 @@ Datos de referencia consumidos por el formulario y los filtros:
 - Para construir el CSV se reutiliza la misma consulta del listado contra los mismos métodos backend (`GET /` y `GET /count`) con los filtros activos.
 - La exportación incluye **todos los registros que cumplen los filtros activos**, no solo la página visible en pantalla.
 - Si no existen filas coincidentes, la UI informa del caso y evita generar un archivo vacío.
+- El CSV incluye una columna con el estado de bloqueo (`Sí`/`No`) además de usuario, nombre, apellidos, email, perfil y último acceso.
 
 ### 3.6. Paginación, orden y filtros
 
@@ -429,6 +501,7 @@ Datos de referencia consumidos por el formulario y los filtros:
 - Las acciones de crear, editar y eliminar solo se muestran si el usuario posee la acción `USER_WRITE` (`canWrite`).
 - El campo `usuario` es inmutable una vez creado (solo editable en alta).
 - La contraseña nunca se muestra: en modo detalle aparece enmascarada.
+- El bloqueo efectivo de una cuenta (administrativo o temporal) se evalúa en `TemplateUserDetails.isAccountNonLocked()`; Spring Security lanza `LockedException`, que `AuthService` traduce a `AccountLockedException` → 429 con `Retry-After`.
 
 ### 3.8. Reglas de comportamiento relevantes
 
@@ -436,6 +509,9 @@ Datos de referencia consumidos por el formulario y los filtros:
 - En **alta**, la contraseña es obligatoria; en edición no se exige (se conserva si no se cambia según la lógica del backend).
 - Tras crear o actualizar con éxito, la aplicación vuelve al listado y lo recarga.
 - La eliminación es irreversible y siempre requiere confirmación explícita del usuario.
+- El check *Bloqueada* es bidireccional: marcarlo aplica un bloqueo administrativo indefinido y desmarcarlo lo revoca; en modo detalle permanece deshabilitado (solo lectura).
+- El desbloqueo manual limpia también el bloqueo temporal vigente y el contador de intentos fallidos, devolviendo la cuenta a su estado activo.
+- El bloqueo temporal se activa automáticamente tras `auth.login-attempts.max-attempts` (por defecto 5) intentos fallidos consecutivos y dura `auth.login-attempts.lockout-minutes` (por defecto 15) minutos.
 
 ---
 
@@ -447,18 +523,19 @@ La suite actual incluye pruebas específicas del servicio y del controlador que 
 
 | Ubicación                                                                                             | Alcance                                                                                                                                              |
 |-------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `template/core/src/test/java/org/myorganization/template/core/service/UserServiceTest.java`           | Validaciones de negocio, creación, consulta por ID y username, filtrado por criterios, actualización, borrado y asociaciones con perfiles e informes |
-| `template/webapp/src/test/java/org/myorganization/template/webapp/controller/UserControllerTest.java` | Respuestas HTTP del endpoint, parámetros de consulta, autenticación del usuario actual y propagación de excepciones del servicio                     |
+| `template/core/src/test/java/org/myorganization/template/core/service/UserServiceTest.java`           | Validaciones de negocio, creación, consulta por ID y username, filtrado por criterios (incluido el estado de bloqueo), actualización (bloquear/desbloquear), borrado y asociaciones con perfiles e informes |
+| `template/webapp/src/test/java/org/myorganization/template/webapp/controller/UserControllerTest.java` | Respuestas HTTP del endpoint, parámetros de consulta (incluido `locked`), autenticación del usuario actual y propagación de excepciones del servicio     |
+| `template/webapp/src/test/java/org/myorganization/template/webapp/integration/LoginLockoutIntegrationTest.java` | Bloqueo temporal de la cuenta tras intentos fallidos (429 + `Retry-After`) en un contexto Spring completo con PostgreSQL |
 
 Estas pruebas cubren el flujo principal de usuarios y complementan la cobertura E2E del frontend, sin reemplazar la validación funcional end-to-end del comportamiento completo de la pantalla.
 
 ### 4.2. Cobertura unitaria (frontend)
 
-| Ubicación                     | Alcance                                           |
-|-------------------------------|---------------------------------------------------|
-| `user-list.component.spec.ts` | Estado de listado, filtros, paginación y acciones |
-| `user-form.component.spec.ts` | Modos del formulario y emisión de eventos         |
-| `user.service.spec.ts`        | Construcción de peticiones CRUD y parámetros      |
+| Ubicación                     | Alcance                                                                 |
+|-------------------------------|-------------------------------------------------------------------------|
+| `user-list.component.spec.ts` | Estado de listado, filtros (incluido el de bloqueo), paginación, acciones y columna de bloqueo en la exportación CSV |
+| `user-form.component.spec.ts` | Modos del formulario, check de bloqueo bidireccional y emisión de eventos |
+| `user.service.spec.ts`        | Construcción de peticiones CRUD y parámetros (incluido `locked`)        |
 
 ### 4.3. Cobertura E2E (Playwright)
 
@@ -473,6 +550,8 @@ Ubicación: `dashboard/e2e/tests/administration/users.spec.ts` (Page Object en `
 | Eliminar usuario   | Seleccionar un usuario y confirmar el borrado          | El backend responde 204 y el usuario deja de aparecer al buscarlo                                 |
 | Exportar CSV       | Pulsar el botón de exportar                            | El navegador descarga el fichero `users_YYYY-MM-DD.csv`                                           |
 | Asignar informes   | Crear un usuario asignándole dos informes              | El backend responde 201 y al editar el usuario se muestran los dos informes asignados             |
+| Bloquear/desbloquear | Marcar y desmarcar el check *Bloqueada* en la edición  | El estado se refleja en el badge del listado y en el filtro por estado de bloqueo                 |
+| Bloqueo temporal   | Provocar `N` intentos fallidos consecutivos de login   | El acceso responde 429 con `Retry-After` y el listado muestra la cuenta como bloqueada            |
 
 - Cada test inicia sesión con un usuario administrador (acciones `USER_READ` y `USER_WRITE`) y navega directamente a `/administration/security/users`.
 - La suite se ejecuta en modo `serial` para evitar contención en el backend al compartir el usuario administrador entre casos.
@@ -487,6 +566,7 @@ Definidos en `dashboard/e2e/fixtures/test-data.ts`: `testUsers.valid` (credencia
 - Los casos E2E de listar, buscar, crear, editar, eliminar y exportar requieren el backend de integración levantado (por defecto en `http://localhost:8080`) con al menos un perfil de referencia disponible.
 - Los casos de creación y edición insertan un registro en el backend por ejecución; el caso de eliminación borra el usuario que él mismo crea.
 - La exportación a CSV depende de que existan filas que cumplan los filtros activos; en caso contrario se notifica que no hay datos que exportar.
+- El caso de bloqueo temporal (TC-USR-13) depende de la configuración `auth.login-attempts.max-attempts` del backend (por defecto 5, ajustable con `E2E_LOGIN_MAX_ATTEMPTS` en el entorno E2E).
 
 ### 4.6. Casos de prueba detallados (TCY-USR)
 
@@ -623,6 +703,35 @@ Precondición del ciclo: usuario administrador `{{ADMIN_USER}}` con `USER_READ` 
 | 2 | En *Informes asignados* (`user-reports`), abrir el selector de informes, marcar los dos primeros informes y aceptar                          | El selector se cierra y los dos informes quedan añadidos al usuario         |
 | 3 | Guardar                                                                                                                                      | El backend responde 201; se vuelve al listado                               |
 | 4 | Buscar `e2e_user_{{UNIQUE}}`, seleccionarlo y pulsar `btn-edit`                                                                              | El formulario de edición muestra exactamente los dos informes asignados     |
+
+#### TC-USR-12 · Bloqueo y desbloqueo administrativo de una cuenta
+
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Funcional, E2E · **Traza:** RF-USR-9 (AC9.3–AC9.7) · **Independiente:** Sí (crea su propio usuario) · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`; crear previamente `e2e_user_{{UNIQUE}}` (vía `POST /api/v1/administration/security/users` o repitiendo TC-USR-03) para operar sobre un registro aislado.
+- **Teardown:** eliminar `e2e_user_{{UNIQUE}}`.
+
+| # | Acción                                                                                        | Resultado esperado                                                                        |
+|---|-----------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|
+| 1 | Buscar `e2e_user_{{UNIQUE}}` y observar la columna *Bloqueada*                                 | El badge (`user-locked-badge`) muestra la cuenta como desbloqueada                         |
+| 2 | Seleccionar el usuario, pulsar `btn-edit` y marcar el check `input-locked`; guardar           | El backend responde 200; se vuelve al listado                                              |
+| 3 | Buscar `e2e_user_{{UNIQUE}}`                                                                   | El badge muestra la cuenta como bloqueada                                                  |
+| 4 | En el filtro de estado (`filter-locked`) seleccionar *Bloqueadas* y buscar                    | El listado incluye la fila de `e2e_user_{{UNIQUE}}`                                        |
+| 5 | En el filtro de estado seleccionar *Desbloqueadas* y buscar                                   | El listado no incluye la fila de `e2e_user_{{UNIQUE}}`                                     |
+| 6 | Volver al filtro *Todas*, buscar el usuario, abrir su edición y desmarcar el check; guardar   | El backend responde 200; se vuelve al listado                                              |
+| 7 | Buscar `e2e_user_{{UNIQUE}}` y abrir su detalle con doble clic                                 | El badge vuelve a mostrar la cuenta como desbloqueada y el check `input-locked` está deshabilitado |
+
+#### TC-USR-13 · Bloqueo temporal de cuenta por intentos fallidos
+
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Seguridad, Funcional, E2E · **Traza:** RF-USR-9 (AC9.1–AC9.4), RNF-USR-6 · **Independiente:** Sí (crea su propio usuario) · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`; crear previamente un usuario con credenciales conocidas (`e2e_user_{{UNIQUE}}` / `Test1234!`). `N` = `auth.login-attempts.max-attempts` (por defecto 5; en E2E, `E2E_LOGIN_MAX_ATTEMPTS`).
+- **Teardown:** eliminar `e2e_user_{{UNIQUE}}` (el borrado elimina también el estado de bloqueo asociado).
+
+| # | Acción                                                                                                              | Resultado esperado                                                                            |
+|---|---------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------|
+| 1 | Realizar `N` intentos de login por API con contraseña incorrecta para `e2e_user_{{UNIQUE}}`                          | Cada intento responde 401 Unauthorized                                                        |
+| 2 | Realizar un login por API con la contraseña **correcta**                                                            | Responde 429 Too Many Requests con cabecera `Retry-After`                                     |
+| 3 | Iniciar sesión en la UI con `{{ADMIN_USER}}`, buscar `e2e_user_{{UNIQUE}}` y observar la columna *Bloqueada*        | El badge (`user-locked-badge`) muestra la cuenta como bloqueada                               |
+| 4 | En el filtro de estado (`filter-locked`) seleccionar *Bloqueadas* y buscar                                          | El listado incluye la fila de `e2e_user_{{UNIQUE}}`                                           |
 
 ---
 
