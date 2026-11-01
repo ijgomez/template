@@ -168,11 +168,11 @@
           <button type="button" class="btn-close" (click)="cancelDelete()"
                   [attr.aria-label]="'button.close' | translate"></button>
         </div>
-        <div class="modal-body">
+        <div class="modal-body" data-testid="delete-confirm-body">
           <p>{{ 'users.delete.confirmMessage' | translate: { username: userToDelete()?.username } }}</p>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-outline-secondary" (click)="cancelDelete()">
+          <button type="button" class="btn btn-outline-secondary" (click)="cancelDelete()" data-testid="btn-cancel-delete">
             {{ 'button.cancel' | translate }}
           </button>
           <button type="button" class="btn btn-danger" (click)="executeDelete()" data-testid="btn-confirm-delete">

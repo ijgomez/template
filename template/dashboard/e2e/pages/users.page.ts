@@ -1,4 +1,4 @@
-import { type Locator, type Page } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
 
 /**
  * Page Object de la pantalla de gestión de usuarios.
@@ -46,6 +46,23 @@ export class UsersPage {
 
   // Modal de confirmación de borrado
   readonly confirmDeleteButton: Locator;
+  readonly cancelDeleteButton: Locator;
+  readonly deleteConfirmBody: Locator;
+
+  // Detalle (modo solo lectura)
+  readonly detailButton: Locator;
+  readonly inputLastAccess: Locator;
+  readonly inputCreatedAt: Locator;
+  readonly inputLastModifiedAt: Locator;
+
+  // Validación y notificaciones
+  readonly errorEmail: Locator;
+  /** Los errores no se muestran como toast sino como diálogo modal (`error-dialog`). */
+  readonly errorNotification: Locator;
+
+  // Paginación
+  readonly pageSizeSelect: Locator;
+  readonly nextPageButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -80,6 +97,80 @@ export class UsersPage {
     this.cancelButton = page.getByTestId('btn-cancel');
 
     this.confirmDeleteButton = page.getByTestId('btn-confirm-delete');
+    this.cancelDeleteButton = page.getByTestId('btn-cancel-delete');
+    this.deleteConfirmBody = page.getByTestId('delete-confirm-body');
+
+    this.detailButton = page.getByTestId('btn-detail');
+    this.inputLastAccess = page.getByTestId('input-last-access');
+    this.inputCreatedAt = page.getByTestId('input-created-at');
+    this.inputLastModifiedAt = page.getByTestId('input-last-modified-at');
+
+    this.errorEmail = page.getByTestId('error-email');
+    this.errorNotification = page.getByTestId('error-dialog');
+
+    this.pageSizeSelect = page.getByTestId('pagination-page-size');
+    this.nextPageButton = page.getByTestId('pagination-next');
+  }
+
+  /**
+   * Cabecera ordenable de la columna indicada (`username`, `firstName`, ...).
+   */
+  columnHeader(key: string): Locator {
+    return this.page.getByTestId(`users-table-th-${key}`);
+  }
+
+  /**
+   * Pulsa la cabecera de la columna y espera la consulta ordenada resultante.
+   * `expected` es el valor del parámetro `sort` (p. ej. `username,asc`).
+   */
+  async sortBy(key: string, expected: string): Promise<void> {
+    const response = this.page.waitForResponse((res) => {
+      const url = res.url();
+      return (
+        res.request().method() === 'GET' &&
+        url.includes('/administration/security/users') &&
+        !url.includes('/count') &&
+        new URL(url).searchParams.get('sort') === expected &&
+        res.status() === 200
+      );
+    });
+    await this.columnHeader(key).click();
+    await response;
+  }
+
+  /**
+   * Cambia el tamaño de página y espera la consulta con el nuevo `size`.
+   */
+  async setPageSize(size: number): Promise<void> {
+    const response = this.page.waitForResponse((res) => {
+      const url = res.url();
+      return (
+        res.request().method() === 'GET' &&
+        url.includes('/administration/security/users') &&
+        !url.includes('/count') &&
+        new URL(url).searchParams.get('size') === String(size) &&
+        res.status() === 200
+      );
+    });
+    await this.pageSizeSelect.selectOption({ label: String(size) });
+    await response;
+  }
+
+  /**
+   * Abre el detalle de un usuario con doble clic sobre su fila.
+   */
+  async openDetailByDoubleClick(username: string): Promise<void> {
+    await this.rowByUsername(username).first().dblclick();
+    await this.form.waitFor({ state: 'visible' });
+  }
+
+  /**
+   * Selecciona el usuario y abre el modal de confirmación de borrado sin confirmar.
+   */
+  async openDeleteModal(username: string): Promise<void> {
+    await this.selectRowByUsername(username);
+    await this.deleteButton.click();
+    await this.confirmDeleteButton.waitFor({ state: 'visible' });
   }
 
   /**
@@ -93,7 +184,16 @@ export class UsersPage {
    * Selecciona en el listado la fila del usuario indicado (click sobre la fila).
    */
   async selectRowByUsername(username: string): Promise<void> {
-    await this.rowByUsername(username).first().click();
+    const row = this.rowByUsername(username).first();
+    // La selección alterna (click = seleccionar/deseleccionar): solo se hace
+    // click si la fila aún no está seleccionada, por ejemplo tras cancelar el
+    // modal de borrado, que deja la fila seleccionada.
+    await expect(async () => {
+      if ((await row.getAttribute('aria-selected')) !== 'true') {
+        await row.click();
+      }
+      await expect(row).toHaveAttribute('aria-selected', 'true');
+    }).toPass({ timeout: 10_000 });
   }
 
   /**
