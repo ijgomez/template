@@ -81,6 +81,16 @@ Identificadores locales de este documento: `RF-USR-*` (requisitos funcionales) y
 - AC7.2: El fichero descargado sigue el patrón `users_YYYY-MM-DD.csv`.
 - AC7.3: Si no hay filas que cumplan los filtros, se notifica que no hay datos que exportar.
 
+#### RF-USR-8: Asignación de informes a un usuario
+
+**Descripción:** un usuario con permiso de escritura debe poder asignar uno o varios informes a un usuario, tanto en el alta como en la edición.
+
+**Criterios de aceptación:**
+- AC8.1: El formulario permite seleccionar uno o varios informes mediante el campo *Informes asignados* (`user-reports`).
+- AC8.2: Al guardar, los informes seleccionados se persisten junto con el usuario.
+- AC8.3: Al abrir el usuario en edición se muestran exactamente los informes asignados.
+- AC8.4: Los identificadores de informe inexistentes se rechazan en el backend.
+
 ### 1.2. Requisitos no funcionales
 
 - **RNF-USR-1 (Autorización):** el acceso requiere sesión y la acción `USER_READ`; las operaciones de escritura requieren `USER_WRITE`.
@@ -462,6 +472,7 @@ Ubicación: `dashboard/e2e/tests/administration/users.spec.ts` (Page Object en `
 | Editar usuario     | Seleccionar un usuario y modificar sus datos           | El campo usuario es de solo lectura, el backend responde 200 y el cambio se refleja en el listado |
 | Eliminar usuario   | Seleccionar un usuario y confirmar el borrado          | El backend responde 204 y el usuario deja de aparecer al buscarlo                                 |
 | Exportar CSV       | Pulsar el botón de exportar                            | El navegador descarga el fichero `users_YYYY-MM-DD.csv`                                           |
+| Asignar informes   | Crear un usuario asignándole dos informes              | El backend responde 201 y al editar el usuario se muestran los dos informes asignados             |
 
 - Cada test inicia sesión con un usuario administrador (acciones `USER_READ` y `USER_WRITE`) y navega directamente a `/administration/security/users`.
 - La suite se ejecuta en modo `serial` para evitar contención en el backend al compartir el usuario administrador entre casos.
@@ -599,6 +610,19 @@ Precondición del ciclo: usuario administrador `{{ADMIN_USER}}` con `USER_READ` 
 | 1 | Con token sin `USER_READ` ni `USER_WRITE`, `GET /api/v1/administration/security/users` | 403 Forbidden                                                      |
 | 2 | Con token `USER_READ` (sin `USER_WRITE`), abrir el listado en la UI                    | Los botones `btn-create`, `btn-edit` y `btn-delete` no se muestran |
 | 3 | Con ese mismo token, `POST /api/v1/administration/security/users`                      | 403 Forbidden                                                      |
+
+#### TC-USR-11 · Asignación de informes a un usuario
+
+- **Versión:** 1.0 · **Prioridad:** Media · **Tipo:** Funcional, E2E · **Traza:** RF-USR-8 (AC8.1–AC8.3) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`; existen al menos dos informes asignables (`GET /api/v1/reports/all`) y un perfil seleccionable.
+- **Teardown:** eliminar el usuario `e2e_user_{{UNIQUE}}` (vía UI o `DELETE /api/v1/administration/security/users/{id}`).
+
+| # | Acción                                                                                                                                       | Resultado esperado                                                          |
+|---|----------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------|
+| 1 | En el listado, pulsar `btn-create` y rellenar usuario `e2e_user_{{UNIQUE}}`, contraseña `Test1234!`, email, nombre, apellidos y perfil        | Se abre el formulario en modo alta con los datos informados                 |
+| 2 | En *Informes asignados* (`user-reports`), abrir el selector de informes, marcar los dos primeros informes y aceptar                          | El selector se cierra y los dos informes quedan añadidos al usuario         |
+| 3 | Guardar                                                                                                                                      | El backend responde 201; se vuelve al listado                               |
+| 4 | Buscar `e2e_user_{{UNIQUE}}`, seleccionarlo y pulsar `btn-edit`                                                                              | El formulario de edición muestra exactamente los dos informes asignados     |
 
 ---
 
