@@ -40,6 +40,9 @@ services:
       - "${WILDFLY_MANAGEMENT_PORT:-9991}:9990"
     environment:
       WILDFLY_ADMIN_USER: ${WILDFLY_ADMIN_USER:-admin}
+      POSTGRES_USER: ${POSTGRES_USER:-administrador}
+      POSTGRES_DB: ${POSTGRES_DB:-template}
+      POSTGRES_JDBC_URL: ${POSTGRES_JDBC_URL:-jdbc:postgresql://postgres:5432/${POSTGRES_DB:-template}}
       CREDENTIALS_FILE: /run/secrets/credentials
     secrets:
       - credentials
@@ -60,6 +63,9 @@ services:
       - "${WILDFLY2_MANAGEMENT_PORT:-9992}:9990"
     environment:
       WILDFLY_ADMIN_USER: ${WILDFLY_ADMIN_USER:-admin}
+      POSTGRES_USER: ${POSTGRES_USER:-administrador}
+      POSTGRES_DB: ${POSTGRES_DB:-template}
+      POSTGRES_JDBC_URL: ${POSTGRES_JDBC_URL:-jdbc:postgresql://postgres:5432/${POSTGRES_DB:-template}}
       CREDENTIALS_FILE: /run/secrets/credentials
     secrets:
       - credentials

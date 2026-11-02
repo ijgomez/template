@@ -1,0 +1,6 @@
+embed-server --std-out=echo
+/subsystem=datasources/data-source=ExampleDS:remove
+/subsystem=datasources/jdbc-driver=h2:remove
+/subsystem=datasources/jdbc-driver=postgresql:add(driver-name=postgresql,driver-module-name=org.postgresql,driver-class-name=org.postgresql.Driver)
+/subsystem=datasources/data-source=PostgreSQLDS:add(jndi-name=java:/jdbc/PostgreSQLDS,driver-name=postgresql,connection-url=${env.POSTGRES_JDBC_URL:jdbc:postgresql://postgres:5432/template},user-name=${env.POSTGRES_USER:administrador},password=${env.POSTGRES_PASSWORD},enabled=true,use-java-context=true,validate-on-match=true,background-validation=false,statistics-enabled=true)
+stop-embedded-server

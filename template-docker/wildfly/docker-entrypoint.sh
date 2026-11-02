@@ -14,4 +14,22 @@ MGMT_USERS_FILE=/opt/jboss/wildfly/standalone/configuration/mgmt-users.propertie
 sed -i "/^${WILDFLY_ADMIN_USER}=.*$/d" "$MGMT_USERS_FILE"
 /opt/jboss/wildfly/bin/add-user.sh "$WILDFLY_ADMIN_USER" "$WILDFLY_ADMIN_PASSWORD" --silent
 
-exec /opt/jboss/wildfly/bin/standalone.sh -b 0.0.0.0 -bmanagement 0.0.0.0
+WILDFLY_HOME=/opt/jboss/wildfly
+STANDALONE_CONFIG="$WILDFLY_HOME/standalone/configuration"
+HISTORY_DIR="$STANDALONE_CONFIG/standalone_xml_history"
+
+# El CLI embebido de la construcción deja un historial current que hace fallar
+# el respaldo XML del siguiente arranque si contiene varios ficheros.
+if [[ -d "$HISTORY_DIR/current" ]]; then
+  find "$HISTORY_DIR/current" -mindepth 1 -maxdepth 1 -type f -delete
+  rmdir "$HISTORY_DIR/current" 2>/dev/null || true
+fi
+
+export POSTGRES_USER="${POSTGRES_USER:-administrador}"
+export POSTGRES_JDBC_URL="${POSTGRES_JDBC_URL:-jdbc:postgresql://postgres:5432/${POSTGRES_DB:-template}}"
+if [[ -n "${CREDENTIALS_FILE:-}" ]]; then
+  export POSTGRES_PASSWORD="$(sed -n 's/^postgres_password=//p' "$CREDENTIALS_FILE" | tr -d '\r')"
+  POSTGRES_PASSWORD="${POSTGRES_PASSWORD:?postgres_password missing from credentials file}"
+fi
+
+exec "$WILDFLY_HOME/bin/standalone.sh" -b 0.0.0.0 -bmanagement 0.0.0.0
