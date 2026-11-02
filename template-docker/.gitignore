@@ -1,0 +1,4 @@
+.env
+/secrets/
+
+/openproject/rotate-admin-password.rb

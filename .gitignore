@@ -340,3 +340,4 @@ Thumbs.db
 .serena/logs/**/*.log
 .playwright-mcp/*.log
 .playwright-mcp/*.yml
+template-docker/.env
