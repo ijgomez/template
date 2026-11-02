@@ -81,7 +81,7 @@ services:
       - wildfly-1
       - wildfly-2
     ports:
-      - "${APACHE_HTTP_PORT:-8090}:80"
+      - "${APACHE_HTTP_PORT:-8000}:80"
 
   openproject:
     build:

@@ -1,196 +1,124 @@
 # Template Docker
 
-template-docker es un ejemplo de infraestructura del entorno de desarrollo para la plataforma Template.
-Permite levantar de forma local los servicios de base de datos (PostgreSQL) y servidor de aplicaciones (WildFly) mediante Docker Compose.
+`template-docker` levanta en local PostgreSQL, dos nodos WildFly detrás de Apache, OpenProject y Mailpit mediante Docker Compose.
 
-## Requisitos previos
+## Requisitos
 
-- [Docker](https://docs.docker.com/get-docker/) (versión 24 o superior)
-- [Docker Compose](https://docs.docker.com/compose/) (incluido en Docker Desktop)
+- Docker Engine con Docker Compose.
+- `bash` y `openssl` para ejecutar `compose.sh` y generar credenciales si faltan.
 
-## Configuración
+## Configuración y secretos
 
-1. Copiar el fichero de variables de entorno:
+Al ejecutar `./compose.sh start` o `./compose.sh reset`, el script prepara los ficheros locales que no existan:
 
-```bash
-cp .env.example .env
-```
+- `.env`: copia de `.env.example`, con la configuración no secreta.
+- `secrets/credentials.env`: un único fichero ignorado por Git con `postgres_password`, `wildfly_admin_password`, `openproject_admin_password` y `openproject_secret_key_base`.
 
-2. Editar `.env` con los valores deseados (credenciales de base de datos, puertos, etc.).
+Las tres contraseñas se generan aleatoriamente con 256 bits de entropía y contienen minúscula, mayúscula, número y símbolo. La clave de OpenProject se genera con 256 bits aleatorios en hexadecimal. Si los ficheros ya existen, el script no los sobrescribe.
+
+Compose monta `credentials.env` como `/run/secrets/credentials` solo en los servicios que lo necesitan. PostgreSQL y WildFly leen sus claves desde ese fichero; OpenProject también obtiene de ahí las credenciales requeridas. No añadas contraseñas a Dockerfiles, a `.env` ni al repositorio. Restringe el acceso local a `secrets/credentials.env` y protege sus copias de seguridad.
+
+Para revisar la configuración de puertos, edita `.env`. Las contraseñas se cambian editando `secrets/credentials.env`; para rotarlas en servicios ya inicializados, actualiza también la contraseña correspondiente en PostgreSQL o en la aplicación y reinicia los servicios afectados.
 
 ## Uso
 
-### Arrancar todos los servicios (recomendado)
+Arrancar todos los servicios:
 
 ```bash
 ./compose.sh start
 ```
 
-Esto levantará:
+El script ejecuta `docker compose up -d --build`.
 
-| Servicio   | Puerto | Descripción                    |
-|------------|--------|--------------------------------|
-| PostgreSQL | 5432   | Base de datos                  |
-| Apache     | 8090   | Balanceador de carga (punto de entrada único) |
-| WildFly    | 8080   | HTTP del servidor de aplicaciones (nodo 1) |
-| WildFly Management | 9990 | Consola de administración de WildFly (nodo 1) |
-| WildFly 2  | 8081   | HTTP del servidor de aplicaciones (nodo 2) |
-| WildFly 2 Management | 9991 | Consola de administración de WildFly (nodo 2) |
-| OpenProject | 8088   | Gestión de proyectos           |
-| Mail (SMTP) | 1025   | Servidor SMTP de pruebas (Mailpit) |
-| Mail (UI)   | 8025   | Interfaz web para consultar los correos capturados |
-
-`./compose.sh start` fuerza reconstrucción de imágenes (`docker compose up -d --build`) para que cambios en Dockerfile y scripts se apliquen automáticamente.
-
-### Reinicializar desde cero (incluyendo volumen de datos)
-
-```bash
-./compose.sh reset
-```
-
-Este comando elimina contenedores y volúmenes y vuelve a construir/levantar servicios. Úsalo cuando cambies scripts de inicialización de PostgreSQL.
-
-### Ver logs
+Ver logs:
 
 ```bash
 docker compose logs -f
-```
-
-Para ver los logs de un servicio concreto:
-
-```bash
 docker compose logs -f postgres
-docker compose logs -f apache
 docker compose logs -f wildfly-1
 docker compose logs -f wildfly-2
-docker compose logs -f openproject
-docker compose logs -f mail
+docker compose logs -f apache
 ```
 
-### Detener todos los servicios
+Detener y quitar los contenedores, conservando los volúmenes:
 
 ```bash
 ./compose.sh stop
 ```
 
-### Detener y eliminar volúmenes (datos)
+Reinicializar servicios y borrar los volúmenes de datos:
 
 ```bash
-docker compose down -v
+./compose.sh reset
 ```
 
-## Estructura
+`reset` elimina PostgreSQL y los datos persistentes de OpenProject; úsalo solo si quieres empezar de cero. Los ficheros `.env` y `secrets/credentials.env` permanecen en el host.
 
-```text
-template-docker/
-├── docker-compose.yml      ← Orquestación de servicios
-├── compose.sh              ← Script de arranque/parada/reset
-├── .env.example            ← Variables de entorno de ejemplo
-├── apache/
-│   ├── Dockerfile          ← Imagen de Apache HTTP Server
-│   └── httpd.conf          ← Configuración del balanceador (mod_proxy_balancer)
-├── mail/
-│   └── Dockerfile          ← Imagen de Mailpit (servidor SMTP de pruebas)
-├── openproject/
-│   └── Dockerfile          ← Imagen de OpenProject personalizada
-├── postgres/
-│   ├── Dockerfile          ← Imagen de PostgreSQL personalizada
-│   ├── init-tablespaces.sh ← Crea rutas físicas de tablespaces
-│   └── init.sql            ← Inicializa roles, schema y tablespaces
-├── wildfly/
-│   ├── Dockerfile          ← Imagen de WildFly personalizada
-│   └── docker-entrypoint.sh ← Crea usuario admin y arranca WildFly
-└── README.md               ← Este fichero
-```
+## Puertos publicados
+
+| Servicio | Puerto del host | Puerto del contenedor | Uso |
+|---|---:|---:|---|
+| PostgreSQL | `5432` | `5432` | Base de datos |
+| Apache | `8000` | `80` | Balanceador y entrada HTTP |
+| WildFly 1 | `8081` | `8080` | HTTP directo para depuración |
+| WildFly 1 | `9991` | `9990` | Consola de administración |
+| WildFly 2 | `8082` | `8080` | HTTP directo para depuración |
+| WildFly 2 | `9992` | `9990` | Consola de administración |
+| OpenProject | `8088` | `80` | Gestión de proyectos |
+| Mailpit SMTP | `1025` | `1025` | Correo de pruebas |
+| Mailpit UI | `8025` | `8025` | Interfaz de mensajes capturados |
+
+Apache reparte el tráfico entre `wildfly-1:8080` y `wildfly-2:8080` dentro de la red Compose; los puertos publicados del host no son los puertos internos. El balanceador usa round-robin y la aplicación se considera stateless. El acceso recomendado es `http://localhost:8000`; los nodos también están disponibles directamente en `http://localhost:8081` y `http://localhost:8082`.
 
 ## Servicios
 
-### PostgreSQL 18
+### PostgreSQL
 
-- Build local desde `postgres/Dockerfile` (base `postgres:18`)
-- Puerto: configurable via `POSTGRES_PORT` (por defecto 5432)
-- Los datos se persisten en un volumen Docker (`postgres-data`) montado en `/var/lib/postgresql`
-- `PGDATA` se fija en `/var/lib/postgresql/18/docker` para seguir el esquema recomendado en 18+
-- Inicialización al primer arranque del volumen:
-  - Base de datos `openproject` con tablespaces `openproject_data_tbs` y `openproject_index_tbs`
-  - Base de datos y schema `template` con tablespaces `template_data_tbs` y `template_index_tbs`
-  - Roles `template_admin` y `template_user`
+- Imagen construida desde `postgres/Dockerfile`, basada en PostgreSQL 18.
+- Persiste los datos en el volumen `postgres-data`; `PGDATA` es `/var/lib/postgresql/18/docker`.
+- Inicializa las bases `template` y `openproject`, roles de plantilla y tablespaces al crear el volumen por primera vez.
+- Los scripts de inicialización solo se ejecutan durante la primera inicialización del volumen. Editarlos no modifica un clúster ya creado.
 
+### WildFly y datasource PostgreSQL
 
-### Apache (balanceador de carga)
+- Los dos nodos usan la imagen `template-wildfly:latest`, construida desde WildFly JDK 21.
+- El Dockerfile descarga el driver JDBC de PostgreSQL directamente con `curl`, valida el JAR y lo instala como módulo `org.postgresql`; no usa una etapa adicional de Alpine ni Maven.
+- La construcción elimina el datasource `ExampleDS` y el driver `h2`, registra el driver PostgreSQL y crea `PostgreSQLDS`.
+- El datasource está disponible en JNDI como `java:/jdbc/PostgreSQLDS`, apunta a la base `template` por defecto y obtiene la contraseña desde `secrets/credentials.env`.
+- `statistics-enabled=true` activa las estadísticas del pool. La configuración permite validar conexiones y espera a que PostgreSQL esté saludable antes de arrancar.
+- Para consultar estadísticas runtime con la CLI de WildFly, el recurso es `/subsystem=datasources/data-source=PostgreSQLDS/statistics=pool:read-resource(include-runtime=true)`.
+- Los nodos arrancan como instancias `standalone`; el balanceo HTTP lo hace Apache. La coordinación o clustering de la aplicación depende de la configuración propia de la aplicación.
+- El entrypoint limpia el historial XML residual de la etapa de construcción antes de iniciar, para evitar el error `WFLYCTL0056` al archivar `standalone_xml_history/current`.
 
-- Build local desde `apache/Dockerfile` (base `httpd:2.4`)
-- Puerto HTTP: configurable via `APACHE_HTTP_PORT` (por defecto 8090 mapeado al 80 interno)
-- Punto de entrada único: reparte las peticiones entre `wildfly-1` y `wildfly-2` con `mod_proxy_balancer` en modo round-robin (`byrequests`)
-- Sin sesiones pegajosas: la aplicación es stateless (autenticación JWT), por lo que cualquier nodo puede atender cualquier petición
-- Si un nodo no responde, Apache deja de enviarle tráfico y lo reintenta tras `retry=5` segundos
-- Reenvía todas las rutas, por lo que si el WAR se despliega con contexto `/template` el acceso es `http://localhost:8090/template/`
-- Consola del balanceador: `http://localhost:8090/balancer-manager` (permite activar/desactivar nodos manualmente)
-- Estado de Apache: `http://localhost:8090/server-status`
-- Arranca después de los dos nodos WildFly (`depends_on`), aunque tolera que todavía no estén listos (devuelve `503` hasta que arrancan)
+### Apache
 
-### WildFly
-
-- Dos instancias (`wildfly-1` y `wildfly-2`) construidas desde la misma imagen (`template-wildfly:latest`, generada con `wildfly/Dockerfile`, base `quay.io/wildfly/wildfly:latest-jdk21`)
-- Nodo 1:
-  - Puerto HTTP: configurable via `WILDFLY_HTTP_PORT` (por defecto 8080)
-  - Puerto de gestión: configurable via `WILDFLY_MANAGEMENT_PORT` (por defecto 9990)
-- Nodo 2:
-  - Puerto HTTP: configurable via `WILDFLY2_HTTP_PORT` (por defecto 8081)
-  - Puerto de gestión: configurable via `WILDFLY2_MANAGEMENT_PORT` (por defecto 9991)
-- Cada contenedor declara un `hostname` distinto (`template-wildfly-1` y `template-wildfly-2`). El módulo `cluster` usa el hostname como identificador de nodo, por lo que ambos se registran como nodos independientes.
-- Ambos nodos comparten la misma base de datos: al desplegar `template.war` en cada instancia, los dos aparecen en **Administración > Cluster** y el heartbeat y la elección de maestro funcionan sobre ellos.
-- Crea automáticamente el usuario de administración (si no existe) en cada instancia a través de:
-  - `WILDFLY_ADMIN_USER`
-  - `WILDFLY_ADMIN_PASSWORD`
-- Espera a que PostgreSQL esté saludable antes de arrancar
-
-> **Nota:** ambas instancias ejecutan WildFly en modo `standalone` (perfil por defecto). El clúster que se simula es el del módulo `cluster` de la aplicación (coordinación vía base de datos), no la replicación de sesiones/HA de WildFly. El acceso recomendado es a través del balanceador Apache (`http://localhost:8090`); los puertos 8080 y 8081 permiten acceder directamente a cada nodo para depuración.
+- Imagen basada en `httpd:2.4`, configurada con `mod_proxy_balancer` y balanceo `byrequests`.
+- Publica el puerto HTTP `8000` por defecto y espera a que los dos servicios WildFly estén creados.
+- Los backends son los nombres DNS de Compose con el puerto interno `8080`.
+- La configuración incluye `/balancer-manager` y `/server-status`, restringidos a rangos locales privados.
 
 ### OpenProject
 
-- Build local desde `openproject/Dockerfile` (base `openproject/openproject:17`)
-- Puerto HTTP: configurable via `OPENPROJECT_PORT` (por defecto 8088 mapeado al 80 interno)
-- Utiliza el servicio PostgreSQL (`postgres`) compartido mediante la base de datos `openproject`
-- Los archivos adjuntos y datos de usuario se persisten en el volumen `openproject-assets`
-- Configuración de host y HTTPS configurable mediante `OPENPROJECT_HOST_NAME` y `OPENPROJECT_HTTPS`
-- Espera a que PostgreSQL esté saludable antes de arrancar
+- Imagen personalizada basada en `openproject/openproject:17`.
+- Conecta a la base PostgreSQL `openproject` y persiste sus recursos en `openproject-assets`.
+- Publica HTTP en el puerto `8088` por defecto y espera a que PostgreSQL esté saludable.
+- El entrypoint lee los secretos desde el fichero compartido y configura `ServerName localhost` para Apache interno.
 
-### Mail (Mailpit)
+### Mailpit
 
-- Build local desde `mail/Dockerfile` (base `axllent/mailpit`)
-- Servidor SMTP de pruebas: captura los correos enviados sin entregarlos a ningún destinatario real
-- Puerto SMTP: configurable via `MAIL_SMTP_PORT` (por defecto 1025)
-- Interfaz web: configurable via `MAIL_UI_PORT` (por defecto 8025), accesible en `http://localhost:8025`
-- Acepta cualquier usuario/contraseña y conexiones sin TLS (`MP_SMTP_AUTH_ACCEPT_ANY` y `MP_SMTP_AUTH_ALLOW_INSECURE`); solo apto para desarrollo
-- Desde otros contenedores el servidor SMTP es `mail:1025`; desde el host, `localhost:1025`
+- Servidor SMTP de pruebas; captura mensajes localmente y no los entrega a destinatarios reales.
+- SMTP disponible en `localhost:1025`; interfaz web en `http://localhost:8025`.
+- Acepta autenticación SMTP sin validación, por lo que es solo para desarrollo local.
 
 ## Variables de entorno
 
-Archivo de referencia: `.env.example`
+`.env.example` documenta las variables no secretas:
 
-- PostgreSQL
-  - `POSTGRES_DB`
-  - `POSTGRES_USER`
-  - `POSTGRES_PASSWORD`
-  - `POSTGRES_PORT`
-- WildFly
-  - `WILDFLY_HTTP_PORT`
-  - `WILDFLY_MANAGEMENT_PORT`
-  - `WILDFLY2_HTTP_PORT`
-  - `WILDFLY2_MANAGEMENT_PORT`
-  - `WILDFLY_ADMIN_USER`
-  - `WILDFLY_ADMIN_PASSWORD`
-- Apache
-  - `APACHE_HTTP_PORT`
-- OpenProject
-  - `OPENPROJECT_PORT`
-  - `OPENPROJECT_HOST_NAME`
-  - `OPENPROJECT_DB`
-  - `OPENPROJECT_SECRET_KEY_BASE`
-  - `OPENPROJECT_HTTPS`
-- Mail
-  - `MAIL_SMTP_PORT`
-  - `MAIL_UI_PORT`
+- PostgreSQL: `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PORT`.
+- WildFly: `WILDFLY_HTTP_PORT`, `WILDFLY_MANAGEMENT_PORT`, `WILDFLY2_HTTP_PORT`, `WILDFLY2_MANAGEMENT_PORT`, `WILDFLY_ADMIN_USER`.
+- PostgreSQL JDBC: `POSTGRES_JDBC_URL` (opcional; por defecto apunta al servicio `postgres` y a `POSTGRES_DB`).
+- Apache: `APACHE_HTTP_PORT`.
+- OpenProject: `OPENPROJECT_PORT`, `OPENPROJECT_HOST_NAME`, `OPENPROJECT_DB`, `OPENPROJECT_HTTPS`.
+- Mailpit: `MAIL_SMTP_PORT`, `MAIL_UI_PORT`.
 
-
+Las contraseñas y `SECRET_KEY_BASE` no se configuran en `.env`; se guardan en `secrets/credentials.env`.
