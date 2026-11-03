@@ -11,13 +11,13 @@ export const ADMINISTRATION_ROUTES: Routes = [
   },
   {
     path: 'parameters',
-    loadComponent: () => import('./parameters/parameter-list/parameter-list.component').then((m) => m.ParameterListComponent),
+    loadComponent: () => import('./pages/parameter-list/parameter-list.component').then((m) => m.ParameterListComponent),
     canActivate: [actionGuard],
     data: { actions: ['SYSTEM_PARAMETER_READ', 'SYSTEM_PARAMETER_WRITE'] },
   },
   {
     path: 'audit',
-    loadComponent: () => import('./audit/audit-list/audit-list.component').then((m) => m.AuditListComponent),
+    loadComponent: () => import('./pages/audit-list/audit-list.component').then((m) => m.AuditListComponent),
     canActivate: [actionGuard],
     data: { actions: ['SYSTEM_LOG_READ'] },
   },
