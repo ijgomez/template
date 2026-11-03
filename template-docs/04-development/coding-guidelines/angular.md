@@ -149,7 +149,7 @@ type FormMode = 'create' | 'edit' | 'view';
 | Select | Se sustituye por un `<input readonly disabled>` con el valor textual (ej: `profileName`) |
 | Password | Se muestra con valor enmascarado (`••••••••`), `readonly disabled` |
 | Campos de auditoría | Visibles solo en modo `view` (ej: `createdAt`, `lastModifiedAt`, `lastAccess`) |
-| Componentes CVA (ej: `tp-selected-reports`) | `[disabled]="true"`, `[showAdd]="false"`, `[showRemove]="false"` |
+| Componentes CVA (ej: `tp-report-selected-list`) | `[disabled]="true"`, `[showAdd]="false"`, `[showRemove]="false"` |
 | Botones de acción | No se muestran Save/Cancel; se muestran Edit, Delete (condicional a permisos) y Back |
 | Indicadores obligatorios (`*`) | No se muestran en modo view |
 | Validación | Deshabilitada (`[required]="false"` o condicional) |

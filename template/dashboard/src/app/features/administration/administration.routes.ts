@@ -5,7 +5,7 @@ import { actionGuard } from '../../core/guards/action.guard';
 export const ADMINISTRATION_ROUTES: Routes = [
   {
     path: 'security',
-    loadChildren: () => import('./security/security.routes').then((m) => m.SECURITY_ROUTES),
+    loadChildren: () => import('../security/security.routes').then((m) => m.SECURITY_ROUTES),
     canActivate: [actionGuard],
     data: { actions: ['USER_READ', 'USER_WRITE', 'PROFILE_READ', 'PROFILE_WRITE', 'ACTION_READ'] },
   },
@@ -23,7 +23,7 @@ export const ADMINISTRATION_ROUTES: Routes = [
   },
   {
     path: 'cluster',
-    loadChildren: () => import('./cluster/cluster.routes').then((m) => m.CLUSTER_ROUTES),
+    loadChildren: () => import('../cluster/cluster.routes').then((m) => m.CLUSTER_ROUTES),
     canActivate: [actionGuard],
     data: { actions: ['CLUSTER_NODE_READ', 'CLUSTER_NODE_WRITE', 'CLUSTER_LOCK_READ'] },
   },

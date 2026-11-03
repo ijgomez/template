@@ -94,6 +94,20 @@ template/dashboard/src/app/
 │   │   │   └── report-list/
 │   │   ├── services/
 │   │   └── reports.routes.ts
+│   ├── security/
+│   │   ├── components/
+│   │   │   └── selected-actions/
+│   │   ├── models/
+│   │   ├── pages/
+│   │   │   ├── user-list/
+│   │   │   └── ...
+│   │   ├── services/
+│   │   └── security.routes.ts
+│   ├── cluster/
+│   │   ├── components/
+│   │   │   └── node-jobs/
+│   │   ├── pages/
+│   │   └── cluster.routes.ts
 │   └── ...
 └── shared/
     ├── components/
@@ -105,6 +119,7 @@ En esta convención:
 
 - `pages/` agrupa pantallas o rutas principales de la feature, como `report-list`.
 - `components/` contiene componentes reutilizables dentro de la misma feature, como `report-selected-list`.
+- `models/` agrupa las interfaces y tipos propios de la feature, como `action.model.ts`.
 - `services/` centraliza llamadas a la API y lógica de acceso a datos.
 
 Esto mantiene la estructura Angular más clara y facilita la reutilización de componentes sin mezclar responsabilidades.

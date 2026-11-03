@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
-import { Action, Profile, ProfileCriteria } from '../../features/administration/security/profiles/models/profile.model';
+import { Action, Profile, ProfileCriteria } from '../../features/security/models/profile.model';
 import { Page } from '../models/page.model';
 
 /** Page size used to fetch the full filtered list for exports (bypasses UI pagination). */

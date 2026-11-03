@@ -30,7 +30,7 @@ export const routes: Routes = [
       },
       {
         path: 'administration/security/user-me',
-        loadComponent: () => import('./features/administration/security/user-me/user-me.component').then((m) => m.UserMeComponent),
+        loadComponent: () => import('./features/security/pages/user-me/user-me.component').then((m) => m.UserMeComponent),
       },
       {
         path: 'administration',

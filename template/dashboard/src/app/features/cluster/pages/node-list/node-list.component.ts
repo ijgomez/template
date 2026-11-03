@@ -1,0 +1,376 @@
+import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { DecimalPipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Router, ActivatedRoute, Params } from '@angular/router';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+
+import { ClusterService } from '../../../../core/services/cluster.service';
+import { AuthService } from '../../../../core/services/auth.service';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { DateService } from '../../../../core/services/date.service';
+import { CsvExportService } from '../../../../core/services/csv-export.service';
+import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
+import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../shared/components/data-table';
+import { ClusterNode } from '../../../../core/models/cluster.model';
+import { NodeFormComponent } from '../node-form/node-form.component';
+import { TpDetailButtonComponent } from '../../../../shared/components/detail-button';
+
+type ViewMode = 'list' | 'form';
+
+/** Primitive values that can be compared as text without object stringification. */
+type SortableValue = string | number | boolean | null | undefined;
+
+/**
+ * Cluster nodes component.
+ * Displays all cluster nodes with status and master indicators.
+ * Allows setting a node as master (with confirmation) when user has CLUSTER_NODE_WRITE action.
+ * Client-side filtering and pagination for consistency with mockup pattern.
+ * No create/delete operations per Req 25.11.
+ */
+@Component({
+  selector: 'app-cluster-node-list',
+  standalone: true,
+  imports: [FormsModule, DecimalPipe, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective, NodeFormComponent, TpDetailButtonComponent],
+  templateUrl: './node-list.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class NodeListComponent implements OnInit {
+  private readonly clusterService = inject(ClusterService);
+  private readonly authService = inject(AuthService);
+  private readonly notificationService = inject(NotificationService);
+  private readonly translateService = inject(TranslateService);
+  private readonly dateService = inject(DateService);
+  private readonly csvExportService = inject(CsvExportService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly destroyRef = inject(DestroyRef);
+
+  // Data state
+  readonly allNodes = signal<ClusterNode[]>([]);
+  readonly isLoading = signal(false);
+
+  // Selection
+  readonly selectedRow = signal<ClusterNode | null>(null);
+
+  // View mode
+  readonly viewMode = signal<ViewMode>('list');
+  readonly selectedNode = signal<ClusterNode | null>(null);
+
+  // Sort state
+  readonly sortColumn = signal('');
+  readonly sortDirection = signal('');
+
+  // Filters
+  readonly filterHostname = signal('');
+  readonly filterStatus = signal('');
+  readonly filterMaster = signal('');
+
+  // Pagination
+  readonly pageSizes = [5, 10, 20, 50];
+  readonly pageSize = signal(10);
+  readonly currentPage = signal(0);
+
+  // Computed: filtered nodes
+  readonly filteredNodes = computed(() => {
+    let nodes = this.allNodes();
+    const hostname = this.filterHostname().trim().toLowerCase();
+    const status = this.filterStatus();
+    const master = this.filterMaster();
+
+    if (hostname) {
+      nodes = nodes.filter((n) => n.hostname.toLowerCase().includes(hostname));
+    }
+    if (status) {
+      nodes = nodes.filter((n) => n.status === status);
+    }
+    if (master) {
+      const isMaster = master === 'true';
+      nodes = nodes.filter((n) => n.master === isMaster);
+    }
+
+    // Apply sort
+    const col = this.sortColumn();
+    const dir = this.sortDirection();
+    if (col && dir) {
+      nodes = [...nodes].sort((a, b) => {
+        const aVal = (a as unknown as Record<string, SortableValue>)[col];
+        const bVal = (b as unknown as Record<string, SortableValue>)[col];
+        const comparison = String(aVal ?? '').localeCompare(String(bVal ?? ''), undefined, { numeric: true, sensitivity: 'base' });
+        return dir === 'asc' ? comparison : -comparison;
+      });
+    }
+
+    return nodes;
+  });
+
+  // Computed: pagination metadata
+  readonly totalElements = computed(() => this.filteredNodes().length);
+  readonly totalPages = computed(() => Math.ceil(this.totalElements() / this.pageSize()) || 1);
+  readonly paginatedNodes = computed(() => {
+    const start = this.currentPage() * this.pageSize();
+    return this.filteredNodes().slice(start, start + this.pageSize());
+  });
+  readonly showingFrom = computed(() => (this.totalElements() === 0 ? 0 : this.currentPage() * this.pageSize() + 1));
+  readonly showingTo = computed(() => Math.min((this.currentPage() + 1) * this.pageSize(), this.totalElements()));
+
+  // Confirmation dialog state
+  readonly showConfirmDialog = signal(false);
+  readonly confirmNodeId = signal<number | null>(null);
+  readonly confirmNodeHostname = signal('');
+
+  // Column definitions for tp-data-table
+  readonly columns: ColumnDef[] = [
+    { key: 'hostname', header: 'cluster.nodes.fields.hostname', sortable: true, resizable: true, reorderable: true, width: '15%' },
+    { key: 'ip', header: 'cluster.nodes.fields.ip', sortable: true, resizable: true, reorderable: true },
+    { key: 'status', header: 'cluster.nodes.fields.status', sortable: true, resizable: true, reorderable: true, width: '80px' },
+    { key: 'master', header: 'cluster.nodes.fields.master', sortable: true, resizable: true, reorderable: true, width: '80px' },
+    { key: 'startedAt', header: 'cluster.nodes.fields.startedAt', sortable: true, resizable: true, reorderable: true },
+    { key: 'lastModifiedAt', header: 'cluster.nodes.fields.lastModifiedAt', sortable: true, resizable: true, reorderable: true },
+    { key: 'usedMemoryGb', header: 'cluster.nodes.fields.usedMemoryGb', sortable: true, resizable: true, reorderable: true, width: '100px', cssClass: 'text-end' },
+    { key: 'totalMemoryGb', header: 'cluster.nodes.fields.totalMemoryGb', sortable: true, resizable: true, reorderable: true, width: '100px', cssClass: 'text-end' },
+    { key: 'freeMemoryPercent', header: 'cluster.nodes.fields.freeMemoryPercent', sortable: true, resizable: true, reorderable: true, width: '90px', cssClass: 'text-end' },
+  ];
+
+  // Permission
+  readonly canWrite = this.authService.hasAction('CLUSTER_NODE_WRITE');
+
+  ngOnInit(): void {
+    this.loadNodes();
+    this.route.queryParams
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => this.restoreViewFromParams(params));
+  }
+
+  /**
+   * Restores the view from URL query params (deep links, back/forward, reload):
+   * `?view=form&id=<id>` opens the node form; otherwise the list. Nodes are loaded
+   * client-side, so a deep link resolves once the list has loaded.
+   */
+  private restoreViewFromParams(params: Params): void {
+    const view = params['view'];
+    const id = params['id'] ? Number(params['id']) : null;
+
+    if (view === 'form' && id !== null) {
+      const node = this.allNodes().find((n) => n.id === id) ?? (this.selectedNode()?.id === id ? this.selectedNode() : null);
+      if (node) {
+        this.selectedNode.set(node);
+        this.viewMode.set('form');
+      } else {
+        // Not loaded yet or unknown id: fall back to the list URL.
+        this.goToListUrl();
+      }
+      return;
+    }
+
+    this.viewMode.set('list');
+  }
+
+  /**
+   * Loads all cluster nodes from the backend.
+   */
+  loadNodes(): void {
+    this.isLoading.set(true);
+    const progressId = this.notificationService.showProgress('notification.pagination.progress');
+
+    this.clusterService.findAllNodes().subscribe({
+      next: (nodes) => {
+        this.allNodes.set(nodes);
+        this.isLoading.set(false);
+        this.notificationService.dismiss(progressId);
+      },
+      error: () => {
+        this.isLoading.set(false);
+        this.notificationService.updateToError(progressId, 'notification.error');
+      },
+    });
+  }
+
+  /**
+   * Selects or deselects a row in the table.
+   */
+  selectRow(node: ClusterNode): void {
+    this.selectedRow.set(this.selectedRow()?.id === node.id ? null : node);
+  }
+
+  /**
+   * Navigates to the form view for a given node.
+   */
+  openForm(node: ClusterNode): void {
+    this.selectedNode.set(node);
+    this.viewMode.set('form');
+    this.router.navigate([], { relativeTo: this.route, queryParams: { view: 'form', id: node.id }, queryParamsHandling: '' });
+  }
+
+  /** Navigates back to the plain list URL (clears the sub-view query params). */
+  private goToListUrl(): void {
+    this.router.navigate([], { relativeTo: this.route, queryParams: {} });
+  }
+
+  /**
+   * Opens the detail (form) view for the currently selected row.
+   */
+  viewSelected(): void {
+    const node = this.selectedRow();
+    if (node) {
+      this.openForm(node);
+    }
+  }
+
+  /**
+   * Opens the form view for the currently selected row.
+   */
+  editSelected(): void {
+    this.viewSelected();
+  }
+
+  /**
+   * Returns to the list view.
+   */
+  backToList(): void {
+    this.selectedNode.set(null);
+    this.viewMode.set('list');
+    this.goToListUrl();
+  }
+
+  /**
+   * Applies filters and resets pagination.
+   */
+  applyFilters(): void {
+    this.currentPage.set(0);
+    this.selectedRow.set(null);
+  }
+
+  /**
+   * Clears all filters and resets pagination.
+   */
+  clearFilters(): void {
+    this.filterHostname.set('');
+    this.filterStatus.set('');
+    this.filterMaster.set('');
+    this.currentPage.set(0);
+    this.selectedRow.set(null);
+  }
+
+  /**
+   * Handles sort events from the data table.
+   */
+  onSort(event: SortEvent): void {
+    this.sortColumn.set(event.column);
+    this.sortDirection.set(event.direction);
+    this.currentPage.set(0);
+  }
+
+  /**
+   * Navigates to a specific page.
+   */
+  goToPage(page: number): void {
+    if (page >= 0 && page < this.totalPages()) {
+      this.currentPage.set(page);
+    }
+  }
+
+  /**
+   * Changes the page size and resets to page 0.
+   */
+  changePageSize(size: number): void {
+    this.pageSize.set(size);
+    this.currentPage.set(0);
+  }
+
+  /**
+   * Opens the confirmation dialog for the currently selected row.
+   */
+  designateMasterSelected(): void {
+    const node = this.selectedRow();
+    if (node && !node.master) {
+      this.confirmSetMaster(node);
+    }
+  }
+
+  /**
+   * Opens the confirmation dialog before setting a node as master.
+   */
+  confirmSetMaster(node: ClusterNode): void {
+    this.confirmNodeId.set(node.id);
+    this.confirmNodeHostname.set(node.hostname);
+    this.showConfirmDialog.set(true);
+  }
+
+  /**
+   * Cancels the set master operation.
+   */
+  cancelSetMaster(): void {
+    this.showConfirmDialog.set(false);
+    this.confirmNodeId.set(null);
+    this.confirmNodeHostname.set('');
+  }
+
+  /**
+   * Confirms and executes the set master operation.
+   */
+  executeSetMaster(): void {
+    const nodeId = this.confirmNodeId();
+    if (nodeId === null) {
+      return;
+    }
+
+    this.showConfirmDialog.set(false);
+    const progressId = this.notificationService.showProgress('notification.save.progress');
+
+    this.clusterService.setMaster(nodeId, true).subscribe({
+      next: () => {
+        this.notificationService.updateToSuccess(progressId, 'notification.save.success');
+        this.confirmNodeId.set(null);
+        this.confirmNodeHostname.set('');
+        this.selectedRow.set(null);
+        this.loadNodes();
+      },
+      error: () => {
+        this.notificationService.updateToError(progressId, 'notification.save.error');
+        this.confirmNodeId.set(null);
+        this.confirmNodeHostname.set('');
+      },
+    });
+  }
+
+  /**
+   * Exports the current filtered data as CSV.
+   */
+  exportCsv(): void {
+    const nodes = this.filteredNodes();
+    if (nodes.length === 0) {
+      return;
+    }
+
+    const headers = [
+      this.translateService.instant('cluster.nodes.fields.hostname'),
+      this.translateService.instant('cluster.nodes.fields.ip'),
+      this.translateService.instant('cluster.nodes.fields.status'),
+      this.translateService.instant('cluster.nodes.fields.master'),
+      this.translateService.instant('cluster.nodes.fields.startedAt'),
+      this.translateService.instant('cluster.nodes.fields.lastModifiedAt'),
+      this.translateService.instant('cluster.nodes.fields.usedMemoryGb'),
+      this.translateService.instant('cluster.nodes.fields.totalMemoryGb'),
+      this.translateService.instant('cluster.nodes.fields.freeMemoryPercent'),
+    ];
+
+    const bytesToGb = (bytes: number): string => (bytes / 1_073_741_824).toFixed(2);
+    const freePercent = (used: number, total: number): string =>
+      total > 0 ? (((total - used) / total) * 100).toFixed(1) + '%' : '0%';
+
+    const rows = nodes.map((n) => [
+      n.hostname,
+      n.ip ?? '',
+      n.status,
+      n.master ? 'MASTER' : '',
+      n.startedAt ? this.dateService.toLocalString(n.startedAt) : '',
+      n.lastModifiedAt ? this.dateService.toLocalString(n.lastModifiedAt) : '',
+      bytesToGb(n.usedMemory),
+      bytesToGb(n.totalMemory),
+      freePercent(n.usedMemory, n.totalMemory),
+    ]);
+
+    this.csvExportService.export(headers, rows, 'cluster-nodes');
+  }
+}

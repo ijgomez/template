@@ -80,16 +80,6 @@ src/
             │   │   └── list-item-def.model.ts
             │   └── directives/
             │       └── tp-list-item.directive.ts
-            ├── selected-reports/
-            │   ├── selected-reports.component.ts
-            │   ├── selected-reports.component.html
-            │   ├── selected-reports.component.scss
-            │   └── index.ts
-            ├── selected-actions/
-            │   ├── selected-actions.component.ts
-            │   ├── selected-actions.component.html
-            │   ├── selected-actions.component.scss
-            │   └── index.ts
             ├── profile-select/
             │   ├── profile-select.component.ts
             │   ├── profile-select.component.html
@@ -503,7 +493,7 @@ Además de las reglas comunes, usa `role="list"` en el contenedor y `role="listi
 
 ### Uso interno en componentes tp-selected-*
 
-Los componentes `tp-selected-reports` y `tp-selected-actions` utilizan `tp-data-list` internamente para renderizar la lista de items seleccionados (con `[showPagination]="false"`), delegando toda la logica visual de header, filtro, lista y estados al componente compartido. Cada uno proporciona su template personalizado via `tpListItem`.
+Los componentes `tp-report-selected-list` y `tp-selected-actions` utilizan `tp-data-list` internamente para renderizar la lista de items seleccionados (con `[showPagination]="false"`), delegando toda la logica visual de header, filtro, lista y estados al componente compartido. Cada uno proporciona su template personalizado via `tpListItem`.
 
 ---
 
@@ -687,10 +677,10 @@ Patron de componente reutilizable para gestionar una lista de items seleccionado
 
 | Componente             | Selector                | Ubicacion                            | Entidad   | Servicio                           |
 |------------------------|-------------------------|--------------------------------------|-----------|------------------------------------|
-| `TpSelectedReportsComponent` | `<tp-selected-reports>` | `shared/components/selected-reports/` | `Report`  | `ReportService.search()` (server-side) |
-| `TpSelectedActionsComponent` | `<tp-selected-actions>` | `shared/components/selected-actions/` | `Action`  | `ProfileService.findAllActions()` (client-side) |
+| `TpReportSelectedListComponent` | `<tp-report-selected-list>` | `features/reports/components/report-selected-list/` | `Report`  | `ReportService.search()` (server-side) |
+| `TpSelectedActionsComponent` | `<tp-selected-actions>` | `features/security/components/selected-actions/` | `Action`  | `ProfileService.findAllActions()` (client-side) |
 
-**Implementacion de referencia:** `tp-selected-reports` en `shared/components/selected-reports/`
+**Implementacion de referencia:** `tp-report-selected-list` en `features/reports/components/report-selected-list/`
 
 ### Concepto
 
@@ -745,7 +735,7 @@ Al pulsar `[+]` se abre el modal:
 | `showRemove`       | `boolean` | `true`             | Muestra los botones "x" en cada item           |
 | `filterPlaceholder`| `string`  | `''`               | Placeholder del filtro (fallback a i18n)       |
 | `ariaLabel`        | `string`  | `''`               | Label de accesibilidad de la lista             |
-| `testId`           | `string`  | `'selected-reports'`| Prefijo para `data-testid`                    |
+| `testId`           | `string`  | `'report-selected-list'`| Prefijo para `data-testid`                    |
 
 ### ControlValueAccessor
 
@@ -839,18 +829,18 @@ Ademas reutiliza: `common.pagination.showing`, `common.pagination.previous`, `co
 ### Ejemplo de uso
 
 ```html
-<tp-selected-reports
+<tp-report-selected-list
   [ngModel]="formUser().reportIds"
   (ngModelChange)="updateFormField('reportIds', $event)"
   name="reportIds"
   [title]="'users.form.sectionReports' | translate"
   testId="user-reports">
-</tp-selected-reports>
+</tp-report-selected-list>
 ```
 
 ### Variante: `tp-selected-actions`
 
-Componente que gestiona la asignacion de acciones de seguridad a un perfil. Diferencias respecto a `tp-selected-reports`:
+Componente que gestiona la asignacion de acciones de seguridad a un perfil. Diferencias respecto a `tp-report-selected-list`:
 
 - **Paginacion client-side**: Carga todas las acciones via `ProfileService.findAllActions()` en `ngOnInit` y pagina/filtra en memoria.
 - **Columnas del modal**: checkbox | codigo | tipo (badge coloreado) | nombre.
@@ -875,7 +865,7 @@ Ejemplo de uso (en formulario de perfiles):
 
 Para crear un componente similar (e.g. `tp-selected-profiles`):
 
-1. Copiar la estructura de `shared/components/selected-reports/`.
+1. Copiar la estructura de `features/reports/components/report-selected-list/`.
 2. Renombrar ficheros y clases (e.g. `TpSelectedProfilesComponent`).
 3. Cambiar el servicio inyectado y el metodo de carga por el servicio correspondiente.
 4. Ajustar el modelo de datos (debe tener al menos `id: number` y `name: string`; opcionalmente `description`).
@@ -1117,7 +1107,7 @@ Patron de componente de formulario que unifica las vistas de creacion, edicion y
 
 **Selector:** `<app-entity-form>` (por entidad, e.g. `<app-user-form>`)
 
-**Ubicacion:** Dentro del directorio de cada feature (e.g. `features/administration/security/users/user-form/`)
+**Ubicacion:** Dentro del directorio de cada feature (e.g. `features/security/pages/user-form/`)
 
 ### Modos
 
@@ -1164,7 +1154,7 @@ Esto aplica el fondo gris de Bootstrap (`var(--bs-secondary-bg)`) que senaliza c
 
 ### Ejemplo de implementacion
 
-Referencia: `UserFormComponent` en `features/administration/security/users/user-form/`.
+Referencia: `UserFormComponent` en `features/security/pages/user-form/`.
 
 ---
 

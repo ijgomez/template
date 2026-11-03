@@ -3,7 +3,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { provideHttpClient } from '@angular/common/http';
 
 import { ProfileService } from './profile.service';
-import { Action, Profile, ProfileCriteria } from '../../features/administration/security/profiles/models/profile.model';
+import { Action, Profile, ProfileCriteria } from '../../features/security/models/profile.model';
 import { Page } from '../models/page.model';
 import { environment } from '../../../environments/environment';
 

@@ -3,7 +3,7 @@
 Documentación funcional y técnica del módulo de Informes. Permite a los usuarios autorizados ejecutar los informes asignados, con filtros dinámicos por informe, paginación servidor y exportación en múltiples formatos. Además, proporciona un componente reutilizable de selección multiple para asignar informes a usuarios desde mantenimientos.
 
 - **Ruta principal (ejecución):** `/reports/:id` (carga `ReportListComponent`).
-- **Componente reutilizable:** `TpSelectedReportsComponent` (`<tp-selected-reports>`), usado en formularios de mantenimiento de usuarios.
+- **Componente reutilizable:** `TpReportSelectedListComponent` (`<tp-report-selected-list>`), usado en formularios de mantenimiento de usuarios.
 - **Endpoint backend base:** `/api/v1/reports` (`ReportController`).
 - **Acceso:** requiere sesión y la autoridad `REPORT_EXECUTE`; además, cada `execute`/`export` valida que el usuario tenga el informe asignado vía `user2report`.
 
@@ -68,7 +68,7 @@ Identificadores locales: `RF-RPT-*` (funcionales) y `RNF-RPT-*` (no funcionales)
 
 #### RF-RPT-5: Selección multiple de informes (componente CVA)
 
-**Descripción:** `<tp-selected-reports>` gestiona una lista de informes asignados (por ejemplo, en el formulario de usuario) y permite añadirlos mediante un modal paginado servidor.
+**Descripción:** `<tp-report-selected-list>` gestiona una lista de informes asignados (por ejemplo, en el formulario de usuario) y permite añadirlos mediante un modal paginado servidor.
 
 **Criterios de aceptación:**
 
@@ -114,7 +114,7 @@ Ruta `/reports/:id`. Flujo:
 3. Barra de exportación (solo post-ejecución).
 4. Tabla de resultados paginada servidor.
 
-#### Vista de selección multiple (`TpSelectedReportsComponent`)
+#### Vista de selección multiple (`TpReportSelectedListComponent`)
 
 Integrable en formularios. Cuenta con:
 
@@ -174,7 +174,7 @@ Integrable en formularios. Cuenta con:
 | Exportar PDF / XLSX / CSV / TXT                                   | `report-export-pdf` / `xlsx` / `csv` / `txt`                                                                                 |
 | Tabla de resultados                                               | `report-results-table`                                                                                                       |
 | Tamaño página (resultados)                                        | `report-page-size`                                                                                                           |
-| Modal `tp-selected-reports`                                       | `${testId}-modal`                                                                                                            |
+| Modal `tp-report-selected-list`                                       | `${testId}-modal`                                                                                                            |
 | Buscar modal / fila id / paginación / tamaño / cancelar / aceptar | `${testId}-modal-search` / `-modal-row-${id}` / `-modal-pagination` / `-modal-page-size` / `-modal-cancel` / `-modal-accept` |
 
 ### 2.5. Diagramas
@@ -216,7 +216,7 @@ sequenceDiagram
 | Capa     | Componente                                   | Propósito                                                                        |
 |----------|----------------------------------------------|----------------------------------------------------------------------------------|
 | Frontend | `ReportListComponent`                        | Pantalla de ejecución paramétrica y consulta de resultados.                      |
-| Frontend | `TpSelectedReportsComponent`                 | CVA reutilizable de selección múltiple para informes asignados.                  |
+| Frontend | `TpReportSelectedListComponent`                 | CVA reutilizable de selección múltiple para informes asignados.                  |
 | Frontend | `ReportService` (TS)                         | Cliente HTTP para `/reports`, filtros y exportación.                             |
 | Backend  | `ReportController`                           | Exposición de endpoints `/api/v1/reports` para listado, ejecución y exportación. |
 | Backend  | `ReportService`                              | Listado, asignación, ejecución y exportación de informes.                        |
@@ -333,7 +333,7 @@ public class User2Report {
 | Ubicación                                                                                | Alcance                                                                                                     |
 |------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------|
 | `dashboard/src/app/core/services/report.service.spec.ts`                                 | Endpoints `findUserReports`, `findAll`, `search`, `getFilters`, `execute` y `export`                        |
-| `dashboard/src/app/features/reports/selected-reports/selected-reports.component.spec.ts` | Ciclo CVA, modal de selección, paginación, búsqueda, selección multiple y emisión de `onChange`/`onTouched` |
+| `dashboard/src/app/features/reports/components/report-selected-list/report-selected-list.component.spec.ts` | Ciclo CVA, modal de selección, paginación, búsqueda, selección multiple y emisión de `onChange`/`onTouched` |
 
 ### 4.3. Cobertura E2E (Playwright)
 
@@ -483,8 +483,8 @@ Precondición del ciclo: usuario con `REPORT_EXECUTE` y al menos un informe asig
 
 #### TC-RPT-10 · Componente de selección múltiple de informes (CVA)
 
-- **Versión:** 1.0 · **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-RPT-5 (AC5.1–AC5.7) · **Independiente:** Sí · **Dependencias:** ninguna
-- **Setup:** login con `{{ADMIN_USER}}`; navegar al formulario de alta de usuario donde se integra `<tp-selected-reports>` (`{{BASE_URL_UI}}/administration/security/users` → *Crear*).
+- **Versión:** 1.1 · **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-RPT-5 (AC5.1–AC5.7) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`; navegar al formulario de alta de usuario donde se integra `<tp-report-selected-list>` (`{{BASE_URL_UI}}/administration/security/users` → *Crear*).
 - **Teardown:** cancelar el formulario sin guardar; logout.
 
 | # | Acción                                                                  | Resultado esperado                                                                                                                 |
