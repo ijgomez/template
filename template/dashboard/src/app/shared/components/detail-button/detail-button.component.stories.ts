@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/angular-vite';
-import { moduleMetadata } from '@storybook/angular-vite';
+import { applicationConfig } from '@storybook/angular-vite';
+import { provideHttpClient } from '@angular/common/http';
 import { provideTranslateService } from '@ngx-translate/core';
+import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { TpDetailButtonComponent } from './detail-button.component';
@@ -17,8 +19,15 @@ const meta: Meta<TpDetailButtonComponent> = {
   component: TpDetailButtonComponent,
   tags: ['autodocs'],
   decorators: [
-    moduleMetadata({
-      providers: [provideTranslateService({ lang: 'en', fallbackLang: 'en' })],
+    applicationConfig({
+      providers: [
+        provideHttpClient(),
+        provideTranslateService({ lang: 'en', fallbackLang: 'en' }),
+        provideTranslateHttpLoader({
+          prefix: './assets/i18n/',
+          suffix: '.json',
+        }),
+      ],
     }),
   ],
   args: {

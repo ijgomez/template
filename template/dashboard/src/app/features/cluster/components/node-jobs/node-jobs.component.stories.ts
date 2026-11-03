@@ -1,7 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/angular-vite';
 import { applicationConfig, moduleMetadata } from '@storybook/angular-vite';
+import { provideHttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { provideTranslateService } from '@ngx-translate/core';
+import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { of } from 'rxjs';
 import { expect, userEvent, within } from 'storybook/test';
 
@@ -75,7 +77,12 @@ const meta: Meta<NodeJobsComponent> = {
     moduleMetadata({ imports: [FormsModule] }),
     applicationConfig({
       providers: [
+        provideHttpClient(),
         provideTranslateService({ lang: 'en', fallbackLang: 'en' }),
+        provideTranslateHttpLoader({
+          prefix: './assets/i18n/',
+          suffix: '.json',
+        }),
         { provide: ClusterService, useValue: stubClusterService(jobs, tasks) },
         { provide: NotificationService, useValue: stubNotificationService() },
         { provide: AuthService, useValue: { hasAction: () => true } },
@@ -107,7 +114,12 @@ export const ReadOnly: Story = {
   decorators: [
     applicationConfig({
       providers: [
+        provideHttpClient(),
         provideTranslateService({ lang: 'en', fallbackLang: 'en' }),
+        provideTranslateHttpLoader({
+          prefix: './assets/i18n/',
+          suffix: '.json',
+        }),
         { provide: ClusterService, useValue: stubClusterService(jobs, tasks) },
         { provide: NotificationService, useValue: stubNotificationService() },
         { provide: AuthService, useValue: { hasAction: () => false } },
@@ -142,7 +154,12 @@ export const AllTasksAssigned: Story = {
   decorators: [
     applicationConfig({
       providers: [
+        provideHttpClient(),
         provideTranslateService({ lang: 'en', fallbackLang: 'en' }),
+        provideTranslateHttpLoader({
+          prefix: './assets/i18n/',
+          suffix: '.json',
+        }),
         {
           provide: ClusterService,
           useValue: stubClusterService(

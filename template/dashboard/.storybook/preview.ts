@@ -2,6 +2,7 @@ import type { Preview } from '@storybook/angular-vite';
 import { applicationConfig } from '@storybook/angular-vite';
 import { provideHttpClient } from '@angular/common/http';
 import { provideTranslateService } from '@ngx-translate/core';
+import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 
 // Estilos globales de la aplicación (Bootstrap, iconos y tokens del design system).
 import '../src/styles.scss';
@@ -15,6 +16,10 @@ const preview: Preview = {
       providers: [
         provideHttpClient(),
         provideTranslateService({ lang: 'en', fallbackLang: 'en' }),
+        provideTranslateHttpLoader({
+          prefix: './assets/i18n/',
+          suffix: '.json',
+        }),
       ],
     }),
   ],
