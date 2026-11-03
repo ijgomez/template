@@ -41,6 +41,10 @@ fi
 CHANGELOG_PROFILE="${1:-master}"
 OUTPUT_FILE="${2:-${WORKSPACE_DIR}/template-dist/sql/template-${CHANGELOG_PROFILE}.sql}"
 
+DB_URL_VALUE="${DB_URL:-}"
+DB_USERNAME_VALUE="${DB_USERNAME:-}"
+DB_PASSWORD_VALUE="${DB_PASSWORD:-}"
+
 case "${CHANGELOG_PROFILE}" in
     master)
         CHANGELOG_FILE="db/changelog/db.changelog-master.xml"
@@ -67,19 +71,53 @@ echo "Workspace:    ${WORKSPACE_DIR}"
 echo "Módulo:       ${DOMAIN_DIR}"
 echo "Changelog:    ${CHANGELOG_FILE}"
 echo "Salida SQL:   ${OUTPUT_FILE}"
+if [ -n "${DB_URL_VALUE}" ]; then
+    echo "BD:           ${DB_URL_VALUE}"
+else
+    echo "BD:           offline:postgresql (modo fallback)"
+fi
 echo ""
 
 cd "${DOMAIN_DIR}"
-if [ -n "${MAVEN_USER_SETTINGS:-}" ]; then
-    mvn -s "${MAVEN_USER_SETTINGS}" liquibase:updateSQL \
-        -Dliquibase.changeLogFile="${CHANGELOG_FILE}" \
-        -Dliquibase.url=offline:postgresql \
-        -Dliquibase.outputFile="${OUTPUT_FILE}"
+DEFAULT_OUTPUT_FILE="${DOMAIN_DIR}/target/liquibase/migrate.sql"
+
+if [ -n "${DB_URL_VALUE}" ]; then
+    if [ -n "${MAVEN_USER_SETTINGS:-}" ]; then
+        mvn -s "${MAVEN_USER_SETTINGS}" liquibase:updateSQL \
+            -Dliquibase.changeLogFile="${CHANGELOG_FILE}" \
+            -Dliquibase.url="${DB_URL_VALUE}" \
+            -Dliquibase.username="${DB_USERNAME_VALUE}" \
+            -Dliquibase.password="${DB_PASSWORD_VALUE}" \
+            -Dliquibase.outputFile="${OUTPUT_FILE}"
+    else
+        mvn liquibase:updateSQL \
+            -Dliquibase.changeLogFile="${CHANGELOG_FILE}" \
+            -Dliquibase.url="${DB_URL_VALUE}" \
+            -Dliquibase.username="${DB_USERNAME_VALUE}" \
+            -Dliquibase.password="${DB_PASSWORD_VALUE}" \
+            -Dliquibase.outputFile="${OUTPUT_FILE}"
+    fi
 else
-    mvn liquibase:updateSQL \
-        -Dliquibase.changeLogFile="${CHANGELOG_FILE}" \
-        -Dliquibase.url=offline:postgresql \
-        -Dliquibase.outputFile="${OUTPUT_FILE}"
+    if [ -n "${MAVEN_USER_SETTINGS:-}" ]; then
+        mvn -s "${MAVEN_USER_SETTINGS}" liquibase:updateSQL \
+            -Dliquibase.changeLogFile="${CHANGELOG_FILE}" \
+            -Dliquibase.url=offline:postgresql \
+            -Dliquibase.outputFile="${OUTPUT_FILE}"
+    else
+        mvn liquibase:updateSQL \
+            -Dliquibase.changeLogFile="${CHANGELOG_FILE}" \
+            -Dliquibase.url=offline:postgresql \
+            -Dliquibase.outputFile="${OUTPUT_FILE}"
+    fi
+fi
+
+if [ -f "${OUTPUT_FILE}" ]; then
+    :
+elif [ -f "${DEFAULT_OUTPUT_FILE}" ]; then
+    cp "${DEFAULT_OUTPUT_FILE}" "${OUTPUT_FILE}"
+else
+    echo "ERROR: Liquibase no generó ningún archivo SQL en la salida esperada."
+    exit 1
 fi
 
 echo ""

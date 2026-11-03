@@ -12,6 +12,9 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # export MAVEN_HOME=/path/a/maven
 # export MAVEN_OPTS="-Xmx2g"
 # export MAVEN_USER_SETTINGS=/path/a/settings.xml
+# export DB_URL="jdbc:postgresql://localhost:5432/template"
+# export DB_USERNAME="template"
+# export DB_PASSWORD="template"
 if [ -z "${ENVIRONMENT_CONF:-}" ]; then
     ENVIRONMENT_CONF="${SCRIPT_DIR}/environment/${USER}.conf.sh"
 fi

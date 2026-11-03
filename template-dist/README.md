@@ -41,6 +41,11 @@ Variables soportadas:
 - `MAVEN_HOME`
 - `MAVEN_OPTS`
 - `MAVEN_USER_SETTINGS`
+- `DB_URL`
+- `DB_USERNAME`
+- `DB_PASSWORD`
+
+Si defines `DB_URL` con una base PostgreSQL accesible, el script `generate-sql` genera el SQL completo del modelo desde los changesets reales de Liquibase; sin esa configuración usa `offline:postgresql` como fallback.
 
 ### build
 
@@ -98,7 +103,8 @@ Parámetros:
    - Windows por defecto: `template-dist\sql\template-<perfil>.sql`
 
 Notas:
-- El script usa URL offline de PostgreSQL (`offline:postgresql`) para generar SQL directamente desde los changesets.
+- Si defines `DB_URL`, `DB_USERNAME` y `DB_PASSWORD`, el script genera el SQL completo del modelo real contra la base PostgreSQL configurada.
+- Si no hay base configurada, usa URL offline de PostgreSQL (`offline:postgresql`) como fallback para generar el SQL a partir de los changesets.
 - Si defines `MAVEN_USER_SETTINGS` en el script de entorno, se usa automáticamente en la ejecución Maven.
 
 ## Uso

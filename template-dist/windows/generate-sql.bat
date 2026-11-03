@@ -45,6 +45,10 @@ if /I "%CHANGELOG_PROFILE%"=="master" (
 set "OUTPUT_FILE=%~2"
 if "%OUTPUT_FILE%"=="" set "OUTPUT_FILE=%WORKSPACE_DIR%\template-dist\sql\template-%CHANGELOG_PROFILE%.sql"
 
+set "DB_URL_VALUE=%DB_URL%"
+set "DB_USERNAME_VALUE=%DB_USERNAME%"
+set "DB_PASSWORD_VALUE=%DB_PASSWORD%"
+
 for %%I in ("%OUTPUT_FILE%") do (
     if not exist "%%~dpI" mkdir "%%~dpI"
 )
@@ -57,10 +61,22 @@ echo Workspace:    %WORKSPACE_DIR%
 echo Modulo:       %DOMAIN_DIR%
 echo Changelog:    %CHANGELOG_FILE%
 echo Salida SQL:   %OUTPUT_FILE%
+if defined DB_URL (
+    echo BD:           %DB_URL%
+) else (
+    echo BD:           offline:postgresql (modo fallback)
+)
 echo.
 
 pushd "%DOMAIN_DIR%"
-if defined MAVEN_USER_SETTINGS (
+set "DEFAULT_OUTPUT_FILE=%DOMAIN_DIR%\target\liquibase\migrate.sql"
+if defined DB_URL (
+    if defined MAVEN_USER_SETTINGS (
+        call mvn -s "%MAVEN_USER_SETTINGS%" liquibase:updateSQL -Dliquibase.changeLogFile="%CHANGELOG_FILE%" -Dliquibase.url="%DB_URL%" -Dliquibase.username="%DB_USERNAME%" -Dliquibase.password="%DB_PASSWORD%" -Dliquibase.outputFile="%OUTPUT_FILE%"
+    ) else (
+        call mvn liquibase:updateSQL -Dliquibase.changeLogFile="%CHANGELOG_FILE%" -Dliquibase.url="%DB_URL%" -Dliquibase.username="%DB_USERNAME%" -Dliquibase.password="%DB_PASSWORD%" -Dliquibase.outputFile="%OUTPUT_FILE%"
+    )
+) else if defined MAVEN_USER_SETTINGS (
     call mvn -s "%MAVEN_USER_SETTINGS%" liquibase:updateSQL -Dliquibase.changeLogFile="%CHANGELOG_FILE%" -Dliquibase.url=offline:postgresql -Dliquibase.outputFile="%OUTPUT_FILE%"
 ) else (
     call mvn liquibase:updateSQL -Dliquibase.changeLogFile="%CHANGELOG_FILE%" -Dliquibase.url=offline:postgresql -Dliquibase.outputFile="%OUTPUT_FILE%"
@@ -70,6 +86,17 @@ if %errorlevel% neq 0 (
     popd
     exit /b 1
 )
+
+if exist "%OUTPUT_FILE%" (
+    rem OK
+) else if exist "%DEFAULT_OUTPUT_FILE%" (
+    copy "%DEFAULT_OUTPUT_FILE%" "%OUTPUT_FILE%" >nul
+) else (
+    echo ERROR: Liquibase no generó ningun archivo SQL en la salida esperada.
+    popd
+    exit /b 1
+)
+
 popd
 
 echo.
