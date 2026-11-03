@@ -1,4 +1,4 @@
-import { applicationConfig, moduleMetadata, type Meta, type StoryObj } from '@storybook/angular-vite';
+import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular-vite';
 import { FormsModule } from '@angular/forms';
 import { of } from 'rxjs';
 import { expect, userEvent, within } from 'storybook/test';
@@ -36,8 +36,8 @@ const meta: Meta<TpProfileSelectComponent> = {
   component: TpProfileSelectComponent,
   tags: ['autodocs'],
   decorators: [
-    moduleMetadata({ imports: [FormsModule] }),
-    applicationConfig({
+    moduleMetadata({
+      imports: [FormsModule],
       providers: [{ provide: UserService, useValue: stubUserService(profiles) }],
     }),
   ],
@@ -106,7 +106,7 @@ export const NoProfiles: Story = {
     ...Filter.args,
   },
   decorators: [
-    applicationConfig({
+    moduleMetadata({
       providers: [{ provide: UserService, useValue: stubUserService([]) }],
     }),
   ],

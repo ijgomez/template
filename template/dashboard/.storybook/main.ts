@@ -19,6 +19,9 @@ const config: StorybookConfig = {
   ],
   viteFinal: config =>
     mergeConfig(config, {
+      optimizeDeps: {
+        include: ['@ngx-translate/http-loader'],
+      },
       css: {
         preprocessorOptions: {
           scss: {
