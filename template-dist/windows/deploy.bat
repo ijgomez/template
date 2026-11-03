@@ -20,6 +20,18 @@ REM Directorio base (raiz del workspace)
 set "SCRIPT_DIR=%~dp0"
 set "WORKSPACE_DIR=%SCRIPT_DIR%..\.."
 
+REM Cargar variables de entorno
+if exist "%SCRIPT_DIR%environment.bat" (
+    call "%SCRIPT_DIR%environment.bat"
+    if %errorlevel% neq 0 (
+        echo ERROR: No se pudieron cargar las variables de entorno.
+        exit /b 1
+    )
+) else (
+    echo ERROR: No se encuentra el script de entorno: %SCRIPT_DIR%environment.bat
+    exit /b 1
+)
+
 set "BACKEND_DIR=%WORKSPACE_DIR%\template"
 set "FRONTEND_DIR=%WORKSPACE_DIR%\template\dashboard"
 

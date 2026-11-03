@@ -1,10 +1,10 @@
 #!/bin/bash
 # =============================================================================
-# build.sh - Compilación del backend y frontend
+# build.sh - Compilación completa con Maven
 # =============================================================================
-# Compila el proyecto backend (Maven) y el proyecto frontend (Angular).
-# Utilizar este script para verificar que ambos componentes compilan
-# correctamente antes de generar artefactos de distribución.
+# Ejecuta la compilación completa desde Maven.
+# El frontend se compila dentro del ciclo Maven según la configuración
+# del proyecto.
 # =============================================================================
 
 set -e
@@ -14,7 +14,15 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WORKSPACE_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 
 BACKEND_DIR="${WORKSPACE_DIR}/template"
-FRONTEND_DIR="${WORKSPACE_DIR}/template/dashboard"
+
+# Cargar variables de entorno
+if [ -f "${SCRIPT_DIR}/environment.sh" ]; then
+    # shellcheck disable=SC1091
+    source "${SCRIPT_DIR}/environment.sh"
+else
+    echo "ERROR: No se encuentra el script de entorno: ${SCRIPT_DIR}/environment.sh"
+    exit 1
+fi
 
 echo "============================================="
 echo " Template - Build"
@@ -36,34 +44,14 @@ if [ ! -d "${BACKEND_DIR}" ]; then
 fi
 
 cd "${BACKEND_DIR}"
-mvn clean install
+if [ -n "${MAVEN_USER_SETTINGS:-}" ]; then
+    mvn -s "${MAVEN_USER_SETTINGS}" clean install
+else
+    mvn clean install
+fi
 
 echo ""
 echo "[OK] Backend compilado correctamente."
-echo ""
-
-# -----------------------------------------------------------------------------
-# Frontend: Instalar dependencias y compilar con Angular CLI
-# -----------------------------------------------------------------------------
-echo "---------------------------------------------"
-echo " Frontend: npm install + ng build"
-echo "---------------------------------------------"
-
-if [ ! -d "${FRONTEND_DIR}" ]; then
-    echo "ERROR: No se encuentra el directorio del frontend: ${FRONTEND_DIR}"
-    exit 1
-fi
-
-cd "${FRONTEND_DIR}"
-
-echo "Instalando dependencias..."
-npm install
-
-echo "Compilando proyecto Angular..."
-ng build
-
-echo ""
-echo "[OK] Frontend compilado correctamente."
 echo ""
 
 # -----------------------------------------------------------------------------

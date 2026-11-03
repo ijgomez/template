@@ -20,6 +20,15 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WORKSPACE_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 
+# Cargar variables de entorno
+if [ -f "${SCRIPT_DIR}/environment.sh" ]; then
+    # shellcheck disable=SC1091
+    source "${SCRIPT_DIR}/environment.sh"
+else
+    echo "ERROR: No se encuentra el script de entorno: ${SCRIPT_DIR}/environment.sh"
+    exit 1
+fi
+
 BACKEND_DIR="${WORKSPACE_DIR}/template"
 FRONTEND_DIR="${WORKSPACE_DIR}/template/dashboard"
 

@@ -1,10 +1,10 @@
 @echo off
 REM =============================================================================
-REM build.bat - Compilacion del backend y frontend
+REM build.bat - Compilacion completa con Maven
 REM =============================================================================
-REM Compila el proyecto backend (Maven) y el proyecto frontend (Angular).
-REM Utilizar este script para verificar que ambos componentes compilan
-REM correctamente antes de generar artefactos de distribucion.
+REM Ejecuta la compilacion completa desde Maven.
+REM El frontend se compila dentro del ciclo Maven segun la configuracion
+REM del proyecto.
 REM =============================================================================
 
 setlocal enabledelayedexpansion
@@ -14,7 +14,18 @@ set "SCRIPT_DIR=%~dp0"
 set "WORKSPACE_DIR=%SCRIPT_DIR%..\.."
 
 set "BACKEND_DIR=%WORKSPACE_DIR%\template"
-set "FRONTEND_DIR=%WORKSPACE_DIR%\template\dashboard"
+
+REM Cargar variables de entorno
+if exist "%SCRIPT_DIR%environment.bat" (
+    call "%SCRIPT_DIR%environment.bat"
+    if %errorlevel% neq 0 (
+        echo ERROR: No se pudieron cargar las variables de entorno.
+        exit /b 1
+    )
+) else (
+    echo ERROR: No se encuentra el script de entorno: %SCRIPT_DIR%environment.bat
+    exit /b 1
+)
 
 echo =============================================
 echo  Template - Build
@@ -36,7 +47,11 @@ if not exist "%BACKEND_DIR%" (
 )
 
 pushd "%BACKEND_DIR%"
-call mvn clean install
+if defined MAVEN_USER_SETTINGS (
+    call mvn -s "%MAVEN_USER_SETTINGS%" clean install
+) else (
+    call mvn clean install
+)
 if %errorlevel% neq 0 (
     echo ERROR: La compilacion del backend ha fallado.
     popd
@@ -46,41 +61,6 @@ popd
 
 echo.
 echo [OK] Backend compilado correctamente.
-echo.
-
-REM -----------------------------------------------------------------------------
-REM Frontend: Instalar dependencias y compilar con Angular CLI
-REM -----------------------------------------------------------------------------
-echo ---------------------------------------------
-echo  Frontend: npm install + ng build
-echo ---------------------------------------------
-
-if not exist "%FRONTEND_DIR%" (
-    echo ERROR: No se encuentra el directorio del frontend: %FRONTEND_DIR%
-    exit /b 1
-)
-
-pushd "%FRONTEND_DIR%"
-
-echo Instalando dependencias...
-call npm install
-if %errorlevel% neq 0 (
-    echo ERROR: La instalacion de dependencias ha fallado.
-    popd
-    exit /b 1
-)
-
-echo Compilando proyecto Angular...
-call ng build
-if %errorlevel% neq 0 (
-    echo ERROR: La compilacion del frontend ha fallado.
-    popd
-    exit /b 1
-)
-popd
-
-echo.
-echo [OK] Frontend compilado correctamente.
 echo.
 
 REM -----------------------------------------------------------------------------
