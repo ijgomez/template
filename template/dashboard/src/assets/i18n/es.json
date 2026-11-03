@@ -20,6 +20,18 @@
       "logout": "Cerrar sesión"
     }
   },
+  "globalSearch": {
+    "placeholder": "Buscar...",
+    "groups": {
+      "user": "Usuarios",
+      "parameter": "Parámetros",
+      "interface": "Interfaces"
+    },
+    "seeAll": "Ver todos ({{count}})",
+    "empty": "Sin resultados para «{{term}}»",
+    "loading": "Buscando...",
+    "groupError": "No se pudo buscar en {{group}}"
+  },
   "pwa": {
     "update": {
       "available": "Hay una nueva versión disponible.",

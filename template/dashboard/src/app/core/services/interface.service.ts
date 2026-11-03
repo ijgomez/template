@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
-import { InterfaceConfig, InterfaceLog, InterfaceLogCriteria } from '../models/interface.model';
+import { InterfaceConfig, InterfaceConfigCriteria, InterfaceLog, InterfaceLogCriteria } from '../models/interface.model';
 import { Page } from '../models/page.model';
 
 /** Page size used to fetch the full filtered list for exports (bypasses UI pagination). */
@@ -25,6 +25,35 @@ export class InterfaceService {
    */
   findAllConfigurations(): Observable<InterfaceConfig[]> {
     return this.http.get<InterfaceConfig[]>(this.configUrl);
+  }
+
+  /**
+   * Retrieves a paginated list of interface configurations with optional filters.
+   */
+  findConfigurationsByCriteria(
+    criteria: InterfaceConfigCriteria,
+    page: number,
+    size: number,
+    sort?: string,
+  ): Observable<Page<InterfaceConfig>> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+
+    if (sort) {
+      params = params.set('sort', sort);
+    }
+    if (criteria.name) {
+      params = params.set('name', criteria.name);
+    }
+    if (criteria.protocol) {
+      params = params.set('protocol', criteria.protocol);
+    }
+    if (criteria.status) {
+      params = params.set('status', criteria.status);
+    }
+
+    return this.http.get<Page<InterfaceConfig>>(`${this.configUrl}/search`, { params });
   }
 
   /**

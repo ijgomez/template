@@ -44,6 +44,15 @@ export interface InterfaceLog {
 }
 
 /**
+ * Criteria for filtering interface configurations.
+ */
+export interface InterfaceConfigCriteria {
+  name?: string;
+  protocol?: string;
+  status?: InterfaceStatus;
+}
+
+/**
  * Criteria for filtering interface logs.
  */
 export interface InterfaceLogCriteria {

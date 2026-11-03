@@ -14,3 +14,11 @@ Los requisitos funcionales de autenticación y gestión de sesión (login y emis
 Documentos funcionales relacionados:
 
 - [Login (pantalla de inicio de sesión)](../02-functional/login/login.md)
+
+# Requisitos Funcionales — Buscador global
+
+Los requisitos del buscador global del header (búsqueda transversal en usuarios, parámetros e interfaces, popup de resultados agrupados, navegación al detalle, degradación elegante y accesibilidad con patrón Combobox ARIA) se especifican en el documento funcional dedicado:
+
+- [Buscador global](../02-functional/global-search/global-search.md) (`RF-GSR-*` / `RNF-GSR-*`)
+
+Especificación de origen: [requirements](../../.kiro/specs/global-search/requirements.md) y [design](../../.kiro/specs/global-search/design.md).

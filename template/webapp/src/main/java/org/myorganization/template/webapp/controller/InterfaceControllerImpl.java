@@ -4,10 +4,12 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 import org.myorganization.template.core.service.InterfaceService;
+import org.myorganization.template.domain.criteria.InterfaceCriteria;
 import org.myorganization.template.domain.criteria.InterfaceLogCriteria;
 import org.myorganization.template.domain.dto.InterfaceDTO;
 import org.myorganization.template.domain.dto.InterfaceLogDTO;
 import org.myorganization.template.domain.enums.InterfaceLogStatus;
+import org.myorganization.template.domain.enums.InterfaceStatus;
 import org.myorganization.template.domain.enums.InterfaceOperationType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -43,6 +45,19 @@ public class InterfaceControllerImpl implements InterfaceController {
     public ResponseEntity<List<InterfaceDTO>> findAll() {
         List<InterfaceDTO> interfaces = interfaceService.findAll();
         return ResponseEntity.ok(interfaces);
+    }
+
+    @Override
+    public ResponseEntity<Page<InterfaceDTO>> findByCriteria(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String protocol,
+            @RequestParam(required = false) InterfaceStatus status,
+            @RequestParam(required = false) String sort) {
+        InterfaceCriteria criteria = new InterfaceCriteria(name, protocol, status);
+        Pageable pageable = buildPageable(page, size, sort);
+        return ResponseEntity.ok(interfaceService.findByCriteria(criteria, pageable));
     }
 
     @Override

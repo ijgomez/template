@@ -14,68 +14,84 @@ accesibilidad, integración e i18n, y E2E/cierre.
 
 ## Tasks
 
+### Fase 0 — Endpoint de interfaces (completada)
+
+- [x] 0.1 Backend: `InterfaceCriteria`, `InterfaceRepository` con
+      `JpaSpecificationExecutor`, `InterfaceService.findByCriteria` y
+      `GET /api/v1/interfaces/configuration/search`. (Diseño §1.1)
+- [x] 0.2 Tests backend: `InterfaceServiceTest` y `InterfaceControllerTest`
+      (pendiente de ejecutar: `mvn test -pl core,webapp -am`).
+- [x] 0.3 Frontend: `InterfaceService.findConfigurationsByCriteria`,
+      `InterfaceConfigCriteria` y su test en `interface.service.spec.ts`
+      (pendiente de ejecutar con `ng test`).
+
 ### Fase 1 — Modelo y servicio facade
 
-- [ ] 1.1 Crear `core/models/global-search.model.ts` con `SearchEntityType`,
+- [x] 1.1 Crear `core/models/global-search.model.ts` con `SearchEntityType`,
       `SearchResultItem` y `SearchResultGroup`. (Diseño §3)
-- [ ] 1.2 Crear `GlobalSearchService` en `core/services/global-search.service.ts`:
-  - [ ] 1.2.1 Inyectar `UserService`, `ParameterService`, `InterfaceService`,
+- [x] 1.2 Crear `GlobalSearchService` en `core/services/global-search.service.ts`:
+  - [x] 1.2.1 Inyectar `UserService`, `ParameterService`, `InterfaceService`,
         `AuthService`. (RF-2, RNF-3)
-  - [ ] 1.2.2 Método `search(term: string)` que filtra entidades por permiso
-        (`AuthService.hasAction`), lanza `findByCriteria` en paralelo con
+  - [x] 1.2.2 Método `search(term: string)` que filtra entidades por permiso
+        (`AuthService.hasAction`, cualquiera de las acciones de la ruta, incluidas
+        `*_WRITE`), lanza `findByCriteria` (en interfaces,
+        `findConfigurationsByCriteria`) en paralelo con
         `forkJoin`, `size = 5`, y normaliza a `SearchResultGroup[]`. (RF-2, RNF-2)
-  - [ ] 1.2.3 `catchError` por entidad para degradación elegante (grupo marcado
+  - [x] 1.2.3 `catchError` por entidad para degradación elegante (grupo marcado
         con error, no rompe el resto). (RF-5)
-  - [ ] 1.2.4 Mapear cada entidad según la tabla de Diseño §4 (primary/secondary/
+  - [x] 1.2.4 Mapear cada entidad según la tabla de Diseño §4 (primary/secondary/
         route/seeAll). (RF-3, RF-4)
-- [ ] 1.3 Tests unitarios del servicio (`global-search.service.spec.ts`):
+- [x] 1.3 Tests unitarios del servicio (`global-search.service.spec.ts`):
       permisos respetados, paralelismo, normalización, error parcial. (RNF-3, RF-5)
 
 ### Fase 2 — Componente de búsqueda
 
-- [ ] 2.1 Crear `GlobalSearchComponent` (standalone, OnPush) en
+- [x] 2.1 Crear `GlobalSearchComponent` (standalone, OnPush) en
       `core/layout/global-search/`. (Diseño §2.1)
-- [ ] 2.2 Campo de entrada con debounce 300 ms, mínimo 2 caracteres,
+- [x] 2.2 Campo de entrada con debounce 300 ms, mínimo 2 caracteres,
       `switchMap` + `distinctUntilChanged`. (RF-1, RNF-2)
-- [ ] 2.3 Popup de resultados agrupados por tipo, con encabezado y contador por
+- [x] 2.3 Popup de resultados agrupados por tipo, con encabezado y contador por
       grupo, texto primario/secundario por resultado, y acción "Ver todos". (RF-3)
-- [ ] 2.4 Navegación al detalle / listado filtrado al activar un resultado; cerrar
+- [x] 2.4 Navegación al detalle / listado filtrado al activar un resultado; cerrar
       popup tras navegar. (RF-4, RF-6)
-- [ ] 2.5 Estados visibles: carga (spinner), vacío, error parcial. (RF-5)
-- [ ] 2.6 Cierre del popup con Escape, clic fuera y campo vacío. (RF-6)
-- [ ] 2.7 `data-testid` en campo, popup, grupos, resultados y "Ver todos" para
+- [x] 2.5 Estados visibles: carga (spinner), vacío, error parcial. (RF-5)
+- [x] 2.6 Cierre del popup con Escape, clic fuera y campo vacío. (RF-6)
+- [x] 2.7 `data-testid` en campo, popup, grupos, resultados y "Ver todos" para
       tests de componente y E2E. (coding-angular)
-- [ ] 2.8 Tests de componente (`.spec.ts`): debounce, render de grupos, estados,
+- [x] 2.8 Tests de componente (`.spec.ts`): debounce, render de grupos, estados,
       navegación, cierre. (coding-angular: obligatoriedad de tests)
 
 ### Fase 3 — Accesibilidad
 
-- [ ] 3.1 Patrón combobox ARIA en el campo: `role`, `aria-expanded`,
+- [x] 3.1 Patrón combobox ARIA en el campo: `role`, `aria-expanded`,
       `aria-controls`, `aria-autocomplete`, `aria-activedescendant`. (RNF-1)
-- [ ] 3.2 Popup `role="listbox"`, resultados `role="option"` con `aria-selected`.
+- [x] 3.2 Popup `role="listbox"`, resultados `role="option"` con `aria-selected`.
       (RNF-1)
-- [ ] 3.3 Navegación por teclado: ↑/↓, Enter, Escape; foco de vuelta al campo al
+- [x] 3.3 Navegación por teclado: ↑/↓, Enter, Escape; foco de vuelta al campo al
       cerrar. (RNF-1)
-- [ ] 3.4 Región `aria-live="polite"` para el estado de carga. (RNF-1)
+- [x] 3.4 Región `aria-live="polite"` para el estado de carga. (RNF-1)
 
 ### Fase 4 — Integración e i18n
 
-- [ ] 4.1 Integrar `GlobalSearchComponent` en `layout.component.html`,
+- [x] 4.1 Integrar `GlobalSearchComponent` en `layout.component.html`,
       reemplazando el bloque `.header-search` actual
       (`data-testid="input-global-search"`). (Diseño §9)
-- [ ] 4.2 Añadir claves i18n `globalSearch.*` en `es.json` y `en.json`
+- [x] 4.2 Añadir claves i18n `globalSearch.*` en `es.json` y `en.json`
       (simétricas); verificar con `translation-completeness.property.spec.ts`.
       (RNF-4)
-- [ ] 4.3 Verificar que la búsqueda respeta permisos con usuarios de distinto
+- [x] 4.3 Verificar que la búsqueda respeta permisos con usuarios de distinto
       perfil (sin permiso → entidad no aparece). (RNF-3)
+- [x] 4.4 Hacer que los listados de usuarios, parámetros e interfaces lean el
+      filtro desde query params para soportar "Ver todos" (o descartar esa
+      acción filtrada y enlazar solo al listado). (RF-3)
 
 ### Fase 5 — E2E y cierre
 
-- [ ] 5.1 Test E2E Playwright del flujo: escribir término, ver resultados
+- [x] 5.1 Test E2E Playwright del flujo: escribir término, ver resultados
       agrupados, navegar a un detalle. (coding-testing)
-- [ ] 5.2 Verificar accesibilidad con el snapshot del MCP de Playwright (roles,
+- [x] 5.2 Verificar accesibilidad con el snapshot del MCP de Playwright (roles,
       aria, foco). (RNF-1)
-- [ ] 5.3 Actualizar documentación funcional/técnica del header si procede
+- [x] 5.3 Actualizar documentación funcional/técnica del header si procede
       (`template-docs/`). (coding-docs)
 
 ## Task Dependency Graph
@@ -103,9 +119,8 @@ graph LR
 
 ## Notes
 
-- **Depende de** la mejora #13 de la auditoría (deep-linking de detalle) para que
-  la navegación lleve al detalle exacto en lugar del listado filtrado. Mientras no
-  exista, implementar la navegación al listado con filtro (Diseño §4, nota).
+- El deep-linking de detalle (mejora #13) **ya está implementado**: la navegación
+  va directa al detalle con `view`/`id` (o `code` en parámetros). Ver Diseño §4.
 - **No** añadir dependencias nuevas (RNF-5).
 - **Evolución** posible a endpoint unificado `GET /search?q=` sin cambios en el
   componente (Diseño §7).

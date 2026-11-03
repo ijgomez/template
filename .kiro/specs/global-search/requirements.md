@@ -2,7 +2,8 @@
 
 > Estado: Borrador (pendiente de implementar)
 > Feature: `global-search`
-> Ámbito: Frontend Angular (`template/dashboard`) + endpoints de backend si son necesarios
+> Ámbito: Frontend Angular (`template/dashboard`) + un endpoint de backend nuevo
+> (búsqueda paginada de configuraciones de interfaces)
 
 ## Introduction
 
@@ -39,11 +40,16 @@ popup organizados por tipo de entidad, y navegar al detalle con un clic.
 
 ### Entidades buscables (alcance inicial)
 
-| Entidad     | Servicio existente              | Ruta de listado/detalle                         | Permiso de lectura        |
-|-------------|---------------------------------|-------------------------------------------------|---------------------------|
-| Usuarios    | `UserService.findByCriteria`    | `/administration/security/users`                | `USER_READ`               |
-| Parámetros  | `ParameterService` (criteria)   | `/administration/parameters`                    | `SYSTEM_PARAMETER_READ`   |
-| Interfaces  | `InterfaceService` (criteria)   | `/interfaces`                                   | `INTERFACES_READ`         |
+| Entidad     | Servicio frontend                                | Ruta de listado/detalle                     | Permisos (cualquiera)                             |
+|-------------|--------------------------------------------------|---------------------------------------------|---------------------------------------------------|
+| Usuarios    | `UserService.findByCriteria`                     | `/administration/security/users`            | `USER_READ`, `USER_WRITE`                         |
+| Parámetros  | `ParameterService.findByCriteria`                | `/administration/parameters`                | `SYSTEM_PARAMETER_READ`, `SYSTEM_PARAMETER_WRITE` |
+| Interfaces  | `InterfaceService.findConfigurationsByCriteria`  | `/interfaces/configuration`                 | `INTERFACES_READ`                                 |
+
+La búsqueda de interfaces usa el endpoint nuevo
+`GET /api/v1/interfaces/configuration/search` (criterios `name`, `protocol`,
+`status`, paginado). El endpoint `GET /interfaces/configuration` (lista completa)
+no se modifica.
 
 Ampliables más adelante: Perfiles (`PROFILE_READ`), Acciones (`ACTION_READ`),
 Nodos de cluster (`CLUSTER_NODE_READ`), Informes (`REPORT_EXECUTE`).
@@ -75,10 +81,13 @@ Nodos de cluster (`CLUSTER_NODE_READ`), Informes (`REPORT_EXECUTE`).
   de contexto (p. ej. perfil del usuario, tipo del parámetro, protocolo de la
   interfaz).
 - Cada grupo con más resultados que el límite muestra una acción "Ver todos" que
-  navega al listado de esa entidad con el filtro aplicado.
+  navega al listado de esa entidad con el filtro aplicado. Requiere que cada
+  listado lea el filtro desde la URL (`username`, `code` y `name`; tarea 4.4).
 
 ### RF-4 — Navegación
-- Al hacer clic en un resultado, se navega a la vista de detalle de esa entidad.
+- Al hacer clic en un resultado, se navega a la vista de detalle de esa entidad
+  mediante deep-linking por query params (`view`/`id`, o `code` en parámetros),
+  que los listados ya soportan.
 - El popup se cierra tras la navegación.
 
 ### RF-5 — Estados visibles
@@ -128,5 +137,5 @@ Nodos de cluster (`CLUSTER_NODE_READ`), Informes (`REPORT_EXECUTE`).
 - Búsqueda full-text en el contenido (payloads, descripciones largas).
 - Historial de búsquedas / sugerencias.
 - Resaltado del término dentro de cada resultado (nice-to-have posterior).
-- Un endpoint de backend unificado de búsqueda (la iteración inicial reutiliza los
-  `findByCriteria` existentes; ver nota en el diseño).
+- Un endpoint de backend unificado de búsqueda (la iteración inicial usa los
+  `findByCriteria` por entidad; ver nota en el diseño).

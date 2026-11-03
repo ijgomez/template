@@ -18,6 +18,8 @@ Para la documentación técnica transversal (layout, navegación, seguridad back
 ├── login/                      Autenticación y acceso
 │   ├── login.md                Pantalla de inicio de sesión
 │   └── authentication.md       Modelo global de autenticación y sesión
+├── global-search/              Buscador global del header
+│   └── global-search.md
 ├── reports/                    Módulo de Informes
 │   └── reports.md
 ├── interfaces/                 Módulo de Interfaces
@@ -50,6 +52,12 @@ Punto de entrada de todos los usuarios y modelo de autenticación de la platafor
 |--------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | [Login](login/login.md)                                      | Pantalla de inicio de sesión: formulario de credenciales, validaciones, gestión de errores, selección de idioma y redirección al dashboard.                                                                                                 |
 | [Autenticación y Gestión de Sesión](login/authentication.md) | Modelo global y transversal de autenticación: login y emisión de tokens, persistencia y recuperación de sesión, renovación del access token, logout, seguridad del refresh token y configuración externalizable (`RF-AUT-*` / `RNF-AUT-*`). |
+
+### Buscador global
+
+| Documento                                          | Descripción                                                                                                                      |
+|----------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------|
+| [Buscador global](global-search/global-search.md)  | Búsqueda transversal en usuarios, parámetros e interfaces desde el header, con popup agrupado, navegación al detalle y accesibilidad ARIA (`RF-GSR-*` / `RNF-GSR-*`). |
 
 ### Informes
 

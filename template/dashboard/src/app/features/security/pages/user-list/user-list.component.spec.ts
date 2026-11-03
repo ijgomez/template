@@ -407,6 +407,36 @@ describe('UserListComponent', () => {
     });
   });
 
+  describe('username filter from URL (global search "Ver todos")', () => {
+    it('should load the list filtered by ?username= on init', async () => {
+      await TestBed.inject(Router).navigate([], { queryParams: { username: 'ad' } });
+      const spy = vi.spyOn(userService, 'findByCriteria');
+
+      component.ngOnInit();
+
+      expect(component.filterUsername()).toBe('ad');
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy.mock.calls[0][0]).toEqual({ username: 'ad' });
+      spy.mockRestore();
+    });
+
+    it('should leave the filter empty when the URL has no username', async () => {
+      await TestBed.inject(Router).navigate([], { queryParams: {} });
+
+      component.ngOnInit();
+
+      expect(component.filterUsername()).toBe('');
+    });
+
+    it('should update the filter when the query param changes after init', async () => {
+      component.ngOnInit();
+
+      await TestBed.inject(Router).navigate([], { queryParams: { username: 'bob' } });
+
+      expect(component.filterUsername()).toBe('bob');
+    });
+  });
+
   describe('deep linking (URL sub-view state)', () => {
     it('showDetail should sync the URL with view=detail and the user id', () => {
       const router = TestBed.inject(Router);

@@ -108,6 +108,10 @@ export class UserListComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Initial deep link (e.g. global search "Ver todos"): filter before the first load.
+    if (this.applyFilterFromParams(this.route.snapshot.queryParams)) {
+      this.criteria.set({ username: this.filterUsername() });
+    }
     this.loadUsers();
     // React to query-param changes (deep links, browser back/forward, reload).
     this.route.queryParams
@@ -124,6 +128,8 @@ export class UserListComponent implements OnInit {
    * - (none)                 → list
    */
   private restoreViewFromParams(params: Params): void {
+    // Text filter from the URL (`?username=<text>`); the debounced search reloads the list.
+    this.applyFilterFromParams(params);
     const view = params['view'] as ViewMode | undefined;
     const id = params['id'] ? Number(params['id']) : null;
 
@@ -158,6 +164,16 @@ export class UserListComponent implements OnInit {
 
     // Default: list view.
     this.viewMode.set('list');
+  }
+
+  /** Sets the username filter from `?username=`. Returns true if the filter changed. */
+  private applyFilterFromParams(params: Params): boolean {
+    const username = params['username'] ? String(params['username']) : null;
+    if (username === null || username === this.filterUsername()) {
+      return false;
+    }
+    this.filterUsername.set(username);
+    return true;
   }
 
   // ─── List Actions ──────────────────────────────────────────

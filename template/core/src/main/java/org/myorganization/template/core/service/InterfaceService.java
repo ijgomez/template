@@ -2,6 +2,7 @@ package org.myorganization.template.core.service;
 
 import org.myorganization.template.core.repository.InterfaceLogRepository;
 import org.myorganization.template.core.repository.InterfaceRepository;
+import org.myorganization.template.domain.criteria.InterfaceCriteria;
 import org.myorganization.template.domain.criteria.InterfaceLogCriteria;
 import org.myorganization.template.domain.dto.InterfaceDTO;
 import org.myorganization.template.domain.dto.InterfaceLogDTO;
@@ -47,6 +48,19 @@ public class InterfaceService {
         return interfaceRepository.findAll().stream()
                 .map(this::toInterfaceDTO)
                 .toList();
+    }
+
+    /**
+     * Finds interfaces matching the given criteria with pagination.
+     *
+     * @param criteria the filter criteria (name, protocol, status)
+     * @param pageable the pagination information
+     * @return a page of interface DTOs
+     */
+    @Transactional(readOnly = true)
+    public Page<InterfaceDTO> findByCriteria(InterfaceCriteria criteria, Pageable pageable) {
+        Specification<Interface> spec = buildInterfaceSpecification(criteria);
+        return interfaceRepository.findAll(spec, pageable).map(this::toInterfaceDTO);
     }
 
     /**
@@ -162,7 +176,27 @@ public class InterfaceService {
         interfaceLogRepository.save(log);
     }
 
-    // ─── Specification builder ───────────────────────────────────────────────────
+    // ─── Specification builders ──────────────────────────────────────────────────
+
+    private Specification<Interface> buildInterfaceSpecification(InterfaceCriteria criteria) {
+        Specification<Interface> spec = (root, query, cb) -> cb.conjunction();
+
+        if (criteria.name() != null && !criteria.name().isBlank()) {
+            String pattern = "%" + criteria.name().trim().toLowerCase() + "%";
+            spec = spec.and((root, query, cb) -> cb.like(cb.lower(root.get("name")), pattern));
+        }
+
+        if (criteria.protocol() != null && !criteria.protocol().isBlank()) {
+            String pattern = "%" + criteria.protocol().trim().toLowerCase() + "%";
+            spec = spec.and((root, query, cb) -> cb.like(cb.lower(root.get("protocol")), pattern));
+        }
+
+        if (criteria.status() != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("status"), criteria.status()));
+        }
+
+        return spec;
+    }
 
     private Specification<InterfaceLog> buildLogSpecification(InterfaceLogCriteria criteria) {
         Specification<InterfaceLog> spec = (root, query, cb) -> cb.conjunction();

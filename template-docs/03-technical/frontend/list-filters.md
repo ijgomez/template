@@ -210,6 +210,12 @@ La búsqueda automática introduce peticiones que pueden solaparse (la carga ini
 
 ---
 
+## 7. Filtro inicial desde la URL
+
+Los listados de usuarios, parámetros y configuración de interfaces leen su filtro inicial de los query params `username`, `code` y `name` respectivamente (en `restoreViewFromParams`). Es lo que usa la acción *Ver todos* del [buscador global](../../02-functional/global-search/global-search.md). En parámetros, `code` solo actúa como filtro si no hay `view`; con `view=detail|edit` identifica el registro.
+
+---
+
 ## Documentación relacionada
 
 - [Componentes reutilizables](components.md) — `tp-data-table`, `tp-data-list`, paginación y estados.

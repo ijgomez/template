@@ -70,6 +70,27 @@ describe('InterfaceService', () => {
       req.flush([mockConfig]);
     });
 
+    it('findConfigurationsByCriteria should GET /search with pagination and filters', () => {
+      const page: Page<InterfaceConfig> = {
+        content: [mockConfig],
+        page: { size: 5, number: 0, totalElements: 1, totalPages: 1 },
+      };
+
+      service
+        .findConfigurationsByCriteria({ name: 'erp', status: 'ACTIVE' }, 0, 5, 'name,asc')
+        .subscribe((result) => expect(result).toEqual(page));
+
+      const req = httpMock.expectOne((r) => r.url === `${configUrl}/search`);
+      expect(req.request.method).toBe('GET');
+      expect(req.request.params.get('page')).toBe('0');
+      expect(req.request.params.get('size')).toBe('5');
+      expect(req.request.params.get('sort')).toBe('name,asc');
+      expect(req.request.params.get('name')).toBe('erp');
+      expect(req.request.params.get('status')).toBe('ACTIVE');
+      expect(req.request.params.has('protocol')).toBe(false);
+      req.flush(page);
+    });
+
     it('findConfigurationById should GET a single config', () => {
       service.findConfigurationById(1).subscribe((config) => {
         expect(config).toEqual(mockConfig);

@@ -78,6 +78,7 @@ A continuación se indexan todos los ciclos de prueba del sistema con enlace dir
 | **TCY-CFG**   | Configuración de interfaces | Interfaces                 |    6     |         Activo          | [Configuración · Casos detallados](../02-functional/interfaces/configuration/configuration.md#46-casos-de-prueba-detallados-tcy-cfg)                                      |
 | **TCY-CLN**   | Nodos del cluster           | Administración · Cluster   |    7     |         Activo          | [Nodos · Casos detallados](../02-functional/administration/cluster/cluster-nodes.md#46-casos-de-prueba-detallados-tcy-cln)                                                |
 | **TCY-CLB**   | Bloqueos del cluster        | Administración · Cluster   |    5     |         Activo          | [Bloqueos · Casos detallados](../02-functional/administration/cluster/cluster-blocks.md#46-casos-de-prueba-detallados-tcy-clb)                                            |
+| **TCY-GSR**   | Buscador global             | Layout · Header            |    6     |         Activo          | [Buscador global · Casos detallados](../02-functional/global-search/global-search.md#46-casos-de-prueba-detallados-tcy-gsr)                                                |
 
 ### Convención de independencia
 
@@ -114,6 +115,7 @@ A continuación se indexan todos los ciclos de prueba del sistema con enlace dir
 | Listado de interfaces | RF-IFM-1..4, RNF-IFM-1               | TC-IFM-01..08 | [02-functional/interfaces/interface-list/interface-list.md](../02-functional/interfaces/interface-list/interface-list.md#47-casos-de-prueba-detallados-tcy-ifm) |
 | Config. interfaces    | RF-CFG-1..5, RNF-CFG-1               | TC-CFG-01..06 | [02-functional/interfaces/configuration/configuration.md](../02-functional/interfaces/configuration/configuration.md#46-casos-de-prueba-detallados-tcy-cfg)     |
 | Nodos cluster         | RF-CLN-1..6, RNF-CLN-2               | TC-CLN-01..07 | [02-functional/administration/cluster/cluster-nodes.md](../02-functional/administration/cluster/cluster-nodes.md#46-casos-de-prueba-detallados-tcy-cln)         |
+| Buscador global      | RF-GSR-1..6, RNF-GSR-1..3            | TC-GSR-01..06 | [02-functional/global-search/global-search.md](../02-functional/global-search/global-search.md#46-casos-de-prueba-detallados-tcy-gsr)                           |
 | Bloqueos cluster      | RF-CLB-1..5                          | TC-CLB-01..05 | [02-functional/administration/cluster/cluster-blocks.md](../02-functional/administration/cluster/cluster-blocks.md#46-casos-de-prueba-detallados-tcy-clb)       |
 
 ---

@@ -12,9 +12,25 @@ paralelo varias entidades (usuarios, parámetros, interfaces) reutilizando los
 servicios `*.Service.findByCriteria` existentes, y muestra los resultados en un
 popup agrupados por tipo de entidad, con navegación al detalle.
 
-La iteración inicial **no requiere un endpoint de backend nuevo**: orquesta las
-búsquedas desde el frontend. En el apartado 7 se describe la alternativa de un
+La iteración inicial orquesta las búsquedas desde el frontend. Usuarios y
+parámetros reutilizan sus endpoints existentes; **interfaces requiere un endpoint
+paginado con criterios** (`GET /api/v1/interfaces/configuration/search`), que
+`InterfaceService` no exponía (solo `findAllConfigurations` sin filtros y
+`findLogsByCriteria` sobre logs). En el apartado 7 se describe la alternativa de un
 endpoint unificado para una evolución posterior.
+
+### 1.1 Endpoint de backend para interfaces (ya implementado)
+
+| Capa      | Artefacto                                                                                   |
+|-----------|---------------------------------------------------------------------------------------------|
+| domain    | `InterfaceCriteria(name, protocol, status)`                                                 |
+| core      | `InterfaceRepository` extiende `JpaSpecificationExecutor`; `InterfaceService.findByCriteria` |
+| webapp    | `GET /api/v1/interfaces/configuration/search` (`page`, `size`, `name`, `protocol`, `status`, `sort`) |
+| dashboard | `InterfaceService.findConfigurationsByCriteria` + `InterfaceConfigCriteria`                 |
+
+- `name` y `protocol` son coincidencia parcial e insensible a mayúsculas; `status` es exacto.
+- `GET /configuration` (lista completa) se mantiene sin cambios para no romper la pantalla de configuración.
+- Seguridad: `SecurityConfig` ya exige `INTERFACES_READ` para todo `GET /api/v1/interfaces/**`.
 
 ## Architecture
 
@@ -71,6 +87,8 @@ export interface SearchResultItem {
   secondary?: string;
   /** Ruta de navegación al detalle. */
   route: string;
+  /** Query params de deep-linking al detalle (p. ej. `{ view: 'detail', id: '3' }`). */
+  queryParams: Record<string, string>;
 }
 
 /** Grupo de resultados de una misma entidad. */
@@ -81,25 +99,31 @@ export interface SearchResultGroup {
   items: SearchResultItem[];
   /** Total de coincidencias en backend (para decidir "Ver todos"). */
   totalMatches: number;
-  /** Ruta al listado con el filtro aplicado (acción "Ver todos"). */
+  /** Ruta del listado (acción "Ver todos"). */
   seeAllRoute: string;
-  /** Query params para preseleccionar el filtro en el listado destino. */
+  /**
+   * Query params para preseleccionar el filtro en el listado destino.
+   * Los listados leen el filtro desde la URL (`username` en usuarios, `code` en
+   * parámetros, `name` en configuración de interfaces); ver tarea 4.4.
+   */
   seeAllQueryParams: Record<string, string>;
 }
 ```
 
 ## 4. Mapeo por entidad
 
-| Entidad    | Campo de criteria | `primary`        | `secondary`         | Ruta detalle                                   | Permiso                 |
-|------------|-------------------|------------------|---------------------|------------------------------------------------|-------------------------|
-| Usuarios   | `username`        | `username`       | `profileName`       | `/administration/security/users` (+ seleccion) | `USER_READ`             |
-| Parámetros | `code`            | `code`           | `type`              | `/administration/parameters`                   | `SYSTEM_PARAMETER_READ` |
-| Interfaces | `name`            | `name`           | `protocol`/`status` | `/interfaces`                                  | `INTERFACES_READ`       |
+| Entidad    | Método del servicio frontend                | Campo de criteria | `primary`  | `secondary`         | Ruta + query params de detalle                                  | Permisos (cualquiera)                      |
+|------------|---------------------------------------------|-------------------|------------|---------------------|-----------------------------------------------------------------|--------------------------------------------|
+| Usuarios   | `UserService.findByCriteria`                | `username`        | `username` | `profileName`       | `/administration/security/users?view=detail&id={id}`            | `USER_READ`, `USER_WRITE`                  |
+| Parámetros | `ParameterService.findByCriteria`           | `code`            | `code`     | `type`              | `/administration/parameters?view=detail&code={code}`            | `SYSTEM_PARAMETER_READ`, `SYSTEM_PARAMETER_WRITE` |
+| Interfaces | `InterfaceService.findConfigurationsByCriteria` | `name`        | `name`     | `protocol`/`status` | `/interfaces/configuration?view=detail&id={id}`                 | `INTERFACES_READ`                          |
 
-> Nota: si el detalle de una entidad no es direccionable por URL (hoy el detalle
-> vive en `viewMode` por signals, ver auditoría #13), la navegación llevará al
-> listado con el filtro aplicado hasta que exista deep-linking. Esto conecta con
-> la mejora #13 de la auditoría.
+> Nota: el deep-linking al detalle **ya existe**. Los listados restauran la vista
+> desde los query params `view`/`id` (o `code` en parámetros) mediante
+> `restoreViewFromParams`. Por tanto, la navegación lleva directamente al detalle.
+> Cada entidad usa su propia clave, por eso `SearchResultItem` incluye `queryParams`.
+> Los valores de `view` y la clave exacta deben verificarse en cada
+> `restoreViewFromParams` al implementar.
 
 ## 5. Flujo de búsqueda
 
@@ -246,7 +270,8 @@ Claves nuevas (en `es.json` y `en.json`, simétricas):
 
 - **Frontend**: nuevo componente + servicio + modelo; modificación de
   `layout.component.html` (y su `.ts` si procede) para integrar el componente.
-- **Backend**: ninguno en la iteración inicial (reutiliza endpoints existentes).
+- **Backend**: nuevo endpoint `GET /interfaces/configuration/search` (ver §1.1);
+  usuarios y parámetros reutilizan endpoints existentes.
 - **Base de datos**: ninguno.
 - **Dependencias**: ninguna nueva.
 
@@ -254,7 +279,10 @@ Claves nuevas (en `es.json` y `en.json`, simétricas):
 
 - **N peticiones por búsqueda**: mitigado con debounce, `switchMap` (cancela la
   anterior) y `size` reducido; evolucionable al endpoint unificado (apartado 7).
-- **Navegación al detalle sin deep-linking**: depende de la mejora #13; mientras
-  tanto se navega al listado filtrado.
+- **"Ver todos" con filtro**: resuelto en la tarea 4.4. Los listados de usuarios,
+  parámetros e interfaces leen `username`, `code` y `name` de los query params
+  (mecanismo `restoreViewFromParams`). En parámetros, `code` solo actúa como
+  filtro si no hay `view` (con `view=detail|edit` identifica el registro).
 - **Consistencia de permisos**: el facade debe respetar exactamente los mismos
-  permisos que `actionGuard`; cualquier cambio de permisos debe reflejarse aquí.
+  permisos que `actionGuard` (cualquiera de las acciones de la ruta, incluidas las
+  `*_WRITE`); cualquier cambio de permisos debe reflejarse aquí.

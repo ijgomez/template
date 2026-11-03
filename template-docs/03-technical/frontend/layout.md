@@ -202,7 +202,7 @@ Incluye, entre otros elementos:
 
 - Botón de toggle del menú lateral (zona izquierda).
 - Logotipo de la aplicación.
-- Campo de búsqueda global.
+- Campo de búsqueda global (`GlobalSearchComponent`).
 - Selector de idioma.
 - Accesos rápidos.
 - Notificaciones.
@@ -210,6 +210,10 @@ Incluye, entre otros elementos:
 - Menú de sesión.
 
 La barra superior permanece visible durante toda la navegación.
+
+### Buscador global
+
+El campo de búsqueda del header es el componente standalone `GlobalSearchComponent` (`core/layout/global-search/`), que sustituye al antiguo bloque `.header-search`. Delega la lógica en el facade `GlobalSearchService` (`core/services/global-search.service.ts`), que consulta en paralelo usuarios, parámetros e interfaces según los permisos del usuario. Usa el patrón *Combobox ARIA* (`role="combobox"`, popup `role="listbox"`) y claves i18n `globalSearch.*`. Mantiene `data-testid="input-global-search"`. Detalle completo en [Buscador global](../../02-functional/global-search/global-search.md).
 
 ### Alineación visual con el menú lateral
 

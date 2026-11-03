@@ -10,6 +10,7 @@ import { environment } from '../../../environments/environment';
 import { AuthService } from '../services/auth.service';
 import { ReportService } from '../services/report.service';
 import { Report } from '../models/report.model';
+import { GlobalSearchComponent } from './global-search/global-search.component';
 
 /**
  * Represents a navigation menu item in the sidebar.
@@ -49,7 +50,7 @@ export interface BreadcrumbSegment {
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, TranslatePipe],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, TranslatePipe, GlobalSearchComponent],
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

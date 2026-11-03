@@ -1,0 +1,95 @@
+<div class="global-search position-relative">
+  <i class="bi bi-search global-search-icon" aria-hidden="true"></i>
+  <input
+    type="text"
+    class="form-control form-control-sm"
+    role="combobox"
+    autocomplete="off"
+    aria-autocomplete="list"
+    [attr.aria-expanded]="open()"
+    [attr.aria-controls]="popupId"
+    [attr.aria-activedescendant]="activeDescendant()"
+    [placeholder]="'globalSearch.placeholder' | translate"
+    [attr.aria-label]="'globalSearch.placeholder' | translate"
+    [value]="term()"
+    (input)="onInput($event)"
+    (focus)="onFocus()"
+    (keydown)="onKeydown($event)"
+    data-testid="input-global-search" />
+
+  <!-- Polite live region announcing the loading state (RNF-1) -->
+  <div class="visually-hidden" aria-live="polite" data-testid="global-search-live">
+    @if (loading()) {
+      {{ 'globalSearch.loading' | translate }}
+    }
+  </div>
+
+  @if (open()) {
+    <div
+      class="global-search-popup shadow border rounded bg-body"
+      [id]="popupId"
+      role="listbox"
+      [attr.aria-label]="'globalSearch.placeholder' | translate"
+      data-testid="global-search-popup">
+
+      @if (loading()) {
+        <div class="d-flex align-items-center gap-2 p-3 text-muted small" data-testid="global-search-loading">
+          <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+          <span>{{ 'globalSearch.loading' | translate }}</span>
+        </div>
+      } @else {
+        @if (isEmpty()) {
+          <div class="p-3 text-muted small" data-testid="global-search-empty">
+            {{ 'globalSearch.empty' | translate: { term: searchedTerm() } }}
+          </div>
+        }
+
+        @for (group of groups(); track group.type; let gi = $index) {
+          <div role="group" class="global-search-group" [attr.data-testid]="'global-search-group-' + group.type"
+               [attr.aria-label]="group.labelKey | translate">
+            <div class="global-search-group-header d-flex justify-content-between px-3 py-1 small fw-semibold text-uppercase text-muted bg-body-tertiary">
+              <span>{{ group.labelKey | translate }}</span>
+              <span class="badge text-bg-secondary" [attr.data-testid]="'global-search-count-' + group.type">{{ group.totalMatches }}</span>
+            </div>
+
+            @if (group.hasError) {
+              <div class="px-3 py-2 small text-danger" role="presentation"
+                   [attr.data-testid]="'global-search-error-' + group.type">
+                {{ 'globalSearch.groupError' | translate: { group: (group.labelKey | translate) } }}
+              </div>
+            }
+
+            @for (item of group.items; track item.id; let ii = $index) {
+              <div
+                class="global-search-option d-flex justify-content-between align-items-center px-3 py-2"
+                [class.active]="isActive(optionId(gi, ii))"
+                role="option"
+                [id]="optionId(gi, ii)"
+                [attr.aria-selected]="isActive(optionId(gi, ii))"
+                (click)="openItem(item)"
+                data-testid="global-search-result">
+                <span class="fw-medium text-truncate">{{ item.primary }}</span>
+                @if (item.secondary) {
+                  <span class="small text-muted ms-2 text-truncate">{{ item.secondary }}</span>
+                }
+              </div>
+            }
+
+            @if (showSeeAll(group)) {
+              <div
+                class="global-search-option global-search-see-all px-3 py-2 small text-primary"
+                [class.active]="isActive(seeAllId(gi))"
+                role="option"
+                [id]="seeAllId(gi)"
+                [attr.aria-selected]="isActive(seeAllId(gi))"
+                (click)="seeAll(group)"
+                [attr.data-testid]="'global-search-see-all-' + group.type">
+                {{ 'globalSearch.seeAll' | translate: { count: group.totalMatches } }}
+              </div>
+            }
+          </div>
+        }
+      }
+    </div>
+  }
+</div>

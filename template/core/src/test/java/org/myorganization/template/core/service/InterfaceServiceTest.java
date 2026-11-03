@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.myorganization.template.core.repository.InterfaceLogRepository;
 import org.myorganization.template.core.repository.InterfaceRepository;
+import org.myorganization.template.domain.criteria.InterfaceCriteria;
 import org.myorganization.template.domain.criteria.InterfaceLogCriteria;
 import org.myorganization.template.domain.dto.InterfaceDTO;
 import org.myorganization.template.domain.dto.InterfaceLogDTO;
@@ -84,6 +85,40 @@ class InterfaceServiceTest {
         List<InterfaceDTO> result = interfaceService.findAll();
 
         assertThat(result).isEmpty();
+    }
+
+    // ─── findByCriteria ──────────────────────────────────────────────────────────
+
+    @Test
+    @DisplayName("findByCriteria: maps the repository page to DTOs")
+    @SuppressWarnings("unchecked")
+    void findByCriteria_returnsMappedPage() {
+        Pageable pageable = PageRequest.of(0, 5);
+        Interface iface = createInterface(1L, "REST API", "desc", "https://api.example.com",
+                "REST", InterfaceStatus.ACTIVE, 60);
+        when(interfaceRepository.findAll(any(Specification.class), eq(pageable)))
+                .thenReturn(new PageImpl<>(List.of(iface), pageable, 1));
+
+        Page<InterfaceDTO> result = interfaceService.findByCriteria(
+                new InterfaceCriteria("rest", null, InterfaceStatus.ACTIVE), pageable);
+
+        assertThat(result.getTotalElements()).isEqualTo(1);
+        assertThat(result.getContent().get(0).name()).isEqualTo("REST API");
+        verify(interfaceRepository).findAll(any(Specification.class), eq(pageable));
+    }
+
+    @Test
+    @DisplayName("findByCriteria: empty criteria still queries with a specification")
+    @SuppressWarnings("unchecked")
+    void findByCriteria_emptyCriteria() {
+        Pageable pageable = PageRequest.of(0, 5);
+        when(interfaceRepository.findAll(any(Specification.class), eq(pageable)))
+                .thenReturn(new PageImpl<>(List.of(), pageable, 0));
+
+        Page<InterfaceDTO> result = interfaceService.findByCriteria(
+                new InterfaceCriteria(null, null, null), pageable);
+
+        assertThat(result.getContent()).isEmpty();
     }
 
     // ─── findById ────────────────────────────────────────────────────────────────

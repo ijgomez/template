@@ -130,6 +130,12 @@ export class ConfigurationListComponent implements OnInit {
    * `?view=detail&id=<id>` or list.
    */
   private restoreViewFromParams(params: Params): void {
+    // Text filter from the URL (`?name=<text>`); client-side, so it applies immediately.
+    const name = params['name'] ? String(params['name']) : null;
+    if (name !== null && name !== this.filterName()) {
+      this.filterName.set(name);
+      this.currentPage.set(0);
+    }
     const view = params['view'];
     const id = params['id'] ? Number(params['id']) : null;
 

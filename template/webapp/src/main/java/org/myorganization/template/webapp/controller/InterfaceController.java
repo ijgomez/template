@@ -6,6 +6,7 @@ import java.util.List;
 import org.myorganization.template.domain.dto.InterfaceDTO;
 import org.myorganization.template.domain.dto.InterfaceLogDTO;
 import org.myorganization.template.domain.enums.InterfaceLogStatus;
+import org.myorganization.template.domain.enums.InterfaceStatus;
 import org.myorganization.template.domain.enums.InterfaceOperationType;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,26 @@ public interface InterfaceController {
      */
     @GetMapping("/configuration")
     ResponseEntity<List<InterfaceDTO>> findAll();
+
+    /**
+     * Searches interfaces with pagination and optional filters.
+     *
+     * @param page     zero-indexed page number
+     * @param size     page size
+     * @param name     filter by interface name (partial, case-insensitive)
+     * @param protocol filter by protocol (partial, case-insensitive)
+     * @param status   filter by interface status
+     * @param sort     sort string "field,direction" (e.g. "name,asc")
+     * @return 200 OK with the paginated interface list
+     */
+    @GetMapping("/configuration/search")
+    ResponseEntity<Page<InterfaceDTO>> findByCriteria(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String protocol,
+            @RequestParam(required = false) InterfaceStatus status,
+            @RequestParam(required = false) String sort);
 
     /**
      * Retrieves an interface by its identifier.

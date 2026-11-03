@@ -21,6 +21,7 @@ Describe los distintos módulos funcionales de la aplicación.
 
 - [Login](02-functional/login/login.md)
   - [Autenticación y Gestión de Sesión](02-functional/login/authentication.md)
+- [Buscador global](02-functional/global-search/global-search.md)
 - [Informes](02-functional/reports/reports.md)
 - [Interfaces](02-functional/interfaces/interfaces.md)
   - [Listado de Interfaces](02-functional/interfaces/interface-list/interface-list.md)

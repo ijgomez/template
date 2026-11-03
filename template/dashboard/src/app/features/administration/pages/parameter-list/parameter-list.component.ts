@@ -97,6 +97,8 @@ export class ParameterListComponent implements OnInit {
   }));
 
   constructor() {
+    // Initial deep link (e.g. global search "Ver todos"): filter before the first load.
+    this.applyFilterFromParams(this.route.snapshot.queryParams);
     this.loadParameters();
 
     // Automatically apply filters as the user types, debounced to avoid
@@ -123,6 +125,8 @@ export class ParameterListComponent implements OnInit {
    * Parameters are identified by their unique `code`.
    */
   private restoreViewFromParams(params: Params): void {
+    // Text filter from the URL (`?code=<text>`); the debounced search reloads the list.
+    this.applyFilterFromParams(params);
     const view = params['view'] as ViewMode | undefined;
     const code = params['code'] ? String(params['code']) : null;
 
@@ -152,6 +156,14 @@ export class ParameterListComponent implements OnInit {
     }
 
     this.viewMode.set('list');
+  }
+
+  /** Sets the code filter from `?code=` when the URL is a list link (no `view`). */
+  private applyFilterFromParams(params: Params): void {
+    const code = params['code'] && !params['view'] ? String(params['code']) : null;
+    if (code !== null && code !== this.filterCode()) {
+      this.filterCode.set(code);
+    }
   }
 
   // ─── List Actions ────────────────────────────────────────────

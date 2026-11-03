@@ -171,18 +171,8 @@
         </button>
 
         <!-- Search -->
-        <!-- TODO(global-search): buscador global pendiente de implementar.
-             Búsqueda multi-entidad (usuarios, parámetros, interfaces) con popup
-             de resultados agrupados por tipo. Spec: .kiro/specs/global-search/.
-             Hoy el campo es decorativo (sin handler). -->
         <div class="header-search d-none d-md-block">
-          <i class="bi bi-search" aria-hidden="true"></i>
-          <input
-            type="text"
-            class="form-control form-control-sm"
-            [placeholder]="'layout.header.search' | translate"
-            [attr.aria-label]="'layout.header.search' | translate"
-            data-testid="input-global-search" />
+          <app-global-search />
         </div>
       </div>
 

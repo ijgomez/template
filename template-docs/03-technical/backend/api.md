@@ -228,6 +228,18 @@ Todas las API desarrolladas sobre Template deben cumplir los siguientes principi
 
 ---
 
+# Endpoints de búsqueda para el buscador global
+
+El [buscador global](../../02-functional/global-search/global-search.md) del header reutiliza los endpoints paginados con criterios de usuarios y parámetros, y añade uno nuevo para interfaces:
+
+| Método y ruta                                    | Parámetros                                              | Respuesta              | Permiso           |
+|--------------------------------------------------|---------------------------------------------------------|------------------------|-------------------|
+| `GET /api/v1/interfaces/configuration/search`    | `page`, `size`, `name`, `protocol`, `status`, `sort`    | 200 con `Page<InterfaceDTO>` | `INTERFACES_READ` |
+
+`name` y `protocol` son parciales e insensibles a mayúsculas; `status` es exacto. `GET /api/v1/interfaces/configuration` (lista completa) no cambia. Detalle en [configuración de interfaces](../../02-functional/interfaces/configuration/configuration.md#33-endpoints).
+
+---
+
 # Resumen
 
 Template diferencia claramente entre las API orientadas a la interfaz de usuario y aquellas destinadas a la integración con otros sistemas.

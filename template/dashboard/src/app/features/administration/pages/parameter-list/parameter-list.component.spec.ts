@@ -378,6 +378,32 @@ describe('ParameterListComponent', () => {
 
   // ─── Deep linking ───────────────────────────────────────────
 
+  describe('code filter from URL (global search "Ver todos")', () => {
+    it('should update the code filter when ?code= changes in list mode', async () => {
+      await TestBed.inject(Router).navigate([], { queryParams: { code: 'MAX' } });
+
+      expect(component.filterCode()).toBe('MAX');
+      expect(component.viewMode()).toBe('list');
+    });
+
+    it('should not treat ?code= as a filter when it identifies a detail view', async () => {
+      await TestBed.inject(Router).navigate([], { queryParams: { view: 'detail', code: 'A' } });
+
+      expect(component.filterCode()).toBe('');
+      expect(component.viewMode()).toBe('detail');
+    });
+
+    it('should load the first page already filtered when the URL carries ?code=', async () => {
+      await TestBed.inject(Router).navigate([], { queryParams: { code: 'MAX' } });
+      parameterService.findByCriteria.mockClear();
+
+      TestBed.createComponent(ParameterListComponent);
+
+      expect(parameterService.findByCriteria).toHaveBeenCalledTimes(1);
+      expect(parameterService.findByCriteria.mock.calls[0][0]).toEqual({ code: 'MAX' });
+    });
+  });
+
   describe('deep linking (URL sub-view state)', () => {
     it('viewDetail should sync the URL with view=detail and the parameter code', () => {
       const spy = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);

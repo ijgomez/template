@@ -1,0 +1,382 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 Crear `core/models/global-search.model.ts` con `SearchEntityType`,": [
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793731732028
+      },
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793731740033
+      },
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793731762455
+      }
+    ],
+    "1.2.1 Inyectar `UserService`, `ParameterService`, `InterfaceService`,": [
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793731732112
+      },
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793731768508
+      },
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793731794227
+      }
+    ],
+    "1.2.2 Método `search(term: string)` que filtra entidades por permiso": [
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793731732185
+      },
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793731796870
+      },
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793731853558
+      }
+    ],
+    "1.2.3 `catchError` por entidad para degradación elegante (grupo marcado": [
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793731732268
+      },
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793731858034
+      },
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793731861001
+      }
+    ],
+    "1.2.4 Mapear cada entidad según la tabla de Diseño §4 (primary/secondary/": [
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793731732341
+      },
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793731863352
+      },
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793731868532
+      }
+    ],
+    "1.3 Tests unitarios del servicio (`global-search.service.spec.ts`):": [
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793731732417
+      },
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793731870966
+      },
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793731927747
+      }
+    ],
+    "2.1 Crear `GlobalSearchComponent` (standalone, OnPush) en": [
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793731732498
+      },
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793731934031
+      },
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793732013532
+      }
+    ],
+    "2.2 Campo de entrada con debounce 300 ms, mínimo 2 caracteres,": [
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793731732568
+      },
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793732021125
+      }
+    ],
+    "2.3 Popup de resultados agrupados por tipo, con encabezado y contador por": [
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793731732646
+      },
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793732021034
+      }
+    ],
+    "2.4 Navegación al detalle / listado filtrado al activar un resultado; cerrar": [
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793731732723
+      },
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793732021642
+      }
+    ],
+    "2.5 Estados visibles: carga (spinner), vacío, error parcial. (RF-5)": [
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793731732790
+      },
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793732022415
+      }
+    ],
+    "2.6 Cierre del popup con Escape, clic fuera y campo vacío. (RF-6)": [
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793731732856
+      },
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793732022917
+      }
+    ],
+    "2.7 `data-testid` en campo, popup, grupos, resultados y \"Ver todos\" para": [
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793731733017
+      },
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793732023716
+      }
+    ],
+    "2.8 Tests de componente (`.spec.ts`): debounce, render de grupos, estados,": [
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793731733279
+      },
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793732029651
+      },
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793732100305
+      }
+    ],
+    "3.1 Patrón combobox ARIA en el campo: `role`, `aria-expanded`,": [
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793731733441
+      },
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793732024530
+      }
+    ],
+    "3.2 Popup `role=\"listbox\"`, resultados `role=\"option\"` con `aria-selected`.": [
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793731733523
+      },
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793732025066
+      }
+    ],
+    "3.3 Navegación por teclado: ↑/↓, Enter, Escape; foco de vuelta al campo al": [
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793731733613
+      },
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793732025874
+      }
+    ],
+    "3.4 Región `aria-live=\"polite\"` para el estado de carga. (RNF-1)": [
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793731733755
+      },
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793732026507
+      }
+    ],
+    "4.1 Integrar `GlobalSearchComponent` en `layout.component.html`,": [
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793731733841
+      },
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793732102902
+      },
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793732171724
+      }
+    ],
+    "4.2 Añadir claves i18n `globalSearch.*` en `es.json` y `en.json`": [
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793731733940
+      },
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793732172288
+      }
+    ],
+    "4.3 Verificar que la búsqueda respeta permisos con usuarios de distinto": [
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793731734075
+      },
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793732177362
+      },
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793732223413
+      }
+    ],
+    "4.4 Hacer que los listados de usuarios, parámetros e interfaces lean el": [
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793731734174
+      },
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793732225900
+      },
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793732357279
+      }
+    ],
+    "5.1 Test E2E Playwright del flujo: escribir término, ver resultados": [
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793731734276
+      },
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793732362944
+      },
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793732413737
+      }
+    ],
+    "5.2 Verificar accesibilidad con el snapshot del MCP de Playwright (roles,": [
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793731734355
+      },
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793732417944
+      },
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793732487401
+      }
+    ],
+    "5.3 Actualizar documentación funcional/técnica del header si procede": [
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793731734436
+      },
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793732487783
+      },
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793732637639
+      }
+    ],
+    "1.2 Crear `GlobalSearchService` en `core/services/global-search.service.ts`:": [
+      {
+        "executionId": "ee910fc2-80f0-4c9f-9b00-71b089f03221",
+        "chatSessionId": "sess_5fc32324-d873-4c5d-8085-31c62e97ebcb",
+        "timestamp": 1793731868613
+      }
+    ]
+  }
+}

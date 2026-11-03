@@ -244,6 +244,34 @@ describe('ConfigurationListComponent', () => {
     });
   });
 
+  describe('name filter from URL (global search "Ver todos")', () => {
+    it('should filter the list by ?name= on init', async () => {
+      await TestBed.inject(Router).navigate([], { queryParams: { name: 'pay' } });
+
+      component.ngOnInit();
+
+      expect(component.filterName()).toBe('pay');
+      expect(component.filteredConfigs()).toEqual([config]);
+      expect(component.viewMode()).toBe('list');
+    });
+
+    it('should apply the filter when the query param changes after init', async () => {
+      component.ngOnInit();
+
+      await TestBed.inject(Router).navigate([], { queryParams: { name: 'director' } });
+
+      expect(component.filteredConfigs()).toEqual([otherConfig]);
+    });
+
+    it('should not filter when the URL has no name', async () => {
+      await TestBed.inject(Router).navigate([], { queryParams: {} });
+
+      component.ngOnInit();
+
+      expect(component.filteredConfigs()).toHaveLength(2);
+    });
+  });
+
   describe('deep linking (URL sub-view state)', () => {
     it('viewDetail should sync the URL with view=detail and the config id', () => {
       const spy = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);

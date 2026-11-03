@@ -322,6 +322,7 @@ Ruta base: `/api/v1/interfaces/configuration`.
 | Método y ruta                | Descripción                                          | Respuesta                                   |
 |------------------------------|------------------------------------------------------|---------------------------------------------|
 | `GET /configuration`         | Listado de todas las interfaces con su estado actual | 200 OK con `List<InterfaceDTO>`             |
+| `GET /configuration/search`  | Búsqueda paginada por criterios (`name`, `protocol`, `status`, `page`, `size`, `sort`); `name` y `protocol` son parciales e insensibles a mayúsculas. Usado por el buscador global | 200 OK con `Page<InterfaceDTO>`             |
 | `GET /configuration/{id}`    | Interfaz por identificador                           | 200 OK con `InterfaceDTO` (o 404 Not Found) |
 | `POST /configuration`        | No disponible                                        | No expuesto por la API (solo lectura)       |
 | `PUT /configuration/{id}`    | No disponible                                        | No expuesto por la API (solo lectura)       |

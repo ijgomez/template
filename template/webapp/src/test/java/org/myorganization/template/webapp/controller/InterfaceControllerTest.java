@@ -6,6 +6,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.myorganization.template.core.service.InterfaceService;
+import org.myorganization.template.domain.criteria.InterfaceCriteria;
 import org.myorganization.template.domain.criteria.InterfaceLogCriteria;
 import org.myorganization.template.domain.dto.InterfaceDTO;
 import org.myorganization.template.domain.dto.InterfaceLogDTO;
@@ -55,6 +56,22 @@ class InterfaceControllerTest {
         assertThat(response.getBody()).hasSize(2);
         assertThat(response.getBody().get(0).name()).isEqualTo("REST API");
         assertThat(response.getBody().get(1).name()).isEqualTo("SOAP Service");
+    }
+
+    @Test
+    void findByCriteria_shouldReturnPageOfInterfaces() {
+        Pageable pageable = PageRequest.of(0, 5);
+        Page<InterfaceDTO> page = new PageImpl<>(List.of(sampleInterface(1L, "REST API")), pageable, 1);
+        when(interfaceService.findByCriteria(any(InterfaceCriteria.class), eq(pageable))).thenReturn(page);
+
+        ResponseEntity<Page<InterfaceDTO>> response =
+                controller.findByCriteria(0, 5, "rest", null, InterfaceStatus.ACTIVE, null);
+
+        assertThat(response.getStatusCode().value()).isEqualTo(200);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().getContent()).hasSize(1);
+        verify(interfaceService).findByCriteria(
+                eq(new InterfaceCriteria("rest", null, InterfaceStatus.ACTIVE)), eq(pageable));
     }
 
     @Test
