@@ -44,8 +44,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 class ActionSecurityIntegrationTest {
 
-    /** Seeded action id (ACTION_READ) used as the target of the updates. */
-    private static final long ACTION_ID = 8L;
+    /** Seeded action code used as the target of the updates. */
+    private static final String ACTION_CODE = "ACTION_READ";
 
     @Container
     @SuppressWarnings("resource") // closed by the Testcontainers extension via @Container
@@ -83,6 +83,14 @@ class ActionSecurityIntegrationTest {
         return jwtTokenProvider.generateAccessToken("secuser", "TestProfile", List.of(authorities));
     }
 
+    private Long actionId() {
+        return actionRepository.findAll().stream()
+                .filter(action -> ACTION_CODE.equals(action.getCode()))
+                .map(action -> action.getId())
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Seeded action not found: " + ACTION_CODE));
+    }
+
     @Test
     void getActions_withActionRead_returns200() throws Exception {
         mockMvc.perform(get("/api/v1/administration/security/actions")
@@ -92,36 +100,41 @@ class ActionSecurityIntegrationTest {
 
     @Test
     void getActionById_withActionWrite_returns200() throws Exception {
-        mockMvc.perform(get("/api/v1/administration/security/actions/" + ACTION_ID)
+        Long actionId = actionId();
+
+        mockMvc.perform(get("/api/v1/administration/security/actions/" + actionId)
                 .header("Authorization", "Bearer " + token("ACTION_WRITE")))
                 .andExpect(status().isOk());
     }
 
     @Test
     void putAction_withOnlyActionRead_returns403() throws Exception {
-        String nameBefore = actionRepository.findById(ACTION_ID).orElseThrow().getName();
+        Long actionId = actionId();
+        String nameBefore = actionRepository.findById(actionId).orElseThrow().getName();
 
-        mockMvc.perform(put("/api/v1/administration/security/actions/" + ACTION_ID)
+        mockMvc.perform(put("/api/v1/administration/security/actions/" + actionId)
                 .header("Authorization", "Bearer " + token("ACTION_READ"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"code\":\"ACTION_READ\",\"type\":\"READ\",\"name\":\"Read-only attempt\"}"))
                 .andExpect(status().isForbidden());
 
         // The catalog must remain unchanged.
-        assertThat(actionRepository.findById(ACTION_ID).orElseThrow().getName())
+        assertThat(actionRepository.findById(actionId).orElseThrow().getName())
                 .isEqualTo(nameBefore);
     }
 
     @Test
     void putAction_withActionWrite_returns200AndPersistsChange() throws Exception {
-        mockMvc.perform(put("/api/v1/administration/security/actions/" + ACTION_ID)
+        Long actionId = actionId();
+
+        mockMvc.perform(put("/api/v1/administration/security/actions/" + actionId)
                 .header("Authorization", "Bearer " + token("ACTION_WRITE"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"code\":\"ACTION_READ\",\"type\":\"READ\",\"name\":\"Edited by ACTION_WRITE\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Edited by ACTION_WRITE"));
 
-        assertThat(actionRepository.findById(ACTION_ID).orElseThrow().getName())
+        assertThat(actionRepository.findById(actionId).orElseThrow().getName())
                 .isEqualTo("Edited by ACTION_WRITE");
     }
 }

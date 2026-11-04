@@ -15,7 +15,7 @@
         <comment>Tarea de clúster NODOS requerida por HeartbeatWorker para el bloqueo de heartbeat</comment>
 
         <insert tableName="cluster_task">
-            <column name="id" valueNumeric="nextval('cluster_task_seq')"/>
+            <column name="id" valueSequenceNext="cluster_task_seq"/>
             <column name="name" value="NODOS"/>
             <column name="description" value="Gestión de nodos del clúster (heartbeat, detección de nodos caídos, elección de master)"/>
             <column name="nodes" valueNumeric="1"/>

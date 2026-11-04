@@ -25,7 +25,7 @@
         <comment>Registros de log de interfaces para desarrollo local, compatibles con H2 y PostgreSQL (30 registros simulados)</comment>
 
         <insert tableName="interface_log">
-            <column name="id" valueNumeric="1"/>
+            <column name="id" valueSequenceNext="interface_log_seq"/>
             <column name="timestamp" valueDate="2025-01-10 08:00:00"/>
             <column name="operation_type" value="GET"/>
             <column name="interface_name" value="Interfaz REST clientes"/>
@@ -35,7 +35,7 @@
         </insert>
 
         <insert tableName="interface_log">
-            <column name="id" valueNumeric="2"/>
+            <column name="id" valueSequenceNext="interface_log_seq"/>
             <column name="timestamp" valueDate="2025-01-10 08:35:00"/>
             <column name="operation_type" value="POST"/>
             <column name="interface_name" value="Interfaz SOAP pagos"/>
@@ -45,7 +45,7 @@
         </insert>
 
         <insert tableName="interface_log">
-            <column name="id" valueNumeric="3"/>
+            <column name="id" valueSequenceNext="interface_log_seq"/>
             <column name="timestamp" valueDate="2025-01-10 09:10:00"/>
             <column name="operation_type" value="GET"/>
             <column name="interface_name" value="Interfaz REST inventario"/>
@@ -55,7 +55,7 @@
         </insert>
 
         <insert tableName="interface_log">
-            <column name="id" valueNumeric="4"/>
+            <column name="id" valueSequenceNext="interface_log_seq"/>
             <column name="timestamp" valueDate="2025-01-10 09:45:00"/>
             <column name="operation_type" value="PUT"/>
             <column name="interface_name" value="Interfaz REST clientes"/>
@@ -65,7 +65,7 @@
         </insert>
 
         <insert tableName="interface_log">
-            <column name="id" valueNumeric="5"/>
+            <column name="id" valueSequenceNext="interface_log_seq"/>
             <column name="timestamp" valueDate="2025-01-10 10:20:00"/>
             <column name="operation_type" value="DELETE"/>
             <column name="interface_name" value="Interfaz FTP ficheros"/>
@@ -75,7 +75,7 @@
         </insert>
 
         <insert tableName="interface_log">
-            <column name="id" valueNumeric="6"/>
+            <column name="id" valueSequenceNext="interface_log_seq"/>
             <column name="timestamp" valueDate="2025-01-10 10:55:00"/>
             <column name="operation_type" value="PATCH"/>
             <column name="interface_name" value="Interfaz SFTP backup"/>
@@ -85,7 +85,7 @@
         </insert>
 
         <insert tableName="interface_log">
-            <column name="id" valueNumeric="7"/>
+            <column name="id" valueSequenceNext="interface_log_seq"/>
             <column name="timestamp" valueDate="2025-01-10 11:30:00"/>
             <column name="operation_type" value="GET"/>
             <column name="interface_name" value="Interfaz REST notificaciones"/>
@@ -95,7 +95,7 @@
         </insert>
 
         <insert tableName="interface_log">
-            <column name="id" valueNumeric="8"/>
+            <column name="id" valueSequenceNext="interface_log_seq"/>
             <column name="timestamp" valueDate="2025-01-10 12:05:00"/>
             <column name="operation_type" value="POST"/>
             <column name="interface_name" value="Interfaz REST clientes"/>
@@ -105,7 +105,7 @@
         </insert>
 
         <insert tableName="interface_log">
-            <column name="id" valueNumeric="9"/>
+            <column name="id" valueSequenceNext="interface_log_seq"/>
             <column name="timestamp" valueDate="2025-01-10 12:40:00"/>
             <column name="operation_type" value="GET"/>
             <column name="interface_name" value="Interfaz SOAP pagos"/>
@@ -115,7 +115,7 @@
         </insert>
 
         <insert tableName="interface_log">
-            <column name="id" valueNumeric="10"/>
+            <column name="id" valueSequenceNext="interface_log_seq"/>
             <column name="timestamp" valueDate="2025-01-10 13:15:00"/>
             <column name="operation_type" value="POST"/>
             <column name="interface_name" value="Interfaz REST inventario"/>
@@ -125,7 +125,7 @@
         </insert>
 
         <insert tableName="interface_log">
-            <column name="id" valueNumeric="11"/>
+            <column name="id" valueSequenceNext="interface_log_seq"/>
             <column name="timestamp" valueDate="2025-01-10 13:50:00"/>
             <column name="operation_type" value="GET"/>
             <column name="interface_name" value="Interfaz SFTP backup"/>
@@ -135,7 +135,7 @@
         </insert>
 
         <insert tableName="interface_log">
-            <column name="id" valueNumeric="12"/>
+            <column name="id" valueSequenceNext="interface_log_seq"/>
             <column name="timestamp" valueDate="2025-01-10 14:25:00"/>
             <column name="operation_type" value="PUT"/>
             <column name="interface_name" value="Interfaz REST notificaciones"/>
@@ -145,7 +145,7 @@
         </insert>
 
         <insert tableName="interface_log">
-            <column name="id" valueNumeric="13"/>
+            <column name="id" valueSequenceNext="interface_log_seq"/>
             <column name="timestamp" valueDate="2025-01-10 15:00:00"/>
             <column name="operation_type" value="GET"/>
             <column name="interface_name" value="Interfaz REST clientes"/>
@@ -155,7 +155,7 @@
         </insert>
 
         <insert tableName="interface_log">
-            <column name="id" valueNumeric="14"/>
+            <column name="id" valueSequenceNext="interface_log_seq"/>
             <column name="timestamp" valueDate="2025-01-10 15:35:00"/>
             <column name="operation_type" value="DELETE"/>
             <column name="interface_name" value="Interfaz REST inventario"/>
@@ -165,7 +165,7 @@
         </insert>
 
         <insert tableName="interface_log">
-            <column name="id" valueNumeric="15"/>
+            <column name="id" valueSequenceNext="interface_log_seq"/>
             <column name="timestamp" valueDate="2025-01-10 16:10:00"/>
             <column name="operation_type" value="PATCH"/>
             <column name="interface_name" value="Interfaz SOAP pagos"/>
@@ -175,7 +175,7 @@
         </insert>
 
         <insert tableName="interface_log">
-            <column name="id" valueNumeric="16"/>
+            <column name="id" valueSequenceNext="interface_log_seq"/>
             <column name="timestamp" valueDate="2025-01-10 16:45:00"/>
             <column name="operation_type" value="GET"/>
             <column name="interface_name" value="Interfaz FTP ficheros"/>
@@ -185,7 +185,7 @@
         </insert>
 
         <insert tableName="interface_log">
-            <column name="id" valueNumeric="17"/>
+            <column name="id" valueSequenceNext="interface_log_seq"/>
             <column name="timestamp" valueDate="2025-01-10 17:20:00"/>
             <column name="operation_type" value="POST"/>
             <column name="interface_name" value="Interfaz SFTP backup"/>
@@ -195,7 +195,7 @@
         </insert>
 
         <insert tableName="interface_log">
-            <column name="id" valueNumeric="18"/>
+            <column name="id" valueSequenceNext="interface_log_seq"/>
             <column name="timestamp" valueDate="2025-01-10 17:55:00"/>
             <column name="operation_type" value="GET"/>
             <column name="interface_name" value="Interfaz REST notificaciones"/>
@@ -205,7 +205,7 @@
         </insert>
 
         <insert tableName="interface_log">
-            <column name="id" valueNumeric="19"/>
+            <column name="id" valueSequenceNext="interface_log_seq"/>
             <column name="timestamp" valueDate="2025-01-10 18:30:00"/>
             <column name="operation_type" value="PUT"/>
             <column name="interface_name" value="Interfaz REST clientes"/>
@@ -215,7 +215,7 @@
         </insert>
 
         <insert tableName="interface_log">
-            <column name="id" valueNumeric="20"/>
+            <column name="id" valueSequenceNext="interface_log_seq"/>
             <column name="timestamp" valueDate="2025-01-10 19:05:00"/>
             <column name="operation_type" value="DELETE"/>
             <column name="interface_name" value="Interfaz SOAP pagos"/>
@@ -225,7 +225,7 @@
         </insert>
 
         <insert tableName="interface_log">
-            <column name="id" valueNumeric="21"/>
+            <column name="id" valueSequenceNext="interface_log_seq"/>
             <column name="timestamp" valueDate="2025-01-10 19:40:00"/>
             <column name="operation_type" value="GET"/>
             <column name="interface_name" value="Interfaz REST inventario"/>
@@ -235,7 +235,7 @@
         </insert>
 
         <insert tableName="interface_log">
-            <column name="id" valueNumeric="22"/>
+            <column name="id" valueSequenceNext="interface_log_seq"/>
             <column name="timestamp" valueDate="2025-01-10 20:15:00"/>
             <column name="operation_type" value="PATCH"/>
             <column name="interface_name" value="Interfaz REST clientes"/>
@@ -245,7 +245,7 @@
         </insert>
 
         <insert tableName="interface_log">
-            <column name="id" valueNumeric="23"/>
+            <column name="id" valueSequenceNext="interface_log_seq"/>
             <column name="timestamp" valueDate="2025-01-10 20:50:00"/>
             <column name="operation_type" value="POST"/>
             <column name="interface_name" value="Interfaz FTP ficheros"/>
@@ -255,7 +255,7 @@
         </insert>
 
         <insert tableName="interface_log">
-            <column name="id" valueNumeric="24"/>
+            <column name="id" valueSequenceNext="interface_log_seq"/>
             <column name="timestamp" valueDate="2025-01-10 21:25:00"/>
             <column name="operation_type" value="GET"/>
             <column name="interface_name" value="Interfaz SFTP backup"/>
@@ -265,7 +265,7 @@
         </insert>
 
         <insert tableName="interface_log">
-            <column name="id" valueNumeric="25"/>
+            <column name="id" valueSequenceNext="interface_log_seq"/>
             <column name="timestamp" valueDate="2025-01-10 22:00:00"/>
             <column name="operation_type" value="PUT"/>
             <column name="interface_name" value="Interfaz SOAP pagos"/>
@@ -275,7 +275,7 @@
         </insert>
 
         <insert tableName="interface_log">
-            <column name="id" valueNumeric="26"/>
+            <column name="id" valueSequenceNext="interface_log_seq"/>
             <column name="timestamp" valueDate="2025-01-10 22:35:00"/>
             <column name="operation_type" value="DELETE"/>
             <column name="interface_name" value="Interfaz REST notificaciones"/>
@@ -285,7 +285,7 @@
         </insert>
 
         <insert tableName="interface_log">
-            <column name="id" valueNumeric="27"/>
+            <column name="id" valueSequenceNext="interface_log_seq"/>
             <column name="timestamp" valueDate="2025-01-10 23:10:00"/>
             <column name="operation_type" value="GET"/>
             <column name="interface_name" value="Interfaz REST clientes"/>
@@ -295,7 +295,7 @@
         </insert>
 
         <insert tableName="interface_log">
-            <column name="id" valueNumeric="28"/>
+            <column name="id" valueSequenceNext="interface_log_seq"/>
             <column name="timestamp" valueDate="2025-01-10 23:45:00"/>
             <column name="operation_type" value="POST"/>
             <column name="interface_name" value="Interfaz REST notificaciones"/>
@@ -305,7 +305,7 @@
         </insert>
 
         <insert tableName="interface_log">
-            <column name="id" valueNumeric="29"/>
+            <column name="id" valueSequenceNext="interface_log_seq"/>
             <column name="timestamp" valueDate="2025-01-11 00:20:00"/>
             <column name="operation_type" value="PATCH"/>
             <column name="interface_name" value="Interfaz REST inventario"/>
@@ -315,7 +315,7 @@
         </insert>
 
         <insert tableName="interface_log">
-            <column name="id" valueNumeric="30"/>
+            <column name="id" valueSequenceNext="interface_log_seq"/>
             <column name="timestamp" valueDate="2025-01-11 00:55:00"/>
             <column name="operation_type" value="GET"/>
             <column name="interface_name" value="Interfaz FTP ficheros"/>
@@ -332,24 +332,5 @@
 
     </changeSet>
 
-    <!-- Reset sequence to avoid conflicts with seed data -->
-    <changeSet id="20250124-seed-local-interface-log-seq-reset" author="template" labels="v1.0.0" context="local">
-
-        <preConditions onFail="MARK_RAN">
-            <tableExists tableName="interface_log"/>
-            <sequenceExists sequenceName="interface_log_seq"/>
-        </preConditions>
-
-        <comment>Ajusta la secuencia interface_log_seq para evitar conflictos con los datos seed</comment>
-
-        <!-- PostgreSQL: setval calcula el siguiente valor a partir del MAX(id) actual -->
-        <sql dbms="postgresql">SELECT setval('interface_log_seq', (SELECT COALESCE(MAX(id), 0) + 1 FROM interface_log), false)</sql>
-        <!-- H2 (perfil local): setval no existe; se reinicia la secuencia al valor fijo
-             siguiente a los ids seed (1-30) -->
-        <sql dbms="h2">ALTER SEQUENCE interface_log_seq RESTART WITH 100</sql>
-
-        <rollback/>
-
-    </changeSet>
 
 </databaseChangeLog>

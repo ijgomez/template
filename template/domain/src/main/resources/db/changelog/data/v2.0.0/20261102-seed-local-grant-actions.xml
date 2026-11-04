@@ -30,17 +30,17 @@
 
         <sql>
             INSERT INTO profile2action (profile_id, action_id)
-            SELECT 1, a.id FROM action a
+            SELECT (SELECT id FROM profile WHERE name = 'Administrador'), a.id FROM action a
             WHERE a.code IN ('ACTION_WRITE', 'PROFILE_GRANT', 'USER_GRANT')
               AND NOT EXISTS (
-                  SELECT 1 FROM profile2action p
-                  WHERE p.profile_id = 1 AND p.action_id = a.id
+                  SELECT (SELECT id FROM profile WHERE name = 'Administrador') FROM profile2action p
+                  WHERE p.profile_id = (SELECT id FROM profile WHERE name = 'Administrador') AND p.action_id = a.id
               );
         </sql>
 
         <rollback>
             <delete tableName="profile2action">
-                <where>profile_id = 1 AND action_id IN (SELECT id FROM action WHERE code IN ('PROFILE_GRANT', 'USER_GRANT'))</where>
+                <where>profile_id = (SELECT id FROM profile WHERE name = 'Administrador') AND action_id IN (SELECT id FROM action WHERE code IN ('PROFILE_GRANT', 'USER_GRANT'))</where>
             </delete>
         </rollback>
 

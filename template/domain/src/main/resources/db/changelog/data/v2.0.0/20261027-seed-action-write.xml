@@ -28,7 +28,7 @@
         <comment>Acción ACTION_WRITE para editar el catálogo de acciones (SEC-02)</comment>
 
         <insert tableName="action">
-            <column name="id" valueNumeric="15"/>
+            <column name="id" valueSequenceNext="action_seq"/>
             <column name="code" value="ACTION_WRITE"/>
             <column name="type" value="WRITE"/>
             <column name="name" value="Editar acciones del sistema"/>
