@@ -1,5 +1,9 @@
 FROM postgres:18
 
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends pgagent \
+    && rm -rf /var/lib/apt/lists/*
+
 ENV PGDATA=/var/lib/postgresql/18/docker
 
 COPY --chmod=755 docker-entrypoint-secrets.sh /usr/local/bin/docker-entrypoint-secrets.sh

@@ -2,6 +2,10 @@
 
 DO $$
 BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'administrador') THEN
+    CREATE ROLE administrador LOGIN PASSWORD 'administrador';
+  END IF;
+
   IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'template_admin') THEN
     CREATE ROLE template_admin LOGIN PASSWORD 'template_admin';
   END IF;
@@ -20,27 +24,28 @@ CREATE TABLESPACE openproject_index_tbs
   OWNER administrador
   LOCATION '/var/lib/postgresql/tablespaces/openproject_index';
 
-CREATE DATABASE openproject
-  OWNER administrador
-  TABLESPACE openproject_data_tbs;
-
-ALTER DATABASE openproject SET default_tablespace = 'openproject_data_tbs';
-
-
-
-CREATE SCHEMA IF NOT EXISTS template AUTHORIZATION administrador;
-ALTER SCHEMA template OWNER TO administrador;
-
 CREATE TABLESPACE template_data_tbs
-  OWNER administrador
+  OWNER template_admin
   LOCATION '/var/lib/postgresql/tablespaces/template_data';
 
 CREATE TABLESPACE template_index_tbs
-  OWNER administrador
+  OWNER template_admin
   LOCATION '/var/lib/postgresql/tablespaces/template_index';
 
-ALTER DATABASE template SET default_tablespace = 'template_data_tbs';
+CREATE EXTENSION IF NOT EXISTS pgagent;
 
+SELECT 'CREATE DATABASE openproject OWNER administrador TABLESPACE openproject_data_tbs'
+WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'openproject')\gexec
+ALTER DATABASE openproject SET default_tablespace = 'openproject_data_tbs';
+
+CREATE SCHEMA IF NOT EXISTS template AUTHORIZATION template_admin;
+ALTER SCHEMA template OWNER TO template_admin;
+ALTER DATABASE template SET default_tablespace = 'template_data_tbs';
+ALTER ROLE template_admin SET default_tablespace = 'template_data_tbs';
+ALTER ROLE template_user SET default_tablespace = 'template_data_tbs';
+
+GRANT CONNECT ON DATABASE template TO template_admin;
+GRANT CONNECT ON DATABASE template TO template_user;
 GRANT CREATE ON SCHEMA template TO template_admin;
 GRANT USAGE ON SCHEMA template TO template_admin;
 GRANT USAGE ON SCHEMA template TO template_user;
@@ -48,13 +53,23 @@ GRANT USAGE ON SCHEMA template TO template_user;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA template TO template_admin;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA template TO template_admin;
 GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA template TO template_admin;
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA template TO template_user;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA template TO template_user;
+GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA template TO template_user;
 
-ALTER DEFAULT PRIVILEGES FOR ROLE administrador IN SCHEMA template
+ALTER DEFAULT PRIVILEGES FOR ROLE template_admin IN SCHEMA template
   GRANT ALL PRIVILEGES ON TABLES TO template_admin;
-ALTER DEFAULT PRIVILEGES FOR ROLE administrador IN SCHEMA template
+ALTER DEFAULT PRIVILEGES FOR ROLE template_admin IN SCHEMA template
   GRANT ALL PRIVILEGES ON SEQUENCES TO template_admin;
-ALTER DEFAULT PRIVILEGES FOR ROLE administrador IN SCHEMA template
+ALTER DEFAULT PRIVILEGES FOR ROLE template_admin IN SCHEMA template
   GRANT ALL PRIVILEGES ON FUNCTIONS TO template_admin;
+
+ALTER DEFAULT PRIVILEGES FOR ROLE template_admin IN SCHEMA template
+  GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO template_user;
+ALTER DEFAULT PRIVILEGES FOR ROLE template_admin IN SCHEMA template
+  GRANT USAGE, SELECT ON SEQUENCES TO template_user;
+ALTER DEFAULT PRIVILEGES FOR ROLE template_admin IN SCHEMA template
+  GRANT EXECUTE ON FUNCTIONS TO template_user;
 
 GRANT CREATE ON TABLESPACE template_data_tbs TO template_admin;
 GRANT CREATE ON TABLESPACE template_index_tbs TO template_admin;
