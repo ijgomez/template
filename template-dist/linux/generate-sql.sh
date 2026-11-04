@@ -80,10 +80,23 @@ echo ""
 
 cd "${DOMAIN_DIR}"
 DEFAULT_OUTPUT_FILE="${DOMAIN_DIR}/target/liquibase/migrate.sql"
+OFFLINE_STATE_FILE="${DOMAIN_DIR}/databasechangelog.csv"
+
+# Limpieza previa para garantizar una generación completa y reproducible:
+# - El SQL por defecto del plugin (el CLI -Dliquibase.outputFile no siempre se
+#   respeta, por lo que leemos SIEMPRE este fichero y lo copiamos al destino).
+# - El fichero de estado offline de Liquibase (databasechangelog.csv). En modo
+#   offline Liquibase usa este CSV como "estado de la base de datos"; si contiene
+#   los changesets como EXECUTED, updateSQL los considera aplicados y genera un
+#   SQL vacío ("Database is up to date, no changesets to execute"). Partimos
+#   siempre de un estado limpio para emitir el esquema completo.
+rm -f "${DEFAULT_OUTPUT_FILE}"
+rm -f "${OFFLINE_STATE_FILE}"
 
 if [ -n "${DB_URL_VALUE}" ]; then
     if [ -n "${MAVEN_USER_SETTINGS:-}" ]; then
         mvn -s "${MAVEN_USER_SETTINGS}" liquibase:updateSQL \
+            -Dliquibase.propertyFileWillOverride=false \
             -Dliquibase.changeLogFile="${CHANGELOG_FILE}" \
             -Dliquibase.url="${DB_URL_VALUE}" \
             -Dliquibase.username="${DB_USERNAME_VALUE}" \
@@ -91,6 +104,7 @@ if [ -n "${DB_URL_VALUE}" ]; then
             -Dliquibase.outputFile="${OUTPUT_FILE}"
     else
         mvn liquibase:updateSQL \
+            -Dliquibase.propertyFileWillOverride=false \
             -Dliquibase.changeLogFile="${CHANGELOG_FILE}" \
             -Dliquibase.url="${DB_URL_VALUE}" \
             -Dliquibase.username="${DB_USERNAME_VALUE}" \
@@ -100,25 +114,44 @@ if [ -n "${DB_URL_VALUE}" ]; then
 else
     if [ -n "${MAVEN_USER_SETTINGS:-}" ]; then
         mvn -s "${MAVEN_USER_SETTINGS}" liquibase:updateSQL \
+            -Dliquibase.propertyFileWillOverride=false \
             -Dliquibase.changeLogFile="${CHANGELOG_FILE}" \
             -Dliquibase.url=offline:postgresql \
             -Dliquibase.outputFile="${OUTPUT_FILE}"
     else
         mvn liquibase:updateSQL \
+            -Dliquibase.propertyFileWillOverride=false \
             -Dliquibase.changeLogFile="${CHANGELOG_FILE}" \
             -Dliquibase.url=offline:postgresql \
             -Dliquibase.outputFile="${OUTPUT_FILE}"
     fi
 fi
 
-if [ -f "${OUTPUT_FILE}" ]; then
-    :
-elif [ -f "${DEFAULT_OUTPUT_FILE}" ]; then
+# El plugin escribe el SQL en su ruta por defecto (DEFAULT_OUTPUT_FILE), ya que
+# -Dliquibase.outputFile por CLI no siempre se aplica. Copiamos ese resultado al
+# destino solicitado. Si el plugin ya hubiera escrito directamente en OUTPUT_FILE,
+# también es válido.
+if [ -f "${DEFAULT_OUTPUT_FILE}" ]; then
     cp "${DEFAULT_OUTPUT_FILE}" "${OUTPUT_FILE}"
-else
+elif [ ! -f "${OUTPUT_FILE}" ]; then
     echo "ERROR: Liquibase no generó ningún archivo SQL en la salida esperada."
     exit 1
 fi
+
+# Verificación: el SQL debe contener al menos un changeset. Un fichero sin
+# changesets suele indicar que había estado offline previo o que el changelog
+# no se resolvió correctamente.
+if ! grep -q "Changeset " "${OUTPUT_FILE}"; then
+    echo "ERROR: El SQL generado no contiene ningún changeset: ${OUTPUT_FILE}"
+    echo "       Revise el changelog (${CHANGELOG_FILE}) y que no exista estado"
+    echo "       offline previo en ${OFFLINE_STATE_FILE}."
+    exit 1
+fi
+
+# Limpieza del estado offline regenerado por Liquibase durante updateSQL. Es un
+# artefacto de ejecución que no debe versionarse ni condicionar ejecuciones
+# posteriores.
+rm -f "${OFFLINE_STATE_FILE}"
 
 echo ""
 echo "[OK] SQL generado correctamente."
