@@ -340,3 +340,6 @@ Thumbs.db
 .serena/logs/**/*.log
 .playwright-mcp/*.log
 .playwright-mcp/*.yml
+
+# Liquibase offline state (artefacto de updateSQL en modo offline)
+databasechangelog.csv
