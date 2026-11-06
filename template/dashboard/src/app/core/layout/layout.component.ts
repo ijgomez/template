@@ -132,7 +132,7 @@ export class LayoutComponent implements OnInit {
       labelKey: r.name,
       icon: 'file-earmark-text',
       route: `/reports/${r.id}`,
-      actions: ['REPORT_EXECUTE'],
+      actions: ['REPORT_READ'],
       isRawLabel: true,
     }));
 
@@ -146,7 +146,7 @@ export class LayoutComponent implements OnInit {
       {
         labelKey: 'menu.reports',
         icon: 'file-earmark-bar-graph',
-        actions: ['REPORT_EXECUTE'],
+        actions: ['REPORT_READ'],
         children: reportChildren.length > 0 ? reportChildren : undefined,
         route: reportChildren.length === 0 ? '/reports' : undefined,
       },
@@ -259,7 +259,7 @@ export class LayoutComponent implements OnInit {
     }
 
     // Load user's assigned reports for sidebar navigation
-    if (this.authService.hasAction('REPORT_EXECUTE')) {
+    if (this.authService.hasAction('REPORT_READ')) {
       this.reportService.findUserReports().subscribe({
         next: (reports) => this.userReports.set(reports),
         error: () => { /* Sidebar will show "Informes" without children */ },

@@ -84,23 +84,46 @@ class ReportServiceTest {
     }
 
     @Test
-    @DisplayName("getFilters: existing report returns filter definitions (empty placeholder)")
-    void getFilters_existingReport_returnsFilters() {
+    @DisplayName("getFilters: report assigned to the user returns filter definitions (empty placeholder)")
+    void getFilters_assignedReport_returnsFilters() {
         Long reportId = 10L;
-        when(reportRepository.existsById(reportId)).thenReturn(true);
+        Long userId = 1L;
+        Report report = createReport(reportId, "Sales Report", "Monthly sales");
+        User user = new User();
+        user.setId(userId);
+        User2Report ur = new User2Report(user, report);
 
-        var filters = reportService.getFilters(reportId);
+        when(reportRepository.existsById(reportId)).thenReturn(true);
+        when(user2ReportRepository.findByIdUserId(userId)).thenReturn(List.of(ur));
+
+        var filters = reportService.getFilters(reportId, userId);
 
         assertThat(filters).isEmpty();
+    }
+
+    @Test
+    @DisplayName("getFilters: report not assigned to the user throws AccessDeniedException")
+    void getFilters_unassignedReport_throwsAccessDeniedException() {
+        Long reportId = 10L;
+        Long userId = 1L;
+
+        when(reportRepository.existsById(reportId)).thenReturn(true);
+        when(user2ReportRepository.findByIdUserId(userId)).thenReturn(Collections.emptyList());
+
+        assertThatThrownBy(() -> reportService.getFilters(reportId, userId))
+                .isInstanceOf(AccessDeniedException.class)
+                .hasMessageContaining("does not have access")
+                .hasMessageContaining("10");
     }
 
     @Test
     @DisplayName("getFilters: non-existing report throws EntityNotFoundException")
     void getFilters_nonExistingReport_throwsEntityNotFoundException() {
         Long reportId = 999L;
+        Long userId = 1L;
         when(reportRepository.existsById(reportId)).thenReturn(false);
 
-        assertThatThrownBy(() -> reportService.getFilters(reportId))
+        assertThatThrownBy(() -> reportService.getFilters(reportId, userId))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining("Report")
                 .hasMessageContaining("999");
@@ -118,7 +141,6 @@ class ReportServiceTest {
 
         when(reportRepository.findById(reportId)).thenReturn(Optional.of(report));
         when(user2ReportRepository.findByIdUserId(userId)).thenReturn(List.of(ur));
-        when(reportRepository.existsById(reportId)).thenReturn(true);
 
         Pageable pageable = PageRequest.of(0, 10);
         Map<String, Object> filters = new HashMap<>();
@@ -176,7 +198,6 @@ class ReportServiceTest {
 
         when(reportRepository.findById(reportId)).thenReturn(Optional.of(report));
         when(user2ReportRepository.findByIdUserId(userId)).thenReturn(List.of(ur));
-        when(reportRepository.existsById(reportId)).thenReturn(true);
 
         Map<String, Object> filters = new HashMap<>();
 
@@ -199,7 +220,6 @@ class ReportServiceTest {
 
         when(reportRepository.findById(reportId)).thenReturn(Optional.of(report));
         when(user2ReportRepository.findByIdUserId(userId)).thenReturn(List.of(ur));
-        when(reportRepository.existsById(reportId)).thenReturn(true);
 
         Map<String, Object> filters = new HashMap<>();
 
@@ -222,7 +242,6 @@ class ReportServiceTest {
 
         when(reportRepository.findById(reportId)).thenReturn(Optional.of(report));
         when(user2ReportRepository.findByIdUserId(userId)).thenReturn(List.of(ur));
-        when(reportRepository.existsById(reportId)).thenReturn(true);
 
         Map<String, Object> filters = new HashMap<>();
 
@@ -243,7 +262,6 @@ class ReportServiceTest {
 
         when(reportRepository.findById(reportId)).thenReturn(Optional.of(report));
         when(user2ReportRepository.findByIdUserId(userId)).thenReturn(List.of(ur));
-        when(reportRepository.existsById(reportId)).thenReturn(true);
 
         Map<String, Object> filters = new HashMap<>();
 
@@ -368,7 +386,6 @@ class ReportServiceTest {
 
         when(reportRepository.findById(reportId)).thenReturn(Optional.of(report));
         when(user2ReportRepository.findByIdUserId(userId)).thenReturn(List.of(ur));
-        when(reportRepository.existsById(reportId)).thenReturn(true);
 
         byte[] result = reportService.export(reportId, userId, new HashMap<>(), ExportFormat.CSV);
 
@@ -389,7 +406,6 @@ class ReportServiceTest {
 
         when(reportRepository.findById(reportId)).thenReturn(Optional.of(report));
         when(user2ReportRepository.findByIdUserId(userId)).thenReturn(List.of(ur));
-        when(reportRepository.existsById(reportId)).thenReturn(true);
 
         byte[] result = reportService.export(reportId, userId, new HashMap<>(), ExportFormat.TXT);
 

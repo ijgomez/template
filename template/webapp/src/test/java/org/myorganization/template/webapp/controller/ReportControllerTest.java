@@ -89,13 +89,16 @@ class ReportControllerTest {
     }
 
     @Test
-    @DisplayName("getFilters: returns filter definitions for a report")
+    @DisplayName("getFilters: returns filter definitions for a report assigned to the user")
     void getFilters_shouldReturnFilterDefinitions() {
+        setAuthenticatedUser("testuser");
+        mockUserLookup("testuser", 1L);
+
         List<ReportFilterDTO> filters = List.of(
                 new ReportFilterDTO("startDate", "DATE", true),
                 new ReportFilterDTO("category", "STRING", false)
         );
-        when(reportService.getFilters(1L)).thenReturn(filters);
+        when(reportService.getFilters(1L, 1L)).thenReturn(filters);
 
         ResponseEntity<List<ReportFilterDTO>> response = reportController.getFilters(1L);
 
@@ -103,15 +106,32 @@ class ReportControllerTest {
         assertThat(response.getBody()).isNotNull().hasSize(2);
         assertThat(response.getBody().get(0).name()).isEqualTo("startDate");
         assertThat(response.getBody().get(0).required()).isTrue();
+        verify(reportService).getFilters(1L, 1L);
     }
 
     @Test
     @DisplayName("getFilters: throws EntityNotFoundException when report does not exist")
     void getFilters_reportNotFound_shouldThrowEntityNotFoundException() {
-        when(reportService.getFilters(99L)).thenThrow(new EntityNotFoundException("Report", 99L));
+        setAuthenticatedUser("testuser");
+        mockUserLookup("testuser", 1L);
+
+        when(reportService.getFilters(99L, 1L)).thenThrow(new EntityNotFoundException("Report", 99L));
 
         assertThatThrownBy(() -> reportController.getFilters(99L))
                 .isInstanceOf(EntityNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("getFilters: throws AccessDeniedException when the report is not assigned to the user")
+    void getFilters_noAccess_shouldThrowAccessDeniedException() {
+        setAuthenticatedUser("testuser");
+        mockUserLookup("testuser", 1L);
+
+        when(reportService.getFilters(eq(5L), eq(1L)))
+                .thenThrow(new AccessDeniedException("User does not have access to report with id: 5"));
+
+        assertThatThrownBy(() -> reportController.getFilters(5L))
+                .isInstanceOf(AccessDeniedException.class);
     }
 
     @Test

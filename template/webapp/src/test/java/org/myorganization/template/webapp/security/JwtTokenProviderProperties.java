@@ -18,6 +18,7 @@ class JwtTokenProviderProperties {
 
     private static final List<String> ALL_ACTION_CODES = List.of(
             "DASHBOARD_READ",
+            "REPORT_READ",
             "REPORT_EXECUTE",
             "INTERFACES_READ",
             "USER_READ",

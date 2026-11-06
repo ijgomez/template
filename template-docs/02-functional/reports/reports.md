@@ -5,7 +5,7 @@ Documentación funcional y técnica del módulo de Informes. Permite a los usuar
 - **Ruta principal (ejecución):** `/reports/:id` (carga `ReportListComponent`).
 - **Componente reutilizable:** `TpReportSelectedListComponent` (`<tp-report-selected-list>`), usado en formularios de mantenimiento de usuarios.
 - **Endpoint backend base:** `/api/v1/reports` (`ReportController`).
-- **Acceso:** requiere sesión y la autoridad `REPORT_EXECUTE`; además, cada `execute`/`export` valida que el usuario tenga el informe asignado vía `user2report`.
+- **Acceso:** requiere sesión. El módulo y el catálogo (menú, `GET /api/v1/reports/**`) exigen `REPORT_READ`; ejecutar o exportar (`POST /api/v1/reports/**`) requiere además `REPORT_EXECUTE`. La visibilidad de cada informe en el menú y las operaciones `/{id}/filters`, `execute` y `export` validan que el usuario tenga el informe asignado vía `user2report`.
 
 ---
 
@@ -80,11 +80,22 @@ Identificadores locales: `RF-RPT-*` (funcionales) y `RNF-RPT-*` (no funcionales)
 - AC5.6: Confirmar modal sobreescribe el valor CVA con los IDs seleccionados.
 - AC5.7: Cualquier cambio dispara `onTouched()` y `onChange()`.
 
+#### RF-RPT-6: Control de acceso por usuario en el catálogo y los filtros
+
+**Descripción:** la lectura del módulo de informes se separa de su ejecución. El acceso al catálogo (`/all`, `/search`) y a la definición de filtros (`/{id}/filters`), la visibilidad en el menú lateral y la ejecución/exportación quedan restringidos al usuario autenticado y a los informes que tenga asignados.
+
+**Criterios de aceptación:**
+
+- AC6.1: El acceso al módulo y al catálogo (`GET /api/v1/reports/**`) exige la autoridad `REPORT_READ`; ejecutar o exportar (`POST /api/v1/reports/**`) exige `REPORT_EXECUTE`.
+- AC6.2: `GET /api/v1/reports` devuelve únicamente los informes asignados al usuario (`user2report`).
+- AC6.3: `GET /api/v1/reports/{id}/filters` valida la asignación del informe al usuario y responde `403 Forbidden` (`AccessDeniedException`) si no está asignado.
+- AC6.4: El menú lateral solo muestra los informes asignados al usuario; la sección requiere `REPORT_READ`.
+
 ### 1.2. Requisitos no funcionales
 
 - **RNF-RPT-1 (Autorización):**
-  - `/api/v1/reports/**` requiere autoridad `REPORT_EXECUTE` (definida en `SecurityConfig.java`, línea 131).
-  - `execute` y `export` validan además la asignación vía `user2report` → `AccessDeniedException` si no existe.
+  - `GET /api/v1/reports/**` requiere autoridad `REPORT_READ` y `POST /api/v1/reports/**` requiere `REPORT_EXECUTE` (definidas en `SecurityConfig.java`).
+  - `execute`, `export` y `getFilters` validan además la asignación vía `user2report` → `AccessDeniedException` si no existe.
 - **RNF-RPT-2 (Integridad de filtros):** doble validación (HTML5 required en formulario + `validateMandatoryFilters` backend) antes de consultar datos.
 - **RNF-RPT-3 (Paginación servidor):** resultados, búsqueda modal y ejecuciones usan siempre `Pageable`; no se emula paginación en cliente.
 - **RNF-RPT-4 (i18n):** textos de la pantalla bajo claves `reports.*`, `common.*` y `selected-reports.*`.
@@ -94,6 +105,7 @@ Identificadores locales: `RF-RPT-*` (funcionales) y `RNF-RPT-*` (no funcionales)
   - CSV UTF-8 sin BOM; campos con `,`, `"` o `\n` se entrecomillan y doblan comillas internas.
   - TXT UTF-8 con cabecera y separador `---`.
   - PDF y XLSX reservados para integraciones reales (placeholder con `ReportExportException`).
+- **RNF-RPT-8 (Mínimo privilegio):** la lectura del catálogo se separa de la ejecución mediante la acción `REPORT_READ`, de modo que un usuario con permiso de ejecución no pueda enumerar informes ni definiciones de filtros que no le han sido asignados (SEC-08).
 
 ---
 
@@ -223,7 +235,7 @@ sequenceDiagram
 | Backend  | `ReportRepository` y `User2ReportRepository` | Acceso a datos para informes y relaciones usuario–informe.                       |
 | Domain   | `Report`                                     | Entidad principal con metadatos del informe.                                     |
 | Domain   | `User2Report`                                | Relación N:M entre usuarios e informes.                                          |
-| Security | `SecurityConfig`                             | Regla `/api/v1/reports/**` requiere `REPORT_EXECUTE`.                            |
+| Security | `SecurityConfig`                             | `GET /api/v1/reports/**` requiere `REPORT_READ`; `POST` requiere `REPORT_EXECUTE`. |
 
 ### 3.2. Modelos de datos
 
@@ -298,14 +310,17 @@ public class User2Report {
 | `GET`       | `/api/v1/reports`                          | Lista informes asignados al usuario autenticado (vía `user2report`)                                    |
 | `GET`       | `/api/v1/reports/all`                      | Todos los informes (administración y carga de caché en CVA)                                            |
 | `GET`       | `/api/v1/reports/search?name=&page=&size=` | Búsqueda paginada servidor                                                                             |
-| `GET`       | `/api/v1/reports/{id}/filters`             | Definición de filtros de un informe                                                                    |
+| `GET`       | `/api/v1/reports/{id}/filters`             | Definición de filtros de un informe (valida la asignación del usuario; 403 si no está asignado)        |
 | `POST`      | `/api/v1/reports/{id}/execute?page=&size=` | Ejecución paginada servidor; body: `Map<String,Object>` de filtros                                     |
 | `POST`      | `/api/v1/reports/{id}/export/{format}`     | Exportación; body: mismos filtros; respuesta `application/octet` con `Content-Disposition: attachment` |
 
+Autorización (SEC-08): todas las rutas `GET /api/v1/reports/**` exigen `REPORT_READ` y todas las `POST /api/v1/reports/**` exigen `REPORT_EXECUTE`. `/{id}/filters`, `execute` y `export` requieren además que el informe esté asignado al usuario (`user2report`); de lo contrario responden `403 Forbidden`.
+
 ### 3.4. Validaciones
 
-- `ReportService.validateUserAccess(userId, reportId)`: busca en `user2report`; si no `AccessDeniedException("User does not have access to report with id: ...")`.
-- `ReportService.validateMandatoryFilters(reportId, filters)`: itera `getFilters` y si falta alguno `required=true` → `ValidationException("Missing mandatory filters: a, b")`.
+- `ReportService.validateUserAccess(userId, reportId)`: busca en `user2report`; si no hay asignación lanza `AccessDeniedException("User does not have access to report with id: ...")`. Se invoca desde `getFilters`, `execute` y `export` (SEC-08).
+- `ReportService.getFilters(reportId, userId)`: comprueba la existencia del informe (`EntityNotFoundException` / 404) y valida la asignación al usuario antes de devolver la definición de filtros.
+- `ReportService.validateMandatoryFilters(reportId, filters)`: itera las definiciones de filtros (helper privado `loadFilterDefinitions`) y si falta alguno `required=true` → `ValidationException("Missing mandatory filters: a, b")`.
 - HTML5 `required` en los inputs del formulario frontend refuerza la validación cliente.
 
 ### 3.5. Exportación
@@ -323,10 +338,11 @@ public class User2Report {
 
 | Ubicación                                                                                          | Alcance                                                                                                                                                                  |
 |----------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `core/src/test/java/org/myorganization/template/core/service/ReportServiceTest.java`               | `findByUser`, `findAll`, `findAll(name, pageable)`, `getFilters`, `execute` (control de acceso y filtros obligatorios), `export` (CSV/TXT OK, PDF/XLSX no implementados) |
-| `webapp/src/test/java/org/myorganization/template/webapp/controller/ReportControllerTest.java`     | Endpoints `/all`, `/search`, `/filters`, `/execute`, `/export/*` con validación de estados 200, 403 y 404                                                                |
-| `ws/src/test/java/org/myorganization/template/ws/security/AuthorizationEnforcementProperties.java` | `Property 5`: verificación de 403 Forbidden en `/api/v1/reports/**` sin `REPORT_EXECUTE`                                                                                 |
-| `ws/src/test/java/org/myorganization/template/ws/security/JwtTokenProvider*Test.java`              | Verificación de claims y autorización con acción `REPORT_EXECUTE`                                                                                                        |
+| `core/src/test/java/org/myorganization/template/core/service/ReportServiceTest.java`               | `findByUser`, `findAll`, `findAll(name, pageable)`, `getFilters` (asignación, `AccessDeniedException` y `EntityNotFoundException`), `execute` (control de acceso y filtros obligatorios), `export` (CSV/TXT OK, PDF/XLSX no implementados) |
+| `webapp/src/test/java/org/myorganization/template/webapp/controller/ReportControllerTest.java`     | Endpoints `/all`, `/search`, `/filters` (con usuario y `403` si no hay acceso), `/execute`, `/export/*` con validación de estados 200, 403 y 404                          |
+| `webapp/src/test/java/org/myorganization/template/webapp/security/AuthorizationEnforcementProperties.java` | `Property 5`: 403 Forbidden en `/api/v1/reports/**` GET sin `REPORT_READ` y en POST sin `REPORT_EXECUTE` (SEC-08)                                                  |
+| `webapp/src/test/java/org/myorganization/template/webapp/integration/ReportAccessIntegrationTest.java` | Integración (Testcontainers + PostgreSQL): catálogo (`/all`, `/search`) con/sin `REPORT_READ`, filtros con/sin asignación y ejecución con/sin `REPORT_EXECUTE`                                             |
+| `webapp/src/test/java/org/myorganization/template/webapp/security/JwtTokenProvider*Test.java`      | Verificación de claims y autorización con acciones de informes                                                                                                          |
 
 ### 4.2. Cobertura unitaria (frontend)
 
@@ -347,6 +363,11 @@ Ubicación: `dashboard/e2e/tests/reports/reports.spec.ts` (Page Object en `dashb
 | Cambio de tamaño de página | Cambiar selector de tamaño de página (p. ej. a 5)                         | Dispara nueva petición paginada al servidor y actualiza la tabla                                                              |
 | Exportación CSV y TXT      | Exportar a CSV y TXT                                                      | El navegador descarga los ficheros con el formato `Informe de actividad mensual_YYYY-MM-DD.csv` y `.txt`                      |
 | Navegación lateral         | Desplegar menú lateral "Informes" y pulsar "Informe de actividad mensual" | Navega a `/reports/1` y carga el informe correspondiente                                                                      |
+| Control de acceso (SEC-08) | Sin `REPORT_READ`: `GET /reports/all` y `/reports/search` con solo `REPORT_EXECUTE` | `403 Forbidden`                                                                                                    |
+| Control de acceso (SEC-08) | Con `REPORT_READ`: `GET /reports/all` y `/reports/search`                 | `200 OK`                                                                                                                      |
+| Control de acceso (SEC-08) | `GET /reports/{id}/filters` con `REPORT_READ` sin asignación / con asignación | `403 Forbidden` / `200 OK`                                                                                                 |
+| Control de acceso (SEC-08) | `POST /reports/1/execute` con solo `REPORT_READ` / con `REPORT_EXECUTE` + asignación | `403 Forbidden` / `200 OK`                                                                                          |
+| Control de acceso (SEC-08) | Menú lateral con `REPORT_READ` sin informes / con el informe `1` asignado | Sección visible sin hijos / el informe "Informe de actividad mensual" aparece como entrada                              |
 
 ### 4.4. Datos de prueba
 
@@ -355,14 +376,17 @@ Los datos semilla para informes y asignaciones al usuario administrador se encue
 ### 4.5. Dependencias de ejecución
 
 - Base de datos con tabla `report` y `user2report` pobladas (seed `20250117-seed-local-reports.xml`).
-- JWT con autoridad `REPORT_EXECUTE` para acceder a la ruta y endpoints.
+- JWT con autoridad `REPORT_READ` para acceder a la ruta y al catálogo, y `REPORT_EXECUTE` para ejecutar/exportar.
 - Backend de integración levantado (perfil `test`) para las llamadas a `/api/v1/reports/**`.
 
 ### 4.6. Casos clave (matriz)
 
 | Caso                                                       | Resultado esperado                                                            |
 |------------------------------------------------------------|-------------------------------------------------------------------------------|
-| Usuario sin `REPORT_EXECUTE` accede a `/api/v1/reports/**` | 403 Forbidden                                                                 |
+| Usuario sin `REPORT_READ` accede a `GET /api/v1/reports/**` (`/all`, `/search`) | 403 Forbidden                                                       |
+| Usuario con `REPORT_READ` accede a `GET /api/v1/reports/**` | 200 OK                                                                       |
+| Usuario sin `REPORT_EXECUTE` ejecuta/exporta (`POST`)      | 403 Forbidden                                                                 |
+| Usuario sin `user2report` consulta `GET /{id}/filters`     | `AccessDeniedException` / 403                                                 |
 | Usuario sin `user2report` ejecuta `POST /{id}/execute`     | `AccessDeniedException` / 403                                                 |
 | Faltan filtros obligatorios en `execute`                   | `ValidationException` (filtros faltantes)                                     |
 | Ejecutar informe                                           | 200 + `ReportResult {columns, rows, totalElements, totalPages, size, number}` |
@@ -378,7 +402,7 @@ Los datos semilla para informes y asignaciones al usuario administrador se encue
 
 Catálogo de test cases derivado de los requisitos funcionales de informes (`RF-RPT-*`, `RNF-RPT-*`). Para el marco global de pruebas, variables (`{{BASE_URL_UI}}`, `{{BASE_URL_API}}`, `{{ADMIN_USER}}`, `{{TODAY}}`) y modelo de ejecución, consultar el [Plan Maestro de Pruebas](../../specification/test-case.md).
 
-Precondición del ciclo: usuario con `REPORT_EXECUTE` y al menos un informe asignado vía `user2report` (seed `20250117-seed-local-reports.xml`); el informe de referencia es el de id `1` ("Informe de actividad mensual"). Cada caso incluye su propio login con `{{ADMIN_USER}}`.
+Precondición del ciclo: usuario con `REPORT_READ` (y `REPORT_EXECUTE` para ejecutar/exportar) y al menos un informe asignado vía `user2report` (seed `20250117-seed-local-reports.xml`); el informe de referencia es el de id `1` ("Informe de actividad mensual"). Cada caso incluye su propio login con `{{ADMIN_USER}}`.
 
 #### TC-RPT-01 · Carga de metadatos y filtros sin ejecución automática
 
@@ -470,16 +494,18 @@ Precondición del ciclo: usuario con `REPORT_EXECUTE` y al menos un informe asig
 |---|------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | 1 | Navegar a `{{BASE_URL_UI}}/reports/1`, ejecutar el informe y pulsar `report-export-pdf` (o `report-export-xlsx`) | El backend lanza `ReportExportException` ("Export format PDF/XLSX not yet implemented"); el frontend muestra `notification.export.error` y no descarga fichero |
 
-#### TC-RPT-09 · Acceso sin autoridad REPORT_EXECUTE
+#### TC-RPT-09 · Acceso sin autoridad al módulo de informes
 
-- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Seguridad, API · **Traza:** RNF-RPT-1 · **Independiente:** Sí · **Dependencias:** requiere disponer de un token de un usuario **sin** `REPORT_EXECUTE`
-- **Setup:** vía API. Obtener un access token de un usuario sin la autoridad `REPORT_EXECUTE` (crear uno con un perfil sin esa acción, o usar uno existente del entorno).
-- **Teardown:** si se creó un usuario para la prueba, eliminarlo.
+- **Versión:** 1.1 · **Prioridad:** Alta · **Tipo:** Seguridad, API · **Traza:** RNF-RPT-1 · **Independiente:** Sí · **Dependencias:** requiere disponer de tokens de usuarios **sin** `REPORT_READ` y **sin** `REPORT_EXECUTE`
+- **Setup:** vía API. Obtener (a) un access token sin `REPORT_READ` (puede tener otras acciones) y (b) un access token con `REPORT_READ` pero sin `REPORT_EXECUTE`.
+- **Teardown:** si se crearon usuarios para la prueba, eliminarlos.
 
-| # | Acción                                                                  | Resultado esperado |
-|---|-------------------------------------------------------------------------|--------------------|
-| 1 | `GET {{BASE_URL_API}}/api/v1/reports` con el token sin `REPORT_EXECUTE` | 403 Forbidden      |
-| 2 | `POST {{BASE_URL_API}}/api/v1/reports/1/execute` con el mismo token     | 403 Forbidden      |
+| # | Acción                                                                   | Resultado esperado |
+|---|--------------------------------------------------------------------------|--------------------|
+| 1 | `GET {{BASE_URL_API}}/api/v1/reports/all` con el token (a)               | 403 Forbidden      |
+| 2 | `GET {{BASE_URL_API}}/api/v1/reports/search` con el token (a)            | 403 Forbidden      |
+| 3 | `POST {{BASE_URL_API}}/api/v1/reports/1/execute` con el token (b)        | 403 Forbidden      |
+| 4 | `POST {{BASE_URL_API}}/api/v1/reports/1/export/CSV` con el token (b)     | 403 Forbidden      |
 
 #### TC-RPT-10 · Componente de selección múltiple de informes (CVA)
 
@@ -492,6 +518,21 @@ Precondición del ciclo: usuario con `REPORT_EXECUTE` y al menos un informe asig
 | 1 | Abrir el modal de selección de informes con *Añadir*                    | Se abre el modal con búsqueda servidor (`GET /api/v1/reports/search?name=&page=&size=`) y paginación                               |
 | 2 | Escribir un nombre en el buscador del modal y usar "Seleccionar página" | Se marcan/desmarcan los IDs de los informes de la página actual                                                                    |
 | 3 | Confirmar el modal (*Aceptar*)                                          | El valor del CVA (`number[]`) se sobrescribe con los IDs seleccionados; se emiten `onChange()` y `onTouched()`; el modal se cierra |
+
+#### TC-RPT-11 · Control de acceso por usuario al catálogo, filtros y menú (SEC-08)
+
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Seguridad, API, E2E · **Traza:** RF-RPT-6 (AC6.1–AC6.4), RNF-RPT-1, RNF-RPT-8 · **Independiente:** Sí · **Dependencias:** requiere tokens de usuarios con perfiles específicos (`REPORT_READ` con/sin informe asignado, `REPORT_EXECUTE` sin `REPORT_READ`)
+- **Setup:** vía API con `{{ADMIN_USER}}`. Preparar: (a) perfil con `REPORT_READ` y usuario sin informes asignados; (b) usuario con `REPORT_READ` y el informe `1` asignado (`reportIds: [1]`); (c) usuario con `REPORT_EXECUTE` y el informe `1` asignado.
+- **Teardown:** eliminar los usuarios y perfiles creados; logout.
+
+| # | Acción                                                                                          | Resultado esperado                                                                                  |
+|---|-------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------|
+| 1 | `GET /api/v1/reports/all` y `/search` con el token (c) (solo `REPORT_EXECUTE`)                  | `403 Forbidden` (la lectura del catálogo exige `REPORT_READ`)                                       |
+| 2 | `GET /api/v1/reports/all` y `/search` con el token (a)                                          | `200 OK`                                                                                            |
+| 3 | `GET /api/v1/reports` con el token (b) / con el token (a)                                       | Devuelve el informe `1` / no devuelve informes                                                      |
+| 4 | `GET /api/v1/reports/1/filters` con el token (a) / con el token (b)                             | `403 Forbidden` / `200 OK`                                                                          |
+| 5 | `POST /api/v1/reports/1/execute` con el token (b) / con el token (c)                            | `403 Forbidden` (falta `REPORT_EXECUTE`) / `200 OK`                                                 |
+| 6 | Menú lateral con el token (a) / con el token (b)                                                | La sección "Informes" aparece sin hijos / aparece el informe "Informe de actividad mensual"         |
 
 ---
 

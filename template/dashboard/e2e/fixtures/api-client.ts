@@ -104,6 +104,7 @@ export async function apiCreateUser(
     firstName?: string;
     lastName?: string;
     profileId: number;
+    reportIds?: number[];
   },
 ): Promise<ApiUser> {
   const response = await request.post(`${API_URL}${USERS_PATH}`, {

@@ -20,7 +20,7 @@ export const routes: Routes = [
         path: 'reports',
         loadChildren: () => import('./features/reports/reports.routes').then((m) => m.REPORTS_ROUTES),
         canActivate: [actionGuard],
-        data: { actions: ['REPORT_EXECUTE'] },
+        data: { actions: ['REPORT_READ'] },
       },
       {
         path: 'interfaces',

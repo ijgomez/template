@@ -133,7 +133,8 @@ El código de cada acción sigue el formato `<IDENTIFICADOR>_<SUFIJO>`, donde el
 | Código                     | Descripción                                        |
 |----------------------------|----------------------------------------------------|
 | `DASHBOARD_READ`           | Visualizar el panel principal (Dashboard)          |
-| `REPORT_EXECUTE`           | Ejecutar informes                                  |
+| `REPORT_READ`              | Acceder al módulo de Informes (catálogo y filtros) |
+| `REPORT_EXECUTE`           | Ejecutar y exportar informes                       |
 | `INTERFACES_READ`          | Acceder al módulo de Interfaces (Monitor y Config) |
 | `USER_READ`                | Consultar usuarios                                 |
 | `USER_WRITE`               | Crear, editar o eliminar usuarios                  |
@@ -151,7 +152,7 @@ El código de cada acción sigue el formato `<IDENTIFICADOR>_<SUFIJO>`, donde el
 
 Las acciones gobiernan qué opciones de menú ve cada usuario en el frontend (ver el mapeo menú → acción en [navigation.md](../frontend/navigation.md)):
 
-1. **Informes**: todos los informes comparten la misma acción (`REPORT_EXECUTE`). La visibilidad de cada informe individual depende de la relación `user2report` del usuario, pero el acceso a la sección requiere esta acción.
+1. **Informes**: el acceso a la sección y al catálogo requiere `REPORT_READ` (menú, `GET /api/v1/reports/**`), mientras que ejecutar o exportar requiere además `REPORT_EXECUTE`. La visibilidad de cada informe individual depende de la relación `user2report` del usuario: solo se muestran y pueden consultarse (`/{id}/filters`) los informes asignados.
 
 2. **Interfaces**: toda la sección (Monitor y Configuración) se gobierna con una única acción (`INTERFACES_READ`).
 

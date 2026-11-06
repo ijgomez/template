@@ -86,6 +86,7 @@ function createComponent(userActions: string[]): LayoutComponent {
 describe('LayoutComponent - Property 6: Navigation visibility matches user actions', () => {
   const ALL_ACTIONS = [
     'DASHBOARD_READ',
+    'REPORT_READ',
     'REPORT_EXECUTE',
     'INTERFACES_READ',
     'USER_READ',

@@ -87,13 +87,16 @@ public class ReportController {
 
     /**
      * Retrieves filter definitions for a given report.
+     * <p>
+     * The report must be assigned to the authenticated user (SEC-08).
      *
      * @param id the report identifier
      * @return 200 OK with the list of filter definitions
      */
     @GetMapping("/{id}/filters")
     public ResponseEntity<List<ReportFilterDTO>> getFilters(@PathVariable Long id) {
-        List<ReportFilterDTO> filters = reportService.getFilters(id);
+        Long userId = getAuthenticatedUserId();
+        List<ReportFilterDTO> filters = reportService.getFilters(id, userId);
         return ResponseEntity.ok(filters);
     }
 

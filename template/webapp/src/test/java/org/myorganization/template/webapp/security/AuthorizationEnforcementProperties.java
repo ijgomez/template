@@ -46,7 +46,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class AuthorizationEnforcementProperties {
 
     private static final List<String> ALL_ACTIONS = List.of(
-            "DASHBOARD_READ", "REPORT_EXECUTE", "INTERFACES_READ",
+            "DASHBOARD_READ", "REPORT_READ", "REPORT_EXECUTE", "INTERFACES_READ",
             "USER_READ", "USER_WRITE", "PROFILE_READ", "PROFILE_WRITE",
             "ACTION_READ", "ACTION_WRITE", "SYSTEM_PARAMETER_READ", "SYSTEM_PARAMETER_WRITE",
             "SYSTEM_LOG_READ", "CLUSTER_NODE_READ", "CLUSTER_NODE_WRITE",
@@ -67,7 +67,7 @@ class AuthorizationEnforcementProperties {
             new EndpointActionMapping("/api/v1/administration/cluster/nodes", "GET",
                     Set.of("CLUSTER_NODE_READ", "CLUSTER_NODE_WRITE")),
             new EndpointActionMapping("/api/v1/reports", "GET",
-                    Set.of("REPORT_EXECUTE"))
+                    Set.of("REPORT_READ"))
     );
 
     private static final String JWT_SECRET = "test-secret-key-for-property-testing-minimum-32-characters";
@@ -79,7 +79,7 @@ class AuthorizationEnforcementProperties {
             "/api/v1/administration/parameters", Set.of("SYSTEM_PARAMETER_READ", "SYSTEM_PARAMETER_WRITE"),
             "/api/v1/administration/audit", Set.of("SYSTEM_LOG_READ"),
             "/api/v1/administration/cluster/nodes", Set.of("CLUSTER_NODE_READ", "CLUSTER_NODE_WRITE"),
-            "/api/v1/reports", Set.of("REPORT_EXECUTE")
+            "/api/v1/reports", Set.of("REPORT_READ")
     );
 
     private final JwtTokenProvider tokenProvider = new JwtTokenProvider(JWT_SECRET, 900000L);
@@ -152,6 +152,23 @@ class AuthorizationEnforcementProperties {
                 .andExpect(status().isForbidden());
     }
 
+    /**
+     * Property 5 (report catalog): For any user without REPORT_READ action,
+     * accessing the report module/catalog (GET) returns 403 (SEC-08).
+     */
+    @Property(tries = 100)
+    void anyUserWithoutReportRead_shouldReceive403ForCatalogEndpoints(
+            @ForAll("actionsWithoutReportRead") List<String> userActions) throws Exception {
+
+        String token = tokenProvider.generateAccessToken("testuser", "TestProfile", userActions);
+        MockMvc mockMvc = buildMockMvc();
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/reports")
+                        .header("Authorization", "Bearer " + token)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden());
+    }
+
     // =========================================================================
     // Providers
     // =========================================================================
@@ -193,6 +210,14 @@ class AuthorizationEnforcementProperties {
     Arbitrary<List<String>> actionsWithoutReportExecute() {
         List<String> available = ALL_ACTIONS.stream()
                 .filter(a -> !"REPORT_EXECUTE".equals(a))
+                .toList();
+        return Arbitraries.subsetOf(available).map(ArrayList::new);
+    }
+
+    @Provide
+    Arbitrary<List<String>> actionsWithoutReportRead() {
+        List<String> available = ALL_ACTIONS.stream()
+                .filter(a -> !"REPORT_READ".equals(a))
                 .toList();
         return Arbitraries.subsetOf(available).map(ArrayList::new);
     }
@@ -249,7 +274,7 @@ class AuthorizationEnforcementProperties {
                     .map(a -> a.getAuthority())
                     .collect(Collectors.toSet());
 
-            Set<String> requiredActions = findRequiredActions(path);
+            Set<String> requiredActions = findRequiredActions(path, request.getMethod());
 
             if (requiredActions != null && !requiredActions.isEmpty()) {
                 boolean hasAccess = requiredActions.stream().anyMatch(userAuthorities::contains);
@@ -264,9 +289,11 @@ class AuthorizationEnforcementProperties {
             filterChain.doFilter(request, response);
         }
 
-        private Set<String> findRequiredActions(String path) {
+        private Set<String> findRequiredActions(String path, String method) {
             if (path.startsWith("/api/v1/reports")) {
-                return Set.of("REPORT_EXECUTE");
+                // SEC-08: reading the module/catalog uses REPORT_READ, whereas
+                // executing/exporting (POST) uses REPORT_EXECUTE.
+                return "GET".equals(method) ? Set.of("REPORT_READ") : Set.of("REPORT_EXECUTE");
             }
             for (Map.Entry<String, Set<String>> entry : PATH_TO_REQUIRED_ACTIONS.entrySet()) {
                 if (path.equals(entry.getKey()) || path.startsWith(entry.getKey() + "/")) {

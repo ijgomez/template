@@ -85,6 +85,7 @@ public class SecurityConfig {
     private static final String AUTHORITY_SYSTEM_PARAMETER_WRITE = "SYSTEM_PARAMETER_WRITE";
     private static final String AUTHORITY_SYSTEM_LOG_READ = "SYSTEM_LOG_READ";
     private static final String AUTHORITY_INTERFACES_READ = "INTERFACES_READ";
+    private static final String AUTHORITY_REPORT_READ = "REPORT_READ";
     private static final String AUTHORITY_REPORT_EXECUTE = "REPORT_EXECUTE";
 
     @Value("${cors.allowed-origins:http://localhost:4200}")
@@ -191,8 +192,10 @@ public class SecurityConfig {
                         // Cluster blocks: read only (CUD already denied above)
                         .requestMatchers(HttpMethod.GET, CLUSTER_BLOCKS_ALL_PATH).hasAuthority(AUTHORITY_CLUSTER_LOCK_READ)
 
-                        // Reports
-                        .requestMatchers(REPORTS_ALL_PATH).hasAuthority(AUTHORITY_REPORT_EXECUTE)
+                        // Reports: reading the module/catalog requires REPORT_READ,
+                        // executing/exporting requires REPORT_EXECUTE (SEC-08).
+                        .requestMatchers(HttpMethod.GET, REPORTS_ALL_PATH).hasAuthority(AUTHORITY_REPORT_READ)
+                        .requestMatchers(HttpMethod.POST, REPORTS_ALL_PATH).hasAuthority(AUTHORITY_REPORT_EXECUTE)
 
                         // Any other API request must be authenticated
                         .requestMatchers(API_ALL_PATH).authenticated()

@@ -84,21 +84,24 @@ public class ReportService {
     }
 
     /**
-     * Returns the filter definitions for a given report.
+     * Returns the filter definitions for a given report for the requesting user.
      * <p>
-     * This is a placeholder implementation that returns an empty list.
-     * Real implementations would query a report_filter table or external configuration.
+     * Validates that the report exists and that the user has it assigned before
+     * exposing its filter definitions (SEC-08), so a user cannot enumerate the
+     * filters of reports that were not granted to them.
      *
      * @param reportId the report identifier
+     * @param userId   the user requesting the filter definitions
      * @return list of filter definitions for the report
      * @throws EntityNotFoundException if the report does not exist
+     * @throws AccessDeniedException   if the user does not have the report assigned
      */
-    public List<ReportFilterDTO> getFilters(Long reportId) {
+    public List<ReportFilterDTO> getFilters(Long reportId, Long userId) {
         if (!reportRepository.existsById(reportId)) {
             throw new EntityNotFoundException("Report", reportId);
         }
-        // Placeholder: real implementations would query report filter definitions
-        return List.of();
+        validateUserAccess(userId, reportId);
+        return loadFilterDefinitions(reportId);
     }
 
     /**
@@ -186,7 +189,7 @@ public class ReportService {
      * @throws ValidationException if one or more mandatory filters are missing
      */
     void validateMandatoryFilters(Long reportId, Map<String, Object> filters) {
-        List<ReportFilterDTO> filterDefs = getFilters(reportId);
+        List<ReportFilterDTO> filterDefs = loadFilterDefinitions(reportId);
         List<String> missingFilters = filterDefs.stream()
                 .<String>mapMulti((def, consumer) -> {
                     if (def.required() && (filters == null || !filters.containsKey(def.name()) || filters.get(def.name()) == null)) {
@@ -198,6 +201,22 @@ public class ReportService {
         if (!missingFilters.isEmpty()) {
             throw new ValidationException("Missing mandatory filters: " + String.join(", ", missingFilters));
         }
+    }
+
+    /**
+     * Loads the filter definitions declared by a report.
+     * <p>
+     * Placeholder implementation returning an empty list; a real implementation
+     * would query a report_filter table or external configuration. Used both by
+     * {@link #getFilters(Long, Long)} (after access validation) and by
+     * {@link #validateMandatoryFilters(Long, Map)} (internal execution check).
+     *
+     * @param reportId the report identifier
+     * @return list of filter definitions for the report
+     */
+    private List<ReportFilterDTO> loadFilterDefinitions(Long reportId) {
+        // Placeholder: real implementations would query report filter definitions
+        return List.of();
     }
 
     private byte[] exportCsv(Report report) {

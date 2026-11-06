@@ -18,6 +18,7 @@ describe('LayoutComponent', () => {
         profile: 'ADMIN',
         actions: [
           'DASHBOARD_READ',
+          'REPORT_READ',
           'REPORT_EXECUTE',
           'INTERFACES_READ',
           'USER_READ',
@@ -39,6 +40,7 @@ describe('LayoutComponent', () => {
       hasAction: (actionCode: string) => {
         const actions = [
           'DASHBOARD_READ',
+          'REPORT_READ',
           'REPORT_EXECUTE',
           'INTERFACES_READ',
           'USER_READ',
@@ -319,7 +321,7 @@ describe('LayoutComponent', () => {
     const dashboardNav = compiled.querySelector('[data-testid="nav-menu.dashboard"]');
     expect(dashboardNav).toBeTruthy();
 
-    // Reports should NOT be visible (no REPORT_EXECUTE action)
+    // Reports should NOT be visible (no REPORT_READ action)
     const reportsNav = compiled.querySelector('[data-testid="nav-menu.reports"]');
     expect(reportsNav).toBeNull();
 
@@ -361,7 +363,7 @@ describe('LayoutComponent', () => {
 
   it('should hide menu items when the user lacks the required actions', () => {
     expect(component.isItemVisible({ labelKey: 'menu.dashboard', icon: 'speedometer2', actions: ['DASHBOARD_READ'] })).toBe(true);
-    expect(component.isItemVisible({ labelKey: 'menu.reports', icon: 'file-earmark-bar-graph', actions: ['REPORT_EXECUTE'] })).toBe(true);
+    expect(component.isItemVisible({ labelKey: 'menu.reports', icon: 'file-earmark-bar-graph', actions: ['REPORT_READ'] })).toBe(true);
     expect(component.isItemVisible({ labelKey: 'menu.hidden', icon: 'lock', actions: ['UNKNOWN_ACTION'] })).toBe(false);
   });
 

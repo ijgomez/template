@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!--
+        SEC-08: control de acceso por usuario en el módulo de informes.
+
+        Hasta ahora el catálogo de informes (GET /api/v1/reports/all y /search) y
+        la definición de filtros (GET /api/v1/reports/{id}/filters) se protegían
+        con REPORT_EXECUTE, de modo que cualquier usuario capaz de ejecutar
+        informes podía enumerar todo el catálogo. Se separa la lectura del
+        módulo/consulta del catálogo (REPORT_READ) de la ejecución/exportación
+        (REPORT_EXECUTE), y la definición de filtros valida además la asignación
+        del informe al usuario (ver SecurityConfig y ReportService).
+
+        Es un changeset NUEVO (no se modifica '20250115-seed-actions' porque ese
+        ya está aplicado en las bases de datos existentes y su checksum es
+        inmutable). Las semillas de perfil (local/test) reciben todas las acciones
+        mediante 'INSERT INTO profile2action SELECT ... FROM action', por lo que
+        obtienen REPORT_READ automáticamente.
+    -->
+
+    <changeSet id="20261106-seed-report-read-action" author="template" labels="v2.0.0">
+
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="action"/>
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM action WHERE code = 'REPORT_READ'</sqlCheck>
+        </preConditions>
+
+        <comment>Acción REPORT_READ para acceder al catálogo de informes (SEC-08)</comment>
+
+        <insert tableName="action">
+            <column name="id" valueSequenceNext="action_seq"/>
+            <column name="code" value="REPORT_READ"/>
+            <column name="type" value="READ"/>
+            <column name="name" value="Informes"/>
+            <column name="description" value="Acceder al catálogo de informes (menú y definición de filtros)"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="action">
+                <where>code = 'REPORT_READ'</where>
+            </delete>
+        </rollback>
+
+    </changeSet>
+
+</databaseChangeLog>

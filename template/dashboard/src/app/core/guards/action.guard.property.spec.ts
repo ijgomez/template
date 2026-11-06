@@ -22,6 +22,7 @@ function createRouteWithActions(actions: string[]): ActivatedRouteSnapshot {
 describe('actionGuard - Property 8: Action guard redirects unauthorized users', () => {
   const ALL_ACTIONS = [
     'DASHBOARD_READ',
+    'REPORT_READ',
     'REPORT_EXECUTE',
     'INTERFACES_READ',
     'USER_READ',
