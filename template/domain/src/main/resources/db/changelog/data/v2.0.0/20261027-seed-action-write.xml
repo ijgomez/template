@@ -31,7 +31,8 @@
             <column name="id" valueSequenceNext="action_seq"/>
             <column name="code" value="ACTION_WRITE"/>
             <column name="type" value="WRITE"/>
-            <column name="name" value="Editar acciones del sistema"/>
+            <column name="name" value="Administración > Seguridad > Acciones"/>
+            <column name="description" value="Editar acciones del sistema"/>
         </insert>
 
         <rollback>

@@ -18,98 +18,112 @@
             <column name="id" valueSequenceNext="action_seq"/>
             <column name="code" value="DASHBOARD_READ"/>
             <column name="type" value="READ"/>
-            <column name="name" value="Visualizar el panel principal (Dashboard)"/>
+            <column name="name" value="Dashboard"/>
+            <column name="description" value="Visualizar el panel principal (Dashboard)"/>
         </insert>
 
         <insert tableName="action">
             <column name="id" valueSequenceNext="action_seq"/>
             <column name="code" value="REPORT_EXECUTE"/>
             <column name="type" value="EXECUTE"/>
-            <column name="name" value="Ejecutar informes"/>
+            <column name="name" value="Informes"/>
+            <column name="description" value="Ejecutar informes"/>
         </insert>
 
         <insert tableName="action">
             <column name="id" valueSequenceNext="action_seq"/>
             <column name="code" value="INTERFACES_READ"/>
             <column name="type" value="READ"/>
-            <column name="name" value="Acceder al módulo de Interfaces"/>
+            <column name="name" value="Interfaces"/>
+            <column name="description" value="Acceder al módulo de Interfaces"/>
         </insert>
 
         <insert tableName="action">
             <column name="id" valueSequenceNext="action_seq"/>
             <column name="code" value="USER_READ"/>
             <column name="type" value="READ"/>
-            <column name="name" value="Consultar usuarios"/>
+            <column name="name" value="Administración > Seguridad > Usuarios"/>
+            <column name="description" value="Consultar usuarios"/>
         </insert>
 
         <insert tableName="action">
             <column name="id" valueSequenceNext="action_seq"/>
             <column name="code" value="USER_WRITE"/>
             <column name="type" value="WRITE"/>
-            <column name="name" value="Crear, editar o eliminar usuarios"/>
+            <column name="name" value="Administración > Seguridad > Usuarios"/>
+            <column name="description" value="Crear, editar o eliminar usuarios"/>
         </insert>
 
         <insert tableName="action">
             <column name="id" valueSequenceNext="action_seq"/>
             <column name="code" value="PROFILE_READ"/>
             <column name="type" value="READ"/>
-            <column name="name" value="Consultar perfiles"/>
+            <column name="name" value="Administración > Seguridad > Perfiles"/>
+            <column name="description" value="Consultar perfiles"/>
         </insert>
 
         <insert tableName="action">
             <column name="id" valueSequenceNext="action_seq"/>
             <column name="code" value="PROFILE_WRITE"/>
             <column name="type" value="WRITE"/>
-            <column name="name" value="Crear, editar o eliminar perfiles"/>
+            <column name="name" value="Administración > Seguridad > Perfiles"/>
+            <column name="description" value="Crear, editar o eliminar perfiles"/>
         </insert>
 
         <insert tableName="action">
             <column name="id" valueSequenceNext="action_seq"/>
             <column name="code" value="ACTION_READ"/>
             <column name="type" value="READ"/>
-            <column name="name" value="Consultar acciones del sistema"/>
+            <column name="name" value="Administración > Seguridad > Acciones"/>
+            <column name="description" value="Consultar acciones del sistema"/>
         </insert>
 
         <insert tableName="action">
             <column name="id" valueSequenceNext="action_seq"/>
             <column name="code" value="SYSTEM_PARAMETER_READ"/>
             <column name="type" value="READ"/>
-            <column name="name" value="Consultar parámetros del sistema"/>
+            <column name="name" value="Administración > Parámetros"/>
+            <column name="description" value="Consultar parámetros del sistema"/>
         </insert>
 
         <insert tableName="action">
             <column name="id" valueSequenceNext="action_seq"/>
             <column name="code" value="SYSTEM_PARAMETER_WRITE"/>
             <column name="type" value="WRITE"/>
-            <column name="name" value="Modificar parámetros del sistema"/>
+            <column name="name" value="Administración > Parámetros"/>
+            <column name="description" value="Modificar parámetros del sistema"/>
         </insert>
 
         <insert tableName="action">
             <column name="id" valueSequenceNext="action_seq"/>
             <column name="code" value="SYSTEM_LOG_READ"/>
             <column name="type" value="READ"/>
-            <column name="name" value="Consultar registros de auditoría"/>
+            <column name="name" value="Administración > Auditoría"/>
+            <column name="description" value="Consultar registros de auditoría"/>
         </insert>
 
         <insert tableName="action">
             <column name="id" valueSequenceNext="action_seq"/>
             <column name="code" value="CLUSTER_NODE_READ"/>
             <column name="type" value="READ"/>
-            <column name="name" value="Consultar nodos del clúster"/>
+            <column name="name" value="Administración > Cluster > Nodos"/>
+            <column name="description" value="Consultar nodos del clúster"/>
         </insert>
 
         <insert tableName="action">
             <column name="id" valueSequenceNext="action_seq"/>
             <column name="code" value="CLUSTER_NODE_WRITE"/>
             <column name="type" value="WRITE"/>
-            <column name="name" value="Modificar la configuración de nodos"/>
+            <column name="name" value="Administración > Cluster > Nodos"/>
+            <column name="description" value="Modificar la configuración de nodos"/>
         </insert>
 
         <insert tableName="action">
             <column name="id" valueSequenceNext="action_seq"/>
             <column name="code" value="CLUSTER_LOCK_READ"/>
             <column name="type" value="READ"/>
-            <column name="name" value="Consultar bloqueos del clúster"/>
+            <column name="name" value="Administración > Cluster > Bloqueos"/>
+            <column name="description" value="Consultar bloqueos del clúster"/>
         </insert>
 
         <rollback>

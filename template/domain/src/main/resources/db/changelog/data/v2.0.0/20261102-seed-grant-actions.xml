@@ -37,14 +37,16 @@
             <column name="id" valueSequenceNext="action_seq"/>
             <column name="code" value="PROFILE_GRANT"/>
             <column name="type" value="WRITE"/>
-            <column name="name" value="Conceder o revocar acciones de un perfil"/>
+            <column name="name" value="Administración > Seguridad > Perfiles"/>
+            <column name="description" value="Conceder o revocar acciones de un perfil"/>
         </insert>
 
         <insert tableName="action">
             <column name="id" valueSequenceNext="action_seq"/>
             <column name="code" value="USER_GRANT"/>
             <column name="type" value="WRITE"/>
-            <column name="name" value="Asignar o cambiar el perfil de un usuario"/>
+            <column name="name" value="Administración > Seguridad > Usuarios"/>
+            <column name="description" value="Asignar o cambiar el perfil de un usuario"/>
         </insert>
 
         <rollback>
