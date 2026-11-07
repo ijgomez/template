@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.myorganization.template.core.service.InterfaceService;
 import org.myorganization.template.domain.criteria.InterfaceCriteria;
 import org.myorganization.template.domain.criteria.InterfaceLogCriteria;
@@ -14,10 +15,12 @@ import org.myorganization.template.domain.enums.InterfaceLogStatus;
 import org.myorganization.template.domain.enums.InterfaceOperationType;
 import org.myorganization.template.domain.enums.InterfaceStatus;
 import org.myorganization.template.domain.exception.EntityNotFoundException;
+import org.myorganization.template.domain.exception.ValidationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,6 +28,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -72,6 +76,28 @@ class InterfaceControllerTest {
         assertThat(response.getBody().getContent()).hasSize(1);
         verify(interfaceService).findByCriteria(
                 eq(new InterfaceCriteria("rest", null, InterfaceStatus.ACTIVE)), eq(pageable));
+    }
+
+    @Test
+    void findByCriteria_withInvalidSort_shouldThrowValidationException() {
+        assertThatThrownBy(() -> controller.findByCriteria(0, 5, null, null, null, "campoInexistente,asc"))
+                .isInstanceOf(ValidationException.class)
+                .hasMessageContaining("campoInexistente");
+        verify(interfaceService, never()).findByCriteria(any(InterfaceCriteria.class), any(Pageable.class));
+    }
+
+    @Test
+    void findByCriteria_withValidSort_shouldPassSortedPageableToService() {
+        Page<InterfaceDTO> page = new PageImpl<>(List.of(), PageRequest.of(0, 5), 0);
+        when(interfaceService.findByCriteria(any(InterfaceCriteria.class), any(Pageable.class))).thenReturn(page);
+
+        controller.findByCriteria(0, 5, null, null, null, "checkFrequency,desc");
+
+        ArgumentCaptor<Pageable> captor = ArgumentCaptor.forClass(Pageable.class);
+        verify(interfaceService).findByCriteria(any(InterfaceCriteria.class), captor.capture());
+        Sort.Order order = captor.getValue().getSort().getOrderFor("checkFrequency");
+        assertThat(order).isNotNull();
+        assertThat(order.getDirection()).isEqualTo(Sort.Direction.DESC);
     }
 
     @Test
@@ -135,6 +161,14 @@ class InterfaceControllerTest {
 
         assertThat(response.getStatusCode().value()).isEqualTo(200);
         verify(interfaceService).findLogsByCriteria(any(InterfaceLogCriteria.class), eq(pageable));
+    }
+
+    @Test
+    void findLogs_withInvalidSort_shouldThrowValidationException() {
+        assertThatThrownBy(() -> controller.findLogs(0, 10, null, null, null, null, null, "campoInexistente,asc"))
+                .isInstanceOf(ValidationException.class)
+                .hasMessageContaining("campoInexistente");
+        verify(interfaceService, never()).findLogsByCriteria(any(InterfaceLogCriteria.class), any(Pageable.class));
     }
 
     @Test

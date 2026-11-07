@@ -333,7 +333,7 @@ No se afirma que la aplicación sea segura: hay controles correctos, pero los ha
 
 ## 9. Seguimiento de aplicación de correcciones
 
-Progreso: **8 / 21 hallazgos aplicados**.
+Progreso: **9 / 21 hallazgos aplicados**.
 
 Estados posibles: `Pendiente` · `En curso` · `Aplicado` · `Descartado` (indicar motivo en Notas).
 
@@ -348,7 +348,7 @@ Estados posibles: `Pendiente` · `En curso` · `Aplicado` · `Descartado` (indic
 | SEC-07 | Escalada de privilegios en el módulo de administración | Media | Aplicado | 2026-11-02 | Segregación de funciones mediante dos nuevas acciones `PROFILE_GRANT` y `USER_GRANT` (changeset `20261102-seed-grant-actions`) exigidas además de `PROFILE_WRITE`/`USER_WRITE`; verificación en `ProfileService`/`UserService` con `GrantAuthorityChecker` solo cuando la petición modifica realmente los permisos (alta con acciones/perfil o cambio de acciones/perfil), `AccessDeniedException` → 403. Tests: `GrantAuthorityCheckerTest`, casos en `ProfileServiceTest`/`UserServiceTest`, `GrantSecurityIntegrationTest` (Testcontainers). Requisitos `RF-PRO-8`/`RNF-PRO-6` y `RF-USR-10`/`RNF-USR-7`; test cases `TC-PRO-10`/`TC-USR-14`. |
 | SEC-08 | Sin control de acceso por usuario en endpoints de informes | Media | Aplicado | 2026-11-06 | Nueva acción `REPORT_READ` (changeset `20261106-seed-report-read-action`): `GET /api/v1/reports/**` exige `REPORT_READ` y `POST` mantiene `REPORT_EXECUTE`. `getFilters` valida la asignación por usuario (`user2report` → 403). Menú/ruta `/reports` del frontend dependen de `REPORT_READ` y solo listan informes asignados. Tests: `ReportServiceTest`, `ReportControllerTest`, `ReportAccessIntegrationTest` y E2E `TC-RPT-11`. Requisitos `RF-RPT-6`/`RNF-RPT-8`. |
 | SEC-09 | Actuator en el WAR y accesible públicamente | Media | Pendiente | | |
-| SEC-10 | `Sort`/`Pageable` sin lista blanca y sin handler genérico | Media | Pendiente | | |
+| SEC-10 | `Sort`/`Pageable` sin lista blanca y sin handler genérico | Media | Aplicado | 2026-11-07 | Lista blanca por entidad (`SortWhitelist`) aplicada en `ActionControllerImpl` (acciones) e `InterfaceControllerImpl` (interfaces y logs), que devuelve 400 ante una propiedad de ordenación no permitida. `GlobalExceptionHandler` ahora extiende `ResponseEntityExceptionHandler` para preservar el estado HTTP de las excepciones de framework (400/404/405/415…) y añade un handler genérico `Exception` → 500 con mensaje genérico y sin traza (traza solo en logs). Tests: `SortWhitelistTest` (unitario), `SortWhitelistIntegrationTest` (Testcontainers, `sort=campoInexistente` → 400 sin traza) y casos añadidos en `ActionControllerTest`/`InterfaceControllerTest`/`GlobalExceptionHandlerTest`. |
 | SEC-11 | Credenciales por defecto y puerto 9990 expuestos (Docker) | Media | Pendiente | | |
 | SEC-12 | Secretos versionados y `.gitignore` sin reglas para `.env` | Media | Pendiente | | |
 | SEC-13 | Interceptor añade `Authorization` sin validar origen | Baja | Pendiente | | |

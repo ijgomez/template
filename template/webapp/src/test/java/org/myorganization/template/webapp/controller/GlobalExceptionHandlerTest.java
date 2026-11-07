@@ -14,8 +14,13 @@ import org.myorganization.template.domain.exception.EntityNotFoundException;
 import org.myorganization.template.domain.exception.MethodNotAllowedException;
 import org.myorganization.template.domain.exception.ReportExportException;
 import org.myorganization.template.domain.exception.ValidationException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.context.request.WebRequest;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -139,6 +144,20 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
+    @DisplayName("Spring Security AccessDeniedException returns 403 Forbidden")
+    void handleSecurityAccessDenied_shouldReturn403() {
+        org.springframework.security.access.AccessDeniedException ex =
+                new org.springframework.security.access.AccessDeniedException("Access Denied");
+
+        ResponseEntity<ErrorResponse> response = handler.handleSecurityAccessDenied(ex, request);
+
+        assertThat(response.getStatusCode().value()).isEqualTo(403);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().status()).isEqualTo(403);
+        assertThat(response.getBody().error()).isEqualTo("Forbidden");
+    }
+
+    @Test
     @DisplayName("MethodNotAllowedException returns 405 Method Not Allowed")
     void handleMethodNotAllowed_shouldReturn405() {
         MethodNotAllowedException ex = new MethodNotAllowedException("Action creation is not allowed");
@@ -164,6 +183,38 @@ class GlobalExceptionHandlerTest {
         assertThat(response.getBody().status()).isEqualTo(500);
         assertThat(response.getBody().error()).isEqualTo("Internal Server Error");
         assertThat(response.getBody().message()).isEqualTo("Failed to generate PDF export");
+    }
+
+    @Test
+    @DisplayName("Unexpected exceptions return 500 without leaking internal details")
+    void handleUnexpected_shouldReturn500WithoutInternals() {
+        RuntimeException ex = new RuntimeException("Sensitive internal detail: db connection lost");
+
+        ResponseEntity<ErrorResponse> response = handler.handleUnexpected(ex, request);
+
+        assertThat(response.getStatusCode().value()).isEqualTo(500);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().status()).isEqualTo(500);
+        assertThat(response.getBody().error()).isEqualTo("Internal Server Error");
+        assertThat(response.getBody().message()).isEqualTo("An unexpected internal error occurred");
+        assertThat(response.getBody().message()).doesNotContain("Sensitive internal detail");
+    }
+
+    @Test
+    @DisplayName("Framework exceptions keep their status while using the standard error format")
+    void handleExceptionInternal_shouldPreserveStatus() {
+        MockHttpServletRequest servletRequest = new MockHttpServletRequest();
+        servletRequest.setRequestURI("/api/v1/administration/security/actions");
+        WebRequest webRequest = new ServletWebRequest(servletRequest);
+
+        ResponseEntity<Object> response = handler.handleExceptionInternal(
+                new RuntimeException("bad request"), null, new HttpHeaders(), HttpStatus.BAD_REQUEST, webRequest);
+
+        assertThat(response.getStatusCode().value()).isEqualTo(400);
+        assertThat(response.getBody()).isInstanceOf(ErrorResponse.class);
+        ErrorResponse body = (ErrorResponse) response.getBody();
+        assertThat(body.status()).isEqualTo(400);
+        assertThat(body.path()).isEqualTo("/api/v1/administration/security/actions");
     }
 
 }

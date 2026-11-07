@@ -5,16 +5,19 @@ import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.myorganization.template.core.service.ActionService;
 import org.myorganization.template.domain.criteria.ActionCriteria;
 import org.myorganization.template.domain.dto.ActionDTO;
 import org.myorganization.template.domain.enums.ActionType;
 import org.myorganization.template.domain.exception.EntityNotFoundException;
 import org.myorganization.template.domain.exception.MethodNotAllowedException;
+import org.myorganization.template.domain.exception.ValidationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,6 +26,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -65,6 +69,28 @@ class ActionControllerTest {
 
         assertThat(response.getStatusCode().value()).isEqualTo(200);
         verify(actionService).findByCriteria(any(ActionCriteria.class), eq(pageable));
+    }
+
+    @Test
+    void findAll_withInvalidSort_shouldThrowValidationException() {
+        assertThatThrownBy(() -> actionController.findAll(0, 10, null, null, null, "campoInexistente,asc"))
+                .isInstanceOf(ValidationException.class)
+                .hasMessageContaining("campoInexistente");
+        verify(actionService, never()).findByCriteria(any(ActionCriteria.class), any(Pageable.class));
+    }
+
+    @Test
+    void findAll_withValidSort_shouldPassSortedPageableToService() {
+        Page<ActionDTO> page = new PageImpl<>(List.of(), PageRequest.of(0, 10), 0);
+        when(actionService.findByCriteria(any(ActionCriteria.class), any(Pageable.class))).thenReturn(page);
+
+        actionController.findAll(0, 10, null, null, null, "code,desc");
+
+        ArgumentCaptor<Pageable> captor = ArgumentCaptor.forClass(Pageable.class);
+        verify(actionService).findByCriteria(any(ActionCriteria.class), captor.capture());
+        Sort.Order order = captor.getValue().getSort().getOrderFor("code");
+        assertThat(order).isNotNull();
+        assertThat(order.getDirection()).isEqualTo(Sort.Direction.DESC);
     }
 
     @Test

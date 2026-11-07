@@ -1,13 +1,13 @@
 package org.myorganization.template.webapp.controller;
 
+import java.util.Set;
+
 import org.myorganization.template.core.service.ActionService;
 import org.myorganization.template.domain.criteria.ActionCriteria;
 import org.myorganization.template.domain.dto.ActionDTO;
 import org.myorganization.template.domain.enums.ActionType;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,6 +33,10 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/v1/administration/security/actions")
 public class ActionControllerImpl implements ActionController {
 
+    /** Fields on {@code Action} that clients may use to sort the listing (SEC-10). */
+    private static final Set<String> ALLOWED_SORT_FIELDS =
+            Set.of("id", "code", "name", "type", "description", "createdAt", "lastModifiedAt");
+
     private final ActionService actionService;
 
     public ActionControllerImpl(ActionService actionService) {
@@ -50,7 +54,7 @@ public class ActionControllerImpl implements ActionController {
             @RequestParam(required = false) String sort) {
 
         ActionCriteria criteria = new ActionCriteria(code, name, type);
-        Pageable pageable = buildPageable(page, size, sort);
+        Pageable pageable = SortWhitelist.buildPageable(page, size, sort, ALLOWED_SORT_FIELDS);
         Page<ActionDTO> result = actionService.findByCriteria(criteria, pageable);
         return ResponseEntity.ok(result);
     }
@@ -95,26 +99,6 @@ public class ActionControllerImpl implements ActionController {
         // Delegates to ActionService which throws MethodNotAllowedException
         actionService.delete(id);
         return ResponseEntity.noContent().build();
-    }
-
-    /**
-     * Builds a Pageable from page, size and an optional sort string.
-     *
-     * @param page zero-indexed page number
-     * @param size page size
-     * @param sort sort string in format "field,direction" (e.g. "code,asc")
-     * @return a Pageable with sorting if specified
-     */
-    private Pageable buildPageable(int page, int size, String sort) {
-        if (sort != null && !sort.isBlank()) {
-            String[] parts = sort.split(",");
-            String property = parts[0];
-            Sort.Direction direction = parts.length > 1 && "desc".equalsIgnoreCase(parts[1])
-                    ? Sort.Direction.DESC
-                    : Sort.Direction.ASC;
-            return PageRequest.of(page, size, Sort.by(direction, property));
-        }
-        return PageRequest.of(page, size);
     }
 
 }

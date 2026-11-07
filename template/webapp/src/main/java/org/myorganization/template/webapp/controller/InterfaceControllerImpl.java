@@ -2,6 +2,7 @@ package org.myorganization.template.webapp.controller;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Set;
 
 import org.myorganization.template.core.service.InterfaceService;
 import org.myorganization.template.domain.criteria.InterfaceCriteria;
@@ -12,9 +13,7 @@ import org.myorganization.template.domain.enums.InterfaceLogStatus;
 import org.myorganization.template.domain.enums.InterfaceStatus;
 import org.myorganization.template.domain.enums.InterfaceOperationType;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,6 +31,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/interfaces")
 public class InterfaceControllerImpl implements InterfaceController {
+
+    /** Fields on {@code Interface} that clients may use to sort the configuration listing (SEC-10). */
+    private static final Set<String> INTERFACE_SORT_FIELDS =
+            Set.of("id", "name", "description", "url", "protocol", "status", "checkFrequency",
+                    "createdAt", "lastModifiedAt");
+
+    /** Fields on {@code InterfaceLog} that clients may use to sort the monitor listing (SEC-10). */
+    private static final Set<String> INTERFACE_LOG_SORT_FIELDS =
+            Set.of("id", "timestamp", "operationType", "interfaceName", "requestPayload",
+                    "responsePayload", "status");
 
     private final InterfaceService interfaceService;
 
@@ -56,7 +65,7 @@ public class InterfaceControllerImpl implements InterfaceController {
             @RequestParam(required = false) InterfaceStatus status,
             @RequestParam(required = false) String sort) {
         InterfaceCriteria criteria = new InterfaceCriteria(name, protocol, status);
-        Pageable pageable = buildPageable(page, size, sort);
+        Pageable pageable = SortWhitelist.buildPageable(page, size, sort, INTERFACE_SORT_FIELDS);
         return ResponseEntity.ok(interfaceService.findByCriteria(criteria, pageable));
     }
 
@@ -81,7 +90,7 @@ public class InterfaceControllerImpl implements InterfaceController {
             @RequestParam(required = false) String sort) {
 
         InterfaceLogCriteria criteria = new InterfaceLogCriteria(fromDate, toDate, operationType, interfaceName, status);
-        Pageable pageable = buildPageable(page, size, sort);
+        Pageable pageable = SortWhitelist.buildPageable(page, size, sort, INTERFACE_LOG_SORT_FIELDS);
         Page<InterfaceLogDTO> result = interfaceService.findLogsByCriteria(criteria, pageable);
         return ResponseEntity.ok(result);
     }
@@ -104,26 +113,6 @@ public class InterfaceControllerImpl implements InterfaceController {
     public ResponseEntity<InterfaceLogDTO> findLogById(@PathVariable Long id) {
         InterfaceLogDTO dto = interfaceService.findLogById(id);
         return ResponseEntity.ok(dto);
-    }
-
-    /**
-     * Builds a Pageable from page, size and an optional sort string.
-     *
-     * @param page zero-indexed page number
-     * @param size page size
-     * @param sort sort string in format "field,direction" (e.g. "timestamp,desc")
-     * @return a Pageable with sorting if specified
-     */
-    private Pageable buildPageable(int page, int size, String sort) {
-        if (sort != null && !sort.isBlank()) {
-            String[] parts = sort.split(",");
-            String property = parts[0];
-            Sort.Direction direction = parts.length > 1 && "desc".equalsIgnoreCase(parts[1])
-                    ? Sort.Direction.DESC
-                    : Sort.Direction.ASC;
-            return PageRequest.of(page, size, Sort.by(direction, property));
-        }
-        return PageRequest.of(page, size);
     }
 
 }
