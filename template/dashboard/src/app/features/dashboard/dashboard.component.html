@@ -1,131 +1,152 @@
-<div class="d-flex justify-content-between align-items-center mb-4">
+﻿<!-- Header: freshness + reload (RF-8) -->
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
   <h1 class="h3 mb-0" data-testid="dashboard-title">{{ 'dashboard.title' | translate }}</h1>
-  <small class="text-muted">{{ 'dashboard.lastAccess' | translate: { date: lastAccess } }}</small>
+  <div class="d-flex align-items-center gap-2 text-muted small">
+    @if (minutesSinceUpdate() !== null) {
+      <span data-testid="dashboard-freshness">
+        @if (minutesSinceUpdate() === 0) {
+          {{ 'dashboard.header.updatedNow' | translate }}
+        } @else {
+          {{ 'dashboard.header.updatedAgo' | translate: { minutes: minutesSinceUpdate() } }}
+        }
+      </span>
+    }
+    <button type="button" class="btn btn-outline-secondary btn-sm" (click)="reload()"
+            data-testid="dashboard-reload" [attr.aria-label]="'dashboard.header.reload' | translate">
+      <i class="bi bi-arrow-clockwise" aria-hidden="true"></i>
+    </button>
+  </div>
 </div>
 
 <!-- Stats cards -->
-<!-- TODO(dashboard-stats): las tarjetas de usuarios, interfaces e informes
-     muestran datos de ejemplo hardcodeados, pendientes de backend real.
-     Solo la tarjeta de nodos del cluster usa datos reales.
-     Spec: .kiro/specs/dashboard-stats/. -->
 <div class="row g-3 mb-4">
-  <div class="col-sm-6 col-xl-3">
-    <div class="card tp-stat-card h-100" data-testid="stat-active-users">
-      <div class="card-body">
-        <div class="stat-label">{{ 'dashboard.stats.activeUsers' | translate }}</div>
-        <div class="stat-value">148</div>
-        <small class="text-success">
-          <i class="bi bi-arrow-up" aria-hidden="true"></i>
-          {{ 'dashboard.stats.vsLastMonth' | translate: { percent: '12' } }}
-        </small>
-      </div>
-    </div>
-  </div>
-  <div class="col-sm-6 col-xl-3">
-    <div class="card tp-stat-card h-100"
-         [class.tp-stat-card-success]="!nodesLoading() && !nodesError() && allNodesOperational()"
-         [class.tp-stat-card-warning]="!nodesLoading() && !nodesError() && !allNodesOperational()"
-         data-testid="stat-cluster-nodes">
-      <div class="card-body">
-        <div class="stat-label">{{ 'dashboard.stats.clusterNodes' | translate }}</div>
-
-        @if (nodesLoading()) {
-          <div class="stat-value" aria-hidden="true">
-            <output class="spinner-border spinner-border-sm text-muted"></output>
-          </div>
-          <output class="small text-muted">{{ 'common.loading' | translate }}</output>
-        } @else if (nodesError()) {
-          <div class="stat-value text-muted" aria-label="Not available">-</div>
-          <small class="text-danger">
-            <i class="bi bi-exclamation-octagon" aria-hidden="true"></i>
-            {{ 'dashboard.stats.nodesLoadError' | translate }}
-          </small>
-        } @else {
-          <div class="stat-value tp-enter-fade" animate.enter="tp-enter-fade"
-               data-testid="stat-cluster-nodes-value">
-            {{ activeNodes() }} <small class="text-muted fs-6">/ {{ totalNodes() }}</small>
-          </div>
-          @if (allNodesOperational()) {
-            <small class="text-success">
-              <i class="bi bi-check-circle" aria-hidden="true"></i>
-              {{ 'dashboard.stats.allOperational' | translate }}
+  <div class="col-sm-6 col-xl-4">
+    @if (canReadUsers) {
+      <div class="card tp-stat-card h-100" data-testid="stat-users">
+        <div class="card-body">
+          <div class="stat-label">{{ 'dashboard.stats.totalUsers' | translate }}</div>
+          @if (usersLoading()) {
+            <div class="stat-value" aria-hidden="true">
+              <output class="spinner-border spinner-border-sm text-muted"></output>
+            </div>
+            <output class="small text-muted">{{ 'common.loading' | translate }}</output>
+          } @else if (usersError()) {
+            <div class="stat-value text-muted" aria-label="Not available" data-testid="stat-users-error">-</div>
+            <small class="text-danger">
+              <i class="bi bi-exclamation-octagon" aria-hidden="true"></i>
+              {{ 'dashboard.stats.usersLoadError' | translate }}
             </small>
           } @else {
-            <small class="text-warning">
-              <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
-              {{ 'dashboard.stats.nodesDegraded' | translate: { count: inactiveNodes() } }}
-            </small>
+            <div class="stat-value tp-enter-fade" animate.enter="tp-enter-fade"
+                 data-testid="stat-users-value">{{ totalUsers() }}</div>
           }
-        }
+        </div>
       </div>
-    </div>
+    }
   </div>
-  <div class="col-sm-6 col-xl-3">
-    <div class="card tp-stat-card tp-stat-card-warning h-100" data-testid="stat-interfaces">
-      <div class="card-body">
-        <div class="stat-label">{{ 'dashboard.stats.interfaces' | translate }}</div>
-        <div class="stat-value">12</div>
-        <small class="text-warning">
-          <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
-          {{ 'dashboard.stats.withError' | translate: { count: '1' } }}
-        </small>
+  <div class="col-sm-6 col-xl-4">
+    @if (canReadNodes) {
+      <div class="card tp-stat-card h-100"
+           [class.tp-stat-card-success]="!nodesLoading() && !nodesError() && allNodesOperational()"
+           [class.tp-stat-card-warning]="!nodesLoading() && !nodesError() && !allNodesOperational()"
+           data-testid="stat-cluster-nodes">
+        <div class="card-body">
+          <div class="stat-label">{{ 'dashboard.stats.clusterNodes' | translate }}</div>
+
+          @if (nodesLoading()) {
+            <div class="stat-value" aria-hidden="true">
+              <output class="spinner-border spinner-border-sm text-muted"></output>
+            </div>
+            <output class="small text-muted">{{ 'common.loading' | translate }}</output>
+          } @else if (nodesError()) {
+            <div class="stat-value text-muted" aria-label="Not available">-</div>
+            <small class="text-danger">
+              <i class="bi bi-exclamation-octagon" aria-hidden="true"></i>
+              {{ 'dashboard.stats.nodesLoadError' | translate }}
+            </small>
+          } @else {
+            <div class="stat-value tp-enter-fade" animate.enter="tp-enter-fade"
+                 data-testid="stat-cluster-nodes-value">
+              {{ activeNodes() }} <small class="text-muted fs-6">/ {{ totalNodes() }}</small>
+            </div>
+            @if (allNodesOperational()) {
+              <small class="text-success" data-testid="stat-cluster-nodes-ok">
+                <i class="bi bi-check-circle" aria-hidden="true"></i>
+                {{ 'dashboard.stats.allOperational' | translate }}
+              </small>
+            } @else {
+              <a routerLink="/administration/cluster/nodes" class="small text-warning text-decoration-none"
+                 data-testid="stat-cluster-nodes-link">
+                <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
+                {{ 'dashboard.stats.nodesDegraded' | translate: { count: inactiveNodes() } }}
+              </a>
+            }
+          }
+        </div>
       </div>
-    </div>
+    }
   </div>
-  <div class="col-sm-6 col-xl-3">
-    <div class="card tp-stat-card tp-stat-card-info h-100" data-testid="stat-reports">
-      <div class="card-body">
-        <div class="stat-label">{{ 'dashboard.stats.reportsGenerated' | translate }}</div>
-        <div class="stat-value">56</div>
-        <small class="text-muted">{{ 'dashboard.stats.thisMonth' | translate }}</small>
+  <div class="col-sm-6 col-xl-4">
+    @if (canReadInterfaces) {
+      <div class="card tp-stat-card h-100"
+           [class.tp-stat-card-success]="!interfacesLoading() && !interfacesError() && interfacesWithError() === 0"
+           [class.tp-stat-card-warning]="!interfacesLoading() && !interfacesError() && interfacesWithError() > 0"
+           data-testid="stat-interfaces">
+        <div class="card-body">
+          <div class="stat-label">{{ 'dashboard.stats.interfaces' | translate }}</div>
+          @if (interfacesLoading()) {
+            <div class="stat-value" aria-hidden="true">
+              <output class="spinner-border spinner-border-sm text-muted"></output>
+            </div>
+            <output class="small text-muted">{{ 'common.loading' | translate }}</output>
+          } @else if (interfacesError()) {
+            <div class="stat-value text-muted" aria-label="Not available">-</div>
+            <small class="text-danger">
+              <i class="bi bi-exclamation-octagon" aria-hidden="true"></i>
+              {{ 'dashboard.stats.interfacesLoadError' | translate }}
+            </small>
+          } @else {
+            <div class="stat-value tp-enter-fade" animate.enter="tp-enter-fade"
+                 data-testid="stat-interfaces-value">{{ totalInterfaces() }}</div>
+            @if (interfacesWithError() > 0) {
+              <a routerLink="/interfaces/configuration" class="small text-warning text-decoration-none"
+                 data-testid="stat-interfaces-error-link">
+                <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
+                {{ 'dashboard.stats.withError' | translate: { count: interfacesWithError() } }}
+              </a>
+            } @else {
+              <small class="text-success" data-testid="stat-interfaces-ok">
+                <i class="bi bi-check-circle" aria-hidden="true"></i>
+                {{ 'dashboard.stats.noInterfaceErrors' | translate }}
+              </small>
+            }
+          }
+        </div>
       </div>
-    </div>
+    }
   </div>
 </div>
-
-<!-- Quick Info -->
+<!-- Zone 3: subordinated chrome -->
 <div class="row g-3">
   <div class="col-lg-6">
     <!-- System Status -->
-    <div class="card mb-3">
+    <div class="card mb-3" data-testid="system-status">
       <div class="card-header">{{ 'dashboard.systemStatus.title' | translate }}</div>
       <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3">
-          <span class="text-muted">{{ 'dashboard.systemStatus.version' | translate }}</span>
-          <span class="fw-medium">1.0.0</span>
-        </div>
-        <div class="d-flex justify-content-between align-items-center mb-3">
           <span class="text-muted">{{ 'dashboard.systemStatus.environment' | translate }}</span>
-          <span class="badge bg-info-subtle text-info">LOCAL</span>
+          <span class="badge bg-info-subtle text-info" data-testid="system-environment">{{ environmentName }}</span>
         </div>
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <span class="text-muted">{{ 'dashboard.systemStatus.masterNode' | translate }}</span>
-          <span class="fw-medium">node-01</span>
-        </div>
-        <div class="d-flex justify-content-between align-items-center">
-          <span class="text-muted">{{ 'dashboard.systemStatus.uptime' | translate }}</span>
-          <span class="fw-medium">14d 6h 32m</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="col-lg-6">
-    <!-- Shortcuts -->
-    <div class="card">
-      <div class="card-header">{{ 'dashboard.shortcuts.title' | translate }}</div>
-      <div class="card-body">
-        <div class="d-grid gap-2">
-          <a routerLink="/administration/security/users" class="btn btn-outline-primary btn-sm text-start" data-testid="shortcut-users">
-            <i class="bi bi-people me-2" aria-hidden="true"></i>{{ 'dashboard.shortcuts.manageUsers' | translate }}
-          </a>
-          <a routerLink="/reports" class="btn btn-outline-primary btn-sm text-start" data-testid="shortcut-reports">
-            <i class="bi bi-file-earmark-bar-graph me-2" aria-hidden="true"></i>{{ 'dashboard.shortcuts.viewReports' | translate }}
-          </a>
-          <a routerLink="/administration/parameters" class="btn btn-outline-primary btn-sm text-start" data-testid="shortcut-config">
-            <i class="bi bi-sliders me-2" aria-hidden="true"></i>{{ 'dashboard.shortcuts.configuration' | translate }}
-          </a>
-        </div>
+        @if (canReadNodes) {
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <span class="text-muted">{{ 'dashboard.systemStatus.masterNode' | translate }}</span>
+            <span class="fw-medium" data-testid="system-master">{{ masterNode() ?? '-' }}</span>
+          </div>
+          <div class="d-flex justify-content-between align-items-center">
+            <span class="text-muted">{{ 'dashboard.systemStatus.uptime' | translate }}</span>
+            <span class="fw-medium" data-testid="system-uptime">{{ uptime() ?? '-' }}</span>
+          </div>
+        }
       </div>
     </div>
   </div>

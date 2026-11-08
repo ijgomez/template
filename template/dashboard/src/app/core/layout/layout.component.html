@@ -219,6 +219,14 @@
                 {{ 'layout.user.profile' | translate }}
               </a>
             </li>
+            @if (canConfigure()) {
+              <li>
+                <a class="dropdown-item" routerLink="/administration/parameters" data-testid="link-user-configuration">
+                  <i class="bi bi-sliders me-2" aria-hidden="true"></i>
+                  {{ 'layout.user.configuration' | translate }}
+                </a>
+              </li>
+            }
             <li><hr class="dropdown-divider" /></li>
             <li>
               <button

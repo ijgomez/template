@@ -1,4 +1,4 @@
-{
+﻿{
   "app": {
     "title": "Template Dashboard"
   },
@@ -17,6 +17,7 @@
     },
     "user": {
       "profile": "Mi Perfil",
+      "configuration": "Configuración",
       "logout": "Cerrar sesión"
     }
   },
@@ -511,31 +512,28 @@
   },
   "dashboard": {
     "title": "Dashboard",
-    "lastAccess": "Último acceso: {{date}}",
+    "header": {
+      "updatedNow": "actualizado ahora mismo",
+      "updatedAgo": "actualizado hace {{minutes}} min",
+      "reload": "Recargar"
+    },
     "stats": {
-      "activeUsers": "Usuarios activos",
-      "clusterNodes": "Nodos cluster",
       "interfaces": "Interfaces",
-      "reportsGenerated": "Informes generados",
+      "withError": "{{count}} con error",
+      "totalUsers": "Usuarios",
+      "clusterNodes": "Nodos cluster",
       "allOperational": "Todos operativos",
       "nodesDegraded": "{{count}} inactivo(s)",
       "nodesLoadError": "Error al cargar nodos",
-      "withError": "{{count}} con error",
-      "thisMonth": "Este mes",
-      "vsLastMonth": "{{percent}}% vs mes anterior"
+      "interfacesLoadError": "Error al cargar interfaces",
+      "usersLoadError": "Error al cargar usuarios",
+      "noInterfaceErrors": "Sin errores"
     },
     "systemStatus": {
       "title": "Estado del sistema",
-      "version": "Versión",
       "environment": "Entorno",
       "masterNode": "Nodo maestro",
       "uptime": "Uptime"
-    },
-    "shortcuts": {
-      "title": "Accesos directos",
-      "manageUsers": "Gestionar usuarios",
-      "viewReports": "Ver informes",
-      "configuration": "Configuración"
     }
   },
   "selected-reports": {

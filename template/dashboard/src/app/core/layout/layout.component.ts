@@ -108,6 +108,11 @@ export class LayoutComponent implements OnInit {
   /** Username for display in the header. */
   readonly username = computed(() => this.authService.getCurrentUser()?.username ?? '');
 
+  /** Whether the user can access the system configuration (parameters). */
+  readonly canConfigure = computed(
+    () => this.authService.hasAction('SYSTEM_PARAMETER_READ') || this.authService.hasAction('SYSTEM_PARAMETER_WRITE'),
+  );
+
   /** Full name computed from user profile (first + last). */
   readonly fullName = computed(() => {
     const user = this.authService.getCurrentUser();

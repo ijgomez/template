@@ -1,4 +1,4 @@
-{
+﻿{
   "app": {
     "title": "Template Dashboard"
   },
@@ -17,6 +17,7 @@
     },
     "user": {
       "profile": "My Profile",
+      "configuration": "Configuration",
       "logout": "Logout"
     }
   },
@@ -511,31 +512,28 @@
   },
   "dashboard": {
     "title": "Dashboard",
-    "lastAccess": "Last access: {{date}}",
+    "header": {
+      "updatedNow": "updated just now",
+      "updatedAgo": "updated {{minutes}} min ago",
+      "reload": "Reload"
+    },
     "stats": {
-      "activeUsers": "Active users",
-      "clusterNodes": "Cluster nodes",
       "interfaces": "Interfaces",
-      "reportsGenerated": "Reports generated",
+      "withError": "{{count}} with error",
+      "totalUsers": "Users",
+      "clusterNodes": "Cluster nodes",
       "allOperational": "All operational",
       "nodesDegraded": "{{count}} inactive",
       "nodesLoadError": "Failed to load nodes",
-      "withError": "{{count}} with error",
-      "thisMonth": "This month",
-      "vsLastMonth": "{{percent}}% vs last month"
+      "interfacesLoadError": "Failed to load interfaces",
+      "usersLoadError": "Failed to load users",
+      "noInterfaceErrors": "No errors"
     },
     "systemStatus": {
       "title": "System status",
-      "version": "Version",
       "environment": "Environment",
       "masterNode": "Master node",
       "uptime": "Uptime"
-    },
-    "shortcuts": {
-      "title": "Quick links",
-      "manageUsers": "Manage users",
-      "viewReports": "View reports",
-      "configuration": "Configuration"
     }
   },
   "selected-reports": {

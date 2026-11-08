@@ -27,13 +27,13 @@ Orden recomendado (impacto / coste):
 
 ### Fase 0 — Frenar el daño: retirar datos falsos (frontend, bajo coste, alto impacto)
 
-- [ ] 0.1 Eliminar del template los valores hardcodeados que simulan datos reales:
+- [x] 0.1 Eliminar del template los valores hardcodeados que simulan datos reales:
       "1 con error" de interfaces, `148`/`+12%` de usuarios, `56` de informes.
       (RF-1, RF-2, RF-3)
-- [ ] 0.2 Eliminar del template el panel "Estado del sistema" hardcodeado
+- [x] 0.2 Eliminar del template el panel "Estado del sistema" hardcodeado
       (`1.0.0`, `LOCAL`, `node-01`, `14d 6h 32m`). (RF-6)
-- [ ] 0.3 Eliminar la constante `lastAccess` hardcodeada del componente. (RF-10)
-- [ ] 0.4 Sustituir provisionalmente por estado de carga/placeholder honesto hasta
+- [x] 0.3 Eliminar la constante `lastAccess` hardcodeada del componente. (RF-10)
+- [x] 0.4 Sustituir provisionalmente por estado de carga/placeholder honesto hasta
       conectar el dato real (no dejar cifras inventadas). (RF-4)
 
 ### Fase 1 — Backend: endpoint de resumen (opción recomendada)
@@ -60,64 +60,64 @@ Orden recomendado (impacto / coste):
 
 ### Fase 3 — Frontend: consumo de stat-cards
 
-- [ ] 3.1 Refactor de `DashboardComponent`: signals por bloque
+- [x] 3.1 Refactor de `DashboardComponent`: signals por bloque
       (loading/error/valor) replicando el patrón de la tarjeta de nodos. (RF-4)
-- [ ] 3.2 Usuarios: mostrar total real; mostrar tendencia SOLO si llega `trend`
+- [x] 3.2 Usuarios: mostrar total real; mostrar tendencia SOLO si llega `trend`
       no nulo. (RF-1)
-- [ ] 3.3 Interfaces: total real + número en error. (RF-2)
-- [ ] 3.4 Informes: mostrar solo si el backend provee el bloque `reports`; si no,
+- [x] 3.3 Interfaces: total real + número en error. (RF-2)
+- [x] 3.4 Informes: mostrar solo si el backend provee el bloque `reports`; si no,
       **no renderizar la tarjeta** (no hardcodear). (RF-3)
-- [ ] 3.5 Estados con icono + texto (no solo color), coherente con la mejora de
+- [x] 3.5 Estados con icono + texto (no solo color), coherente con la mejora de
       accesibilidad ya aplicada. (RF-4, RNF-5)
-- [ ] 3.6 i18n del periodo y textos auxiliares en es.json/en.json simétricas;
+- [x] 3.6 i18n del periodo y textos auxiliares en es.json/en.json simétricas;
       verificar con `translation-completeness.property.spec.ts`. (RNF-3)
-- [ ] 3.7 Actualizar/crear tests de `DashboardComponent` para los bloques
+- [x] 3.7 Actualizar/crear tests de `DashboardComponent` para los bloques
       (carga/error/dato) sin datos hardcodeados. (coding-angular)
 
 ### Fase 4 — Alternativa (si no se aborda el backend de inmediato)
 
-- [ ] 4.1 En su lugar, `DashboardComponent` reutiliza las lecturas existentes en
+- [x] 4.1 En su lugar, `DashboardComponent` reutiliza las lecturas existentes en
       paralelo (`forkJoin`): `UserService.countByCriteria`,
       `InterfaceService.findAllConfigurations`, `ClusterService.findAllNodes`;
       omitiendo tendencia e informes. (Diseño §4)
-- [ ] 4.2 Frescura provisional desde el instante de respuesta del `forkJoin`
+- [x] 4.2 Frescura provisional desde el instante de respuesta del `forkJoin`
       hasta que exista `generatedAt`. (RF-8)
-- [ ] 4.3 Marcar en el código que es un puente hasta el endpoint `/dashboard/stats`.
+- [x] 4.3 Marcar en el código que es un puente hasta el endpoint `/dashboard/stats`.
 
 ### Fase 5 — Panel "Estado del sistema" con datos reales
 
-- [ ] 5.1 Entorno desde `environment.ts` (`profile`). (RF-6)
-- [ ] 5.2 Nodo máster desde `ClusterService.findAllNodes()` (nodo `master===true`). (RF-6)
-- [ ] 5.3 Uptime derivado de `startedAt` del nodo máster (formateo legible). (RF-6)
-- [ ] 5.4 Versión solo si hay fuente real; si no, retirar o marcar no disponible. (RF-6)
-- [ ] 5.5 Tests del panel (estados y datos derivados). (coding-angular)
+- [x] 5.1 Entorno desde `environment.ts` (`profile`). (RF-6)
+- [x] 5.2 Nodo máster desde `ClusterService.findAllNodes()` (nodo `master===true`). (RF-6)
+- [x] 5.3 Uptime derivado de `startedAt` del nodo máster (formateo legible). (RF-6)
+- [x] 5.4 Versión solo si hay fuente real; si no, retirar o marcar no disponible. (RF-6)
+- [x] 5.5 Tests del panel (estados y datos derivados). (coding-angular)
 
 ### Fase 6 — Excepciones accionables y navegables
 
-- [ ] 6.1 Tarjeta de interfaces en error → enlace a `/interfaces` (prefiltro
+- [x] 6.1 Tarjeta de interfaces en error → enlace a `/interfaces` (prefiltro
       `status=ERROR` si hay soporte de query param). (RF-7)
-- [ ] 6.2 Tarjeta de nodos → enlace a la vista de nodos del cluster
+- [x] 6.2 Tarjeta de nodos → enlace a la vista de nodos del cluster
       (`/administration/cluster`). (RF-7)
 - [ ] 6.3 (Backend, a confirmar) soporte de filtro por `status` en el listado de
       configuraciones de interfaces para el prefiltro del drill-down. (RF-7, Diseño §8)
-- [ ] 6.4 Tests de navegación/enlaces. (coding-angular)
+- [x] 6.4 Tests de navegación/enlaces. (coding-angular)
 
 ### Fase 7 — Frescura y recarga
 
-- [ ] 7.1 Indicador "actualizado hace X" basado en `generatedAt` (o instante de
+- [x] 7.1 Indicador "actualizado hace X" basado en `generatedAt` (o instante de
       respuesta en la alternativa). (RF-8)
-- [ ] 7.2 Acción de recargar que relanza la carga y recalcula la frescura. (RF-8)
-- [ ] 7.3 "Último acceso" real desde sesión/perfil o retirado de la cabecera. (RF-10)
-- [ ] 7.4 Tests de frescura/recarga. (coding-angular)
+- [x] 7.2 Acción de recargar que relanza la carga y recalcula la frescura. (RF-8)
+- [x] 7.3 "Último acceso" real desde sesión/perfil o retirado de la cabecera. (RF-10)
+- [x] 7.4 Tests de frescura/recarga. (coding-angular)
 
 ### Fase 8 — Jerarquía y reorganización del layout
 
-- [ ] 8.1 Zona primaria "Salud del sistema" (nodos + interfaces en error) con
+- [x] 8.1 Zona primaria "Salud del sistema" (nodos + interfaces en error) con
       mayor contraste, superior-izquierda. (RF-9, Diseño §6)
-- [ ] 8.2 Zona secundaria de contexto (usuarios, interfaces configuradas) más
+- [x] 8.2 Zona secundaria de contexto (usuarios, interfaces configuradas) más
       discreta. (RF-9)
-- [ ] 8.3 Panel "Estado del sistema" y "Accesos rápidos" como chrome subordinado. (RF-9)
-- [ ] 8.4 Estado "todo sano" silencioso (sin colores de alarma); la excepción
+- [x] 8.3 Panel "Estado del sistema" y "Accesos rápidos" como chrome subordinado. (RF-9)
+- [x] 8.4 Estado "todo sano" silencioso (sin colores de alarma); la excepción
       destaca por escasez. (RF-9)
 - [ ] 8.5 Verificación visual/responsive con el MCP de Playwright
       (desktop + móvil). (coding-angular)
