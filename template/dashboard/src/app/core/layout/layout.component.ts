@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit, DestroyRef, Renderer2 } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit, DestroyRef, Renderer2, HostListener } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterOutlet, RouterLink, RouterLinkActive, NavigationEnd, ActivatedRoute } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -89,6 +89,9 @@ export class LayoutComponent implements OnInit {
 
   /** Tracks which expandable sections are open by their labelKey. */
   readonly expandedSections = signal<Set<string>>(new Set());
+
+  /** Top offset (px) of the flyout submenu shown when the sidebar is collapsed. */
+  readonly flyoutTop = signal(0);
 
   /** Current year for the footer copyright. */
   readonly currentYear = new Date().getFullYear();
@@ -335,11 +338,14 @@ export class LayoutComponent implements OnInit {
     this.mobileMenuOpen.set(false);
   }
 
-  /** Toggle an expandable section open/closed. If sidebar is collapsed, automatically expand it. */
-  toggleSection(labelKey: string): void {
-    if (this.sidebarCollapsed()) {
-      this.sidebarCollapsed.set(false);
-      localStorage.setItem(LayoutComponent.STORAGE_KEY, 'false');
+  /**
+   * Toggle an expandable section open/closed. When the sidebar is collapsed the
+   * submenu is shown as a flyout dropdown; passing the click event of a top-level
+   * toggle positions the flyout next to its button.
+   */
+  toggleSection(labelKey: string, event?: Event): void {
+    if (this.sidebarCollapsed() && event?.currentTarget instanceof HTMLElement) {
+      this.flyoutTop.set(Math.round(event.currentTarget.getBoundingClientRect().top));
     }
     this.expandedSections.update((sections) => {
       const updated = new Set(sections);
@@ -375,8 +381,31 @@ export class LayoutComponent implements OnInit {
    * ancestor of the clicked leaf, and closes the mobile menu.
    */
   onLeafClick(leaf: NavItem): void {
-    this.expandedSections.set(new Set(this.findAncestorKeys((nav) => nav === leaf)));
+    // In collapsed mode the flyout must close after navigating.
+    this.expandedSections.set(
+      this.sidebarCollapsed() ? new Set() : new Set(this.findAncestorKeys((nav) => nav === leaf)),
+    );
     this.closeMobileMenu();
+  }
+
+  /** Closes the collapsed-sidebar flyout when clicking outside the sidebar. */
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event): void {
+    if (!this.sidebarCollapsed() || this.expandedSections().size === 0) {
+      return;
+    }
+    const target = event.target;
+    if (!(target instanceof Element) || !target.closest('.tp-sidebar')) {
+      this.expandedSections.set(new Set());
+    }
+  }
+
+  /** Closes the collapsed-sidebar flyout with the Escape key. */
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    if (this.sidebarCollapsed() && this.expandedSections().size > 0) {
+      this.expandedSections.set(new Set());
+    }
   }
 
   /** Check if a section is expanded. */

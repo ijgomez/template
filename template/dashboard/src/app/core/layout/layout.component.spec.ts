@@ -115,6 +115,39 @@ describe('LayoutComponent', () => {
     });
   });
 
+  describe('collapsed sidebar flyout', () => {
+    it('should keep the sidebar collapsed and open the section as flyout', () => {
+      component.sidebarCollapsed.set(true);
+
+      component.toggleSection('menu.interfaces');
+
+      expect(component.sidebarCollapsed()).toBe(true);
+      expect(component.isSectionExpanded('menu.interfaces')).toBe(true);
+    });
+
+    it('should close the flyout on outside click and on Escape', () => {
+      component.sidebarCollapsed.set(true);
+      component.expandedSections.set(new Set(['menu.interfaces']));
+
+      component.onDocumentClick({ target: document.body } as unknown as Event);
+      expect(component.expandedSections().size).toBe(0);
+
+      component.expandedSections.set(new Set(['menu.interfaces']));
+      component.onEscape();
+      expect(component.expandedSections().size).toBe(0);
+    });
+
+    it('should close the flyout after clicking a leaf', () => {
+      component.sidebarCollapsed.set(true);
+      const interfaces = component.computedNavItems().find((i) => i.labelKey === 'menu.interfaces')!;
+      component.expandedSections.set(new Set([interfaces.labelKey]));
+
+      component.onLeafClick(interfaces.children![0]);
+
+      expect(component.expandedSections().size).toBe(0);
+    });
+  });
+
   describe('toggleSection (accordion behaviour)', () => {
     it('should close other branches when opening a section, keeping its ancestors open', () => {
       component.expandedSections.set(new Set(['menu.administration', 'menu.administration.security']));
