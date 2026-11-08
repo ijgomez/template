@@ -345,11 +345,38 @@ export class LayoutComponent implements OnInit {
       const updated = new Set(sections);
       if (updated.has(labelKey)) {
         updated.delete(labelKey);
-      } else {
-        updated.add(labelKey);
+        return updated;
       }
-      return updated;
+      // Opening: close everything except the ancestors of this section (accordion).
+      const ancestors = this.findAncestorKeys((nav) => nav.labelKey === labelKey);
+      return new Set([...ancestors, labelKey]);
     });
+  }
+
+  /** Returns the labelKeys of the ancestors of the first nav item matching the predicate. */
+  private findAncestorKeys(match: (nav: NavItem) => boolean): string[] {
+    const findPath = (items: NavItem[], path: string[]): string[] | null => {
+      for (const nav of items) {
+        if (match(nav)) {
+          return path;
+        }
+        const found = nav.children ? findPath(nav.children, [...path, nav.labelKey]) : null;
+        if (found) {
+          return found;
+        }
+      }
+      return null;
+    };
+    return findPath(this.computedNavItems(), []) ?? [];
+  }
+
+  /**
+   * Handles a click on a leaf item: closes every open section that is not an
+   * ancestor of the clicked leaf, and closes the mobile menu.
+   */
+  onLeafClick(leaf: NavItem): void {
+    this.expandedSections.set(new Set(this.findAncestorKeys((nav) => nav === leaf)));
+    this.closeMobileMenu();
   }
 
   /** Check if a section is expanded. */

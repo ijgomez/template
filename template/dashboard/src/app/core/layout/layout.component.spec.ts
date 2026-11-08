@@ -77,6 +77,63 @@ describe('LayoutComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  describe('onLeafClick (accordion behaviour)', () => {
+    it('should close unrelated open sections and keep ancestors of the clicked leaf open', () => {
+      // Arrange
+      const items = component.computedNavItems();
+      const interfaces = items.find((i) => i.labelKey === 'menu.interfaces')!;
+      const administration = items.find((i) => i.labelKey === 'menu.administration')!;
+      const security = administration.children!.find((c) => c.labelKey === 'menu.administration.security')!;
+      const usersLeaf = security.children![0];
+      component.expandedSections.set(new Set([interfaces.labelKey, administration.labelKey, security.labelKey]));
+
+      // Act
+      component.onLeafClick(interfaces.children![0]);
+
+      // Assert
+      expect(component.isSectionExpanded(interfaces.labelKey)).toBe(true);
+      expect(component.isSectionExpanded(administration.labelKey)).toBe(false);
+      expect(component.isSectionExpanded(security.labelKey)).toBe(false);
+
+      // Act
+      component.expandedSections.set(new Set([interfaces.labelKey, administration.labelKey, security.labelKey]));
+      component.onLeafClick(usersLeaf);
+
+      // Assert
+      expect(component.isSectionExpanded(interfaces.labelKey)).toBe(false);
+      expect(component.isSectionExpanded(administration.labelKey)).toBe(true);
+      expect(component.isSectionExpanded(security.labelKey)).toBe(true);
+    });
+
+    it('should close all sections when a top-level leaf is clicked', () => {
+      const dashboard = component.computedNavItems().find((i) => i.labelKey === 'menu.dashboard')!;
+      component.expandedSections.set(new Set(['menu.interfaces']));
+
+      component.onLeafClick(dashboard);
+
+      expect(component.expandedSections().size).toBe(0);
+    });
+  });
+
+  describe('toggleSection (accordion behaviour)', () => {
+    it('should close other branches when opening a section, keeping its ancestors open', () => {
+      component.expandedSections.set(new Set(['menu.administration', 'menu.administration.security']));
+
+      component.toggleSection('menu.interfaces');
+
+      expect(component.isSectionExpanded('menu.interfaces')).toBe(true);
+      expect(component.isSectionExpanded('menu.administration')).toBe(false);
+      expect(component.isSectionExpanded('menu.administration.security')).toBe(false);
+
+      component.toggleSection('menu.administration');
+      component.toggleSection('menu.administration.cluster');
+
+      expect(component.isSectionExpanded('menu.administration')).toBe(true);
+      expect(component.isSectionExpanded('menu.administration.cluster')).toBe(true);
+      expect(component.isSectionExpanded('menu.interfaces')).toBe(false);
+    });
+  });
+
   describe('hasActiveChild (collapsed branch indicator)', () => {
     const branch = {
       labelKey: 'menu.administration',
