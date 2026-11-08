@@ -194,4 +194,43 @@ export async function apiDeleteProfile(
   await request.delete(`${API_URL}${PROFILES_PATH}/${profileId}`, { headers: authHeaders(token) });
 }
 
-export { USERS_PATH, PROFILES_PATH };
+/**
+ * Devuelve la acción cuyo código coincide exactamente con el indicado.
+ * Falla el test si no existe en el catálogo semilla.
+ */
+export async function apiGetActionByCode(
+  request: APIRequestContext,
+  token: string,
+  code: string,
+): Promise<{ id: number; code: string; name: string; description: string | null; type: string }> {
+  const response = await request.get(`${API_URL}${ACTIONS_PATH}`, {
+    headers: authHeaders(token),
+    params: { code, size: 50 },
+  });
+  expect(response.status()).toBe(200);
+  const body = (await response.json()) as {
+    content: { id: number; code: string; name: string; description: string | null; type: string }[];
+  };
+  const action = body.content.find((item) => item.code === code);
+  expect(action, `acción semilla ${code} debe existir`).toBeTruthy();
+  return action!;
+}
+
+/**
+ * Actualiza el nombre, descripción y tipo de una acción por su id.
+ * Pensado para teardowns que restauran datos semilla.
+ */
+export async function apiUpdateAction(
+  request: APIRequestContext,
+  token: string,
+  id: number,
+  data: { name: string; description: string | null; type: string },
+): Promise<void> {
+  const response = await request.put(`${API_URL}${ACTIONS_PATH}/${id}`, {
+    headers: authHeaders(token),
+    data,
+  });
+  expect(response.status(), `restaurar acción ${id}`).toBe(200);
+}
+
+export { USERS_PATH, PROFILES_PATH, ACTIONS_PATH };

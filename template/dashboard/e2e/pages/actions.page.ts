@@ -9,25 +9,49 @@ import { type Locator, type Page } from '@playwright/test';
 export class ActionsPage {
   private readonly page: Page;
 
+  // ── Tabla ──────────────────────────────────────────────────────────────────
   readonly table: Locator;
   readonly rows: Locator;
 
+  // ── Cabeceras de columna (para verificar ordenación) ──────────────────────
+  columnHeader(key: string): Locator {
+    return this.page.getByTestId(`actions-table-th-${key}`);
+  }
+
+  // ── Filtros ────────────────────────────────────────────────────────────────
   readonly filterForm: Locator;
   readonly filterCode: Locator;
   readonly filterType: Locator;
   readonly searchButton: Locator;
   readonly clearButton: Locator;
 
+  // ── Barra de acciones ──────────────────────────────────────────────────────
+  readonly detailButton: Locator;
   readonly editButton: Locator;
   readonly exportButton: Locator;
 
+  // ── Formulario (edición / detalle) ─────────────────────────────────────────
   readonly form: Locator;
   readonly inputCode: Locator;
   readonly inputName: Locator;
   readonly inputDescription: Locator;
   readonly selectType: Locator;
+  readonly inputTypeReadonly: Locator;
+  readonly inputCreatedAt: Locator;
+  readonly inputLastModifiedAt: Locator;
   readonly saveButton: Locator;
   readonly cancelButton: Locator;
+
+  /**
+   * Botón "Editar" del modo detalle (`action-form-btn-edit`).
+   * Distinto del `btn-edit` de la barra del listado.
+   */
+  readonly detailEditButton: Locator;
+  /** Botón "Volver" del modo detalle (`action-form-btn-back`). */
+  readonly backButton: Locator;
+
+  /** Los errores no se muestran como toast sino como diálogo modal (`error-dialog`). */
+  readonly errorNotification: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -41,6 +65,7 @@ export class ActionsPage {
     this.searchButton = page.getByTestId('btn-filter-search');
     this.clearButton = page.getByTestId('btn-filter-clear');
 
+    this.detailButton = page.getByTestId('btn-detail');
     this.editButton = page.getByTestId('btn-edit');
     this.exportButton = page.getByTestId('btn-export');
 
@@ -49,9 +74,18 @@ export class ActionsPage {
     this.inputName = page.getByTestId('input-name');
     this.inputDescription = page.getByTestId('input-description');
     this.selectType = page.getByTestId('select-type');
+    this.inputTypeReadonly = page.getByTestId('input-type-readonly');
+    this.inputCreatedAt = page.getByTestId('input-created-at');
+    this.inputLastModifiedAt = page.getByTestId('input-last-modified-at');
     this.saveButton = page.getByTestId('btn-save');
     this.cancelButton = page.getByTestId('btn-cancel');
+    this.detailEditButton = page.getByTestId('action-form-btn-edit');
+    this.backButton = page.getByTestId('action-form-btn-back');
+
+    this.errorNotification = page.getByTestId('error-dialog');
   }
+
+  // ── Helpers de fila ────────────────────────────────────────────────────────
 
   rowByCode(code: string): Locator {
     return this.rows.filter({ hasText: code });
@@ -61,6 +95,8 @@ export class ActionsPage {
     await this.rowByCode(code).first().click();
   }
 
+  // ── Navegación ─────────────────────────────────────────────────────────────
+
   async goto(): Promise<void> {
     await this.page.goto('/administration/security/actions');
     await this.page.waitForURL(/\/administration\/security\/actions$/);
@@ -69,6 +105,8 @@ export class ActionsPage {
     // a la primera fila garantiza que la carga inicial terminó antes de leer.
     await this.rows.first().waitFor({ state: 'visible' });
   }
+
+  // ── Filtros ────────────────────────────────────────────────────────────────
 
   async applyCodeFilter(code: string): Promise<void> {
     // Con búsqueda automática (debounce) basta rellenar el filtro, pero el botón
@@ -81,9 +119,8 @@ export class ActionsPage {
   }
 
   async applyTypeFilter(type: 'READ' | 'WRITE' | 'EXECUTE'): Promise<void> {
-    // Se espera la respuesta cuyo parámetro `type` coincide: la identifica de
-    // forma inequívoca y evita confundirla con una petición previa en vuelo
-    // (p. ej. la del clearFilters anterior reemitida por el debounce).
+    // El listener debe registrarse ANTES de interactuar con el control para
+    // evitar que el debounce dispare la petición antes de que esté escuchando.
     const response = this.waitForActionsQuery({ type });
     await this.filterType.selectOption(type);
     await this.searchButton.click();
@@ -104,7 +141,12 @@ export class ActionsPage {
    * acotan la respuesta esperada por sus parámetros de URL para no satisfacer
    * la espera con una petición distinta aún en vuelo.
    */
-  private waitForActionsQuery(match?: { page?: number; code?: string; type?: string; noFilters?: boolean }): Promise<unknown> {
+  private waitForActionsQuery(match?: {
+    page?: number;
+    code?: string;
+    type?: string;
+    noFilters?: boolean;
+  }): Promise<unknown> {
     return this.page.waitForResponse((response) => {
       const url = response.url();
       if (
@@ -132,11 +174,58 @@ export class ActionsPage {
     });
   }
 
+  /** Ordena por la columna indicada y espera la respuesta con el parámetro `sort`. */
+  async sortBy(column: string, sortParam: string): Promise<void> {
+    const response = this.page.waitForResponse(
+      (res) =>
+        res.request().method() === 'GET' &&
+        res.url().includes('/administration/security/actions') &&
+        !res.url().includes('/count') &&
+        new URL(res.url()).searchParams.get('sort') === sortParam,
+    );
+    await this.columnHeader(column).click();
+    await response;
+  }  /** Cambia el tamaño de página mediante el selector `pagination-page-size`. */
+  async setPageSize(size: number): Promise<void> {
+    const response = this.page.waitForResponse(
+      (res) =>
+        res.request().method() === 'GET' &&
+        res.url().includes('/administration/security/actions') &&
+        !res.url().includes('/count') &&
+        new URL(res.url()).searchParams.get('size') === String(size),
+    );
+    await this.page.getByTestId('pagination-page-size').selectOption(String(size));
+    await response;
+  }
+
+  // ── Apertura de formularios ────────────────────────────────────────────────
+
   async openEditFormByIndex(index = 0): Promise<void> {
     await this.rows.nth(index).click();
     await this.editButton.click();
     await this.form.waitFor({ state: 'visible' });
   }
+
+  async openEditFormByCode(code: string): Promise<void> {
+    await this.selectRowByCode(code);
+    await this.editButton.click();
+    await this.form.waitFor({ state: 'visible' });
+  }
+
+  /** Abre el detalle usando el botón `btn-detail` con la fila ya seleccionada. */
+  async openDetailByButton(code: string): Promise<void> {
+    await this.selectRowByCode(code);
+    await this.detailButton.click();
+    await this.form.waitFor({ state: 'visible' });
+  }
+
+  /** Abre el detalle mediante doble clic sobre la fila del código indicado. */
+  async openDetailByDoubleClick(code: string): Promise<void> {
+    await this.rowByCode(code).first().dblclick();
+    await this.form.waitFor({ state: 'visible' });
+  }
+
+  // ── Guardado ───────────────────────────────────────────────────────────────
 
   async saveEdit(data: { name?: string; description?: string; type?: 'READ' | 'WRITE' | 'EXECUTE' }): Promise<void> {
     if (data.name !== undefined) {
@@ -159,6 +248,8 @@ export class ActionsPage {
     await this.saveButton.click();
     await updateResponse;
   }
+
+  // ── Exportación ────────────────────────────────────────────────────────────
 
   async exportCsv(): Promise<import('@playwright/test').Download> {
     const downloadPromise = this.page.waitForEvent('download');
