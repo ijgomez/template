@@ -18,6 +18,10 @@ Para la documentación técnica transversal (layout, navegación, seguridad back
 ├── login/                      Autenticación y acceso
 │   ├── login.md                Pantalla de inicio de sesión
 │   └── authentication.md       Modelo global de autenticación y sesión
+├── dashboard/                  Página de inicio
+│   └── dashboard.md
+├── layout/                     Estructura visual de la aplicación
+│   └── layout.md
 ├── global-search/              Buscador global del header
 │   └── global-search.md
 ├── reports/                    Módulo de Informes
@@ -52,6 +56,13 @@ Punto de entrada de todos los usuarios y modelo de autenticación de la platafor
 |--------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | [Login](login/login.md)                                      | Pantalla de inicio de sesión: formulario de credenciales, validaciones, gestión de errores, selección de idioma y redirección al dashboard.                                                                                                 |
 | [Autenticación y Gestión de Sesión](login/authentication.md) | Modelo global y transversal de autenticación: login y emisión de tokens, persistencia y recuperación de sesión, renovación del access token, logout, seguridad del refresh token y configuración externalizable (`RF-AUT-*` / `RNF-AUT-*`). |
+
+### Dashboard y Layout
+
+| Documento                          | Descripción                                                                                                                                         |
+|------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
+| [Dashboard](dashboard/dashboard.md) | Página de inicio con tarjetas de usuarios, nodos e interfaces con datos reales, estado del sistema, frescura y recarga (`RF-DSH-*` / `RNF-DSH-*`). |
+| [Layout](layout/layout.md)          | Menú lateral según permisos, contraíble y redimensionable, barra superior, breadcrumb, pie y menú móvil (`RF-LAY-*` / `RNF-LAY-*`).                 |
 
 ### Buscador global
 

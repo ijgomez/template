@@ -79,6 +79,8 @@ A continuación se indexan todos los ciclos de prueba del sistema con enlace dir
 | **TCY-CLN**   | Nodos del cluster           | Administración · Cluster   |    7     |         Activo          | [Nodos · Casos detallados](../02-functional/administration/cluster/cluster-nodes.md#46-casos-de-prueba-detallados-tcy-cln)                                                |
 | **TCY-CLB**   | Bloqueos del cluster        | Administración · Cluster   |    5     |         Activo          | [Bloqueos · Casos detallados](../02-functional/administration/cluster/cluster-blocks.md#46-casos-de-prueba-detallados-tcy-clb)                                            |
 | **TCY-GSR**   | Buscador global             | Layout · Header            |    6     |         Activo          | [Buscador global · Casos detallados](../02-functional/global-search/global-search.md#46-casos-de-prueba-detallados-tcy-gsr)                                                |
+| **TCY-DSH**   | Dashboard                   | Dashboard                  |    8     |         Activo          | [Dashboard · Casos detallados](../02-functional/dashboard/dashboard.md#46-casos-de-prueba-detallados-tcy-dsh)                                                             |
+| **TCY-LAY**   | Layout de la aplicación     | Layout                     |    9     |         Activo          | [Layout · Casos detallados](../02-functional/layout/layout.md#46-casos-de-prueba-detallados-tcy-lay)                                                                      |
 
 ### Convención de independencia
 
@@ -117,6 +119,8 @@ A continuación se indexan todos los ciclos de prueba del sistema con enlace dir
 | Nodos cluster         | RF-CLN-1..6, RNF-CLN-2               | TC-CLN-01..07 | [02-functional/administration/cluster/cluster-nodes.md](../02-functional/administration/cluster/cluster-nodes.md#46-casos-de-prueba-detallados-tcy-cln)         |
 | Buscador global      | RF-GSR-1..6, RNF-GSR-1..3            | TC-GSR-01..06 | [02-functional/global-search/global-search.md](../02-functional/global-search/global-search.md#46-casos-de-prueba-detallados-tcy-gsr)                           |
 | Bloqueos cluster      | RF-CLB-1..5                          | TC-CLB-01..05 | [02-functional/administration/cluster/cluster-blocks.md](../02-functional/administration/cluster/cluster-blocks.md#46-casos-de-prueba-detallados-tcy-clb)       |
+| Dashboard             | RF-DSH-1..9, RNF-DSH-1..5            | TC-DSH-01..08 | [02-functional/dashboard/dashboard.md](../02-functional/dashboard/dashboard.md#46-casos-de-prueba-detallados-tcy-dsh)                                           |
+| Layout                | RF-LAY-1..10, RNF-LAY-1..5           | TC-LAY-01..09 | [02-functional/layout/layout.md](../02-functional/layout/layout.md#46-casos-de-prueba-detallados-tcy-lay)                                                       |
 
 ---
 

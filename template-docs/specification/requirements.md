@@ -22,3 +22,17 @@ Los requisitos del buscador global del header (búsqueda transversal en usuarios
 - [Buscador global](../02-functional/global-search/global-search.md) (`RF-GSR-*` / `RNF-GSR-*`)
 
 Especificación de origen: [requirements](../../.kiro/specs/global-search/requirements.md) y [design](../../.kiro/specs/global-search/design.md).
+
+# Requisitos Funcionales — Dashboard
+
+Los requisitos de la página de inicio (tarjetas de usuarios, nodos del cluster e interfaces con datos reales, estados por bloque, permisos por tarjeta, panel de estado del sistema, frescura y recarga, y jerarquía de la información) se especifican en el documento funcional dedicado:
+
+- [Dashboard](../02-functional/dashboard/dashboard.md) (`RF-DSH-*` / `RNF-DSH-*`)
+
+Especificación de origen: [requirements](../../.kiro/specs/dashboard-stats/requirements.md) y [design](../../.kiro/specs/dashboard-stats/design.md).
+
+# Requisitos Funcionales — Layout
+
+Los requisitos de la estructura visual de la aplicación (menú lateral según permisos, acordeón, menú contraíble y redimensionable, menú móvil, barra superior, cierre de sesión, breadcrumb y pie de página) se especifican en el documento funcional dedicado:
+
+- [Layout](../02-functional/layout/layout.md) (`RF-LAY-*` / `RNF-LAY-*`)
