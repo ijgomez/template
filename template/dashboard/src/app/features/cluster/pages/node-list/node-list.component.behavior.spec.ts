@@ -286,6 +286,44 @@ describe('NodeListComponent (behavior)', () => {
       expect(component.filteredNodes().map((n) => n.hostname)).toEqual(['alpha', 'bravo', 'charlie']);
     });
 
+    describe('memory columns', () => {
+      const GB = 1_073_741_824;
+
+      beforeEach(() => {
+        // alpha: used 3, total 4, free 25% | bravo: used 1, total 8, free 87.5% | charlie: used 2, total 2, free 0%
+        component.allNodes.set([
+          buildNode({ id: 1, hostname: 'alpha', usedMemory: 3 * GB, totalMemory: 4 * GB }),
+          buildNode({ id: 2, hostname: 'bravo', usedMemory: 1 * GB, totalMemory: 8 * GB }),
+          buildNode({ id: 3, hostname: 'charlie', usedMemory: 2 * GB, totalMemory: 2 * GB }),
+        ]);
+      });
+
+      it.each([
+        ['usedMemoryGb', 'asc', ['bravo', 'charlie', 'alpha']],
+        ['usedMemoryGb', 'desc', ['alpha', 'charlie', 'bravo']],
+        ['totalMemoryGb', 'asc', ['charlie', 'alpha', 'bravo']],
+        ['totalMemoryGb', 'desc', ['bravo', 'alpha', 'charlie']],
+        ['freeMemoryPercent', 'asc', ['charlie', 'alpha', 'bravo']],
+        ['freeMemoryPercent', 'desc', ['bravo', 'alpha', 'charlie']],
+      ])('onSort by %s %s should order numerically', (column, direction, expected) => {
+        component.onSort({ column, direction } as Parameters<typeof component.onSort>[0]);
+
+        expect(component.filteredNodes().map((n) => n.hostname)).toEqual(expected);
+      });
+
+      it('should sort a node with zero total memory as 0% free', () => {
+        component.allNodes.update((list) => [
+          ...list,
+          buildNode({ id: 4, hostname: 'delta', usedMemory: 0, totalMemory: 0 }),
+        ]);
+
+        component.onSort({ column: 'freeMemoryPercent', direction: 'asc' });
+
+        // delta and charlie are both 0% free; alpha (25%) and bravo (87.5%) follow.
+        expect(component.filteredNodes().map((n) => n.hostname).slice(2)).toEqual(['alpha', 'bravo']);
+      });
+    });
+
     it('onSort without direction should keep the original order', () => {
       component.onSort({ column: 'hostname', direction: '' });
 

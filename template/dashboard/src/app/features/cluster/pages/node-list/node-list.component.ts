@@ -94,9 +94,12 @@ export class NodeListComponent implements OnInit {
     const dir = this.sortDirection();
     if (col && dir) {
       nodes = [...nodes].sort((a, b) => {
-        const aVal = (a as unknown as Record<string, SortableValue>)[col];
-        const bVal = (b as unknown as Record<string, SortableValue>)[col];
-        const comparison = String(aVal ?? '').localeCompare(String(bVal ?? ''), undefined, { numeric: true, sensitivity: 'base' });
+        const aVal = this.getSortValue(a, col);
+        const bVal = this.getSortValue(b, col);
+        const comparison =
+          typeof aVal === 'number' && typeof bVal === 'number'
+            ? aVal - bVal
+            : String(aVal ?? '').localeCompare(String(bVal ?? ''), undefined, { numeric: true, sensitivity: 'base' });
         return dir === 'asc' ? comparison : -comparison;
       });
     }
@@ -140,6 +143,24 @@ export class NodeListComponent implements OnInit {
     this.route.queryParams
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((params) => this.restoreViewFromParams(params));
+  }
+
+  /**
+   * Returns the value used to sort a node by the given column key.
+   * Memory columns are virtual (the column key differs from the model field),
+   * so they are mapped to the underlying numeric values.
+   */
+  private getSortValue(node: ClusterNode, column: string): SortableValue {
+    switch (column) {
+      case 'usedMemoryGb':
+        return node.usedMemory ?? 0;
+      case 'totalMemoryGb':
+        return node.totalMemory ?? 0;
+      case 'freeMemoryPercent':
+        return node.totalMemory > 0 ? (node.totalMemory - node.usedMemory) / node.totalMemory : 0;
+      default:
+        return (node as unknown as Record<string, SortableValue>)[column];
+    }
   }
 
   /**
