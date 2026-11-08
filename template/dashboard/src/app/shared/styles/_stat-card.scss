@@ -1,0 +1,55 @@
+/*
+ * Stat card styles shared by the dashboard summary cards
+ * (user-card, node-card, interface-card).
+ *
+ * Usage (component .scss):
+ *   @use 'app/shared/styles' as shared;
+ *   @include shared.stat-card;
+ */
+
+@mixin stat-card {
+  .tp-stat-card {
+    border: 1px solid var(--tp-color-border);
+    border-top: 2px solid var(--tp-color-primary);
+    border-radius: var(--tp-border-radius);
+    background: var(--tp-color-surface);
+    box-shadow: var(--tp-shadow-sm);
+    transition: box-shadow 120ms ease-in-out;
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        box-shadow: var(--tp-shadow);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
+
+  .tp-stat-card-success {
+    border-top-color: var(--tp-color-success);
+  }
+
+  .tp-stat-card-warning {
+    border-top-color: var(--tp-color-warning);
+  }
+
+  .stat-value {
+    font-size: 1.625rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+    color: var(--tp-color-text);
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--tp-color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+}

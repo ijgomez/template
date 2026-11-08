@@ -1,6 +1,7 @@
 /*
  * Shared styles index.
- * Import this file from any component that needs responsive utilities.
+ * Import this file from any component that needs responsive utilities or shared mixins.
  */
 
 @forward 'responsive';
+@forward 'stat-card';

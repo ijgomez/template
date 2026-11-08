@@ -1,0 +1,20 @@
+<div class="card tp-stat-card h-100" data-testid="stat-users">
+  <div class="card-body">
+    <div class="stat-label">{{ 'dashboard.stats.totalUsers' | translate }}</div>
+    @if (loading()) {
+      <div class="stat-value" aria-hidden="true">
+        <output class="spinner-border spinner-border-sm text-muted"></output>
+      </div>
+      <output class="small text-muted">{{ 'common.loading' | translate }}</output>
+    } @else if (error()) {
+      <div class="stat-value text-muted" aria-label="Not available" data-testid="stat-users-error">-</div>
+      <small class="text-danger">
+        <i class="bi bi-exclamation-octagon" aria-hidden="true"></i>
+        {{ 'dashboard.stats.usersLoadError' | translate }}
+      </small>
+    } @else {
+      <div class="stat-value tp-enter-fade" animate.enter="tp-enter-fade"
+           data-testid="stat-users-value">{{ total() }}</div>
+    }
+  </div>
+</div>

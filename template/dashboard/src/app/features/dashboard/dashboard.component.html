@@ -22,107 +22,19 @@
 <div class="row g-3 mb-4">
   <div class="col-sm-6 col-xl-4">
     @if (canReadUsers) {
-      <div class="card tp-stat-card h-100" data-testid="stat-users">
-        <div class="card-body">
-          <div class="stat-label">{{ 'dashboard.stats.totalUsers' | translate }}</div>
-          @if (usersLoading()) {
-            <div class="stat-value" aria-hidden="true">
-              <output class="spinner-border spinner-border-sm text-muted"></output>
-            </div>
-            <output class="small text-muted">{{ 'common.loading' | translate }}</output>
-          } @else if (usersError()) {
-            <div class="stat-value text-muted" aria-label="Not available" data-testid="stat-users-error">-</div>
-            <small class="text-danger">
-              <i class="bi bi-exclamation-octagon" aria-hidden="true"></i>
-              {{ 'dashboard.stats.usersLoadError' | translate }}
-            </small>
-          } @else {
-            <div class="stat-value tp-enter-fade" animate.enter="tp-enter-fade"
-                 data-testid="stat-users-value">{{ totalUsers() }}</div>
-          }
-        </div>
-      </div>
+      <tp-user-card class="d-block h-100" [total]="totalUsers()" [loading]="usersLoading()" [error]="usersError()" />
     }
   </div>
   <div class="col-sm-6 col-xl-4">
     @if (canReadNodes) {
-      <div class="card tp-stat-card h-100"
-           [class.tp-stat-card-success]="!nodesLoading() && !nodesError() && allNodesOperational()"
-           [class.tp-stat-card-warning]="!nodesLoading() && !nodesError() && !allNodesOperational()"
-           data-testid="stat-cluster-nodes">
-        <div class="card-body">
-          <div class="stat-label">{{ 'dashboard.stats.clusterNodes' | translate }}</div>
-
-          @if (nodesLoading()) {
-            <div class="stat-value" aria-hidden="true">
-              <output class="spinner-border spinner-border-sm text-muted"></output>
-            </div>
-            <output class="small text-muted">{{ 'common.loading' | translate }}</output>
-          } @else if (nodesError()) {
-            <div class="stat-value text-muted" aria-label="Not available">-</div>
-            <small class="text-danger">
-              <i class="bi bi-exclamation-octagon" aria-hidden="true"></i>
-              {{ 'dashboard.stats.nodesLoadError' | translate }}
-            </small>
-          } @else {
-            <div class="stat-value tp-enter-fade" animate.enter="tp-enter-fade"
-                 data-testid="stat-cluster-nodes-value">
-              {{ activeNodes() }} <small class="text-muted fs-6">/ {{ totalNodes() }}</small>
-            </div>
-            @if (allNodesOperational()) {
-              <small class="text-success" data-testid="stat-cluster-nodes-ok">
-                <i class="bi bi-check-circle" aria-hidden="true"></i>
-                {{ 'dashboard.stats.allOperational' | translate }}
-              </small>
-            } @else {
-              <a routerLink="/administration/cluster/nodes" class="small text-warning text-decoration-none"
-                 data-testid="stat-cluster-nodes-link">
-                <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
-                {{ 'dashboard.stats.nodesDegraded' | translate: { count: inactiveNodes() } }}
-              </a>
-            }
-          }
-        </div>
-      </div>
+      <tp-node-card class="d-block h-100" [activeNodes]="activeNodes()" [totalNodes]="totalNodes()"
+                    [loading]="nodesLoading()" [error]="nodesError()" />
     }
   </div>
   <div class="col-sm-6 col-xl-4">
     @if (canReadInterfaces) {
-      <div class="card tp-stat-card h-100"
-           [class.tp-stat-card-success]="!interfacesLoading() && !interfacesError() && interfacesWithError() === 0"
-           [class.tp-stat-card-warning]="!interfacesLoading() && !interfacesError() && interfacesWithError() > 0"
-           data-testid="stat-interfaces">
-        <div class="card-body">
-          <div class="stat-label">{{ 'dashboard.stats.interfaces' | translate }}</div>
-          @if (interfacesLoading()) {
-            <div class="stat-value" aria-hidden="true">
-              <output class="spinner-border spinner-border-sm text-muted"></output>
-            </div>
-            <output class="small text-muted">{{ 'common.loading' | translate }}</output>
-          } @else if (interfacesError()) {
-            <div class="stat-value text-muted" aria-label="Not available">-</div>
-            <small class="text-danger">
-              <i class="bi bi-exclamation-octagon" aria-hidden="true"></i>
-              {{ 'dashboard.stats.interfacesLoadError' | translate }}
-            </small>
-          } @else {
-            <div class="stat-value tp-enter-fade" animate.enter="tp-enter-fade"
-                 data-testid="stat-interfaces-value">{{ totalInterfaces() }}</div>
-            @if (interfacesWithError() > 0) {
-              <a routerLink="/interfaces/configuration" class="small text-warning text-decoration-none"
-                 data-testid="stat-interfaces-error-link">
-                <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
-                {{ 'dashboard.stats.withError' | translate: { count: interfacesWithError() } }}
-              </a>
-            } @else {
-              <small class="text-success" data-testid="stat-interfaces-ok">
-                <i class="bi bi-check-circle" aria-hidden="true"></i>
-                {{ 'dashboard.stats.noInterfaceErrors' | translate }}
-              </small>
-            }
-          }
-        </div>
-      </div>
+      <tp-interface-card class="d-block h-100" [total]="totalInterfaces()" [withError]="interfacesWithError()"
+                         [loading]="interfacesLoading()" [error]="interfacesError()" />
     }
   </div>
 </div>

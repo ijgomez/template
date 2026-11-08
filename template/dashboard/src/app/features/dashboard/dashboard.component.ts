@@ -1,5 +1,4 @@
 import { Component, ChangeDetectionStrategy, DestroyRef, OnInit, inject, signal, computed } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { environment } from '../../../environments/environment';
@@ -7,6 +6,9 @@ import { AuthService } from '../../core/services/auth.service';
 import { ClusterService } from '../../core/services/cluster.service';
 import { InterfaceService } from '../../core/services/interface.service';
 import { UserService } from '../../core/services/user.service';
+import { TpNodeCardComponent } from '../cluster/components/node-card';
+import { TpInterfaceCardComponent } from '../interfaces/components/interface-card';
+import { TpUserCardComponent } from '../security/components/user-card';
 
 /** Interval (ms) used to recompute the "updated X ago" freshness label. */
 const FRESHNESS_TICK_MS = 30_000;
@@ -24,7 +26,7 @@ const FRESHNESS_TICK_MS = 30_000;
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [RouterLink, TranslatePipe],
+  imports: [TranslatePipe, TpUserCardComponent, TpNodeCardComponent, TpInterfaceCardComponent],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
