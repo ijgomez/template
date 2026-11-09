@@ -42,7 +42,7 @@ Identificadores locales de este documento: `RF-PAR-*` (requisitos funcionales) y
 **Criterios de aceptación:**
 - AC3.1: El formulario exige código y tipo, y deshabilita el guardado mientras falten campos obligatorios o el valor no sea válido para el tipo seleccionado.
 - AC3.2: El valor es obligatorio en el alta y debe ser compatible con el tipo seleccionado.
-- AC3.3: El código debe ser único dentro del sistema, tanto en alta como en edición.
+- AC3.3: El código debe ser único dentro del sistema. La unicidad se valida en frontend (el formulario consulta al backend al informar el código, muestra el error bajo el campo y en el resumen de errores, y deshabilita el guardado) y en backend (el servicio rechaza el duplicado con `409 Conflict`).
 - AC3.4: Si el usuario limpia un campo obligatorio, el formulario lo marca como inválido y no permite guardar.
 - AC3.5: Una creación válida devuelve 201 y el nuevo parámetro aparece en el listado.
 
@@ -244,7 +244,7 @@ La pantalla de parámetros usa `List screen` para la consulta, `Form screen` par
 | Tipo        | Obligatorio; permitido únicamente por el enum `ParameterType`                                                                       |
 | Valor       | Requerido y validado con el tipo; por ejemplo, `true`/`false` para booleanos                                                        |
 | Descripción | Opcional, permite explicar la finalidad del parámetro                                                                               |
-| Unicidad    | El backend rechaza duplicados con `409 Conflict` tanto en alta como en edición                                                      |
+| Unicidad    | Doble validación: el frontend avisa en el formulario si el código ya existe (error `parameters.validation.codeExists` y guardado deshabilitado) y el backend rechaza duplicados con `409 Conflict` |
 
 ### 2.6. Validaciones de negocio en backend
 
@@ -385,7 +385,8 @@ Ruta base: `/api/v1/administration/parameters`.
 - La descripción es opcional, pero si se informa debe incorporar texto descriptivo válido y compatible con la longitud y formato del backend.
 - La validación de compatibilidad se repite tanto en frontend como en servicio para evitar inconsistencias.
 - El formulario marca visualmente los campos obligatorios como inválidos al vaciarlos y bloquea el envío con `save` deshabilitado hasta que el formulario es válido.
-- La comprobación de unicidad del `code` se realiza también en backend para rechazar conflictos de código duplicado con `409 Conflict` en creación y edición.
+- Unicidad del `code` en frontend: en modo alta, `ParameterFormComponent` consulta al backend (`ParameterService.countByCriteria`) cada vez que cambia el código; si ya existe, muestra el mensaje `parameters.validation.codeExists` bajo el campo y en el resumen de errores, y deshabilita el guardado. En edición no se comprueba porque el código es inmutable.
+- Unicidad del `code` en backend: `ParameterService` rechaza el código duplicado con `DuplicateEntityException`, que `GlobalExceptionHandler` traduce a `409 Conflict`, tanto en creación como en edición. Esta validación es la que garantiza la integridad; la del frontend solo anticipa el error.
 
 ### 3.5. Exportación
 
@@ -505,13 +506,14 @@ Precondición del ciclo: usuario con `SYSTEM_PARAMETER_READ` / `SYSTEM_PARAMETER
 
 #### TC-PAR-04 · Alta con código duplicado
 
-- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Negativo · **Traza:** RF-PAR-3 (AC3.3), RNF-PAR-3 · **Independiente:** Sí (crea y luego duplica) · **Dependencias:** ninguna
+- **Versión:** 1.1 · **Prioridad:** Alta · **Tipo:** Negativo, E2E, API · **Traza:** RF-PAR-3 (AC3.3), RNF-PAR-3 · **Independiente:** Sí (crea y luego duplica) · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`; crear `E2E_PARAM_{{UNIQUE}}` como primer parámetro.
 - **Teardown:** eliminar `E2E_PARAM_{{UNIQUE}}`.
 
-| # | Acción                                                                   | Resultado esperado                                                |
-|---|--------------------------------------------------------------------------|-------------------------------------------------------------------|
-| 1 | Intentar crear otro parámetro con el mismo código `E2E_PARAM_{{UNIQUE}}` | El backend devuelve `409 Conflict` y la operación queda bloqueada |
+| # | Acción                                                                                         | Resultado esperado                                                                                   |
+|---|------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------|
+| 1 | En la UI, pulsar `btn-create` e informar el código `E2E_PARAM_{{UNIQUE}}` ya existente        | El campo `input-code` se marca inválido, `error-code` muestra que el código ya existe y `btn-save` queda deshabilitado |
+| 2 | Por API, `POST` de otro parámetro con el mismo código `E2E_PARAM_{{UNIQUE}}`                   | El backend devuelve `409 Conflict` y no se crea el parámetro                                          |
 
 #### TC-PAR-05 · Edición (código inmutable)
 

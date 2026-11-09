@@ -180,7 +180,8 @@
       "usernameRequired": "Username is required",
       "passwordRequired": "Password is required",
       "emailInvalid": "The email address is not valid",
-      "profileRequired": "Profile is required"
+      "profileRequired": "Profile is required",
+      "usernameExists": "Username already exists in the database"
     },
     "filters": {
       "allProfiles": "All profiles",
@@ -228,7 +229,8 @@
       "lastModifiedAt": "Last Modified At"
     },
     "errors": {
-      "nameRequired": "Name is required"
+      "nameRequired": "Name is required",
+      "nameExists": "Name already exists in the database"
     },
     "filters": {
       "clear": "Clear"

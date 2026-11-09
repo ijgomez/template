@@ -42,6 +42,7 @@ Identificadores locales de este documento: `RF-PRO-*` (requisitos funcionales) y
 - AC3.2: Un alta válida devuelve 201 y el nuevo perfil aparece en el listado.
 - AC3.3: No se permiten acciones duplicadas dentro del mismo perfil.
 - AC3.4: Tras el alta correcta se vuelve al listado y se recarga.
+- AC3.5: El nombre debe ser único dentro del sistema. La unicidad se valida en frontend (el formulario consulta al backend al informar el nombre, muestra el error bajo el campo y en el resumen de errores, y deshabilita el guardado) y en backend (el servicio rechaza el duplicado con `409 Conflict`).
 
 #### RF-PRO-4: Edición de perfil
 
@@ -51,6 +52,7 @@ Identificadores locales de este documento: `RF-PRO-*` (requisitos funcionales) y
 - AC4.1: Se puede cambiar el nombre y la descripción.
 - AC4.2: Se puede reemplazar la lista de acciones asignadas.
 - AC4.3: Una edición válida devuelve 200 y el cambio se refleja en el listado.
+- AC4.4: Al cambiar el nombre se aplica la misma regla de unicidad que en el alta (AC3.5), ignorando el propio perfil; conservar el nombre actual no genera error.
 
 #### RF-PRO-5: Eliminación de perfil
 
@@ -242,7 +244,8 @@ En perfiles, el `List screen` soporta filtrado por nombre, el `Form screen` inte
 
 | Campo       | Regla                                     |
 |-------------|-------------------------------------------|
-| Nombre      | Obligatorio                               |
+| Nombre      | Obligatorio y único                       |
+| Unicidad    | Doble validación: el frontend avisa en el formulario si el nombre ya existe (error `profiles.errors.nameExists` y guardado deshabilitado) y el backend rechaza duplicados con `409 Conflict`, tanto en alta como en edición |
 | Descripción | Opcional                                  |
 | Acciones    | Deben ser únicas y existir en el catálogo |
 
@@ -371,6 +374,8 @@ Datos de referencia consumidos por el formulario:
 ### 3.4. Validaciones
 
 - El nombre del perfil es obligatorio y debe cumplir la regla de unicidad en el catálogo de perfiles.
+- Unicidad del `name` en frontend: `ProfileFormComponent` consulta al backend (`ProfileService.findByCriteria`) cada vez que cambia el nombre y compara por coincidencia exacta, porque el filtro `name` del listado es parcial. En edición ignora el propio perfil por `id`. Si ya existe, muestra el mensaje `profiles.errors.nameExists` bajo el campo y en el resumen de errores, y deshabilita el guardado.
+- Unicidad del `name` en backend: `ProfileService` rechaza el nombre duplicado con `DuplicateEntityException` en creación y en edición (cuando el nombre cambia), que `GlobalExceptionHandler` traduce a `409 Conflict`. Esta validación es la que garantiza la integridad; la del frontend solo anticipa el error.
 - La descripción es opcional, pero si se informa debe cumplir la longitud y el formato requerido por el backend.
 - La relación con acciones debe referenciar IDs válidos que existan en el catálogo de permisos.
 - La operación de borrado se rechaza si el perfil está asociado a usuarios activos o si el backend detecta un uso en curso (`EntityInUseException`).
@@ -578,6 +583,19 @@ Precondición del ciclo: usuario con `PROFILE_READ` y `PROFILE_WRITE`. Datos de 
 | 2 | Con token (a), `PUT /api/v1/administration/security/profiles/{ADMIN}` cambiando `actionIds`                              | 403 Forbidden; las acciones del perfil no cambian                           |
 | 3 | Con token (a), `PUT /api/v1/administration/security/profiles/{ADMIN}` cambiando solo la descripción (mismos `actionIds`)  | 200 OK (editar sin tocar permisos no requiere `PROFILE_GRANT`)              |
 | 4 | Con token (b), `POST /api/v1/administration/security/profiles` con nombre nuevo y `actionIds` con una acción              | 201 Created; el perfil se crea con la acción indicada                       |
+
+#### TC-PRO-11 · Alta y edición con nombre duplicado
+
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Negativo, E2E, API · **Traza:** RF-PRO-3 (AC3.5), RF-PRO-4 (AC4.4) · **Independiente:** Sí (crea y luego duplica) · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`; crear `e2e_profile_{{UNIQUE}}` como primer perfil.
+- **Teardown:** eliminar `e2e_profile_{{UNIQUE}}`.
+
+| # | Acción                                                                                         | Resultado esperado                                                                                                  |
+|---|------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------|
+| 1 | En la UI, pulsar `btn-create` e informar el nombre `e2e_profile_{{UNIQUE}}` ya existente       | El campo `input-name` se marca inválido, `error-name` muestra que el nombre ya existe y `btn-save` queda deshabilitado |
+| 2 | Por API, `POST /api/v1/administration/security/profiles` con el mismo nombre                   | 409 Conflict; no se crea el perfil                                                                                  |
+| 3 | En la UI, editar `e2e_profile_{{UNIQUE}}` sin cambiar el nombre                                | No se muestra error de unicidad y `btn-save` permanece habilitado                                                   |
+| 4 | Por API, `PUT` sobre otro perfil existente con el nombre `e2e_profile_{{UNIQUE}}`              | 409 Conflict; el nombre del otro perfil no cambia                                                                   |
 
 ---
 
