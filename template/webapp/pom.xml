@@ -189,6 +189,9 @@
     </dependencies>
 
     <build>
+        <!-- Nombre del artefacto: webapp/target/template.war (contexto /template en Tomcat) -->
+        <finalName>template</finalName>
+
         <!-- Resource filtering: resolve @...@ placeholders in application.yml -->
         <resources>
             <resource>
@@ -235,6 +238,15 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+
+            <!-- El WAR sólo incluye el application-<perfil>.yml del perfil activo -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <packagingExcludes>${war.excluded.profiles}</packagingExcludes>
+                </configuration>
             </plugin>
 
             <plugin>

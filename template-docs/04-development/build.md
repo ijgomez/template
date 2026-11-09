@@ -93,7 +93,7 @@ La aplicación arranca en `http://localhost:8080/template` con el perfil `local`
 Alternativamente, si ya se ha compilado el WAR:
 
 ```bash
-java -jar webapp/target/template-webapp-0.1.0-SNAPSHOT.war --spring.profiles.active=local
+java -jar webapp/target/template.war --spring.profiles.active=local
 ```
 
 ### Context path

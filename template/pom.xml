@@ -84,6 +84,13 @@
         -->
         <spring.profiles.active>dist</spring.profiles.active>
         <!--
+            Ficheros application-<perfil>.yml de los OTROS perfiles que se excluyen del WAR
+            (el WAR sólo debe llevar el del perfil activo). Cada perfil Maven lo sobreescribe.
+            Se excluyen en el empaquetado (no en process-resources) para que los tests,
+            que usan target/classes, sigan viendo application-test.yml.
+        -->
+        <war.excluded.profiles>WEB-INF/classes/application-local.yml,WEB-INF/classes/application-test.yml</war.excluded.profiles>
+        <!--
             Perfil de Spring Boot usado por 'mvn spring-boot:run'. A diferencia del
             empaquetado (que por defecto es 'dist' por SEC-04), el arranque en local
             debe usar 'local' sin necesidad de '-P', para no exigir variables de
@@ -417,6 +424,7 @@
             <id>local</id>
             <properties>
                 <spring.profiles.active>local</spring.profiles.active>
+                <war.excluded.profiles>WEB-INF/classes/application-dist.yml,WEB-INF/classes/application-test.yml</war.excluded.profiles>
                 <spring-boot.run.profiles>local</spring-boot.run.profiles>
                 <angular.configuration>local</angular.configuration>
             </properties>
@@ -427,6 +435,7 @@
             <id>dist</id>
             <properties>
                 <spring.profiles.active>dist</spring.profiles.active>
+                <war.excluded.profiles>WEB-INF/classes/application-local.yml,WEB-INF/classes/application-test.yml</war.excluded.profiles>
                 <spring-boot.run.profiles>dist</spring-boot.run.profiles>
                 <angular.configuration>dist</angular.configuration>
             </properties>
@@ -437,6 +446,7 @@
             <id>test</id>
             <properties>
                 <spring.profiles.active>test</spring.profiles.active>
+                <war.excluded.profiles>WEB-INF/classes/application-local.yml,WEB-INF/classes/application-dist.yml</war.excluded.profiles>
                 <spring-boot.run.profiles>test</spring-boot.run.profiles>
                 <angular.configuration>test</angular.configuration>
                 <!--

@@ -120,7 +120,7 @@ El script `package` realiza:
 
 | Artefacto          | Ubicación                                             | Descripción                     |
 |--------------------|-------------------------------------------------------|---------------------------------|
-| WAR del backend    | `template/webapp/target/template-webapp-X.Y.Z.war`    | Aplicación backend empaquetada  |
+| WAR del backend    | `template/webapp/target/template.war`                 | Aplicación backend empaquetada  |
 | Frontend compilado | `template/dashboard/dist/dashboard/browser/`          | Ficheros estáticos del frontend |
 
 El WAR generado con el perfil `dist` incluye automáticamente el frontend compilado en `static/`, resultando en un artefacto único desplegable.
@@ -163,7 +163,7 @@ Para entornos gestionados, la configuración se almacena en el directorio `templ
 1. Copiar el WAR al servidor:
 
    ```bash
-   scp template/webapp/target/template-webapp-X.Y.Z.war usuario@servidor:/ruta/despliegue/
+   scp template/webapp/target/template.war usuario@servidor:/ruta/despliegue/
    ```
 
 2. Arrancar la aplicación con las variables de entorno del entorno destino:
@@ -175,7 +175,7 @@ Para entornos gestionados, la configuración se almacena en el directorio `templ
    export JWT_SECRET=<clave-produccion-min-32-chars>
    export CORS_ALLOWED_ORIGINS=https://app.midominio.com
 
-   java -jar template-webapp-X.Y.Z.war --spring.profiles.active=dist
+   java -jar template.war --spring.profiles.active=dist
    ```
 
 ### Despliegue con Docker
