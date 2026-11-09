@@ -75,6 +75,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!--
@@ -86,6 +92,13 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
+            <exclusions>
+                <!-- El EL lo aporta el contenedor (WildFly); ver spring-boot-starter-tomcat provided -->
+                <exclusion>
+                    <groupId>org.apache.tomcat.embed</groupId>
+                    <artifactId>tomcat-embed-el</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Spring Security -->
@@ -138,6 +151,33 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
+        </dependency>
+
+        <!--
+            Tomcat embebido en 'provided': permite arrancar en local con
+            'spring-boot:run' pero NO se empaqueta en WEB-INF/lib del WAR.
+            Si se empaquetara, tomcat-embed-core trae sus propias clases
+            jakarta.servlet.* y entra en conflicto con las del contenedor
+            (WildFly: IncompatibleClassChangeError en HttpServlet).
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!--
+            Logging (Logback) en 'provided': solo para 'spring-boot:run' en local.
+            No se empaqueta en el WAR porque WildFly aporta SLF4J sobre JBoss
+            LogManager y Spring Boot falla si detecta Logback junto a otra
+            implementación ("LoggerFactory is not a Logback LoggerContext").
+            Al declararlo directamente, este scope prevalece sobre el transitivo
+            (compile) que traen todos los starters.
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-logging</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Servlet API (provided by container for WAR) -->
