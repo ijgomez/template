@@ -9,6 +9,7 @@ import org.myorganization.template.domain.enums.AuditSection;
 import org.myorganization.template.domain.enums.OperationType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,8 +36,8 @@ public class AuditController {
     /**
      * Lists audit log entries with pagination and optional filters.
      *
-     * @param fromDate      optional filter: start date (inclusive)
-     * @param toDate        optional filter: end date (inclusive)
+     * @param fromDate      optional start instant, ISO-8601 with offset (inclusive)
+     * @param toDate        optional end instant, ISO-8601 with offset (exclusive)
      * @param username      optional filter by username (partial match)
      * @param operationType optional filter by operation type
      * @param section       optional filter by audit section
@@ -45,8 +46,8 @@ public class AuditController {
      */
     @GetMapping
     public ResponseEntity<Page<AuditLogDTO>> findAll(
-            @RequestParam(required = false) OffsetDateTime fromDate,
-            @RequestParam(required = false) OffsetDateTime toDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime fromDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime toDate,
             @RequestParam(required = false) String username,
             @RequestParam(required = false) OperationType operationType,
             @RequestParam(required = false) AuditSection section,
@@ -60,8 +61,8 @@ public class AuditController {
     /**
      * Counts audit log entries matching the given filters.
      *
-     * @param fromDate      optional filter: start date (inclusive)
-     * @param toDate        optional filter: end date (inclusive)
+     * @param fromDate      optional start instant, ISO-8601 with offset (inclusive)
+     * @param toDate        optional end instant, ISO-8601 with offset (exclusive)
      * @param username      optional filter by username (partial match)
      * @param operationType optional filter by operation type
      * @param section       optional filter by audit section
@@ -69,8 +70,8 @@ public class AuditController {
      */
     @GetMapping("/count")
     public ResponseEntity<Long> count(
-            @RequestParam(required = false) OffsetDateTime fromDate,
-            @RequestParam(required = false) OffsetDateTime toDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime fromDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime toDate,
             @RequestParam(required = false) String username,
             @RequestParam(required = false) OperationType operationType,
             @RequestParam(required = false) AuditSection section) {

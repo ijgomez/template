@@ -148,6 +148,13 @@ Todo `@Repository` asociado a una entidad debe exponer `findByCriteria` y `count
 - Externalizar toda configuración en `application.yml`.
 - Escribir tests unitarios con JUnit 5 y Mockito. Tests de integración con `@SpringBootTest`.
 
+## Fechas y Zonas Horarias
+
+- El backend maneja todos los instantes en **UTC**: `OffsetDateTime` con `ZoneOffset.UTC`; nunca `ZoneId.systemDefault()` ni `LocalDateTime` para instantes.
+- Parámetros de fecha en controladores: `@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime`.
+- Rangos de fecha en criterios: `fromDate` inclusivo (`>=`), `toDate` exclusivo (`<`).
+- La conversión a la zona horaria del usuario la hace el frontend. Regla completa: [api-rest.md — Fechas y Zonas Horarias](api-rest.md#fechas-y-zonas-horarias).
+
 ## Testing
 
 - **JUnit 5**, **Mockito**, **Spring Boot Test**, **Testcontainers**, **MockMvc**, **Instancio**, **ArchUnit 1.5.0**, **JaCoCo**, **SonarQube**.

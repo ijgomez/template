@@ -59,6 +59,28 @@ Patrón interfaz + implementación:
 - Ubicar la ruta `/references` **antes** de las rutas genéricas `/{id}` en el controlador para evitar conflictos de path matching en Spring MVC.
 - Las reglas de autorización de estos endpoints en `SecurityConfig` se detallan en [security.md](security.md), sección "Autorización de Endpoints Auxiliares para Filtros".
 
+## Fechas y Zonas Horarias
+
+**Regla:** el usuario ve siempre las fechas en la zona horaria de su navegador; el backend y la base de datos manejan siempre las fechas en **UTC**. La conversión entre ambas se hace únicamente en el frontend.
+
+| Capa           | Regla                                                                                                     |
+|----------------|-----------------------------------------------------------------------------------------------------------|
+| Base de datos  | Columnas de instante con tipo `TIMESTAMP WITH TIME ZONE`; el servidor PostgreSQL trabaja en UTC.          |
+| Backend (Java) | Tipo `OffsetDateTime` en UTC (`OffsetDateTime.now(ZoneOffset.UTC)`); `hibernate.jdbc.time_zone` y `spring.jackson.time-zone` a `UTC`. No usar `ZoneId.systemDefault()` ni `LocalDateTime` para instantes. |
+| API REST       | Los instantes viajan en ISO-8601 con offset, en UTC (`2026-10-24T22:00:00.000Z`), tanto en respuestas como en parámetros. Los parámetros se declaran con `@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)`. |
+| Frontend       | Se muestran con `LocalDatePipe` / `DateService`, que convierten a la zona del navegador. No mostrar nunca el valor UTC en bruto. |
+
+### Filtros por rango de fechas
+
+- El usuario elige días locales (`<input type="date">` → `YYYY-MM-DD`). El frontend los convierte en el **rango semiabierto UTC** `[fromDate, toDate)` con `DateService.toUtcStartOfLocalDay` (00:00 local del día inicial) y `DateService.toUtcStartOfNextLocalDay` (00:00 local del día siguiente al final).
+- En el backend `fromDate` es **inclusivo** (`>=`) y `toDate` **exclusivo** (`<`).
+- No calcular límites sumando 24 h en UTC: los días de cambio de hora duran 23 o 25 horas.
+- No enviar fechas sin zona (`2026-10-25`) al backend: son ambiguas y se rechazan con `400`.
+
+### Excepciones
+
+Los datos de calendario civil que no son instantes (fecha de nacimiento, festivos, "todos los días a las 09:00 de Madrid") se modelan con `LocalDate` / `LocalTime` y, si aplica, la zona horaria (`ZoneId`) explícita; no se convierten a UTC.
+
 ## Documentación
 
 - OpenAPI 3 / Springdoc (`springdoc-openapi`).

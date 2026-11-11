@@ -1,4 +1,4 @@
-import { type Locator, type Page } from '@playwright/test';
+import { type Download, type Locator, type Page, type Response } from '@playwright/test';
 
 /**
  * Page Object de la pantalla de auditoría.
@@ -22,6 +22,12 @@ export class AuditPage {
   readonly viewDetailButton: Locator;
   readonly exportButton: Locator;
   readonly backToListButton: Locator;
+  readonly selectedRows: Locator;
+  readonly dateRangeError: Locator;
+  readonly pageSizeSelect: Locator;
+  readonly nextPageButton: Locator;
+  /** Los errores (p. ej. exportación sin datos) se muestran en el diálogo modal `error-dialog`. */
+  readonly errorDialog: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -39,6 +45,49 @@ export class AuditPage {
     this.viewDetailButton = page.getByTestId('audit-view-detail');
     this.exportButton = page.getByTestId('audit-export-csv');
     this.backToListButton = page.getByTestId('audit-back-to-list');
+    this.selectedRows = this.table.locator('tbody tr[aria-selected="true"]');
+    this.dateRangeError = this.filterForm.locator('.text-danger');
+    this.pageSizeSelect = page.getByTestId('pagination-page-size');
+    this.nextPageButton = page.getByTestId('pagination-next');
+    this.errorDialog = page.getByTestId('error-dialog');
+  }
+
+  /** Cabecera de la columna indicada (`timestamp`, `username`, ...). */
+  columnHeader(key: string): Locator {
+    return this.page.getByTestId(`audit-table-th-${key}`);
+  }
+
+  /** Pulsa la cabecera y espera la consulta con el `sort` esperado (p. ej. `timestamp,asc`). */
+  async sortBy(key: string, expected: string): Promise<Response> {
+    const response = this.waitForAuditQuery({ sort: expected });
+    await this.columnHeader(key).click();
+    return response;
+  }
+
+  /** Cambia el tamaño de página y espera la consulta con el nuevo `size`. */
+  async setPageSize(size: number): Promise<Response> {
+    const response = this.waitForAuditQuery({ size });
+    await this.pageSizeSelect.selectOption({ label: String(size) });
+    return response;
+  }
+
+  /** Navega a la página siguiente y espera su consulta. */
+  async goToNextPage(): Promise<Response> {
+    const response = this.waitForAuditQuery({ page: 1 });
+    await this.nextPageButton.click();
+    return response;
+  }
+
+  /**
+   * Informa el rango de días locales (`YYYY-MM-DD`) y aplica los filtros.
+   * Devuelve la respuesta de la consulta, cuya URL contiene `fromDate`/`toDate` en UTC.
+   */
+  async applyDateRange(dateFrom: string, dateTo: string): Promise<Response> {
+    await this.filterDateFrom.fill(dateFrom);
+    await this.filterDateTo.fill(dateTo);
+    const response = this.waitForAuditQuery({ page: 0, hasParam: 'toDate' });
+    await this.applyFiltersButton.click();
+    return response;
   }
 
   /** Navega a la pantalla y espera al listado inicial. */
@@ -100,10 +149,40 @@ export class AuditPage {
   }
 
   /** Exporta el resultado filtrado y devuelve la descarga del navegador. */
-  async exportCsv(): Promise<import('@playwright/test').Download> {
+  async exportCsv(): Promise<Download> {
     const download = this.page.waitForEvent('download');
     await this.exportButton.click();
     return download;
+  }
+
+  /**
+   * Espera la consulta del listado (no el recuento) que cumpla los criterios indicados.
+   */
+  waitForAuditQuery(match?: { page?: number; size?: number; sort?: string; hasParam?: string }): Promise<Response> {
+    return this.page.waitForResponse((response) => {
+      if (
+        response.request().method() !== 'GET' ||
+        !response.url().includes('/administration/audit') ||
+        response.url().includes('/count') ||
+        response.status() !== 200
+      ) {
+        return false;
+      }
+      const params = new URL(response.url()).searchParams;
+      if (match?.page !== undefined && params.get('page') !== String(match.page)) {
+        return false;
+      }
+      if (match?.size !== undefined && params.get('size') !== String(match.size)) {
+        return false;
+      }
+      if (match?.sort !== undefined && params.get('sort') !== match.sort) {
+        return false;
+      }
+      if (match?.hasParam !== undefined && !params.has(match.hasParam)) {
+        return false;
+      }
+      return true;
+    });
   }
 
   private async submitFilters(): Promise<void> {
@@ -116,20 +195,4 @@ export class AuditPage {
     await response;
   }
 
-  private waitForAuditQuery(match?: { page?: number }): Promise<unknown> {
-    return this.page.waitForResponse((response) => {
-      if (
-        response.request().method() !== 'GET' ||
-        !response.url().includes('/administration/audit') ||
-        response.url().includes('/count') ||
-        response.status() !== 200
-      ) {
-        return false;
-      }
-      if (match?.page !== undefined && new URL(response.url()).searchParams.get('page') !== String(match.page)) {
-        return false;
-      }
-      return true;
-    });
-  }
 }

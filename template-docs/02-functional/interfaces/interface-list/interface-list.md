@@ -320,6 +320,7 @@ public class InterfaceLog extends BaseEntity {
 ### 3.4. Validaciones
 
 - Los filtros de fecha, tipo de operación, interfaz y estado se validan antes de ejecutar la consulta; valores no permitidos se descartan o se convierten al tipo del enum.
+- Las fechas del filtro son días locales del navegador (`YYYY-MM-DD`). `InterfaceService` (frontend) las envía como el rango UTC semiabierto `[fromDate, toDate)` en ISO-8601 (00:00 local del día inicial y 00:00 local del día siguiente al final); el backend aplica `fromDate` inclusivo y `toDate` exclusivo. Ver [api-rest.md — Fechas y Zonas Horarias](../../../04-development/coding-guidelines/api-rest.md#fechas-y-zonas-horarias).
 - El filtro de interfaz se aplica por **igualdad exacta** sobre el nombre (`interfaceName`): el backend compara el nombre completo (`cb.equal`), no una coincidencia parcial.
 - El nombre de interfaz y el estado deben existir en el catálogo de configuración para que la consulta devuelva resultados coherentes.
 - La API exige que el usuario tenga la autoridad `INTERFACES_READ`; en caso contrario el acceso se deniega antes de procesar la consulta.

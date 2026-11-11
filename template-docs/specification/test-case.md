@@ -142,7 +142,6 @@ La inmensa mayoría de casos son **independientes** (login y limpieza propios). 
 | `TC-PRO-11`                           | Necesita un perfil previo para duplicarlo                                                                     | El setup crea `e2e_profile_{{UNIQUE}}` por API antes de los pasos                                                 |
 | `TC-PAR-04`..`07`                     | Necesitan un parámetro propio                                                                                 | El setup crea `E2E_PARAM_{{UNIQUE}}` por API antes de los pasos                                                   |
 | `TC-ACC-04`                           | Edita un registro semilla                                                                                     | El teardown restaura el valor original                                                                            |
-| `TC-AUD-03`                           | 🔴 **BLOQUEADO**: discrepancia de contrato de fechas (sección 3.4), pendiente de revisión funcional y técnica | No ejecutar; desbloquear solo tras alinear `dateFrom/dateTo` ↔ `fromDate/toDate` y verificar de extremo a extremo |
 | `TC-CLN-04`                           | Modifica estado compartido; requiere ≥2 nodos activos                                                         | Ejecutar en entorno con dos nodos; el teardown restaura el maestro original                                       |
 
 ---

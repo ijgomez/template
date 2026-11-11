@@ -79,8 +79,11 @@ describe('AuditService', () => {
       expect(req.request.params.get('page')).toBe('1');
       expect(req.request.params.get('size')).toBe('10');
       expect(req.request.params.get('sort')).toBe('timestamp,desc');
-      expect(req.request.params.get('dateFrom')).toBe('2026-01-01');
-      expect(req.request.params.get('dateTo')).toBe('2026-01-31');
+      // Local days are sent as the half-open UTC range [00:00 of dateFrom, 00:00 of the day after dateTo)
+      expect(req.request.params.get('fromDate')).toBe(new Date(2026, 0, 1).toISOString());
+      expect(req.request.params.get('toDate')).toBe(new Date(2026, 1, 1).toISOString());
+      expect(req.request.params.get('dateFrom')).toBeNull();
+      expect(req.request.params.get('dateTo')).toBeNull();
       expect(req.request.params.get('username')).toBe('admin');
       expect(req.request.params.get('operationType')).toBe('UPDATE');
       expect(req.request.params.get('section')).toBe('REPORTS');

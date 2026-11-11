@@ -144,3 +144,59 @@ describe('DateService', () => {
     });
   });
 });
+
+describe('DateService local day → UTC range', () => {
+  const MADRID = 'Europe/Madrid';
+  let service: DateService;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(DateService);
+  });
+
+  it('should map a winter day in Madrid (CET, UTC+1) to its UTC bounds', () => {
+    expect(service.toUtcStartOfLocalDay('2026-01-15', MADRID)).toBe('2026-01-14T23:00:00.000Z');
+    expect(service.toUtcStartOfNextLocalDay('2026-01-15', MADRID)).toBe('2026-01-15T23:00:00.000Z');
+  });
+
+  it('should map a summer day in Madrid (CEST, UTC+2) to its UTC bounds', () => {
+    expect(service.toUtcStartOfLocalDay('2026-07-15', MADRID)).toBe('2026-07-14T22:00:00.000Z');
+    expect(service.toUtcStartOfNextLocalDay('2026-07-15', MADRID)).toBe('2026-07-15T22:00:00.000Z');
+  });
+
+  it('should cover the 25-hour day when DST ends (last Sunday of October)', () => {
+    const start = service.toUtcStartOfLocalDay('2026-10-25', MADRID);
+    const end = service.toUtcStartOfNextLocalDay('2026-10-25', MADRID);
+
+    expect(start).toBe('2026-10-24T22:00:00.000Z');
+    expect(end).toBe('2026-10-25T23:00:00.000Z');
+    expect(new Date(end).getTime() - new Date(start).getTime()).toBe(25 * 3600 * 1000);
+  });
+
+  it('should cover the 23-hour day when DST starts (last Sunday of March)', () => {
+    const start = service.toUtcStartOfLocalDay('2026-03-29', MADRID);
+    const end = service.toUtcStartOfNextLocalDay('2026-03-29', MADRID);
+
+    expect(start).toBe('2026-03-28T23:00:00.000Z');
+    expect(end).toBe('2026-03-29T22:00:00.000Z');
+    expect(new Date(end).getTime() - new Date(start).getTime()).toBe(23 * 3600 * 1000);
+  });
+
+  it('should roll over month and year boundaries', () => {
+    expect(service.toUtcStartOfNextLocalDay('2026-12-31', MADRID)).toBe('2026-12-31T23:00:00.000Z');
+  });
+
+  it('should handle zones west of UTC', () => {
+    expect(service.toUtcStartOfLocalDay('2026-07-15', 'America/New_York')).toBe('2026-07-15T04:00:00.000Z');
+  });
+
+  it('should default to the browser time zone (same result as local Date midnight)', () => {
+    expect(service.toUtcStartOfLocalDay('2026-10-25')).toBe(new Date(2026, 9, 25).toISOString());
+    expect(service.toUtcStartOfNextLocalDay('2026-10-25')).toBe(new Date(2026, 9, 26).toISOString());
+  });
+
+  it('should reject values that are not a YYYY-MM-DD local day', () => {
+    expect(() => service.toUtcStartOfLocalDay('2026-10-25T00:00:00Z')).toThrowError(/YYYY-MM-DD/);
+    expect(() => service.toUtcStartOfNextLocalDay('')).toThrowError(/YYYY-MM-DD/);
+  });
+});

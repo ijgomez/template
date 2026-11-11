@@ -334,6 +334,7 @@ No hay endpoints `POST`, `PUT`, `PATCH` ni `DELETE` para registros de auditoría
 
 - El usuario, la operación y la sección deben respetar los valores admitidos por el backend; los filtros no válidos se descartan antes de ejecutar la consulta.
 - Los rangos de fecha deben ser coherentes: `fromDate` no puede ser posterior a `toDate`, y la consulta debe devolver un conjunto vacío si la selección no produce coincidencias.
+- Las fechas del filtro son días locales del navegador (`YYYY-MM-DD`). `AuditService` (frontend) los envía como el rango UTC semiabierto `[fromDate, toDate)`: `fromDate` = 00:00 local del día inicial y `toDate` = 00:00 local del día siguiente al final, ambos en ISO-8601 UTC. El backend aplica `fromDate` inclusivo y `toDate` exclusivo, de modo que los días de cambio de hora (23 o 25 horas) se filtran completos. Ver [api-rest.md — Fechas y Zonas Horarias](../../../04-development/coding-guidelines/api-rest.md#fechas-y-zonas-horarias).
 - La pantalla es de solo lectura; no se exponen endpoints ni acciones para crear, modificar ni borrar registros de auditoría.
 - La autorización de acceso se verifica antes de consultar los registros y puede fallar si el usuario no tiene la acción correcta para la sección.
 
@@ -343,10 +344,6 @@ No hay endpoints `POST`, `PUT`, `PATCH` ni `DELETE` para registros de auditoría
 - Para construir el CSV se reutiliza la misma consulta del listado contra los mismos métodos backend (`GET /api/v1/administration/audit` y `GET /api/v1/administration/audit/count`) con los filtros activos.
 - La exportación incluye **todos los registros que cumplen los filtros activos**, no solo la página visible en pantalla.
 - Si no existen filas coincidentes, la UI informa del caso y evita generar un archivo vacío.
-
-#### Discrepancia actual en filtros de fecha
-
-El contrato de `AuditController` recibe los parámetros `fromDate` y `toDate` como `OffsetDateTime`, mientras que `AuditService` del frontend envía `dateFrom` y `dateTo` procedentes de controles HTML de tipo `date`. Por tanto, los filtros de usuario, operación y sección se alinean con la API, pero los de fecha no están actualmente alineados con el contrato backend y deben corregirse antes de considerarlos operativos de extremo a extremo.
 
 ### 3.6. Paginación, orden, filtros y exportación
 
@@ -373,28 +370,31 @@ La consulta de la pantalla utiliza el mismo servicio de dominio para filtrar y p
 | `core/src/test/java/org/myorganization/template/core/service/AuditServiceTest.java`                     | Consulta por criterios, mapeo de resultados, persistencia de una entrada y comportamiento de retención |
 | `core/src/test/java/org/myorganization/template/core/service/AuditServiceImmutabilityPropertyTest.java` | Propiedades de inmutabilidad: ausencia de API pública de modificación y campos JPA no actualizables    |
 | `core/src/test/java/org/myorganization/template/core/audit/AuditAspectTest.java`                        | Creación de entradas por el aspecto tras operaciones auditables                                        |
+| `webapp/src/test/java/org/myorganization/template/webapp/integration/DateRangeFilterIntegrationTest.java` | Integración con PostgreSQL: rango `[fromDate, toDate)` en UTC sobre el día de 25 horas y rechazo de fechas sin zona |
 
 ### 4.2. Cobertura unitaria (frontend)
 
-| Ubicación                                               | Alcance                                                                                                  |
-|---------------------------------------------------------|----------------------------------------------------------------------------------------------------------|
-| `dashboard/src/app/core/services/audit.service.spec.ts` | Construcción de peticiones paginadas, envío de filtros, consulta para exportación y endpoint de recuento |
-
-No hay actualmente pruebas unitarias específicas de `AuditListComponent` en el repositorio.
+| Ubicación                                                                                     | Alcance                                                                                                         |
+|-----------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------|
+| `dashboard/src/app/core/services/audit.service.spec.ts`                                       | Construcción de peticiones paginadas, envío de filtros (rango de fechas UTC), exportación y recuento            |
+| `dashboard/src/app/core/services/date.service.spec.ts`                                        | Conversión de día local a rango UTC, incluidos los días de 23 y 25 horas por cambio de hora                     |
+| `dashboard/src/app/features/administration/pages/audit-list/audit-list.component.spec.ts`     | Carga inicial, filtros y rango inválido, limpieza, selección, detalle y Volver (AC3.4), exportación y sin datos |
 
 ### 4.3. Cobertura E2E (Playwright)
 
-Ubicación: `dashboard/e2e/tests/administration/audit.spec.ts` (Page Object en `dashboard/e2e/pages/audit.page.ts`).
+Ubicación: `dashboard/e2e/tests/administration/audit.spec.ts` (Page Object en `dashboard/e2e/pages/audit.page.ts`). Cada test se nombra con el caso que automatiza.
 
-| Caso                            | Descripción                                                        | Resultado esperado                                                                 |
-|---------------------------------|--------------------------------------------------------------------|------------------------------------------------------------------------------------|
-| Listado de solo lectura         | Acceder a la pantalla tras iniciar sesión                          | La tabla y filtros son visibles; no existen acciones de crear, editar ni eliminar  |
-| Filtrado                        | Filtrar por administrador, `EXECUTE` y `SECURITY`; después limpiar | El listado contiene los registros coincidentes y se recarga sin filtros al limpiar |
-| Detalle desde barra de acciones | Seleccionar una fila y pulsar *Detalle*                            | El detalle muestra los datos de la fila y la acción Volver restaura el listado     |
-| Detalle por doble clic          | Doble clic sobre la primera entrada                                | Abre la vista de detalle; *Volver* restaura el listado                             |
-| Exportación CSV                 | Exportar registros filtrados por administrador                     | El navegador descarga un fichero `audit_YYYY-MM-DD.csv`                            |
+| Caso       | Test E2E                                                                                   | Comprobaciones principales                                                                                                   |
+|------------|--------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------|
+| TC-AUD-01  | `TC-AUD-01 should list audit logs read-only with sorting and pagination`                   | Tabla, filtros y 7 columnas; sin acciones CRUD; orden asc/desc (`aria-sort`); tamaños 5/10/20/50; página siguiente           |
+| TC-AUD-02  | `TC-AUD-02 should filter by username, operation and section and reset on clear`            | Coincidencia parcial sin mayúsculas; todas las filas cumplen los filtros; vuelta a página 1; limpiar vacía campos y criterios |
+| TC-AUD-03  | `TC-AUD-03 step 1`, `TC-AUD-03 step 2` y casos de rango vacío e invertido                  | Con zona del navegador `Pacific/Kiritimati` (UTC+14): `fromDate`/`toDate` en UTC, registros de hoy y hora mostrada en local  |
+| TC-AUD-04  | `TC-AUD-04 should open the detail read-only and clear the selection on back` y doble clic  | Detalle con los datos de la fila y sin acciones CRUD; Volver restaura el listado sin selección                               |
+| TC-AUD-05  | `TC-AUD-05 should export every filtered row to CSV…` y `…no data to export`                | `audit_YYYY-MM-DD.csv` con todas las filas filtradas (más que la página de 5); aviso y sin descarga si no hay datos           |
+| TC-AUD-06  | `TC-AUD-06 should only expose read endpoints` (API)                                        | `GET` y `GET /count` 200; `POST`, `PUT`, `PATCH` y `DELETE` rechazados (403/405)                                             |
+| TC-AUD-07  | `TC-AUD-07 should record the login as an EXECUTE/SECURITY audit entry`                     | El login por la UI genera una entrada `EXECUTE`/`SECURITY` posterior al inicio del test, visible en la pantalla             |
 
-Cada caso inicia sesión con el usuario administrador. Ese inicio de sesión genera la operación auditable `EXECUTE` en la sección `SECURITY`, que proporciona un registro conocido para las comprobaciones sin modificar el registro desde la pantalla de auditoría.
+Cada caso de UI inicia sesión con el usuario administrador. Ese inicio de sesión genera la operación auditable `EXECUTE` en la sección `SECURITY`, que proporciona un registro conocido para las comprobaciones sin modificar el registro desde la pantalla de auditoría.
 
 ### 4.4. Datos de prueba
 
@@ -404,7 +404,7 @@ Los datos semilla de backend para registros de auditoría se encuentran en `doma
 
 - Las consultas reales y la exportación requieren el backend de integración levantado y datos en la tabla `audit_log`.
 - El usuario de prueba debe contar con `SYSTEM_LOG_READ`; de lo contrario, el guard de ruta impide el acceso a `/administration/audit`.
-- Para validar los filtros de fecha de extremo a extremo debe resolverse primero la discrepancia de nombres y formato descrita en la sección 3.4.
+- Los filtros de fecha dependen de la zona horaria del navegador; el test E2E de TC-AUD-03 la fija con `timezoneId` para que el resultado sea determinista.
 
 ### 4.6. Casos de prueba detallados (TCY-AUD)
 
@@ -412,7 +412,6 @@ Catálogo de test cases derivado de los requisitos funcionales de auditoría (`R
 
 Precondición del ciclo: usuario con `SYSTEM_LOG_READ`; tabla `audit_log` con datos (el propio login genera un registro `EXECUTE` en sección `SECURITY`). Pantalla de solo lectura.
 
-> ⚠️ **Caso bloqueado en este ciclo:** TC-AUD-03 (filtrado por rango de fechas) está 🔴 **BLOQUEADO** por una discrepancia de contrato pendiente de revisión funcional y técnica. Excluirlo de la ejecución hasta desbloquearlo.
 
 #### TC-AUD-01 · Listado de solo lectura paginado
 
@@ -437,17 +436,14 @@ Precondición del ciclo: usuario con `SYSTEM_LOG_READ`; tabla `audit_log` con da
 | 2 | Pulsar `audit-clear-filters`                                                                                                                                       | Se recarga la consulta sin criterios                              |
 
 #### TC-AUD-03 · Filtrado por rango de fechas
-
-- **Estado:** 🔴 **BLOQUEADO** — pendiente de revisión funcional y técnica. No ejecutar hasta desbloquear.
-- **Versión:** 1.0 · **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-AUD-2 (AC2.4) · **Independiente:** Sí · **Dependencias:** ninguna
-- **Motivo del bloqueo:** la sección 3.4 del documento funcional (`audit.md`) declara una **discrepancia abierta** en el contrato de filtros de fecha: el frontend envía `dateFrom`/`dateTo` (controles HTML `date`) y el backend espera `fromDate`/`toDate` (`OffsetDateTime`). El filtrado por fecha no está alineado de extremo a extremo. Esta parte está pendiente de revisión funcional y técnica.
-- **Condición para desbloquear:** alinear el contrato de fechas entre `AuditService` (frontend) y `AuditController` (backend), verificar el comportamiento de extremo a extremo y actualizar la sección 3.4 de `audit.md`. Una vez hecho, retirar el estado BLOQUEADO y validar los pasos.
+- **Versión:** 1.1 · **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-AUD-2 (AC2.4) · **Independiente:** Sí · **Dependencias:** ninguna
 - **Setup:** login con `{{ADMIN_USER}}`.
 - **Teardown:** logout.
 
-| # | Acción                                                                                                   | Resultado esperado                                                            |
-|---|----------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------|
-| 1 | Informar `audit-filter-date-from` = fecha de hace 7 días y `audit-filter-date-to` = `{{TODAY}}`, aplicar | Los registros se restringen al rango (una vez alineado el contrato de fechas) |
+| # | Acción                                                                                                   | Resultado esperado                                                                                         |
+|---|----------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|
+| 1 | Informar `audit-filter-date-from` = fecha de hace 7 días y `audit-filter-date-to` = `{{TODAY}}`, aplicar | Los registros se restringen al rango de días locales del navegador; incluye los registros de hoy          |
+| 2 | Informar `audit-filter-date-from` = `audit-filter-date-to` = `{{TODAY}}`                                 | Solo se muestran registros de hoy en hora local (el login del setup aparece); las horas se ven en hora local |
 
 #### TC-AUD-04 · Consulta de detalle
 

@@ -226,6 +226,8 @@ export class AuditListComponent implements OnInit {
   backToList(): void {
     this.viewMode.set('list');
     this.selectedAuditLog.set(null);
+    // RF-AUD-3 AC3.4: returning to the list clears the current selection.
+    this.selectedRow.set(null);
   }
 
   /**

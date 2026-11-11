@@ -117,6 +117,10 @@ Todos los objetos se crean en el esquema `template`. Su ubicación física se pa
 - `spring.liquibase.default-schema` y `hibernate.default_schema` apuntan a `template`, de modo que las semillas SQL y las entidades JPA no necesitan cualificar el esquema.
 - Las consultas nativas deben usar `{h-schema}` delante del nombre de tabla.
 
+## Fechas
+
+- Las columnas que guardan instantes usan `TIMESTAMP WITH TIME ZONE` y se almacenan en UTC. Ver [api-rest.md — Fechas y Zonas Horarias](api-rest.md#fechas-y-zonas-horarias).
+
 ## Reglas de los Changesets
 
 - Cada changeset debe ser atómico.
