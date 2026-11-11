@@ -9,15 +9,15 @@
 
                 <preConditions onFail="MARK_RAN">
             <not>
-                <tableExists tableName="report"/>
+                <tableExists schemaName="${schemaName}" tableName="report"/>
             </not>
         </preConditions>
 
 <comment>Creación de la tabla de informes</comment>
 
-        <createTable tableName="report">
+        <createTable schemaName="${schemaName}" tablespace="${tablespaceData}" tableName="report">
             <column name="id" type="BIGINT">
-                <constraints primaryKey="true" nullable="false"/>
+                <constraints primaryKey="true" primaryKeyTablespace="${tablespaceIndex}" nullable="false"/>
             </column>
             <column name="name" type="VARCHAR(255)">
                 <constraints nullable="false"/>
@@ -31,11 +31,11 @@
             </column>
         </createTable>
 
-        <createSequence sequenceName="report_seq" startValue="1" incrementBy="50"/>
+        <createSequence schemaName="${schemaName}" sequenceName="report_seq" startValue="1" incrementBy="50"/>
 
         <rollback>
-            <dropSequence sequenceName="report_seq"/>
-            <dropTable tableName="report"/>
+            <dropSequence schemaName="${schemaName}" sequenceName="report_seq"/>
+            <dropTable schemaName="${schemaName}" tableName="report"/>
         </rollback>
 
     </changeSet>

@@ -29,18 +29,18 @@
         <comment>Completa en el perfil Administrador local las acciones de escritura/concesión (SEC-02 y SEC-07)</comment>
 
         <sql>
-            INSERT INTO profile2action (profile_id, action_id)
+            INSERT INTO profile2action (profile_fk, action_fk)
             SELECT (SELECT id FROM profile WHERE name = 'Administrador'), a.id FROM action a
             WHERE a.code IN ('ACTION_WRITE', 'PROFILE_GRANT', 'USER_GRANT')
               AND NOT EXISTS (
                   SELECT (SELECT id FROM profile WHERE name = 'Administrador') FROM profile2action p
-                  WHERE p.profile_id = (SELECT id FROM profile WHERE name = 'Administrador') AND p.action_id = a.id
+                  WHERE p.profile_fk = (SELECT id FROM profile WHERE name = 'Administrador') AND p.action_fk = a.id
               );
         </sql>
 
         <rollback>
             <delete tableName="profile2action">
-                <where>profile_id = (SELECT id FROM profile WHERE name = 'Administrador') AND action_id IN (SELECT id FROM action WHERE code IN ('PROFILE_GRANT', 'USER_GRANT'))</where>
+                <where>profile_fk = (SELECT id FROM profile WHERE name = 'Administrador') AND action_fk IN (SELECT id FROM action WHERE code IN ('PROFILE_GRANT', 'USER_GRANT'))</where>
             </delete>
         </rollback>
 

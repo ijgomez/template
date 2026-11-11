@@ -9,14 +9,14 @@
 
         <comment>Make first_name, last_name and email nullable in users table</comment>
 
-        <dropNotNullConstraint tableName="users" columnName="first_name" columnDataType="VARCHAR(100)"/>
-        <dropNotNullConstraint tableName="users" columnName="last_name" columnDataType="VARCHAR(100)"/>
-        <dropNotNullConstraint tableName="users" columnName="email" columnDataType="VARCHAR(255)"/>
+        <dropNotNullConstraint schemaName="${schemaName}" tableName="users" columnName="first_name" columnDataType="VARCHAR(100)"/>
+        <dropNotNullConstraint schemaName="${schemaName}" tableName="users" columnName="last_name" columnDataType="VARCHAR(100)"/>
+        <dropNotNullConstraint schemaName="${schemaName}" tableName="users" columnName="email" columnDataType="VARCHAR(255)"/>
 
         <rollback>
-            <addNotNullConstraint tableName="users" columnName="first_name" columnDataType="VARCHAR(100)"/>
-            <addNotNullConstraint tableName="users" columnName="last_name" columnDataType="VARCHAR(100)"/>
-            <addNotNullConstraint tableName="users" columnName="email" columnDataType="VARCHAR(255)"/>
+            <addNotNullConstraint schemaName="${schemaName}" tableName="users" columnName="first_name" columnDataType="VARCHAR(100)"/>
+            <addNotNullConstraint schemaName="${schemaName}" tableName="users" columnName="last_name" columnDataType="VARCHAR(100)"/>
+            <addNotNullConstraint schemaName="${schemaName}" tableName="users" columnName="email" columnDataType="VARCHAR(255)"/>
         </rollback>
 
     </changeSet>

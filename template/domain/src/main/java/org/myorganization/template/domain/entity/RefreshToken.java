@@ -40,7 +40,7 @@ public class RefreshToken {
     private String token;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_fk", nullable = false)
     private User user;
 
     @Column(name = "expires_at", nullable = false)

@@ -56,6 +56,7 @@ class ReportAccessIntegrationTest {
     @Container
     @SuppressWarnings("resource") // closed by the Testcontainers extension via @Container
     static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:18-alpine")
+            .withInitScript("db/test-init-schema.sql")
             .withDatabaseName("template_test")
             .withUsername("test")
             .withPassword("test");

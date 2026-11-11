@@ -72,20 +72,20 @@
         <preConditions onFail="MARK_RAN">
             <tableExists tableName="user2report"/>
             <sqlCheck expectedResult="1">SELECT COUNT(*) FROM users WHERE id = (SELECT id FROM users WHERE username = 'admin')</sqlCheck>
-            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM user2report WHERE user_id = (SELECT id FROM users WHERE username = 'admin')</sqlCheck>
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM user2report WHERE user_fk = (SELECT id FROM users WHERE username = 'admin')</sqlCheck>
         </preConditions>
 
         <comment>Asigna todos los informes actuales al usuario admin (desarrollo local)</comment>
 
         <!-- Assign all existing reports to the admin user (id = 1) -->
         <sql>
-            INSERT INTO user2report (user_id, report_id)
+            INSERT INTO user2report (user_fk, report_fk)
             SELECT (SELECT id FROM users WHERE username = 'admin'), id FROM report;
         </sql>
 
         <rollback>
             <delete tableName="user2report">
-                <where>user_id = (SELECT id FROM users WHERE username = 'admin')</where>
+                <where>user_fk = (SELECT id FROM users WHERE username = 'admin')</where>
             </delete>
         </rollback>
 

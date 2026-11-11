@@ -9,15 +9,15 @@
 
                 <preConditions onFail="MARK_RAN">
             <not>
-                <tableExists tableName="cluster_node"/>
+                <tableExists schemaName="${schemaName}" tableName="cluster_node"/>
             </not>
         </preConditions>
 
 <comment>Creación de la tabla de nodos del clúster</comment>
 
-        <createTable tableName="cluster_node">
+        <createTable schemaName="${schemaName}" tablespace="${tablespaceData}" tableName="cluster_node">
             <column name="id" type="BIGINT">
-                <constraints primaryKey="true" nullable="false"/>
+                <constraints primaryKey="true" primaryKeyTablespace="${tablespaceIndex}" nullable="false"/>
             </column>
             <column name="status" type="VARCHAR(20)">
                 <constraints nullable="false"/>
@@ -42,11 +42,11 @@
             </column>
         </createTable>
 
-        <createSequence sequenceName="cluster_node_seq" startValue="1" incrementBy="50"/>
+        <createSequence schemaName="${schemaName}" sequenceName="cluster_node_seq" startValue="1" incrementBy="50"/>
 
         <rollback>
-            <dropSequence sequenceName="cluster_node_seq"/>
-            <dropTable tableName="cluster_node"/>
+            <dropSequence schemaName="${schemaName}" sequenceName="cluster_node_seq"/>
+            <dropTable schemaName="${schemaName}" tableName="cluster_node"/>
         </rollback>
 
     </changeSet>

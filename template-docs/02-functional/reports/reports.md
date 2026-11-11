@@ -298,8 +298,8 @@ public class Report extends BaseEntity {
 @Entity @Table(name = "user2report")
 public class User2Report {
     @EmbeddedId private User2ReportPK id;
-    @ManyToOne(fetch = LAZY) @MapsId("userId")  @JoinColumn(name = "user_id") private User user;
-    @ManyToOne(fetch = LAZY) @MapsId("reportId") @JoinColumn(name = "report_id") private Report report;
+    @ManyToOne(fetch = LAZY) @MapsId("userId")  @JoinColumn(name = "user_fk") private User user;
+    @ManyToOne(fetch = LAZY) @MapsId("reportId") @JoinColumn(name = "report_fk") private Report report;
 }
 ```
 

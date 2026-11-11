@@ -9,17 +9,17 @@
 
                 <preConditions onFail="MARK_RAN">
             <not>
-                <tableExists tableName="cluster_job"/>
+                <tableExists schemaName="${schemaName}" tableName="cluster_job"/>
             </not>
         </preConditions>
 
 <comment>Creación de la tabla de trabajos del clúster (composite PK)</comment>
 
-        <createTable tableName="cluster_job">
-            <column name="cluster_node_id" type="BIGINT">
+        <createTable schemaName="${schemaName}" tablespace="${tablespaceData}" tableName="cluster_job">
+            <column name="cluster_node_fk" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
-            <column name="cluster_task_id" type="BIGINT">
+            <column name="cluster_task_fk" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
             <column name="priority" type="INTEGER">
@@ -30,19 +30,19 @@
             </column>
         </createTable>
 
-        <addPrimaryKey tableName="cluster_job" columnNames="cluster_node_id, cluster_task_id"
+        <addPrimaryKey schemaName="${schemaName}" tablespace="${tablespaceIndex}" tableName="cluster_job" columnNames="cluster_node_fk, cluster_task_fk"
                        constraintName="cluster_job_PK"/>
 
-        <addForeignKeyConstraint baseTableName="cluster_job" baseColumnNames="cluster_node_id"
+        <addForeignKeyConstraint baseTableSchemaName="${schemaName}" referencedTableSchemaName="${schemaName}" baseTableName="cluster_job" baseColumnNames="cluster_node_fk"
                                  referencedTableName="cluster_node" referencedColumnNames="id"
-                                 constraintName="cluster_job_cluster_node_id_FK"/>
+                                 constraintName="cluster_job_cluster_node_FK"/>
 
-        <addForeignKeyConstraint baseTableName="cluster_job" baseColumnNames="cluster_task_id"
+        <addForeignKeyConstraint baseTableSchemaName="${schemaName}" referencedTableSchemaName="${schemaName}" baseTableName="cluster_job" baseColumnNames="cluster_task_fk"
                                  referencedTableName="cluster_task" referencedColumnNames="id"
-                                 constraintName="cluster_job_cluster_task_id_FK"/>
+                                 constraintName="cluster_job_cluster_task_FK"/>
 
         <rollback>
-            <dropTable tableName="cluster_job"/>
+            <dropTable schemaName="${schemaName}" tableName="cluster_job"/>
         </rollback>
 
     </changeSet>

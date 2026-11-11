@@ -88,10 +88,34 @@ Ejemplo completo:
 | Ficheros           | `YYYYMMDD-descripcion-kebab.xml` | `20240101-create-user-table.xml` |
 | Tablas             | snake_case, singular             | `user`, `order_item`             |
 | Tablas intermedias | `<entidad1>2<entidad2>`          | `profile2action`                 |
-| Columnas           | snake_case, singular             | `created_at`, `user_id`          |
+| Columnas           | snake_case, singular             | `created_at`, `username`         |
+| Columnas FK        | `<referencia>_fk` (nunca `_id`)  | `user_fk`, `profile_fk`          |
 | Índices            | `idx_<tabla>_<columna>`          | `idx_user_email`                 |
 | Foreign keys       | `<tabla>_<referencia>_FK`        | `order_user_id_FK`               |
 | Secuencias         | `<tabla>_SEQ`                    | `user_SEQ`                       |
+
+## Esquema y Tablespaces
+
+Todos los objetos se crean en el esquema `template`. Su ubicación física se parametriza con propiedades de Liquibase definidas en `db.changelog-master.xml`:
+
+| Propiedad         | Valor por defecto    | Uso                                   |
+|-------------------|----------------------|---------------------------------------|
+| `schemaName`      | `template`           | Esquema de tablas, secuencias e índices |
+| `tablespaceData`  | `template_data_tbs`  | Tablespace de las tablas              |
+| `tablespaceIndex` | `template_index_tbs` | Tablespace de índices, PK y UK        |
+
+| Objeto     | Atributos obligatorios                                                                 |
+|------------|----------------------------------------------------------------------------------------|
+| Tabla      | `schemaName="${schemaName}" tablespace="${tablespaceData}"`                            |
+| Secuencia  | `schemaName="${schemaName}"` (PostgreSQL no admite tablespace en secuencias)           |
+| Índice     | `schemaName="${schemaName}" tablespace="${tablespaceIndex}"`                           |
+| PK         | `primaryKeyTablespace="${tablespaceIndex}"` (inline) o `tablespace` en `addPrimaryKey` |
+| UK         | `addUniqueConstraint` con `tablespace="${tablespaceIndex}"` (no usar `unique="true"` inline) |
+| FK         | `baseTableSchemaName` y `referencedTableSchemaName` con `${schemaName}`                |
+
+- El esquema y los tablespaces deben existir antes de ejecutar Liquibase (ver `template-docker/postgres/init.sql`).
+- `spring.liquibase.default-schema` y `hibernate.default_schema` apuntan a `template`, de modo que las semillas SQL y las entidades JPA no necesitan cualificar el esquema.
+- Las consultas nativas deben usar `{h-schema}` delante del nombre de tabla.
 
 ## Reglas de los Changesets
 

@@ -43,6 +43,10 @@ ALTER SCHEMA template OWNER TO template_admin;
 ALTER DATABASE template SET default_tablespace = 'template_data_tbs';
 ALTER ROLE template_admin SET default_tablespace = 'template_data_tbs';
 ALTER ROLE template_user SET default_tablespace = 'template_data_tbs';
+-- search_path de los usuarios de la aplicación, solo al conectarse a la BD 'template':
+-- las sentencias sin esquema explícito se resuelven en el esquema 'template'.
+ALTER ROLE template_admin IN DATABASE template SET search_path TO template, public;
+ALTER ROLE template_user IN DATABASE template SET search_path TO template, public;
 
 GRANT CONNECT ON DATABASE template TO template_admin;
 GRANT CONNECT ON DATABASE template TO template_user;

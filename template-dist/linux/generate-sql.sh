@@ -138,6 +138,11 @@ elif [ ! -f "${OUTPUT_FILE}" ]; then
     exit 1
 fi
 
+# Las sentencias sin esquema explícito (semillas, DATABASECHANGELOG) se resuelven en el
+# esquema de la aplicación: se fija el search_path al inicio del script generado.
+DB_SCHEMA_VALUE="${DB_SCHEMA:-template}"
+{ echo "SET search_path TO ${DB_SCHEMA_VALUE}, public;"; echo; cat "${OUTPUT_FILE}"; } > "${OUTPUT_FILE}.tmp" && mv "${OUTPUT_FILE}.tmp" "${OUTPUT_FILE}"
+
 # Verificación: el SQL debe contener al menos un changeset. Un fichero sin
 # changesets suele indicar que había estado offline previo o que el changelog
 # no se resolvió correctamente.

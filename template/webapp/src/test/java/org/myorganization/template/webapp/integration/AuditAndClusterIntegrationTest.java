@@ -49,6 +49,7 @@ class AuditAndClusterIntegrationTest {
     @Container
     @SuppressWarnings("resource") // Testcontainers manages the container lifecycle via @Container/@Testcontainers
     static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:18-alpine")
+            .withInitScript("db/test-init-schema.sql")
             .withDatabaseName("template_test")
             .withUsername("test")
             .withPassword("test");

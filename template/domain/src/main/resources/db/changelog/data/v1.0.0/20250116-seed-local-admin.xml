@@ -25,13 +25,13 @@
 
         <!-- Assign all actions to the admin profile -->
         <sql>
-            INSERT INTO profile2action (profile_id, action_id)
+            INSERT INTO profile2action (profile_fk, action_fk)
             SELECT (SELECT id FROM profile WHERE name = 'Administrador'), id FROM action;
         </sql>
 
         <rollback>
             <delete tableName="profile2action">
-                <where>profile_id = (SELECT id FROM profile WHERE name = 'Administrador')</where>
+                <where>profile_fk = (SELECT id FROM profile WHERE name = 'Administrador')</where>
             </delete>
             <delete tableName="profile">
                 <where>name = 'Administrador'</where>
@@ -56,7 +56,7 @@
             <column name="first_name" value="Admin"/>
             <column name="last_name" value="Usuario"/>
             <column name="email" value="admin@localhost"/>
-            <column name="profile_id" valueComputed="(SELECT id FROM profile WHERE name = 'Administrador')"/>
+            <column name="profile_fk" valueComputed="(SELECT id FROM profile WHERE name = 'Administrador')"/>
         </insert>
 
         <rollback>

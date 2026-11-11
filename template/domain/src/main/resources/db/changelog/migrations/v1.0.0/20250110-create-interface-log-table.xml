@@ -9,15 +9,15 @@
 
                 <preConditions onFail="MARK_RAN">
             <not>
-                <tableExists tableName="interface_log"/>
+                <tableExists schemaName="${schemaName}" tableName="interface_log"/>
             </not>
         </preConditions>
 
 <comment>Creación de la tabla de log de interfaces (append-only, inmutable)</comment>
 
-        <createTable tableName="interface_log">
+        <createTable schemaName="${schemaName}" tablespace="${tablespaceData}" tableName="interface_log">
             <column name="id" type="BIGINT">
-                <constraints primaryKey="true" nullable="false"/>
+                <constraints primaryKey="true" primaryKeyTablespace="${tablespaceIndex}" nullable="false"/>
             </column>
             <column name="timestamp" type="TIMESTAMP WITH TIME ZONE">
                 <constraints nullable="false"/>
@@ -35,22 +35,22 @@
             </column>
         </createTable>
 
-        <createSequence sequenceName="interface_log_seq" startValue="1" incrementBy="50"/>
+        <createSequence schemaName="${schemaName}" sequenceName="interface_log_seq" startValue="1" incrementBy="50"/>
 
-        <createIndex tableName="interface_log" indexName="idx_interface_log_timestamp_interface_name">
+        <createIndex schemaName="${schemaName}" tablespace="${tablespaceIndex}" tableName="interface_log" indexName="idx_interface_log_timestamp_interface_name">
             <column name="timestamp"/>
             <column name="interface_name"/>
         </createIndex>
 
-        <createIndex tableName="interface_log" indexName="idx_interface_log_status">
+        <createIndex schemaName="${schemaName}" tablespace="${tablespaceIndex}" tableName="interface_log" indexName="idx_interface_log_status">
             <column name="status"/>
         </createIndex>
 
         <rollback>
-            <dropIndex tableName="interface_log" indexName="idx_interface_log_status"/>
-            <dropIndex tableName="interface_log" indexName="idx_interface_log_timestamp_interface_name"/>
-            <dropSequence sequenceName="interface_log_seq"/>
-            <dropTable tableName="interface_log"/>
+            <dropIndex schemaName="${schemaName}" tableName="interface_log" indexName="idx_interface_log_status"/>
+            <dropIndex schemaName="${schemaName}" tableName="interface_log" indexName="idx_interface_log_timestamp_interface_name"/>
+            <dropSequence schemaName="${schemaName}" sequenceName="interface_log_seq"/>
+            <dropTable schemaName="${schemaName}" tableName="interface_log"/>
         </rollback>
 
     </changeSet>

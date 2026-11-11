@@ -18,7 +18,7 @@
 
         <!-- Assign all seeded actions to admin profile -->
         <sql>
-            INSERT INTO profile2action (profile_id, action_id)
+            INSERT INTO profile2action (profile_fk, action_fk)
             SELECT 1000, id FROM action;
         </sql>
     </changeSet>
@@ -32,7 +32,7 @@
             <column name="first_name" value="Admin"/>
             <column name="last_name" value="User"/>
             <column name="email" value="admin@test.com"/>
-            <column name="profile_id" valueNumeric="1000"/>
+            <column name="profile_fk" valueNumeric="1000"/>
         </insert>
     </changeSet>
 

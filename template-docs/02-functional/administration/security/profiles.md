@@ -346,8 +346,8 @@ public class Profile extends BaseEntity {
     @ManyToMany
     @JoinTable(
         name = "profile_action",
-        joinColumns = @JoinColumn(name = "profile_id"),
-        inverseJoinColumns = @JoinColumn(name = "action_id")
+        joinColumns = @JoinColumn(name = "profile_fk"),
+        inverseJoinColumns = @JoinColumn(name = "action_fk")
     )
     private List<Action> actions = new ArrayList<>();
 }
