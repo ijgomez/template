@@ -42,7 +42,7 @@
             </column>
         </createTable>
 
-        <createSequence schemaName="${schemaName}" sequenceName="cluster_node_seq" startValue="1" incrementBy="50"/>
+        <createSequence schemaName="${schemaName}" sequenceName="cluster_node_seq" startValue="1" incrementBy="1"/>
 
         <rollback>
             <dropSequence schemaName="${schemaName}" sequenceName="cluster_node_seq"/>

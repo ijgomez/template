@@ -35,7 +35,7 @@
             </column>
         </createTable>
 
-        <createSequence schemaName="${schemaName}" sequenceName="interface_log_seq" startValue="1" incrementBy="50"/>
+        <createSequence schemaName="${schemaName}" sequenceName="interface_log_seq" startValue="1" incrementBy="1"/>
 
         <createIndex schemaName="${schemaName}" tablespace="${tablespaceIndex}" tableName="interface_log" indexName="idx_interface_log_timestamp_interface_name">
             <column name="timestamp"/>

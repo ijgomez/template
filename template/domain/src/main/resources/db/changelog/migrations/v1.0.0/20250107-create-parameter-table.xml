@@ -37,7 +37,7 @@
         <addUniqueConstraint schemaName="${schemaName}" tablespace="${tablespaceIndex}" tableName="parameter" columnNames="code"
                              constraintName="parameter_code_UK"/>
 
-        <createSequence schemaName="${schemaName}" sequenceName="parameter_seq" startValue="1" incrementBy="50"/>
+        <createSequence schemaName="${schemaName}" sequenceName="parameter_seq" startValue="1" incrementBy="1"/>
 
         <rollback>
             <dropSequence schemaName="${schemaName}" sequenceName="parameter_seq"/>

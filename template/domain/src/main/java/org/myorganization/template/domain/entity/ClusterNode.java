@@ -32,7 +32,7 @@ public class ClusterNode {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cluster_node_gen")
-    @SequenceGenerator(name = "cluster_node_gen", sequenceName = "cluster_node_seq", allocationSize = 50)
+    @SequenceGenerator(name = "cluster_node_gen", sequenceName = "cluster_node_seq", allocationSize = 1)
     @Column(name = "id")
     private Long id;
 

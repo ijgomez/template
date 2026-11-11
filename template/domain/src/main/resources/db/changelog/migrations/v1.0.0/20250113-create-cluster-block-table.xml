@@ -31,7 +31,7 @@
         <addUniqueConstraint schemaName="${schemaName}" tablespace="${tablespaceIndex}" tableName="cluster_block" columnNames="name"
                              constraintName="cluster_block_name_UK"/>
 
-        <createSequence schemaName="${schemaName}" sequenceName="cluster_block_seq" startValue="1" incrementBy="50"/>
+        <createSequence schemaName="${schemaName}" sequenceName="cluster_block_seq" startValue="1" incrementBy="1"/>
 
         <addForeignKeyConstraint baseTableSchemaName="${schemaName}" referencedTableSchemaName="${schemaName}" baseTableName="cluster_block" baseColumnNames="name"
                                  referencedTableName="cluster_task" referencedColumnNames="name"

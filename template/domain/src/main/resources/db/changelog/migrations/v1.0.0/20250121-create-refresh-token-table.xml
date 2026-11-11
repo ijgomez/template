@@ -38,7 +38,7 @@
         <addUniqueConstraint schemaName="${schemaName}" tablespace="${tablespaceIndex}" tableName="refresh_token" columnNames="token"
                              constraintName="refresh_token_token_UK"/>
 
-        <createSequence schemaName="${schemaName}" sequenceName="refresh_token_seq" startValue="1" incrementBy="50"/>
+        <createSequence schemaName="${schemaName}" sequenceName="refresh_token_seq" startValue="1" incrementBy="1"/>
 
         <addForeignKeyConstraint baseTableSchemaName="${schemaName}" referencedTableSchemaName="${schemaName}" baseTableName="refresh_token" baseColumnNames="user_fk"
                                  referencedTableName="users" referencedColumnNames="id"

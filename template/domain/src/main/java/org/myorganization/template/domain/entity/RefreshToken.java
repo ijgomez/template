@@ -32,7 +32,7 @@ public class RefreshToken {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "refresh_token_gen")
-    @SequenceGenerator(name = "refresh_token_gen", sequenceName = "refresh_token_seq", allocationSize = 50)
+    @SequenceGenerator(name = "refresh_token_gen", sequenceName = "refresh_token_seq", allocationSize = 1)
     @Column(name = "id")
     private Long id;
 

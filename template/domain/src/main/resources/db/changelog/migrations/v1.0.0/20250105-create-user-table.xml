@@ -48,7 +48,7 @@
         <addUniqueConstraint schemaName="${schemaName}" tablespace="${tablespaceIndex}" tableName="users" columnNames="username"
                              constraintName="users_username_UK"/>
 
-        <createSequence schemaName="${schemaName}" sequenceName="users_seq" startValue="1" incrementBy="50"/>
+        <createSequence schemaName="${schemaName}" sequenceName="users_seq" startValue="1" incrementBy="1"/>
 
         <addForeignKeyConstraint baseTableSchemaName="${schemaName}" referencedTableSchemaName="${schemaName}" baseTableName="users" baseColumnNames="profile_fk"
                                  referencedTableName="profile" referencedColumnNames="id"

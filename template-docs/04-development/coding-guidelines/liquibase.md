@@ -69,7 +69,7 @@ Ejemplo completo:
             </column>
         </createTable>
 
-        <createSequence sequenceName="user_SEQ" startValue="1" incrementBy="50"/>
+        <createSequence sequenceName="user_SEQ" startValue="1" incrementBy="1"/>
 
         <rollback>
             <dropSequence sequenceName="user_SEQ"/>
