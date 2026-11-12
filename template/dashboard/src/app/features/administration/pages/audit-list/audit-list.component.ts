@@ -14,6 +14,9 @@ import { TpDatePickerComponent } from '../../../../shared/components/date-picker
 import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../shared/components/data-table';
 import { AuditLog, AuditCriteria, OperationType, AuditSection } from '../../../../core/models/audit.model';
 import { TpDetailButtonComponent } from '../../../../shared/components/detail-button';
+import { TpFilterButtonComponent } from '../../../../shared/components/filter-button';
+import { TpClearButtonComponent } from '../../../../shared/components/clear-button';
+import { TpExportButtonComponent } from '../../../../shared/components/export-button';
 
 /**
  * Audit log component.
@@ -23,7 +26,7 @@ import { TpDetailButtonComponent } from '../../../../shared/components/detail-bu
 @Component({
   selector: 'app-audit-list',
   standalone: true,
-  imports: [FormsModule, TranslatePipe, LocalDatePipe, TpDatePickerComponent, TpDataTableComponent, TpColumnDirective, TpDetailButtonComponent],
+  imports: [FormsModule, TranslatePipe, LocalDatePipe, TpDatePickerComponent, TpDataTableComponent, TpColumnDirective, TpDetailButtonComponent, TpFilterButtonComponent, TpClearButtonComponent, TpExportButtonComponent],
   templateUrl: './audit-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

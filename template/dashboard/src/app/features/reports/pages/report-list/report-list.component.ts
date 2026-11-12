@@ -1,3 +1,5 @@
+import { TpExecuteButtonComponent } from '../../../../shared/components/execute-button';
+import { TpClearButtonComponent } from '../../../../shared/components/clear-button';
 import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -20,7 +22,7 @@ import { Report, ReportFilter, ReportResult, ExportFormat } from '../../../../co
 @Component({
   selector: 'app-report-list',
   standalone: true,
-  imports: [FormsModule, TranslatePipe, TpDatePickerComponent],
+  imports: [FormsModule, TranslatePipe, TpDatePickerComponent, TpExecuteButtonComponent, TpClearButtonComponent],
   templateUrl: './report-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

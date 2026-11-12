@@ -90,6 +90,11 @@ src/
             │   ├── detail-button.component.spec.ts
             │   ├── detail-button.component.stories.ts
             │   └── index.ts
+            ├── create-button/        (tambien edit-, delete-, filter-, clear-, export- y execute-button, con la misma estructura)
+            │   ├── create-button.component.ts
+            │   ├── create-button.component.spec.ts
+            │   ├── create-button.component.stories.ts
+            │   └── index.ts
             ├── modal/
             ├── card/
             ├── alert/
@@ -1011,6 +1016,96 @@ No depende de ningun servicio ni conoce el dominio: es un boton generico de pres
 ### Claves de traduccion (i18n)
 
 - `common.detail` — etiqueta por defecto del boton ("Detalle"). Se puede sobrescribir con `labelKey`.
+
+---
+
+## Botones de Accion (`tp-edit-button`, `tp-create-button`, `tp-delete-button`, `tp-filter-button`, `tp-clear-button`, `tp-export-button`, `tp-execute-button`)
+
+Familia de botones de accion reutilizables, complementaria a `tp-detail-button`. Unifica en un unico componente cada boton que se repetia en los listados y en las cabeceras de los formularios, de modo que icono, estilo, etiqueta traducida y `data-testid` sean homogeneos en todas las pantallas.
+
+**Ubicacion:** `shared/components/<nombre>-button/` (cada carpeta contiene `.component.ts`, `.component.spec.ts`, `.component.stories.ts` e `index.ts`).
+
+### Concepto
+
+Todos los botones comparten el mismo patron:
+
+1. Renderizan un unico `<button class="btn btn-sm ...">` con un icono Bootstrap Icons decorativo (`aria-hidden="true"`) y la etiqueta traducida.
+2. Aceptan los inputs `disabled`, `labelKey` y `testId`, con valores por defecto propios de cada boton.
+3. Emiten un evento al hacer clic (no emiten si estan deshabilitados).
+4. No dependen de ningun servicio ni conocen el dominio: son componentes de presentacion.
+
+### Catalogo
+
+| Selector             | Icono              | Estilo                 | Evento      | Etiqueta por defecto (`labelKey`) | `testId` por defecto | Uso tipico                                       |
+|----------------------|--------------------|------------------------|-------------|-----------------------------------|----------------------|--------------------------------------------------|
+| `tp-create-button`   | `bi-plus-lg`       | `btn-primary`          | `(create)`  | `button.create`                   | `btn-create`         | Barra de acciones del listado                    |
+| `tp-edit-button`     | `bi-pencil`        | `outline-secondary` o `primary` (input `variant`) | `(edit)` | `button.edit` | `btn-edit` | Listado (con fila seleccionada) y cabecera del formulario en modo vista |
+| `tp-delete-button`   | `bi-trash`         | `btn-danger`           | `(delete)`  | `button.delete`                   | `btn-delete`         | Listado (con fila seleccionada) y cabecera del formulario en modo vista |
+| `tp-filter-button`   | `bi-search`        | `btn-primary`          | `(filter)`  | `button.filter`                   | `btn-filter-search`  | Formulario de filtros del listado                |
+| `tp-clear-button`    | `bi-x-circle`      | `btn-outline-secondary`| `(clear)`   | `button.clear`                    | `btn-filter-clear`   | Formulario de filtros del listado                |
+| `tp-export-button`   | `bi-download`      | `btn-outline-secondary`| `(export)`  | `button.export`                   | `btn-export`         | Barra de acciones del listado (exportacion CSV)  |
+| `tp-execute-button`  | `bi-play-fill`     | `btn-primary`          | `(execute)` | `button.execute`                  | `btn-execute`        | Ejecucion de informes                            |
+
+### Inputs comunes
+
+| Propiedad  | Tipo      | Descripcion                                                     |
+|------------|-----------|-----------------------------------------------------------------|
+| `disabled` | `boolean` | Deshabilita el boton (defecto `false`); tipicamente sin fila seleccionada |
+| `labelKey` | `string`  | Clave i18n de la etiqueta (ver tabla del catalogo)              |
+| `testId`   | `string`  | Valor de `data-testid` del boton (ver tabla del catalogo)       |
+
+### Inputs especificos
+
+| Componente           | Propiedad     | Tipo                                  | Defecto               | Descripcion                                                                 |
+|----------------------|---------------|---------------------------------------|-----------------------|-----------------------------------------------------------------------------|
+| `tp-edit-button`     | `variant`     | `'outline-secondary' \| 'primary'`    | `'outline-secondary'` | `outline-secondary` en listados; `primary` en la cabecera de los formularios |
+| `tp-filter-button`   | `type`        | `'submit' \| 'button'`                | `'submit'`            | Con `submit` dispara el `(ngSubmit)` del formulario que lo contiene         |
+| `tp-execute-button`  | `type`        | `'submit' \| 'button'`                | `'submit'`            | Igual que en `tp-filter-button`                                             |
+| `tp-export-button`   | `labelSuffix` | `string`                              | `''`                  | Texto literal anadido a la etiqueta traducida (p. ej. `" CSV"`)             |
+
+### Notas de uso
+
+- **Posicionamiento:** al ser componentes, las clases de layout se aplican sobre el elemento host, no sobre el `<button>` interno. Ejemplo: `<tp-export-button class="ms-auto" ... />` para alinear el boton a la derecha de la barra.
+- **Formularios de filtros:** `tp-filter-button` es `submit` por defecto, por lo que basta con que el formulario tenga `(ngSubmit)`. Solo se usa `type="button"` junto con `(filter)` cuando no hay `<form>` (p. ej. el monitor de interfaces).
+- **Formularios en modo vista:** `tp-edit-button` se usa con `variant="primary"` para conservar el estilo de la cabecera.
+- **Pruebas E2E:** cada pantalla mantiene su propio `testId` (por ejemplo `user-form-btn-edit` o `audit-export-csv`), por lo que los selectores existentes no cambian.
+
+### Accesibilidad
+
+- El atributo `disabled` del `<button>` refleja el input `disabled`; un boton deshabilitado no recibe foco ni emite eventos.
+- Los iconos son decorativos (`aria-hidden="true"`); el texto accesible proviene de la etiqueta traducida.
+
+### Ejemplos de uso
+
+```html
+<!-- Barra de acciones del listado -->
+<div class="tp-toolbar d-flex gap-2 mb-3">
+  <tp-create-button testId="btn-create" (create)="showCreateForm()" />
+  <tp-edit-button [disabled]="!selectedRow()" testId="btn-edit" (edit)="editSelected()" />
+  <tp-delete-button [disabled]="!selectedRow()" testId="btn-delete" (delete)="deleteSelected()" />
+  <tp-export-button class="ms-auto" testId="btn-export" (export)="exportCsv()" />
+</div>
+
+<!-- Formulario de filtros -->
+<form (ngSubmit)="applyFilters()">
+  <tp-filter-button testId="btn-filter-search" />
+  <tp-clear-button testId="btn-filter-clear" (clear)="clearFilters()" />
+</form>
+
+<!-- Cabecera de formulario en modo vista -->
+<tp-edit-button variant="primary" testId="user-form-btn-edit" (edit)="onEdit()" />
+
+<!-- Ejecucion de un informe -->
+<tp-execute-button [disabled]="isExecuting()" testId="report-execute-btn" />
+```
+
+### Claves de traduccion (i18n)
+
+Definidas en el namespace `button` de `assets/i18n/en.json` y `es.json`:
+
+- `button.create`, `button.edit`, `button.delete`, `button.filter`, `button.export` — etiquetas existentes.
+- `button.clear` ("Limpiar") y `button.execute` ("Ejecutar") — anadidas con esta familia de componentes.
+- `button.search` — etiqueta alternativa que usa `tp-filter-button` en el monitor de interfaces (`labelKey="button.search"`).
 
 ---
 

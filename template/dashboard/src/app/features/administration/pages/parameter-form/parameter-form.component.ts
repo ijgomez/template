@@ -6,6 +6,8 @@ import { catchError, take } from 'rxjs/operators';
 import { of } from 'rxjs';
 
 import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
+import { TpEditButtonComponent } from '../../../../shared/components/edit-button';
+import { TpDeleteButtonComponent } from '../../../../shared/components/delete-button';
 import { Parameter, ParameterType } from '../../../../core/models/parameter.model';
 import { ParameterService } from '../../../../core/services/parameter.service';
 
@@ -18,7 +20,7 @@ type FormMode = 'create' | 'edit' | 'view';
 @Component({
   selector: 'app-parameter-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, LocalDatePipe],
+  imports: [CommonModule, FormsModule, TranslatePipe, LocalDatePipe, TpEditButtonComponent, TpDeleteButtonComponent],
   templateUrl: './parameter-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

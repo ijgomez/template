@@ -81,21 +81,13 @@
         </div>
       }
       <div class="col-12 d-flex justify-content-end gap-2 mt-2">
-        <button
-          class="btn btn-primary btn-sm"
+        <tp-filter-button
           type="button"
-          data-testid="interface-list-apply-filters"
+          labelKey="button.search"
+          testId="interface-list-apply-filters"
           [disabled]="isFilterDisabled()"
-          (click)="applyFilters()">
-          <i class="bi bi-search me-1" aria-hidden="true"></i>{{ 'button.search' | translate }}
-        </button>
-        <button
-          class="btn btn-outline-secondary btn-sm"
-          type="button"
-          data-testid="interface-list-clear-filters"
-          (click)="clearFilters()">
-          <i class="bi bi-x-circle me-1" aria-hidden="true"></i>{{ 'interfaces.interfaceList.filters.clear' | translate }}
-        </button>
+          (filter)="applyFilters()" />
+        <tp-clear-button testId="interface-list-clear-filters" (clear)="clearFilters()" />
       </div>
     </div>
   </div>
@@ -110,13 +102,11 @@
       (click)="viewDetail(selectedLog()!)">
       <i class="bi bi-eye me-1" aria-hidden="true"></i>{{ 'common.detail' | translate }}
     </button>
-    <button
-      class="btn btn-outline-secondary btn-sm ms-auto"
-      type="button"
-      data-testid="interface-list-export-csv"
-      (click)="exportCsv()">
-      <i class="bi bi-download me-1" aria-hidden="true"></i>{{ 'button.export' | translate }} CSV
-    </button>
+    <tp-export-button
+      class="ms-auto"
+      labelSuffix=" CSV"
+      testId="interface-list-export-csv"
+      (export)="exportCsv()" />
   </div>
 
   <!-- Data table -->

@@ -13,6 +13,12 @@ import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '.
 import { Parameter, ParameterCriteria, ParameterType } from '../../../../core/models/parameter.model';
 import { ParameterFormComponent } from '../parameter-form/parameter-form.component';
 import { TpDetailButtonComponent } from '../../../../shared/components/detail-button';
+import { TpEditButtonComponent } from '../../../../shared/components/edit-button';
+import { TpDeleteButtonComponent } from '../../../../shared/components/delete-button';
+import { TpCreateButtonComponent } from '../../../../shared/components/create-button';
+import { TpFilterButtonComponent } from '../../../../shared/components/filter-button';
+import { TpClearButtonComponent } from '../../../../shared/components/clear-button';
+import { TpExportButtonComponent } from '../../../../shared/components/export-button';
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit';
 
@@ -24,7 +30,7 @@ type ViewMode = 'list' | 'detail' | 'create' | 'edit';
 @Component({
   selector: 'app-parameter-list',
   standalone: true,
-  imports: [FormsModule, TranslatePipe, TpDataTableComponent, TpColumnDirective, ParameterFormComponent, TpDetailButtonComponent],
+  imports: [FormsModule, TranslatePipe, TpDataTableComponent, TpColumnDirective, ParameterFormComponent, TpDetailButtonComponent, TpEditButtonComponent, TpCreateButtonComponent, TpDeleteButtonComponent, TpFilterButtonComponent, TpClearButtonComponent, TpExportButtonComponent],
   templateUrl: './parameter-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

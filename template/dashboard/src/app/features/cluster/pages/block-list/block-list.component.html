@@ -16,21 +16,15 @@
              [placeholder]="'cluster.blocks.fields.name' | translate" data-testid="cluster-blocks-filter-name">
     </div>
     <div class="col-12 d-flex justify-content-end gap-2 mt-2">
-      <button type="submit" class="btn btn-primary btn-sm" data-testid="cluster-blocks-apply-filters">
-        <i class="bi bi-search me-1" aria-hidden="true"></i> {{ 'button.filter' | translate }}
-      </button>
-      <button type="button" class="btn btn-outline-secondary btn-sm" (click)="clearFilters()" data-testid="cluster-blocks-clear-filters">
-        <i class="bi bi-x-circle me-1" aria-hidden="true"></i> {{ 'cluster.blocks.filters.clear' | translate }}
-      </button>
+      <tp-filter-button testId="cluster-blocks-apply-filters" />
+      <tp-clear-button testId="cluster-blocks-clear-filters" (clear)="clearFilters()" />
     </div>
   </form>
 </div>
 
 <!-- Action toolbar -->
 <div class="tp-toolbar d-flex gap-2 mb-3">
-  <button type="button" class="btn btn-outline-secondary btn-sm ms-auto" (click)="exportCsv()" data-testid="cluster-blocks-export-csv">
-    <i class="bi bi-download me-1" aria-hidden="true"></i> {{ 'button.export' | translate }}
-  </button>
+  <tp-export-button class="ms-auto" testId="cluster-blocks-export-csv" (export)="exportCsv()" />
 </div>
 
 <!-- Data table -->

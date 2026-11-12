@@ -16,6 +16,12 @@ import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent, SortDire
 import { Profile, ProfileCriteria } from '../../models/profile.model';
 import { ProfileFormComponent } from '../profile-form/profile-form.component';
 import { TpDetailButtonComponent } from '../../../../shared/components/detail-button';
+import { TpEditButtonComponent } from '../../../../shared/components/edit-button';
+import { TpDeleteButtonComponent } from '../../../../shared/components/delete-button';
+import { TpCreateButtonComponent } from '../../../../shared/components/create-button';
+import { TpFilterButtonComponent } from '../../../../shared/components/filter-button';
+import { TpClearButtonComponent } from '../../../../shared/components/clear-button';
+import { TpExportButtonComponent } from '../../../../shared/components/export-button';
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit';
 
@@ -27,7 +33,7 @@ type ViewMode = 'list' | 'detail' | 'create' | 'edit';
 @Component({
   selector: 'app-profile-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective, ProfileFormComponent, TpDetailButtonComponent],
+  imports: [CommonModule, FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective, ProfileFormComponent, TpDetailButtonComponent, TpEditButtonComponent, TpCreateButtonComponent, TpDeleteButtonComponent, TpFilterButtonComponent, TpClearButtonComponent, TpExportButtonComponent],
   templateUrl: './profile-list.component.html',
   styleUrls: ['./profile-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -38,12 +38,8 @@
         </select>
       </div>
       <div class="col-12 d-flex justify-content-end gap-2 mt-2">
-        <button type="submit" class="btn btn-primary btn-sm" data-testid="btn-filter-search">
-          <i class="bi bi-search me-1" aria-hidden="true"></i> {{ 'button.filter' | translate }}
-        </button>
-        <button type="button" class="btn btn-outline-secondary btn-sm" (click)="clearFilters()" data-testid="btn-filter-clear">
-          <i class="bi bi-x-circle me-1" aria-hidden="true"></i> {{ 'interfaces.configuration.filters.clear' | translate }}
-        </button>
+        <tp-filter-button testId="btn-filter-search" />
+        <tp-clear-button testId="btn-filter-clear" (clear)="clearFilters()" />
       </div>
     </form>
   </div>
@@ -54,9 +50,7 @@
       [disabled]="!selectedRow()"
       testId="btn-view-detail"
       (detail)="viewSelectedDetail()" />
-    <button type="button" class="btn btn-outline-secondary btn-sm ms-auto" (click)="exportCsv()" data-testid="btn-export">
-      <i class="bi bi-download me-1" aria-hidden="true"></i> {{ 'button.export' | translate }}
-    </button>
+    <tp-export-button class="ms-auto" testId="btn-export" (export)="exportCsv()" />
   </div>
 
   <!-- Data table -->

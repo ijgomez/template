@@ -17,12 +17,8 @@
                [placeholder]="'profiles.fields.name' | translate" data-testid="filter-name">
       </div>
       <div class="col-12 d-flex justify-content-end gap-2 mt-2">
-        <button type="submit" class="btn btn-primary btn-sm" data-testid="btn-filter-search">
-          <i class="bi bi-search me-1" aria-hidden="true"></i> {{ 'button.filter' | translate }}
-        </button>
-        <button type="button" class="btn btn-outline-secondary btn-sm" (click)="clearFilter()" data-testid="btn-filter-clear">
-          <i class="bi bi-x-circle me-1" aria-hidden="true"></i> {{ 'profiles.filters.clear' | translate }}
-        </button>
+        <tp-filter-button testId="btn-filter-search" />
+        <tp-clear-button testId="btn-filter-clear" (clear)="clearFilter()" />
       </div>
     </form>
   </div>
@@ -34,19 +30,19 @@
       testId="btn-detail"
       (detail)="viewSelectedProfile()" />
     @if (canWrite()) {
-      <button type="button" class="btn btn-primary btn-sm" (click)="showCreateForm()" data-testid="btn-create">
-        <i class="bi bi-plus-lg me-1" aria-hidden="true"></i> {{ 'button.create' | translate }}
-      </button>
-      <button type="button" class="btn btn-outline-secondary btn-sm" [disabled]="!selectedRow()" (click)="editSelectedProfile()" data-testid="btn-edit">
-        <i class="bi bi-pencil me-1" aria-hidden="true"></i> {{ 'button.edit' | translate }}
-      </button>
-      <button type="button" class="btn btn-danger btn-sm" [disabled]="!selectedRow()" (click)="deleteSelectedProfile()" data-testid="btn-delete">
-        <i class="bi bi-trash me-1" aria-hidden="true"></i> {{ 'button.delete' | translate }}
-      </button>
+      <tp-create-button
+        testId="btn-create"
+        (create)="showCreateForm()" />
+      <tp-edit-button
+        [disabled]="!selectedRow()"
+        testId="btn-edit"
+        (edit)="editSelectedProfile()" />
+      <tp-delete-button
+        [disabled]="!selectedRow()"
+        testId="btn-delete"
+        (delete)="deleteSelectedProfile()" />
     }
-    <button type="button" class="btn btn-outline-secondary btn-sm ms-auto" (click)="exportCsv()" data-testid="btn-export">
-      <i class="bi bi-download me-1" aria-hidden="true"></i> {{ 'button.export' | translate }}
-    </button>
+    <tp-export-button class="ms-auto" testId="btn-export" (export)="exportCsv()" />
   </div>
 
   <!-- Data table -->

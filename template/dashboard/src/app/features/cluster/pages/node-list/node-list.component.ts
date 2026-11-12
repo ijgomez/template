@@ -15,6 +15,10 @@ import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '.
 import { ClusterNode } from '../../../../core/models/cluster.model';
 import { NodeFormComponent } from '../node-form/node-form.component';
 import { TpDetailButtonComponent } from '../../../../shared/components/detail-button';
+import { TpEditButtonComponent } from '../../../../shared/components/edit-button';
+import { TpFilterButtonComponent } from '../../../../shared/components/filter-button';
+import { TpClearButtonComponent } from '../../../../shared/components/clear-button';
+import { TpExportButtonComponent } from '../../../../shared/components/export-button';
 
 type ViewMode = 'list' | 'form';
 
@@ -31,7 +35,7 @@ type SortableValue = string | number | boolean | null | undefined;
 @Component({
   selector: 'app-cluster-node-list',
   standalone: true,
-  imports: [FormsModule, DecimalPipe, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective, NodeFormComponent, TpDetailButtonComponent],
+  imports: [FormsModule, DecimalPipe, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective, NodeFormComponent, TpDetailButtonComponent, TpEditButtonComponent, TpFilterButtonComponent, TpClearButtonComponent, TpExportButtonComponent],
   templateUrl: './node-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

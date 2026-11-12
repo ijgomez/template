@@ -13,6 +13,10 @@ import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '.
 import { Action, ActionCriteria } from '../../models/action.model';
 import { ActionFormComponent } from '../action-form/action-form.component';
 import { TpDetailButtonComponent } from '../../../../shared/components/detail-button';
+import { TpEditButtonComponent } from '../../../../shared/components/edit-button';
+import { TpFilterButtonComponent } from '../../../../shared/components/filter-button';
+import { TpClearButtonComponent } from '../../../../shared/components/clear-button';
+import { TpExportButtonComponent } from '../../../../shared/components/export-button';
 
 type ViewMode = 'list' | 'detail' | 'edit';
 
@@ -25,7 +29,7 @@ type ViewMode = 'list' | 'detail' | 'edit';
 @Component({
   selector: 'app-action-list',
   standalone: true,
-  imports: [FormsModule, TranslatePipe, TpDataTableComponent, TpColumnDirective, ActionFormComponent, TpDetailButtonComponent],
+  imports: [FormsModule, TranslatePipe, TpDataTableComponent, TpColumnDirective, ActionFormComponent, TpDetailButtonComponent, TpEditButtonComponent, TpFilterButtonComponent, TpClearButtonComponent, TpExportButtonComponent],
   templateUrl: './action-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

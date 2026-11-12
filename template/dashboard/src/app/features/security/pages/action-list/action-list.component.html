@@ -28,12 +28,8 @@
         </select>
       </div>
       <div class="col-12 d-flex justify-content-end gap-2 mt-2">
-        <button type="submit" class="btn btn-primary btn-sm" data-testid="btn-filter-search">
-          <i class="bi bi-search me-1" aria-hidden="true"></i> {{ 'button.filter' | translate }}
-        </button>
-        <button type="button" class="btn btn-outline-secondary btn-sm" (click)="clearFilters()" data-testid="btn-filter-clear">
-          <i class="bi bi-x-circle me-1" aria-hidden="true"></i> {{ 'actions.filters.clear' | translate }}
-        </button>
+        <tp-filter-button testId="btn-filter-search" />
+        <tp-clear-button testId="btn-filter-clear" (clear)="clearFilters()" />
       </div>
     </form>
   </div>
@@ -45,13 +41,12 @@
       testId="btn-detail"
       (detail)="viewSelectedAction()" />
     @if (canEdit()) {
-      <button type="button" class="btn btn-outline-secondary btn-sm" [disabled]="!selectedRow()" (click)="editSelectedAction()" data-testid="btn-edit">
-        <i class="bi bi-pencil me-1" aria-hidden="true"></i> {{ 'button.edit' | translate }}
-      </button>
+      <tp-edit-button
+        [disabled]="!selectedRow()"
+        testId="btn-edit"
+        (edit)="editSelectedAction()" />
     }
-    <button type="button" class="btn btn-outline-secondary btn-sm ms-auto" (click)="exportCsv()" data-testid="btn-export">
-      <i class="bi bi-download me-1" aria-hidden="true"></i> {{ 'button.export' | translate }}
-    </button>
+    <tp-export-button class="ms-auto" testId="btn-export" (export)="exportCsv()" />
   </div>
 
   <!-- Data table -->

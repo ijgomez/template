@@ -9,6 +9,9 @@ import { NotificationService } from '../../../../core/services/notification.serv
 import { DateService } from '../../../../core/services/date.service';
 import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
 import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../shared/components/data-table';
+import { TpFilterButtonComponent } from '../../../../shared/components/filter-button';
+import { TpClearButtonComponent } from '../../../../shared/components/clear-button';
+import { TpExportButtonComponent } from '../../../../shared/components/export-button';
 import { ClusterBlock, ClusterBlockCriteria } from '../../../../core/models/cluster.model';
 
 /**
@@ -18,7 +21,7 @@ import { ClusterBlock, ClusterBlockCriteria } from '../../../../core/models/clus
 @Component({
   selector: 'app-cluster-block-list',
   standalone: true,
-  imports: [FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective],
+  imports: [FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective, TpFilterButtonComponent, TpClearButtonComponent, TpExportButtonComponent],
   templateUrl: './block-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

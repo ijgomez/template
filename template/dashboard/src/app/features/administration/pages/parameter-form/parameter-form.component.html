@@ -10,16 +10,13 @@
   @if (isReadonly()) {
     <div class="d-flex gap-2">
       @if (canWrite()) {
-        <button class="btn btn-primary btn-sm"
-                (click)="onEdit()"
-                data-testid="parameter-form-btn-edit">
-          <i class="bi bi-pencil me-1" aria-hidden="true"></i>{{ 'button.edit' | translate }}
-        </button>
-        <button class="btn btn-danger btn-sm"
-                (click)="onDelete()"
-                data-testid="parameter-form-btn-delete">
-          <i class="bi bi-trash me-1" aria-hidden="true"></i>{{ 'button.delete' | translate }}
-        </button>
+        <tp-edit-button
+          variant="primary"
+          testId="parameter-form-btn-edit"
+          (edit)="onEdit()" />
+        <tp-delete-button
+          testId="parameter-form-btn-delete"
+          (delete)="onDelete()" />
       }
       <button class="btn btn-outline-secondary btn-sm"
               (click)="onCancel()"

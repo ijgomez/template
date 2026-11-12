@@ -14,6 +14,9 @@ import { InterfaceConfig } from '../../../../core/models/interface.model';
 import { ConfigurationFormComponent } from '../configuration-form/configuration-form.component';
 import { ProtocolSelectComponent } from '../../components/protocol-select';
 import { TpDetailButtonComponent } from '../../../../shared/components/detail-button';
+import { TpFilterButtonComponent } from '../../../../shared/components/filter-button';
+import { TpClearButtonComponent } from '../../../../shared/components/clear-button';
+import { TpExportButtonComponent } from '../../../../shared/components/export-button';
 
 /** Primitive values that can be compared as text without object stringification. */
 type SortableValue = string | number | boolean | null | undefined;
@@ -27,7 +30,7 @@ type SortableValue = string | number | boolean | null | undefined;
 @Component({
   selector: 'app-configuration-list',
   standalone: true,
-  imports: [FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective, ConfigurationFormComponent, ProtocolSelectComponent, TpDetailButtonComponent],
+  imports: [FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective, ConfigurationFormComponent, ProtocolSelectComponent, TpDetailButtonComponent, TpFilterButtonComponent, TpClearButtonComponent, TpExportButtonComponent],
   templateUrl: './configuration-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

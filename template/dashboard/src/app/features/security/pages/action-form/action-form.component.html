@@ -10,11 +10,10 @@
   @if (isReadonly()) {
     <div class="d-flex gap-2">
       @if (canEdit()) {
-        <button class="btn btn-primary btn-sm"
-                (click)="onEdit()"
-                data-testid="action-form-btn-edit">
-          <i class="bi bi-pencil me-1" aria-hidden="true"></i>{{ 'button.edit' | translate }}
-        </button>
+        <tp-edit-button
+          variant="primary"
+          testId="action-form-btn-edit"
+          (edit)="onEdit()" />
       }
       <button class="btn btn-outline-secondary btn-sm"
               (click)="onCancel()"

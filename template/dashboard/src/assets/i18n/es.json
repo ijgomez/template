@@ -1,4 +1,4 @@
-﻿{
+{
   "app": {
     "title": "Template Dashboard"
   },
@@ -69,6 +69,8 @@
     "delete": "Eliminar",
     "export": "Exportar",
     "filter": "Filtrar",
+    "clear": "Limpiar",
+    "execute": "Ejecutar",
     "close": "Cerrar",
     "confirm": "Confirmar",
     "back": "Volver",

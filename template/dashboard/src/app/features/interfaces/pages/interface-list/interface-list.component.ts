@@ -11,6 +11,9 @@ import { DateService } from '../../../../core/services/date.service';
 import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
 import { TpDatePickerComponent } from '../../../../shared/components/date-picker/date-picker.component';
 import { TpDataTableComponent, TpColumnDirective, ColumnDef, SortEvent } from '../../../../shared/components/data-table';
+import { TpFilterButtonComponent } from '../../../../shared/components/filter-button';
+import { TpClearButtonComponent } from '../../../../shared/components/clear-button';
+import { TpExportButtonComponent } from '../../../../shared/components/export-button';
 import { TpInterfaceSelectComponent } from '../../components/interface-select';
 import {
   InterfaceLog,
@@ -35,6 +38,9 @@ import {
     TpDataTableComponent,
     TpColumnDirective,
     TpInterfaceSelectComponent,
+    TpFilterButtonComponent,
+    TpClearButtonComponent,
+    TpExportButtonComponent,
   ],
   templateUrl: './interface-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

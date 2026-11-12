@@ -17,13 +17,19 @@ import { UserDTO, UserCriteria } from '../../../../core/models/user.model';
 import { UserFormComponent } from '../user-form/user-form.component';
 import { TpProfileSelectComponent } from '../../../../shared/components/profile-select';
 import { TpDetailButtonComponent } from '../../../../shared/components/detail-button';
+import { TpEditButtonComponent } from '../../../../shared/components/edit-button';
+import { TpDeleteButtonComponent } from '../../../../shared/components/delete-button';
+import { TpCreateButtonComponent } from '../../../../shared/components/create-button';
+import { TpFilterButtonComponent } from '../../../../shared/components/filter-button';
+import { TpClearButtonComponent } from '../../../../shared/components/clear-button';
+import { TpExportButtonComponent } from '../../../../shared/components/export-button';
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit';
 
 @Component({
   selector: 'app-user-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective, UserFormComponent, TpProfileSelectComponent, TpDetailButtonComponent],
+  imports: [CommonModule, FormsModule, TranslatePipe, LocalDatePipe, TpDataTableComponent, TpColumnDirective, UserFormComponent, TpProfileSelectComponent, TpDetailButtonComponent, TpEditButtonComponent, TpCreateButtonComponent, TpDeleteButtonComponent, TpFilterButtonComponent, TpClearButtonComponent, TpExportButtonComponent],
   templateUrl: './user-list.component.html',
   styleUrl: './user-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
