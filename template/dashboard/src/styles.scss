@@ -317,6 +317,18 @@ body {
   }
 }
 
+// Cursor de mano en selects sobre los que el usuario puede actuar;
+// si están deshabilitados o en solo lectura se mantiene el cursor por defecto.
+select:not(:disabled):not([readonly]),
+.form-select:not(:disabled):not([readonly]) {
+  cursor: pointer;
+}
+
+select:disabled,
+.form-select:disabled {
+  cursor: not-allowed;
+}
+
 // ─── Sidebar Resize ──────────────────────────────────────────
 // Prevents text selection and enforces col-resize cursor during sidebar resize drag.
 body.tp-sidebar-resizing {
