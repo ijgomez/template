@@ -31,6 +31,7 @@ function buildUser(overrides: Partial<UserDTO> = {}): UserDTO {
 describe('UserFormComponent', () => {
   let component: UserFormComponent;
   let fixture: ComponentFixture<UserFormComponent>;
+  let userServiceMock: { findByCriteria: ReturnType<typeof vi.fn>; getProfiles: ReturnType<typeof vi.fn> };
 
   /**
    * Marks the named control as touched + dirty through Angular's forms API
@@ -64,7 +65,8 @@ describe('UserFormComponent', () => {
       search: vi.fn().mockReturnValue(of({ content: [], page: { size: 5, number: 0, totalElements: 0, totalPages: 1 } })),
     };
 
-    const userService = {
+    userServiceMock = {
+      findByCriteria: vi.fn().mockReturnValue(of({ content: [], page: { size: 100, number: 0, totalElements: 0, totalPages: 0 } })),
       getProfiles: vi.fn().mockReturnValue(of([
         { id: 10, name: 'Admin' },
         { id: 20, name: 'User' },
@@ -76,9 +78,40 @@ describe('UserFormComponent', () => {
       providers: [
         provideTranslateService({ lang: 'en', fallbackLang: 'en' }),
         { provide: ReportService, useValue: reportService },
-        { provide: UserService, useValue: userService },
+        { provide: UserService, useValue: userServiceMock },
       ],
     }).compileComponents();
+  });
+
+  describe('username uniqueness', () => {
+    it('should flag an existing username in create mode and block save', () => {
+      userServiceMock.findByCriteria.mockReturnValue(of({ content: [buildUser({ username: 'jdoe' })] }));
+      setup('create', buildUser({ id: null, username: '', password: 'secret' }));
+
+      component.updateField('username', 'jdoe');
+
+      expect(component.usernameExistsError()).not.toBe('');
+      expect(component.isSaveDisabled()).toBe(true);
+    });
+
+    it('should ignore partial matches', () => {
+      userServiceMock.findByCriteria.mockReturnValue(of({ content: [buildUser({ username: 'jdoe2' })] }));
+      setup('create', buildUser({ id: null, username: '', password: 'secret' }));
+
+      component.updateField('username', 'jdoe');
+
+      expect(component.usernameExistsError()).toBe('');
+    });
+
+    it('should not check uniqueness in edit mode', () => {
+      setup('edit');
+      userServiceMock.findByCriteria.mockClear();
+
+      component.updateField('username', 'other');
+
+      expect(userServiceMock.findByCriteria).not.toHaveBeenCalled();
+      expect(component.usernameExistsError()).toBe('');
+    });
   });
 
   it('should create', () => {

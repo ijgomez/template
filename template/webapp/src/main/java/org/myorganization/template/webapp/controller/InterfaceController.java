@@ -9,6 +9,7 @@ import org.myorganization.template.domain.enums.InterfaceLogStatus;
 import org.myorganization.template.domain.enums.InterfaceStatus;
 import org.myorganization.template.domain.enums.InterfaceOperationType;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -68,8 +69,8 @@ public interface InterfaceController {
      *
      * @param page          zero-indexed page number
      * @param size          page size
-     * @param fromDate      filter from date (inclusive)
-     * @param toDate        filter to date (inclusive)
+     * @param fromDate      optional start instant, ISO-8601 with offset (inclusive)
+     * @param toDate        optional end instant, ISO-8601 with offset (exclusive)
      * @param operationType filter by operation type (IN, OUT)
      * @param interfaceName filter by interface name (partial match)
      * @param status        filter by log status (SUCCESS, ERROR)
@@ -79,8 +80,8 @@ public interface InterfaceController {
     ResponseEntity<Page<InterfaceLogDTO>> findLogs(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) OffsetDateTime fromDate,
-            @RequestParam(required = false) OffsetDateTime toDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime fromDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime toDate,
             @RequestParam(required = false) InterfaceOperationType operationType,
             @RequestParam(required = false) String interfaceName,
             @RequestParam(required = false) InterfaceLogStatus status,
@@ -89,8 +90,8 @@ public interface InterfaceController {
     /**
      * Counts interface operation logs matching the given filters.
      *
-     * @param fromDate      filter from date (inclusive)
-     * @param toDate        filter to date (inclusive)
+     * @param fromDate      optional start instant, ISO-8601 with offset (inclusive)
+     * @param toDate        optional end instant, ISO-8601 with offset (exclusive)
      * @param operationType filter by operation type (IN, OUT)
      * @param interfaceName filter by interface name (partial match)
      * @param status        filter by log status (SUCCESS, ERROR)
@@ -98,8 +99,8 @@ public interface InterfaceController {
      */
     @GetMapping("/monitor/count")
     ResponseEntity<Long> countLogs(
-            @RequestParam(required = false) OffsetDateTime fromDate,
-            @RequestParam(required = false) OffsetDateTime toDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime fromDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime toDate,
             @RequestParam(required = false) InterfaceOperationType operationType,
             @RequestParam(required = false) String interfaceName,
             @RequestParam(required = false) InterfaceLogStatus status);

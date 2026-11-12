@@ -2,13 +2,23 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { NgForm } from '@angular/forms';
 import { provideTranslateService } from '@ngx-translate/core';
+import { of } from 'rxjs';
 
 import { ProfileFormComponent } from './profile-form.component';
 import { Profile } from '../../models/profile.model';
+import { ProfileService } from '../../../../core/services/profile.service';
 
 describe('ProfileFormComponent', () => {
   let component: ProfileFormComponent;
   let fixture: ComponentFixture<ProfileFormComponent>;
+  const profileServiceMock = { findByCriteria: vi.fn(), findAllActions: vi.fn() };
+
+  beforeEach(() => {
+    profileServiceMock.findByCriteria.mockReset();
+    profileServiceMock.findByCriteria.mockReturnValue(of({ content: [] }));
+    profileServiceMock.findAllActions.mockReset();
+    profileServiceMock.findAllActions.mockReturnValue(of({ content: [] }));
+  });
 
   const buildProfile = (overrides: Partial<Profile> = {}): Profile => ({
     id: 1,
@@ -36,7 +46,10 @@ describe('ProfileFormComponent', () => {
   async function setup(mode: 'create' | 'edit' | 'view' = 'create', profile: Profile = buildProfile(), actionIds: number[] = [1, 2]): Promise<void> {
     await TestBed.configureTestingModule({
       imports: [ProfileFormComponent],
-      providers: [provideTranslateService({ lang: 'en', fallbackLang: 'en' })],
+      providers: [
+        provideTranslateService({ lang: 'en', fallbackLang: 'en' }),
+        { provide: ProfileService, useValue: profileServiceMock },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ProfileFormComponent);
@@ -46,6 +59,38 @@ describe('ProfileFormComponent', () => {
     fixture.componentRef.setInput('actionIds', actionIds);
     fixture.detectChanges();
   }
+
+  describe('name uniqueness', () => {
+    it('should flag an existing name in create mode and block save', async () => {
+      await setup('create', buildProfile({ id: null, name: '' }), []);
+      profileServiceMock.findByCriteria.mockReturnValue(of({ content: [buildProfile({ id: 5, name: 'Operador' })] }));
+
+      component.updateField('name', 'Operador');
+
+      expect(component.nameExistsError()).not.toBe('');
+      expect(component.isSaveDisabled()).toBe(true);
+    });
+
+    it('should ignore partial matches', async () => {
+      await setup('create', buildProfile({ id: null, name: '' }), []);
+      profileServiceMock.findByCriteria.mockReturnValue(of({ content: [buildProfile({ id: 5, name: 'Operador2' })] }));
+
+      component.updateField('name', 'Operador');
+
+      expect(component.nameExistsError()).toBe('');
+    });
+
+    it('should ignore the profile being edited but flag other profiles in edit mode', async () => {
+      await setup('edit', buildProfile({ id: 1, name: 'Administrador' }), []);
+      profileServiceMock.findByCriteria.mockReturnValue(of({ content: [buildProfile({ id: 1, name: 'Auditor' })] }));
+      component.updateField('name', 'Auditor');
+      expect(component.nameExistsError()).toBe('');
+
+      profileServiceMock.findByCriteria.mockReturnValue(of({ content: [buildProfile({ id: 2, name: 'Auditor' })] }));
+      component.updateField('name', 'Auditor');
+      expect(component.nameExistsError()).not.toBe('');
+    });
+  });
 
   it('should sync profile data when input changes in edit mode', async () => {
     await setup('edit', buildProfile({ id: 10, name: 'Auditor', description: 'Auditoría' }), [9, 8]);

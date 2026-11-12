@@ -8,8 +8,8 @@ import org.myorganization.template.domain.enums.InterfaceOperationType;
 /**
  * Filter criteria for InterfaceLog listings.
  *
- * @param fromDate      filter from date (inclusive)
- * @param toDate        filter to date (inclusive)
+ * @param fromDate      filter start instant in UTC (inclusive)
+ * @param toDate        filter end instant in UTC (exclusive)
  * @param operationType filter by interface operation type
  * @param interfaceName filter by interface name
  * @param status        filter by log status

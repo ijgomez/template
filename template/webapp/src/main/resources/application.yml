@@ -11,6 +11,7 @@ spring:
       ddl-auto: none
     properties:
       hibernate:
+        default_schema: template
         jdbc:
           time_zone: UTC
 
@@ -26,6 +27,8 @@ spring:
 
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
+    # Los objetos y las semillas sin esquema explícito se resuelven en este esquema
+    default-schema: template
 
 # Server configuration
 server:

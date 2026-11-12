@@ -43,6 +43,7 @@ Identificadores locales de este documento: `RF-USR-*` (requisitos funcionales) y
 - AC3.2: Un alta válida devuelve 201 y el nuevo usuario aparece en el listado.
 - AC3.3: El email, cuando se informa, debe tener formato válido.
 - AC3.4: Tras el alta correcta se vuelve al listado y se recarga.
+- AC3.5: El usuario (`username`) debe ser único dentro del sistema. La unicidad se valida en frontend (el formulario consulta al backend al informar el usuario, muestra el error bajo el campo y en el resumen de errores, y deshabilita el guardado) y en backend (el servicio rechaza el duplicado con `409 Conflict`).
 
 #### RF-USR-4: Edición de usuario
 
@@ -290,7 +291,8 @@ La pantalla de usuarios usa `List screen` para la consulta, `Form screen` para a
 
 | Campo      | Regla                                                                                       |
 |------------|---------------------------------------------------------------------------------------------|
-| Usuario    | Obligatorio en alta; inmutable en edición                                                    |
+| Usuario    | Obligatorio en alta; inmutable en edición; único                                             |
+| Unicidad   | Doble validación: el frontend avisa en el formulario si el usuario ya existe (error `users.errors.usernameExists` y guardado deshabilitado) y el backend rechaza duplicados con `409 Conflict` |
 | Contraseña | Obligatoria únicamente al crear un usuario                                                   |
 | Perfil     | Obligatorio                                                                                  |
 | Email      | Formato de email cuando se informa                                                           |
@@ -439,7 +441,7 @@ public class User extends BaseEntity {
     private String password;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "profile_id")
+    @JoinColumn(name = "profile_fk")
     private Profile profile;
 
     /** Bloqueo administrativo indefinido. */
@@ -486,6 +488,8 @@ Datos de referencia consumidos por el formulario y los filtros:
 ### 3.4. Validaciones
 
 - El formulario valida que el campo `username` sea obligatorio en alta y que el valor no cambie en edición.
+- Unicidad del `username` en frontend: en modo alta, `UserFormComponent` consulta al backend (`UserService.findByCriteria`) cada vez que cambia el usuario y compara por coincidencia exacta, porque el filtro `username` del listado es parcial; si ya existe, muestra el mensaje `users.errors.usernameExists` bajo el campo y en el resumen de errores, y deshabilita el guardado. En edición no se comprueba porque el usuario es inmutable.
+- Unicidad del `username` en backend: `UserService` rechaza el usuario duplicado con `DuplicateEntityException`, que `GlobalExceptionHandler` traduce a `409 Conflict`. Esta validación es la que garantiza la integridad; la del frontend solo anticipa el error.
 - La contraseña es obligatoria solo en creación; si el usuario no la modifica en edición, el backend conserva la existente.
 - El `email` se valida con formato de correo cuando se informa, y el `perfil` debe apuntar a una entidad existente en el catálogo.
 - Los informes asociados deben pertenecer a registros válidos del sistema; cualquier identificador inexistente se rechaza en backend.
@@ -761,6 +765,17 @@ Precondición del ciclo: usuario administrador `{{ADMIN_USER}}` con `USER_READ` 
 | 2 | Con token (a), `PUT /api/v1/administration/security/users/{id}` cambiando `profileId` a uno distinto del actual                   | 403 Forbidden; el perfil del usuario no cambia                           |
 | 3 | Con token (a), `PUT /api/v1/administration/security/users/{id}` sin alterar el perfil (mismo `profileId`)                          | 200 OK (editar sin tocar el perfil no requiere `USER_GRANT`)             |
 | 4 | Con token (b), `POST /api/v1/administration/security/users` con usuario nuevo y `profileId` informado                             | 201 Created; el usuario se crea con el perfil indicado                   |
+
+#### TC-USR-15 · Alta con usuario duplicado
+
+- **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Negativo, E2E, API · **Traza:** RF-USR-3 (AC3.5) · **Independiente:** Sí (crea y luego duplica) · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`; crear `e2e_user_{{UNIQUE}}` como primer usuario.
+- **Teardown:** eliminar `e2e_user_{{UNIQUE}}`.
+
+| # | Acción                                                                                   | Resultado esperado                                                                                                    |
+|---|------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------|
+| 1 | En la UI, pulsar `btn-create` e informar el usuario `e2e_user_{{UNIQUE}}` ya existente   | El campo `input-username` se marca inválido, `error-username` muestra que el usuario ya existe y `btn-save` queda deshabilitado |
+| 2 | Por API, `POST /api/v1/administration/security/users` con el mismo `username`            | 409 Conflict; no se crea el usuario                                                                                   |
 
 ---
 

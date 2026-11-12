@@ -230,7 +230,7 @@ public record TokenRefreshResponseDTO(
 @Table(name = "refresh_token")
 public class RefreshToken extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_fk", nullable = false)
     private User user;
 
     @Column(nullable = false, unique = true)

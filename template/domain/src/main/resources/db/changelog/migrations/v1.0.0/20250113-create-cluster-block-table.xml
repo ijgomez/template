@@ -9,18 +9,18 @@
 
                 <preConditions onFail="MARK_RAN">
             <not>
-                <tableExists tableName="cluster_block"/>
+                <tableExists schemaName="${schemaName}" tableName="cluster_block"/>
             </not>
         </preConditions>
 
 <comment>Creación de la tabla de bloqueos del clúster</comment>
 
-        <createTable tableName="cluster_block">
+        <createTable schemaName="${schemaName}" tablespace="${tablespaceData}" tableName="cluster_block">
             <column name="id" type="BIGINT">
-                <constraints primaryKey="true" nullable="false"/>
+                <constraints primaryKey="true" primaryKeyTablespace="${tablespaceIndex}" nullable="false"/>
             </column>
             <column name="name" type="VARCHAR(255)">
-                <constraints nullable="false" unique="true"/>
+                <constraints nullable="false"/>
             </column>
             <column name="start_date" type="TIMESTAMP WITH TIME ZONE"/>
             <column name="avg_time" type="BIGINT"/>
@@ -28,17 +28,19 @@
             <column name="max_time" type="BIGINT"/>
             <column name="total" type="BIGINT"/>
         </createTable>
+        <addUniqueConstraint schemaName="${schemaName}" tablespace="${tablespaceIndex}" tableName="cluster_block" columnNames="name"
+                             constraintName="cluster_block_name_UK"/>
 
-        <createSequence sequenceName="cluster_block_seq" startValue="1" incrementBy="50"/>
+        <createSequence schemaName="${schemaName}" sequenceName="cluster_block_seq" startValue="1" incrementBy="1"/>
 
-        <addForeignKeyConstraint baseTableName="cluster_block" baseColumnNames="name"
+        <addForeignKeyConstraint baseTableSchemaName="${schemaName}" referencedTableSchemaName="${schemaName}" baseTableName="cluster_block" baseColumnNames="name"
                                  referencedTableName="cluster_task" referencedColumnNames="name"
                                  constraintName="cluster_block_name_FK"
                                  onDelete="RESTRICT" onUpdate="CASCADE"/>
 
         <rollback>
-            <dropSequence sequenceName="cluster_block_seq"/>
-            <dropTable tableName="cluster_block"/>
+            <dropSequence schemaName="${schemaName}" sequenceName="cluster_block_seq"/>
+            <dropTable schemaName="${schemaName}" tableName="cluster_block"/>
         </rollback>
 
     </changeSet>

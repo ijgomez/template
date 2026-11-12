@@ -103,7 +103,7 @@ public class AuditService extends AbstractCriteriaService<AuditLog, AuditLogDTO,
 
         if (criteria.toDate() != null) {
             spec = spec.and((root, query, cb) ->
-                    cb.lessThanOrEqualTo(root.get("timestamp"), criteria.toDate()));
+                    cb.lessThan(root.get("timestamp"), criteria.toDate()));
         }
 
         if (criteria.username() != null && !criteria.username().isBlank()) {

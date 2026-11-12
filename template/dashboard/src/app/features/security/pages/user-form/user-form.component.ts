@@ -1,12 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, ChangeDetectionStrategy, computed, effect, ElementRef, input, output, signal, viewChild } from '@angular/core';
+import { Component, ChangeDetectionStrategy, computed, effect, ElementRef, inject, input, output, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { of } from 'rxjs';
+import { catchError, take } from 'rxjs/operators';
 
 import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
 import { TpReportSelectedListComponent } from '../../../reports/components/report-selected-list';
 import { TpProfileSelectComponent } from '../../../../shared/components/profile-select';
 import { UserDTO } from '../../../../core/models/user.model';
+import { UserService } from '../../../../core/services/user.service';
 
 type FormMode = 'create' | 'edit' | 'view';
 
@@ -22,6 +25,9 @@ type FormMode = 'create' | 'edit' | 'view';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserFormComponent {
+  private readonly translateService = inject(TranslateService);
+  private readonly userService = inject(UserService);
+
   /** The mode of the form: 'create', 'edit', or 'view'. */
   readonly mode = input.required<FormMode>();
 
@@ -70,7 +76,7 @@ export class UserFormComponent {
     const profileId = user.profileId;
     const profileIsMissing = this.requireProfile() && !profileId;
 
-    return !username || (this.mode() === 'create' && !password) || profileIsMissing || this.emailIsInvalid();
+    return !username || this.usernameExistsError() !== '' || (this.mode() === 'create' && !password) || profileIsMissing || this.emailIsInvalid();
   });
 
   /** Whether a save was attempted while the form was invalid (controls the error summary). */
@@ -83,16 +89,18 @@ export class UserFormComponent {
    * List of validation errors for the error summary.
    * Each entry links to the invalid field via its DOM id. Only computed in edit/create modes.
    */
-  readonly formErrors = computed<ReadonlyArray<{ fieldId: string; messageKey: string }>>(() => {
+  readonly formErrors = computed<ReadonlyArray<{ fieldId: string; messageKey?: string; message?: string }>>(() => {
     if (this.isReadonly()) {
       return [];
     }
 
     const user = this.formUser();
-    const errors: { fieldId: string; messageKey: string }[] = [];
+    const errors: { fieldId: string; messageKey?: string; message?: string }[] = [];
 
     if (!(user.username?.trim())) {
       errors.push({ fieldId: 'username', messageKey: 'users.errors.usernameRequired' });
+    } else if (this.usernameExistsError()) {
+      errors.push({ fieldId: 'username', message: this.usernameExistsError() });
     }
     if (this.mode() === 'create' && !(user.password?.trim())) {
       errors.push({ fieldId: 'password', messageKey: 'users.errors.passwordRequired' });
@@ -123,9 +131,14 @@ export class UserFormComponent {
     locked: false,
   });
 
+  /** Error message when the username already exists in the database (empty when valid). */
+  readonly usernameExistsError = signal('');
+
   constructor() {
     effect(() => {
-      this.formUser.set({ ...this.user() });
+      const next = { ...this.user() };
+      this.formUser.set(next);
+      this.validateUsernameUniqueness(next.username ?? '');
     });
 
     // Move focus to the error summary after a failed submit so keyboard and
@@ -140,6 +153,10 @@ export class UserFormComponent {
   updateField(field: keyof UserDTO, value: unknown): void {
     if (this.isReadonly()) return;
     this.formUser.update(u => ({ ...u, [field]: value }));
+
+    if (field === 'username') {
+      this.validateUsernameUniqueness((value as string | null | undefined)?.trim() ?? '');
+    }
   }
 
   onSubmit(): void {
@@ -165,5 +182,41 @@ export class UserFormComponent {
 
   onDelete(): void {
     this.delete.emit(this.user());
+  }
+
+  /**
+   * Checks against the backend whether the username is already taken (create mode only).
+   * The criteria filter is a partial match, so the result is compared for an exact match.
+   */
+  private validateUsernameUniqueness(username: string): void {
+    const trimmed = username.trim();
+    if (this.isReadonly() || this.mode() === 'edit' || !trimmed) {
+      this.usernameExistsError.set('');
+      return;
+    }
+
+    this.userService.findByCriteria({ username: trimmed }, 0, 100, 'username,asc')
+      .pipe(
+        catchError(() => of(null)),
+        take(1)
+      )
+      .subscribe((page) => {
+        // Discard stale responses if the user kept typing.
+        if ((this.formUser().username ?? '').trim() !== trimmed) {
+          return;
+        }
+
+        const exists = !!page?.content?.some((u) => u.username === trimmed);
+        if (!exists) {
+          this.usernameExistsError.set('');
+          return;
+        }
+
+        const messageKey = 'users.errors.usernameExists';
+        const translated = this.translateService.instant(messageKey);
+        const fallback = 'Username already exists in the database';
+
+        this.usernameExistsError.set(translated && translated !== messageKey ? translated : fallback);
+      });
   }
 }

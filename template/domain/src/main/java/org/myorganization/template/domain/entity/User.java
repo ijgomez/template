@@ -53,7 +53,7 @@ public class User extends BaseEntity {
     private boolean locked;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "profile_id")
+    @JoinColumn(name = "profile_fk")
     private Profile profile;
 
     @OneToMany(mappedBy = "user")

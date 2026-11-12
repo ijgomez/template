@@ -32,7 +32,7 @@ public class RefreshToken {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "refresh_token_gen")
-    @SequenceGenerator(name = "refresh_token_gen", sequenceName = "refresh_token_seq", allocationSize = 50)
+    @SequenceGenerator(name = "refresh_token_gen", sequenceName = "refresh_token_seq", allocationSize = 1)
     @Column(name = "id")
     private Long id;
 
@@ -40,7 +40,7 @@ public class RefreshToken {
     private String token;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_fk", nullable = false)
     private User user;
 
     @Column(name = "expires_at", nullable = false)

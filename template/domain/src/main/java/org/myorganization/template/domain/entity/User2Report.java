@@ -25,12 +25,12 @@ public class User2Report {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("userId")
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_fk")
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("reportId")
-    @JoinColumn(name = "report_id")
+    @JoinColumn(name = "report_fk")
     private Report report;
 
     public User2Report() {

@@ -10,7 +10,7 @@ spring:
     # Desactiva el banner de Spring Boot en los tests (ruido en consola)
     banner-mode: off
   datasource:
-    url: jdbc:tc:postgresql:18:///template_test
+    url: jdbc:tc:postgresql:18:///template_test?TC_INITSCRIPT=db/test-init-schema.sql
     username: test
     password: test
     driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver

@@ -200,7 +200,7 @@ public class User extends BaseEntity {
     private String password;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "profile_id")
+    @JoinColumn(name = "profile_fk")
     private Profile profile;
 }
 ```

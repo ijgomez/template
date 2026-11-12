@@ -9,18 +9,18 @@
 
                 <preConditions onFail="MARK_RAN">
             <not>
-                <tableExists tableName="profile"/>
+                <tableExists schemaName="${schemaName}" tableName="profile"/>
             </not>
         </preConditions>
 
 <comment>Creación de la tabla de perfiles de seguridad</comment>
 
-        <createTable tableName="profile">
+        <createTable schemaName="${schemaName}" tablespace="${tablespaceData}" tableName="profile">
             <column name="id" type="BIGINT">
-                <constraints primaryKey="true" nullable="false"/>
+                <constraints primaryKey="true" primaryKeyTablespace="${tablespaceIndex}" nullable="false"/>
             </column>
             <column name="name" type="VARCHAR(100)">
-                <constraints nullable="false" unique="true"/>
+                <constraints nullable="false"/>
             </column>
             <column name="description" type="VARCHAR(500)"/>
             <column name="created_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="CURRENT_TIMESTAMP">
@@ -30,12 +30,14 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+        <addUniqueConstraint schemaName="${schemaName}" tablespace="${tablespaceIndex}" tableName="profile" columnNames="name"
+                             constraintName="profile_name_UK"/>
 
-        <createSequence sequenceName="profile_seq" startValue="1" incrementBy="50"/>
+        <createSequence schemaName="${schemaName}" sequenceName="profile_seq" startValue="1" incrementBy="1"/>
 
         <rollback>
-            <dropSequence sequenceName="profile_seq"/>
-            <dropTable tableName="profile"/>
+            <dropSequence schemaName="${schemaName}" sequenceName="profile_seq"/>
+            <dropTable schemaName="${schemaName}" tableName="profile"/>
         </rollback>
 
     </changeSet>

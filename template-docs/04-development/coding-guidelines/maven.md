@@ -18,6 +18,7 @@ Directrices para la gestión de builds del backend con Maven.
 ## Gestión de Dependencias
 
 - Scopes: `compile` (por defecto), `test`, `provided`.
+- En `webapp` (WAR), `spring-boot-starter-tomcat` se excluye de `spring-boot-starter-web` y se declara `provided`: así no se empaqueta `tomcat-embed-core` (trae sus propias clases `jakarta.servlet.*` y rompe el despliegue en WildFly con `IncompatibleClassChangeError`), pero `spring-boot:run` sigue funcionando. Por el mismo motivo se excluye `tomcat-embed-el` de `spring-boot-starter-validation` (el EL lo aporta el contenedor). Igualmente, `spring-boot-starter-logging` (Logback) se declara `provided` en `webapp`: WildFly aporta SLF4J sobre JBoss LogManager y Spring Boot falla con `LoggerFactory is not a Logback LoggerContext` si Logback viaja en el WAR.
 - Agrupar dependencias por categoría con comentarios.
 - Evitar dependencias transitivas innecesarias con `<exclusions>`.
 

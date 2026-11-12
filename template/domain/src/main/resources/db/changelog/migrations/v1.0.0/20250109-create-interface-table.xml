@@ -9,15 +9,15 @@
 
                 <preConditions onFail="MARK_RAN">
             <not>
-                <tableExists tableName="interface"/>
+                <tableExists schemaName="${schemaName}" tableName="interface"/>
             </not>
         </preConditions>
 
 <comment>Creación de la tabla de interfaces del sistema</comment>
 
-        <createTable tableName="interface">
+        <createTable schemaName="${schemaName}" tablespace="${tablespaceData}" tableName="interface">
             <column name="id" type="BIGINT">
-                <constraints primaryKey="true" nullable="false"/>
+                <constraints primaryKey="true" primaryKeyTablespace="${tablespaceIndex}" nullable="false"/>
             </column>
             <column name="name" type="VARCHAR(255)">
                 <constraints nullable="false"/>
@@ -43,11 +43,11 @@
             </column>
         </createTable>
 
-        <createSequence sequenceName="interface_seq" startValue="1" incrementBy="50"/>
+        <createSequence schemaName="${schemaName}" sequenceName="interface_seq" startValue="1" incrementBy="1"/>
 
         <rollback>
-            <dropSequence sequenceName="interface_seq"/>
-            <dropTable tableName="interface"/>
+            <dropSequence schemaName="${schemaName}" sequenceName="interface_seq"/>
+            <dropTable schemaName="${schemaName}" tableName="interface"/>
         </rollback>
 
     </changeSet>

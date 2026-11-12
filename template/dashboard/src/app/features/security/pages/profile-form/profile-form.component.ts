@@ -1,11 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, ChangeDetectionStrategy, computed, effect, ElementRef, input, output, signal, viewChild, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, computed, effect, ElementRef, inject, input, output, signal, viewChild, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { of } from 'rxjs';
+import { catchError, take } from 'rxjs/operators';
 
 import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
 import { TpSelectedActionsComponent } from '../../components/selected-actions';
 import { Profile } from '../../models/profile.model';
+import { ProfileService } from '../../../../core/services/profile.service';
 
 type FormMode = 'create' | 'edit' | 'view';
 
@@ -21,6 +24,9 @@ type FormMode = 'create' | 'edit' | 'view';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProfileFormComponent implements OnInit {
+  private readonly translateService = inject(TranslateService);
+  private readonly profileService = inject(ProfileService);
+
   /** The mode of the form: 'create', 'edit', or 'view'. */
   readonly mode = input.required<FormMode>();
 
@@ -55,7 +61,7 @@ export class ProfileFormComponent implements OnInit {
     }
 
     const name = this.formProfile().name?.trim() ?? '';
-    return !name;
+    return !name || this.nameExistsError() !== '';
   });
 
   /** Whether a save was attempted while the form was invalid (controls the error summary). */
@@ -68,14 +74,16 @@ export class ProfileFormComponent implements OnInit {
    * List of validation errors for the error summary.
    * Each entry links to the invalid field via its DOM id. Only computed in edit/create modes.
    */
-  readonly formErrors = computed<ReadonlyArray<{ fieldId: string; messageKey: string }>>(() => {
+  readonly formErrors = computed<ReadonlyArray<{ fieldId: string; messageKey?: string; message?: string }>>(() => {
     if (this.isReadonly()) {
       return [];
     }
 
-    const errors: { fieldId: string; messageKey: string }[] = [];
+    const errors: { fieldId: string; messageKey?: string; message?: string }[] = [];
     if (!(this.formProfile().name?.trim())) {
       errors.push({ fieldId: 'profileName', messageKey: 'profiles.errors.nameRequired' });
+    } else if (this.nameExistsError()) {
+      errors.push({ fieldId: 'profileName', message: this.nameExistsError() });
     }
     return errors;
   });
@@ -84,10 +92,14 @@ export class ProfileFormComponent implements OnInit {
   readonly formProfile = signal<Profile>({ id: null, name: '', description: '', actions: [] });
   readonly selectedActionIds = signal<number[]>([]);
 
+  /** Error message when the name already exists in the database (empty when valid). */
+  readonly nameExistsError = signal('');
+
   constructor() {
     effect(() => {
       const profile = this.profile();
       this.formProfile.set({ ...profile });
+      this.validateNameUniqueness(profile.name ?? '');
     });
 
     effect(() => {
@@ -110,6 +122,10 @@ export class ProfileFormComponent implements OnInit {
   updateField(field: keyof Profile, value: unknown): void {
     if (this.isReadonly()) return;
     this.formProfile.update(p => ({ ...p, [field]: value }));
+
+    if (field === 'name') {
+      this.validateNameUniqueness((value as string | null | undefined)?.trim() ?? '');
+    }
   }
 
   onSubmit(): void {
@@ -137,6 +153,44 @@ export class ProfileFormComponent implements OnInit {
 
   onDelete(): void {
     this.delete.emit(this.profile());
+  }
+
+  /**
+   * Checks against the backend whether the name is already used by another profile.
+   * The criteria filter is a partial match, so the result is compared for an exact match,
+   * excluding the profile being edited.
+   */
+  private validateNameUniqueness(name: string): void {
+    const trimmed = name.trim();
+    if (this.isReadonly() || !trimmed) {
+      this.nameExistsError.set('');
+      return;
+    }
+
+    const currentId = this.profile().id;
+    this.profileService.findByCriteria({ name: trimmed }, 0, 100, 'name,asc')
+      .pipe(
+        catchError(() => of(null)),
+        take(1)
+      )
+      .subscribe((page) => {
+        // Discard stale responses if the user kept typing.
+        if ((this.formProfile().name ?? '').trim() !== trimmed) {
+          return;
+        }
+
+        const exists = !!page?.content?.some((p) => p.name === trimmed && p.id !== currentId);
+        if (!exists) {
+          this.nameExistsError.set('');
+          return;
+        }
+
+        const messageKey = 'profiles.errors.nameExists';
+        const translated = this.translateService.instant(messageKey);
+        const fallback = 'Name already exists in the database';
+
+        this.nameExistsError.set(translated && translated !== messageKey ? translated : fallback);
+      });
   }
 
   getActionTypeBadgeClass(type: string): string {

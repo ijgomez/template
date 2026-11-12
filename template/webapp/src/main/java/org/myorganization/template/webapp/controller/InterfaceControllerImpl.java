@@ -14,6 +14,7 @@ import org.myorganization.template.domain.enums.InterfaceStatus;
 import org.myorganization.template.domain.enums.InterfaceOperationType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -82,8 +83,8 @@ public class InterfaceControllerImpl implements InterfaceController {
     public ResponseEntity<Page<InterfaceLogDTO>> findLogs(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) OffsetDateTime fromDate,
-            @RequestParam(required = false) OffsetDateTime toDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime fromDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime toDate,
             @RequestParam(required = false) InterfaceOperationType operationType,
             @RequestParam(required = false) String interfaceName,
             @RequestParam(required = false) InterfaceLogStatus status,
@@ -97,8 +98,8 @@ public class InterfaceControllerImpl implements InterfaceController {
 
     @Override
     public ResponseEntity<Long> countLogs(
-            @RequestParam(required = false) OffsetDateTime fromDate,
-            @RequestParam(required = false) OffsetDateTime toDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime fromDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime toDate,
             @RequestParam(required = false) InterfaceOperationType operationType,
             @RequestParam(required = false) String interfaceName,
             @RequestParam(required = false) InterfaceLogStatus status) {

@@ -9,18 +9,18 @@
 
                 <preConditions onFail="MARK_RAN">
             <not>
-                <tableExists tableName="cluster_task"/>
+                <tableExists schemaName="${schemaName}" tableName="cluster_task"/>
             </not>
         </preConditions>
 
 <comment>Creación de la tabla de tareas del clúster</comment>
 
-        <createTable tableName="cluster_task">
+        <createTable schemaName="${schemaName}" tablespace="${tablespaceData}" tableName="cluster_task">
             <column name="id" type="BIGINT">
-                <constraints primaryKey="true" nullable="false"/>
+                <constraints primaryKey="true" primaryKeyTablespace="${tablespaceIndex}" nullable="false"/>
             </column>
             <column name="name" type="VARCHAR(255)">
-                <constraints nullable="false" unique="true"/>
+                <constraints nullable="false"/>
             </column>
             <column name="description" type="VARCHAR(500)"/>
             <column name="nodes" type="INTEGER">
@@ -30,12 +30,14 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+        <addUniqueConstraint schemaName="${schemaName}" tablespace="${tablespaceIndex}" tableName="cluster_task" columnNames="name"
+                             constraintName="cluster_task_name_UK"/>
 
-        <createSequence sequenceName="cluster_task_seq" startValue="1" incrementBy="50"/>
+        <createSequence schemaName="${schemaName}" sequenceName="cluster_task_seq" startValue="1" incrementBy="1"/>
 
         <rollback>
-            <dropSequence sequenceName="cluster_task_seq"/>
-            <dropTable tableName="cluster_task"/>
+            <dropSequence schemaName="${schemaName}" sequenceName="cluster_task_seq"/>
+            <dropTable schemaName="${schemaName}" tableName="cluster_task"/>
         </rollback>
 
     </changeSet>

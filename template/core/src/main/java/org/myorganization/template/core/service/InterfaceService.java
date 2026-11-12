@@ -208,7 +208,7 @@ public class InterfaceService {
 
         if (criteria.toDate() != null) {
             spec = spec.and((root, query, cb) ->
-                    cb.lessThanOrEqualTo(root.get("timestamp"), criteria.toDate()));
+                    cb.lessThan(root.get("timestamp"), criteria.toDate()));
         }
 
         if (criteria.operationType() != null) {

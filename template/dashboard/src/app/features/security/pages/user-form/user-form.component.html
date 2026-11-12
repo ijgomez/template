@@ -49,7 +49,7 @@
         <ul class="mb-0 ps-3">
           @for (err of formErrors(); track err.fieldId) {
             <li>
-              <a [href]="'#' + err.fieldId" class="alert-link">{{ err.messageKey | translate }}</a>
+              <a [href]="'#' + err.fieldId" class="alert-link">{{ err.messageKey ? (err.messageKey | translate) : err.message }}</a>
             </li>
           }
         </ul>
@@ -69,7 +69,7 @@
         <input id="username"
                type="text"
                class="form-control form-control-sm"
-               [ngClass]="{ 'is-invalid': username.invalid && (username.dirty || username.touched) }"
+               [ngClass]="{ 'is-invalid': (username.invalid && (username.dirty || username.touched)) || usernameExistsError() }"
                [ngModel]="formUser().username"
                (ngModelChange)="updateField('username', $event)"
                name="username"
@@ -78,12 +78,16 @@
                [readonly]="isReadonly() || mode() === 'edit'"
                [disabled]="isReadonly()"
                [attr.aria-label]="'users.fields.username' | translate"
-               [attr.aria-invalid]="username.invalid && (username.dirty || username.touched) ? 'true' : null"
-               [attr.aria-describedby]="username.invalid && (username.dirty || username.touched) ? 'username-error' : null"
+               [attr.aria-invalid]="(username.invalid && (username.dirty || username.touched)) || usernameExistsError() ? 'true' : null"
+               [attr.aria-describedby]="(username.invalid && (username.dirty || username.touched)) || usernameExistsError() ? 'username-error' : null"
                data-testid="input-username">
-        @if (username.invalid && (username.dirty || username.touched)) {
-          <div id="username-error" class="invalid-feedback" data-testid="error-username">
-            {{ 'validation.required' | translate }}
+        @if (!isReadonly() && ((username.invalid && (username.dirty || username.touched)) || usernameExistsError())) {
+          <div id="username-error" class="invalid-feedback d-block" data-testid="error-username">
+            @if (username.invalid && (username.dirty || username.touched)) {
+              {{ 'validation.required' | translate }}
+            } @else {
+              {{ usernameExistsError() }}
+            }
           </div>
         }
       </div>

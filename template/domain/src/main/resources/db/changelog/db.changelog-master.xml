@@ -5,6 +5,14 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
+    <!--
+        Parámetros de ubicación física. Sobrescribibles vía spring.liquibase.parameters.*
+        Tablas -> esquema + tablespace de datos; índices (incluidos los de PK/UK) -> tablespace de índices.
+        Las secuencias solo admiten esquema (PostgreSQL no permite tablespace en secuencias).
+    -->
+    <property name="schemaName" value="template"/>
+    <property name="tablespaceData" value="template_data_tbs"/>
+    <property name="tablespaceIndex" value="template_index_tbs"/>
     <!-- v1.0.0 - Schema migrations (ordered by FK dependencies) -->
 
     <!-- H2 compatibility stubs (only applied on H2 / local profile) -->

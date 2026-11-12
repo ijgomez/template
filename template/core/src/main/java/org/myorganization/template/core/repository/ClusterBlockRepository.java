@@ -55,6 +55,6 @@ public interface ClusterBlockRepository extends JpaRepository<ClusterBlock, Long
      * @param name the block name
      */
     @Modifying
-    @Query(value = "UPDATE cluster_block SET start_date = CURRENT_TIMESTAMP WHERE name = :name", nativeQuery = true)
+    @Query(value = "UPDATE {h-schema}cluster_block SET start_date = CURRENT_TIMESTAMP WHERE name = :name", nativeQuery = true)
     void updateStartDateWithDbTime(@Param("name") String name);
 }

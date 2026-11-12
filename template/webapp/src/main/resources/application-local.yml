@@ -11,7 +11,7 @@ spring:
     # H2 en memoria con modo de compatibilidad PostgreSQL. DB_CLOSE_DELAY=-1
     # mantiene la BD viva mientras la JVM esté activa; NON_KEYWORDS=USER evita
     # conflictos con la tabla 'users'.
-    url: jdbc:h2:mem:template;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;NON_KEYWORDS=USER
+    url: jdbc:h2:mem:template;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;NON_KEYWORDS=USER;INIT=CREATE SCHEMA IF NOT EXISTS template\;SET SCHEMA template
     username: sa
     password:
     driver-class-name: org.h2.Driver

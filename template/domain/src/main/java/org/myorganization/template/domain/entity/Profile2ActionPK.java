@@ -10,7 +10,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Composite primary key for Profile2Action (profile_id + action_id).
+ * Composite primary key for Profile2Action (profile_fk + action_fk).
  */
 @Embeddable
 @Getter
@@ -20,10 +20,10 @@ public class Profile2ActionPK implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "profile_id")
+    @Column(name = "profile_fk")
     private Long profileId;
 
-    @Column(name = "action_id")
+    @Column(name = "action_fk")
     private Long actionId;
 
     public Profile2ActionPK() {

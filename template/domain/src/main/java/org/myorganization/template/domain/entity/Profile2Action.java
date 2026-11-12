@@ -25,12 +25,12 @@ public class Profile2Action {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("profileId")
-    @JoinColumn(name = "profile_id")
+    @JoinColumn(name = "profile_fk")
     private Profile profile;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("actionId")
-    @JoinColumn(name = "action_id")
+    @JoinColumn(name = "action_fk")
     private Action action;
 
     public Profile2Action() {

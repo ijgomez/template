@@ -180,7 +180,8 @@
       "usernameRequired": "El usuario es obligatorio",
       "passwordRequired": "La contraseña es obligatoria",
       "emailInvalid": "La dirección de email no es válida",
-      "profileRequired": "El perfil es obligatorio"
+      "profileRequired": "El perfil es obligatorio",
+      "usernameExists": "El usuario ya existe en la base de datos"
     },
     "filters": {
       "allProfiles": "Todos los perfiles",
@@ -228,7 +229,8 @@
       "lastModifiedAt": "Última modificación"
     },
     "errors": {
-      "nameRequired": "El nombre es obligatorio"
+      "nameRequired": "El nombre es obligatorio",
+      "nameExists": "El nombre ya existe en la base de datos"
     },
     "filters": {
       "clear": "Limpiar"

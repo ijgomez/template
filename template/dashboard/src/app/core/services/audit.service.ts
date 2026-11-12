@@ -7,6 +7,7 @@ import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { AuditLog, AuditCriteria } from '../models/audit.model';
 import { Page } from '../models/page.model';
+import { DateService } from './date.service';
 
 /** Page size used to fetch the full filtered list for exports (bypasses UI pagination). */
 const EXPORT_PAGE_SIZE = 100000;
@@ -18,6 +19,7 @@ const EXPORT_PAGE_SIZE = 100000;
 @Injectable({ providedIn: 'root' })
 export class AuditService {
   private readonly http = inject(HttpClient);
+  private readonly dateService = inject(DateService);
   private readonly baseUrl = `${environment.apiUrl}/administration/audit`;
 
   /**
@@ -32,12 +34,7 @@ export class AuditService {
       params = params.set('sort', sort);
     }
 
-    if (criteria.dateFrom) {
-      params = params.set('dateFrom', criteria.dateFrom);
-    }
-    if (criteria.dateTo) {
-      params = params.set('dateTo', criteria.dateTo);
-    }
+    params = this.appendDateRange(params, criteria);
     if (criteria.username) {
       params = params.set('username', criteria.username);
     }
@@ -65,12 +62,7 @@ export class AuditService {
   countByCriteria(criteria: AuditCriteria): Observable<number> {
     let params = new HttpParams();
 
-    if (criteria.dateFrom) {
-      params = params.set('dateFrom', criteria.dateFrom);
-    }
-    if (criteria.dateTo) {
-      params = params.set('dateTo', criteria.dateTo);
-    }
+    params = this.appendDateRange(params, criteria);
     if (criteria.username) {
       params = params.set('username', criteria.username);
     }
@@ -82,5 +74,20 @@ export class AuditService {
     }
 
     return this.http.get<number>(`${this.baseUrl}/count`, { params });
+  }
+
+  /**
+   * Adds the date-range filter as UTC instants: the local days chosen by the user (browser time
+   * zone, 'YYYY-MM-DD') become the half-open range [fromDate, toDate) expected by the backend.
+   */
+  private appendDateRange(params: HttpParams, criteria: Pick<AuditCriteria, 'dateFrom' | 'dateTo'>): HttpParams {
+    let result = params;
+    if (criteria.dateFrom) {
+      result = result.set('fromDate', this.dateService.toUtcStartOfLocalDay(criteria.dateFrom));
+    }
+    if (criteria.dateTo) {
+      result = result.set('toDate', this.dateService.toUtcStartOfNextLocalDay(criteria.dateTo));
+    }
+    return result;
   }
 }

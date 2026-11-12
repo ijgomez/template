@@ -14,7 +14,7 @@ import lombok.Setter;
 
 /**
  * Represents the assignment of a cluster task to a cluster node with priority and enabled status.
- * Uses a composite primary key (cluster_node_id + cluster_task_id).
+ * Uses a composite primary key (cluster_node_fk + cluster_task_fk).
  */
 @Entity
 @Table(name = "cluster_job")
@@ -27,12 +27,12 @@ public class ClusterJob {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("clusterNodeId")
-    @JoinColumn(name = "cluster_node_id")
+    @JoinColumn(name = "cluster_node_fk")
     private ClusterNode clusterNode;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("clusterTaskId")
-    @JoinColumn(name = "cluster_task_id")
+    @JoinColumn(name = "cluster_task_fk")
     private ClusterTask clusterTask;
 
     @Column(name = "priority")

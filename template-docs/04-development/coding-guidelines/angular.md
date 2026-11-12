@@ -53,6 +53,13 @@ src/
 - Gestionar errores HTTP con `catchError`.
 - Nunca hacer llamadas HTTP desde un componente directamente.
 
+## Fechas y Zonas Horarias
+
+- El usuario ve siempre las fechas en la **zona horaria del navegador**; el backend las envía y recibe en **UTC** (ISO-8601 con `Z`).
+- Mostrar fechas con `LocalDatePipe` / `DateService`; nunca el valor UTC en bruto ni con un `DatePipe` sin zona.
+- Convertir a UTC en los servicios antes de llamar a la API. Filtros por día: `DateService.toUtcStartOfLocalDay` / `toUtcStartOfNextLocalDay` (rango `[fromDate, toDate)`).
+- Regla completa: [api-rest.md — Fechas y Zonas Horarias](api-rest.md#fechas-y-zonas-horarias).
+
 ## Estilos con Bootstrap
 
 - Clases utilitarias de Bootstrap 5 en lugar de estilos inline.

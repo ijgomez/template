@@ -9,34 +9,34 @@
 
                 <preConditions onFail="MARK_RAN">
             <not>
-                <tableExists tableName="user2report"/>
+                <tableExists schemaName="${schemaName}" tableName="user2report"/>
             </not>
         </preConditions>
 
 <comment>Creación de la tabla intermedia usuario-informe</comment>
 
-        <createTable tableName="user2report">
-            <column name="user_id" type="BIGINT">
+        <createTable schemaName="${schemaName}" tablespace="${tablespaceData}" tableName="user2report">
+            <column name="user_fk" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
-            <column name="report_id" type="BIGINT">
+            <column name="report_fk" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
         </createTable>
 
-        <addUniqueConstraint tableName="user2report" columnNames="user_id, report_id"
-                             constraintName="user2report_user_id_report_id_UK"/>
+        <addUniqueConstraint schemaName="${schemaName}" tablespace="${tablespaceIndex}" tableName="user2report" columnNames="user_fk, report_fk"
+                             constraintName="user2report_user_fk_report_fk_UK"/>
 
-        <addForeignKeyConstraint baseTableName="user2report" baseColumnNames="user_id"
+        <addForeignKeyConstraint baseTableSchemaName="${schemaName}" referencedTableSchemaName="${schemaName}" baseTableName="user2report" baseColumnNames="user_fk"
                                  referencedTableName="users" referencedColumnNames="id"
-                                 constraintName="user2report_user_id_FK"/>
+                                 constraintName="user2report_user_FK"/>
 
-        <addForeignKeyConstraint baseTableName="user2report" baseColumnNames="report_id"
+        <addForeignKeyConstraint baseTableSchemaName="${schemaName}" referencedTableSchemaName="${schemaName}" baseTableName="user2report" baseColumnNames="report_fk"
                                  referencedTableName="report" referencedColumnNames="id"
-                                 constraintName="user2report_report_id_FK"/>
+                                 constraintName="user2report_report_FK"/>
 
         <rollback>
-            <dropTable tableName="user2report"/>
+            <dropTable schemaName="${schemaName}" tableName="user2report"/>
         </rollback>
 
     </changeSet>

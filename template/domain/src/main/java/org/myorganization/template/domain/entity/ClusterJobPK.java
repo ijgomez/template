@@ -10,7 +10,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Composite primary key for ClusterJob (cluster_node_id + cluster_task_id).
+ * Composite primary key for ClusterJob (cluster_node_fk + cluster_task_fk).
  */
 @Embeddable
 @Getter
@@ -20,10 +20,10 @@ public class ClusterJobPK implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "cluster_node_id")
+    @Column(name = "cluster_node_fk")
     private Long clusterNodeId;
 
-    @Column(name = "cluster_task_id")
+    @Column(name = "cluster_task_fk")
     private Long clusterTaskId;
 
     public ClusterJobPK() {

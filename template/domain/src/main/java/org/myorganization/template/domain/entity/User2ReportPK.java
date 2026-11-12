@@ -10,7 +10,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Composite primary key for User2Report (user_id + report_id).
+ * Composite primary key for User2Report (user_fk + report_fk).
  */
 @Embeddable
 @Getter
@@ -20,10 +20,10 @@ public class User2ReportPK implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "user_id")
+    @Column(name = "user_fk")
     private Long userId;
 
-    @Column(name = "report_id")
+    @Column(name = "report_fk")
     private Long reportId;
 
     public User2ReportPK() {

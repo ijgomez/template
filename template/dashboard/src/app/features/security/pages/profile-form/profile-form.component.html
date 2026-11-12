@@ -47,7 +47,7 @@
         <ul class="mb-0 ps-3">
           @for (err of formErrors(); track err.fieldId) {
             <li>
-              <a [href]="'#' + err.fieldId" class="alert-link">{{ err.messageKey | translate }}</a>
+              <a [href]="'#' + err.fieldId" class="alert-link">{{ err.messageKey ? (err.messageKey | translate) : err.message }}</a>
             </li>
           }
         </ul>
@@ -67,7 +67,7 @@
         <input id="profileName"
                type="text"
                class="form-control form-control-sm"
-               [ngClass]="{ 'is-invalid': profileName.invalid && (profileName.dirty || profileName.touched) }"
+               [ngClass]="{ 'is-invalid': (profileName.invalid && (profileName.dirty || profileName.touched)) || nameExistsError() }"
                [ngModel]="formProfile().name"
                (ngModelChange)="updateField('name', $event)"
                name="profileName"
@@ -76,12 +76,16 @@
                [readonly]="isReadonly()"
                [disabled]="isReadonly()"
                [attr.aria-label]="'profiles.fields.name' | translate"
-               [attr.aria-invalid]="profileName.invalid && (profileName.dirty || profileName.touched) ? 'true' : null"
-               [attr.aria-describedby]="profileName.invalid && (profileName.dirty || profileName.touched) ? 'profileName-error' : null"
+               [attr.aria-invalid]="(profileName.invalid && (profileName.dirty || profileName.touched)) || nameExistsError() ? 'true' : null"
+               [attr.aria-describedby]="(profileName.invalid && (profileName.dirty || profileName.touched)) || nameExistsError() ? 'profileName-error' : null"
                data-testid="input-name">
-        @if (profileName.invalid && (profileName.dirty || profileName.touched)) {
-          <div id="profileName-error" class="invalid-feedback" data-testid="error-name">
-            {{ 'validation.required' | translate }}
+        @if (!isReadonly() && ((profileName.invalid && (profileName.dirty || profileName.touched)) || nameExistsError())) {
+          <div id="profileName-error" class="invalid-feedback d-block" data-testid="error-name">
+            @if (profileName.invalid && (profileName.dirty || profileName.touched)) {
+              {{ 'validation.required' | translate }}
+            } @else {
+              {{ nameExistsError() }}
+            }
           </div>
         }
       </div>
