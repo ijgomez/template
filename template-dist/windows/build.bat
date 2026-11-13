@@ -46,11 +46,18 @@ if not exist "%BACKEND_DIR%" (
     exit /b 1
 )
 
+REM Perfil Maven opcional (local, dist, test). Sin argumento se usa el por defecto seguro (dist, SEC-04).
+set "PROFILE_ARGS="
+if not "%~1"=="" (
+    set "PROFILE_ARGS=-P %~1"
+    echo Perfil Maven: %~1
+)
+
 pushd "%BACKEND_DIR%"
 if defined MAVEN_USER_SETTINGS (
-    call mvn -s "%MAVEN_USER_SETTINGS%" clean install
+    call mvn -s "%MAVEN_USER_SETTINGS%" %PROFILE_ARGS% clean install
 ) else (
-    call mvn clean install
+    call mvn %PROFILE_ARGS% clean install
 )
 if %errorlevel% neq 0 (
     echo ERROR: La compilacion del backend ha fallado.

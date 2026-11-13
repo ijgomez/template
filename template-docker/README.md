@@ -60,6 +60,7 @@ Reinicializar servicios y borrar los volúmenes de datos:
 |---|---:|---:|---|
 | PostgreSQL | `5432` | `5432` | Base de datos |
 | Apache | `8000` | `80` | Balanceador y entrada HTTP |
+| Apache | `4430` | `443` | Balanceador y entrada HTTPS |
 | WildFly 1 | `8081` | `8080` | HTTP directo para depuración |
 | WildFly 1 | `9991` | `9990` | Consola de administración |
 | WildFly 2 | `8082` | `8080` | HTTP directo para depuración |
@@ -68,7 +69,7 @@ Reinicializar servicios y borrar los volúmenes de datos:
 | Mailpit SMTP | `1025` | `1025` | Correo de pruebas |
 | Mailpit UI | `8025` | `8025` | Interfaz de mensajes capturados |
 
-Apache reparte el tráfico entre `wildfly-1:8080` y `wildfly-2:8080` dentro de la red Compose; los puertos publicados del host no son los puertos internos. El balanceador usa round-robin y la aplicación se considera stateless. El acceso recomendado es `http://localhost:8000`; los nodos también están disponibles directamente en `http://localhost:8081` y `http://localhost:8082`.
+Apache reparte el tráfico entre `wildfly-1:8080` y `wildfly-2:8080` dentro de la red Compose; los puertos publicados del host no son los puertos internos. El balanceador usa round-robin y la aplicación se considera stateless. El acceso recomendado es `http://localhost:8000` o `https://localhost:4430` (certificado autofirmado); los nodos también están disponibles directamente en `http://localhost:8081` y `http://localhost:8082`.
 
 ## Servicios
 
@@ -93,7 +94,8 @@ Apache reparte el tráfico entre `wildfly-1:8080` y `wildfly-2:8080` dentro de l
 ### Apache
 
 - Imagen basada en `httpd:2.4`, configurada con `mod_proxy_balancer` y balanceo `byrequests`.
-- Publica el puerto HTTP `8000` por defecto y espera a que los dos servicios WildFly estén creados.
+- Publica el puerto HTTP `8000` y el HTTPS `4430` por defecto y espera a que los dos servicios WildFly estén creados.
+- Termina TLS en el puerto 443 con un certificado autofirmado generado en el Dockerfile (sólo pruebas; en producción montar uno real) y reenvía a los nodos por HTTP interno con `X-Forwarded-Proto: https`.
 - Los backends son los nombres DNS de Compose con el puerto interno `8080`.
 - La configuración incluye `/balancer-manager` y `/server-status`, restringidos a rangos locales privados.
 
@@ -117,7 +119,7 @@ Apache reparte el tráfico entre `wildfly-1:8080` y `wildfly-2:8080` dentro de l
 - PostgreSQL: `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PORT`.
 - WildFly: `WILDFLY_HTTP_PORT`, `WILDFLY_MANAGEMENT_PORT`, `WILDFLY2_HTTP_PORT`, `WILDFLY2_MANAGEMENT_PORT`, `WILDFLY_ADMIN_USER`.
 - PostgreSQL JDBC: `POSTGRES_JDBC_URL` (opcional; por defecto apunta al servicio `postgres` y a `POSTGRES_DB`).
-- Apache: `APACHE_HTTP_PORT`.
+- Apache: `APACHE_HTTP_PORT`, `APACHE_HTTPS_PORT`.
 - OpenProject: `OPENPROJECT_PORT`, `OPENPROJECT_HOST_NAME`, `OPENPROJECT_DB`, `OPENPROJECT_HTTPS`.
 - Mailpit: `MAIL_SMTP_PORT`, `MAIL_UI_PORT`.
 

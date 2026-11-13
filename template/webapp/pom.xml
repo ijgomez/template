@@ -150,7 +150,17 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <scope>runtime</scope>
+            <scope>${db.driver.scope}</scope>
+        </dependency>
+
+        <!--
+            Driver PostgreSQL (llega transitivo desde core). Se declara aquí para poder
+            controlar su scope por perfil: en dist es 'provided' (lo aporta WildFly).
+        -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>${db.driver.scope}</scope>
         </dependency>
 
         <!--
@@ -286,6 +296,12 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
                     <packagingExcludes>${war.excluded.profiles}</packagingExcludes>
+                    <archive>
+                        <manifestEntries>
+                            <!-- Logging profile de WildFly (sólo dist); vacío en local/test -->
+                            <Logging-Profile>${war.logging.profile}</Logging-Profile>
+                        </manifestEntries>
+                    </archive>
                 </configuration>
             </plugin>
 

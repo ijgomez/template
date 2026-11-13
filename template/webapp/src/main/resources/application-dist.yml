@@ -7,26 +7,26 @@
 # =============================================================================
 
 spring:
+  main:
+    # Sin banner de Spring Boot en el log de WildFly
+    banner-mode: off
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-    driver-class-name: org.postgresql.Driver
+    # DataSource gestionado por WildFly (standalone.xml). Sustituye a url/username/password.
+    jndi-name: java:jboss/datasources/TemplateDS
 
   liquibase:
-    # SEC-01: contexto seguro por defecto; excluye las semillas de desarrollo
-    # (changesets con context='local'). Sobreescribible con LIQUIBASE_CONTEXTS.
-    contexts: ${LIQUIBASE_CONTEXTS:dist}
+    # El esquema se gestiona fuera de la aplicación (scripts SQL generados con
+    # generate-sql); al arrancar no se ejecuta ningún changeset.
+    enabled: false
 
   jpa:
+    hibernate:
+      # Sólo valida que las entidades coincidan con el esquema existente; no modifica nada.
+      ddl-auto: validate
     show-sql: false
     properties:
       hibernate:
         format_sql: false
-
-# Server configuration (externalized)
-server:
-  port: ${SERVER_PORT:8080}
 
 # JWT configuration (externalized - secrets MUST be provided)
 jwt:
@@ -43,18 +43,7 @@ auth:
     secure: ${AUTH_COOKIE_SECURE:true}
     same-site: ${AUTH_COOKIE_SAME_SITE:Strict}
 
-# CORS configuration (externalized)
-cors:
-  allowed-origins: ${CORS_ALLOWED_ORIGINS}
-
 # Cluster configuration (externalized)
 cluster:
   heartbeat-interval: ${CLUSTER_HEARTBEAT_INTERVAL:30000}
   dead-node-timeout: ${CLUSTER_DEAD_NODE_TIMEOUT:300000}
-
-# Logging (production-level)
-logging:
-  level:
-    root: WARN
-    org.myorganization.template: INFO
-    org.springframework.security: WARN

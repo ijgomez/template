@@ -32,4 +32,11 @@ if [[ -n "${CREDENTIALS_FILE:-}" ]]; then
   POSTGRES_PASSWORD="${POSTGRES_PASSWORD:?postgres_password missing from credentials file}"
 fi
 
+# Secreto JWT: Spring lo resuelve como ${JWT_SECRET} desde el entorno del proceso.
+# Debe ser el mismo en todos los nodos del cluster.
+if [[ -n "${CREDENTIALS_FILE:-}" ]]; then
+  export JWT_SECRET="$(sed -n 's/^jwt_secret=//p' "$CREDENTIALS_FILE" | tr -d '\r')"
+fi
+export JWT_SECRET="${JWT_SECRET:?jwt_secret missing from credentials file (or set JWT_SECRET)}"
+
 exec "$WILDFLY_HOME/bin/standalone.sh" -b 0.0.0.0 -bmanagement 0.0.0.0

@@ -112,6 +112,8 @@ El script `package` realiza:
 
 1. **Backend:** `mvn clean package -Pdist -DskipTests`
    - Genera el WAR con el perfil de distribución.
+   - El WAR es un WAR plano para WildFly: sin los drivers H2 y PostgreSQL (los aporta WildFly) y sin `WEB-INF/lib-provided` (no es ejecutable con `java -jar`).
+   - Sólo incluye `application.yml` y `application-dist.yml`.
    - La configuración queda externalizada (sin valores hardcoded).
 2. **Frontend:** `npm install` + `ng build --configuration production`
    - Build optimizado con hashing, tree-shaking y Service Worker.
@@ -129,22 +131,125 @@ El WAR generado con el perfil `dist` incluye automáticamente el frontend compil
 
 ## Configuración de distribución
 
+### Perfiles Maven y de Spring
+
+Cada perfil Maven fija el perfil de Spring que se empaqueta (`application-<perfil>.yml`). El WAR sólo incluye el `application-<perfil>.yml` del perfil con el que se compila.
+
+| Perfil Maven | Perfil de Spring | Uso                                   | Drivers H2/PostgreSQL en el WAR | WAR                          |
+|--------------|------------------|---------------------------------------|:-------------------------------:|------------------------------|
+| (sin `-P`)   | `dist`           | Por defecto seguro (SEC-04)           | No                              | Plano, para contenedor       |
+| `dist`       | `dist`           | Despliegue (dev, int, qa, pro)        | No                              | Plano, para contenedor       |
+| `local`      | `local`          | Desarrollo en la máquina del desarrollador | Sí                         | Ejecutable (`java -jar`)     |
+| `test`       | `test`           | Tests de integración y CI             | Sí                              | Ejecutable (`java -jar`)     |
+
+Un build sin `-P` nunca genera un artefacto con configuración de desarrollo (SEC-04). `mvn spring-boot:run` sin `-P` arranca en `local`.
+
+### Backend (perfil `local`)
+
+Fichero `application-local.yml`. No requiere configuración externa.
+
+| Propiedad              | Valor                                                    |
+|------------------------|----------------------------------------------------------|
+| Base de datos          | H2 en memoria (modo compatibilidad PostgreSQL)           |
+| Liquibase              | Activo, `db.changelog-local.xml`, contexto `local` (esquema y semillas locales) |
+| Servidor               | Puerto 8080                                              |
+| JWT                    | Secreto fijo de desarrollo (no usar fuera de local)      |
+| Cookie de refresh      | `refresh-token`, `Secure=false`, `SameSite=Lax`          |
+| CORS                   | `http://localhost:4200`                                  |
+| Logging                | Detallado (`DEBUG`/`TRACE`)                              |
+
+### Backend (perfil `test`)
+
+Fichero `application-test.yml`. Pensado para tests de integración y CI.
+
+| Propiedad       | Valor                                                       |
+|-----------------|-------------------------------------------------------------|
+| Base de datos   | PostgreSQL 18 con Testcontainers (requiere Docker)          |
+| Servidor        | Puerto aleatorio (`0`)                                      |
+| JWT             | Secreto fijo de pruebas                                     |
+| CORS            | `http://localhost:4200`                                     |
+| Cluster         | Intervalos cortos (heartbeat 5 s, nodo inactivo 15 s)       |
+| Logging         | Lo controla `logback-test.xml`                              |
+
 ### Backend (perfil `dist`)
 
-El perfil `dist` externaliza toda la configuración sensible mediante variables de entorno. El fichero `application-dist.yml` declara:
+Fichero `application-dist.yml`. Pensado para desplegar en WildFly. La infraestructura (datasource, logging, puertos y HTTPS) se configura en WildFly y la aplicación sólo recibe lo que necesita por variables.
 
-| Variable de entorno            | Descripción                       | Obligatoria    |
-|--------------------------------|-----------------------------------|:--------------:|
-| `DB_URL`                       | URL JDBC de conexión a PostgreSQL | Sí             |
-| `DB_USERNAME`                  | Usuario de base de datos          | Sí             |
-| `DB_PASSWORD`                  | Contraseña de base de datos       | Sí             |
-| `JWT_SECRET`                   | Clave para firmar tokens JWT (mín. 32 caracteres) | Sí             |
-| `JWT_ACCESS_TOKEN_EXPIRATION`  | Expiración del access token (ms)  | No (900000)    |
-| `JWT_REFRESH_TOKEN_EXPIRATION` | Expiración del refresh token (ms) | No (604800000) |
-| `CORS_ALLOWED_ORIGINS`         | Orígenes CORS permitidos          | Sí             |
-| `SERVER_PORT`                  | Puerto del servidor               | No (8080)      |
-| `CLUSTER_HEARTBEAT_INTERVAL`   | Intervalo de heartbeat (ms)       | No (30000)     |
-| `CLUSTER_DEAD_NODE_TIMEOUT`    | Timeout de nodos inactivos (ms)   | No (300000)    |
+Valores fijados por el perfil:
+
+| Propiedad                       | Valor                                         | Motivo                                              |
+|---------------------------------|-----------------------------------------------|-----------------------------------------------------|
+| `spring.datasource.jndi-name`   | `java:jboss/datasources/TemplateDS`           | El DataSource lo aporta WildFly                     |
+| `spring.liquibase.enabled`      | `false`                                       | No se ejecuta ningún changeset al arrancar          |
+| `spring.jpa.hibernate.ddl-auto` | `validate`                                    | Sólo valida el modelo de datos, no modifica nada    |
+
+Variables (propiedades del sistema o del entorno de WildFly):
+
+| Variable                       | Descripción                                          | Obligatoria    |
+|--------------------------------|------------------------------------------------------|:--------------:|
+| `JWT_SECRET`                   | Clave para firmar tokens JWT (mín. 32 caracteres). Debe ser la misma en todos los nodos del cluster | Sí             |
+| `JWT_ACCESS_TOKEN_EXPIRATION`  | Expiración del access token (ms)                     | No (900000)    |
+| `JWT_REFRESH_TOKEN_EXPIRATION` | Expiración del refresh token (ms)                    | No (604800000) |
+| `AUTH_COOKIE_NAME`             | Nombre de la cookie de refresh                       | No (`__Host-refresh-token`) |
+| `AUTH_COOKIE_PATH`             | Ruta de la cookie de refresh                         | No (`/template/api/v1/auth`) |
+| `AUTH_COOKIE_MAX_AGE`          | Duración de la cookie (s)                            | No (604800)    |
+| `AUTH_COOKIE_SECURE`           | Cookie sólo por HTTPS                                | No (`true`)    |
+| `AUTH_COOKIE_SAME_SITE`        | Política `SameSite` de la cookie                     | No (`Strict`)  |
+| `CLUSTER_HEARTBEAT_INTERVAL`   | Intervalo de heartbeat (ms)                          | No (30000)     |
+| `CLUSTER_DEAD_NODE_TIMEOUT`    | Timeout de nodos inactivos (ms)                      | No (300000)    |
+
+Notas:
+
+- Las variables `DB_URL`, `DB_USERNAME` y `DB_PASSWORD` ya no las lee el WAR. Siguen usándose en los scripts `generate-sql` de `template-dist`.
+- `CORS_ALLOWED_ORIGINS` y `SERVER_PORT` no se definen en `dist`: el frontend va dentro del WAR (mismo origen) y el puerto lo fija WildFly. Se aplican los valores de `application.yml`.
+- El logging se configura en el subsistema `logging` de WildFly, no en el YAML. Con `LoggingSystem=none` Spring Boot ignora `logging.level.*`.
+- Con `AUTH_COOKIE_SECURE=true` hace falta HTTPS. Por HTTP plano hay que definir `AUTH_COOKIE_SECURE=false` y un `AUTH_COOKIE_NAME` sin el prefijo `__Host-`.
+
+### Esquema de base de datos en `dist`
+
+Como Liquibase está desactivado en `dist`, el esquema `template`, las tablas y los datos iniciales deben existir antes de desplegar el WAR. Se generan con `template-dist/linux/generate-sql.sh` (o `generate-sql.bat`) y se aplican en la base de datos de destino. Si el modelo no coincide con las entidades, la aplicación no arranca (`ddl-auto: validate`).
+
+### Configuración de WildFly
+
+Requisitos en el servidor para el perfil `dist`:
+
+| Elemento               | Configuración                                                                    |
+|------------------------|----------------------------------------------------------------------------------|
+| Driver PostgreSQL      | Módulo `org.postgresql` y driver `postgresql` en el subsistema `datasources`     |
+| DataSource             | `TemplateDS` con JNDI `java:jboss/datasources/TemplateDS`                        |
+| `JWT_SECRET`           | Propiedad del sistema (`/system-property=JWT_SECRET:add(value=...)`) o variable de entorno del proceso |
+| HTTPS                  | `https-listener` de Undertow (puerto 8443 por defecto)                           |
+| Proxy inverso          | Si hay un balanceador que termina HTTPS (Apache), `proxy-address-forwarding=true` en el `http-listener` de Undertow. Sin ello Spring cree que la petición es `http` con `Origin` `https` y devuelve 403 (CORS) en los recursos del navegador |
+| Logging                | Logging profile `template` (imprescindible: el WAR de `dist` lo referencia en el MANIFEST y el despliegue puede fallar si no existe) y propiedad del sistema `org.springframework.boot.logging.LoggingSystem=none` (imprescindible: sin ella Spring Boot reconfigura `java.util.logging` y los logs de la aplicación no llegan a `server.log`) y fichero propio `template.log` (ver «Logs de la aplicación en WildFly») |
+
+#### Logs de la aplicación en WildFly
+
+Los logs de la aplicación y de sus frameworks se escriben en `standalone/log/template.log`, con rotación diaria, y no aparecen en `server.log`. Se consigue con un **logging profile** de WildFly (`template`), que aísla esta configuración de la global del servidor. El fichero se ve en la consola en Runtime → Log Files.
+
+El WAR de `dist` referencia el perfil con la entrada `Logging-Profile: template` de su `META-INF/MANIFEST.MF` (propiedad Maven `war.logging.profile`, vacía en `local` y `test`). **El perfil debe existir en WildFly antes de desplegar el WAR.** Se crea con el CLI:
+
+```
+/subsystem=logging/logging-profile=template:add
+/subsystem=logging/logging-profile=template/pattern-formatter=PATTERN:add(pattern="%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%c] (%t) %s%e%n")
+/subsystem=logging/logging-profile=template/periodic-rotating-file-handler=TEMPLATE:add(file={relative-to=jboss.server.log.dir, path=template.log}, suffix=.yyyy-MM-dd, append=true, autoflush=true, named-formatter=PATTERN)
+/subsystem=logging/logging-profile=template/root-logger=ROOT:add(level=INFO, handlers=[TEMPLATE])
+/subsystem=logging/logging-profile=template/logger=org.myorganization.template:add(level=DEBUG)
+/subsystem=logging/logging-profile=template/logger=org.springframework.security:add(level=WARN)
+/subsystem=logging/logging-profile=template/logger=org.hibernate:add(level=WARN)
+/subsystem=logging/logging-profile=template/logger=org.liquibase:add(level=WARN)
+```
+
+| Categoría                          | Nivel | Contenido                                  |
+|------------------------------------|-------|--------------------------------------------|
+| (raíz del perfil)                  | INFO  | Spring y el resto de librerías             |
+| `org.myorganization.template`      | DEBUG | Código de la aplicación                    |
+| `org.springframework.security`     | WARN  | Spring Security                            |
+| `org.hibernate`                    | WARN  | Hibernate y Hibernate Validator            |
+| `org.liquibase`                    | WARN  | Liquibase                                  |
+
+Para cambiar el nivel de una categoría: `/subsystem=logging/logging-profile=template/logger=<categoría>:write-attribute(name=level, value=DEBUG)`. Requiere `org.springframework.boot.logging.LoggingSystem=none`. Los logs del propio WildFly siguen en `server.log`.
+
+La imagen `template-docker/wildfly` ya incluye el driver, el datasource `TemplateDS` y HTTPS con certificado autofirmado (sólo pruebas). El entrypoint lee `jwt_secret` del fichero `template-docker/secrets/credentials.env` y lo exporta como `JWT_SECRET`.
 
 ### Frontend
 
@@ -158,42 +263,38 @@ Para entornos gestionados, la configuración se almacena en el directorio `templ
 
 ## Despliegue
 
-### Despliegue manual del WAR
+### Despliegue manual del WAR en WildFly
 
-1. Copiar el WAR al servidor:
+1. Preparar WildFly según la sección «Configuración de WildFly» (datasource `TemplateDS`, `JWT_SECRET` y HTTPS) y aplicar en la base de datos el SQL del esquema.
 
-   ```bash
-   scp template/webapp/target/template.war usuario@servidor:/ruta/despliegue/
-   ```
-
-2. Arrancar la aplicación con las variables de entorno del entorno destino:
+2. Copiar el WAR al servidor y desplegarlo:
 
    ```bash
-   export DB_URL=jdbc:postgresql://db-server:5432/template_pro
-   export DB_USERNAME=template_pro
-   export DB_PASSWORD=<contraseña-produccion>
-   export JWT_SECRET=<clave-produccion-min-32-chars>
-   export CORS_ALLOWED_ORIGINS=https://app.midominio.com
-
-   java -jar template.war --spring.profiles.active=dist
+   scp template/webapp/target/template.war usuario@servidor:/ruta/wildfly/standalone/deployments/
    ```
+
+   El WAR de `dist` no es ejecutable con `java -jar`: se arranca siempre dentro de WildFly.
+
+3. Comprobar en el log de WildFly que la aplicación arranca y que la validación del modelo no reporta errores.
 
 ### Despliegue con Docker
 
-Construir las imágenes de distribución:
+Los servicios `wildfly-1` y `wildfly-2` de `template-docker/docker-compose.yml` usan la imagen `template-wildfly`. Construir las imágenes:
 
 ```bash
 cd template-docker
 docker compose build
 ```
 
+Antes de arrancar, `template-docker/secrets/credentials.env` debe incluir `jwt_secret` (compartido por todos los nodos), además de las contraseñas de PostgreSQL y de la consola de WildFly.
+
+Puertos por defecto de los nodos: HTTP 8081/8082, HTTPS 8444/8445 y gestión 9991/9992.
+
 Las imágenes resultantes pueden subirse a un registro de contenedores:
 
 ```bash
-docker tag template-backend:latest registro.midominio.com/template-backend:X.Y.Z
-docker tag template-frontend:latest registro.midominio.com/template-frontend:X.Y.Z
-docker push registro.midominio.com/template-backend:X.Y.Z
-docker push registro.midominio.com/template-frontend:X.Y.Z
+docker tag template-wildfly:latest registro.midominio.com/template-wildfly:X.Y.Z
+docker push registro.midominio.com/template-wildfly:X.Y.Z
 ```
 
 ### Script de despliegue (placeholder)
@@ -234,7 +335,9 @@ Antes de entregar una distribución al cliente, verificar:
 - [ ] Se ha creado el tag en Git (`vX.Y.Z`).
 - [ ] Se ha generado un changelog con los cambios incluidos en la release.
 - [ ] La documentación está actualizada si hay cambios funcionales.
-- [ ] Las variables de entorno del destino están documentadas y disponibles.
+- [ ] El esquema de base de datos del destino está creado y actualizado (Liquibase está desactivado en `dist`).
+- [ ] WildFly tiene el datasource `TemplateDS`, `JWT_SECRET` y HTTPS configurados.
+- [ ] Las variables opcionales del destino (`AUTH_COOKIE_*`, `CLUSTER_*`) están documentadas y disponibles.
 
 ---
 

@@ -43,11 +43,18 @@ if [ ! -d "${BACKEND_DIR}" ]; then
     exit 1
 fi
 
+# Perfil Maven opcional (local, dist, test). Sin argumento se usa el por defecto seguro (dist, SEC-04).
+PROFILE_ARGS=()
+if [ -n "${1:-}" ]; then
+    PROFILE_ARGS=(-P "$1")
+    echo "Perfil Maven: $1"
+fi
+
 cd "${BACKEND_DIR}"
 if [ -n "${MAVEN_USER_SETTINGS:-}" ]; then
-    mvn -s "${MAVEN_USER_SETTINGS}" clean install
+    mvn -s "${MAVEN_USER_SETTINGS}" "${PROFILE_ARGS[@]}" clean install
 else
-    mvn clean install
+    mvn "${PROFILE_ARGS[@]}" clean install
 fi
 
 echo ""

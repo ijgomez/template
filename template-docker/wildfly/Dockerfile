@@ -16,5 +16,5 @@ RUN jar tf /opt/jboss/wildfly/modules/system/layers/base/org/postgresql/main/pos
 COPY --chmod=755 docker-entrypoint.sh /opt/jboss/wildfly/bin/docker-entrypoint.sh
 
 USER jboss
-EXPOSE 8080 9990
+EXPOSE 8080 8443 9990
 CMD ["/opt/jboss/wildfly/bin/docker-entrypoint.sh"]

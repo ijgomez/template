@@ -37,6 +37,7 @@ services:
         condition: service_healthy
     ports:
       - "${WILDFLY_HTTP_PORT:-8081}:8080"
+      - "${WILDFLY_HTTPS_PORT:-8444}:8443"
       - "${WILDFLY_MANAGEMENT_PORT:-9991}:9990"
     environment:
       WILDFLY_ADMIN_USER: ${WILDFLY_ADMIN_USER:-admin}
@@ -60,6 +61,7 @@ services:
         condition: service_healthy
     ports:
       - "${WILDFLY2_HTTP_PORT:-8082}:8080"
+      - "${WILDFLY2_HTTPS_PORT:-8445}:8443"
       - "${WILDFLY2_MANAGEMENT_PORT:-9992}:9990"
     environment:
       WILDFLY_ADMIN_USER: ${WILDFLY_ADMIN_USER:-admin}
@@ -82,6 +84,7 @@ services:
       - wildfly-2
     ports:
       - "${APACHE_HTTP_PORT:-8000}:80"
+      - "${APACHE_HTTPS_PORT:-4430}:443"
 
   openproject:
     build:

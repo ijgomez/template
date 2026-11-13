@@ -4,4 +4,33 @@ embed-server --std-out=echo
 /subsystem=datasources/jdbc-driver=postgresql:add(driver-name=postgresql,driver-module-name=org.postgresql,driver-class-name=org.postgresql.Driver)
 /subsystem=datasources/data-source=TemplateDS:add(jndi-name=java:jboss/datasources/TemplateDS,driver-name=postgresql,connection-url=${env.POSTGRES_JDBC_URL:jdbc:postgresql://postgres:5432/template},user-name=${env.POSTGRES_USER:administrador},password=${env.POSTGRES_PASSWORD},enabled=true,use-java-context=true,validate-on-match=true,background-validation=false,statistics-enabled=true)
 /subsystem=ee/service=default-bindings:write-attribute(name=datasource, value=undefined)
+# El logging lo gestiona WildFly: sin esto Spring Boot reconfigura java.util.logging y los logs de la aplicación desaparecen de server.log
+/system-property=org.springframework.boot.logging.LoggingSystem:add(value=none)
+
+# Estadísticas: propiedad global de WildFly (la resuelven Undertow, EJB, webservices...) y,
+# de forma explícita, Undertow y transacciones (el datasource TemplateDS ya las activa al crearse)
+/system-property=wildfly.statistics-enabled:add(value=true)
+/subsystem=undertow:write-attribute(name=statistics-enabled, value=true)
+/subsystem=transactions:write-attribute(name=statistics-enabled, value=true)
+
+# Detrás de Apache (HTTP interno): WildFly respeta X-Forwarded-Proto/Host para conocer el esquema real.
+# Sin esto Spring ve 'http' con Origin 'https' y rechaza por CORS (403) los scripts del navegador.
+# no-request-timeout alto evita cortes de conexiones inactivas con Apache; record-request-start-time
+# permite medir la duración de las peticiones. No hay ajp-listener: Apache usa proxy HTTP.
+/subsystem=undertow/server=default-server/http-listener=default:write-attribute(name=no-request-timeout, value=600000)
+/subsystem=undertow/server=default-server/http-listener=default:write-attribute(name=proxy-address-forwarding, value=true)
+/subsystem=undertow/server=default-server/http-listener=default:write-attribute(name=record-request-start-time, value=true)
+/subsystem=undertow/server=default-server/https-listener=https:write-attribute(name=record-request-start-time, value=true)
+
+# Logging profile 'template': los logs del WAR (aplicación y frameworks) van sólo a
+# standalone/log/template.log (rotación diaria) y no a server.log. El WAR lo referencia con
+# 'Logging-Profile: template' en su MANIFEST.MF (perfil Maven dist). No toca la configuración global.
+/subsystem=logging/logging-profile=template:add
+/subsystem=logging/logging-profile=template/pattern-formatter=PATTERN:add(pattern="%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%c] (%t) %s%e%n")
+/subsystem=logging/logging-profile=template/periodic-rotating-file-handler=TEMPLATE:add(file={relative-to=jboss.server.log.dir, path=template.log}, suffix=.yyyy-MM-dd, append=true, autoflush=true, named-formatter=PATTERN)
+/subsystem=logging/logging-profile=template/root-logger=ROOT:add(level=INFO, handlers=[TEMPLATE])
+/subsystem=logging/logging-profile=template/logger=org.myorganization.template:add(level=DEBUG)
+/subsystem=logging/logging-profile=template/logger=org.springframework.security:add(level=WARN)
+/subsystem=logging/logging-profile=template/logger=org.hibernate:add(level=WARN)
+/subsystem=logging/logging-profile=template/logger=org.liquibase:add(level=WARN)
 stop-embedded-server
