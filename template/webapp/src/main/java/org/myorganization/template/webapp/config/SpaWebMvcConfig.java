@@ -15,9 +15,9 @@ import org.springframework.web.servlet.resource.PathResourceResolver;
  * CSS, JSON, images, i18n files, etc.) and falls back to {@code index.html} for any other
  * path, letting the Angular router resolve it on the client.
  * <p>
- * API endpoints ({@code /api/**}) are never routed here: they are handled by their
- * controllers and are excluded from the fallback so a missing API path does not return
- * the SPA shell.
+ * Web services ({@code /api/**} and {@code /actuator/**}) are never routed here: they are
+ * handled by their controllers and are excluded from the fallback so a missing path does
+ * not return the SPA shell.
  */
 @Configuration
 public class SpaWebMvcConfig implements WebMvcConfigurer {
@@ -46,11 +46,16 @@ public class SpaWebMvcConfig implements WebMvcConfigurer {
             if (requested != null) {
                 return requested;
             }
-            // Do not serve the SPA shell for API paths; let them 404 through the API layer.
-            if (resourcePath.startsWith("api/") || resourcePath.equals("api")) {
+            // Do not serve the SPA shell for API or actuator paths; they are web services
+            // and must answer with their own status (404, 406...) instead of the Angular app.
+            if (isServicePath(resourcePath, "api") || isServicePath(resourcePath, "actuator")) {
                 return null;
             }
             return index.exists() && index.isReadable() ? index : null;
+        }
+
+        private static boolean isServicePath(String resourcePath, String prefix) {
+            return resourcePath.equals(prefix) || resourcePath.startsWith(prefix + "/");
         }
     }
 
