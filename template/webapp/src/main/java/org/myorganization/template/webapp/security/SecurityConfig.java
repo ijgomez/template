@@ -11,7 +11,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -242,23 +241,21 @@ public class SecurityConfig {
     }
 
     /**
-     * Authentication provider backed by the application's {@link UserDetailsService}.
+     * Authentication manager backed by a {@link DaoAuthenticationProvider} on the
+     * application's {@link UserDetailsService}.
      * <p>
-     * Spring Security's account status checks run against the loaded user, so a
+     * The provider is instantiated manually (not exposed as a bean) so Spring Security
+     * does not warn about a global {@code AuthenticationProvider} bean overriding its
+     * own configuration. Account status checks run against the loaded user, so a
      * temporarily locked account (too many failed logins) is rejected with a
      * {@code LockedException} before the password is even verified.
      */
     @Bean
-    AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService,
-                                                  PasswordEncoder passwordEncoder) {
+    AuthenticationManager authenticationManager(UserDetailsService userDetailsService,
+                                                PasswordEncoder passwordEncoder) {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
         provider.setPasswordEncoder(passwordEncoder);
-        return provider;
-    }
-
-    @Bean
-    AuthenticationManager authenticationManager(AuthenticationProvider authenticationProvider) {
-        return new ProviderManager(authenticationProvider);
+        return new ProviderManager(provider);
     }
 
     private void handleAuthenticationError(HttpServletRequest request,
