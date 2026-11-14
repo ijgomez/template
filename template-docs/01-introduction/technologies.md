@@ -54,6 +54,7 @@ El backend está desarrollado sobre la plataforma Java utilizando Spring Boot co
 | Hibernate        | Implementación JPA                                         |
 | MapStruct        | Conversión entre entidades y DTO                           |
 | Jackson          | Serialización y deserialización JSON                       |
+| Apache CXF       | Servicios web SOAP (JAX-WS, starter Spring Boot) en `ws`   |
 | Maven            | Gestión de dependencias y construcción del proyecto        |
 
 ---

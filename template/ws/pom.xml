@@ -24,7 +24,19 @@
             <artifactId>template-core</artifactId>
         </dependency>
 
-        
+        <!-- Apache CXF (JAX-WS) -->
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-spring-boot-starter-jaxws</artifactId>
+            <version>${cxf.version}</version>
+            <exclusions>
+                <!-- El contenedor (WildFly) aporta el servlet; evita tomcat-embed en el WAR -->
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
         <!-- Testing: Spring Boot Test -->
         <dependency>
