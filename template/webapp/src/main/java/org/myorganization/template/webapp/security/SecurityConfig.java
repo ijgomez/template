@@ -42,6 +42,10 @@ public class SecurityConfig {
 
     private static final String ALL_SUFFIX = "/**";
 
+    private static final String ACTUATOR_PATH = "/actuator";
+    private static final String ACTUATOR_ALL_PATH = ACTUATOR_PATH + ALL_SUFFIX;
+    private static final String ACTUATOR_HEALTH_PATH = ACTUATOR_PATH + "/health";
+    private static final String ACTUATOR_HEALTH_ALL_PATH = ACTUATOR_HEALTH_PATH + ALL_SUFFIX;
     private static final String API_BASE_PATH = "/api/v1";
     private static final String ADMIN_BASE_PATH = API_BASE_PATH + "/administration";
 
@@ -111,6 +115,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Public endpoints
                         .requestMatchers(AUTH_PATH).permitAll()
+                        // Actuator: only health (no details) is public, for health checks;
+                        // any other actuator endpoint is denied.
+                        .requestMatchers(ACTUATOR_HEALTH_PATH, ACTUATOR_HEALTH_ALL_PATH).permitAll()
+                        .requestMatchers(ACTUATOR_ALL_PATH).denyAll()
 
                         // 405 Method Not Allowed: Actions create/delete
                         .requestMatchers(HttpMethod.POST, ACTIONS_PATH).denyAll()

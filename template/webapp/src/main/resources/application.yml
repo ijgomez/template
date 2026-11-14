@@ -36,6 +36,19 @@ server:
   servlet:
     context-path: /template
 
+# Actuator (SEC-09): solo se expone "health" (sin detalles); el resto de
+# endpoints queda denegado en SecurityConfig (deny by default).
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
+      probes:
+        enabled: true
+
 # JWT configuration
 # SEC-03: sin secreto por defecto en el repositorio. Cada perfil debe aportar su
 # propio valor (application-local.yml y application-test.yml lo definen; los
