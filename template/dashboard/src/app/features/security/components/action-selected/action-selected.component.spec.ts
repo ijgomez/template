@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideTranslateService } from '@ngx-translate/core';
 import { of, throwError } from 'rxjs';
 
-import { TpSelectedActionsComponent } from './selected-actions.component';
+import { TpActionSelectedComponent } from './action-selected.component';
 import { ProfileService } from '../../../../core/services/profile.service';
 import { Action } from '../../models/profile.model';
 import { Page } from '../../../../core/models/page.model';
@@ -26,9 +26,9 @@ function pageOf(actions: Action[]): Page<Action> {
   };
 }
 
-describe('TpSelectedActionsComponent', () => {
-  let component: TpSelectedActionsComponent;
-  let fixture: ComponentFixture<TpSelectedActionsComponent>;
+describe('TpActionSelectedComponent', () => {
+  let component: TpActionSelectedComponent;
+  let fixture: ComponentFixture<TpActionSelectedComponent>;
   let profileService: { findAllActions: ReturnType<typeof vi.fn> };
 
   const allActions: Action[] = [
@@ -47,14 +47,14 @@ describe('TpSelectedActionsComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-      imports: [TpSelectedActionsComponent],
+      imports: [TpActionSelectedComponent],
       providers: [
         provideTranslateService({ lang: 'en', fallbackLang: 'en' }),
         { provide: ProfileService, useValue: profileService },
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(TpSelectedActionsComponent);
+    fixture = TestBed.createComponent(TpActionSelectedComponent);
     component = fixture.componentInstance;
     fixture.detectChanges(); // triggers ngOnInit -> loadAllActions
   });
@@ -71,7 +71,7 @@ describe('TpSelectedActionsComponent', () => {
 
   it('should set loading false when loadAllActions fails', () => {
     profileService.findAllActions.mockReturnValue(throwError(() => new Error('boom')));
-    const localFixture = TestBed.createComponent(TpSelectedActionsComponent);
+    const localFixture = TestBed.createComponent(TpActionSelectedComponent);
     localFixture.detectChanges();
     expect(localFixture.componentInstance.loading()).toBe(false);
     expect(localFixture.componentInstance.allActions().length).toBe(0);
@@ -304,21 +304,21 @@ describe('TpSelectedActionsComponent', () => {
       component.openModal();
       fixture.detectChanges();
 
-      const modal = fixture.nativeElement.querySelector('[data-testid="selected-actions-modal"]');
+      const modal = fixture.nativeElement.querySelector('[data-testid="action-selected-modal"]');
       expect(modal).toBeTruthy();
 
-      const searchInput = fixture.nativeElement.querySelector('[data-testid="selected-actions-modal-search"]');
+      const searchInput = fixture.nativeElement.querySelector('[data-testid="action-selected-modal-search"]');
       expect(searchInput).toBeTruthy();
       searchInput.value = 'alpha';
       searchInput.dispatchEvent(new Event('input'));
       fixture.detectChanges();
       expect(component.modalFilteredActions().map(a => a.id)).toEqual([1]);
 
-      const row = fixture.nativeElement.querySelector('[data-testid="selected-actions-modal-row-1"]');
+      const row = fixture.nativeElement.querySelector('[data-testid="action-selected-modal-row-1"]');
       row.click();
       fixture.detectChanges();
 
-      const acceptButton = fixture.nativeElement.querySelector('[data-testid="selected-actions-modal-accept"]');
+      const acceptButton = fixture.nativeElement.querySelector('[data-testid="action-selected-modal-accept"]');
       acceptButton.click();
       fixture.detectChanges();
 

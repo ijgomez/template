@@ -498,7 +498,7 @@ Además de las reglas comunes, usa `role="list"` en el contenedor y `role="listi
 
 ### Uso interno en componentes tp-selected-*
 
-Los componentes `tp-report-selected-list` y `tp-selected-actions` utilizan `tp-data-list` internamente para renderizar la lista de items seleccionados (con `[showPagination]="false"`), delegando toda la logica visual de header, filtro, lista y estados al componente compartido. Cada uno proporciona su template personalizado via `tpListItem`.
+Los componentes `tp-report-selected-list` y `tp-action-selected` utilizan `tp-data-list` internamente para renderizar la lista de items seleccionados (con `[showPagination]="false"`), delegando toda la logica visual de header, filtro, lista y estados al componente compartido. Cada uno proporciona su template personalizado via `tpListItem`.
 
 ---
 
@@ -683,7 +683,7 @@ Patron de componente reutilizable para gestionar una lista de items seleccionado
 | Componente             | Selector                | Ubicacion                            | Entidad   | Servicio                           |
 |------------------------|-------------------------|--------------------------------------|-----------|------------------------------------|
 | `TpReportSelectedListComponent` | `<tp-report-selected-list>` | `features/reports/components/report-selected-list/` | `Report`  | `ReportService.search()` (server-side) |
-| `TpSelectedActionsComponent` | `<tp-selected-actions>` | `features/security/components/selected-actions/` | `Action`  | `ProfileService.findAllActions()` (client-side) |
+| `TpActionSelectedComponent` | `<tp-action-selected>` | `features/security/components/action-selected/` | `Action`  | `ProfileService.findAllActions()` (client-side) |
 
 **Implementacion de referencia:** `tp-report-selected-list` en `features/reports/components/report-selected-list/`
 
@@ -843,7 +843,7 @@ Ademas reutiliza: `common.pagination.showing`, `common.pagination.previous`, `co
 </tp-report-selected-list>
 ```
 
-### Variante: `tp-selected-actions`
+### Variante: `tp-action-selected`
 
 Componente que gestiona la asignacion de acciones de seguridad a un perfil. Diferencias respecto a `tp-report-selected-list`:
 
@@ -851,19 +851,19 @@ Componente que gestiona la asignacion de acciones de seguridad a un perfil. Dife
 - **Columnas del modal**: checkbox | codigo | tipo (badge coloreado) | nombre.
 - **Items seleccionados**: Muestran badge de tipo (READ/WRITE/EXECUTE) + `code — name`.
 - **Badges de tipo**: `READ` → `bg-info-subtle text-info`, `WRITE` → `bg-warning-subtle text-warning`, `EXECUTE` → `bg-success-subtle text-success`.
-- **Namespace i18n**: `selected-actions.*`.
-- **testId default**: `'selected-actions'`.
+- **Namespace i18n**: `action-selected.*`.
+- **testId default**: `'action-selected'`.
 
 Ejemplo de uso (en formulario de perfiles):
 
 ```html
-<tp-selected-actions
+<tp-action-selected
   [ngModel]="selectedActionIds()"
   (ngModelChange)="selectedActionIds.set($event)"
   name="actionIds"
   [title]="'profiles.form.sectionActions' | translate"
   testId="profile-actions">
-</tp-selected-actions>
+</tp-action-selected>
 ```
 
 ### Crear un nuevo componente con este patron

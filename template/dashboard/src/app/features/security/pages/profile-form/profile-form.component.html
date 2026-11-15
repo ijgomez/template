@@ -139,7 +139,7 @@
     }
 
     <!-- Acciones asignadas -->
-    <tp-selected-actions
+    <tp-action-selected
       [ngModel]="selectedActionIds()"
       (ngModelChange)="selectedActionIds.set($event)"
       name="actionIds"
@@ -148,7 +148,7 @@
       [showAdd]="!isReadonly()"
       [showRemove]="!isReadonly()"
       testId="profile-actions">
-    </tp-selected-actions>
+    </tp-action-selected>
 
     <!-- Botones de acción (solo en modo edición/creación) -->
     @if (!isReadonly()) {

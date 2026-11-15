@@ -571,7 +571,7 @@
       "accept": "Accept"
     }
   },
-  "selected-actions": {
+  "action-selected": {
     "count": "Total",
     "filter": {
       "placeholder": "Filter...",

@@ -8,7 +8,7 @@ import { catchError, take } from 'rxjs/operators';
 import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
 import { TpEditButtonComponent } from '../../../../shared/components/edit-button';
 import { TpDeleteButtonComponent } from '../../../../shared/components/delete-button';
-import { TpSelectedActionsComponent } from '../../components/selected-actions';
+import { TpActionSelectedComponent } from '../../components/action-selected';
 import { Profile } from '../../models/profile.model';
 import { ProfileService } from '../../../../core/services/profile.service';
 
@@ -21,7 +21,7 @@ type FormMode = 'create' | 'edit' | 'view';
 @Component({
   selector: 'app-profile-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, LocalDatePipe, TpEditButtonComponent, TpDeleteButtonComponent, TpSelectedActionsComponent],
+  imports: [CommonModule, FormsModule, TranslatePipe, LocalDatePipe, TpEditButtonComponent, TpDeleteButtonComponent, TpActionSelectedComponent],
   templateUrl: './profile-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -8,13 +8,13 @@
   [totalElements]="totalCount()"
   [title]="title"
   [filterable]="true"
-  [filterPlaceholder]="filterPlaceholder || ('selected-actions.filter.placeholder' | translate)"
+  [filterPlaceholder]="filterPlaceholder || ('action-selected.filter.placeholder' | translate)"
   [filterText]="filterText()"
   [showAdd]="showAdd"
   [showRemove]="showRemove && !disabled()"
   [disabled]="disabled()"
   [showPagination]="false"
-  [ariaLabel]="ariaLabel || ('selected-actions.list.aria' | translate)"
+  [ariaLabel]="ariaLabel || ('action-selected.list.aria' | translate)"
   [testId]="testId"
   (filterChange)="onFilterChange($event)"
   (add)="openModal()"
@@ -41,7 +41,7 @@
       <div class="modal-content">
         <div class="modal-header py-2">
           <h5 class="modal-title" [id]="testId + '-modal-title'" style="font-size: 1rem;">
-            {{ 'selected-actions.modal.title' | translate }}
+            {{ 'action-selected.modal.title' | translate }}
           </h5>
           <button type="button" class="btn-close" (click)="closeModal()"
                   [attr.aria-label]="'button.close' | translate"
@@ -53,8 +53,8 @@
             <div class="input-group input-group-sm">
               <span class="input-group-text"><i class="bi bi-search" aria-hidden="true"></i></span>
               <input type="text" class="form-control"
-                     [placeholder]="'selected-actions.modal.search' | translate"
-                     [attr.aria-label]="'selected-actions.modal.search' | translate"
+                     [placeholder]="'action-selected.modal.search' | translate"
+                     [attr.aria-label]="'action-selected.modal.search' | translate"
                      [ngModel]="modalSearch()"
                 [ngModelOptions]="{ standalone: true }"
                      (ngModelChange)="onModalSearchChange($event)"
@@ -71,18 +71,18 @@
                     <input type="checkbox" class="form-check-input"
                            [checked]="allPageActionsSelected"
                            (change)="toggleAllModalActions()"
-                           [attr.aria-label]="'selected-actions.modal.selectAll' | translate">
+                           [attr.aria-label]="'action-selected.modal.selectAll' | translate">
                   </th>
-                  <th scope="col">{{ 'selected-actions.modal.columnCode' | translate }}</th>
-                  <th scope="col">{{ 'selected-actions.modal.columnType' | translate }}</th>
-                  <th scope="col">{{ 'selected-actions.modal.columnName' | translate }}</th>
+                  <th scope="col">{{ 'action-selected.modal.columnCode' | translate }}</th>
+                  <th scope="col">{{ 'action-selected.modal.columnType' | translate }}</th>
+                  <th scope="col">{{ 'action-selected.modal.columnName' | translate }}</th>
                 </tr>
               </thead>
               <tbody>
                 @if (modalPageActions().length === 0) {
                   <tr>
                     <td colspan="4" class="text-center py-3 text-muted">
-                      {{ 'selected-actions.modal.noData' | translate }}
+                      {{ 'action-selected.modal.noData' | translate }}
                     </td>
                   </tr>
                 } @else {
@@ -100,7 +100,7 @@
                                (click)="$event.stopPropagation()"
                                (keydown)="$event.stopPropagation()"
                                (change)="toggleModalAction(action.id)"
-                               [attr.aria-label]="'selected-actions.modal.selectAction' | translate">
+                               [attr.aria-label]="'action-selected.modal.selectAction' | translate">
                       </td>
                       <td class="fw-medium">{{ action.code }}</td>
                       <td>
@@ -126,7 +126,7 @@
               </span>
 
               <!-- Page navigation -->
-              <nav [attr.aria-label]="'selected-actions.modal.paginationLabel' | translate">
+              <nav [attr.aria-label]="'action-selected.modal.paginationLabel' | translate">
                 <ul class="pagination pagination-sm mb-0">
                   <li class="page-item" [class.disabled]="modalPage() === 0">
                     <a class="page-link" href="javascript:void(0)"
@@ -176,14 +176,14 @@
           }
         </div>
         <div class="modal-footer py-2">
-          <small class="text-muted me-auto">{{ modalSelectedCount() }} {{ 'selected-actions.modal.selected' | translate }}</small>
+          <small class="text-muted me-auto">{{ modalSelectedCount() }} {{ 'action-selected.modal.selected' | translate }}</small>
           <button type="button" class="btn btn-outline-secondary btn-sm" (click)="closeModal()"
                   [attr.data-testid]="testId + '-modal-cancel'">
             {{ 'button.cancel' | translate }}
           </button>
           <button type="button" class="btn btn-primary btn-sm" (click)="confirmSelection()"
                   [attr.data-testid]="testId + '-modal-accept'">
-            <i class="bi bi-check-lg me-1" aria-hidden="true"></i> {{ 'selected-actions.modal.accept' | translate }}
+            <i class="bi bi-check-lg me-1" aria-hidden="true"></i> {{ 'action-selected.modal.accept' | translate }}
           </button>
         </div>
       </div>

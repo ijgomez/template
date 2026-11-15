@@ -26,28 +26,28 @@ import { ProfileService } from '../../../../core/services/profile.service';
  *
  * Usage:
  * ```html
- * <tp-selected-actions
+ * <tp-action-selected
  *   formControlName="actions"
  *   [title]="'ACCIONES ASIGNADAS'">
- * </tp-selected-actions>
+ * </tp-action-selected>
  * ```
  */
 @Component({
-  selector: 'tp-selected-actions',
+  selector: 'tp-action-selected',
   standalone: true,
   imports: [CommonModule, FormsModule, TranslatePipe, TpDataListComponent, TpListItemDirective],
-  templateUrl: './selected-actions.component.html',
-  styleUrls: ['./selected-actions.component.scss'],
+  templateUrl: './action-selected.component.html',
+  styleUrls: ['./action-selected.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => TpSelectedActionsComponent),
+      useExisting: forwardRef(() => TpActionSelectedComponent),
       multi: true,
     },
   ],
 })
-export class TpSelectedActionsComponent implements ControlValueAccessor, OnInit {
+export class TpActionSelectedComponent implements ControlValueAccessor, OnInit {
   private readonly profileService = inject(ProfileService);
 
   // ─── Inputs ────────────────────────────────────────────────
@@ -68,7 +68,7 @@ export class TpSelectedActionsComponent implements ControlValueAccessor, OnInit 
   @Input() ariaLabel = '';
 
   /** data-testid prefix for testing. */
-  @Input() testId = 'selected-actions';
+  @Input() testId = 'action-selected';
 
   // ─── Internal State ────────────────────────────────────────
 

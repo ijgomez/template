@@ -236,7 +236,7 @@ En perfiles, el `List screen` soporta filtrado por nombre, el `Form screen` inte
 |--------------------|-------------|----------------------------------------------------------------------|
 | Nombre             | Sí          | Requerido en alta y edición                                          |
 | Descripción        | No          | Texto libre opcional                                                 |
-| Acciones asignadas | No          | Multi-selección de acciones a través de `TpSelectedActionsComponent` |
+| Acciones asignadas | No          | Multi-selección de acciones a través de `TpActionSelectedComponent` |
 
 **Información de auditoría** (solo en modo detalle, solo lectura): fecha de creación y última modificación.
 
@@ -287,7 +287,7 @@ flowchart TD
 | Frontend | `ProfileFormComponent`       | Alta, edición y detalle de un perfil.                                           |
 | Frontend | `ProfileService`             | Llamadas CRUD y carga de referencias de acciones asociadas.                     |
 | Frontend | `TpDataTableComponent`       | Tabla reutilizable para ordenación, paginación y selección.                     |
-| Frontend | `TpSelectedActionsComponent` | Selección multi-acción del perfil en el formulario.                             |
+| Frontend | `TpActionSelectedComponent` | Selección multi-acción del perfil en el formulario.                             |
 | Frontend | `AuthService`                | Comprobación de permisos del usuario antes de acceder al módulo.                |
 | Backend  | `ProfileController`          | Exposición de endpoints CRUD y de referencias de perfiles.                      |
 | Backend  | `ProfileService`             | Lógica de negocio, validaciones y persistencia del perfil.                      |

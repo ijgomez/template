@@ -96,7 +96,7 @@ template/dashboard/src/app/
 │   │   └── reports.routes.ts
 │   ├── security/
 │   │   ├── components/
-│   │   │   └── selected-actions/
+│   │   │   └── action-selected/
 │   │   ├── models/
 │   │   ├── pages/
 │   │   │   ├── user-list/
