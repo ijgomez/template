@@ -38,28 +38,3 @@
     }
   </div>
 </div>
-<!-- Zone 3: subordinated chrome -->
-<div class="row g-3">
-  <div class="col-lg-6">
-    <!-- System Status -->
-    <div class="card mb-3" data-testid="system-status">
-      <div class="card-header">{{ 'dashboard.systemStatus.title' | translate }}</div>
-      <div class="card-body">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <span class="text-muted">{{ 'dashboard.systemStatus.environment' | translate }}</span>
-          <span class="badge bg-info-subtle text-info" data-testid="system-environment">{{ environmentName }}</span>
-        </div>
-        @if (canReadNodes) {
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <span class="text-muted">{{ 'dashboard.systemStatus.masterNode' | translate }}</span>
-            <span class="fw-medium" data-testid="system-master">{{ masterNode() ?? '-' }}</span>
-          </div>
-          <div class="d-flex justify-content-between align-items-center">
-            <span class="text-muted">{{ 'dashboard.systemStatus.uptime' | translate }}</span>
-            <span class="fw-medium" data-testid="system-uptime">{{ uptime() ?? '-' }}</span>
-          </div>
-        }
-      </div>
-    </div>
-  </div>
-</div>

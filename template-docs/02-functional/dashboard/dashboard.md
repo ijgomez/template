@@ -60,11 +60,7 @@ Identificadores locales de este documento: `RF-DSH-*` (funcionales) y `RNF-DSH-*
 
 #### RF-DSH-7: Panel Estado del sistema
 
-**Criterios de aceptación:**
-- AC7.1: Muestra el entorno desde `environment.environmentName`.
-- AC7.2: Con permiso de nodos, muestra el hostname del nodo máster (`master === true`) y su uptime derivado de `startedAt`, con formato `Xd Yh Zm`.
-- AC7.3: Si no hay máster o no hay fecha de arranque, muestra `-`.
-- AC7.4: La versión de la aplicación no se muestra en el panel (se publica en el pie del layout).
+**Retirado:** el panel de estado del sistema (entorno, nodo máster y uptime) ya no se muestra en el dashboard. La versión y el entorno se publican en el pie del layout.
 
 #### RF-DSH-8: Frescura y recarga
 
@@ -78,7 +74,6 @@ Identificadores locales de este documento: `RF-DSH-*` (funcionales) y `RNF-DSH-*
 **Criterios de aceptación:**
 - AC9.1: Las señales de salud (nodos e interfaces) usan estilos de éxito o aviso; las métricas de contexto (usuarios) no.
 - AC9.2: Con todo sano, la zona de salud no usa colores de alarma; la excepción destaca por escasez.
-- AC9.3: El estado del sistema queda como zona subordinada bajo las tarjetas.
 
 ### 1.2. Requisitos no funcionales
 
@@ -94,7 +89,7 @@ Identificadores locales de este documento: `RF-DSH-*` (funcionales) y `RNF-DSH-*
 |-------------|--------------------------------------------|-------------------------------------------------------------------|
 | RF-3        | KPI de informes generados                  | Retirado: sin histórico de ejecuciones no es calculable           |
 | RF-10       | «Último acceso» real en la cabecera        | Retirado de la cabecera                                           |
-| RF-6        | Versión en el panel de estado              | No se muestra; la versión está en el pie del layout               |
+| RF-6        | Versión en el panel de estado              | Panel retirado; la versión está en el pie del layout              |
 | RNF-1       | Endpoint único `GET /dashboard/stats`      | Pendiente; se usan los endpoints existentes                       |
 | RF-7        | Interfaces en error prefiltradas por estado | El enlace va a `/interfaces/configuration` sin filtro `status`   |
 
@@ -114,7 +109,6 @@ Que el usuario vea, al entrar en la aplicación, si el sistema está sano y a d�
 | Tarjeta usuarios    | Total de usuarios                                          | `USER_READ` o `USER_WRITE`         |
 | Tarjeta nodos       | Activos / total y enlace a nodos degradados                | `CLUSTER_NODE_READ` o `CLUSTER_NODE_WRITE` |
 | Tarjeta interfaces  | Total y enlace a interfaces en error                       | `INTERFACES_READ`                  |
-| Estado del sistema  | Entorno, nodo máster y uptime (máster y uptime con permiso de nodos) | `DASHBOARD_READ` |
 
 ### 2.3. Flujo
 
@@ -149,11 +143,10 @@ flowchart TD
 | Nodos operativos / enlace degradados  | `stat-cluster-nodes-ok` / `stat-cluster-nodes-link` |
 | Tarjeta y valor de interfaces         | `stat-interfaces` / `stat-interfaces-value`         |
 | Interfaces sin error / enlace de error | `stat-interfaces-ok` / `stat-interfaces-error-link` |
-| Panel de estado                       | `system-status`, `system-environment`, `system-master`, `system-uptime` |
 
 ### 2.6. Mensajes e internacionalización
 
-Claves en `es.json` y `en.json` bajo `dashboard.*`: `title`, `header.{updatedNow|updatedAgo|reload}`, `stats.*` (totales, errores de carga, `allOperational`, `nodesDegraded`, `withError`, `noInterfaceErrors`) y `systemStatus.{title|environment|masterNode|uptime}`. La simetría se verifica con `translation-completeness.property.spec.ts`.
+Claves en `es.json` y `en.json` bajo `dashboard.*`: `title`, `header.{updatedNow|updatedAgo|reload}`, `stats.*` (totales, errores de carga, `allOperational`, `nodesDegraded`, `withError`, `noInterfaceErrors`). La simetría se verifica con `translation-completeness.property.spec.ts`.
 
 ---
 
@@ -169,7 +162,6 @@ Claves en `es.json` y `en.json` bajo `dashboard.*`: `title`, `header.{updatedNow
 | Frontend | `UserService.countByCriteria`              | Total de usuarios.                                                          |
 | Frontend | `InterfaceService.findAllConfigurations`   | Total de interfaces y estado de cada una.                                   |
 | Frontend | `AuthService.hasAction`                    | Permisos por tarjeta.                                                       |
-| Frontend | `environment.environmentName`              | Entorno mostrado.                                                           |
 
 El componente no usa `HttpClient`; no hay cambios de backend en la implementación puente.
 
@@ -217,7 +209,7 @@ No aplica: la implementación puente no introduce cambios de backend.
 
 | Ubicación                       | Alcance                                                                                                            |
 |---------------------------------|--------------------------------------------------------------------------------------------------------------------|
-| `dashboard.component.spec.ts`   | Peticiones por permiso, tarjetas ocultas con hueco, autoridades `*_WRITE`, cálculo de nodos/máster/uptime, silencio con todo activo, usuarios e interfaces en error, ausencia de tarjeta de informes, aislamiento de fallos, estado de error de nodos, frescura y recarga |
+| `dashboard.component.spec.ts`   | Peticiones por permiso, tarjetas ocultas con hueco, autoridades `*_WRITE`, cálculo de nodos, silencio con todo activo, usuarios e interfaces en error, ausencia de tarjeta de informes, aislamiento de fallos, estado de error de nodos, frescura y recarga |
 
 ### 4.3. Cobertura E2E (Playwright)
 
@@ -287,7 +279,7 @@ Para variables (`{{BASE_URL_UI}}`, `{{ADMIN_USER}}`) y modelo de ejecución, con
 
 | # | Acción                        | Resultado esperado                                                                                       |
 |---|-------------------------------|----------------------------------------------------------------------------------------------------------|
-| 1 | Abrir `/dashboard`            | No aparecen `stat-interfaces` ni `stat-cluster-nodes`; en el panel de estado no aparecen máster ni uptime |
+| 1 | Abrir `/dashboard`            | No aparecen `stat-interfaces` ni `stat-cluster-nodes` |
 | 2 | Revisar la actividad de red   | No se lanzan las peticiones de nodos ni de interfaces                                                    |
 
 #### TC-DSH-06 · Aislamiento de errores
@@ -299,16 +291,6 @@ Para variables (`{{BASE_URL_UI}}`, `{{ADMIN_USER}}`) y modelo de ejecución, con
 | # | Acción                 | Resultado esperado                                                                    |
 |---|------------------------|---------------------------------------------------------------------------------------|
 | 1 | Abrir `/dashboard`     | La tarjeta de interfaces muestra `-` y el mensaje de error; usuarios y nodos muestran datos |
-
-#### TC-DSH-07 · Panel Estado del sistema
-
-- **Versión:** 1.0 · **Prioridad:** Media · **Tipo:** Funcional · **Traza:** RF-DSH-7 · **Independiente:** Sí · **Dependencias:** un nodo máster con fecha de arranque
-- **Setup:** login con `{{ADMIN_USER}}`.
-- **Teardown:** logout.
-
-| # | Acción                 | Resultado esperado                                                                                   |
-|---|------------------------|------------------------------------------------------------------------------------------------------|
-| 1 | Abrir `/dashboard`     | `system-environment` muestra el entorno; `system-master` el hostname del máster; `system-uptime` el formato `Xd Yh Zm` |
 
 #### TC-DSH-08 · Frescura y recarga
 

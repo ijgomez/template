@@ -1,7 +1,6 @@
 import { Component, ChangeDetectionStrategy, DestroyRef, OnInit, inject, signal, computed } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 
-import { environment } from '../../../environments/environment';
 import { AuthService } from '../../core/services/auth.service';
 import { ClusterService } from '../../core/services/cluster.service';
 import { InterfaceService } from '../../core/services/interface.service';
@@ -17,7 +16,7 @@ const FRESHNESS_TICK_MS = 30_000;
  * Dashboard component: system health overview for the administrator/operator.
  *
  * Zones: system health (nodes + interfaces in error), context (users, configured
- * interfaces) and subordinated chrome (system status + quick links).
+ * interfaces) and subordinated chrome (quick links).
  *
  * NOTE: bridge implementation (spec dashboard-stats, Fase 4). Each block is loaded
  * from existing endpoints, independently, until the `GET /dashboard/stats` summary
@@ -38,9 +37,6 @@ export class DashboardComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
 
-  /** Environment name taken from the Angular environment file. */
-  readonly environmentName = environment.environmentName;
-
   // ─── Permissions (RF-5) ──────────────────────────────────────
   // Same authorities the backend accepts for each underlying GET endpoint (SecurityConfig).
   readonly canReadUsers = this.hasAny('USER_READ', 'USER_WRITE');
@@ -52,10 +48,6 @@ export class DashboardComponent implements OnInit {
   readonly nodesError = signal(false);
   readonly activeNodes = signal(0);
   readonly totalNodes = signal(0);
-  /** Hostname of the master node, or null when unknown. */
-  readonly masterNode = signal<string | null>(null);
-  /** Start instant of the master node (ISO string), or null when unknown. */
-  readonly masterStartedAt = signal<string | null>(null);
 
   readonly inactiveNodes = computed(() => this.totalNodes() - this.activeNodes());
   readonly allNodesOperational = computed(() => this.totalNodes() > 0 && this.inactiveNodes() === 0);
@@ -79,19 +71,6 @@ export class DashboardComponent implements OnInit {
   readonly minutesSinceUpdate = computed(() => {
     const updated = this.lastUpdated();
     return updated === null ? null : Math.max(0, Math.floor((this.now() - updated) / 60_000));
-  });
-
-  /** Master node uptime formatted as "Xd Yh Zm", or null when unknown. */
-  readonly uptime = computed(() => {
-    const startedAt = this.masterStartedAt();
-    if (!startedAt) {
-      return null;
-    }
-    const totalMinutes = Math.max(0, Math.floor((this.now() - new Date(startedAt).getTime()) / 60_000));
-    const days = Math.floor(totalMinutes / 1440);
-    const hours = Math.floor((totalMinutes % 1440) / 60);
-    const minutes = totalMinutes % 60;
-    return `${days}d ${hours}h ${minutes}m`;
   });
 
   /** Whether any health exception (degraded nodes or interfaces in error) is active. */
@@ -137,9 +116,6 @@ export class DashboardComponent implements OnInit {
       next: (nodes) => {
         this.totalNodes.set(nodes.length);
         this.activeNodes.set(nodes.filter((n) => n.status === 'ACTIVE').length);
-        const master = nodes.find((n) => n.master);
-        this.masterNode.set(master?.hostname ?? null);
-        this.masterStartedAt.set(master?.startedAt ?? null);
         this.nodesLoading.set(false);
         this.markUpdated();
       },

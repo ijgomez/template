@@ -92,7 +92,7 @@ describe('DashboardComponent', () => {
     expect(component.canReadInterfaces).toBe(false);
   });
 
-  it('should compute nodes, master and uptime from the backend response', () => {
+  it('should compute nodes from the backend response', () => {
     const { component, httpMock } = setup(['CLUSTER_NODE_READ']);
     httpMock.expectOne(nodesUrl).flush([
       buildNode(1, 'ACTIVE', true),
@@ -104,8 +104,6 @@ describe('DashboardComponent', () => {
     expect(component.activeNodes()).toBe(2);
     expect(component.inactiveNodes()).toBe(1);
     expect(component.allNodesOperational()).toBe(false);
-    expect(component.masterNode()).toBe('node-1');
-    expect(component.uptime()).toMatch(/^\d+d \d+h \d+m$/);
     expect(component.hasHealthException()).toBe(true);
   });
 

@@ -532,12 +532,6 @@
       "interfacesLoadError": "Error al cargar interfaces",
       "usersLoadError": "Error al cargar usuarios",
       "noInterfaceErrors": "Sin errores"
-    },
-    "systemStatus": {
-      "title": "Estado del sistema",
-      "environment": "Entorno",
-      "masterNode": "Nodo maestro",
-      "uptime": "Uptime"
     }
   },
   "selected-reports": {

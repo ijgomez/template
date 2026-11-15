@@ -532,12 +532,6 @@
       "interfacesLoadError": "Failed to load interfaces",
       "usersLoadError": "Failed to load users",
       "noInterfaceErrors": "No errors"
-    },
-    "systemStatus": {
-      "title": "System status",
-      "environment": "Environment",
-      "masterNode": "Master node",
-      "uptime": "Uptime"
     }
   },
   "selected-reports": {
