@@ -70,6 +70,57 @@ test.describe('Cluster nodes', () => {
     await expect(nodesPage.filterForm).toBeVisible();
   });
 
+  test('should show the extended info sections in the node detail', async ({ page }) => {
+    // Arrange
+    const nodesPage = new ClusterNodesPage(page);
+    await nodesPage.goto();
+    const detailResponse = page.waitForResponse(
+      (response) =>
+        response.request().method() === 'GET' && /\/cluster\/nodes\/\d+$/.test(new URL(response.url()).pathname),
+    );
+
+    // Act
+    await nodesPage.openDetail(nodesPage.rows.first());
+    const response = await detailResponse;
+
+    // Assert: el detalle se obtiene con GET /nodes/{id} (7.8)
+    expect(response.ok()).toBeTruthy();
+
+    // Recursos (7.1, 7.2)
+    await expect(page.getByTestId('node-form-resources')).toBeVisible();
+    await expect(page.getByTestId('node-form-processors')).toBeVisible();
+    await expect(page.getByTestId('node-form-fs-total')).toBeVisible();
+    await expect(page.getByTestId('node-form-fs-free')).toBeVisible();
+    await expect(page.getByTestId('node-form-fs-free-percent')).toBeVisible();
+    await expect(page.getByTestId('node-form-processors')).not.toHaveValue('');
+
+    // JVM y variables de entorno (7.1, 7.3): tabla con filtro o mensaje de sin propiedades
+    for (const section of ['jvm', 'env']) {
+      await expect(page.getByTestId(`node-form-${section}-section`)).toBeVisible();
+
+      const table = page.getByTestId(`node-form-${section}-table`);
+      const empty = page.getByTestId(`node-form-${section}-empty`);
+      await expect(table.or(empty)).toBeVisible();
+
+      if (await table.isVisible()) {
+        const filter = page.getByTestId(`node-form-${section}-filter`);
+        const rows = page.getByTestId(`node-form-${section}-row`);
+        await expect(filter).toBeVisible();
+        expect(await rows.count()).toBeGreaterThan(0);
+
+        // El filtro de una sección no afecta a la otra (7.3)
+        const otherSection = section === 'jvm' ? 'env' : 'jvm';
+        const otherCount = await page.getByTestId(`node-form-${otherSection}-row`).count();
+        await filter.fill('zzz-no-such-key-zzz');
+        await expect(page.getByTestId(`node-form-${section}-no-matches`)).toBeVisible();
+        await expect(page.getByTestId(`node-form-${otherSection}-row`)).toHaveCount(otherCount);
+
+        await filter.fill('');
+        await expect(rows.first()).toBeVisible();
+      }
+    }
+  });
+
   test('should export nodes to CSV', async ({ page }) => {
     const nodesPage = new ClusterNodesPage(page);
     await nodesPage.goto();

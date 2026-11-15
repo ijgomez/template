@@ -1,0 +1,723 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 Añadir los campos nuevos a `ClusterNode` y `ClusterNodeDTO`": [
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794773928413
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794773933164
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794773965280
+      }
+    ],
+    "1.2 Crear la migración Liquibase XML e incluirla en el master": [
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794773928446
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794773933785
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794773965996
+      }
+    ],
+    "2.1 Implementar `SensitivePropertyMasker`": [
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794773928476
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794773970303
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774001976
+      }
+    ],
+    "2.2 Implementar `NodePropertiesJsonCodec`": [
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794773928521
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794773970503
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774002669
+      }
+    ],
+    "2.3 Crear `NodeEnvironmentProbe` y `DefaultNodeEnvironmentProbe`": [
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794773928548
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794773971323
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774003563
+      }
+    ],
+    "2.4 Escribir pruebas de propiedades de `SensitivePropertyMasker`": [
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794773928581
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774038420
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774102663
+      }
+    ],
+    "2.5 Escribir pruebas de propiedades de `NodePropertiesJsonCodec`": [
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794773928606
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774039205
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774101887
+      }
+    ],
+    "3.1 Integrar la información extendida en `ClusterService`": [
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794773928637
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774040021
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774101071
+      }
+    ],
+    "3.2 Escribir pruebas de propiedades del registro": [
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794773928663
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774108153
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774185972
+      }
+    ],
+    "3.3 Escribir la prueba de propiedades del heartbeat": [
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794773928694
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774193269
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774349558
+      }
+    ],
+    "3.4 Escribir pruebas de propiedades de la conversión a DTO": [
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794773928721
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774352369
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774401033
+      }
+    ],
+    "3.5 Escribir pruebas unitarias de `ClusterService`": [
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794773928746
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774108200
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774186995
+      }
+    ],
+    "4.1 Escribir pruebas de `ClusterController`": [
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794773928771
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774108570
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774187603
+      }
+    ],
+    "5.1 Actualizar el modelo y el servicio de cluster": [
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794773928797
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794773971864
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774004278
+      }
+    ],
+    "5.2 Crear `node-extended-info.util.ts`": [
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794773928822
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794773972427
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774004687
+      }
+    ],
+    "5.3 Añadir las claves i18n en español e inglés": [
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794773928848
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774011355
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774036138
+      }
+    ],
+    "5.4 Ampliar `NodeFormComponent` y su plantilla": [
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794773928873
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774040836
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774103460
+      }
+    ],
+    "5.5 Escribir pruebas de propiedades de `node-extended-info.util`": [
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794773928898
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774041371
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774104019
+      }
+    ],
+    "5.6 Escribir pruebas unitarias de `NodeFormComponent` y de i18n": [
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794773928928
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774109386
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774185170
+      }
+    ],
+    "5.7 Escribir pruebas de `node-list` con y sin campos nuevos": [
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794773928954
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774109994
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774188119
+      }
+    ],
+    "5.8 Escribir la prueba E2E del detalle del nodo": [
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794773928989
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774191527
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774347353
+      }
+    ],
+    "6.1 Escribir la prueba de integración Liquibase (`*IT`, Testcontainers PostgreSQL 18)": [
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794773929022
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774191655
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774348209
+      }
+    ],
+    "7.1 Actualizar `template-docs/02-functional/administration/cluster/cluster-nodes.md`": [
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794773929052
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774192775
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774349102
+      }
+    ],
+    "7.2 Actualizar el plan de pruebas y la versión de los casos de prueba": [
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794773929079
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774352894
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774401437
+      }
+    ],
+    "8.1 Verificar el backend en una sola pasada": [
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794773929137
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774404165
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774635598
+      }
+    ],
+    "8.2 Verificar el dashboard en una sola pasada": [
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794773929163
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774404725
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774636282
+      }
+    ],
+    "9. Checkpoint final": [
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794773929193
+      },
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774639305
+      }
+    ],
+    "1. Capa de dominio y esquema de base de datos": [
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794773966028
+      }
+    ],
+    "2. Componentes puros y sonda del entorno en `core`": [
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774102697
+      }
+    ],
+    "4. Capa web (`webapp`)": [
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774187635
+      }
+    ],
+    "5. Frontend `dashboard`": [
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774347387
+      }
+    ],
+    "6. Pruebas de integración de la migración": [
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774348236
+      }
+    ],
+    "3. Lógica de `ClusterService`": [
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774401070
+      }
+    ],
+    "7. Documentación funcional": [
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774401468
+      }
+    ],
+    "8. Verificación final agrupada por módulo": [
+      {
+        "executionId": "b7415f42-c76a-4324-ba49-3095bd2846b0",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794774636322
+      }
+    ],
+    "10.1 Mover las funciones puras de propiedades a `shared`": [
+      {
+        "executionId": "4d8841fc-6893-4db9-b825-22181c8f5ab3",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794775258764
+      },
+      {
+        "executionId": "4d8841fc-6893-4db9-b825-22181c8f5ab3",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794775261304
+      },
+      {
+        "executionId": "4d8841fc-6893-4db9-b825-22181c8f5ab3",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794775287417
+      }
+    ],
+    "10.2 Crear `PropertyTableComponent` (`tp-property-table`)": [
+      {
+        "executionId": "4d8841fc-6893-4db9-b825-22181c8f5ab3",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794775258792
+      },
+      {
+        "executionId": "4d8841fc-6893-4db9-b825-22181c8f5ab3",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794775290074
+      },
+      {
+        "executionId": "4d8841fc-6893-4db9-b825-22181c8f5ab3",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794775318131
+      }
+    ],
+    "10.3 Refactorizar `NodeFormComponent` para usar `tp-property-table`": [
+      {
+        "executionId": "4d8841fc-6893-4db9-b825-22181c8f5ab3",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794775258825
+      },
+      {
+        "executionId": "4d8841fc-6893-4db9-b825-22181c8f5ab3",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794775320462
+      },
+      {
+        "executionId": "4d8841fc-6893-4db9-b825-22181c8f5ab3",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794775353890
+      }
+    ],
+    "10.4 Escribir las pruebas del componente y ajustar las de `NodeFormComponent`": [
+      {
+        "executionId": "4d8841fc-6893-4db9-b825-22181c8f5ab3",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794775258845
+      },
+      {
+        "executionId": "4d8841fc-6893-4db9-b825-22181c8f5ab3",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794775356338
+      },
+      {
+        "executionId": "4d8841fc-6893-4db9-b825-22181c8f5ab3",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794775445215
+      }
+    ],
+    "10.5 Documentar el componente": [
+      {
+        "executionId": "4d8841fc-6893-4db9-b825-22181c8f5ab3",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794775258868
+      },
+      {
+        "executionId": "4d8841fc-6893-4db9-b825-22181c8f5ab3",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794775356836
+      },
+      {
+        "executionId": "4d8841fc-6893-4db9-b825-22181c8f5ab3",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794775444672
+      }
+    ],
+    "10.6 Verificar el dashboard en una sola pasada": [
+      {
+        "executionId": "4d8841fc-6893-4db9-b825-22181c8f5ab3",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794775258888
+      },
+      {
+        "executionId": "4d8841fc-6893-4db9-b825-22181c8f5ab3",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794775447569
+      },
+      {
+        "executionId": "4d8841fc-6893-4db9-b825-22181c8f5ab3",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794775491091
+      }
+    ],
+    "10. Extraer el componente reutilizable `tp-property-table`": [
+      {
+        "executionId": "4d8841fc-6893-4db9-b825-22181c8f5ab3",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794775491115
+      }
+    ],
+    "11.1 Mover `node-extended-info.util.ts` a `shared/utils/format.util.ts`": [
+      {
+        "executionId": "62c26213-537b-4239-bbb6-495363237f80",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794776388040
+      },
+      {
+        "executionId": "62c26213-537b-4239-bbb6-495363237f80",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794776390610
+      },
+      {
+        "executionId": "62c26213-537b-4239-bbb6-495363237f80",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794776410037
+      }
+    ],
+    "11.2 Actualizar la documentación": [
+      {
+        "executionId": "62c26213-537b-4239-bbb6-495363237f80",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794776388071
+      },
+      {
+        "executionId": "62c26213-537b-4239-bbb6-495363237f80",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794776412404
+      },
+      {
+        "executionId": "62c26213-537b-4239-bbb6-495363237f80",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794776466525
+      }
+    ],
+    "11.3 Verificar el dashboard en una sola pasada": [
+      {
+        "executionId": "62c26213-537b-4239-bbb6-495363237f80",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794776388099
+      },
+      {
+        "executionId": "62c26213-537b-4239-bbb6-495363237f80",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794776469038
+      },
+      {
+        "executionId": "62c26213-537b-4239-bbb6-495363237f80",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794776493051
+      }
+    ],
+    "11. Mover los formateadores genéricos a `shared/utils`": [
+      {
+        "executionId": "62c26213-537b-4239-bbb6-495363237f80",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794776493076
+      }
+    ],
+    "12.1 Usar `formatGb` y `formatFreePercent` en los campos de memoria de `node-form`": [
+      {
+        "executionId": "d80ddad3-2ee8-45e2-ae4a-00d0d4112232",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794776624602
+      },
+      {
+        "executionId": "d80ddad3-2ee8-45e2-ae4a-00d0d4112232",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794776627178
+      },
+      {
+        "executionId": "d80ddad3-2ee8-45e2-ae4a-00d0d4112232",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794776670392
+      }
+    ],
+    "12.2 Verificar el dashboard en una sola pasada": [
+      {
+        "executionId": "d80ddad3-2ee8-45e2-ae4a-00d0d4112232",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794776624630
+      },
+      {
+        "executionId": "d80ddad3-2ee8-45e2-ae4a-00d0d4112232",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794776672872
+      },
+      {
+        "executionId": "d80ddad3-2ee8-45e2-ae4a-00d0d4112232",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794776694817
+      }
+    ],
+    "12. Reutilizar los formateadores en la memoria del nodo": [
+      {
+        "executionId": "d80ddad3-2ee8-45e2-ae4a-00d0d4112232",
+        "chatSessionId": "sess_d2c14cf1-f444-4534-bcf8-05ea21e54c48",
+        "timestamp": 1794776694843
+      }
+    ]
+  }
+}

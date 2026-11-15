@@ -81,7 +81,7 @@
       <input id="node-used-memory"
              type="text"
              class="form-control form-control-sm"
-             [value]="(node().usedMemory / 1073741824 | number:'1.2-2') + ' GB'"
+             [value]="usedMemoryGb()"
              readonly
              disabled
              [attr.aria-label]="'cluster.nodes.fields.usedMemoryGb' | translate">
@@ -91,7 +91,7 @@
       <input id="node-total-memory"
              type="text"
              class="form-control form-control-sm"
-             [value]="(node().totalMemory / 1073741824 | number:'1.2-2') + ' GB'"
+             [value]="totalMemoryGb()"
              readonly
              disabled
              [attr.aria-label]="'cluster.nodes.fields.totalMemoryGb' | translate">
@@ -101,12 +101,61 @@
       <input id="node-free-memory"
              type="text"
              class="form-control form-control-sm"
-             [value]="((node().totalMemory > 0 ? ((node().totalMemory - node().usedMemory) / node().totalMemory * 100) : 0) | number:'1.1-1') + '%'"
+             [value]="freeMemoryPercent()"
              readonly
              disabled
              [attr.aria-label]="'cluster.nodes.fields.freeMemoryPercent' | translate">
     </div>
   </div>
+
+  @if (loadState() === 'error') {
+    <div class="alert alert-danger py-2" role="alert" data-testid="node-form-load-error">
+      {{ 'cluster.nodes.form.loadError' | translate }}
+    </div>
+  }
+
+  <!-- Recursos -->
+  <h6 class="tp-section-label text-muted text-uppercase fw-semibold mb-2">
+    {{ 'cluster.nodes.form.sectionResources' | translate }}
+  </h6>
+  <div class="row g-2 mb-3" data-testid="node-form-resources">
+    <div class="col-md-3">
+      <label class="form-label form-label-sm mb-1" for="node-processors">{{ 'cluster.nodes.fields.processors' | translate }}</label>
+      <input id="node-processors" type="text" class="form-control form-control-sm"
+             [value]="processors()" readonly disabled data-testid="node-form-processors">
+    </div>
+    <div class="col-md-3">
+      <label class="form-label form-label-sm mb-1" for="node-fs-total">{{ 'cluster.nodes.fields.fsTotalGb' | translate }}</label>
+      <input id="node-fs-total" type="text" class="form-control form-control-sm"
+             [value]="fsTotalGb()" readonly disabled data-testid="node-form-fs-total">
+    </div>
+    <div class="col-md-3">
+      <label class="form-label form-label-sm mb-1" for="node-fs-free">{{ 'cluster.nodes.fields.fsFreeGb' | translate }}</label>
+      <input id="node-fs-free" type="text" class="form-control form-control-sm"
+             [value]="fsFreeGb()" readonly disabled data-testid="node-form-fs-free">
+    </div>
+    <div class="col-md-3">
+      <label class="form-label form-label-sm mb-1" for="node-fs-free-percent">{{ 'cluster.nodes.fields.fsFreePercent' | translate }}</label>
+      <input id="node-fs-free-percent" type="text" class="form-control form-control-sm"
+             [value]="fsFreePercent()" readonly disabled data-testid="node-form-fs-free-percent">
+    </div>
+  </div>
+
+  @if (loadState() === 'loaded') {
+    <!-- Propiedades de la JVM -->
+    <tp-property-table
+      [properties]="detail()?.jvmProperties"
+      heading="cluster.nodes.form.sectionJvm"
+      filterLabel="cluster.nodes.form.filterLabelJvm"
+      testId="node-form-jvm" />
+
+    <!-- Variables de entorno -->
+    <tp-property-table
+      [properties]="detail()?.environmentProperties"
+      heading="cluster.nodes.form.sectionEnvironment"
+      filterLabel="cluster.nodes.form.filterLabelEnv"
+      testId="node-form-env" />
+  }
 </div>
 
 <app-node-jobs [nodeId]="node().id" />

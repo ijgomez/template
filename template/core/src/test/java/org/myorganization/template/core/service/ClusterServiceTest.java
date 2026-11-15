@@ -1,15 +1,26 @@
 package org.myorganization.template.core.service;
 
+import java.net.InetAddress;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.AbstractMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.slf4j.LoggerFactory;
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.read.ListAppender;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
@@ -34,8 +45,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -50,11 +64,14 @@ class ClusterServiceTest {
     @Mock
     private AuditService auditService;
 
+    @Mock
+    private NodeEnvironmentProbe environmentProbe;
+
     private ClusterService clusterService;
 
     @BeforeEach
     void setUp() {
-        clusterService = new ClusterService(clusterNodeRepository, clusterBlockRepository, auditService);
+        clusterService = new ClusterService(clusterNodeRepository, clusterBlockRepository, auditService, environmentProbe);
     }
 
     // =====================================================================
@@ -369,6 +386,234 @@ class ClusterServiceTest {
             assertThatThrownBy(() -> clusterService.deleteBlock(1L))
                     .isInstanceOf(MethodNotAllowedException.class)
                     .hasMessageContaining("deletion is not allowed");
+        }
+    }
+
+    // =====================================================================
+    // Extended node information
+    // =====================================================================
+
+    @Nested
+    @DisplayName("extended node info")
+    class ExtendedInfo {
+
+        private static final String SECRET_VALUE = "s3cr3t-value-XYZ";
+        private static final String PLAIN_VALUE = "plain-value-ABC";
+
+        private String hostname;
+        private ListAppender<ILoggingEvent> appender;
+        private Logger serviceLogger;
+        private Level previousLevel;
+
+        @BeforeEach
+        void setUpLogs() throws Exception {
+            hostname = InetAddress.getLocalHost().getHostName();
+            serviceLogger = (Logger) LoggerFactory.getLogger(ClusterService.class);
+            previousLevel = serviceLogger.getLevel();
+            serviceLogger.setLevel(Level.DEBUG);
+            appender = new ListAppender<>();
+            appender.start();
+            serviceLogger.addAppender(appender);
+        }
+
+        @AfterEach
+        void tearDownLogs() {
+            serviceLogger.detachAppender(appender);
+            serviceLogger.setLevel(previousLevel);
+        }
+
+        private void stubProbe(int processors, NodeEnvironmentProbe.FileSystemSpace fs) {
+            lenient().when(environmentProbe.availableProcessors()).thenReturn(processors);
+            lenient().when(environmentProbe.fileSystemSpace()).thenReturn(fs);
+            lenient().when(environmentProbe.jvmProperties()).thenReturn(
+                    new LinkedHashMap<>(Map.of("java.version", "21", "db.password", SECRET_VALUE)));
+            lenient().when(environmentProbe.environmentVariables()).thenReturn(
+                    new LinkedHashMap<>(Map.of("HOME", PLAIN_VALUE, "API_TOKEN", SECRET_VALUE)));
+        }
+
+        private ClusterNode registerNewAndCapture() {
+            when(clusterNodeRepository.findByHostname(hostname)).thenReturn(Optional.empty());
+            when(clusterNodeRepository.save(any(ClusterNode.class))).thenAnswer(inv -> {
+                ClusterNode n = inv.getArgument(0);
+                n.setId(10L);
+                return n;
+            });
+            clusterService.registerNode();
+            ArgumentCaptor<ClusterNode> captor = ArgumentCaptor.forClass(ClusterNode.class);
+            verify(clusterNodeRepository).save(captor.capture());
+            return captor.getValue();
+        }
+
+        private String allLogs() {
+            return appender.list.stream().map(ILoggingEvent::getFormattedMessage)
+                    .reduce("", (a, b) -> a + "\n" + b);
+        }
+
+        @Test
+        @DisplayName("registerNode creates a new node with processors, filesystem, JVM and env properties")
+        void registerNewNodeLoadsExtendedInfo() {
+            stubProbe(8, new NodeEnvironmentProbe.FileSystemSpace(1000L, 400L, 300L));
+
+            ClusterNode saved = registerNewAndCapture();
+
+            assertThat(saved.getProcessors()).isEqualTo(8);
+            assertThat(saved.getFsTotalSpace()).isEqualTo(1000L);
+            assertThat(saved.getFsFreeSpace()).isEqualTo(400L);
+            assertThat(saved.getFsUsableSpace()).isEqualTo(300L);
+            Map<String, String> jvm = NodePropertiesJsonCodec.fromJson(saved.getJvmProperties());
+            Map<String, String> env = NodePropertiesJsonCodec.fromJson(saved.getEnvironmentProperties());
+            assertThat(jvm).containsEntry("java.version", "21")
+                    .containsEntry("db.password", SensitivePropertyMasker.MASKED_VALUE);
+            assertThat(env).containsEntry("HOME", PLAIN_VALUE)
+                    .containsEntry("API_TOKEN", SensitivePropertyMasker.MASKED_VALUE);
+            assertThat(saved.getJvmProperties()).doesNotContain(SECRET_VALUE);
+            assertThat(saved.getEnvironmentProperties()).doesNotContain(SECRET_VALUE);
+        }
+
+        @Test
+        @DisplayName("registerNode on an existing node replaces previous extended info")
+        void registerExistingNodeReplacesExtendedInfo() {
+            stubProbe(4, new NodeEnvironmentProbe.FileSystemSpace(2000L, 900L, 800L));
+            ClusterNode existing = createNode(5L, hostname, NodeStatus.INACTIVE, false);
+            existing.setProcessors(2);
+            existing.setFsTotalSpace(1L);
+            existing.setJvmProperties("{\"old\":\"x\"}");
+            existing.setEnvironmentProperties("{\"old\":\"y\"}");
+            when(clusterNodeRepository.findByHostname(hostname)).thenReturn(Optional.of(existing));
+
+            clusterService.registerNode();
+
+            assertThat(existing.getProcessors()).isEqualTo(4);
+            assertThat(existing.getFsTotalSpace()).isEqualTo(2000L);
+            assertThat(existing.getFsFreeSpace()).isEqualTo(900L);
+            assertThat(existing.getFsUsableSpace()).isEqualTo(800L);
+            assertThat(NodePropertiesJsonCodec.fromJson(existing.getJvmProperties()))
+                    .doesNotContainKey("old").containsEntry("java.version", "21");
+            assertThat(NodePropertiesJsonCodec.fromJson(existing.getEnvironmentProperties()))
+                    .doesNotContainKey("old").containsEntry("HOME", PLAIN_VALUE);
+            verify(clusterNodeRepository).save(existing);
+        }
+
+        @Test
+        @DisplayName("registerNode with filesystem probe failure nulls only the three filesystem values")
+        void registerFilesystemProbeFailure() {
+            stubProbe(8, null);
+            when(environmentProbe.fileSystemSpace()).thenThrow(new IllegalStateException("boom " + SECRET_VALUE));
+
+            ClusterNode saved = registerNewAndCapture();
+
+            assertThat(saved.getFsTotalSpace()).isNull();
+            assertThat(saved.getFsFreeSpace()).isNull();
+            assertThat(saved.getFsUsableSpace()).isNull();
+            assertThat(saved.getProcessors()).isEqualTo(8);
+            assertThat(saved.getJvmProperties()).isNotNull();
+            assertThat(saved.getEnvironmentProperties()).isNotNull();
+            assertThat(appender.list).anyMatch(e -> e.getLevel() == Level.WARN);
+        }
+
+        @Test
+        @DisplayName("registerNode with JVM properties probe failure nulls only the JVM column")
+        void registerMaskerFailureNullsOnlyAffectedColumn() {
+            stubProbe(8, new NodeEnvironmentProbe.FileSystemSpace(1L, 1L, 1L));
+            Map<String, String> failing = new AbstractMap<>() {
+                @Override
+                public Set<Entry<String, String>> entrySet() {
+                    throw new IllegalStateException("cannot read " + SECRET_VALUE);
+                }
+            };
+            when(environmentProbe.jvmProperties()).thenReturn(failing);
+
+            ClusterNode saved = registerNewAndCapture();
+
+            assertThat(saved.getJvmProperties()).isNull();
+            assertThat(saved.getEnvironmentProperties()).isNotNull();
+            assertThat(saved.getProcessors()).isEqualTo(8);
+            assertThat(appender.list).anyMatch(e -> e.getLevel() == Level.ERROR);
+            assertThat(allLogs()).doesNotContain(SECRET_VALUE).doesNotContain(PLAIN_VALUE);
+        }
+
+        @Test
+        @DisplayName("registerNode with oversized environment JSON nulls only the environment column")
+        void registerSerializerFailureNullsOnlyAffectedColumn() {
+            stubProbe(8, new NodeEnvironmentProbe.FileSystemSpace(1L, 1L, 1L));
+            String huge = "v".repeat(NodePropertiesJsonCodec.MAX_JSON_LENGTH + 1);
+            when(environmentProbe.environmentVariables()).thenReturn(new LinkedHashMap<>(Map.of("BIG", huge)));
+
+            ClusterNode saved = registerNewAndCapture();
+
+            assertThat(saved.getEnvironmentProperties()).isNull();
+            assertThat(saved.getJvmProperties()).isNotNull();
+            assertThat(appender.list).anyMatch(e -> e.getLevel() == Level.WARN
+                    && e.getFormattedMessage().contains("Environment_Properties"));
+            assertThat(allLogs()).doesNotContain("vvvvvvvv").doesNotContain(SECRET_VALUE);
+        }
+
+        @Test
+        @DisplayName("heartbeat updates filesystem and keeps processors and properties")
+        void heartbeatUpdatesOnlyFilesystem() {
+            stubProbe(99, new NodeEnvironmentProbe.FileSystemSpace(7000L, 3000L, 2500L));
+            ClusterNode node = createNode(5L, hostname, NodeStatus.ACTIVE, false);
+            node.setProcessors(8);
+            node.setFsTotalSpace(1L);
+            node.setFsFreeSpace(1L);
+            node.setFsUsableSpace(1L);
+            node.setJvmProperties("{\"a\":\"b\"}");
+            node.setEnvironmentProperties("{\"c\":\"d\"}");
+            when(clusterNodeRepository.findByHostname(hostname)).thenReturn(Optional.of(node));
+
+            clusterService.heartbeat();
+
+            assertThat(node.getFsTotalSpace()).isEqualTo(7000L);
+            assertThat(node.getFsFreeSpace()).isEqualTo(3000L);
+            assertThat(node.getFsUsableSpace()).isEqualTo(2500L);
+            assertThat(node.getProcessors()).isEqualTo(8);
+            assertThat(node.getJvmProperties()).isEqualTo("{\"a\":\"b\"}");
+            assertThat(node.getEnvironmentProperties()).isEqualTo("{\"c\":\"d\"}");
+            verify(clusterNodeRepository).save(node);
+            verify(environmentProbe, never()).jvmProperties();
+            verify(environmentProbe, never()).environmentVariables();
+            verify(environmentProbe, never()).availableProcessors();
+        }
+
+        @Test
+        @DisplayName("heartbeat with filesystem probe failure nulls filesystem, keeps the rest and still saves")
+        void heartbeatProbeFailure() {
+            ClusterNode node = createNode(5L, hostname, NodeStatus.ACTIVE, false);
+            node.setProcessors(8);
+            node.setFsTotalSpace(1L);
+            node.setFsFreeSpace(1L);
+            node.setFsUsableSpace(1L);
+            node.setJvmProperties("{\"a\":\"b\"}");
+            OffsetDateTime before = OffsetDateTime.now(ZoneOffset.UTC).minusMinutes(1);
+            node.setLastModifiedAt(before);
+            when(clusterNodeRepository.findByHostname(hostname)).thenReturn(Optional.of(node));
+            when(environmentProbe.fileSystemSpace()).thenThrow(new IllegalStateException("io"));
+
+            clusterService.heartbeat();
+
+            assertThat(node.getFsTotalSpace()).isNull();
+            assertThat(node.getFsFreeSpace()).isNull();
+            assertThat(node.getFsUsableSpace()).isNull();
+            assertThat(node.getProcessors()).isEqualTo(8);
+            assertThat(node.getJvmProperties()).isEqualTo("{\"a\":\"b\"}");
+            assertThat(node.getLastModifiedAt()).isAfter(before);
+            verify(clusterNodeRepository).save(node);
+            assertThat(appender.list).anyMatch(e -> e.getLevel() == Level.WARN);
+        }
+
+        @Test
+        @DisplayName("10 heartbeats create no audit entries")
+        void tenHeartbeatsDoNotAudit() {
+            stubProbe(8, new NodeEnvironmentProbe.FileSystemSpace(10L, 5L, 4L));
+            ClusterNode node = createNode(5L, hostname, NodeStatus.ACTIVE, false);
+            when(clusterNodeRepository.findByHostname(hostname)).thenReturn(Optional.of(node));
+
+            for (int i = 0; i < 10; i++) {
+                clusterService.heartbeat();
+            }
+
+            verify(clusterNodeRepository, times(10)).save(node);
+            verifyNoInteractions(auditService);
         }
     }
 

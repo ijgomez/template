@@ -7,6 +7,9 @@ import java.time.ZoneOffset;
 import java.util.List;
 
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 import org.myorganization.template.cluster.HeartbeatClusterService;
 import org.myorganization.template.core.repository.ClusterBlockRepository;
@@ -46,10 +49,13 @@ public class ClusterService implements HeartbeatClusterService {
     private final ClusterNodeRepository clusterNodeRepository;
     private final ClusterBlockService clusterBlockService;
     private final AuditService auditService;
+    private final NodeEnvironmentProbe environmentProbe;
 
     public ClusterService(ClusterNodeRepository clusterNodeRepository,
                           ClusterBlockRepository clusterBlockRepository,
-                          AuditService auditService) {
+                          AuditService auditService,
+                          NodeEnvironmentProbe environmentProbe) {
+        this.environmentProbe = environmentProbe;
         this.clusterNodeRepository = clusterNodeRepository;
         this.clusterBlockService = new ClusterBlockService(clusterBlockRepository);
         this.auditService = auditService;
@@ -67,7 +73,7 @@ public class ClusterService implements HeartbeatClusterService {
     @Transactional(readOnly = true)
     public List<ClusterNodeDTO> findAllNodes() {
         return clusterNodeRepository.findAll().stream()
-                .map(this::toNodeDTO)
+                .map(this::toNodeSummaryDTO)
                 .toList();
     }
 
@@ -82,7 +88,7 @@ public class ClusterService implements HeartbeatClusterService {
     public ClusterNodeDTO findNodeById(Long id) {
         ClusterNode node = clusterNodeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(CLUSTER_NODE, id));
-        return toNodeDTO(node);
+        return toNodeDetailDTO(node);
     }
 
     /**
@@ -102,7 +108,7 @@ public class ClusterService implements HeartbeatClusterService {
         node.setMaster(true);
 
         ClusterNode saved = clusterNodeRepository.save(node);
-        return toNodeDTO(saved);
+        return toNodeSummaryDTO(saved);
     }
 
     /**
@@ -125,6 +131,7 @@ public class ClusterService implements HeartbeatClusterService {
                     existingNode.setTotalMemory(getTotalMemory());
                     existingNode.setStartedAt(now);
                     existingNode.setLastModifiedAt(now);
+                    applyExtendedInfo(existingNode);
                     clusterNodeRepository.save(existingNode);
                     log.info("Cluster node re-registered: hostname={}", hostname);
                     auditService.log(new AuditLogEntry(
@@ -142,6 +149,7 @@ public class ClusterService implements HeartbeatClusterService {
                     newNode.setFreeMemory(getFreeMemory());
                     newNode.setTotalMemory(getTotalMemory());
                     newNode.setStartedAt(now);
+                    applyExtendedInfo(newNode);
                     ClusterNode saved = clusterNodeRepository.save(newNode);
                     log.info("Cluster node registered: hostname={}", hostname);
                     auditService.log(new AuditLogEntry(
@@ -170,6 +178,7 @@ public class ClusterService implements HeartbeatClusterService {
         node.setUsedMemory(getUsedMemory());
         node.setFreeMemory(getFreeMemory());
         node.setTotalMemory(getTotalMemory());
+        applyFileSystem(node);
         node.setLastModifiedAt(OffsetDateTime.now(ZoneOffset.UTC));
         clusterNodeRepository.save(node);
     }
@@ -319,7 +328,18 @@ public class ClusterService implements HeartbeatClusterService {
     // Private helpers
     // =====================================================================
 
-    private ClusterNodeDTO toNodeDTO(ClusterNode node) {
+    private ClusterNodeDTO toNodeSummaryDTO(ClusterNode node) {
+        return buildDTO(node, null, null);
+    }
+
+    private ClusterNodeDTO toNodeDetailDTO(ClusterNode node) {
+        return buildDTO(node,
+                NodePropertiesJsonCodec.fromJson(node.getJvmProperties()),
+                NodePropertiesJsonCodec.fromJson(node.getEnvironmentProperties()));
+    }
+
+    private ClusterNodeDTO buildDTO(ClusterNode node, Map<String, String> jvm, Map<String, String> env) {
+        boolean detail = jvm != null;
         return new ClusterNodeDTO(
                 node.getId(),
                 node.getStatus(),
@@ -330,8 +350,64 @@ public class ClusterService implements HeartbeatClusterService {
                 node.getFreeMemory(),
                 node.getTotalMemory(),
                 node.getStartedAt(),
-                node.getLastModifiedAt()
+                node.getLastModifiedAt(),
+                detail ? node.getProcessors() : null,
+                detail ? node.getFsTotalSpace() : null,
+                detail ? node.getFsFreeSpace() : null,
+                detail ? node.getFsUsableSpace() : null,
+                jvm,
+                env
         );
+    }
+
+    /** Applies processors, filesystem and masked properties (registration only). */
+    private void applyExtendedInfo(ClusterNode node) {
+        int processors = environmentProbe.availableProcessors();
+        if (processors >= 1) {
+            node.setProcessors(processors);
+        } else if (node.getProcessors() == null) {
+            throw new IllegalStateException("Invalid processor count: " + processors);
+        }
+        applyFileSystem(node);
+        node.setJvmProperties(storeProperties("JVM_Properties", node.getHostname(),
+                environmentProbe::jvmProperties));
+        node.setEnvironmentProperties(storeProperties("Environment_Properties", node.getHostname(),
+                environmentProbe::environmentVariables));
+    }
+
+    private void applyFileSystem(ClusterNode node) {
+        try {
+            NodeEnvironmentProbe.FileSystemSpace space = environmentProbe.fileSystemSpace();
+            node.setFsTotalSpace(space.total());
+            node.setFsFreeSpace(space.free());
+            node.setFsUsableSpace(space.usable());
+        } catch (RuntimeException e) {
+            log.warn("Unable to read filesystem space: hostname={}, cause={}", node.getHostname(), e.toString());
+            node.setFsTotalSpace(null);
+            node.setFsFreeSpace(null);
+            node.setFsUsableSpace(null);
+        }
+    }
+
+    private String storeProperties(String label, String hostname, Supplier<Map<String, String>> source) {
+        Map<String, String> masked;
+        try {
+            masked = SensitivePropertyMasker.mask(source.get());
+        } catch (RuntimeException e) {
+            log.error("Unable to mask {} properties: hostname={}", label, hostname);
+            return null;
+        }
+        Optional<String> json;
+        try {
+            json = NodePropertiesJsonCodec.toJson(masked);
+        } catch (RuntimeException e) {
+            json = Optional.empty();
+        }
+        if (json.isEmpty()) {
+            log.warn("Unable to store {}: serialization failed or exceeds size limit, hostname={}", label, hostname);
+            return null;
+        }
+        return json.get();
     }
 
     private String getHostname() {

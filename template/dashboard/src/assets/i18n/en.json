@@ -420,7 +420,11 @@
         "lastModifiedAt": "Last Heartbeat",
         "usedMemoryGb": "Used (GB)",
         "totalMemoryGb": "Total (GB)",
-        "freeMemoryPercent": "Free (%)"
+        "freeMemoryPercent": "Free (%)",
+        "processors": "Processors",
+        "fsTotalGb": "Filesystem total (GB)",
+        "fsFreeGb": "Filesystem free (GB)",
+        "fsFreePercent": "Filesystem free (%)"
       },
       "filters": {
         "allStatuses": "All",
@@ -438,7 +442,18 @@
       },
       "form": {
         "title": "Cluster Node",
-        "sectionNode": "Node data"
+        "sectionNode": "Node data",
+        "sectionResources": "Resources",
+        "sectionJvm": "JVM properties",
+        "sectionEnvironment": "Environment variables",
+        "filterPlaceholder": "Filter by key or value",
+        "filterLabelJvm": "Filter JVM properties",
+        "filterLabelEnv": "Filter environment variables",
+        "columnKey": "Key",
+        "columnValue": "Value",
+        "noMatches": "No matches found",
+        "noProperties": "No properties available",
+        "loadError": "The node data could not be loaded"
       },
       "jobs": {
         "title": "Node Jobs",

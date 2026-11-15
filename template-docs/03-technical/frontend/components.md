@@ -85,6 +85,12 @@ src/
             │   ├── profile-select.component.html
             │   ├── profile-select.component.spec.ts
             │   └── index.ts
+            ├── property-table/
+            │   ├── property-table.component.ts
+            │   ├── property-table.component.html
+            │   ├── property-table.component.spec.ts
+            │   ├── property-table.util.ts
+            │   └── property-table.util.spec.ts
             ├── detail-button/
             │   ├── detail-button.component.ts
             │   ├── detail-button.component.spec.ts
@@ -113,9 +119,41 @@ src/
             ├── date-range/
             ├── autocomplete/
             └── entity-filter/
+        └── utils/
+            ├── format.util.ts
+            └── format.util.spec.ts
 ```
 
 Cada componente sigue la convencion de un directorio propio con sus ficheros `.ts`, `.html`, `.scss` y `.spec.ts` separados.
+
+---
+
+# Utilidades compartidas (`shared/utils`)
+
+## Proposito
+
+`shared/utils/` agrupa funciones **puras, sin estado y reutilizables** entre features: no inyectan servicios, no acceden al DOM ni a `HttpClient`, y devuelven el mismo resultado para los mismos argumentos. Cada fichero se nombra `<tema>.util.ts` y tiene su `<tema>.util.spec.ts` junto a el.
+
+## Utilidades disponibles
+
+| Fichero          | Contenido                                                                                                              |
+|------------------|------------------------------------------------------------------------------------------------------------------------|
+| `format.util.ts` | `BYTES_PER_GB`, `NO_VALUE` (`'-'`), `formatGb`, `formatFreePercent` (acotado a 0..100) y `formatInteger`. Usadas por `NodeFormComponent` |
+
+## Criterio shared frente a core
+
+| Ubicacion          | Que contiene                                                                                       | Ejemplo                                      |
+|--------------------|----------------------------------------------------------------------------------------------------|----------------------------------------------|
+| `shared/utils/`    | Funciones puras sin estado ni dependencias de Angular, genericas y sin conocimiento del negocio    | `formatGb`, `formatInteger`                  |
+| `core/services/`   | Logica con estado o inyeccion de dependencias, de ambito singleton (acceso a API, sesion, etc.)   | `ClusterService`                             |
+| `core/models/`     | Interfaces y tipos del dominio compartidos por varias features                                     | `ClusterNode`                                |
+| `features/<x>/`    | Funciones que solo tienen sentido para una feature concreta                                        | Logica propia de una pantalla                |
+
+Reglas:
+
+- Una utilidad va a `shared/utils/` solo si no depende de entidades de negocio ni de servicios; si necesita inyeccion o estado, va a `core/services/`.
+- Una funcion usada por una unica feature se mantiene en esa feature hasta que exista un segundo consumidor.
+- Las funciones puras que acompañan a un unico componente compartido viven junto a el (por ejemplo `property-table.util.ts`).
 
 ---
 
@@ -1174,6 +1212,79 @@ Reutiliza claves existentes del namespace `interfaces`, no define namespace prop
 
 - `interfaces.interfaceList.filters.allInterfaces` — opcion "todas" del filtro ("Todas las interfaces").
 - `interfaces.interfaceList.fields.interfaceName` — texto del `aria-label`.
+
+---
+
+## Tabla de Propiedades (`tp-property-table`)
+
+Tabla de solo lectura de pares clave-valor, ordenada por clave y con un filtro de texto propio. Se usa en el detalle de nodos del cluster para las propiedades de la JVM y las variables de entorno (dos instancias independientes). Es un componente `standalone` con `OnPush`.
+
+**Selector:** `<tp-property-table>`
+
+**Ubicacion:** `shared/components/property-table/`
+
+### Inputs
+
+| Propiedad     | Tipo                                              | Defecto | Descripcion                                                                                   |
+|---------------|---------------------------------------------------|---------|-----------------------------------------------------------------------------------------------|
+| `properties`  | `Record<string, string> \| null \| undefined`     | —       | Mapa clave-valor a mostrar (obligatorio). Nulo, indefinido o vacio se trata como sin datos    |
+| `heading`     | `string`                                          | —       | Clave i18n del titulo de la seccion (obligatorio)                                             |
+| `filterLabel` | `string`                                          | —       | Clave i18n de la etiqueta del campo de filtro (obligatorio)                                   |
+| `testId`      | `string`                                          | —       | Prefijo de los `data-testid` y de los `id` del componente (obligatorio)                       |
+
+El componente no tiene outputs. El texto del filtro es un estado interno (`filter`), por lo que cada instancia filtra de forma independiente.
+
+### Funciones puras (`property-table.util.ts`)
+
+| Funcion                          | Descripcion                                                                                                  |
+|----------------------------------|--------------------------------------------------------------------------------------------------------------|
+| `PropertyRow`                    | Interfaz `{ key: string; value: string }`                                                                    |
+| `toSortedRows(props)`            | Convierte el mapa en filas ordenadas por clave sin distinguir mayusculas; nulo o indefinido devuelve `[]`     |
+| `filterRows(rows, text)`         | Conserva las filas cuya clave o valor contiene el texto sin distinguir mayusculas; texto vacio devuelve todas |
+
+### Estados
+
+| Estado                 | Condicion                                          | Comportamiento                                                                                  |
+|------------------------|----------------------------------------------------|-------------------------------------------------------------------------------------------------|
+| Sin propiedades        | `properties` nulo, indefinido o vacio              | Solo muestra el mensaje `cluster.nodes.form.noProperties`; no hay filtro ni tabla               |
+| Con datos              | Hay filas y el filtro esta vacio o coincide        | Muestra el filtro y la tabla con cabeceras Clave y Valor                                        |
+| Sin coincidencias      | Hay propiedades pero el filtro no coincide con ninguna | Mantiene el filtro con su texto y muestra `cluster.nodes.form.noMatches` en lugar de la tabla |
+
+### `data-testid` e `id`
+
+Todos se derivan de `testId` (ejemplo con `node-form-jvm`):
+
+| Elemento                         | `data-testid`                | `id`                    |
+|----------------------------------|------------------------------|-------------------------|
+| Seccion (`<section>`)            | `node-form-jvm-section`      | —                       |
+| Titulo (`<h6>`)                  | —                            | `node-form-jvm-heading` |
+| Campo de filtro                  | `node-form-jvm-filter`       | `node-form-jvm-filter`  |
+| Tabla                            | `node-form-jvm-table`        | —                       |
+| Fila de la tabla                 | `node-form-jvm-row`          | —                       |
+| Mensaje de sin coincidencias     | `node-form-jvm-no-matches`   | —                       |
+| Mensaje de sin propiedades       | `node-form-jvm-empty`        | —                       |
+
+### Accesibilidad
+
+- La seccion se asocia a su titulo con `aria-labelledby` apuntando a `<testId>-heading`.
+- El campo de filtro tiene un `<label>` asociado mediante `for` a `<testId>-filter`.
+- La tabla usa `<th scope="col">` en las cabeceras y un `<caption>` oculto visualmente (`visually-hidden`) con el titulo.
+- El mensaje de sin coincidencias usa `role="status"` para que se anuncie a los lectores de pantalla.
+- Los valores largos usan `text-break` para evitar desbordes en pantallas estrechas.
+
+### Ejemplo de uso
+
+```html
+<tp-property-table
+  [properties]="detail()?.jvmProperties"
+  heading="cluster.nodes.form.sectionJvm"
+  filterLabel="cluster.nodes.form.filterLabelJvm"
+  testId="node-form-jvm" />
+```
+
+### Claves de traduccion (i18n)
+
+Reutiliza las claves del namespace `cluster.nodes.form`: `filterPlaceholder`, `columnKey`, `columnValue`, `noMatches` y `noProperties`. El titulo y la etiqueta del filtro los aporta el consumidor.
 
 ---
 

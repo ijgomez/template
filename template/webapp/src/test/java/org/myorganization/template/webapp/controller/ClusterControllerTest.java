@@ -1,8 +1,10 @@
 package org.myorganization.template.webapp.controller;
 
+import java.lang.reflect.Method;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,7 +22,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -30,6 +37,9 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Unit tests for {@link ClusterController}.
@@ -39,12 +49,77 @@ class ClusterControllerTest {
     private ClusterService clusterService;
     private ClusterJobService clusterJobService;
     private ClusterController clusterController;
+    private MockMvc mockMvc;
+
+    private static final String NODES_URL = "/api/v1/administration/cluster/nodes";
 
     @BeforeEach
     void setUp() {
         clusterService = mock(ClusterService.class);
         clusterJobService = mock(ClusterJobService.class);
         clusterController = new ClusterController(clusterService, clusterJobService);
+        mockMvc = MockMvcBuilders.standaloneSetup(clusterController)
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
+    }
+
+    // =====================================================================
+    // MockMvc tests: extended node information (list vs detail)
+    // =====================================================================
+
+    @Test
+    void findAllNodesMvc_shouldNotExposeExtendedFieldsWithValue() throws Exception {
+        when(clusterService.findAllNodes()).thenReturn(List.of(sampleNode(1L, true)));
+
+        mockMvc.perform(get(NODES_URL).accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(1))
+                .andExpect(jsonPath("$[0].hostname").value("node-1"))
+                .andExpect(jsonPath("$[0].processors").doesNotExist())
+                .andExpect(jsonPath("$[0].fsTotalSpace").doesNotExist())
+                .andExpect(jsonPath("$[0].fsFreeSpace").doesNotExist())
+                .andExpect(jsonPath("$[0].fsUsableSpace").doesNotExist())
+                .andExpect(jsonPath("$[0].jvmProperties").doesNotExist())
+                .andExpect(jsonPath("$[0].environmentProperties").doesNotExist());
+    }
+
+    @Test
+    void findNodeByIdMvc_shouldReturnAllExtendedFields() throws Exception {
+        when(clusterService.findNodeById(1L)).thenReturn(sampleDetailNode(1L));
+
+        mockMvc.perform(get(NODES_URL + "/1").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.processors").value(8))
+                .andExpect(jsonPath("$.fsTotalSpace").value(1000))
+                .andExpect(jsonPath("$.fsFreeSpace").value(400))
+                .andExpect(jsonPath("$.fsUsableSpace").value(350))
+                .andExpect(jsonPath("$.jvmProperties['java.version']").value("21"))
+                .andExpect(jsonPath("$.environmentProperties['DB_PASSWORD']").value("******"));
+    }
+
+    @Test
+    void findNodeByIdMvc_unknownId_shouldReturn404() throws Exception {
+        when(clusterService.findNodeById(99L)).thenThrow(new EntityNotFoundException("ClusterNode", 99L));
+
+        mockMvc.perform(get(NODES_URL + "/99").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value(404));
+    }
+
+    @Test
+    void nodeReadEndpoints_shouldRemainUnsecuredInControllerAndDelegateToSecurityConfig() throws Exception {
+        // Authorization is centralized in SecurityConfig (GET nodes requires
+        // CLUSTER_NODE_READ or CLUSTER_NODE_WRITE); the controller must not add its own rules.
+        for (String methodName : List.of("findAllNodes", "findNodeById")) {
+            Method method = java.util.Arrays.stream(ClusterController.class.getDeclaredMethods())
+                    .filter(m -> m.getName().equals(methodName))
+                    .findFirst()
+                    .orElseThrow();
+            assertThat(method.getAnnotation(PreAuthorize.class)).isNull();
+            assertThat(method.getAnnotation(GetMapping.class)).isNotNull();
+        }
+        assertThat(ClusterController.class.getAnnotation(PreAuthorize.class)).isNull();
     }
 
     // =====================================================================
@@ -298,7 +373,35 @@ class ClusterControllerTest {
                 1024L * 1024 * 768,
                 1024L * 1024 * 1024,
                 now,
-                now
+                now,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+    }
+
+    private ClusterNodeDTO sampleDetailNode(Long id) {
+        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
+        return new ClusterNodeDTO(
+                id,
+                NodeStatus.ACTIVE,
+                "node-1",
+                "192.168.1.100",
+                true,
+                1024L * 1024 * 256,
+                1024L * 1024 * 768,
+                1024L * 1024 * 1024,
+                now,
+                now,
+                8,
+                1000L,
+                400L,
+                350L,
+                Map.of("java.version", "21"),
+                Map.of("DB_PASSWORD", "******")
         );
     }
 

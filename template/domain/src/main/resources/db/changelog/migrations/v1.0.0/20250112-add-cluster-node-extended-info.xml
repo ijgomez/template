@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20250112-add-cluster-node-processors" author="template" labels="v1.0.0">
+
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists schemaName="${schemaName}" tableName="cluster_node" columnName="processors"/>
+            </not>
+        </preConditions>
+
+        <comment>Añade el número de procesadores del nodo</comment>
+
+        <addColumn schemaName="${schemaName}" tableName="cluster_node">
+            <column name="processors" type="INTEGER"/>
+        </addColumn>
+
+        <rollback>
+            <dropColumn schemaName="${schemaName}" tableName="cluster_node" columnName="processors"/>
+        </rollback>
+
+    </changeSet>
+
+    <changeSet id="20250112-add-cluster-node-fs-total-space" author="template" labels="v1.0.0">
+
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists schemaName="${schemaName}" tableName="cluster_node" columnName="fs_total_space"/>
+            </not>
+        </preConditions>
+
+        <comment>Añade el espacio total del sistema de ficheros del nodo (bytes)</comment>
+
+        <addColumn schemaName="${schemaName}" tableName="cluster_node">
+            <column name="fs_total_space" type="BIGINT"/>
+        </addColumn>
+
+        <rollback>
+            <dropColumn schemaName="${schemaName}" tableName="cluster_node" columnName="fs_total_space"/>
+        </rollback>
+
+    </changeSet>
+
+    <changeSet id="20250112-add-cluster-node-fs-free-space" author="template" labels="v1.0.0">
+
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists schemaName="${schemaName}" tableName="cluster_node" columnName="fs_free_space"/>
+            </not>
+        </preConditions>
+
+        <comment>Añade el espacio libre del sistema de ficheros del nodo (bytes)</comment>
+
+        <addColumn schemaName="${schemaName}" tableName="cluster_node">
+            <column name="fs_free_space" type="BIGINT"/>
+        </addColumn>
+
+        <rollback>
+            <dropColumn schemaName="${schemaName}" tableName="cluster_node" columnName="fs_free_space"/>
+        </rollback>
+
+    </changeSet>
+
+    <changeSet id="20250112-add-cluster-node-fs-usable-space" author="template" labels="v1.0.0">
+
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists schemaName="${schemaName}" tableName="cluster_node" columnName="fs_usable_space"/>
+            </not>
+        </preConditions>
+
+        <comment>Añade el espacio utilizable del sistema de ficheros del nodo (bytes)</comment>
+
+        <addColumn schemaName="${schemaName}" tableName="cluster_node">
+            <column name="fs_usable_space" type="BIGINT"/>
+        </addColumn>
+
+        <rollback>
+            <dropColumn schemaName="${schemaName}" tableName="cluster_node" columnName="fs_usable_space"/>
+        </rollback>
+
+    </changeSet>
+
+    <changeSet id="20250112-add-cluster-node-jvm-properties" author="template" labels="v1.0.0">
+
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists schemaName="${schemaName}" tableName="cluster_node" columnName="jvm_properties"/>
+            </not>
+        </preConditions>
+
+        <comment>Añade las propiedades de la JVM del nodo (JSON enmascarado)</comment>
+
+        <addColumn schemaName="${schemaName}" tableName="cluster_node">
+            <column name="jvm_properties" type="TEXT"/>
+        </addColumn>
+
+        <rollback>
+            <dropColumn schemaName="${schemaName}" tableName="cluster_node" columnName="jvm_properties"/>
+        </rollback>
+
+    </changeSet>
+
+    <changeSet id="20250112-add-cluster-node-environment-properties" author="template" labels="v1.0.0">
+
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists schemaName="${schemaName}" tableName="cluster_node" columnName="environment_properties"/>
+            </not>
+        </preConditions>
+
+        <comment>Añade las variables de entorno del nodo (JSON enmascarado)</comment>
+
+        <addColumn schemaName="${schemaName}" tableName="cluster_node">
+            <column name="environment_properties" type="TEXT"/>
+        </addColumn>
+
+        <rollback>
+            <dropColumn schemaName="${schemaName}" tableName="cluster_node" columnName="environment_properties"/>
+        </rollback>
+
+    </changeSet>
+
+</databaseChangeLog>

@@ -42,7 +42,8 @@ class ClusterSingleMasterPropertyTest {
         ClusterNodeRepository nodeRepository = mock(ClusterNodeRepository.class);
         ClusterBlockRepository blockRepository = mock(ClusterBlockRepository.class);
         ClusterService clusterService = new ClusterService(nodeRepository, blockRepository,
-                mock(org.myorganization.template.core.service.AuditService.class));
+                mock(org.myorganization.template.core.service.AuditService.class),
+                mock(NodeEnvironmentProbe.class));
 
         List<ClusterNode> nodes = new ArrayList<>();
         for (int i = 0; i < nodeCount; i++) {
@@ -79,7 +80,8 @@ class ClusterSingleMasterPropertyTest {
         ClusterNodeRepository nodeRepository = mock(ClusterNodeRepository.class);
         ClusterBlockRepository blockRepository = mock(ClusterBlockRepository.class);
         ClusterService clusterService = new ClusterService(nodeRepository, blockRepository,
-                mock(org.myorganization.template.core.service.AuditService.class));
+                mock(org.myorganization.template.core.service.AuditService.class),
+                mock(NodeEnvironmentProbe.class));
 
         List<ClusterNode> nodes = new ArrayList<>();
         for (int i = 0; i < nodeCount; i++) {

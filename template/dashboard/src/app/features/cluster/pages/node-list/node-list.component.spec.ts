@@ -97,6 +97,54 @@ describe('NodeListComponent', () => {
     });
   });
 
+  describe('extended info fields (processors, fs*, jvm/env properties)', () => {
+    const extendedFields: Partial<ClusterNode> = {
+      processors: 8,
+      fsTotalSpace: 500_000_000_000,
+      fsFreeSpace: 200_000_000_000,
+      fsUsableSpace: 150_000_000_000,
+      jvmProperties: { 'java.version': '21' },
+      environmentProperties: { PATH: '/usr/bin' },
+    };
+
+    const rowsText = (): string[] =>
+      Array.from(fixture.nativeElement.querySelectorAll('tbody tr')).map((tr) =>
+        ((tr as HTMLElement).textContent ?? '').replace(/\s+/g, ' ').trim(),
+      );
+
+    it('should render identical rows with and without the new fields and log no console errors', () => {
+      const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+      const base = [buildNode({ id: 1 }), buildNode({ id: 2, hostname: 'node-02', master: false })];
+      setup(base);
+      const rowsWithout = rowsText();
+
+      component.allNodes.set(base.map((n) => ({ ...n, ...extendedFields })));
+      fixture.detectChanges();
+      const rowsWith = rowsText();
+
+      // Null values must also render the same rows.
+      component.allNodes.set(
+        base.map((n) => ({
+          ...n,
+          processors: null,
+          fsTotalSpace: null,
+          fsFreeSpace: null,
+          fsUsableSpace: null,
+          jvmProperties: null,
+          environmentProperties: null,
+        })),
+      );
+      fixture.detectChanges();
+      const rowsNull = rowsText();
+
+      expect(rowsWithout.length).toBe(2);
+      expect(rowsWith).toEqual(rowsWithout);
+      expect(rowsNull).toEqual(rowsWithout);
+      expect(consoleError).not.toHaveBeenCalled();
+      consoleError.mockRestore();
+    });
+  });
+
   describe('deep linking (URL sub-view state)', () => {
     it('openForm should switch to form mode and sync the URL with view=form and the node id', () => {
       setup([buildNode({ id: 5 })]);

@@ -17,6 +17,13 @@ export interface ClusterNode {
   usedMemory: number;
   startedAt: string;
   lastModifiedAt: string;
+  /** Extended info: only present in the node detail response, not in the list. */
+  processors?: number | null;
+  fsTotalSpace?: number | null;
+  fsFreeSpace?: number | null;
+  fsUsableSpace?: number | null;
+  jvmProperties?: Record<string, string> | null;
+  environmentProperties?: Record<string, string> | null;
 }
 
 /**

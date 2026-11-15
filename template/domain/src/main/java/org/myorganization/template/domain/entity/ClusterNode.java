@@ -64,6 +64,24 @@ public class ClusterNode {
     @Column(name = "last_modified_at", nullable = false)
     private OffsetDateTime lastModifiedAt;
 
+    @Column(name = "processors")
+    private Integer processors;
+
+    @Column(name = "fs_total_space")
+    private Long fsTotalSpace;
+
+    @Column(name = "fs_free_space")
+    private Long fsFreeSpace;
+
+    @Column(name = "fs_usable_space")
+    private Long fsUsableSpace;
+
+    @Column(name = "jvm_properties", columnDefinition = "TEXT")
+    private String jvmProperties;
+
+    @Column(name = "environment_properties", columnDefinition = "TEXT")
+    private String environmentProperties;
+
     @PrePersist
     protected void onCreate() {
         this.lastModifiedAt = OffsetDateTime.now(ZoneOffset.UTC);

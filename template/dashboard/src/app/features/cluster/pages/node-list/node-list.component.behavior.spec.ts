@@ -40,6 +40,7 @@ describe('NodeListComponent (behavior)', () => {
   let nodes: ClusterNode[];
 
   const clusterService = {
+    findNodeById: vi.fn().mockReturnValue(throwError(() => new Error('not stubbed'))),
     findAllNodes: (): Observable<ClusterNode[]> => of(nodes),
     setMaster: (..._a: unknown[]): Observable<unknown> => of(void 0),
     // Needed by the node-jobs component rendered inside the node form.
@@ -166,6 +167,45 @@ describe('NodeListComponent (behavior)', () => {
       component.selectRow(nodes[1]);
       await render();
       expect(button.disabled).toBe(false);
+    });
+  });
+
+  describe('extended info fields (with and without)', () => {
+    const rowsText = (): string[] =>
+      Array.from(el().querySelectorAll('tbody tr')).map((tr) =>
+        (tr.textContent ?? '').replace(/\s+/g, ' ').trim(),
+      );
+
+    it('should render identical rows, CSV export and filters with and without the new fields, with no console errors', async () => {
+      const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+      const exportSpy = vi.spyOn(csvExportService, 'export');
+      await create();
+      const rowsWithout = rowsText();
+      component.exportCsv();
+
+      component.allNodes.set(
+        nodes.map((n) => ({
+          ...n,
+          processors: 8,
+          fsTotalSpace: 500_000_000_000,
+          fsFreeSpace: 200_000_000_000,
+          fsUsableSpace: 150_000_000_000,
+          jvmProperties: { 'java.version': '21' },
+          environmentProperties: { PATH: '/usr/bin' },
+        })),
+      );
+      await render();
+      const rowsWith = rowsText();
+      component.exportCsv();
+
+      expect(rowsWithout.length).toBe(3);
+      expect(rowsWith).toEqual(rowsWithout);
+      expect(exportSpy.mock.calls[1]).toEqual(exportSpy.mock.calls[0]);
+
+      component.filterHostname.set('bra');
+      await render();
+      expect(component.filteredNodes().map((n) => n.hostname)).toEqual(['bravo']);
+      expect(consoleError).not.toHaveBeenCalled();
     });
   });
 

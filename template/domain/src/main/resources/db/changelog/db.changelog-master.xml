@@ -41,6 +41,7 @@
     <!-- Cluster tables (ordered by FK dependencies) -->
     <include file="migrations/v1.0.0/20250111-create-cluster-task-table.xml" relativeToChangelogFile="true"/>
     <include file="migrations/v1.0.0/20250112-create-cluster-node-table.xml" relativeToChangelogFile="true"/>
+    <include file="migrations/v1.0.0/20250112-add-cluster-node-extended-info.xml" relativeToChangelogFile="true"/>
     <include file="migrations/v1.0.0/20250113-create-cluster-block-table.xml" relativeToChangelogFile="true"/>
     <include file="migrations/v1.0.0/20250114-create-cluster-job-table.xml" relativeToChangelogFile="true"/>
 
