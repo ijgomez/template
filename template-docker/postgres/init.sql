@@ -16,14 +16,6 @@ BEGIN
 END
 $$;
 
-CREATE TABLESPACE openproject_data_tbs
-  OWNER administrador
-  LOCATION '/var/lib/postgresql/tablespaces/openproject_data';
-
-CREATE TABLESPACE openproject_index_tbs
-  OWNER administrador
-  LOCATION '/var/lib/postgresql/tablespaces/openproject_index';
-
 CREATE TABLESPACE template_data_tbs
   OWNER template_admin
   LOCATION '/var/lib/postgresql/tablespaces/template_data';
@@ -33,10 +25,6 @@ CREATE TABLESPACE template_index_tbs
   LOCATION '/var/lib/postgresql/tablespaces/template_index';
 
 CREATE EXTENSION IF NOT EXISTS pgagent;
-
-SELECT 'CREATE DATABASE openproject OWNER administrador TABLESPACE openproject_data_tbs'
-WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'openproject')\gexec
-ALTER DATABASE openproject SET default_tablespace = 'openproject_data_tbs';
 
 CREATE SCHEMA IF NOT EXISTS template AUTHORIZATION template_admin;
 ALTER SCHEMA template OWNER TO template_admin;
