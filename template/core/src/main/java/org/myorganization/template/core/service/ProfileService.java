@@ -1,5 +1,8 @@
 package org.myorganization.template.core.service;
 
+import org.myorganization.template.domain.enums.OperationType;
+import org.myorganization.template.domain.enums.AuditSection;
+import org.myorganization.template.core.audit.Auditable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -55,6 +58,7 @@ public class ProfileService extends AbstractCriteriaService<Profile, ProfileDTO,
      * @throws ValidationException      if the action list contains duplicates
      */
     @Transactional
+    @Auditable(operationType = OperationType.CREATE, section = AuditSection.SECURITY, entityName = "Profile")
     public ProfileDTO create(ProfileDTO dto) {
         validateNoDuplicateActions(dto.actionIds());
         requireGrantWhenGranting(dto.actionIds());
@@ -104,6 +108,7 @@ public class ProfileService extends AbstractCriteriaService<Profile, ProfileDTO,
      * @throws ValidationException      if the action list contains duplicates
      */
     @Transactional
+    @Auditable(operationType = OperationType.UPDATE, section = AuditSection.SECURITY, entityName = "Profile")
     public ProfileDTO update(Long id, ProfileDTO dto) {
         validateNoDuplicateActions(dto.actionIds());
 
@@ -138,6 +143,7 @@ public class ProfileService extends AbstractCriteriaService<Profile, ProfileDTO,
      * @throws EntityInUseException    if the profile has assigned users
      */
     @Transactional
+    @Auditable(operationType = OperationType.DELETE, section = AuditSection.SECURITY, entityName = "Profile")
     public void delete(Long id) {
         Profile profile = profileRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(ENTITY_NAME, id));

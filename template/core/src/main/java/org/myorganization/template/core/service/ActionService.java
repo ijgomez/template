@@ -1,5 +1,8 @@
 package org.myorganization.template.core.service;
 
+import org.myorganization.template.domain.enums.OperationType;
+import org.myorganization.template.domain.enums.AuditSection;
+import org.myorganization.template.core.audit.Auditable;
 import org.myorganization.template.core.repository.ActionRepository;
 import org.myorganization.template.domain.criteria.ActionCriteria;
 import org.myorganization.template.domain.dto.ActionDTO;
@@ -49,6 +52,7 @@ public class ActionService extends AbstractCriteriaService<Action, ActionDTO, Ac
      * @throws EntityNotFoundException if no action exists with the given id
      */
     @Transactional
+    @Auditable(operationType = OperationType.UPDATE, section = AuditSection.SECURITY, entityName = "Action")
     public ActionDTO update(Long id, ActionDTO dto) {
         Action action = actionRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Action", id));

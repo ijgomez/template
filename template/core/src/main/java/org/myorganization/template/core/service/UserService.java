@@ -132,6 +132,7 @@ public class UserService extends AbstractCriteriaService<User, UserDTO, UserCrit
      * @throws ValidationException     if the report list contains duplicates
      */
     @Transactional
+    @Auditable(operationType = OperationType.UPDATE, section = AuditSection.SECURITY, entityName = "User")
     public UserDTO update(Long id, UserDTO dto) {
         validateNoDuplicateReports(dto.reportIds());
 
@@ -174,6 +175,7 @@ public class UserService extends AbstractCriteriaService<User, UserDTO, UserCrit
      * @throws EntityNotFoundException if no user exists with the given id
      */
     @Transactional
+    @Auditable(operationType = OperationType.DELETE, section = AuditSection.SECURITY, entityName = "User")
     public void delete(Long id) {
         if (!userRepository.existsById(id)) {
             throw new EntityNotFoundException("User", id);

@@ -8,9 +8,9 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -25,10 +25,17 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Aspect
 @Component
-@RequiredArgsConstructor
 public class AuditAspect {
 
     private final AuditService auditService;
+
+    /**
+     * {@code @Lazy} breaks the cycle created by auditing {@code ParameterService}: the aspect
+     * needs {@link AuditService}, which in turn depends on {@code ParameterService}.
+     */
+    public AuditAspect(@Lazy AuditService auditService) {
+        this.auditService = auditService;
+    }
 
     /**
      * Intercepts methods annotated with {@link Auditable} after they return successfully

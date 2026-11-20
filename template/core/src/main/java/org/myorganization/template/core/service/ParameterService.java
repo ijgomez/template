@@ -1,5 +1,8 @@
 package org.myorganization.template.core.service;
 
+import org.myorganization.template.domain.enums.OperationType;
+import org.myorganization.template.domain.enums.AuditSection;
+import org.myorganization.template.core.audit.Auditable;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
@@ -47,6 +50,7 @@ public class ParameterService extends AbstractCriteriaService<Parameter, Paramet
      * @throws DuplicateEntityException if a parameter with the same code already exists
      * @throws ValidationException      if the value is incompatible with the type
      */
+    @Auditable(operationType = OperationType.CREATE, section = AuditSection.SYSTEM, entityName = "Parameter")
     public ParameterDTO create(ParameterDTO dto) {
         String normalizedCode = normalizeCode(dto.code());
         if (parameterRepository.existsByCode(normalizedCode)) {
@@ -91,6 +95,7 @@ public class ParameterService extends AbstractCriteriaService<Parameter, Paramet
      * @throws EntityNotFoundException if no parameter with the given code exists
      * @throws ValidationException     if the value is incompatible with the type
      */
+    @Auditable(operationType = OperationType.UPDATE, section = AuditSection.SYSTEM, entityName = "Parameter")
     public ParameterDTO update(String code, ParameterDTO dto) {
         Parameter entity = parameterRepository.findByCode(code)
                 .orElseThrow(() -> new EntityNotFoundException(ENTITY_NAME, code));
@@ -117,6 +122,7 @@ public class ParameterService extends AbstractCriteriaService<Parameter, Paramet
      * @param code the parameter code
      * @throws EntityNotFoundException if no parameter with the given code exists
      */
+    @Auditable(operationType = OperationType.DELETE, section = AuditSection.SYSTEM, entityName = "Parameter")
     public void delete(String code) {
         Parameter entity = parameterRepository.findByCode(code)
                 .orElseThrow(() -> new EntityNotFoundException(ENTITY_NAME, code));
