@@ -1,4 +1,5 @@
-import { test, expect, type APIRequestContext, type Request } from '@playwright/test';
+import { type APIRequestContext, type Request } from '@playwright/test';
+import { test, expect } from '../../fixtures/test';
 
 import {
   API_URL,

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../../fixtures/test';
 
 import {
   API_URL,
@@ -30,7 +30,7 @@ test.describe.serial('Reports execution', () => {
     await loginPage.loginAndWaitForDashboard(testUsers.valid.username, testUsers.valid.password);
   });
 
-  test('should display report metadata and not show results table before execution', async ({ page }) => {
+  test('TC-RPT-01 should display report metadata and not show results table before execution', async ({ page }) => {
     const reportPage = new ReportPage(page);
     await reportPage.goto(1);
 
@@ -48,7 +48,7 @@ test.describe.serial('Reports execution', () => {
     await expect(reportPage.exportXlsxButton).toHaveCount(0);
   });
 
-  test('should execute report and display results with export toolbar', async ({ page }) => {
+  test('TC-RPT-05 should execute report and display results with export toolbar', async ({ page }) => {
     const reportPage = new ReportPage(page);
     await reportPage.goto(1);
 
@@ -65,7 +65,7 @@ test.describe.serial('Reports execution', () => {
     await expect(reportPage.exportXlsxButton).toBeVisible();
   });
 
-  test('should reset results when clicking clear button', async ({ page }) => {
+  test('TC-RPT-04 should reset results when clicking clear button', async ({ page }) => {
     const reportPage = new ReportPage(page);
     await reportPage.goto(1);
 
@@ -78,7 +78,7 @@ test.describe.serial('Reports execution', () => {
     await expect(reportPage.exportCsvButton).toHaveCount(0);
   });
 
-  test('should change page size and re-execute', async ({ page }) => {
+  test('TC-RPT-06 should change page size and re-execute', async ({ page }) => {
     const reportPage = new ReportPage(page);
     await reportPage.goto(1);
 
@@ -92,7 +92,7 @@ test.describe.serial('Reports execution', () => {
     await expect(reportPage.rows.first()).toBeVisible();
   });
 
-  test('should export report to CSV and TXT formats', async ({ page }) => {
+  test('TC-RPT-07 should export report to CSV and TXT formats', async ({ page }) => {
     const reportPage = new ReportPage(page);
     await reportPage.goto(1);
 
@@ -107,7 +107,7 @@ test.describe.serial('Reports execution', () => {
     expect(txtDownload.suggestedFilename()).toMatch(/^Informe de actividad mensual_\d{4}-\d{2}-\d{2}\.txt$/);
   });
 
-  test('should navigate to report from sidebar menu', async ({ page }) => {
+  test('TC-RPT-12 should navigate to report from sidebar menu', async ({ page }) => {
     const reportPage = new ReportPage(page);
 
     // Partiendo del dashboard, abrimos el menú lateral de informes

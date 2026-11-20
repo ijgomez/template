@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../../fixtures/test';
 
 import {
   API_URL,
@@ -23,7 +23,7 @@ test.describe.serial('Profiles management', () => {
     await loginPage.loginAndWaitForDashboard(testUsers.valid.username, testUsers.valid.password);
   });
 
-  test('should list profiles', async ({ page }) => {
+  test('TC-PRO-01 should list profiles', async ({ page }) => {
     const profilesPage = new ProfilesPage(page);
     await profilesPage.goto();
 
@@ -34,7 +34,7 @@ test.describe.serial('Profiles management', () => {
     await expect(profilesPage.createButton).toBeVisible();
   });
 
-  test('should filter profiles by name', async ({ page }) => {
+  test('TC-PRO-02 should filter profiles by name', async ({ page }) => {
     const profilesPage = new ProfilesPage(page);
     await profilesPage.goto();
 
@@ -50,7 +50,7 @@ test.describe.serial('Profiles management', () => {
     await expect(profilesPage.rows.first()).toBeVisible();
   });
 
-  test('should create a new profile', async ({ page }) => {
+  test('TC-PRO-03 should create a new profile', async ({ page }) => {
     const profilesPage = new ProfilesPage(page);
     await profilesPage.goto();
 
@@ -62,7 +62,7 @@ test.describe.serial('Profiles management', () => {
     await expect(profilesPage.rows.first()).toContainText(newProfile.name);
   });
 
-  test('should edit an existing profile', async ({ page }) => {
+  test('TC-PRO-04 should edit an existing profile', async ({ page }) => {
     const profilesPage = new ProfilesPage(page);
     await profilesPage.goto();
 
@@ -79,7 +79,7 @@ test.describe.serial('Profiles management', () => {
     await expect(profilesPage.rows.first()).toContainText(updatedName);
   });
 
-  test('should delete a profile', async ({ page }) => {
+  test('TC-PRO-05 should delete a profile', async ({ page }) => {
     const profilesPage = new ProfilesPage(page);
     await profilesPage.goto();
 
@@ -94,7 +94,7 @@ test.describe.serial('Profiles management', () => {
     await expect(profilesPage.rows).toHaveCount(0);
   });
 
-  test('should export profiles to CSV', async ({ page }) => {
+  test('TC-PRO-08 should export profiles to CSV', async ({ page }) => {
     const profilesPage = new ProfilesPage(page);
     await profilesPage.goto();
 

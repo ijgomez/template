@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../../fixtures/test';
 
 import { testUsers } from '../../fixtures/test-data';
 import { LoginPage } from '../../pages/login.page';
@@ -19,7 +19,7 @@ test.describe('Cluster nodes', () => {
     await loginPage.loginAndWaitForDashboard(testUsers.valid.username, testUsers.valid.password);
   });
 
-  test('should list nodes as a controlled screen', async ({ page }) => {
+  test('TC-CLN-01 should list nodes as a controlled screen', async ({ page }) => {
     const nodesPage = new ClusterNodesPage(page);
     await nodesPage.goto();
 
@@ -34,7 +34,7 @@ test.describe('Cluster nodes', () => {
     await expect(page.getByTestId('btn-delete')).toHaveCount(0);
   });
 
-  test('should filter nodes by hostname and clear the filter', async ({ page }) => {
+  test('TC-CLN-02 should filter nodes by hostname and clear the filter', async ({ page }) => {
     const nodesPage = new ClusterNodesPage(page);
     await nodesPage.goto();
 
@@ -52,7 +52,7 @@ test.describe('Cluster nodes', () => {
     await expect(nodesPage.rows.first()).toBeVisible();
   });
 
-  test('should open a node detail and return to the list', async ({ page }) => {
+  test('TC-CLN-03 should open a node detail and return to the list', async ({ page }) => {
     const nodesPage = new ClusterNodesPage(page);
     await nodesPage.goto();
 
@@ -70,7 +70,7 @@ test.describe('Cluster nodes', () => {
     await expect(nodesPage.filterForm).toBeVisible();
   });
 
-  test('should show the extended info sections in the node detail', async ({ page }) => {
+  test('TC-CLN-08, TC-CLN-09 should show the extended info sections in the node detail', async ({ page }) => {
     // Arrange
     const nodesPage = new ClusterNodesPage(page);
     await nodesPage.goto();
@@ -121,7 +121,7 @@ test.describe('Cluster nodes', () => {
     }
   });
 
-  test('should export nodes to CSV', async ({ page }) => {
+  test('TC-CLN-06 should export nodes to CSV', async ({ page }) => {
     const nodesPage = new ClusterNodesPage(page);
     await nodesPage.goto();
 

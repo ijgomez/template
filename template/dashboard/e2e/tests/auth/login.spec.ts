@@ -1,10 +1,10 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../../fixtures/test';
 
 import { testUsers } from '../../fixtures/test-data';
 import { LoginPage } from '../../pages/login.page';
 
 test.describe('Login', () => {
-  test('should render the login form', async ({ page }) => {
+  test('TC-LOG-01 should render the login form', async ({ page }) => {
     // Arrange
     const loginPage = new LoginPage(page);
 
@@ -18,7 +18,7 @@ test.describe('Login', () => {
     await expect(loginPage.submitButton).toBeVisible();
   });
 
-  test('should require username and password', async ({ page }) => {
+  test('TC-LOG-04 should require username and password', async ({ page }) => {
     // Arrange
     const loginPage = new LoginPage(page);
     await loginPage.goto();
@@ -30,7 +30,7 @@ test.describe('Login', () => {
     await expect(page).toHaveURL(/\/login$/);
   });
 
-  test('should toggle password visibility', async ({ page }) => {
+  test('TC-LOG-05 should toggle password visibility', async ({ page }) => {
     // Arrange
     const loginPage = new LoginPage(page);
     await loginPage.goto();
@@ -46,7 +46,7 @@ test.describe('Login', () => {
     await expect(loginPage.passwordInput).toHaveAttribute('type', 'text');
   });
 
-  test('should log in with valid credentials and load the dashboard', async ({ page }) => {
+  test('TC-LOG-02 should log in with valid credentials and load the dashboard', async ({ page }) => {
     // Arrange
     const loginPage = new LoginPage(page);
     await loginPage.goto();
@@ -59,7 +59,7 @@ test.describe('Login', () => {
     await expect(page.getByTestId('dashboard-title')).toBeVisible();
   });
 
-  test('should show an error with invalid credentials', async ({ page }) => {
+  test('TC-LOG-03 should show an error with invalid credentials', async ({ page }) => {
     // Arrange
     const loginPage = new LoginPage(page);
     await loginPage.goto();

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../../fixtures/test';
 
 import { testUsers } from '../../fixtures/test-data';
 import { LoginPage } from '../../pages/login.page';
@@ -22,7 +22,7 @@ test.describe('Interfaces configuration', () => {
     await loginPage.loginAndWaitForDashboard(testUsers.valid.username, testUsers.valid.password);
   });
 
-  test('should list interface configurations as a read-only screen', async ({ page }) => {
+  test('TC-CFG-01 should list interface configurations as a read-only screen', async ({ page }) => {
     const configPage = new InterfacesConfigurationPage(page);
     await configPage.goto();
 
@@ -37,7 +37,7 @@ test.describe('Interfaces configuration', () => {
     await expect(page.getByTestId('btn-delete')).toHaveCount(0);
   });
 
-  test('should filter interface configurations by name, protocol and status', async ({ page }) => {
+  test('TC-CFG-02 should filter interface configurations by name, protocol and status', async ({ page }) => {
     const configPage = new InterfacesConfigurationPage(page);
     await configPage.goto();
 
@@ -46,7 +46,7 @@ test.describe('Interfaces configuration', () => {
     await expect(configPage.table).toBeVisible();
   });
 
-  test('should open detail view from toolbar button and return to list', async ({ page }) => {
+  test('TC-CFG-03 should open detail view from toolbar button and return to list', async ({ page }) => {
     const configPage = new InterfacesConfigurationPage(page);
     await configPage.goto();
 
@@ -66,7 +66,7 @@ test.describe('Interfaces configuration', () => {
     }
   });
 
-  test('should open detail view by double clicking a row', async ({ page }) => {
+  test('TC-CFG-03 should open detail view by double clicking a row', async ({ page }) => {
     const configPage = new InterfacesConfigurationPage(page);
     await configPage.goto();
 
@@ -81,7 +81,7 @@ test.describe('Interfaces configuration', () => {
     }
   });
 
-  test('should export interface configurations to CSV', async ({ page }) => {
+  test('TC-CFG-04 should export interface configurations to CSV', async ({ page }) => {
     const configPage = new InterfacesConfigurationPage(page);
     await configPage.goto();
 
@@ -91,7 +91,7 @@ test.describe('Interfaces configuration', () => {
     }
   });
 
-  test('should navigate to interface configuration from sidebar menu', async ({ page }) => {
+  test('TC-CFG-07 should navigate to interface configuration from sidebar menu', async ({ page }) => {
     const configPage = new InterfacesConfigurationPage(page);
 
     // Partiendo del dashboard, desplegamos la sección de Interfaces

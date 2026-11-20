@@ -534,6 +534,17 @@ Precondición del ciclo: usuario con `REPORT_READ` (y `REPORT_EXECUTE` para ejec
 | 5 | `POST /api/v1/reports/1/execute` con el token (b) / con el token (c)                            | `403 Forbidden` (falta `REPORT_EXECUTE`) / `200 OK`                                                 |
 | 6 | Menú lateral con el token (a) / con el token (b)                                                | La sección "Informes" aparece sin hijos / aparece el informe "Informe de actividad mensual"         |
 
+#### TC-RPT-12 · Navegación desde el menú lateral
+
+- **Versión:** 1.0 · **Prioridad:** Baja · **Tipo:** UI, E2E · **Traza:** RF-RPT-1, RF-RPT-6 (AC6.4) · **Independiente:** Sí · **Dependencias:** el usuario tiene asignado el informe `1`
+- **Setup:** login con `{{ADMIN_USER}}`; partir del dashboard.
+- **Teardown:** logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Desplegar el menú lateral *Informes* | Se muestra la entrada "Informe de actividad mensual" |
+| 2 | Pulsar "Informe de actividad mensual" | Navega a `/reports/1`; se muestran el título del informe y el formulario de filtros |
+
 ---
 
 ## Documentación relacionada

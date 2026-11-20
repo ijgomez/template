@@ -507,6 +507,17 @@ Precondición del ciclo: usuario con `INTERFACES_READ`; tabla `interface_log` co
 | 1 | Con el usuario sin `INTERFACES_READ`, navegar a `{{BASE_URL_UI}}/interfaces/monitor` | El guard redirige a `/forbidden`; la API responde 403 |
 | 2 | Con token de `{{ADMIN_USER}}`, `POST`/`PUT`/`DELETE` sobre `/api/v1/interfaces/**`   | `MethodNotAllowedException` / operación denegada      |
 
+#### TC-IFM-09 · Navegación desde el menú lateral
+
+- **Versión:** 1.0 · **Prioridad:** Baja · **Tipo:** UI, E2E · **Traza:** RF-IFM-1 · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`; partir del dashboard.
+- **Teardown:** logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Desplegar el menú *Interfaces* | Se muestra la entrada *Listado de Interfaces* |
+| 2 | Pulsar *Listado de Interfaces* | Navega a `/interfaces/monitor`; se muestran el título y la tabla del listado |
+
 ---
 
 ## Documentación relacionada

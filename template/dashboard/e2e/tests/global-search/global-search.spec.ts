@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../../fixtures/test';
 
 import { testUsers } from '../../fixtures/test-data';
 import { GlobalSearchPage } from '../../pages/global-search.page';
@@ -12,7 +12,7 @@ test.describe('Global search', () => {
     await loginPage.loginAndWaitForDashboard(testUsers.valid.username, testUsers.valid.password);
   });
 
-  test('should show grouped results and navigate to the detail of a result', async ({ page }) => {
+  test('TC-GSR-01 should show grouped results and navigate to the detail of a result', async ({ page }) => {
     const globalSearch = new GlobalSearchPage(page);
 
     // Act: término de >= 2 caracteres (coincide con el usuario admin)

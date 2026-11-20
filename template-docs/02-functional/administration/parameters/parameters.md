@@ -84,6 +84,14 @@ Identificadores locales de este documento: `RF-PAR-*` (requisitos funcionales) y
 - AC7.3: `DATE` exige un valor ISO 8601 válido (`yyyy-MM-dd`, `yyyy-MM-ddTHH:mm:ss` o con offset).
 - AC7.4: `STRING` acepta cualquier valor textual.
 
+#### RF-PAR-8: Exportación a CSV
+
+**Descripción:** el sistema debe permitir exportar el listado filtrado de parámetros a un fichero CSV.
+
+**Criterios de aceptación:**
+- AC8.1: La exportación incluye todos los registros que cumplen los filtros activos, no solo la página visible.
+- AC8.2: El fichero descargado sigue el patrón `parameters_YYYY-MM-DD.csv`.
+
 ### 1.2. Requisitos no funcionales
 
 - **RNF-PAR-1 (Autorización):** el acceso requiere sesión y la acción `SYSTEM_PARAMETER_READ`; las operaciones de escritura requieren `SYSTEM_PARAMETER_WRITE`.
@@ -570,6 +578,17 @@ Precondición del ciclo: usuario con `SYSTEM_PARAMETER_READ` / `SYSTEM_PARAMETER
 |---|-----------------------------------------------------------------------|-------------------------------------------------------------------|
 | 1 | Con token `SYSTEM_PARAMETER_READ` (sin write), abrir el listado en UI | Los botones `btn-create`, `btn-edit`, `btn-delete` no se muestran |
 | 2 | Con ese token, `POST /api/v1/administration/parameters`               | 403 Forbidden                                                     |
+
+#### TC-PAR-10 · Exportación CSV
+
+- **Versión:** 1.0 · **Prioridad:** Media · **Tipo:** Funcional, E2E · **Traza:** RF-PAR-8 (AC8.1–AC8.2) · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`.
+- **Teardown:** eliminar el fichero descargado; logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Navegar a `{{BASE_URL_UI}}/administration/parameters` | Listado de parámetros visible |
+| 2 | Pulsar `btn-export` | Descarga `parameters_{{TODAY}}.csv` con todos los registros que cumplen los filtros |
 
 ---
 

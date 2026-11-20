@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../../fixtures/test';
 
 import { testUsers } from '../../fixtures/test-data';
 import { LoginPage } from '../../pages/login.page';
@@ -22,7 +22,7 @@ test.describe('Interface list', () => {
     await loginPage.loginAndWaitForDashboard(testUsers.valid.username, testUsers.valid.password);
   });
 
-  test('should list interface logs as a read-only screen', async ({ page }) => {
+  test('TC-IFM-01 should list interface logs as a read-only screen', async ({ page }) => {
     const interfaceListPage = new InterfaceListPage(page);
     await interfaceListPage.goto();
 
@@ -41,7 +41,7 @@ test.describe('Interface list', () => {
     await expect(page.getByTestId('btn-delete')).toHaveCount(0);
   });
 
-  test('should filter interface logs by operation type and status', async ({ page }) => {
+  test('TC-IFM-02 should filter interface logs by operation type and status', async ({ page }) => {
     const interfaceListPage = new InterfaceListPage(page);
     await interfaceListPage.goto();
 
@@ -60,7 +60,7 @@ test.describe('Interface list', () => {
     expect(await interfaceListPage.rows.count()).toBeGreaterThan(0);
   });
 
-  test('should open detail view from toolbar button and return to list', async ({ page }) => {
+  test('TC-IFM-04 should open detail view from toolbar button and return to list', async ({ page }) => {
     const interfaceListPage = new InterfaceListPage(page);
     await interfaceListPage.goto();
 
@@ -86,7 +86,7 @@ test.describe('Interface list', () => {
     await expect(interfaceListPage.rows.first()).toBeVisible();
   });
 
-  test('should open detail view by double clicking a row', async ({ page }) => {
+  test('TC-IFM-05 should open detail view by double clicking a row', async ({ page }) => {
     const interfaceListPage = new InterfaceListPage(page);
     await interfaceListPage.goto();
 
@@ -99,7 +99,7 @@ test.describe('Interface list', () => {
     await expect(interfaceListPage.table).toBeVisible();
   });
 
-  test('should change page size and reload data', async ({ page }) => {
+  test('TC-IFM-01 should change page size and reload data', async ({ page }) => {
     const interfaceListPage = new InterfaceListPage(page);
     await interfaceListPage.goto();
 
@@ -111,7 +111,7 @@ test.describe('Interface list', () => {
     expect(count).toBeGreaterThan(0);
   });
 
-  test('should export filtered interface logs to CSV', async ({ page }) => {
+  test('TC-IFM-06 should export filtered interface logs to CSV', async ({ page }) => {
     const interfaceListPage = new InterfaceListPage(page);
     await interfaceListPage.goto();
 
@@ -121,7 +121,7 @@ test.describe('Interface list', () => {
     expect(download.suggestedFilename()).toMatch(/^interfaces_monitor_\d{4}-\d{2}-\d{2}\.csv$/);
   });
 
-  test('should navigate to interface list from sidebar menu', async ({ page }) => {
+  test('TC-IFM-09 should navigate to interface list from sidebar menu', async ({ page }) => {
     const interfaceListPage = new InterfaceListPage(page);
 
     // Partiendo del dashboard, desplegamos la sección de Interfaces

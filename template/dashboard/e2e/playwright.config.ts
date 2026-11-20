@@ -23,7 +23,8 @@ export default defineConfig({
   use: {
     baseURL: 'http://localhost:4200',
     trace: 'on-first-retry',
-    screenshot: 'only-on-failure',
+    // Captura al final de cada test (también los que pasan) para que el report HTML muestre imágenes.
+    screenshot: { mode: 'on', fullPage: true },
     video: 'retain-on-failure',
   },
   projects: [

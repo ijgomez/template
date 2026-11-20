@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../../fixtures/test';
 
 import { buildNewParameter, testUsers } from '../../fixtures/test-data';
 import { LoginPage } from '../../pages/login.page';
@@ -11,7 +11,7 @@ test.describe.serial('Parameters management', () => {
     await loginPage.loginAndWaitForDashboard(testUsers.valid.username, testUsers.valid.password);
   });
 
-  test('should list parameters', async ({ page }) => {
+  test('TC-PAR-01 should list parameters', async ({ page }) => {
     const parametersPage = new ParametersPage(page);
     await parametersPage.goto();
 
@@ -22,7 +22,7 @@ test.describe.serial('Parameters management', () => {
     await expect(parametersPage.createButton).toBeVisible();
   });
 
-  test('should filter parameters by code and type', async ({ page }) => {
+  test('TC-PAR-02 should filter parameters by code and type', async ({ page }) => {
     const parametersPage = new ParametersPage(page);
     await parametersPage.goto();
 
@@ -40,7 +40,7 @@ test.describe.serial('Parameters management', () => {
     await expect(parametersPage.rows.first()).toBeVisible();
   });
 
-  test('should create a new parameter', async ({ page }) => {
+  test('TC-PAR-03 should create a new parameter', async ({ page }) => {
     const parametersPage = new ParametersPage(page);
     await parametersPage.goto();
 
@@ -52,7 +52,7 @@ test.describe.serial('Parameters management', () => {
     await expect(parametersPage.rows.first()).toContainText(newParameter.code);
   });
 
-  test('should edit an existing parameter', async ({ page }) => {
+  test('TC-PAR-05 should edit an existing parameter', async ({ page }) => {
     const parametersPage = new ParametersPage(page);
     await parametersPage.goto();
 
@@ -69,7 +69,7 @@ test.describe.serial('Parameters management', () => {
     await expect(parametersPage.rows.first()).toContainText(updatedValue);
   });
 
-  test('should delete a parameter', async ({ page }) => {
+  test('TC-PAR-06 should delete a parameter', async ({ page }) => {
     const parametersPage = new ParametersPage(page);
     await parametersPage.goto();
 
@@ -84,7 +84,7 @@ test.describe.serial('Parameters management', () => {
     await expect(parametersPage.rows).toHaveCount(0);
   });
 
-  test('should export parameters to CSV', async ({ page }) => {
+  test('TC-PAR-10 should export parameters to CSV', async ({ page }) => {
     const parametersPage = new ParametersPage(page);
     await parametersPage.goto();
 

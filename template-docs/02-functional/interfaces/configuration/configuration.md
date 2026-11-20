@@ -481,6 +481,17 @@ Precondición del ciclo: usuario con `INTERFACES_READ`; al menos una interfaz re
 |---|-----------------------------------------------------------------------|----------------------------------------------------------------|
 | 1 | Con ese usuario, navegar a `{{BASE_URL_UI}}/interfaces/configuration` | Acceso denegado por `actionGuard` (redirección a `/forbidden`) |
 
+#### TC-CFG-07 · Navegación desde el menú lateral
+
+- **Versión:** 1.0 · **Prioridad:** Baja · **Tipo:** UI, E2E · **Traza:** RF-CFG-1 · **Independiente:** Sí · **Dependencias:** ninguna
+- **Setup:** login con `{{ADMIN_USER}}`; partir del dashboard.
+- **Teardown:** logout.
+
+| # | Acción | Resultado esperado |
+|---|--------|--------------------|
+| 1 | Desplegar la sección *Interfaces* del menú | Se muestra la entrada *Configuración* |
+| 2 | Pulsar *Configuración* | Navega a `/interfaces/configuration`; se muestran el título y la tabla |
+
 ---
 
 ## Referencias

@@ -1,5 +1,6 @@
 import { readFile } from 'node:fs/promises';
-import { test, expect, type APIRequestContext, type Page, type Response } from '@playwright/test';
+import { type APIRequestContext, type Page, type Response } from '@playwright/test';
+import { test, expect } from '../../fixtures/test';
 import { testUsers } from '../../fixtures/test-data';
 import { API_URL, apiLogin, authHeaders } from '../../fixtures/api-client';
 import { LoginPage } from '../../pages/login.page';

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../../fixtures/test';
 
 import { testUsers } from '../../fixtures/test-data';
 import { LoginPage } from '../../pages/login.page';
@@ -25,7 +25,7 @@ test.describe('Cluster blocks', () => {
     await loginPage.loginAndWaitForDashboard(testUsers.valid.username, testUsers.valid.password);
   });
 
-  test('should list cluster blocks as a read-only screen', async ({ page }) => {
+  test('TC-CLB-01 should list cluster blocks as a read-only screen', async ({ page }) => {
     const blocksPage = new ClusterBlocksPage(page);
     await blocksPage.goto();
 
@@ -39,7 +39,7 @@ test.describe('Cluster blocks', () => {
     await expect(page.getByTestId('btn-delete')).toHaveCount(0);
   });
 
-  test('should filter blocks by name and clear the filter', async ({ page }) => {
+  test('TC-CLB-02 should filter blocks by name and clear the filter', async ({ page }) => {
     const blocksPage = new ClusterBlocksPage(page);
     await blocksPage.goto();
 
@@ -60,7 +60,7 @@ test.describe('Cluster blocks', () => {
     await expect(blocksPage.rows.first()).toBeVisible();
   });
 
-  test('should show all block metrics in the list without a detail screen', async ({ page }) => {
+  test('TC-CLB-03 should show all block metrics in the list without a detail screen', async ({ page }) => {
     const blocksPage = new ClusterBlocksPage(page);
     await blocksPage.goto();
 
@@ -77,7 +77,7 @@ test.describe('Cluster blocks', () => {
     await expect(page.getByTestId('cluster-blocks-back-to-list')).toHaveCount(0);
   });
 
-  test('should export the filtered blocks to CSV', async ({ page }) => {
+  test('TC-CLB-04 should export the filtered blocks to CSV', async ({ page }) => {
     const blocksPage = new ClusterBlocksPage(page);
     await blocksPage.goto();
 
