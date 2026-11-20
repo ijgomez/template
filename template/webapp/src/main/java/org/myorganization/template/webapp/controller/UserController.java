@@ -1,5 +1,6 @@
 package org.myorganization.template.webapp.controller;
 
+import java.util.Set;
 import org.myorganization.template.core.service.UserService;
 import org.myorganization.template.domain.criteria.UserCriteria;
 import org.myorganization.template.domain.dto.UserDTO;
@@ -35,6 +36,12 @@ import jakarta.validation.groups.Default;
 @RequestMapping("/api/v1/administration/security/users")
 public class UserController {
 
+    private static final Set<String> ALLOWED_SORT_FIELDS = Set.of(
+            "id", "username", "firstName", "lastName", "email", "lastAccess", "createdAt", "lastModifiedAt",
+            "profile.name");
+    /** UI sort key that is not an entity property. */
+    private static final java.util.Map<String, String> SORT_ALIASES = java.util.Map.of("profileName", "profile.name");
+
     private final UserService userService;
 
     public UserController(UserService userService) {
@@ -64,7 +71,8 @@ public class UserController {
             Pageable pageable) {
 
         UserCriteria criteria = new UserCriteria(username, firstName, lastName, email, profileId, locked);
-        Page<UserDTO> page = userService.findByCriteria(criteria, pageable);
+        Page<UserDTO> page = userService.findByCriteria(criteria,
+                SortWhitelist.restrict(pageable, ALLOWED_SORT_FIELDS, SORT_ALIASES));
         return ResponseEntity.ok(page);
     }
 

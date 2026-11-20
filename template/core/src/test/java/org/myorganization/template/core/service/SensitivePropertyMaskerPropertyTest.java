@@ -20,7 +20,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 class SensitivePropertyMaskerPropertyTest {
 
     private static final List<String> SENSITIVE_FRAGMENTS =
-            List.of("password", "passwd", "secret", "token", "key", "credential", "jwt");
+            List.of("password", "passwd", "pass", "pwd", "secret", "token", "key", "credential", "jwt",
+                    "auth", "cookie", "private", "dsn", "salt");
 
     private static boolean containsSensitiveFragment(String key) {
         final String lower = key.toLowerCase(Locale.ROOT);

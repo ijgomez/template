@@ -1,5 +1,6 @@
 package org.myorganization.template.webapp.controller;
 
+import java.util.Set;
 import org.myorganization.template.core.service.ParameterService;
 import org.myorganization.template.domain.criteria.ParameterCriteria;
 import org.myorganization.template.domain.dto.ParameterDTO;
@@ -30,6 +31,9 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/v1/administration/parameters")
 public class ParameterController {
 
+    private static final Set<String> ALLOWED_SORT_FIELDS =
+            Set.of("id", "code", "description", "type", "createdAt", "lastModifiedAt");
+
     private final ParameterService parameterService;
 
     public ParameterController(ParameterService parameterService) {
@@ -53,7 +57,8 @@ public class ParameterController {
             Pageable pageable) {
 
         ParameterCriteria criteria = new ParameterCriteria(code, description, type);
-        Page<ParameterDTO> page = parameterService.findByCriteria(criteria, pageable);
+        Page<ParameterDTO> page = parameterService.findByCriteria(criteria,
+                SortWhitelist.restrict(pageable, ALLOWED_SORT_FIELDS));
         return ResponseEntity.ok(page);
     }
 

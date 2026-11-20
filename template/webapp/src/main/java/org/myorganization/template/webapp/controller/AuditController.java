@@ -1,5 +1,6 @@
 package org.myorganization.template.webapp.controller;
 
+import java.util.Set;
 import java.time.OffsetDateTime;
 
 import org.myorganization.template.core.service.AuditService;
@@ -26,6 +27,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/administration/audit")
 public class AuditController {
+
+    private static final Set<String> ALLOWED_SORT_FIELDS = Set.of(
+            "id", "timestamp", "username", "operationType", "section", "entityId", "entityName");
 
     private final AuditService auditService;
 
@@ -54,7 +58,8 @@ public class AuditController {
             Pageable pageable) {
 
         AuditCriteria criteria = new AuditCriteria(fromDate, toDate, username, operationType, section);
-        Page<AuditLogDTO> page = auditService.findByCriteria(criteria, pageable);
+        Page<AuditLogDTO> page = auditService.findByCriteria(criteria,
+                SortWhitelist.restrict(pageable, ALLOWED_SORT_FIELDS));
         return ResponseEntity.ok(page);
     }
 

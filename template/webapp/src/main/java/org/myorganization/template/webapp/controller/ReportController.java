@@ -1,5 +1,6 @@
 package org.myorganization.template.webapp.controller;
 
+import java.util.Set;
 import java.util.List;
 import java.util.Map;
 
@@ -36,6 +37,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/reports")
 public class ReportController {
+
+    private static final Set<String> SEARCH_SORT_FIELDS =
+            Set.of("id", "name", "description", "createdAt", "lastModifiedAt");
 
     private final ReportService reportService;
     private final UserService userService;
@@ -81,7 +85,8 @@ public class ReportController {
     public ResponseEntity<Page<ReportDTO>> search(
             @RequestParam(required = false) String name,
             Pageable pageable) {
-        Page<ReportDTO> page = reportService.findAll(name, pageable);
+        Page<ReportDTO> page = reportService.findAll(name,
+                SortWhitelist.restrict(pageable, SEARCH_SORT_FIELDS));
         return ResponseEntity.ok(page);
     }
 

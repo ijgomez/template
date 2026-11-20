@@ -1,5 +1,6 @@
 package org.myorganization.template.webapp.controller;
 
+import java.util.Set;
 import java.util.List;
 
 import org.myorganization.template.core.service.ClusterJobService;
@@ -34,6 +35,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/administration/cluster")
 public class ClusterController {
+
+    private static final Set<String> BLOCK_SORT_FIELDS = Set.of(
+            "id", "name", "startDate", "avgTime", "minTime", "maxTime", "total");
 
     private final ClusterService clusterService;
     private final ClusterJobService clusterJobService;
@@ -204,7 +208,8 @@ public class ClusterController {
             Pageable pageable) {
 
         ClusterBlockCriteria criteria = new ClusterBlockCriteria(name);
-        Page<ClusterBlockDTO> page = clusterService.findBlocksByCriteria(criteria, pageable);
+        Page<ClusterBlockDTO> page = clusterService.findBlocksByCriteria(criteria,
+                SortWhitelist.restrict(pageable, BLOCK_SORT_FIELDS));
         return ResponseEntity.ok(page);
     }
 

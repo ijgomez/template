@@ -1,5 +1,6 @@
 package org.myorganization.template.webapp.controller;
 
+import java.util.Set;
 import org.myorganization.template.core.service.ProfileService;
 import org.myorganization.template.domain.criteria.ProfileCriteria;
 import org.myorganization.template.domain.dto.ProfileDTO;
@@ -31,6 +32,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/administration/security/profiles")
 public class ProfileController {
+
+    private static final Set<String> ALLOWED_SORT_FIELDS =
+            Set.of("id", "name", "description", "createdAt", "lastModifiedAt");
 
     private final ProfileService profileService;
 
@@ -64,7 +68,8 @@ public class ProfileController {
             @RequestParam(required = false) String name,
             Pageable pageable) {
         ProfileCriteria criteria = new ProfileCriteria(name);
-        Page<ProfileDTO> page = profileService.findByCriteria(criteria, pageable);
+        Page<ProfileDTO> page = profileService.findByCriteria(criteria,
+                SortWhitelist.restrict(pageable, ALLOWED_SORT_FIELDS));
         return ResponseEntity.ok(page);
     }
 
