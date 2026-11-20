@@ -299,6 +299,7 @@ class UserServiceTest {
 
         assertThat(existingUser.isLocked()).isTrue();
         assertThat(result.locked()).isTrue();
+        verify(refreshTokenRepository).revokeAllByUser(existingUser);
     }
 
     @Test

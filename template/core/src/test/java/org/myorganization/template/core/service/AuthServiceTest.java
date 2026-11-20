@@ -301,6 +301,37 @@ class AuthServiceTest {
     }
 
     @Test
+    @DisplayName("refreshToken: locked account is rejected and all its tokens are revoked")
+    void refreshToken_lockedUser_throwsAndRevokesAllUserTokens() {
+        User user = new User();
+        user.setUsername("admin");
+        user.setLocked(true);
+        RefreshToken storedToken = new RefreshToken();
+        storedToken.setToken("valid-refresh");
+        storedToken.setUser(user);
+        storedToken.setRevoked(false);
+        storedToken.setExpiresAt(OffsetDateTime.now(ZoneOffset.UTC).plusDays(7));
+        when(refreshTokenRepository.findByToken("valid-refresh")).thenReturn(Optional.of(storedToken));
+        when(userRepository.findByUsernameWithProfileActions("admin")).thenReturn(Optional.of(user));
+
+        assertThatThrownBy(() -> authService.refreshToken("valid-refresh"))
+                .isInstanceOf(BadCredentialsException.class)
+                .hasMessage("Invalid or expired refresh token");
+
+        verify(refreshTokenRepository).revokeAllByUser(user);
+        verify(tokenProvider, never()).generateAccessToken(any(), any(), any());
+    }
+
+    @Test
+    @DisplayName("refreshToken: failure paths commit their revocations (noRollbackFor BadCredentialsException)")
+    void refreshToken_declaresNoRollbackForBadCredentials() throws NoSuchMethodException {
+        org.springframework.transaction.annotation.Transactional tx = AuthService.class
+                .getMethod("refreshToken", String.class)
+                .getAnnotation(org.springframework.transaction.annotation.Transactional.class);
+        assertThat(tx.noRollbackFor()).contains(BadCredentialsException.class);
+    }
+
+    @Test
     @DisplayName("refreshToken: rotation generates new opaque UUID token")
     void refreshToken_rotation_generatesNewOpaqueToken() {
         Profile profile = new Profile();

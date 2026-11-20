@@ -114,8 +114,12 @@ public class AuthService {
      *         refresh token
      * @throws BadCredentialsException if the refresh token is invalid, expired or
      *                                 revoked
+     * <p>
+     * {@code noRollbackFor}: the revocations done before rejecting a request (reuse of a
+     * revoked token, locked account) must be committed even though the call ends with an
+     * exception, otherwise they would be rolled back.
      */
-    @Transactional
+    @Transactional(noRollbackFor = BadCredentialsException.class)
     public TokenResponse refreshToken(String refreshTokenValue) {
         RefreshToken storedToken = refreshTokenRepository.findByToken(refreshTokenValue)
                 .orElseThrow(() -> new BadCredentialsException("Invalid or expired refresh token"));
@@ -136,6 +140,13 @@ public class AuthService {
         // Generate new token pair — reload user with full profile/actions graph
         User user = userRepository.findByUsernameWithProfileActions(storedToken.getUser().getUsername())
                 .orElseThrow(() -> new BadCredentialsException("Invalid or expired refresh token"));
+
+        // A locked account (administrator block or temporary lock) cannot renew its session:
+        // revoke every refresh token of the user and reject the request.
+        if (user.isCurrentlyLocked()) {
+            refreshTokenRepository.revokeAllByUser(user);
+            throw new BadCredentialsException("Invalid or expired refresh token");
+        }
 
         // Update lastAccess on each successful token refresh
         user.setLastAccess(OffsetDateTime.now(ZoneOffset.UTC));

@@ -144,6 +144,10 @@ public class UserService extends AbstractCriteriaService<User, UserDTO, UserCrit
         user.setLastName(dto.lastName());
         user.setEmail(dto.email());
         applyLockState(user, dto.locked());
+        if (Boolean.TRUE.equals(dto.locked())) {
+            // Blocking must end existing sessions: refresh tokens would otherwise keep renewing access.
+            refreshTokenRepository.revokeAllByUser(user);
+        }
 
         if (dto.profileId() != null) {
             Profile profile = profileRepository.findById(dto.profileId())
