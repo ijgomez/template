@@ -8,6 +8,8 @@ RUN openssl req -x509 -newkey rsa:2048 -nodes -days 365 \
        -out /usr/local/apache2/conf/server.crt \
     && chmod 600 /usr/local/apache2/conf/server.key
 
+# Puerto HTTPS público usado en la redirección HTTP -> HTTPS (Compose lo sobrescribe)
+ENV APACHE_PUBLIC_HTTPS_PORT=443
 COPY --chmod=644 httpd.conf /usr/local/apache2/conf/httpd.conf
 
 EXPOSE 80 443

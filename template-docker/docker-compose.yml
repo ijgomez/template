@@ -85,6 +85,9 @@ services:
     ports:
       - "${APACHE_HTTP_PORT:-8000}:80"
       - "${APACHE_HTTPS_PORT:-4430}:443"
+    environment:
+      # Puerto HTTPS del host al que Apache redirige las peticiones HTTP
+      APACHE_PUBLIC_HTTPS_PORT: ${APACHE_HTTPS_PORT:-4430}
 
   mail:
     build:
