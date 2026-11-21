@@ -37,7 +37,9 @@ jwt:
 # Refresh token cookie configuration (externalized)
 auth:
   cookie:
-    name: ${AUTH_COOKIE_NAME:__Host-refresh-token}
+    # Prefijo __Secure- (exige Secure, admite Path restringido). __Host- no es válido aquí:
+    # obliga a Path=/ y el navegador descartaría la cookie con el path de la API de auth.
+    name: ${AUTH_COOKIE_NAME:__Secure-refresh-token}
     path: ${AUTH_COOKIE_PATH:/template/api/v1/auth}
     max-age-seconds: ${AUTH_COOKIE_MAX_AGE:604800}
     secure: ${AUTH_COOKIE_SECURE:true}

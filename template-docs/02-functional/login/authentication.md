@@ -98,7 +98,7 @@ El refresh token es un valor opaco (UUID aleatorio) almacenado en base de datos 
 | Duración access token        | `jwt.access-token-expiration`    | 900000 (15 min)         |
 | Duración refresh token       | `jwt.refresh-token-expiration`   | 604800000 (7 días)      |
 | Secreto JWT                  | `jwt.secret`                     | (requerido en prod)     |
-| Nombre de cookie             | `auth.cookie.name`               | `__Host-refresh-token`  |
+| Nombre de cookie             | `auth.cookie.name`               | `__Secure-refresh-token` |
 | Path de cookie               | `auth.cookie.path`               | `/template/api/v1/auth` |
 | Max-Age de cookie (segundos) | `auth.cookie.max-age-seconds`    | 604800 (7 días)         |
 | Cookie Secure                | `auth.cookie.secure`             | true                    |

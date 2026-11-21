@@ -190,7 +190,7 @@ Variables (propiedades del sistema o del entorno de WildFly):
 | `JWT_SECRET`                   | Clave para firmar tokens JWT (mín. 32 caracteres). Debe ser la misma en todos los nodos del cluster | Sí             |
 | `JWT_ACCESS_TOKEN_EXPIRATION`  | Expiración del access token (ms)                     | No (900000)    |
 | `JWT_REFRESH_TOKEN_EXPIRATION` | Expiración del refresh token (ms)                    | No (604800000) |
-| `AUTH_COOKIE_NAME`             | Nombre de la cookie de refresh                       | No (`__Host-refresh-token`) |
+| `AUTH_COOKIE_NAME`             | Nombre de la cookie de refresh                       | No (`__Secure-refresh-token`) |
 | `AUTH_COOKIE_PATH`             | Ruta de la cookie de refresh                         | No (`/template/api/v1/auth`) |
 | `AUTH_COOKIE_MAX_AGE`          | Duración de la cookie (s)                            | No (604800)    |
 | `AUTH_COOKIE_SECURE`           | Cookie sólo por HTTPS                                | No (`true`)    |
@@ -203,7 +203,7 @@ Notas:
 - Las variables `DB_URL`, `DB_USERNAME` y `DB_PASSWORD` ya no las lee el WAR. Siguen usándose en los scripts `generate-sql` de `template-dist`.
 - `CORS_ALLOWED_ORIGINS` y `SERVER_PORT` no se definen en `dist`: el frontend va dentro del WAR (mismo origen) y el puerto lo fija WildFly. Se aplican los valores de `application.yml`.
 - El logging se configura en el subsistema `logging` de WildFly, no en el YAML. Con `LoggingSystem=none` Spring Boot ignora `logging.level.*`.
-- Con `AUTH_COOKIE_SECURE=true` hace falta HTTPS. Por HTTP plano hay que definir `AUTH_COOKIE_SECURE=false` y un `AUTH_COOKIE_NAME` sin el prefijo `__Host-`.
+- Con `AUTH_COOKIE_SECURE=true` hace falta HTTPS. Por HTTP plano hay que definir `AUTH_COOKIE_SECURE=false` y un `AUTH_COOKIE_NAME` sin el prefijo `__Secure-`. El prefijo `__Host-` no se puede usar con el path por defecto (`/template/api/v1/auth`), porque exige `Path=/`.
 
 ### Esquema de base de datos en `dist`
 
