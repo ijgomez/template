@@ -18,7 +18,7 @@ Versiones principales sobre las que se construye la plataforma. Esta tabla es la
 | Spring Boot | 4.1.1   |
 | PostgreSQL  | 18      |
 | Angular     | 22      |
-| Bootstrap   | 5.3.8   |
+| Bootstrap   | 5.3.9   |
 
 ---
 
