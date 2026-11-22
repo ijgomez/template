@@ -86,6 +86,15 @@
   --tp-duration-medium: 200ms; /* popovers, dialogs */
   --tp-duration-slow: 250ms;   /* collapse / expand */
   --tp-duration-drawer: 300ms; /* off-canvas drawer */
+  // Z-index scale (same values as Bootstrap layers)
+  --tp-z-raised: 1;           /* resize handles */
+  --tp-z-sticky: 1030;        /* sticky header */
+  --tp-z-backdrop: 1035;      /* sidebar backdrop */
+  --tp-z-sidebar: 1040;       /* off-canvas sidebar */
+  --tp-z-overlay: 1050;       /* dropdowns, popovers, banners */
+  --tp-z-toast: 1080;         /* notifications */
+  --tp-z-dialog-backdrop: 1090; /* error dialog backdrop */
+  --tp-z-dialog: 1091;        /* error dialog */
 }
 
 // Dark theme tokens

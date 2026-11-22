@@ -44,7 +44,7 @@ input {
   width: 24rem;
   max-height: 60vh;
   overflow-y: auto;
-  z-index: 1050;
+  z-index: var(--tp-z-overlay);
 }
 
 .global-search-option {

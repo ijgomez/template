@@ -1,5 +1,5 @@
 .toast-container {
-  z-index: 1080;
+  z-index: var(--tp-z-toast);
 }
 
 .toast {
