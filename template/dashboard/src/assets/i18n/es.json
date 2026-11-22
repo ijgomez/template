@@ -2,6 +2,12 @@
   "app": {
     "title": "Template Dashboard"
   },
+  "data-list": {
+    "empty": {
+      "none": "No hay elementos",
+      "filtered": "Ningún elemento coincide con el filtro"
+    }
+  },
   "layout": {
     "skipToContent": "Saltar al contenido principal",
     "sidebar": {
@@ -11,7 +17,7 @@
       "menu": "Menú principal"
     },
     "header": {
-      "search": "Buscar...",
+      "search": "Buscar…",
       "notifications": "Notificaciones",
       "noNotifications": "No hay notificaciones"
     },
@@ -22,7 +28,7 @@
     }
   },
   "globalSearch": {
-    "placeholder": "Buscar...",
+    "placeholder": "Buscar…",
     "groups": {
       "user": "Usuarios",
       "parameter": "Parámetros",
@@ -30,7 +36,7 @@
     },
     "seeAll": "Ver todos ({{count}})",
     "empty": "Sin resultados para «{{term}}»",
-    "loading": "Buscando...",
+    "loading": "Buscando…",
     "groupError": "No se pudo buscar en {{group}}"
   },
   "pwa": {
@@ -80,9 +86,9 @@
     "title": "Template App",
     "subtitle": "Introduce tus credenciales para acceder",
     "username": "Usuario",
-    "username.placeholder": "Introduce tu usuario",
+    "username.placeholder": "p. ej. jperez…",
     "password": "Contraseña",
-    "password.placeholder": "Introduce tu contraseña",
+    "password.placeholder": "Introduce tu contraseña…",
     "password.show": "Mostrar contraseña",
     "password.hide": "Ocultar contraseña",
     "remember": "Recordarme",
@@ -91,27 +97,27 @@
     "locked": "Cuenta bloqueada temporalmente por demasiados intentos fallidos. Inténtalo de nuevo más tarde."
   },
   "notification": {
-    "progress": "Procesando...",
+    "progress": "Procesando…",
     "success": "Operación completada correctamente",
     "error": "Se ha producido un error",
-    "save.progress": "Guardando...",
+    "save.progress": "Guardando…",
     "save.success": "Guardado correctamente",
     "save.error": "Error al guardar",
-    "create.progress": "Creando registro...",
+    "create.progress": "Creando registro…",
     "create.success": "Registro creado correctamente",
     "create.error": "Error al crear el registro",
-    "update.progress": "Actualizando registro...",
+    "update.progress": "Actualizando registro…",
     "update.success": "Registro actualizado correctamente",
     "update.error": "Error al actualizar el registro",
-    "delete.progress": "Eliminando registro...",
+    "delete.progress": "Eliminando registro…",
     "delete.success": "Registro eliminado correctamente",
     "delete.error": "Error al eliminar el registro",
-    "export.progress": "Exportando datos...",
+    "export.progress": "Exportando datos…",
     "export.success": "Exportación completada correctamente",
     "export.error": "Error al exportar los datos",
     "export.empty": "No hay datos que exportar",
-    "pagination.progress": "Cargando datos...",
-    "filter.progress": "Aplicando filtros..."
+    "pagination.progress": "Cargando datos…",
+    "filter.progress": "Aplicando filtros…"
   },
   "validation": {
     "required": "Este campo es obligatorio",
@@ -148,7 +154,7 @@
     "load.error": "Error al cargar el perfil"
   },
   "common": {
-    "loading": "Cargando...",
+    "loading": "Cargando…",
     "noData": "No hay datos disponibles",
     "actions": "Acciones",
     "detail": "Detalle",
@@ -199,16 +205,16 @@
     "form": {
       "createTitle": "Crear Usuario",
       "editTitle": "Editar Usuario",
-      "selectProfile": "Seleccione un perfil...",
+      "selectProfile": "Seleccione un perfil…",
       "sectionGeneral": "Datos generales",
       "sectionReports": "Informes asignados",
       "lockedHint": "Bloquea el acceso de la cuenta de forma indefinida hasta que se desmarque.",
-      "filterReports": "Filtrar...",
+      "filterReports": "Filtrar…",
       "addReport": "Añadir informe",
       "removeReport": "Eliminar informe",
       "modal": {
         "title": "Seleccionar informes",
-        "search": "Buscar informe...",
+        "search": "Buscar informe…",
         "selectAll": "Seleccionar todos",
         "selectReport": "Seleccionar informe",
         "selected": "seleccionados",
@@ -252,7 +258,7 @@
       "assignActions": "Asignar Acciones",
       "sectionGeneral": "Datos generales",
       "sectionActions": "Acciones asignadas",
-      "filterActions": "Filtrar...",
+      "filterActions": "Filtrar…",
       "addAction": "Añadir acción",
       "removeAction": "Eliminar acción"
     },
@@ -401,6 +407,9 @@
       "filters": {
         "allProtocols": "Todos",
         "allStatuses": "Todos",
+        "statusActive": "Activo",
+        "statusInactive": "Inactivo",
+        "statusError": "Error",
         "clear": "Limpiar"
       },
       "detail": {
@@ -552,7 +561,7 @@
   "selected-reports": {
     "count": "Total",
     "filter": {
-      "placeholder": "Filtrar...",
+      "placeholder": "Filtrar…",
       "aria": "Filtrar informes seleccionados"
     },
     "add": {
@@ -561,14 +570,14 @@
     "remove": {
       "aria": "Eliminar informe"
     },
-    "loading": "Cargando informes...",
+    "loading": "Cargando informes…",
     "empty": {
       "filtered": "No se encontraron informes con ese filtro",
       "none": "No hay informes asignados"
     },
     "modal": {
       "title": "Seleccionar informes",
-      "search": "Buscar informe...",
+      "search": "Buscar informe…",
       "selectAll": "Seleccionar todos",
       "selectReport": "Seleccionar informe",
       "columnName": "Nombre",
@@ -583,7 +592,7 @@
   "action-selected": {
     "count": "Total",
     "filter": {
-      "placeholder": "Filtrar...",
+      "placeholder": "Filtrar…",
       "aria": "Filtrar acciones seleccionadas"
     },
     "add": {
@@ -592,14 +601,14 @@
     "remove": {
       "aria": "Eliminar acción"
     },
-    "loading": "Cargando acciones...",
+    "loading": "Cargando acciones…",
     "empty": {
       "none": "No hay acciones asignadas",
       "filtered": "No se encontraron acciones"
     },
     "modal": {
       "title": "Seleccionar acciones",
-      "search": "Buscar por código o nombre...",
+      "search": "Buscar por código o nombre…",
       "selectAll": "Seleccionar todos",
       "selectAction": "Seleccionar acción",
       "columnCode": "Código",

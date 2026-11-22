@@ -12,7 +12,7 @@
   <form class="row g-3 align-items-end" (ngSubmit)="applyFilters()" aria-label="Filtros de búsqueda de nodos" data-testid="nodes-filter-form">
     <div class="col-md-3">
       <label for="filterHostname" class="form-label">{{ 'cluster.nodes.fields.hostname' | translate }}</label>
-      <input id="filterHostname" type="text" class="form-control form-control-sm"
+      <input autocomplete="off" id="filterHostname" type="text" class="form-control form-control-sm"
              [ngModel]="filterHostname()" (ngModelChange)="filterHostname.set($event)" name="filterHostname"
              [placeholder]="'cluster.nodes.fields.hostname' | translate" data-testid="filter-hostname">
     </div>
@@ -96,7 +96,7 @@
 
     <ng-template tpColumn="master" let-node>
       @if (node.master) {
-        <span class="badge bg-primary">MASTER</span>
+        <span class="badge bg-primary">{{ 'cluster.nodes.fields.master' | translate }}</span>
       } @else {
         <span class="text-muted">&mdash;</span>
       }
@@ -111,11 +111,11 @@
     </ng-template>
 
     <ng-template tpColumn="usedMemoryGb" let-node>
-      {{ node.usedMemory / 1073741824 | number:'1.2-2' }} GB
+      {{ node.usedMemory / 1073741824 | number:'1.2-2' }}&nbsp;GB
     </ng-template>
 
     <ng-template tpColumn="totalMemoryGb" let-node>
-      {{ node.totalMemory / 1073741824 | number:'1.2-2' }} GB
+      {{ node.totalMemory / 1073741824 | number:'1.2-2' }}&nbsp;GB
     </ng-template>
 
     <ng-template tpColumn="freeMemoryPercent" let-node>

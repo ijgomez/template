@@ -11,7 +11,7 @@
   <form class="row g-3 align-items-end" (ngSubmit)="applyFilters()" aria-label="Filtros de búsqueda de bloqueos" data-testid="blocks-filter-form">
     <div class="col-md-4">
       <label for="filterName" class="form-label">{{ 'cluster.blocks.fields.name' | translate }}</label>
-      <input id="filterName" type="text" class="form-control form-control-sm"
+      <input autocomplete="off" id="filterName" type="text" class="form-control form-control-sm"
              [ngModel]="filterName()" (ngModelChange)="filterName.set($event)" name="filterName"
              [placeholder]="'cluster.blocks.fields.name' | translate" data-testid="cluster-blocks-filter-name">
     </div>

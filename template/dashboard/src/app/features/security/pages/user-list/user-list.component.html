@@ -15,7 +15,7 @@
           data-testid="users-filter-form">
       <div class="col-md-3">
         <label for="filterUsername" class="form-label">{{ 'users.fields.username' | translate }}</label>
-        <input id="filterUsername"
+        <input autocomplete="off" id="filterUsername"
                type="text"
                class="form-control form-control-sm"
                [ngModel]="filterUsername()"
@@ -26,7 +26,7 @@
       </div>
       <div class="col-md-3">
         <label for="filterFirstName" class="form-label">{{ 'users.fields.firstName' | translate }}</label>
-        <input id="filterFirstName"
+        <input autocomplete="off" id="filterFirstName"
                type="text"
                class="form-control form-control-sm"
                [ngModel]="filterFirstName()"

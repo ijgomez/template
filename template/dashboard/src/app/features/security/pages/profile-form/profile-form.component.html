@@ -28,7 +28,7 @@
 </div>
 
 <div class="tp-filter-bar">
-  <form id="profileForm" (ngSubmit)="onSubmit()" #profileForm="ngForm" novalidate data-testid="profile-form">
+  <form id="profileForm" (ngSubmit)="onSubmit()" #profileForm="ngForm" tpUnsavedChanges novalidate data-testid="profile-form">
     <!-- Error summary (shown after a failed submit) -->
     @if (submitAttempted() && formErrors().length > 0) {
       <div #errorSummary
@@ -61,7 +61,7 @@
           {{ 'profiles.fields.name' | translate }}
           @if (!isReadonly()) { <span class="text-danger">*</span> }
         </label>
-        <input id="profileName"
+        <input autocomplete="off" id="profileName"
                type="text"
                class="form-control form-control-sm"
                [ngClass]="{ 'is-invalid': (profileName.invalid && (profileName.dirty || profileName.touched)) || nameExistsError() }"
@@ -90,7 +90,7 @@
         <label for="profileDescription" class="form-label form-label-sm mb-1">
           {{ 'profiles.fields.description' | translate }}
         </label>
-        <input id="profileDescription"
+        <input autocomplete="off" id="profileDescription"
                type="text"
                class="form-control form-control-sm"
                [ngModel]="formProfile().description ?? ''"
@@ -113,7 +113,7 @@
           <label for="profile-created-at" class="form-label form-label-sm mb-1">
             {{ 'profiles.fields.createdAt' | translate }}
           </label>
-          <input id="profile-created-at"
+          <input autocomplete="off" id="profile-created-at"
                  type="text"
                  class="form-control form-control-sm"
                  [value]="(formProfile().createdAt | localDate) ?? ''"
@@ -126,7 +126,7 @@
           <label for="profile-last-modified-at" class="form-label form-label-sm mb-1">
             {{ 'profiles.fields.lastModifiedAt' | translate }}
           </label>
-          <input id="profile-last-modified-at"
+          <input autocomplete="off" id="profile-last-modified-at"
                  type="text"
                  class="form-control form-control-sm"
                  [value]="(formProfile().lastModifiedAt | localDate) ?? ''"

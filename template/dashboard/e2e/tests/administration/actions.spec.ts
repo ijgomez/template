@@ -40,6 +40,24 @@ async function openActionsPage(page: import('@playwright/test').Page): Promise<A
   return actionsPage;
 }
 
+/**
+ * Espera (con auto-retry) a que la tabla muestre al menos una fila y todas contengan
+ * los textos indicados, y devuelve el texto de esas filas.
+ * Aplicar un filtro lanza dos peticiones con los mismos parámetros (botón Buscar y
+ * debounce), así que una lectura puntual con `count()` puede caer en el repintado
+ * intermedio (spinner, sin filas) o en las filas previas al filtro.
+ */
+async function settledRowTexts(actionsPage: ActionsPage, ...needles: string[]): Promise<string[]> {
+  let texts: string[] = [];
+  await expect
+    .poll(async () => {
+      texts = await actionsPage.rows.allTextContents();
+      return texts.length > 0 && texts.every((text) => needles.every((needle) => text.includes(needle)));
+    })
+    .toBe(true);
+  return texts;
+}
+
 test.describe.serial('Actions management', () => {
   test.beforeEach(async ({ page }) => {
     const loginPage = new LoginPage(page);
@@ -86,31 +104,22 @@ test.describe.serial('Actions management', () => {
     await actionsPage.applyCodeFilter('USER');
 
     // Assert: todas las filas visibles contienen 'USER' en el texto
-    const countAfterCode = await actionsPage.rows.count();
-    expect(countAfterCode).toBeGreaterThan(0);
+    const countAfterCode = (await settledRowTexts(actionsPage, 'USER')).length;
     expect(countAfterCode).toBeLessThanOrEqual(totalCount);
-    for (let i = 0; i < countAfterCode; i++) {
-      await expect(actionsPage.rows.nth(i)).toContainText('USER');
-    }
 
     // Act: añadir filtro de tipo READ (AC2.2)
     await actionsPage.applyTypeFilter('READ');
 
     // Assert: filas visibles contienen 'USER' y 'READ'; el total es ≤ filtro anterior
-    const countAfterType = await actionsPage.rows.count();
-    expect(countAfterType).toBeGreaterThan(0);
+    const countAfterType = (await settledRowTexts(actionsPage, 'USER', 'READ')).length;
     expect(countAfterType).toBeLessThanOrEqual(countAfterCode);
-    for (let i = 0; i < countAfterType; i++) {
-      await expect(actionsPage.rows.nth(i)).toContainText('USER');
-      await expect(actionsPage.rows.nth(i)).toContainText('READ');
-    }
 
     // Act: limpiar filtros (AC2.4)
     await actionsPage.clearFilters();
 
     // Assert: filtros vacíos y listado completo restaurado
     await expect(actionsPage.filterCode).toHaveValue('');
-    expect(await actionsPage.rows.count()).toBeGreaterThan(countAfterType);
+    await expect.poll(() => actionsPage.rows.count()).toBeGreaterThan(countAfterType);
   });
 
   test('TC-ACC-03 should open read-only detail via double click and via btn-detail', async ({ page }) => {

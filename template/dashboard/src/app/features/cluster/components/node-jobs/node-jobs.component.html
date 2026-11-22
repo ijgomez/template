@@ -103,7 +103,7 @@
           </div>
           <div class="mb-3">
             <label for="jobPriority" class="form-label">{{ 'cluster.nodes.jobs.fields.priority' | translate }}</label>
-            <input id="jobPriority" type="number" min="0" required class="form-control"
+            <input autocomplete="off" id="jobPriority" type="number" inputmode="numeric" min="0" required class="form-control"
                    [class.is-invalid]="isPriorityInvalid()"
                    [ngModel]="formData().priority"
                    (ngModelChange)="updateField('priority', $event)"

@@ -18,7 +18,7 @@
 
     <div class="tp-data-list__actions">
       @if (filterable) {
-        <input
+        <input autocomplete="off"
           type="text"
           class="form-control form-control-sm tp-data-list__filter"
           [placeholder]="filterPlaceholder || ('data-list.filter.placeholder' | translate)"
@@ -59,9 +59,9 @@
       @if (data.length === 0) {
         <div class="tp-data-list__empty" [attr.data-testid]="testId + '-empty'">
           @if (filterText) {
-            <span class="text-muted">{{ 'data-list.empty.filtered' | translate }}</span>
+            <span class="text-muted">{{ emptyFilteredText | translate }}</span>
           } @else {
-            <span class="text-muted">{{ 'data-list.empty.none' | translate }}</span>
+            <span class="text-muted">{{ emptyText | translate }}</span>
           }
         </div>
       } @else {

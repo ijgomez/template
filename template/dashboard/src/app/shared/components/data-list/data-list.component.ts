@@ -87,6 +87,12 @@ export class TpDataListComponent<T> {
   /** Current filter text (two-way bindable). */
   @Input() filterText = '';
 
+  /** i18n key shown when the list has no items. */
+  @Input() emptyText = 'data-list.empty.none';
+
+  /** i18n key shown when the filter matches no items. */
+  @Input() emptyFilteredText = 'data-list.empty.filtered';
+
   /** Whether the add button is visible. */
   @Input() showAdd = false;
 

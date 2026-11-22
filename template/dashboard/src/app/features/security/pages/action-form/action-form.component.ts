@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
+import { UnsavedChangesDirective } from '../../../../shared/directives/unsaved-changes.directive';
 import { TpEditButtonComponent } from '../../../../shared/components/edit-button';
 import { Action } from '../../models/action.model';
 
@@ -16,7 +17,7 @@ type FormMode = 'edit' | 'view';
 @Component({
   selector: 'app-action-form',
   standalone: true,
-  imports: [FormsModule, TranslatePipe, LocalDatePipe, TpEditButtonComponent],
+  imports: [UnsavedChangesDirective, FormsModule, TranslatePipe, LocalDatePipe, TpEditButtonComponent],
   templateUrl: './action-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

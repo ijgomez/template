@@ -129,10 +129,10 @@ describe('NodeListComponent (behavior)', () => {
       await create();
 
       const text = el().textContent ?? '';
-      expect(text).toContain('MASTER');
+      expect(text).toContain('cluster.nodes.fields.master');
       expect(text).toContain('alpha');
-      expect(text).toContain('0.50 GB');
-      expect(text).toContain('1.00 GB');
+      expect(text).toContain('0.50\u00a0GB');
+      expect(text).toContain('1.00\u00a0GB');
       expect(text).toContain('50.0%');
       expect(text).toContain('0.0%');
     });

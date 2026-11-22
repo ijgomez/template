@@ -30,7 +30,9 @@
             [attr.aria-invalid]="usernameControl.invalid && usernameControl.touched"
             aria-describedby="username-error"
             data-testid="input-username"
-            autocomplete="username" />
+            autocomplete="username"
+            autocapitalize="off"
+            spellcheck="false" />
         </div>
         @if (usernameControl.invalid && usernameControl.touched) {
           <div id="username-error" class="text-danger small mt-1" role="alert">

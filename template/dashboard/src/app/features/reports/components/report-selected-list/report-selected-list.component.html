@@ -16,6 +16,8 @@
   [showPagination]="false"
   [ariaLabel]="ariaLabel || ('selected-reports.list.aria' | translate)"
   [testId]="testId"
+  emptyText="selected-reports.empty.none"
+  emptyFilteredText="selected-reports.empty.filtered"
   (filterChange)="onFilterChange($event)"
   (add)="openModal()"
   (remove)="removeReport($event)">
@@ -47,7 +49,7 @@
           <div class="p-3 border-bottom">
             <div class="input-group input-group-sm">
               <span class="input-group-text"><i class="bi bi-search" aria-hidden="true"></i></span>
-              <input type="text" class="form-control"
+              <input autocomplete="off" type="text" class="form-control"
                      [placeholder]="'selected-reports.modal.search' | translate"
                      [attr.aria-label]="'selected-reports.modal.search' | translate"
                      [ngModel]="modalSearch()"
@@ -117,27 +119,27 @@
               <nav [attr.aria-label]="'selected-reports.modal.paginationLabel' | translate">
                 <ul class="pagination pagination-sm mb-0">
                   <li class="page-item" [class.disabled]="modalPage() === 0">
-                    <a class="page-link" href="javascript:void(0)"
+                    <button type="button" class="page-link"
                        (click)="modalGoToPage(modalPage() - 1)"
                        [attr.aria-label]="'common.pagination.previous' | translate">
                       <i class="bi bi-chevron-left" aria-hidden="true"></i>
-                    </a>
+                    </button>
                   </li>
                   @for (p of modalVisiblePages(); track p) {
                     <li class="page-item"
                         [class.active]="p === modalPage()"
                         [attr.aria-current]="p === modalPage() ? 'page' : null">
-                      <a class="page-link" href="javascript:void(0)" (click)="modalGoToPage(p)">
+                      <button type="button" class="page-link" (click)="modalGoToPage(p)">
                         {{ p + 1 }}
-                      </a>
+                      </button>
                     </li>
                   }
                   <li class="page-item" [class.disabled]="modalPage() >= modalTotalPages() - 1">
-                    <a class="page-link" href="javascript:void(0)"
+                    <button type="button" class="page-link"
                        (click)="modalGoToPage(modalPage() + 1)"
                        [attr.aria-label]="'common.pagination.next' | translate">
                       <i class="bi bi-chevron-right" aria-hidden="true"></i>
-                    </a>
+                    </button>
                   </li>
                 </ul>
               </nav>

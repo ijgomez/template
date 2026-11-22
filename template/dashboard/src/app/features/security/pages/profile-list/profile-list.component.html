@@ -12,7 +12,7 @@
     <form class="row g-3 align-items-end" (ngSubmit)="applyFilter()" aria-label="Filtros de búsqueda de perfiles" data-testid="profiles-filter-form">
       <div class="col-md-4">
         <label for="filterName" class="form-label">{{ 'profiles.fields.name' | translate }}</label>
-        <input id="filterName" type="text" class="form-control form-control-sm"
+        <input autocomplete="off" id="filterName" type="text" class="form-control form-control-sm"
                [ngModel]="filterName()" (ngModelChange)="filterName.set($event)" name="filterName"
                [placeholder]="'profiles.fields.name' | translate" data-testid="filter-name">
       </div>

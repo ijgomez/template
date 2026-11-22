@@ -25,7 +25,7 @@
 </div>
 
 <div class="tp-filter-bar">
-  <form id="actionForm" (ngSubmit)="onSubmit()" #actionForm="ngForm" novalidate data-testid="action-form">
+  <form id="actionForm" (ngSubmit)="onSubmit()" #actionForm="ngForm" tpUnsavedChanges novalidate data-testid="action-form">
     <!-- Error summary (shown after a failed submit) -->
     @if (submitAttempted() && formErrors().length > 0) {
       <div #errorSummary
@@ -56,7 +56,7 @@
         <label for="actionCode" class="form-label form-label-sm mb-1">
           {{ 'actions.fields.code' | translate }}
         </label>
-        <input id="actionCode"
+        <input autocomplete="off" id="actionCode"
                type="text"
                class="form-control form-control-sm"
                [value]="action().code"
@@ -70,7 +70,7 @@
           {{ 'actions.fields.name' | translate }}
           @if (!isReadonly()) { <span class="text-danger">*</span> }
         </label>
-        <input id="actionName"
+        <input autocomplete="off" id="actionName"
                type="text"
                class="form-control form-control-sm"
                [class.is-invalid]="actionName.invalid && (actionName.dirty || actionName.touched)"
@@ -97,7 +97,7 @@
           @if (!isReadonly()) { <span class="text-danger">*</span> }
         </label>
         @if (isReadonly()) {
-          <input id="actionTypeReadonly"
+          <input autocomplete="off" id="actionTypeReadonly"
                  type="text"
                  class="form-control form-control-sm"
                  [value]="action().type"
@@ -134,7 +134,7 @@
           {{ 'actions.fields.description' | translate }}
         </label>
         @if (isReadonly()) {
-          <input id="actionDescriptionReadonly"
+          <input autocomplete="off" id="actionDescriptionReadonly"
                  type="text"
                  class="form-control form-control-sm"
                  [value]="action().description ?? ''"
@@ -165,7 +165,7 @@
           <label for="action-created-at" class="form-label form-label-sm mb-1">
             {{ 'actions.fields.createdAt' | translate }}
           </label>
-          <input id="action-created-at"
+          <input autocomplete="off" id="action-created-at"
                  type="text"
                  class="form-control form-control-sm"
                  [value]="(action().createdAt | localDate) ?? ''"
@@ -178,7 +178,7 @@
           <label for="action-last-modified-at" class="form-label form-label-sm mb-1">
             {{ 'actions.fields.lastModifiedAt' | translate }}
           </label>
-          <input id="action-last-modified-at"
+          <input autocomplete="off" id="action-last-modified-at"
                  type="text"
                  class="form-control form-control-sm"
                  [value]="(action().lastModifiedAt | localDate) ?? ''"

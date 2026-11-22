@@ -30,7 +30,7 @@ import { ConnectivityService } from '../../services/connectivity.service';
     .alert {
       position: sticky;
       top: 0;
-      z-index: 1050;
+      z-index: var(--tp-z-overlay);
       font-size: 0.875rem;
       padding: 0.5rem 1rem;
     }

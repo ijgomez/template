@@ -27,7 +27,7 @@
 
           @switch (filter.type) {
             @case ('TEXT') {
-              <input [id]="'filter-' + filter.name"
+              <input autocomplete="off" [id]="'filter-' + filter.name"
                      type="text"
                      class="form-control form-control-sm"
                      [placeholder]="filter.label"
@@ -38,8 +38,9 @@
                      [attr.data-testid]="'report-filter-' + filter.name">
             }
             @case ('NUMBER') {
-              <input [id]="'filter-' + filter.name"
+              <input autocomplete="off" [id]="'filter-' + filter.name"
                      type="number"
+                     inputmode="decimal"
                      class="form-control form-control-sm"
                      [placeholder]="filter.label"
                      [ngModel]="filterValues()[filter.name]"

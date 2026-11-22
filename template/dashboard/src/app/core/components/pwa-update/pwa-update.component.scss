@@ -3,7 +3,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 1050;
+  z-index: var(--tp-z-overlay);
   display: flex;
   align-items: center;
   justify-content: space-between;
