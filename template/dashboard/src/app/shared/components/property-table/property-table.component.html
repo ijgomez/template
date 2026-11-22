@@ -4,7 +4,7 @@
 <section class="mb-3" [attr.aria-labelledby]="testId() + '-heading'" [attr.data-testid]="testId() + '-section'">
   @if (allRows().length > 0) {
     <label class="form-label form-label-sm mb-1" [for]="testId() + '-filter'">{{ filterLabel() | translate }}</label>
-    <input [id]="testId() + '-filter'" type="text" class="form-control form-control-sm mb-2"
+    <input autocomplete="off" [id]="testId() + '-filter'" type="text" class="form-control form-control-sm mb-2"
            [value]="filter()"
            (input)="onFilter($event)"
            [placeholder]="'cluster.nodes.form.filterPlaceholder' | translate"

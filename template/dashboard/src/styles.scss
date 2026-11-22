@@ -90,6 +90,7 @@
 
 // Dark theme tokens
 .tp-dark {
+  color-scheme: dark;
   --tp-color-background: #0b0f17;
   --tp-color-surface: #111827;
   --tp-color-surface-subtle: #1f2937;
@@ -363,6 +364,7 @@ body.tp-sidebar-resizing {
 // user-agent dialog styles so Bootstrap's .modal layout and the
 // .modal-content card remain the single source of visual styling.
 dialog.modal {
+  overscroll-behavior: contain;
   padding: 0;
   border: 0;
   margin: 0;
@@ -370,4 +372,38 @@ dialog.modal {
   max-height: none;
   background: transparent;
   color: inherit;
+}
+
+// ─── Web Interface Guidelines: touch, typography, native controls ────
+a,
+button,
+input,
+select,
+textarea,
+label,
+.btn,
+.page-link {
+  touch-action: manipulation;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  text-wrap: balance;
+}
+
+// Columns of figures align across rows.
+.table td,
+.table th {
+  font-variant-numeric: tabular-nums;
+}
+
+// Native <select>/<option>: explicit colours so Windows dark mode renders them correctly.
+select,
+select option {
+  background-color: var(--tp-color-surface);
+  color: var(--tp-color-text);
 }

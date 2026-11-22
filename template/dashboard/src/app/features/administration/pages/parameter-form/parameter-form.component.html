@@ -28,7 +28,7 @@
 </div>
 
 <div class="tp-filter-bar">
-  <form (ngSubmit)="onSubmit()" #paramForm="ngForm" novalidate data-testid="parameter-form">
+  <form (ngSubmit)="onSubmit()" #paramForm="ngForm" tpUnsavedChanges novalidate data-testid="parameter-form">
     <!-- Error summary (shown after a failed submit) -->
     @if (submitAttempted() && formErrors().length > 0) {
       <div #errorSummary
@@ -62,7 +62,7 @@
           {{ 'parameters.fields.code' | translate }}
           @if (!isReadonly()) { <span class="text-danger">*</span> }
         </label>
-        <input id="paramCode"
+        <input autocomplete="off" id="paramCode"
                type="text"
                class="form-control form-control-sm"
                [ngClass]="{ 'is-invalid': (code.invalid && (code.dirty || code.touched)) || codeExistsError() }"
@@ -93,7 +93,7 @@
           @if (!isReadonly()) { <span class="text-danger">*</span> }
         </label>
         @if (isReadonly()) {
-          <input id="paramTypeReadonly"
+          <input autocomplete="off" id="paramTypeReadonly"
                  type="text"
                  class="form-control form-control-sm"
                  [value]="formData().type"
@@ -130,7 +130,7 @@
           {{ 'parameters.fields.value' | translate }}
           @if (!isReadonly()) { <span class="text-danger">*</span> }
         </label>
-        <input id="paramValue"
+        <input autocomplete="off" id="paramValue"
                type="text"
                class="form-control form-control-sm"
                [class.is-invalid]="(!isReadonly() && (paramValue.invalid && (paramValue.dirty || paramValue.touched))) || (!isReadonly() && typeValueError())"
@@ -159,7 +159,7 @@
         <label for="paramDescription" class="form-label form-label-sm mb-1">
           {{ 'parameters.fields.description' | translate }}
         </label>
-        <input id="paramDescription"
+        <input autocomplete="off" id="paramDescription"
                type="text"
                class="form-control form-control-sm"
                [ngModel]="formData().description"
@@ -182,7 +182,7 @@
           <label for="parameter-created-at" class="form-label form-label-sm mb-1">
             {{ 'parameters.fields.createdAt' | translate }}
           </label>
-          <input id="parameter-created-at"
+          <input autocomplete="off" id="parameter-created-at"
                  type="text"
                  class="form-control form-control-sm"
                  [value]="(formData().createdAt | localDate) ?? ''"
@@ -195,7 +195,7 @@
           <label for="parameter-last-modified-at" class="form-label form-label-sm mb-1">
             {{ 'parameters.fields.lastModifiedAt' | translate }}
           </label>
-          <input id="parameter-last-modified-at"
+          <input autocomplete="off" id="parameter-last-modified-at"
                  type="text"
                  class="form-control form-control-sm"
                  [value]="(formData().lastModifiedAt | localDate) ?? ''"

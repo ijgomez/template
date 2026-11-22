@@ -17,7 +17,7 @@
   <div class="row g-2 mb-3">
     <div class="col-md-4">
       <label class="form-label form-label-sm mb-1" for="node-hostname">{{ 'cluster.nodes.fields.hostname' | translate }}</label>
-      <input id="node-hostname"
+      <input autocomplete="off" id="node-hostname"
              type="text"
              class="form-control form-control-sm"
              [value]="node().hostname"
@@ -27,7 +27,7 @@
     </div>
     <div class="col-md-4">
       <label class="form-label form-label-sm mb-1" for="node-ip">{{ 'cluster.nodes.fields.ip' | translate }}</label>
-      <input id="node-ip"
+      <input autocomplete="off" id="node-ip"
              type="text"
              class="form-control form-control-sm"
              [value]="node().ip ?? '-'"
@@ -50,7 +50,7 @@
       <span class="form-label form-label-sm mb-1 d-block">{{ 'cluster.nodes.fields.master' | translate }}</span>
       <div>
         @if (node().master) {
-          <span class="badge bg-primary">MASTER</span>
+          <span class="badge bg-primary">{{ 'cluster.nodes.fields.master' | translate }}</span>
         } @else {
           <span class="text-muted">&mdash;</span>
         }
@@ -58,7 +58,7 @@
     </div>
     <div class="col-md-4">
       <label class="form-label form-label-sm mb-1" for="node-started-at">{{ 'cluster.nodes.fields.startedAt' | translate }}</label>
-      <input id="node-started-at"
+      <input autocomplete="off" id="node-started-at"
              type="text"
              class="form-control form-control-sm"
              [value]="(node().startedAt | localDate) ?? ''"
@@ -68,7 +68,7 @@
     </div>
     <div class="col-md-4">
       <label class="form-label form-label-sm mb-1" for="node-last-modified-at">{{ 'cluster.nodes.fields.lastModifiedAt' | translate }}</label>
-      <input id="node-last-modified-at"
+      <input autocomplete="off" id="node-last-modified-at"
              type="text"
              class="form-control form-control-sm"
              [value]="(node().lastModifiedAt | localDate) ?? ''"
@@ -78,7 +78,7 @@
     </div>
     <div class="col-md-4">
       <label class="form-label form-label-sm mb-1" for="node-used-memory">{{ 'cluster.nodes.fields.usedMemoryGb' | translate }}</label>
-      <input id="node-used-memory"
+      <input autocomplete="off" id="node-used-memory"
              type="text"
              class="form-control form-control-sm"
              [value]="usedMemoryGb()"
@@ -88,7 +88,7 @@
     </div>
     <div class="col-md-4">
       <label class="form-label form-label-sm mb-1" for="node-total-memory">{{ 'cluster.nodes.fields.totalMemoryGb' | translate }}</label>
-      <input id="node-total-memory"
+      <input autocomplete="off" id="node-total-memory"
              type="text"
              class="form-control form-control-sm"
              [value]="totalMemoryGb()"
@@ -98,7 +98,7 @@
     </div>
     <div class="col-md-4">
       <label class="form-label form-label-sm mb-1" for="node-free-memory">{{ 'cluster.nodes.fields.freeMemoryPercent' | translate }}</label>
-      <input id="node-free-memory"
+      <input autocomplete="off" id="node-free-memory"
              type="text"
              class="form-control form-control-sm"
              [value]="freeMemoryPercent()"
@@ -121,22 +121,22 @@
   <div class="row g-2 mb-3" data-testid="node-form-resources">
     <div class="col-md-3">
       <label class="form-label form-label-sm mb-1" for="node-processors">{{ 'cluster.nodes.fields.processors' | translate }}</label>
-      <input id="node-processors" type="text" class="form-control form-control-sm"
+      <input autocomplete="off" id="node-processors" type="text" class="form-control form-control-sm"
              [value]="processors()" readonly disabled data-testid="node-form-processors">
     </div>
     <div class="col-md-3">
       <label class="form-label form-label-sm mb-1" for="node-fs-total">{{ 'cluster.nodes.fields.fsTotalGb' | translate }}</label>
-      <input id="node-fs-total" type="text" class="form-control form-control-sm"
+      <input autocomplete="off" id="node-fs-total" type="text" class="form-control form-control-sm"
              [value]="fsTotalGb()" readonly disabled data-testid="node-form-fs-total">
     </div>
     <div class="col-md-3">
       <label class="form-label form-label-sm mb-1" for="node-fs-free">{{ 'cluster.nodes.fields.fsFreeGb' | translate }}</label>
-      <input id="node-fs-free" type="text" class="form-control form-control-sm"
+      <input autocomplete="off" id="node-fs-free" type="text" class="form-control form-control-sm"
              [value]="fsFreeGb()" readonly disabled data-testid="node-form-fs-free">
     </div>
     <div class="col-md-3">
       <label class="form-label form-label-sm mb-1" for="node-fs-free-percent">{{ 'cluster.nodes.fields.fsFreePercent' | translate }}</label>
-      <input id="node-fs-free-percent" type="text" class="form-control form-control-sm"
+      <input autocomplete="off" id="node-fs-free-percent" type="text" class="form-control form-control-sm"
              [value]="fsFreePercent()" readonly disabled data-testid="node-form-fs-free-percent">
     </div>
   </div>

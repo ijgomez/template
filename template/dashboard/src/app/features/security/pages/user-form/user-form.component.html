@@ -30,7 +30,7 @@
 </div>
 
 <div class="tp-filter-bar">
-  <form id="userForm" (ngSubmit)="onSubmit()" #userForm="ngForm" novalidate data-testid="user-form">
+  <form id="userForm" (ngSubmit)="onSubmit()" #userForm="ngForm" tpUnsavedChanges novalidate data-testid="user-form">
     <!-- Error summary (shown after a failed submit) -->
     @if (submitAttempted() && formErrors().length > 0) {
       <div #errorSummary
@@ -63,7 +63,7 @@
           {{ 'users.fields.username' | translate }}
           @if (!isReadonly()) { <span class="text-danger">*</span> }
         </label>
-        <input id="username"
+        <input autocomplete="off" spellcheck="false" autocapitalize="off" id="username"
                type="text"
                class="form-control form-control-sm"
                [ngClass]="{ 'is-invalid': (username.invalid && (username.dirty || username.touched)) || usernameExistsError() }"
@@ -120,7 +120,7 @@
         <label for="email" class="form-label form-label-sm mb-1">
           {{ 'users.fields.email' | translate }}
         </label>
-        <input id="email"
+        <input autocomplete="off" spellcheck="false" id="email"
                [type]="isReadonly() ? 'text' : 'email'"
                class="form-control form-control-sm"
                [ngClass]="{ 'is-invalid': (email.invalid && (email.dirty || email.touched)) || emailIsInvalid() }"
@@ -146,7 +146,7 @@
         <label for="firstName" class="form-label form-label-sm mb-1">
           {{ 'users.fields.firstName' | translate }}
         </label>
-        <input id="firstName"
+        <input autocomplete="off" id="firstName"
                type="text"
                class="form-control form-control-sm"
                [ngModel]="formUser().firstName ?? ''"
@@ -161,7 +161,7 @@
         <label for="lastName" class="form-label form-label-sm mb-1">
           {{ 'users.fields.lastName' | translate }}
         </label>
-        <input id="lastName"
+        <input autocomplete="off" id="lastName"
                type="text"
                class="form-control form-control-sm"
                [ngModel]="formUser().lastName ?? ''"
@@ -177,7 +177,7 @@
           <label for="profileName" class="form-label form-label-sm mb-1">
             {{ 'users.fields.profile' | translate }}
           </label>
-          <input id="profileName"
+          <input autocomplete="off" id="profileName"
                  type="text"
                  class="form-control form-control-sm"
                  [value]="formUser().profileName ?? ''"
@@ -234,7 +234,7 @@
           <label for="user-last-access" class="form-label form-label-sm mb-1">
             {{ 'users.fields.lastAccess' | translate }}
           </label>
-          <input id="user-last-access"
+          <input autocomplete="off" id="user-last-access"
                  type="text"
                  class="form-control form-control-sm"
                  [value]="(formUser().lastAccess | localDate) ?? ''"
@@ -247,7 +247,7 @@
           <label for="user-created-at" class="form-label form-label-sm mb-1">
             {{ 'users.fields.createdAt' | translate }}
           </label>
-          <input id="user-created-at"
+          <input autocomplete="off" id="user-created-at"
                  type="text"
                  class="form-control form-control-sm"
                  [value]="(formUser().createdAt | localDate) ?? ''"
@@ -260,7 +260,7 @@
           <label for="user-last-modified-at" class="form-label form-label-sm mb-1">
             {{ 'users.fields.lastModifiedAt' | translate }}
           </label>
-          <input id="user-last-modified-at"
+          <input autocomplete="off" id="user-last-modified-at"
                  type="text"
                  class="form-control form-control-sm"
                  [value]="(formUser().lastModifiedAt | localDate) ?? ''"

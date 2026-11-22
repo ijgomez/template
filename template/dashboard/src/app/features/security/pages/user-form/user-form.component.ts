@@ -6,6 +6,7 @@ import { of } from 'rxjs';
 import { catchError, take } from 'rxjs/operators';
 
 import { LocalDatePipe } from '../../../../shared/pipes/local-date.pipe';
+import { UnsavedChangesDirective } from '../../../../shared/directives/unsaved-changes.directive';
 import { TpEditButtonComponent } from '../../../../shared/components/edit-button';
 import { TpDeleteButtonComponent } from '../../../../shared/components/delete-button';
 import { TpReportSelectedListComponent } from '../../../reports/components/report-selected-list';
@@ -22,7 +23,7 @@ type FormMode = 'create' | 'edit' | 'view';
 @Component({
   selector: 'app-user-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, LocalDatePipe, TpEditButtonComponent, TpDeleteButtonComponent, TpReportSelectedListComponent, TpProfileSelectComponent],
+  imports: [UnsavedChangesDirective, CommonModule, FormsModule, TranslatePipe, LocalDatePipe, TpEditButtonComponent, TpDeleteButtonComponent, TpReportSelectedListComponent, TpProfileSelectComponent],
   templateUrl: './user-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

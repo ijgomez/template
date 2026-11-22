@@ -2,6 +2,12 @@
   "app": {
     "title": "Template Dashboard"
   },
+  "data-list": {
+    "empty": {
+      "none": "No items",
+      "filtered": "No items match the filter"
+    }
+  },
   "layout": {
     "skipToContent": "Skip to main content",
     "sidebar": {
@@ -11,7 +17,7 @@
       "menu": "Main menu"
     },
     "header": {
-      "search": "Search...",
+      "search": "Search…",
       "notifications": "Notifications",
       "noNotifications": "No notifications"
     },
@@ -22,7 +28,7 @@
     }
   },
   "globalSearch": {
-    "placeholder": "Search...",
+    "placeholder": "Search…",
     "groups": {
       "user": "Users",
       "parameter": "Parameters",
@@ -30,7 +36,7 @@
     },
     "seeAll": "See all ({{count}})",
     "empty": "No results for «{{term}}»",
-    "loading": "Searching...",
+    "loading": "Searching…",
     "groupError": "Could not search in {{group}}"
   },
   "pwa": {
@@ -80,9 +86,9 @@
     "title": "Template App",
     "subtitle": "Enter your credentials to access",
     "username": "Username",
-    "username.placeholder": "Enter your username",
+    "username.placeholder": "e.g. jsmith…",
     "password": "Password",
-    "password.placeholder": "Enter your password",
+    "password.placeholder": "Enter your password…",
     "password.show": "Show password",
     "password.hide": "Hide password",
     "remember": "Remember me",
@@ -91,27 +97,27 @@
     "locked": "Account temporarily locked due to too many failed attempts. Please try again later."
   },
   "notification": {
-    "progress": "Processing...",
+    "progress": "Processing…",
     "success": "Operation completed successfully",
     "error": "An error occurred",
-    "save.progress": "Saving...",
+    "save.progress": "Saving…",
     "save.success": "Saved successfully",
     "save.error": "Failed to save",
-    "create.progress": "Creating record...",
+    "create.progress": "Creating record…",
     "create.success": "Record created successfully",
     "create.error": "Failed to create record",
-    "update.progress": "Updating record...",
+    "update.progress": "Updating record…",
     "update.success": "Record updated successfully",
     "update.error": "Failed to update record",
-    "delete.progress": "Deleting record...",
+    "delete.progress": "Deleting record…",
     "delete.success": "Record deleted successfully",
     "delete.error": "Failed to delete record",
-    "export.progress": "Exporting data...",
+    "export.progress": "Exporting data…",
     "export.success": "Export completed successfully",
     "export.error": "Failed to export data",
     "export.empty": "No data to export",
-    "pagination.progress": "Loading data...",
-    "filter.progress": "Applying filters..."
+    "pagination.progress": "Loading data…",
+    "filter.progress": "Applying filters…"
   },
   "validation": {
     "required": "This field is required",
@@ -148,7 +154,7 @@
     "load.error": "Failed to load profile"
   },
   "common": {
-    "loading": "Loading...",
+    "loading": "Loading…",
     "noData": "No data available",
     "actions": "Actions",
     "detail": "Detail",
@@ -199,16 +205,16 @@
     "form": {
       "createTitle": "Create User",
       "editTitle": "Edit User",
-      "selectProfile": "Select a profile...",
+      "selectProfile": "Select a profile…",
       "sectionGeneral": "General data",
       "sectionReports": "Assigned reports",
       "lockedHint": "Blocks access to the account indefinitely until it is unchecked.",
-      "filterReports": "Filter...",
+      "filterReports": "Filter…",
       "addReport": "Add report",
       "removeReport": "Remove report",
       "modal": {
         "title": "Select reports",
-        "search": "Search report...",
+        "search": "Search report…",
         "selectAll": "Select all",
         "selectReport": "Select report",
         "selected": "selected",
@@ -252,7 +258,7 @@
       "assignActions": "Assign Actions",
       "sectionGeneral": "General data",
       "sectionActions": "Assigned actions",
-      "filterActions": "Filter...",
+      "filterActions": "Filter…",
       "addAction": "Add action",
       "removeAction": "Remove action"
     },
@@ -401,6 +407,9 @@
       "filters": {
         "allProtocols": "All",
         "allStatuses": "All",
+        "statusActive": "Active",
+        "statusInactive": "Inactive",
+        "statusError": "Error",
         "clear": "Clear"
       },
       "detail": {
@@ -552,7 +561,7 @@
   "selected-reports": {
     "count": "Total",
     "filter": {
-      "placeholder": "Filter...",
+      "placeholder": "Filter…",
       "aria": "Filter selected reports"
     },
     "add": {
@@ -561,14 +570,14 @@
     "remove": {
       "aria": "Remove report"
     },
-    "loading": "Loading reports...",
+    "loading": "Loading reports…",
     "empty": {
       "filtered": "No reports found matching that filter",
       "none": "No reports assigned"
     },
     "modal": {
       "title": "Select reports",
-      "search": "Search report...",
+      "search": "Search report…",
       "selectAll": "Select all",
       "selectReport": "Select report",
       "columnName": "Name",
@@ -583,7 +592,7 @@
   "action-selected": {
     "count": "Total",
     "filter": {
-      "placeholder": "Filter...",
+      "placeholder": "Filter…",
       "aria": "Filter selected actions"
     },
     "add": {
@@ -592,14 +601,14 @@
     "remove": {
       "aria": "Remove action"
     },
-    "loading": "Loading actions...",
+    "loading": "Loading actions…",
     "empty": {
       "none": "No actions assigned",
       "filtered": "No actions found"
     },
     "modal": {
       "title": "Select actions",
-      "search": "Search by code or name...",
+      "search": "Search by code or name…",
       "selectAll": "Select all",
       "selectAction": "Select action",
       "columnCode": "Code",

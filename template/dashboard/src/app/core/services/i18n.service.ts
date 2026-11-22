@@ -31,7 +31,7 @@ export class I18nService {
    */
   setLanguage(lang: string): void {
     const resolvedLang = this.isSupported(lang) ? lang : environment.defaultLanguage;
-    this.translateService.use(resolvedLang);
+    this.applyLanguage(resolvedLang);
     this.persistLanguage(resolvedLang);
   }
 
@@ -42,23 +42,31 @@ export class I18nService {
     return environment.supportedLanguages;
   }
 
+  /** Activates the language in ngx-translate and keeps `<html lang>` in sync. */
+  private applyLanguage(lang: string): void {
+    this.translateService.use(lang);
+    if (typeof document !== 'undefined') {
+      document.documentElement.lang = lang;
+    }
+  }
+
   private initializeLanguage(): void {
     const savedLang = this.getSavedLanguage();
 
     if (savedLang && this.isSupported(savedLang)) {
-      this.translateService.use(savedLang);
+      this.applyLanguage(savedLang);
       return;
     }
 
     const browserLang = this.detectBrowserLanguage();
 
     if (this.isSupported(browserLang)) {
-      this.translateService.use(browserLang);
+      this.applyLanguage(browserLang);
       this.persistLanguage(browserLang);
       return;
     }
 
-    this.translateService.use(environment.defaultLanguage);
+    this.applyLanguage(environment.defaultLanguage);
     this.persistLanguage(environment.defaultLanguage);
   }
 

@@ -27,7 +27,7 @@
           <label for="name" class="form-label form-label-sm mb-1">
             {{ 'interfaces.configuration.fields.name' | translate }}
           </label>
-          <input id="name"
+          <input autocomplete="off" id="name"
                  type="text"
                  class="form-control form-control-sm"
                  [value]="config.name ?? ''"
@@ -40,7 +40,7 @@
           <label for="status" class="form-label form-label-sm mb-1">
             {{ 'interfaces.configuration.fields.status' | translate }}
           </label>
-          <input id="status"
+          <input autocomplete="off" id="status"
                  type="text"
                  class="form-control form-control-sm"
                  [value]="config.status ?? ''"
@@ -53,7 +53,7 @@
           <label for="description" class="form-label form-label-sm mb-1">
             {{ 'interfaces.configuration.fields.description' | translate }}
           </label>
-          <input id="description"
+          <input autocomplete="off" id="description"
                  type="text"
                  class="form-control form-control-sm"
                  [value]="config.description ?? ''"
@@ -66,7 +66,7 @@
           <label for="url" class="form-label form-label-sm mb-1">
             {{ 'interfaces.configuration.fields.url' | translate }}
           </label>
-          <input id="url"
+          <input autocomplete="off" id="url"
                  type="text"
                  class="form-control form-control-sm"
                  [value]="config.url ?? ''"
@@ -91,7 +91,7 @@
           <label for="checkFrequency" class="form-label form-label-sm mb-1">
             {{ 'interfaces.configuration.fields.checkFrequency' | translate }}
           </label>
-          <input id="checkFrequency"
+          <input autocomplete="off" id="checkFrequency"
                  type="text"
                  class="form-control form-control-sm"
                  [value]="config.checkFrequency ?? ''"

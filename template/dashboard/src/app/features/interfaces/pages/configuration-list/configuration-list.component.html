@@ -12,7 +12,7 @@
     <form class="row g-3 align-items-end" (ngSubmit)="applyFilters()" aria-label="Filtros de búsqueda de interfaces" data-testid="config-filter-form">
       <div class="col-md-3">
         <label for="filterName" class="form-label">{{ 'interfaces.configuration.fields.name' | translate }}</label>
-        <input id="filterName" type="text" class="form-control form-control-sm"
+        <input autocomplete="off" id="filterName" type="text" class="form-control form-control-sm"
                [ngModel]="filterName()" (ngModelChange)="filterName.set($event)" name="filterName"
                [placeholder]="'interfaces.configuration.fields.name' | translate" data-testid="filter-name">
       </div>
@@ -32,9 +32,9 @@
                 [ngModel]="filterStatus()" (ngModelChange)="filterStatus.set($event)" name="filterStatus"
                 [attr.aria-label]="'interfaces.configuration.fields.status' | translate" data-testid="filter-status">
           <option value="">{{ 'interfaces.configuration.filters.allStatuses' | translate }}</option>
-          <option value="ACTIVE">ACTIVE</option>
-          <option value="INACTIVE">INACTIVE</option>
-          <option value="ERROR">ERROR</option>
+          <option value="ACTIVE">{{ 'interfaces.configuration.filters.statusActive' | translate }}</option>
+          <option value="INACTIVE">{{ 'interfaces.configuration.filters.statusInactive' | translate }}</option>
+          <option value="ERROR">{{ 'interfaces.configuration.filters.statusError' | translate }}</option>
         </select>
       </div>
       <div class="col-12 d-flex justify-content-end gap-2 mt-2">
