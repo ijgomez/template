@@ -48,6 +48,13 @@ async function captureStep(page: Page, action: string): Promise<void> {
   }
   ctx.busy = true;
   try {
+    // Esperar a que Angular haya renderizado algo: tras goto/click el control vuelve antes de pintar la vista.
+    await page
+      .waitForFunction(() => (document.querySelector('app-root')?.childElementCount ?? 0) > 0, undefined, {
+        timeout: 3_000,
+      })
+      .catch(() => undefined);
+    await page.waitForLoadState('networkidle', { timeout: 2_000 }).catch(() => undefined);
     const body = await page.screenshot({ timeout: 5_000 });
     ctx.counter += 1;
     const index = String(ctx.counter).padStart(2, '0');
