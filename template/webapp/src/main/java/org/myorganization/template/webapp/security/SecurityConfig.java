@@ -91,8 +91,32 @@ public class SecurityConfig {
     private static final String AUTHORITY_REPORT_READ = "REPORT_READ";
     private static final String AUTHORITY_REPORT_EXECUTE = "REPORT_EXECUTE";
 
+    /**
+     * Content-Security-Policy for every response (SPA shell, static files and API).
+     * <p>
+     * The SPA is served from the same origin and loads no third-party resources, so
+     * everything is restricted to {@code 'self'}. Exceptions: {@code style-src 'unsafe-inline'}
+     * because Angular injects component styles as {@code <style>} elements at runtime, and
+     * {@code img-src data:} for the SVG icons embedded in the Bootstrap stylesheet. The dist
+     * build disables critical-CSS inlining so {@code index.html} has no inline script and
+     * {@code script-src} stays {@code 'self'}.
+     */
+    static final String DEFAULT_CONTENT_SECURITY_POLICY = "default-src 'self'; "
+            + "script-src 'self'; "
+            + "style-src 'self' 'unsafe-inline'; "
+            + "img-src 'self' data:; "
+            + "font-src 'self'; "
+            + "connect-src 'self'; "
+            + "worker-src 'self'; "
+            + "manifest-src 'self'; "
+            + "object-src 'none'; "
+            + "base-uri 'self'; "
+            + "form-action 'self'; "
+            + "frame-ancestors 'none'";
     @Value("${cors.allowed-origins:http://localhost:4200}")
     private List<String> allowedOrigins;
+    @Value("${security.content-security-policy:" + DEFAULT_CONTENT_SECURITY_POLICY + "}")
+    private String contentSecurityPolicy = DEFAULT_CONTENT_SECURITY_POLICY;
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
@@ -105,6 +129,8 @@ public class SecurityConfig {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
+                .headers(headers -> headers
+                        .contentSecurityPolicy(csp -> csp.policyDirectives(contentSecurityPolicy)))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exceptions -> exceptions
