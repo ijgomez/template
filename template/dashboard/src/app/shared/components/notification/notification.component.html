@@ -17,7 +17,7 @@
             } @else {
               <i [class]="getIconClass(notification)" aria-hidden="true"></i>
             }
-            <span class="flex-grow-1">{{ notification.messageKey | translate }}</span>
+            <span class="flex-grow-1">{{ notification.messageKey | translate: notification.messageParams }}</span>
             <button type="button"
                     class="btn-close btn-close-sm ms-2"
                     (click)="dismiss(notification)"

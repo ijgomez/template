@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20261124-add-cluster-node-filesystem" author="template" labels="v2.0.0">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists schemaName="${schemaName}" tableName="cluster_node" columnName="filesystem"/>
+            </not>
+        </preConditions>
+        <comment>
+            Añade la descripción del sistema de ficheros (dispositivo, tipo y ruta) del que se
+            obtienen el espacio total, libre y utilizable del nodo.
+        </comment>
+        <addColumn schemaName="${schemaName}" tableName="cluster_node">
+            <column name="filesystem" type="VARCHAR(1024)"/>
+        </addColumn>
+        <rollback>
+            <dropColumn schemaName="${schemaName}" tableName="cluster_node" columnName="filesystem"/>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

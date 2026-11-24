@@ -24,7 +24,7 @@
                   @if (error.message) {
                     {{ error.message }}
                   } @else {
-                    {{ error.messageKey | translate }}
+                    {{ error.messageKey | translate: error.messageParams }}
                   }
                 </p>
               }

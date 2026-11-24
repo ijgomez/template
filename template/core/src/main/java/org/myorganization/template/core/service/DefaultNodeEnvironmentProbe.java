@@ -1,6 +1,9 @@
 package org.myorganization.template.core.service;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileStore;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -20,11 +23,26 @@ public class DefaultNodeEnvironmentProbe implements NodeEnvironmentProbe {
 
     @Override
     public FileSystemSpace fileSystemSpace() {
-        File workingDir = Path.of("").toAbsolutePath().toFile();
+        Path path = Path.of("").toAbsolutePath();
+        File workingDir = path.toFile();
         return new FileSystemSpace(
                 workingDir.getTotalSpace(),
                 workingDir.getFreeSpace(),
-                workingDir.getUsableSpace());
+                workingDir.getUsableSpace(),
+                describeFileSystem(path));
+    }
+
+    /**
+     * Describes the filesystem holding the path as "device (type) - path"; falls back to the
+     * path alone when the store cannot be read.
+     */
+    private String describeFileSystem(Path path) {
+        try {
+            FileStore store = Files.getFileStore(path);
+            return "%s (%s) - %s".formatted(store.name(), store.type(), path);
+        } catch (IOException | RuntimeException e) {
+            return path.toString();
+        }
     }
 
     @Override

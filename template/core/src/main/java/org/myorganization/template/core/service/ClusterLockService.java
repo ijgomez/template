@@ -38,6 +38,7 @@ public class ClusterLockService implements HeartbeatLockService {
     private final ConcurrentHashMap<String, Instant> lockStartTimes = new ConcurrentHashMap<>();
 
     private final ClusterBlockRepository clusterBlockRepository;
+    private final AdvisoryLockManager advisoryLockManager;
 
     /**
      * Acquires a lock identified by resource name, providing both intra-instance
@@ -64,7 +65,7 @@ public class ClusterLockService implements HeartbeatLockService {
         try {
             // 2. Inter-instance lock (PostgreSQL advisory lock)
             int lockKey = computeLockKey(resourceName);
-            clusterBlockRepository.acquireAdvisoryLock(lockKey);
+            advisoryLockManager.lock(lockKey);
 
             // 3. Record start time using database time (avoids clock drift)
             ensureClusterBlockExists(resourceName);
@@ -76,7 +77,8 @@ public class ClusterLockService implements HeartbeatLockService {
 
             log.debug("Lock acquired for resource: {}", resourceName);
         } catch (Exception e) {
-            // If DB lock fails, release the intra-instance lock
+            // If anything fails after taking the lock, release both levels
+            advisoryLockManager.unlock(computeLockKey(resourceName));
             lock.unlock();
             throw e;
         }
@@ -99,19 +101,18 @@ public class ClusterLockService implements HeartbeatLockService {
     @Transactional
     public void releaseLock(String resourceName) {
         try {
-            // 1. Calculate duration using database time
-            Instant startTime = lockStartTimes.remove(resourceName);
-            Instant endTime = clusterBlockRepository.getDatabaseTime();
-
-            if (startTime != null && endTime != null) {
-                long durationMs = Duration.between(startTime, endTime).toMillis();
-                updateBlockMetrics(resourceName, durationMs);
+            try {
+                // 1. Calculate duration using database time
+                Instant startTime = lockStartTimes.remove(resourceName);
+                Instant endTime = clusterBlockRepository.getDatabaseTime();
+                if (startTime != null && endTime != null) {
+                    long durationMs = Duration.between(startTime, endTime).toMillis();
+                    updateBlockMetrics(resourceName, durationMs);
+                }
+            } finally {
+                // 2. Always release the inter-instance lock (PostgreSQL advisory lock)
+                advisoryLockManager.unlock(computeLockKey(resourceName));
             }
-
-            // 2. Release inter-instance lock (PostgreSQL advisory lock)
-            int lockKey = computeLockKey(resourceName);
-            clusterBlockRepository.releaseAdvisoryLock(lockKey);
-
             log.debug("Lock released for resource: {}", resourceName);
         } finally {
             // 3. Release intra-instance lock

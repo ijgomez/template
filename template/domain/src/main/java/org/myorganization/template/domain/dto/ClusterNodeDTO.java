@@ -22,6 +22,7 @@ import org.myorganization.template.domain.enums.NodeStatus;
  * @param fsTotalSpace    filesystem total space in bytes
  * @param fsFreeSpace     filesystem free space in bytes
  * @param fsUsableSpace   filesystem usable space in bytes
+ * @param filesystem      filesystem (device, type and path) the space figures come from
  * @param jvmProperties   JVM system properties (sensitive values masked)
  * @param environmentProperties environment variables (sensitive values masked)
  */
@@ -40,6 +41,7 @@ public record ClusterNodeDTO(
         Long fsTotalSpace,
         Long fsFreeSpace,
         Long fsUsableSpace,
+        String filesystem,
         Map<String, String> jvmProperties,
         Map<String, String> environmentProperties
 ) {

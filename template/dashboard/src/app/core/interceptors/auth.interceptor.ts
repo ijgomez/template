@@ -212,7 +212,7 @@ function handleHttpError(error: HttpErrorResponse | Error, notificationService: 
   }
 
   if (error.status >= 400 && error.status < 500) {
-    notificationService.showError('error.client', error.error?.message);
+    notificationService.showError('error.client', error.error?.message, { status: error.status });
     return throwError(() => ({
       status: error.status,
       messageKey: 'error.client',

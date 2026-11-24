@@ -379,6 +379,7 @@ class ClusterControllerTest {
                 null,
                 null,
                 null,
+                null,
                 null
         );
     }
@@ -400,6 +401,7 @@ class ClusterControllerTest {
                 1000L,
                 400L,
                 350L,
+                "overlay (overlay) - /opt/app",
                 Map.of("java.version", "21"),
                 Map.of("DB_PASSWORD", "******")
         );

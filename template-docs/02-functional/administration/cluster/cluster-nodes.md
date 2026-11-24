@@ -85,7 +85,7 @@ Identificadores locales de este documento: `RF-CLN-*` (requisitos funcionales) y
 **Criterios de aceptación:**
 
 - AC7.1: El registro del nodo (`registerNode()`) persiste el número de procesadores (`Runtime.availableProcessors()`, entero mayor o igual que 1) en la columna `processors`.
-- AC7.2: El registro y cada heartbeat persisten el espacio total, libre y utilizable (bytes) de la partición del directorio de trabajo en `fs_total_space`, `fs_free_space` y `fs_usable_space`.
+- AC7.2: El registro y cada heartbeat persisten el espacio total, libre y utilizable (bytes) de la partición del directorio de trabajo en `fs_total_space`, `fs_free_space` y `fs_usable_space`. Además persisten en `filesystem` la descripción del sistema de ficheros leído (`dispositivo (tipo) - ruta`), que `GET /nodes/{id}` devuelve como `filesystem` y el formulario muestra encima de los valores de espacio.
 - AC7.3: El heartbeat no recalcula ni reescribe `processors`.
 - AC7.4: Si `availableProcessors()` devuelve un valor menor que 1, se conserva el valor previo; si no existe valor previo, el registro se rechaza con un error y no se persiste ningún cambio.
 - AC7.5: Si la lectura del Filesystem falla, se registra un `WARN` con el nodo y la causa, los tres valores quedan nulos y el registro o heartbeat se completa (incluida la actualización de `lastModifiedAt`).

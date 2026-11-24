@@ -13,7 +13,14 @@ import {
   formatGb,
   formatInteger,
 } from '../../../../shared/utils/format.util';
-import { PropertyTableComponent } from '../../../../shared/components/property-table/property-table.component';
+
+/** Formats a property map as sorted "key = value" lines (empty string when there are none). */
+function toPropertyText(properties: Record<string, string> | null | undefined): string {
+  return Object.entries(properties ?? {})
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([key, value]) => `${key} = ${value}`)
+    .join('\n');
+}
 
 /** Timeout (ms) for loading the node detail. */
 const DETAIL_TIMEOUT_MS = 30000;
@@ -28,7 +35,7 @@ const DETAIL_TIMEOUT_MS = 30000;
 @Component({
   selector: 'app-node-form',
   standalone: true,
-  imports: [TranslatePipe, LocalDatePipe, NodeJobsComponent, PropertyTableComponent],
+  imports: [TranslatePipe, LocalDatePipe, NodeJobsComponent],
   templateUrl: './node-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -56,10 +63,14 @@ export class NodeFormComponent {
   });
 
   readonly processors = computed(() => formatInteger(this.detail()?.processors));
+  readonly filesystem = computed(() => this.detail()?.filesystem || NO_VALUE);
   readonly fsTotalGb = computed(() => formatGb(this.detail()?.fsTotalSpace));
   readonly fsFreeGb = computed(() => formatGb(this.detail()?.fsFreeSpace));
   readonly fsFreePercent = computed(() =>
     formatFreePercent(this.detail()?.fsTotalSpace, this.detail()?.fsFreeSpace));
+
+  readonly jvmText = computed(() => toPropertyText(this.detail()?.jvmProperties));
+  readonly envText = computed(() => toPropertyText(this.detail()?.environmentProperties));
 
   constructor() {
     toObservable(this.node)

@@ -11,5 +11,7 @@ export interface Notification {
   type: NotificationType;
   messageKey: string;
   message?: string;
+  /** Interpolation parameters for the translated messageKey (e.g. {{status}}). */
+  messageParams?: Record<string, unknown>;
   createdAt: number;
 }

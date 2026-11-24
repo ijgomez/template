@@ -48,11 +48,15 @@ export class NotificationService {
    * Does NOT auto-dismiss — the user must acknowledge the error manually.
    * @param messageKey i18n translation key for the error category.
    * @param message Optional literal message from the backend for additional detail.
+   * @param messageParams Optional interpolation parameters for the translated key.
    */
-  showError(messageKey: string, message?: string): void {
+  showError(messageKey: string, message?: string, messageParams?: Record<string, unknown>): void {
     const notification = this.createNotification('error', messageKey);
     if (message) {
       notification.message = message;
+    }
+    if (messageParams) {
+      notification.messageParams = messageParams;
     }
     this.addNotification(notification);
   }

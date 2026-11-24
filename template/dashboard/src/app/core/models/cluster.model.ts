@@ -22,6 +22,8 @@ export interface ClusterNode {
   fsTotalSpace?: number | null;
   fsFreeSpace?: number | null;
   fsUsableSpace?: number | null;
+  /** Filesystem (device, type and path) the space figures are read from. */
+  filesystem?: string | null;
   jvmProperties?: Record<string, string> | null;
   environmentProperties?: Record<string, string> | null;
 }

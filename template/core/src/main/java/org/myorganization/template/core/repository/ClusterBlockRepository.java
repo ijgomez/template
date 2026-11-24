@@ -25,23 +25,6 @@ public interface ClusterBlockRepository extends JpaRepository<ClusterBlock, Long
     Optional<ClusterBlock> findByName(String name);
 
     /**
-     * Acquires a PostgreSQL advisory lock using the hashcode of the resource name.
-     * This blocks until the lock is available, providing inter-instance exclusion.
-     *
-     * @param lockKey the integer key derived from the resource name
-     */
-    @Query(value = "SELECT pg_advisory_lock(:lockKey)", nativeQuery = true)
-    void acquireAdvisoryLock(@Param("lockKey") int lockKey);
-
-    /**
-     * Releases a PostgreSQL advisory lock.
-     *
-     * @param lockKey the integer key derived from the resource name
-     */
-    @Query(value = "SELECT pg_advisory_unlock(:lockKey)", nativeQuery = true)
-    void releaseAdvisoryLock(@Param("lockKey") int lockKey);
-
-    /**
      * Gets the current database timestamp to avoid clock drift between nodes.
      *
      * @return the current database timestamp

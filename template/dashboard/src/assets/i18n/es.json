@@ -431,6 +431,7 @@
         "totalMemoryGb": "Total (GB)",
         "freeMemoryPercent": "Libre (%)",
         "processors": "Procesadores",
+        "filesystem": "Filesystem",
         "fsTotalGb": "Filesystem total (GB)",
         "fsFreeGb": "Filesystem libre (GB)",
         "fsFreePercent": "Filesystem libre (%)"
@@ -455,12 +456,6 @@
         "sectionResources": "Recursos",
         "sectionJvm": "Propiedades de la JVM",
         "sectionEnvironment": "Variables de entorno",
-        "filterPlaceholder": "Filtrar por clave o valor",
-        "filterLabelJvm": "Filtrar propiedades de la JVM",
-        "filterLabelEnv": "Filtrar variables de entorno",
-        "columnKey": "Clave",
-        "columnValue": "Valor",
-        "noMatches": "No hay coincidencias",
         "noProperties": "No hay propiedades disponibles",
         "loadError": "No se pudieron cargar los datos del nodo"
       },

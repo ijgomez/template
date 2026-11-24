@@ -213,17 +213,18 @@ public class ClusterService implements HeartbeatClusterService {
 
     /**
      * Auto-elects a master if no ALIVE node with master=true exists.
-     * Elects the first ALIVE node ordered by id.
+     * Elects the node running the check (e.g. when the previous master died), falling back to the first ACTIVE node by id.
      */
     @Override
     @Transactional
     public void electMaster() {
-        boolean masterExists = clusterNodeRepository
-                .findByMasterTrueAndStatus(NodeStatus.ACTIVE)
-                .isPresent();
-
-        if (!masterExists) {
-            clusterNodeRepository.findFirstByStatusOrderByIdAsc(NodeStatus.ACTIVE)
+        List<ClusterNode> masters = clusterNodeRepository
+                .findByMasterTrueAndStatusOrderByIdAsc(NodeStatus.ACTIVE);
+        if (masters.isEmpty()) {
+            // Prefer the node running this check; fall back to the lowest-id ACTIVE node.
+            clusterNodeRepository.findByHostname(getHostname())
+                    .filter(n -> n.getStatus() == NodeStatus.ACTIVE)
+                    .or(() -> clusterNodeRepository.findFirstByStatusOrderByIdAsc(NodeStatus.ACTIVE))
                     .ifPresent(candidate -> {
                         clusterNodeRepository.deactivateAllMasters();
                         candidate.setMaster(true);
@@ -231,6 +232,14 @@ public class ClusterService implements HeartbeatClusterService {
                         log.info("Cluster master elected: hostname={}, id={}",
                                 candidate.getHostname(), candidate.getId());
                     });
+            return;
+        }
+        // Self-heal: enforce the single-master invariant, keeping the lowest id.
+        for (ClusterNode extra : masters.subList(1, masters.size())) {
+            extra.setMaster(false);
+            clusterNodeRepository.save(extra);
+            log.warn("Duplicate cluster master demoted: hostname={}, id={}",
+                    extra.getHostname(), extra.getId());
         }
     }
 
@@ -355,6 +364,7 @@ public class ClusterService implements HeartbeatClusterService {
                 detail ? node.getFsTotalSpace() : null,
                 detail ? node.getFsFreeSpace() : null,
                 detail ? node.getFsUsableSpace() : null,
+                detail ? node.getFilesystem() : null,
                 jvm,
                 env
         );
@@ -381,11 +391,13 @@ public class ClusterService implements HeartbeatClusterService {
             node.setFsTotalSpace(space.total());
             node.setFsFreeSpace(space.free());
             node.setFsUsableSpace(space.usable());
+            node.setFilesystem(space.filesystem());
         } catch (RuntimeException e) {
             log.warn("Unable to read filesystem space: hostname={}, cause={}", node.getHostname(), e.toString());
             node.setFsTotalSpace(null);
             node.setFsFreeSpace(null);
             node.setFsUsableSpace(null);
+            node.setFilesystem(null);
         }
     }
 

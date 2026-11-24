@@ -221,8 +221,8 @@ class ClusterServiceTest {
         void electsFirstActiveNodeWhenNoMaster() {
             ClusterNode candidate = createNode(1L, "host1", NodeStatus.ACTIVE, false);
 
-            when(clusterNodeRepository.findByMasterTrueAndStatus(NodeStatus.ACTIVE))
-                    .thenReturn(Optional.empty());
+            when(clusterNodeRepository.findByMasterTrueAndStatusOrderByIdAsc(NodeStatus.ACTIVE))
+                    .thenReturn(List.of());
             when(clusterNodeRepository.findFirstByStatusOrderByIdAsc(NodeStatus.ACTIVE))
                     .thenReturn(Optional.of(candidate));
             when(clusterNodeRepository.save(any(ClusterNode.class)))
@@ -237,12 +237,31 @@ class ClusterServiceTest {
         }
 
         @Test
+        @DisplayName("elects the current node when the previous master is no longer ACTIVE")
+        void electsCurrentNodeWhenMasterDead() throws Exception {
+            String hostname = java.net.InetAddress.getLocalHost().getHostName();
+            ClusterNode self = createNode(2L, hostname, NodeStatus.ACTIVE, false);
+
+            when(clusterNodeRepository.findByMasterTrueAndStatusOrderByIdAsc(NodeStatus.ACTIVE))
+                    .thenReturn(List.of());
+            when(clusterNodeRepository.findByHostname(hostname)).thenReturn(Optional.of(self));
+            when(clusterNodeRepository.save(any(ClusterNode.class)))
+                    .thenAnswer(invocation -> invocation.getArgument(0));
+
+            clusterService.electMaster();
+
+            verify(clusterNodeRepository).deactivateAllMasters();
+            assertThat(self.getMaster()).isTrue();
+            verify(clusterNodeRepository, never()).findFirstByStatusOrderByIdAsc(any());
+        }
+
+        @Test
         @DisplayName("does nothing when an ACTIVE master already exists")
         void doesNothingWhenMasterExists() {
             ClusterNode master = createNode(1L, "host1", NodeStatus.ACTIVE, true);
 
-            when(clusterNodeRepository.findByMasterTrueAndStatus(NodeStatus.ACTIVE))
-                    .thenReturn(Optional.of(master));
+            when(clusterNodeRepository.findByMasterTrueAndStatusOrderByIdAsc(NodeStatus.ACTIVE))
+                    .thenReturn(List.of(master));
 
             clusterService.electMaster();
 
@@ -251,10 +270,23 @@ class ClusterServiceTest {
         }
 
         @Test
+        @DisplayName("demotes duplicate masters keeping the lowest id")
+        void demotesDuplicateMasters() {
+            ClusterNode first = createNode(1L, "host1", NodeStatus.ACTIVE, true);
+            ClusterNode second = createNode(2L, "host2", NodeStatus.ACTIVE, true);
+            when(clusterNodeRepository.findByMasterTrueAndStatusOrderByIdAsc(NodeStatus.ACTIVE))
+                    .thenReturn(List.of(first, second));
+            clusterService.electMaster();
+            assertThat(first.getMaster()).isTrue();
+            assertThat(second.getMaster()).isFalse();
+            verify(clusterNodeRepository).save(second);
+            verify(clusterNodeRepository, never()).deactivateAllMasters();
+        }
+        @Test
         @DisplayName("does nothing when no ACTIVE nodes available")
         void doesNothingWhenNoActiveNodes() {
-            when(clusterNodeRepository.findByMasterTrueAndStatus(NodeStatus.ACTIVE))
-                    .thenReturn(Optional.empty());
+            when(clusterNodeRepository.findByMasterTrueAndStatusOrderByIdAsc(NodeStatus.ACTIVE))
+                    .thenReturn(List.of());
             when(clusterNodeRepository.findFirstByStatusOrderByIdAsc(NodeStatus.ACTIVE))
                     .thenReturn(Optional.empty());
 
@@ -452,7 +484,7 @@ class ClusterServiceTest {
         @Test
         @DisplayName("registerNode creates a new node with processors, filesystem, JVM and env properties")
         void registerNewNodeLoadsExtendedInfo() {
-            stubProbe(8, new NodeEnvironmentProbe.FileSystemSpace(1000L, 400L, 300L));
+            stubProbe(8, new NodeEnvironmentProbe.FileSystemSpace(1000L, 400L, 300L, "overlay (overlay) - /opt/app"));
 
             ClusterNode saved = registerNewAndCapture();
 
@@ -460,6 +492,7 @@ class ClusterServiceTest {
             assertThat(saved.getFsTotalSpace()).isEqualTo(1000L);
             assertThat(saved.getFsFreeSpace()).isEqualTo(400L);
             assertThat(saved.getFsUsableSpace()).isEqualTo(300L);
+            assertThat(saved.getFilesystem()).isEqualTo("overlay (overlay) - /opt/app");
             Map<String, String> jvm = NodePropertiesJsonCodec.fromJson(saved.getJvmProperties());
             Map<String, String> env = NodePropertiesJsonCodec.fromJson(saved.getEnvironmentProperties());
             assertThat(jvm).containsEntry("java.version", "21")

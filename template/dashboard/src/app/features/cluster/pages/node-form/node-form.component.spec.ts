@@ -34,6 +34,7 @@ function buildDetail(overrides: Partial<ClusterNode> = {}): ClusterNode {
     fsTotalSpace: 100 * GB,
     fsFreeSpace: 25 * GB,
     fsUsableSpace: 20 * GB,
+    filesystem: 'overlay (overlay) - /opt/app',
     jvmProperties: { 'java.version': '21.0.1', 'user.language': 'es', 'os.name': 'Linux' },
     environmentProperties: { PATH: '/usr/bin', HOME: '/home/app', LANG: 'en_US' },
     ...overrides,
@@ -67,19 +68,6 @@ describe('NodeFormComponent', () => {
   function q<T extends HTMLElement = HTMLElement>(testId: string): T | null {
     return (fixture.nativeElement as HTMLElement).querySelector<T>(`[data-testid="${testId}"]`);
   }
-
-  function qAll(testId: string): HTMLElement[] {
-    return Array.from((fixture.nativeElement as HTMLElement).querySelectorAll<HTMLElement>(`[data-testid="${testId}"]`));
-  }
-
-  function type(testId: string, text: string) {
-    const input = q<HTMLInputElement>(testId)!;
-    input.value = text;
-    input.dispatchEvent(new Event('input'));
-    fixture.detectChanges();
-  }
-
-  const rowKeys = (testId: string) => qAll(testId).map((r) => r.querySelector('td')?.textContent?.trim());
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -193,27 +181,25 @@ describe('NodeFormComponent', () => {
       setupWithDetail(buildDetail());
 
       expect(q<HTMLInputElement>('node-form-processors')?.value).toBe('8');
+      expect(q<HTMLInputElement>('node-form-filesystem')?.value).toBe('overlay (overlay) - /opt/app');
       expect(q<HTMLInputElement>('node-form-fs-total')?.value).toBe('100.00');
       expect(q<HTMLInputElement>('node-form-fs-free')?.value).toBe('25.00');
       expect(q<HTMLInputElement>('node-form-fs-free-percent')?.value).toBe('25.0');
-      expect(rowKeys('node-form-jvm-row')).toEqual(['java.version', 'os.name', 'user.language']);
-      expect(rowKeys('node-form-env-row')).toEqual(['HOME', 'LANG', 'PATH']);
+      expect(q<HTMLTextAreaElement>('node-form-jvm-text')?.value).toBe(
+        'java.version = 21.0.1\nos.name = Linux\nuser.language = es',
+      );
+      expect(q<HTMLTextAreaElement>('node-form-env-text')?.value).toBe(
+        'HOME = /home/app\nLANG = en_US\nPATH = /usr/bin',
+      );
     });
 
-    it('filters JVM and environment sections independently', () => {
+    it('shows JVM properties and environment variables in read-only textareas', () => {
       setupWithDetail(buildDetail());
-
-      type('node-form-jvm-filter', 'java');
-      expect(rowKeys('node-form-jvm-row')).toEqual(['java.version']);
-      expect(rowKeys('node-form-env-row')).toHaveLength(3);
-
-      type('node-form-env-filter', 'path');
-      expect(rowKeys('node-form-env-row')).toEqual(['PATH']);
-      expect(rowKeys('node-form-jvm-row')).toEqual(['java.version']);
-
-      type('node-form-jvm-filter', '');
-      expect(rowKeys('node-form-jvm-row')).toHaveLength(3);
-      expect(rowKeys('node-form-env-row')).toEqual(['PATH']);
+      ['node-form-jvm-text', 'node-form-env-text'].forEach((id) => {
+        const area = q<HTMLTextAreaElement>(id);
+        expect(area?.tagName).toBe('TEXTAREA');
+        expect(area?.readOnly).toBe(true);
+      });
     });
 
     it('renders null values as "-" without errors', () => {
@@ -223,17 +209,19 @@ describe('NodeFormComponent', () => {
           fsTotalSpace: null,
           fsFreeSpace: null,
           fsUsableSpace: null,
+          filesystem: null,
           jvmProperties: null,
           environmentProperties: null,
         }),
       );
 
       expect(q<HTMLInputElement>('node-form-processors')?.value).toBe('-');
+      expect(q<HTMLInputElement>('node-form-filesystem')?.value).toBe('-');
       expect(q<HTMLInputElement>('node-form-fs-total')?.value).toBe('-');
       expect(q<HTMLInputElement>('node-form-fs-free')?.value).toBe('-');
       expect(q<HTMLInputElement>('node-form-fs-free-percent')?.value).toBe('-');
-      expect(q('node-form-jvm-empty')).not.toBeNull();
-      expect(q('node-form-env-empty')).not.toBeNull();
+      expect(q<HTMLTextAreaElement>('node-form-jvm-text')?.value).toBe('');
+      expect(q<HTMLTextAreaElement>('node-form-env-text')?.value).toBe('');
       expect(q('node-form-load-error')).toBeNull();
     });
 
@@ -243,8 +231,8 @@ describe('NodeFormComponent', () => {
 
       expect(q<HTMLInputElement>('node-form-processors')?.value).toBe('-');
       expect(q<HTMLInputElement>('node-form-fs-free-percent')?.value).toBe('-');
-      expect(q('node-form-jvm-empty')).not.toBeNull();
-      expect(q('node-form-env-empty')).not.toBeNull();
+      expect(q<HTMLTextAreaElement>('node-form-jvm-text')?.value).toBe('');
+      expect(q<HTMLTextAreaElement>('node-form-env-text')?.value).toBe('');
       expect(q('node-form-load-error')).toBeNull();
     });
 
@@ -255,10 +243,8 @@ describe('NodeFormComponent', () => {
 
       expect(q('node-form-load-error')?.textContent).toContain('cluster.nodes.form.loadError');
       expect(q<HTMLInputElement>('node-form-processors')?.value).toBe('-');
-      expect(q('node-form-jvm-table')).toBeNull();
-      expect(q('node-form-jvm-empty')).toBeNull();
-      expect(q('node-form-env-table')).toBeNull();
-      expect(q('node-form-env-empty')).toBeNull();
+      expect(q('node-form-jvm-text')).toBeNull();
+      expect(q('node-form-env-text')).toBeNull();
     });
 
     it('shows the load error when the detail does not answer within 30 s', () => {
@@ -273,7 +259,7 @@ describe('NodeFormComponent', () => {
       vi.advanceTimersByTime(1);
       fixture.detectChanges();
       expect(q('node-form-load-error')?.textContent).toContain('cluster.nodes.form.loadError');
-      expect(q('node-form-jvm-table')).toBeNull();
+      expect(q('node-form-jvm-text')).toBeNull();
     });
 
     it('associates every label with an existing control', () => {
@@ -287,17 +273,15 @@ describe('NodeFormComponent', () => {
         expect((fixture.nativeElement as HTMLElement).querySelector(`#${id}`)).not.toBeNull();
       });
       [
+        'node-filesystem',
         'node-processors',
         'node-fs-total',
         'node-fs-free',
         'node-fs-free-percent',
-        'node-form-jvm-filter',
-        'node-form-env-filter',
+        'node-form-jvm-text',
+        'node-form-env-text',
       ].forEach((id) => {
         expect((fixture.nativeElement as HTMLElement).querySelector(`label[for="${id}"]`), id).not.toBeNull();
-      });
-      ['node-form-jvm-heading', 'node-form-env-heading'].forEach((id) => {
-        expect((fixture.nativeElement as HTMLElement).querySelector(`#${id}`), id).not.toBeNull();
       });
     });
   });
@@ -306,18 +290,13 @@ describe('NodeFormComponent', () => {
 describe('cluster.nodes i18n keys', () => {
   const NEW_KEYS = [
     'fields.processors',
+    'fields.filesystem',
     'fields.fsTotalGb',
     'fields.fsFreeGb',
     'fields.fsFreePercent',
     'form.sectionResources',
     'form.sectionJvm',
     'form.sectionEnvironment',
-    'form.filterPlaceholder',
-    'form.filterLabelJvm',
-    'form.filterLabelEnv',
-    'form.columnKey',
-    'form.columnValue',
-    'form.noMatches',
     'form.noProperties',
     'form.loadError',
   ];

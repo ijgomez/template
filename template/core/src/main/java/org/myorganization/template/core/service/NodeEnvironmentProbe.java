@@ -37,7 +37,12 @@ public interface NodeEnvironmentProbe {
      * @param total  total space
      * @param free   free space
      * @param usable usable space for this JVM
+     * @param filesystem description of the filesystem read (device, type and path); may be null
      */
-    record FileSystemSpace(long total, long free, long usable) {
+    record FileSystemSpace(long total, long free, long usable, String filesystem) {
+
+        public FileSystemSpace(long total, long free, long usable) {
+            this(total, free, usable, null);
+        }
     }
 }

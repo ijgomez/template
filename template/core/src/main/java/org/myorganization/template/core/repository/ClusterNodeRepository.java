@@ -21,7 +21,7 @@ public interface ClusterNodeRepository extends JpaRepository<ClusterNode, Long> 
 
     List<ClusterNode> findByStatusAndLastModifiedAtBefore(NodeStatus status, OffsetDateTime threshold);
 
-    Optional<ClusterNode> findByMasterTrueAndStatus(NodeStatus status);
+    List<ClusterNode> findByMasterTrueAndStatusOrderByIdAsc(NodeStatus status);
 
     @Modifying
     @Query("UPDATE ClusterNode n SET n.master = false WHERE n.master = true")

@@ -30,11 +30,14 @@ class ClusterLockServiceTest {
     @Mock
     private ClusterBlockRepository clusterBlockRepository;
 
+    @Mock
+    private AdvisoryLockManager advisoryLockManager;
+
     private ClusterLockService clusterLockService;
 
     @BeforeEach
     void setUp() {
-        clusterLockService = new ClusterLockService(clusterBlockRepository);
+        clusterLockService = new ClusterLockService(clusterBlockRepository, advisoryLockManager);
     }
 
     @Nested
@@ -53,7 +56,7 @@ class ClusterLockServiceTest {
             clusterLockService.acquireLock(resourceName);
 
             // Verify advisory lock was acquired
-            verify(clusterBlockRepository).acquireAdvisoryLock(resourceName.hashCode());
+            verify(advisoryLockManager).lock(resourceName.hashCode());
             // Verify start_date was updated with DB time
             verify(clusterBlockRepository).updateStartDateWithDbTime(resourceName);
             // Verify DB time was retrieved for later duration calc
@@ -102,7 +105,7 @@ class ClusterLockServiceTest {
 
             // Simulate advisory lock failure (void method requires doThrow syntax)
             doThrow(new RuntimeException("DB connection failed"))
-                    .when(clusterBlockRepository).acquireAdvisoryLock(anyInt());
+                    .when(advisoryLockManager).lock(anyInt());
 
             assertThatThrownBy(() -> clusterLockService.acquireLock(resourceName))
                     .isInstanceOf(RuntimeException.class)
@@ -123,7 +126,7 @@ class ClusterLockServiceTest {
 
             clusterLockService.acquireLock(resourceName);
 
-            verify(clusterBlockRepository).acquireAdvisoryLock("NODOS".hashCode());
+            verify(advisoryLockManager).lock("NODOS".hashCode());
 
             // Cleanup
             when(clusterBlockRepository.findByName(resourceName)).thenReturn(Optional.of(createBlock(resourceName)));
@@ -162,7 +165,7 @@ class ClusterLockServiceTest {
             clusterLockService.releaseLock(resourceName);
 
             // Verify advisory lock released
-            verify(clusterBlockRepository).releaseAdvisoryLock(resourceName.hashCode());
+            verify(advisoryLockManager).unlock(resourceName.hashCode());
 
             // Verify metrics updated
             ArgumentCaptor<ClusterBlock> captor = ArgumentCaptor.forClass(ClusterBlock.class);
@@ -212,6 +215,22 @@ class ClusterLockServiceTest {
             assertThat(updated.getAvgTime()).isEqualTo(2000L);
             assertThat(updated.getMinTime()).isEqualTo(1000L); // min stays 1000
             assertThat(updated.getMaxTime()).isEqualTo(3000L); // max updated to 3000
+        }
+
+        @Test
+        @DisplayName("releases advisory lock even when metrics update fails")
+        void releasesAdvisoryLockWhenMetricsFail() {
+            String resourceName = "FAILING_METRICS";
+            when(clusterBlockRepository.findByName(resourceName)).thenReturn(Optional.of(createBlock(resourceName)));
+            when(clusterBlockRepository.getDatabaseTime()).thenReturn(Instant.now());
+            clusterLockService.acquireLock(resourceName);
+
+            when(clusterBlockRepository.getDatabaseTime()).thenThrow(new RuntimeException("DB failure"));
+            assertThatThrownBy(() -> clusterLockService.releaseLock(resourceName))
+                    .isInstanceOf(RuntimeException.class);
+
+            verify(advisoryLockManager).unlock(resourceName.hashCode());
+            assertThat(clusterLockService.isLocked(resourceName)).isFalse();
         }
 
         @Test

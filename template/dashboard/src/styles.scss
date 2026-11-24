@@ -327,6 +327,14 @@ body {
   }
 }
 
+// Textareas de solo lectura: mismo fondo que un campo deshabilitado (los inputs de solo
+// lectura de los formularios usan `readonly disabled`), pero sin deshabilitarlos para que
+// el texto siga siendo seleccionable y copiable.
+textarea.form-control[readonly] {
+  background-color: var(--bs-secondary-bg);
+  opacity: 1;
+}
+
 // Cursor de mano en selects sobre los que el usuario puede actuar;
 // si están deshabilitados o en solo lectura se mantiene el cursor por defecto.
 select:not(:disabled):not([readonly]),

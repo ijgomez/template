@@ -76,6 +76,10 @@ public class ClusterNode {
     @Column(name = "fs_usable_space")
     private Long fsUsableSpace;
 
+    /** Filesystem (device, type and path) the space figures are read from. */
+    @Column(name = "filesystem", length = 1024)
+    private String filesystem;
+
     @Column(name = "jvm_properties", columnDefinition = "TEXT")
     private String jvmProperties;
 

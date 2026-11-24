@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DecimalPipe } from '@angular/common';
+import { EMPTY, interval, switchMap, catchError } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -21,6 +22,9 @@ import { TpClearButtonComponent } from '../../../../shared/components/clear-butt
 import { TpExportButtonComponent } from '../../../../shared/components/export-button';
 
 type ViewMode = 'list' | 'form';
+
+/** Silent refresh period; matches the default backend heartbeat interval (30 s). */
+const REFRESH_INTERVAL_MS = 30_000;
 
 /** Primitive values that can be compared as text without object stringification. */
 type SortableValue = string | number | boolean | null | undefined;
@@ -144,6 +148,7 @@ export class NodeListComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadNodes();
+    this.startAutoRefresh();
     this.route.queryParams
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((params) => this.restoreViewFromParams(params));
@@ -189,6 +194,26 @@ export class NodeListComponent implements OnInit {
     }
 
     this.viewMode.set('list');
+  }
+
+  /**
+   * Periodically reloads the nodes without progress notifications so the heartbeat,
+   * status and master columns stay current. Stops when the component is destroyed;
+   * a failed refresh is skipped and retried on the next tick.
+   */
+  private startAutoRefresh(): void {
+    interval(REFRESH_INTERVAL_MS)
+      .pipe(
+        switchMap(() => this.clusterService.findAllNodes().pipe(catchError(() => EMPTY))),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((nodes) => {
+        this.allNodes.set(nodes);
+        const current = this.selectedNode();
+        if (current) {
+          this.selectedNode.set(nodes.find((n) => n.id === current.id) ?? current);
+        }
+      });
   }
 
   /**
