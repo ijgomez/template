@@ -255,6 +255,17 @@ describe('NodeListComponent (behavior)', () => {
       expect(component.selectedRow()).toBeNull();
     });
 
+    it('applyFilters should reload the nodes even when no filter is set', () => {
+      const spy = vi.spyOn(clusterService, 'findAllNodes');
+      expect(component.filterHostname()).toBe('');
+      expect(component.filterStatus()).toBe('');
+      expect(component.filterMaster()).toBe('');
+      (byTestId('btn-filter-search') as HTMLButtonElement).click();
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(component.filteredNodes()).toHaveLength(nodes.length);
+      spy.mockRestore();
+    });
+
     it('should apply the filters on submit', () => {
       component.currentPage.set(2);
 
