@@ -94,33 +94,14 @@ test.describe('Cluster nodes', () => {
     await expect(page.getByTestId('node-form-fs-free-percent')).toBeVisible();
     await expect(page.getByTestId('node-form-processors')).not.toHaveValue('');
 
-    // JVM y variables de entorno (7.1, 7.3): tabla con filtro o mensaje de sin propiedades
+    // JVM y variables de entorno (7.1, 7.3): áreas de texto de solo lectura con líneas "clave = valor"
     for (const section of ['jvm', 'env']) {
       await expect(page.getByTestId(`node-form-${section}-section`)).toBeVisible();
-
-      const table = page.getByTestId(`node-form-${section}-table`);
-      const empty = page.getByTestId(`node-form-${section}-empty`);
-      await expect(table.or(empty)).toBeVisible();
-
-      if (await table.isVisible()) {
-        const filter = page.getByTestId(`node-form-${section}-filter`);
-        const rows = page.getByTestId(`node-form-${section}-row`);
-        await expect(filter).toBeVisible();
-        expect(await rows.count()).toBeGreaterThan(0);
-
-        // El filtro de una sección no afecta a la otra (7.3)
-        const otherSection = section === 'jvm' ? 'env' : 'jvm';
-        const otherCount = await page.getByTestId(`node-form-${otherSection}-row`).count();
-        await filter.fill('zzz-no-such-key-zzz');
-        await expect(page.getByTestId(`node-form-${section}-no-matches`)).toBeVisible();
-        await expect(page.getByTestId(`node-form-${otherSection}-row`)).toHaveCount(otherCount);
-
-        await filter.fill('');
-        await expect(rows.first()).toBeVisible();
-      }
+      const text = page.getByTestId(`node-form-${section}-text`);
+      await expect(text).toBeVisible();
+      await expect(text).toHaveAttribute('readonly', '');
     }
   });
-
   test('TC-CLN-06 should export nodes to CSV', async ({ page }) => {
     const nodesPage = new ClusterNodesPage(page);
     await nodesPage.goto();

@@ -806,16 +806,12 @@ Precondición del ciclo: usuario con `CLUSTER_NODE_READ` (y `CLUSTER_NODE_WRITE`
 #### TC-CLN-09 · Propiedades de la JVM y variables de entorno
 
 - **Versión:** 1.1 · **Prioridad:** Alta · **Tipo:** Funcional · **Traza:** RF-CLN-8 (AC8.5–AC8.7) · **Independiente:** Sí · **Dependencias:** ninguna
-- **Setup:** login con `{{ADMIN_USER}}`; abrir el detalle de un nodo con propiedades. Las dos secciones son instancias de `tp-property-table` con `testId` `node-form-jvm` y `node-form-env`.
+- **Setup:** login con `{{ADMIN_USER}}`; abrir el detalle de un nodo con propiedades. Las dos secciones son áreas de texto de solo lectura con `data-testid` `node-form-jvm-text` y `node-form-env-text`.
 - **Teardown:** logout.
-
-| # | Acción                                                                    | Resultado esperado                                                                                          |
-|---|---------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------|
-| 1 | Observar `node-form-jvm-table` y `node-form-env-table`                    | Dos tablas independientes con cabeceras Clave y Valor, ordenadas por clave sin distinguir mayúsculas       |
-| 2 | Escribir `java` en `node-form-jvm-filter`                                 | Solo filas de la sección JVM cuya clave o valor contiene el texto; la sección de entorno no cambia          |
-| 3 | Escribir un texto inexistente en `node-form-env-filter`                   | `node-form-env-no-matches` visible y el texto del filtro se conserva                                        |
-| 4 | Abrir el detalle de un nodo con propiedades nulas o vacías                | `node-form-jvm-empty` y `node-form-env-empty` visibles, sin tabla ni filtro                                 |
-
+| # | Acción                                                     | Resultado esperado                                                                               |
+|---|------------------------------------------------------------|--------------------------------------------------------------------------------------------------|
+| 1 | Observar `node-form-jvm-text` y `node-form-env-text`       | Dos áreas de texto independientes, de solo lectura, con líneas `clave = valor` ordenadas por clave |
+| 2 | Abrir el detalle de un nodo con propiedades nulas o vacías | Las áreas quedan vacías y muestran el texto de sin propiedades como placeholder                  |
 #### TC-CLN-10 · Enmascaramiento de valores sensibles
 
 - **Versión:** 1.0 · **Prioridad:** Alta · **Tipo:** Seguridad, API · **Traza:** RF-CLN-9 (AC9.1–AC9.4), RNF-CLN-7 · **Independiente:** Sí · **Dependencias:** variable de entorno sensible conocida en el servidor (por ejemplo `DB_PASSWORD`)
