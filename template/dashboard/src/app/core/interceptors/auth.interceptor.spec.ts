@@ -71,6 +71,18 @@ describe('authInterceptor', () => {
   });
 
   describe('Authorization header attachment', () => {
+    it('should not add Authorization header to URLs outside the API (SEC-13)', () => {
+      authServiceMock.getAccessToken.mockReturnValue('valid-token');
+      authServiceMock.getCurrentUser.mockReturnValue(createUser(3600));
+
+      httpClient.get('https://evil.example.com/auth/loginx/data').subscribe();
+      httpClient.get('https://evil.example.com/api/v1/users').subscribe();
+
+      for (const req of httpMock.match(() => true)) {
+        expect(req.request.headers.has('Authorization')).toBe(false);
+      }
+    });
+
     it('should add Authorization Bearer header when token exists', () => {
       authServiceMock.getAccessToken.mockReturnValue('valid-token');
       authServiceMock.getCurrentUser.mockReturnValue(createUser(3600));

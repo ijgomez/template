@@ -30,10 +30,39 @@ export function resetRefreshState(): void {
 }
 
 /**
- * Determines if a URL is an authentication endpoint that should skip interception.
+ * Resolves a (possibly relative) URL against the document base, or null if it is invalid.
  */
-function isAuthEndpoint(url: string): boolean {
-  return AUTH_SKIP_URLS.some((path) => url.includes(path));
+function resolveUrl(url: string): URL | null {
+  try {
+    return new URL(url, document.baseURI);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Returns the path of `url` relative to the API root (e.g. `/auth/login`), or null when the
+ * URL does not belong to the API (different origin or outside the `environment.apiUrl` path).
+ * Only API requests may carry the access token, so it is never sent to another origin.
+ */
+function getApiPath(url: string): string | null {
+  const target = resolveUrl(url);
+  const api = resolveUrl(environment.apiUrl);
+  if (!target || !api || target.origin !== api.origin) {
+    return null;
+  }
+  const apiBase = api.pathname.replace(/\/$/, '');
+  if (target.pathname !== apiBase && !target.pathname.startsWith(`${apiBase}/`)) {
+    return null;
+  }
+  return target.pathname.slice(apiBase.length) || '/';
+}
+
+/**
+ * Determines if an API path is a public authentication endpoint that should skip interception.
+ */
+function isAuthEndpoint(apiPath: string): boolean {
+  return AUTH_SKIP_URLS.some((path) => apiPath === path || apiPath.startsWith(`${path}/`));
 }
 
 /**
@@ -78,15 +107,17 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, ne
   const router = inject(Router);
   const notificationService = inject(NotificationService);
 
+  const apiPath = getApiPath(req.url);
+
   // Skip auth endpoints to avoid infinite loops
-  if (isAuthEndpoint(req.url)) {
+  if (apiPath !== null && isAuthEndpoint(apiPath)) {
     return next(req);
   }
 
   const token = authService.getAccessToken();
 
-  // No token available — send request as-is
-  if (!token) {
+  // No token available, or the request is not addressed to the API origin: never attach the token
+  if (!token || apiPath === null) {
     return next(req).pipe(catchError((error) => handleHttpError(error, notificationService)));
   }
 
