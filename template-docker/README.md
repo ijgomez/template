@@ -82,7 +82,7 @@ Apache reparte el tráfico entre `wildfly-1:8080` y `wildfly-2:8080` dentro de l
 
 ### WildFly y datasource PostgreSQL
 
-- Los dos nodos usan la imagen `template-wildfly:latest`, construida desde WildFly JDK 21.
+- Los dos nodos usan la imagen `template-wildfly:latest`, construida desde `quay.io/wildfly/wildfly:42.0.0.Final-jdk21` (versión fijada en `wildfly/Dockerfile`; actualizar la etiqueta al subir de versión).
 - El Dockerfile descarga el driver JDBC de PostgreSQL directamente con `curl`, valida el JAR y lo instala como módulo `org.postgresql`; no usa una etapa adicional de Alpine ni Maven.
 - La construcción elimina el datasource `ExampleDS` y el driver `h2`, registra el driver PostgreSQL y crea `PostgreSQLDS`.
 - El datasource está disponible en JNDI como `java:/jdbc/PostgreSQLDS`, apunta a la base `template` por defecto y obtiene la contraseña desde `secrets/credentials.env`.

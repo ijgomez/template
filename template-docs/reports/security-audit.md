@@ -325,15 +325,15 @@ No se afirma que la aplicación sea segura: hay controles correctos, pero los ha
 
 | Estado | Hallazgos |
 |---|---|
-| **Vulnerabilidades confirmadas** | SEC-01 (Crítica), SEC-02, SEC-03, SEC-04, SEC-05, SEC-06, SEC-07, SEC-08, SEC-10, SEC-11, SEC-12, SEC-13, SEC-14, SEC-15, SEC-16, SEC-19, SEC-20 |
-| **Posibles problemas pendientes de verificación** | SEC-09 (exposición real de Actuator en runtime), rate limiting por IP en infraestructura (complementa a SEC-06), efecto en runtime de SEC-01/SEC-04 según pipeline, CVE de dependencias Maven (sin escanear), CORS real en producción |
-| **Mejoras preventivas** | SEC-17 (iss/aud/algoritmo JWT), SEC-18 (cabeceras de seguridad/CSP), SEC-21 (actualizar `@angular/build`), escaneo de secretos y de dependencias en CI, segregación de funciones |
+| **Vulnerabilidades confirmadas** | SEC-01 (Crítica), SEC-02, SEC-03, SEC-04, SEC-05, SEC-06, SEC-07, SEC-08, SEC-10, SEC-12 (parcial: secreto en historial), SEC-13, SEC-14, SEC-15, SEC-16, SEC-19 |
+| **Posibles problemas pendientes de verificación** | SEC-09 (corregido en código; falta confirmar la exposición real de Actuator en runtime), SEC-20 (confirmar ausencia de `h2-*.jar` en el WAR `dist`), rate limiting por IP en infraestructura (complementa a SEC-06), efecto en runtime de SEC-01/SEC-04 según pipeline, CVE de dependencias Maven (sin escanear), CORS real en producción |
+| **Mejoras preventivas** | SEC-17 (iss/aud/algoritmo JWT), SEC-18 (CSP aplicada; faltan `Referrer-Policy`, `Permissions-Policy`, HSTS), SEC-21 (0 vulnerabilidades actuales; añadir `npm audit` a CI), escaneo de secretos y de dependencias en CI, segregación de funciones |
 
 ---
 
 ## 9. Seguimiento de aplicación de correcciones
 
-Progreso: **9 / 21 hallazgos aplicados**.
+Progreso: **13 / 21 hallazgos aplicados** (2 más en curso: SEC-12, SEC-18).
 
 Estados posibles: `Pendiente` · `En curso` · `Aplicado` · `Descartado` (indicar motivo en Notas).
 
@@ -347,19 +347,19 @@ Estados posibles: `Pendiente` · `En curso` · `Aplicado` · `Descartado` (indic
 | SEC-06 | Sin limitación de intentos en el login | Media | Aplicado | 2026-10-28 | Bloqueo temporal de cuenta con contador persistido en PostgreSQL (`users.failed_login_attempts`/`locked_until`, changeset `20261028-add-user-login-lock-fields`); `LoginAttemptService` (core, `REQUIRES_NEW`) y verificación vía Spring Security (`TemplateUserDetails.isAccountNonLocked()` → `DaoAuthenticationProvider` → `LockedException` → `AccountLockedException` → 429 + `Retry-After`). Frontend con aviso de bloqueo temporal. Tests: `LoginAttemptServiceTest`, `AuthServiceTest`, `LoginLockoutIntegrationTest`, `login.component.spec.ts`. Ampliación funcional (2026-11-01): bloqueo administrativo indefinido (`users.locked`, changeset `20261101-add-user-locked-flag`) con control bidireccional en el formulario de usuario, estado/badge y filtro por estado en el listado, columna en la exportación CSV y desbloqueo manual que limpia `locked_until`/`failed_login_attempts`; `User.isCurrentlyLocked()` unifica ambos bloqueos. |
 | SEC-07 | Escalada de privilegios en el módulo de administración | Media | Aplicado | 2026-11-02 | Segregación de funciones mediante dos nuevas acciones `PROFILE_GRANT` y `USER_GRANT` (changeset `20261102-seed-grant-actions`) exigidas además de `PROFILE_WRITE`/`USER_WRITE`; verificación en `ProfileService`/`UserService` con `GrantAuthorityChecker` solo cuando la petición modifica realmente los permisos (alta con acciones/perfil o cambio de acciones/perfil), `AccessDeniedException` → 403. Tests: `GrantAuthorityCheckerTest`, casos en `ProfileServiceTest`/`UserServiceTest`, `GrantSecurityIntegrationTest` (Testcontainers). Requisitos `RF-PRO-8`/`RNF-PRO-6` y `RF-USR-10`/`RNF-USR-7`; test cases `TC-PRO-10`/`TC-USR-14`. |
 | SEC-08 | Sin control de acceso por usuario en endpoints de informes | Media | Aplicado | 2026-11-06 | Nueva acción `REPORT_READ` (changeset `20261106-seed-report-read-action`): `GET /api/v1/reports/**` exige `REPORT_READ` y `POST` mantiene `REPORT_EXECUTE`. `getFilters` valida la asignación por usuario (`user2report` → 403). Menú/ruta `/reports` del frontend dependen de `REPORT_READ` y solo listan informes asignados. Tests: `ReportServiceTest`, `ReportControllerTest`, `ReportAccessIntegrationTest` y E2E `TC-RPT-11`. Requisitos `RF-RPT-6`/`RNF-RPT-8`. |
-| SEC-09 | Actuator en el WAR y accesible públicamente | Media | Pendiente | | |
+| SEC-09 | Actuator en el WAR y accesible públicamente | Media | Aplicado | 2026-11-26 | `management.endpoints.web.exposure.include: health` y `show-details: never` en `application.yml`; `SecurityConfig` permite solo `/actuator/health` y aplica `denyAll()` al resto de `/actuator/**`. Actuator sigue en el WAR. Pendiente la verificación en runtime (CHK-03). |
 | SEC-10 | `Sort`/`Pageable` sin lista blanca y sin handler genérico | Media | Aplicado | 2026-11-07 | Lista blanca por entidad (`SortWhitelist`) aplicada en `ActionControllerImpl` (acciones) e `InterfaceControllerImpl` (interfaces y logs), que devuelve 400 ante una propiedad de ordenación no permitida. `GlobalExceptionHandler` ahora extiende `ResponseEntityExceptionHandler` para preservar el estado HTTP de las excepciones de framework (400/404/405/415…) y añade un handler genérico `Exception` → 500 con mensaje genérico y sin traza (traza solo en logs). Tests: `SortWhitelistTest` (unitario), `SortWhitelistIntegrationTest` (Testcontainers, `sort=campoInexistente` → 400 sin traza) y casos añadidos en `ActionControllerTest`/`InterfaceControllerTest`/`GlobalExceptionHandlerTest`. |
-| SEC-11 | Credenciales por defecto y puerto 9990 expuestos (Docker) | Media | Pendiente | | |
-| SEC-12 | Secretos versionados y `.gitignore` sin reglas para `.env` | Media | Pendiente | | |
+| SEC-11 | Credenciales por defecto y puerto 9990 expuestos (Docker) | Media | Aplicado | 2026-11-26 | Contraseñas de Postgres/WildFly sin valor por defecto: se leen de `secrets/credentials.env` (Docker secret). Imagen base fijada a `quay.io/wildfly/wildfly:42.0.0.Final-jdk21` en `template-docker/wildfly/Dockerfile`. Puertos de gestión (`9991`/`9992`) publicados a propósito: `template-docker` replica producción pero se usa para desarrollar (riesgo aceptado). |
+| SEC-12 | Secretos versionados y `.gitignore` sin reglas para `.env` | Media | En curso | 2026-11-26 | `.gitignore` ya ignora `.env`, `.env.*` (con `!.env.example`) y `template-docker/.gitignore` ignora `/secrets/`; `SECRET_KEY_BASE` ya no está en `.env.example` ni en `docker-compose.yml`. Pendiente: rotar el valor antiguo, que sigue en el historial de git (commits `8150364`, `4193ea6`). |
 | SEC-13 | Interceptor añade `Authorization` sin validar origen | Baja | Pendiente | | |
 | SEC-14 | Service Worker con dataGroup `/api/**` no alineado | Baja | Pendiente | | |
 | SEC-15 | CSV formula injection en la exportación | Baja | Pendiente | | |
 | SEC-16 | Credenciales de E2E hardcodeadas | Baja | Pendiente | | |
 | SEC-17 | JWT sin `iss`/`aud` ni algoritmo explícito | Baja | Pendiente | | |
-| SEC-18 | Sin cabeceras de seguridad (CSP, X-Frame-Options…) | Baja | Pendiente | | |
+| SEC-18 | Sin cabeceras de seguridad (CSP, X-Frame-Options…) | Baja | En curso | 2026-11-26 | CSP configurada en `SecurityConfig` (commit `fc40556`, incluye `frame-ancestors 'none'`). Pendiente verificar/añadir `Referrer-Policy`, `Permissions-Policy` y HSTS. |
 | SEC-19 | `LIKE` sin escapar comodines en filtros | Baja | Pendiente | | |
-| SEC-20 | Driver H2 incluido en el WAR de producción | Baja | Pendiente | | |
-| SEC-21 | Dependencias de desarrollo con vulnerabilidad conocida | Baja | Pendiente | | |
+| SEC-20 | Driver H2 incluido en el WAR de producción | Baja | Aplicado | 2026-11-26 | H2 usa `${db.driver.scope}`: `provided` por defecto y `runtime` solo en los perfiles `local` y `test`. Pendiente comprobar que `WEB-INF/lib` del WAR `dist` no contiene `h2-*.jar`. |
+| SEC-21 | Dependencias de desarrollo con vulnerabilidad conocida | Baja | Aplicado | 2026-11-26 | `npm audit` y `npm audit --omit=dev` devuelven 0 vulnerabilidades. Falta añadirlo a CI (CI-01). |
 
 ### Comprobaciones y tareas de CI pendientes
 

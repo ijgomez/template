@@ -1,4 +1,4 @@
-FROM quay.io/wildfly/wildfly:latest-jdk21
+FROM quay.io/wildfly/wildfly:42.0.0.Final-jdk21
 ARG POSTGRESQL_JDBC_VERSION=42.7.7
 USER root
 
