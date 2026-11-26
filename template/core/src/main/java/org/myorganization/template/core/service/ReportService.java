@@ -238,8 +238,16 @@ public class ReportService {
         return sb.toString().getBytes(StandardCharsets.UTF_8);
     }
 
+    /**
+     * Escapes a CSV field. Values starting with a spreadsheet formula trigger
+     * ({@code = + - @}, tab or carriage return) are prefixed with a single quote so
+     * Excel/Sheets treat them as text instead of executing them (CSV injection).
+     */
     private String escapeCsv(String value) {
-        if (value.contains(",") || value.contains("\"") || value.contains("\n")) {
+        if (!value.isEmpty() && "=+-@\t\r".indexOf(value.charAt(0)) >= 0) {
+            value = "'" + value;
+        }
+        if (value.contains(",") || value.contains("\"") || value.contains("\n") || value.contains("\r")) {
             return "\"" + value.replace("\"", "\"\"") + "\"";
         }
         return value;

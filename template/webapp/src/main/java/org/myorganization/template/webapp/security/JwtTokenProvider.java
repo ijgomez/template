@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -34,6 +35,13 @@ public class JwtTokenProvider implements TokenProvider {
     private static final String CLAIM_TYPE = "type";
     private static final String TOKEN_TYPE_ACCESS = "access";
     private static final String TOKEN_TYPE_REFRESH = "refresh";
+
+    /** Issuer and audience bound to every token, so tokens minted for other services are rejected. */
+    static final String ISSUER = "template";
+    static final String AUDIENCE = "template-api";
+
+    /** The only signature algorithm accepted; the key is HMAC and tokens are signed with HS256. */
+    private static final String ALGORITHM = "HS256";
 
     /**
      * Default signing secret shipped by previous revisions of the repository. It is public
@@ -92,13 +100,15 @@ public class JwtTokenProvider implements TokenProvider {
         Instant expiry = now.plusMillis(accessTokenExpiration);
 
         return Jwts.builder()
+                .issuer(ISSUER)
+                .audience().add(AUDIENCE).and()
                 .subject(username)
                 .claim(CLAIM_PROFILE, profileName)
                 .claim(CLAIM_ACTIONS, actionCodes)
                 .claim(CLAIM_TYPE, TOKEN_TYPE_ACCESS)
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(expiry))
-                .signWith(secretKey)
+                .signWith(secretKey, Jwts.SIG.HS256)
                 .compact();
     }
 
@@ -111,10 +121,7 @@ public class JwtTokenProvider implements TokenProvider {
     @Override
     public boolean validateToken(String token) {
         try {
-            Jwts.parser()
-                    .verifyWith(secretKey)
-                    .build()
-                    .parseSignedClaims(token);
+            parse(token);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
             return false;
@@ -179,11 +186,23 @@ public class JwtTokenProvider implements TokenProvider {
     }
 
     private Claims extractClaims(String token) {
-        return Jwts.parser()
+        return parse(token).getPayload();
+    }
+
+    /**
+     * Parses and verifies a token: signature, expiration, issuer, audience and algorithm.
+     */
+    private Jws<Claims> parse(String token) {
+        Jws<Claims> jws = Jwts.parser()
                 .verifyWith(secretKey)
+                .requireIssuer(ISSUER)
+                .requireAudience(AUDIENCE)
                 .build()
-                .parseSignedClaims(token)
-                .getPayload();
+                .parseSignedClaims(token);
+        if (!ALGORITHM.equals(jws.getHeader().getAlgorithm())) {
+            throw new JwtException("Unexpected signature algorithm: " + jws.getHeader().getAlgorithm());
+        }
+        return jws;
     }
 
 }

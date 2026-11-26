@@ -122,4 +122,39 @@ class JwtTokenProviderTest {
         assertThat(jwtTokenProvider.extractActions(token)).isEmpty();
     }
 
+
+    @Test
+    void validateToken_shouldRejectTokenWithWrongIssuerOrAudience() {
+        javax.crypto.SecretKey key = io.jsonwebtoken.security.Keys.hmacShaKeyFor(
+                SECRET.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        String wrongIssuer = io.jsonwebtoken.Jwts.builder().issuer("other").audience().add("template-api").and()
+                .subject("admin").expiration(new java.util.Date(System.currentTimeMillis() + 60000)).signWith(key).compact();
+        String wrongAudience = io.jsonwebtoken.Jwts.builder().issuer("template").audience().add("other").and()
+                .subject("admin").expiration(new java.util.Date(System.currentTimeMillis() + 60000)).signWith(key).compact();
+        String noIssuerNoAudience = io.jsonwebtoken.Jwts.builder()
+                .subject("admin").expiration(new java.util.Date(System.currentTimeMillis() + 60000)).signWith(key).compact();
+
+        assertThat(jwtTokenProvider.validateToken(wrongIssuer)).isFalse();
+        assertThat(jwtTokenProvider.validateToken(wrongAudience)).isFalse();
+        assertThat(jwtTokenProvider.validateToken(noIssuerNoAudience)).isFalse();
+    }
+
+    @Test
+    void validateToken_shouldRejectTokenSignedWithDifferentHmacAlgorithm() {
+        javax.crypto.SecretKey key = io.jsonwebtoken.security.Keys.hmacShaKeyFor(
+                SECRET.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        String hs384 = io.jsonwebtoken.Jwts.builder().issuer("template").audience().add("template-api").and()
+                .subject("admin").expiration(new java.util.Date(System.currentTimeMillis() + 60000))
+                .signWith(key, io.jsonwebtoken.Jwts.SIG.HS384).compact();
+
+        assertThat(jwtTokenProvider.validateToken(hs384)).isFalse();
+    }
+
+    @Test
+    void validateToken_shouldRejectUnsignedAlgNoneToken() {
+        String unsigned = io.jsonwebtoken.Jwts.builder().issuer("template").audience().add("template-api").and()
+                .subject("admin").expiration(new java.util.Date(System.currentTimeMillis() + 60000)).compact();
+
+        assertThat(jwtTokenProvider.validateToken(unsigned)).isFalse();
+    }
 }

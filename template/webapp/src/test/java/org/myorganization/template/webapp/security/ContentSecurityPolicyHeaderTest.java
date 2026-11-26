@@ -76,6 +76,18 @@ class ContentSecurityPolicyHeaderTest {
     }
 
     @Test
+    void should_sendHardeningHeaders_when_anyPathIsRequested() throws Exception {
+        for (String path : new String[] {"/", "/api/v1/auth/login", "/api/v1/reports"}) {
+            var response = mockMvc.perform(MockMvcRequestBuilders.get(path)).andReturn().getResponse();
+
+            assertThat(response.getHeader("X-Content-Type-Options")).as(path).isEqualTo("nosniff");
+            assertThat(response.getHeader("X-Frame-Options")).as(path).isEqualTo("DENY");
+            assertThat(response.getHeader("Referrer-Policy")).as(path).isEqualTo("strict-origin-when-cross-origin");
+            assertThat(response.getHeader("Permissions-Policy")).as(path).isEqualTo(SecurityConfig.PERMISSIONS_POLICY);
+        }
+    }
+
+    @Test
     void should_restrictScriptsAndFraming_when_usingDefaultPolicy() {
         String csp = SecurityConfig.DEFAULT_CONTENT_SECURITY_POLICY;
         assertThat(csp).contains("script-src 'self';")

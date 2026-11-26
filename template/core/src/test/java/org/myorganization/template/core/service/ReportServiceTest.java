@@ -395,6 +395,24 @@ class ReportServiceTest {
     }
 
     @Test
+    @DisplayName("export CSV: values starting with a formula character are neutralized (SEC-15)")
+    void export_csv_neutralizesFormulaInjection() {
+        Long reportId = 10L;
+        Long userId = 1L;
+        Report report = createReport(reportId, "=cmd|' /C calc'!A0", "@SUM(1+1)");
+        User user = new User();
+        user.setId(userId);
+        User2Report ur = new User2Report(user, report);
+        when(reportRepository.findById(reportId)).thenReturn(Optional.of(report));
+        when(user2ReportRepository.findByIdUserId(userId)).thenReturn(List.of(ur));
+
+        String csv = new String(reportService.export(reportId, userId, new HashMap<>(), ExportFormat.CSV));
+
+        assertThat(csv).contains(",'=cmd|' /C calc'!A0,'@SUM(1+1)");
+        assertThat(csv).doesNotContain(",=cmd").doesNotContain(",@SUM");
+    }
+
+    @Test
     @DisplayName("export TXT: null description renders N/A")
     void export_txt_nullDescription_rendersNA() {
         Long reportId = 10L;
