@@ -1,5 +1,5 @@
 // Bootstrap
-@use 'bootstrap/scss/bootstrap';
+@use 'bootstrap-custom';
 
 // Bootstrap Icons
 @use 'bootstrap-icons/font/bootstrap-icons';
@@ -13,6 +13,9 @@
   --tp-color-success: #059669;
   --tp-color-danger: #dc2626;
   --tp-color-warning: #d97706;
+  // Warning text on light surfaces: #92400e → ~7:1 sobre blanco (WCAG AA).
+  // Bootstrap's #ffc107 (.text-warning) solo da 1.63:1.
+  --tp-color-warning-text: #92400e;
   --tp-color-info: #0284c7;
   --tp-color-background: #f8fafc;
   --tp-color-surface: #ffffff;
@@ -105,6 +108,7 @@
   --tp-color-surface-subtle: #1f2937;
   --tp-color-text: #f9fafb;
   --tp-color-text-muted: #9ca3af;
+  --tp-color-warning-text: #fbbf24;
   --tp-color-border: #1f2937;
   --tp-color-border-subtle: #172033;
 
@@ -123,6 +127,10 @@
   --tp-sidebar-active-bg: rgba(29, 78, 216, 0.28);
 }
 
+// Accessible warning text (use instead of Bootstrap .text-warning for text).
+.tp-text-warning {
+  color: var(--tp-color-warning-text);
+}
 body {
   font-family: var(--tp-font-family);
   font-size: var(--tp-font-size-base);

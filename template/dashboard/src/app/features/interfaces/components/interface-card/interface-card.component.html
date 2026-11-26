@@ -19,7 +19,7 @@
       <div class="stat-value tp-enter-fade" animate.enter="tp-enter-fade"
            data-testid="stat-interfaces-value">{{ total() }}</div>
       @if (withError() > 0) {
-        <a routerLink="/interfaces/configuration" class="small text-warning text-decoration-none"
+        <a routerLink="/interfaces/configuration" class="small tp-text-warning text-decoration-none"
            data-testid="stat-interfaces-error-link">
           <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
           {{ 'dashboard.stats.withError' | translate: { count: withError() } }}
