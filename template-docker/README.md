@@ -1,6 +1,6 @@
 # Template Docker
 
-`template-docker` levanta en local PostgreSQL, dos nodos WildFly detrás de Apache, OpenProject y Mailpit mediante Docker Compose.
+`template-docker` levanta en local PostgreSQL, dos nodos WildFly detrás de Apache y Mailpit mediante Docker Compose.
 
 ## Requisitos
 
@@ -12,11 +12,11 @@
 Al ejecutar `./compose.sh start` o `./compose.sh reset`, el script prepara los ficheros locales que no existan:
 
 - `.env`: copia de `.env.example`, con la configuración no secreta.
-- `secrets/credentials.env`: un único fichero ignorado por Git con `postgres_password`, `wildfly_admin_password`, `openproject_admin_password` y `openproject_secret_key_base`.
+- `secrets/credentials.env`: un único fichero ignorado por Git con `postgres_password`, `wildfly_admin_password` y `jwt_secret` (secreto JWT compartido por los dos nodos WildFly).
 
-Las tres contraseñas se generan aleatoriamente con 256 bits de entropía y contienen minúscula, mayúscula, número y símbolo. La clave de OpenProject se genera con 256 bits aleatorios en hexadecimal. Si los ficheros ya existen, el script no los sobrescribe.
+Las dos contraseñas se generan aleatoriamente con 256 bits de entropía y contienen minúscula, mayúscula, número y símbolo. `jwt_secret` se genera con 256 bits aleatorios en hexadecimal. Si los ficheros ya existen, el script no los sobrescribe.
 
-Compose monta `credentials.env` como `/run/secrets/credentials` solo en los servicios que lo necesitan. PostgreSQL y WildFly leen sus claves desde ese fichero; OpenProject también obtiene de ahí las credenciales requeridas. No añadas contraseñas a Dockerfiles, a `.env` ni al repositorio. Restringe el acceso local a `secrets/credentials.env` y protege sus copias de seguridad.
+Compose monta `credentials.env` como `/run/secrets/credentials` solo en los servicios que lo necesitan. PostgreSQL y WildFly leen sus claves desde ese fichero. No añadas contraseñas a Dockerfiles, a `.env` ni al repositorio. Restringe el acceso local a `secrets/credentials.env` y protege sus copias de seguridad.
 
 Para revisar la configuración de puertos, edita `.env`. Las contraseñas se cambian editando `secrets/credentials.env`; para rotarlas en servicios ya inicializados, actualiza también la contraseña correspondiente en PostgreSQL o en la aplicación y reinicia los servicios afectados.
 
@@ -52,7 +52,7 @@ Reinicializar servicios y borrar los volúmenes de datos:
 ./compose.sh reset
 ```
 
-`reset` elimina PostgreSQL y los datos persistentes de OpenProject; úsalo solo si quieres empezar de cero. Los ficheros `.env` y `secrets/credentials.env` permanecen en el host.
+`reset` elimina los datos persistentes de PostgreSQL; úsalo solo si quieres empezar de cero. Los ficheros `.env` y `secrets/credentials.env` permanecen en el host.
 
 ## Puertos publicados
 
@@ -65,7 +65,6 @@ Reinicializar servicios y borrar los volúmenes de datos:
 | WildFly 1 | `9991` | `9990` | Consola de administración |
 | WildFly 2 | `8082` | `8080` | HTTP directo para depuración |
 | WildFly 2 | `9992` | `9990` | Consola de administración |
-| OpenProject | `8088` | `80` | Gestión de proyectos |
 | Mailpit SMTP | `1025` | `1025` | Correo de pruebas |
 | Mailpit UI | `8025` | `8025` | Interfaz de mensajes capturados |
 
@@ -77,7 +76,7 @@ Apache reparte el tráfico entre `wildfly-1:8080` y `wildfly-2:8080` dentro de l
 
 - Imagen construida desde `postgres/Dockerfile`, basada en PostgreSQL 18.
 - Persiste los datos en el volumen `postgres-data`; `PGDATA` es `/var/lib/postgresql/18/docker`.
-- Inicializa las bases `template` y `openproject`, roles de plantilla y tablespaces al crear el volumen por primera vez.
+- Inicializa la base `template`, roles de plantilla y tablespaces al crear el volumen por primera vez.
 - Los scripts de inicialización solo se ejecutan durante la primera inicialización del volumen. Editarlos no modifica un clúster ya creado.
 
 ### WildFly y datasource PostgreSQL
@@ -100,13 +99,6 @@ Apache reparte el tráfico entre `wildfly-1:8080` y `wildfly-2:8080` dentro de l
 - El puerto 80 redirige (301) todo el tráfico a HTTPS, al puerto `APACHE_HTTPS_PORT`; la cookie de refresco es `Secure` y no viaja por HTTP.
 - La configuración incluye `/balancer-manager` y `/server-status`, restringidos a rangos locales privados.
 
-### OpenProject
-
-- Imagen personalizada basada en `openproject/openproject:17`.
-- Conecta a la base PostgreSQL `openproject` y persiste sus recursos en `openproject-assets`.
-- Publica HTTP en el puerto `8088` por defecto y espera a que PostgreSQL esté saludable.
-- El entrypoint lee los secretos desde el fichero compartido y configura `ServerName localhost` para Apache interno.
-
 ### Mailpit
 
 - Servidor SMTP de pruebas; captura mensajes localmente y no los entrega a destinatarios reales.
@@ -121,7 +113,6 @@ Apache reparte el tráfico entre `wildfly-1:8080` y `wildfly-2:8080` dentro de l
 - WildFly: `WILDFLY_HTTP_PORT`, `WILDFLY_MANAGEMENT_PORT`, `WILDFLY2_HTTP_PORT`, `WILDFLY2_MANAGEMENT_PORT`, `WILDFLY_ADMIN_USER`.
 - PostgreSQL JDBC: `POSTGRES_JDBC_URL` (opcional; por defecto apunta al servicio `postgres` y a `POSTGRES_DB`).
 - Apache: `APACHE_HTTP_PORT`, `APACHE_HTTPS_PORT`.
-- OpenProject: `OPENPROJECT_PORT`, `OPENPROJECT_HOST_NAME`, `OPENPROJECT_DB`, `OPENPROJECT_HTTPS`.
 - Mailpit: `MAIL_SMTP_PORT`, `MAIL_UI_PORT`.
 
-Las contraseñas y `SECRET_KEY_BASE` no se configuran en `.env`; se guardan en `secrets/credentials.env`.
+Las contraseñas y `jwt_secret` no se configuran en `.env`; se guardan en `secrets/credentials.env`.

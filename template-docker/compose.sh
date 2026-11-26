@@ -26,8 +26,7 @@ ensure_local_config() {
     {
       printf 'postgres_password=%s\n' "$(generate_password)"
       printf 'wildfly_admin_password=%s\n' "$(generate_password)"
-      printf 'openproject_admin_password=%s\n' "$(generate_password)"
-      printf 'openproject_secret_key_base=%s\n' "$(openssl rand -hex 32)"
+      printf 'jwt_secret=%s\n' "$(openssl rand -hex 32)"
     } > "$credentials_file"
     chmod 600 "$credentials_file"
     echo "Creado secrets/credentials.env con credenciales aleatorias"

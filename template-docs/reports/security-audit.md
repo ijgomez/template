@@ -325,7 +325,7 @@ No se afirma que la aplicación sea segura: hay controles correctos, pero los ha
 
 | Estado | Hallazgos |
 |---|---|
-| **Vulnerabilidades confirmadas** | SEC-01 (Crítica), SEC-02, SEC-03, SEC-04, SEC-05, SEC-06, SEC-07, SEC-08, SEC-10, SEC-12 (parcial: secreto en historial), SEC-16 |
+| **Vulnerabilidades confirmadas** | SEC-01 (Crítica), SEC-02, SEC-03, SEC-04, SEC-05, SEC-06, SEC-07, SEC-08, SEC-10, SEC-16 |
 | **Posibles problemas pendientes de verificación** | SEC-09 (corregido en código; falta confirmar la exposición real de Actuator en runtime), SEC-20 (confirmar ausencia de `h2-*.jar` en el WAR `dist`), rate limiting por IP en infraestructura (complementa a SEC-06), efecto en runtime de SEC-01/SEC-04 según pipeline, CVE de dependencias Maven (sin escanear), CORS real en producción |
 | **Mejoras preventivas** | SEC-17 y SEC-18 (aplicados; replicar HSTS en el proxy de producción), SEC-21 (0 vulnerabilidades actuales; añadir `npm audit` a CI), escaneo de secretos y de dependencias en CI, segregación de funciones |
 
@@ -333,7 +333,7 @@ No se afirma que la aplicación sea segura: hay controles correctos, pero los ha
 
 ## 9. Seguimiento de aplicación de correcciones
 
-Progreso: **19 / 21 hallazgos aplicados** (1 más en curso: SEC-12).
+Progreso: **20 / 21 hallazgos aplicados**.
 
 Estados posibles: `Pendiente` · `En curso` · `Aplicado` · `Descartado` (indicar motivo en Notas).
 
@@ -350,7 +350,7 @@ Estados posibles: `Pendiente` · `En curso` · `Aplicado` · `Descartado` (indic
 | SEC-09 | Actuator en el WAR y accesible públicamente | Media | Aplicado | 2026-11-26 | `management.endpoints.web.exposure.include: health` y `show-details: never` en `application.yml`; `SecurityConfig` permite solo `/actuator/health` y aplica `denyAll()` al resto de `/actuator/**`. Actuator sigue en el WAR. Pendiente la verificación en runtime (CHK-03). |
 | SEC-10 | `Sort`/`Pageable` sin lista blanca y sin handler genérico | Media | Aplicado | 2026-11-07 | Lista blanca por entidad (`SortWhitelist`) aplicada en `ActionControllerImpl` (acciones) e `InterfaceControllerImpl` (interfaces y logs), que devuelve 400 ante una propiedad de ordenación no permitida. `GlobalExceptionHandler` ahora extiende `ResponseEntityExceptionHandler` para preservar el estado HTTP de las excepciones de framework (400/404/405/415…) y añade un handler genérico `Exception` → 500 con mensaje genérico y sin traza (traza solo en logs). Tests: `SortWhitelistTest` (unitario), `SortWhitelistIntegrationTest` (Testcontainers, `sort=campoInexistente` → 400 sin traza) y casos añadidos en `ActionControllerTest`/`InterfaceControllerTest`/`GlobalExceptionHandlerTest`. |
 | SEC-11 | Credenciales por defecto y puerto 9990 expuestos (Docker) | Media | Aplicado | 2026-11-26 | Contraseñas de Postgres/WildFly sin valor por defecto: se leen de `secrets/credentials.env` (Docker secret). Imagen base fijada a `quay.io/wildfly/wildfly:42.0.0.Final-jdk21` en `template-docker/wildfly/Dockerfile`. Puertos de gestión (`9991`/`9992`) publicados a propósito: `template-docker` replica producción pero se usa para desarrollar (riesgo aceptado). |
-| SEC-12 | Secretos versionados y `.gitignore` sin reglas para `.env` | Media | En curso | 2026-11-26 | `.gitignore` ya ignora `.env`, `.env.*` (con `!.env.example`) y `template-docker/.gitignore` ignora `/secrets/`; `SECRET_KEY_BASE` ya no está en `.env.example` ni en `docker-compose.yml`. Pendiente: rotar el valor antiguo, que sigue en el historial de git (commits `8150364`, `4193ea6`). |
+| SEC-12 | Secretos versionados y `.gitignore` sin reglas para `.env` | Media | Aplicado | 2026-11-26 | `.gitignore` ignora `.env`, `.env.*` (con `!.env.example`) y `template-docker/.gitignore` ignora `/secrets/`; los secretos se generan en `secrets/credentials.env` (Docker secret). El `SECRET_KEY_BASE` que queda en el historial de git (commits `8150364`, `4193ea6`) era de OpenProject, que ya no forma parte de `template-docker` (sin servicio en `docker-compose.yml`), por lo que no requiere rotación. No reutilizar ese valor si se reintroduce OpenProject. |
 | SEC-13 | Interceptor añade `Authorization` sin validar origen | Baja | Aplicado | 2026-11-26 | `auth.interceptor.ts` resuelve la URL contra `document.baseURI` y solo adjunta el token si coincide el origen y el path de `environment.apiUrl` (`getApiPath`); la exclusión de endpoints de auth pasa a comparar el path relativo a la API en lugar de `url.includes`. Test `auth.interceptor.spec.ts` (URL externa no recibe el header); 15 tests en verde. |
 | SEC-14 | Service Worker con dataGroup `/api/**` no alineado | Baja | Aplicado | 2026-11-26 | Corrección del diagnóstico: el generador de `ngsw` antepone el `baseHref` (`/template/`) a los patrones, por lo que `/api/**` equivalía a `/template/api/**` y **sí cubría** la API real (el dataGroup no era inerte): respuestas autenticadas se cacheaban hasta 1 h en Cache Storage. Eliminado el dataGroup `api-freshness` de `ngsw-config.json`. Verificar en un build `dist` que `ngsw.json` ya no lo contiene. |
 | SEC-15 | CSV formula injection en la exportación | Baja | Aplicado | 2026-11-26 | `ReportService.escapeCsv` antepone `'` a los valores que empiezan por `=`, `+`, `-`, `@`, tabulador o retorno de carro, y entrecomilla también los que contienen `\r`. Test `ReportServiceTest.export_csv_neutralizesFormulaInjection`. |
