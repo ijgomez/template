@@ -1,5 +1,6 @@
 package org.myorganization.template.core.service;
 
+import org.myorganization.template.core.repository.LikePatterns;
 import org.myorganization.template.domain.enums.OperationType;
 import org.myorganization.template.domain.enums.AuditSection;
 import org.myorganization.template.core.audit.Auditable;
@@ -216,12 +217,12 @@ public class ParameterService extends AbstractCriteriaService<Parameter, Paramet
 
         if (criteria.code() != null && !criteria.code().isBlank()) {
             spec = spec.and((root, query, cb) ->
-                    cb.like(cb.lower(root.get("code")), "%" + criteria.code().toLowerCase() + "%"));
+                    LikePatterns.containsIgnoreCase(cb, root.get("code"), criteria.code()));
         }
 
         if (criteria.description() != null && !criteria.description().isBlank()) {
             spec = spec.and((root, query, cb) ->
-                    cb.like(cb.lower(root.get("description")), "%" + criteria.description().toLowerCase() + "%"));
+                    LikePatterns.containsIgnoreCase(cb, root.get("description"), criteria.description()));
         }
 
         if (criteria.type() != null) {

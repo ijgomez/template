@@ -325,7 +325,7 @@ No se afirma que la aplicación sea segura: hay controles correctos, pero los ha
 
 | Estado | Hallazgos |
 |---|---|
-| **Vulnerabilidades confirmadas** | SEC-01 (Crítica), SEC-02, SEC-03, SEC-04, SEC-05, SEC-06, SEC-07, SEC-08, SEC-10, SEC-12 (parcial: secreto en historial), SEC-16, SEC-19 |
+| **Vulnerabilidades confirmadas** | SEC-01 (Crítica), SEC-02, SEC-03, SEC-04, SEC-05, SEC-06, SEC-07, SEC-08, SEC-10, SEC-12 (parcial: secreto en historial), SEC-16 |
 | **Posibles problemas pendientes de verificación** | SEC-09 (corregido en código; falta confirmar la exposición real de Actuator en runtime), SEC-20 (confirmar ausencia de `h2-*.jar` en el WAR `dist`), rate limiting por IP en infraestructura (complementa a SEC-06), efecto en runtime de SEC-01/SEC-04 según pipeline, CVE de dependencias Maven (sin escanear), CORS real en producción |
 | **Mejoras preventivas** | SEC-17 y SEC-18 (aplicados; replicar HSTS en el proxy de producción), SEC-21 (0 vulnerabilidades actuales; añadir `npm audit` a CI), escaneo de secretos y de dependencias en CI, segregación de funciones |
 
@@ -333,7 +333,7 @@ No se afirma que la aplicación sea segura: hay controles correctos, pero los ha
 
 ## 9. Seguimiento de aplicación de correcciones
 
-Progreso: **18 / 21 hallazgos aplicados** (1 más en curso: SEC-12).
+Progreso: **19 / 21 hallazgos aplicados** (1 más en curso: SEC-12).
 
 Estados posibles: `Pendiente` · `En curso` · `Aplicado` · `Descartado` (indicar motivo en Notas).
 
@@ -357,7 +357,7 @@ Estados posibles: `Pendiente` · `En curso` · `Aplicado` · `Descartado` (indic
 | SEC-16 | Credenciales de E2E hardcodeadas | Baja | Pendiente | | |
 | SEC-17 | JWT sin `iss`/`aud` ni algoritmo explícito | Baja | Aplicado | 2026-11-26 | `JwtTokenProvider` emite `iss=template` y `aud=template-api`, firma explícitamente con `Jwts.SIG.HS256` y en la validación exige issuer, audience y `alg=HS256` (rechaza HS384/HS512, `alg=none` y tokens sin `iss`/`aud`). Los access tokens emitidos antes del cambio dejan de ser válidos (caducan en 15 min; el refresh token opaco no se ve afectado). Tests en `JwtTokenProviderTest` (16 tests). |
 | SEC-18 | Sin cabeceras de seguridad (CSP, X-Frame-Options…) | Baja | Aplicado | 2026-11-26 | CSP (commit `fc40556`) + `Referrer-Policy: strict-origin-when-cross-origin` y `Permissions-Policy` (cámara, micrófono, geolocalización, pago y USB desactivados) en `SecurityConfig`; `X-Content-Type-Options: nosniff` y `X-Frame-Options: DENY` los añade Spring Security por defecto. Verificado en `ContentSecurityPolicyHeaderTest`. HSTS: como el TLS termina en Apache, se envía desde `template-docker/apache/httpd.conf` (`Strict-Transport-Security: max-age=31536000` en el VirtualHost 443, sin `includeSubDomains`/`preload`); en producción debe replicarse en el proxy real. |
-| SEC-19 | `LIKE` sin escapar comodines en filtros | Baja | Pendiente | | |
+| SEC-19 | `LIKE` sin escapar comodines en filtros | Baja | Aplicado | 2026-11-26 | Nuevo helper `LikePatterns` (core) que escapa `\`, `%` y `_` y genera `lower(campo) LIKE %valor% ESCAPE '\'`; aplicado a los 13 filtros de texto de `UserService`, `ProfileService`, `ParameterService`, `ActionService`, `AuditService`, `ClusterBlockService` e `InterfaceService`. `ReportRepository.findByNameContainingIgnoreCase` ya estaba protegido (Spring Data escapa los comodines en consultas derivadas). Tests: `LikePatternsTest` y `LikeWildcardIntegrationTest` (Testcontainers + PostgreSQL: `%`, `_` y `\` se tratan como literales). |
 | SEC-20 | Driver H2 incluido en el WAR de producción | Baja | Aplicado | 2026-11-26 | H2 usa `${db.driver.scope}`: `provided` por defecto y `runtime` solo en los perfiles `local` y `test`. Pendiente comprobar que `WEB-INF/lib` del WAR `dist` no contiene `h2-*.jar`. |
 | SEC-21 | Dependencias de desarrollo con vulnerabilidad conocida | Baja | Aplicado | 2026-11-26 | `npm audit` y `npm audit --omit=dev` devuelven 0 vulnerabilidades. Falta añadirlo a CI (CI-01). |
 

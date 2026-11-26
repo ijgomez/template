@@ -1,5 +1,6 @@
 package org.myorganization.template.core.service;
 
+import org.myorganization.template.core.repository.LikePatterns;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.HashSet;
@@ -321,22 +322,22 @@ public class UserService extends AbstractCriteriaService<User, UserDTO, UserCrit
 
         if (criteria.username() != null && !criteria.username().isBlank()) {
             spec = spec.and((root, query, cb) ->
-                    cb.like(cb.lower(root.get("username")), "%" + criteria.username().toLowerCase() + "%"));
+                    LikePatterns.containsIgnoreCase(cb, root.get("username"), criteria.username()));
         }
 
         if (criteria.firstName() != null && !criteria.firstName().isBlank()) {
             spec = spec.and((root, query, cb) ->
-                    cb.like(cb.lower(root.get("firstName")), "%" + criteria.firstName().toLowerCase() + "%"));
+                    LikePatterns.containsIgnoreCase(cb, root.get("firstName"), criteria.firstName()));
         }
 
         if (criteria.lastName() != null && !criteria.lastName().isBlank()) {
             spec = spec.and((root, query, cb) ->
-                    cb.like(cb.lower(root.get("lastName")), "%" + criteria.lastName().toLowerCase() + "%"));
+                    LikePatterns.containsIgnoreCase(cb, root.get("lastName"), criteria.lastName()));
         }
 
         if (criteria.email() != null && !criteria.email().isBlank()) {
             spec = spec.and((root, query, cb) ->
-                    cb.like(cb.lower(root.get("email")), "%" + criteria.email().toLowerCase() + "%"));
+                    LikePatterns.containsIgnoreCase(cb, root.get("email"), criteria.email()));
         }
 
         if (criteria.profileId() != null) {

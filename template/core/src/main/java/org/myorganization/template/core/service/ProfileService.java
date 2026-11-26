@@ -1,5 +1,6 @@
 package org.myorganization.template.core.service;
 
+import org.myorganization.template.core.repository.LikePatterns;
 import org.myorganization.template.domain.enums.OperationType;
 import org.myorganization.template.domain.enums.AuditSection;
 import org.myorganization.template.core.audit.Auditable;
@@ -229,8 +230,7 @@ public class ProfileService extends AbstractCriteriaService<Profile, ProfileDTO,
     protected Specification<Profile> buildSpecification(ProfileCriteria criteria) {
         Specification<Profile> spec = (root, query, cb) -> cb.conjunction();
         if (criteria != null && criteria.name() != null && !criteria.name().isBlank()) {
-            spec = spec.and((root, query, cb) -> cb.like(cb.lower(root.get("name")),
-                    "%" + criteria.name().toLowerCase() + "%"));
+            spec = spec.and((root, query, cb) -> LikePatterns.containsIgnoreCase(cb, root.get("name"), criteria.name()));
         }
         return spec;
     }

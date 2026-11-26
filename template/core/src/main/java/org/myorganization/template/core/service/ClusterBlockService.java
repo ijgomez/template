@@ -1,5 +1,6 @@
 package org.myorganization.template.core.service;
 
+import org.myorganization.template.core.repository.LikePatterns;
 import org.myorganization.template.core.repository.ClusterBlockRepository;
 import org.myorganization.template.domain.criteria.ClusterBlockCriteria;
 import org.myorganization.template.domain.dto.ClusterBlockDTO;
@@ -45,7 +46,7 @@ public class ClusterBlockService extends AbstractCriteriaService<ClusterBlock, C
 
         if (criteria != null && criteria.name() != null && !criteria.name().isBlank()) {
             spec = spec.and((root, query, cb) ->
-                    cb.like(cb.lower(root.get("name")), "%" + criteria.name().toLowerCase() + "%"));
+                    LikePatterns.containsIgnoreCase(cb, root.get("name"), criteria.name()));
         }
 
         return spec;

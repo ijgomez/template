@@ -1,5 +1,6 @@
 package org.myorganization.template.core.service;
 
+import org.myorganization.template.core.repository.LikePatterns;
 import org.myorganization.template.core.repository.InterfaceLogRepository;
 import org.myorganization.template.core.repository.InterfaceRepository;
 import org.myorganization.template.domain.criteria.InterfaceCriteria;
@@ -182,13 +183,13 @@ public class InterfaceService {
         Specification<Interface> spec = (root, query, cb) -> cb.conjunction();
 
         if (criteria.name() != null && !criteria.name().isBlank()) {
-            String pattern = "%" + criteria.name().trim().toLowerCase() + "%";
-            spec = spec.and((root, query, cb) -> cb.like(cb.lower(root.get("name")), pattern));
+            String name = criteria.name().trim();
+            spec = spec.and((root, query, cb) -> LikePatterns.containsIgnoreCase(cb, root.get("name"), name));
         }
 
         if (criteria.protocol() != null && !criteria.protocol().isBlank()) {
-            String pattern = "%" + criteria.protocol().trim().toLowerCase() + "%";
-            spec = spec.and((root, query, cb) -> cb.like(cb.lower(root.get("protocol")), pattern));
+            String protocol = criteria.protocol().trim();
+            spec = spec.and((root, query, cb) -> LikePatterns.containsIgnoreCase(cb, root.get("protocol"), protocol));
         }
 
         if (criteria.status() != null) {

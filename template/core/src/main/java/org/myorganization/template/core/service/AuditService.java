@@ -1,5 +1,6 @@
 package org.myorganization.template.core.service;
 
+import org.myorganization.template.core.repository.LikePatterns;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 
@@ -108,7 +109,7 @@ public class AuditService extends AbstractCriteriaService<AuditLog, AuditLogDTO,
 
         if (criteria.username() != null && !criteria.username().isBlank()) {
             spec = spec.and((root, query, cb) ->
-                    cb.like(cb.lower(root.get("username")), "%" + criteria.username().toLowerCase() + "%"));
+                    LikePatterns.containsIgnoreCase(cb, root.get("username"), criteria.username()));
         }
 
         if (criteria.operationType() != null) {
