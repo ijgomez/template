@@ -5,6 +5,7 @@ import java.util.Set;
 import org.myorganization.template.core.service.ActionService;
 import org.myorganization.template.domain.criteria.ActionCriteria;
 import org.myorganization.template.domain.dto.ActionDTO;
+import org.myorganization.template.domain.entity.Action_;
 import org.myorganization.template.domain.enums.ActionType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,7 +36,8 @@ public class ActionControllerImpl implements ActionController {
 
     /** Fields on {@code Action} that clients may use to sort the listing (SEC-10). */
     private static final Set<String> ALLOWED_SORT_FIELDS =
-            Set.of("id", "code", "name", "type", "description", "createdAt", "lastModifiedAt");
+            Set.of(Action_.ID, Action_.CODE, Action_.NAME, Action_.TYPE, Action_.DESCRIPTION,
+                    Action_.CREATED_AT, Action_.LAST_MODIFIED_AT);
 
     private final ActionService actionService;
 

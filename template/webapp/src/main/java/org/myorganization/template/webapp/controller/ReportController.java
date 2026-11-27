@@ -7,6 +7,7 @@ import java.util.Map;
 import org.myorganization.template.core.service.ReportService;
 import org.myorganization.template.core.service.UserService;
 import org.myorganization.template.domain.dto.ReportDTO;
+import org.myorganization.template.domain.entity.Report_;
 import org.myorganization.template.domain.dto.ReportFilterDTO;
 import org.myorganization.template.domain.dto.UserDTO;
 import org.myorganization.template.domain.enums.ExportFormat;
@@ -38,8 +39,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/reports")
 public class ReportController {
 
-    private static final Set<String> SEARCH_SORT_FIELDS =
-            Set.of("id", "name", "description", "createdAt", "lastModifiedAt");
+    private static final Set<String> ALLOWED_SORT_FIELDS =
+            Set.of(Report_.ID, Report_.NAME, Report_.DESCRIPTION, Report_.CREATED_AT, Report_.LAST_MODIFIED_AT);
 
     private final ReportService reportService;
     private final UserService userService;
@@ -86,7 +87,7 @@ public class ReportController {
             @RequestParam(required = false) String name,
             Pageable pageable) {
         Page<ReportDTO> page = reportService.findAll(name,
-                SortWhitelist.restrict(pageable, SEARCH_SORT_FIELDS));
+                SortWhitelist.restrict(pageable, ALLOWED_SORT_FIELDS));
         return ResponseEntity.ok(page);
     }
 

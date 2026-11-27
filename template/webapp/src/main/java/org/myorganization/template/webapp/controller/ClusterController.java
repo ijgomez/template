@@ -7,6 +7,7 @@ import org.myorganization.template.core.service.ClusterJobService;
 import org.myorganization.template.core.service.ClusterService;
 import org.myorganization.template.domain.criteria.ClusterBlockCriteria;
 import org.myorganization.template.domain.dto.ClusterBlockDTO;
+import org.myorganization.template.domain.entity.ClusterBlock_;
 import org.myorganization.template.domain.dto.ClusterJobDTO;
 import org.myorganization.template.domain.dto.ClusterNodeDTO;
 import org.myorganization.template.domain.dto.ClusterTaskDTO;
@@ -36,8 +37,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/administration/cluster")
 public class ClusterController {
 
-    private static final Set<String> BLOCK_SORT_FIELDS = Set.of(
-            "id", "name", "startDate", "avgTime", "minTime", "maxTime", "total");
+    private static final Set<String> ALLOWED_SORT_FIELDS = Set.of(
+            ClusterBlock_.ID, ClusterBlock_.NAME, ClusterBlock_.START_DATE, ClusterBlock_.AVG_TIME,
+            ClusterBlock_.MIN_TIME, ClusterBlock_.MAX_TIME, ClusterBlock_.TOTAL);
 
     private final ClusterService clusterService;
     private final ClusterJobService clusterJobService;
@@ -209,7 +211,7 @@ public class ClusterController {
 
         ClusterBlockCriteria criteria = new ClusterBlockCriteria(name);
         Page<ClusterBlockDTO> page = clusterService.findBlocksByCriteria(criteria,
-                SortWhitelist.restrict(pageable, BLOCK_SORT_FIELDS));
+                SortWhitelist.restrict(pageable, ALLOWED_SORT_FIELDS));
         return ResponseEntity.ok(page);
     }
 

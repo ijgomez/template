@@ -4,6 +4,7 @@ import java.util.Set;
 import org.myorganization.template.core.service.ParameterService;
 import org.myorganization.template.domain.criteria.ParameterCriteria;
 import org.myorganization.template.domain.dto.ParameterDTO;
+import org.myorganization.template.domain.entity.Parameter_;
 import org.myorganization.template.domain.enums.ParameterType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,7 +33,8 @@ import jakarta.validation.Valid;
 public class ParameterController {
 
     private static final Set<String> ALLOWED_SORT_FIELDS =
-            Set.of("id", "code", "description", "type", "createdAt", "lastModifiedAt");
+            Set.of(Parameter_.ID, Parameter_.CODE, Parameter_.DESCRIPTION, Parameter_.TYPE,
+                    Parameter_.CREATED_AT, Parameter_.LAST_MODIFIED_AT);
 
     private final ParameterService parameterService;
 

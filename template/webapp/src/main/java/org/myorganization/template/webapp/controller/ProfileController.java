@@ -4,6 +4,7 @@ import java.util.Set;
 import org.myorganization.template.core.service.ProfileService;
 import org.myorganization.template.domain.criteria.ProfileCriteria;
 import org.myorganization.template.domain.dto.ProfileDTO;
+import org.myorganization.template.domain.entity.Profile_;
 import org.myorganization.template.domain.dto.ProfileRefDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,7 +35,7 @@ import java.util.List;
 public class ProfileController {
 
     private static final Set<String> ALLOWED_SORT_FIELDS =
-            Set.of("id", "name", "description", "createdAt", "lastModifiedAt");
+            Set.of(Profile_.ID, Profile_.NAME, Profile_.DESCRIPTION, Profile_.CREATED_AT, Profile_.LAST_MODIFIED_AT);
 
     private final ProfileService profileService;
 

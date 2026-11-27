@@ -6,6 +6,7 @@ import java.time.OffsetDateTime;
 import org.myorganization.template.core.service.AuditService;
 import org.myorganization.template.domain.criteria.AuditCriteria;
 import org.myorganization.template.domain.dto.AuditLogDTO;
+import org.myorganization.template.domain.entity.AuditLog_;
 import org.myorganization.template.domain.enums.AuditSection;
 import org.myorganization.template.domain.enums.OperationType;
 import org.springframework.data.domain.Page;
@@ -29,7 +30,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuditController {
 
     private static final Set<String> ALLOWED_SORT_FIELDS = Set.of(
-            "id", "timestamp", "username", "operationType", "section", "entityId", "entityName");
+            AuditLog_.ID, AuditLog_.TIMESTAMP, AuditLog_.USERNAME, AuditLog_.OPERATION_TYPE,
+            AuditLog_.SECTION, AuditLog_.ENTITY_ID, AuditLog_.ENTITY_NAME);
 
     private final AuditService auditService;
 

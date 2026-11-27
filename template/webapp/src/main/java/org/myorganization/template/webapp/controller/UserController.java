@@ -4,6 +4,8 @@ import java.util.Set;
 import org.myorganization.template.core.service.UserService;
 import org.myorganization.template.domain.criteria.UserCriteria;
 import org.myorganization.template.domain.dto.UserDTO;
+import org.myorganization.template.domain.entity.User_;
+import org.myorganization.template.domain.entity.Profile_;
 import org.myorganization.template.domain.validation.ValidationGroups;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,11 +38,12 @@ import jakarta.validation.groups.Default;
 @RequestMapping("/api/v1/administration/security/users")
 public class UserController {
 
+    private static final String PROFILE_NAME_PATH = User_.PROFILE + "." + Profile_.NAME;
     private static final Set<String> ALLOWED_SORT_FIELDS = Set.of(
-            "id", "username", "firstName", "lastName", "email", "lastAccess", "createdAt", "lastModifiedAt",
-            "profile.name");
+            User_.ID, User_.USERNAME, User_.FIRST_NAME, User_.LAST_NAME, User_.EMAIL, User_.LAST_ACCESS,
+            User_.CREATED_AT, User_.LAST_MODIFIED_AT, PROFILE_NAME_PATH);
     /** UI sort key that is not an entity property. */
-    private static final java.util.Map<String, String> SORT_ALIASES = java.util.Map.of("profileName", "profile.name");
+    private static final java.util.Map<String, String> SORT_ALIASES = java.util.Map.of("profileName", PROFILE_NAME_PATH);
 
     private final UserService userService;
 

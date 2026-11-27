@@ -8,6 +8,8 @@ import org.myorganization.template.core.service.InterfaceService;
 import org.myorganization.template.domain.criteria.InterfaceCriteria;
 import org.myorganization.template.domain.criteria.InterfaceLogCriteria;
 import org.myorganization.template.domain.dto.InterfaceDTO;
+import org.myorganization.template.domain.entity.Interface_;
+import org.myorganization.template.domain.entity.InterfaceLog_;
 import org.myorganization.template.domain.dto.InterfaceLogDTO;
 import org.myorganization.template.domain.enums.InterfaceLogStatus;
 import org.myorganization.template.domain.enums.InterfaceStatus;
@@ -34,14 +36,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class InterfaceControllerImpl implements InterfaceController {
 
     /** Fields on {@code Interface} that clients may use to sort the configuration listing (SEC-10). */
-    private static final Set<String> INTERFACE_SORT_FIELDS =
-            Set.of("id", "name", "description", "url", "protocol", "status", "checkFrequency",
-                    "createdAt", "lastModifiedAt");
+    private static final Set<String> ALLOWED_SORT_FIELDS =
+            Set.of(Interface_.ID, Interface_.NAME, Interface_.DESCRIPTION, Interface_.URL, Interface_.PROTOCOL,
+                    Interface_.STATUS, Interface_.CHECK_FREQUENCY, Interface_.CREATED_AT,
+                    Interface_.LAST_MODIFIED_AT);
 
     /** Fields on {@code InterfaceLog} that clients may use to sort the monitor listing (SEC-10). */
-    private static final Set<String> INTERFACE_LOG_SORT_FIELDS =
-            Set.of("id", "timestamp", "operationType", "interfaceName", "requestPayload",
-                    "responsePayload", "status");
+    private static final Set<String> ALLOWED_LOG_SORT_FIELDS =
+            Set.of(InterfaceLog_.ID, InterfaceLog_.TIMESTAMP, InterfaceLog_.OPERATION_TYPE,
+                    InterfaceLog_.INTERFACE_NAME, InterfaceLog_.REQUEST_PAYLOAD,
+                    InterfaceLog_.RESPONSE_PAYLOAD, InterfaceLog_.STATUS);
 
     private final InterfaceService interfaceService;
 
@@ -66,7 +70,7 @@ public class InterfaceControllerImpl implements InterfaceController {
             @RequestParam(required = false) InterfaceStatus status,
             @RequestParam(required = false) String sort) {
         InterfaceCriteria criteria = new InterfaceCriteria(name, protocol, status);
-        Pageable pageable = SortWhitelist.buildPageable(page, size, sort, INTERFACE_SORT_FIELDS);
+        Pageable pageable = SortWhitelist.buildPageable(page, size, sort, ALLOWED_SORT_FIELDS);
         return ResponseEntity.ok(interfaceService.findByCriteria(criteria, pageable));
     }
 
@@ -91,7 +95,7 @@ public class InterfaceControllerImpl implements InterfaceController {
             @RequestParam(required = false) String sort) {
 
         InterfaceLogCriteria criteria = new InterfaceLogCriteria(fromDate, toDate, operationType, interfaceName, status);
-        Pageable pageable = SortWhitelist.buildPageable(page, size, sort, INTERFACE_LOG_SORT_FIELDS);
+        Pageable pageable = SortWhitelist.buildPageable(page, size, sort, ALLOWED_LOG_SORT_FIELDS);
         Page<InterfaceLogDTO> result = interfaceService.findLogsByCriteria(criteria, pageable);
         return ResponseEntity.ok(result);
     }
